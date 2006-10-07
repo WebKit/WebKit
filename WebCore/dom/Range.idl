@@ -24,38 +24,38 @@ module ranges {
     interface [GenerateConstructor] Range {
 
         readonly attribute Node startContainer
-            getter raises (DOMException);
+            getter raises(DOMException);
         readonly attribute long startOffset
-            getter raises (DOMException);
+            getter raises(DOMException);
         readonly attribute Node endContainer
-            getter raises (DOMException);
+            getter raises(DOMException);
         readonly attribute long endOffset
-            getter raises (DOMException);
+            getter raises(DOMException);
         readonly attribute boolean collapsed
-            getter raises (DOMException);
+            getter raises(DOMException);
         readonly attribute Node commonAncestorContainer
-            getter raises (DOMException);
+            getter raises(DOMException);
 
         [OldStyleObjC] void setStart(in Node refNode, 
                                      in long offset)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         [OldStyleObjC] void setEnd(in Node refNode, 
                                    in long offset)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void setStartBefore(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void setStartAfter(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void setEndBefore(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void setEndAfter(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void collapse(in boolean toStart)
             raises(DOMException);
         void selectNode(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
         void selectNodeContents(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
 
         // CompareHow
         const unsigned short START_TO_START = 0;
@@ -65,52 +65,52 @@ module ranges {
 
         [OldStyleObjC] short compareBoundaryPoints(in CompareHow how,
                                                    in Range sourceRange)
-            raises(dom::DOMException);
+            raises(DOMException);
 
         void deleteContents()
-            raises(dom::DOMException);
+            raises(DOMException);
         DocumentFragment extractContents()
-            raises(dom::DOMException);
+            raises(DOMException);
         DocumentFragment cloneContents()
-            raises(dom::DOMException);
+            raises(DOMException);
         void insertNode(in Node newNode)
-            raises(dom::DOMException, RangeException);
+            raises(DOMException, RangeException);
         void surroundContents(in Node newParent)
-            raises(dom::DOMException, RangeException);
+            raises(DOMException, RangeException);
         Range cloneRange()
-            raises(dom::DOMException);
+            raises(DOMException);
         DOMString toString()
-            raises(dom::DOMException);
+            raises(DOMException);
 
         void detach()
-            raises(dom::DOMException);
+            raises(DOMException);
 
         // extensions
 
         DocumentFragment createContextualFragment(in DOMString html)
-            raises(dom::DOMException);
-            
+            raises(DOMException);
+
         // WebKit extensions
 
         boolean intersectsNode(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
 
         short compareNode(in Node refNode)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
 
         // CompareResults
-        const unsigned short NODE_BEFORE = 0;
-        const unsigned short NODE_AFTER = 1;
+        const unsigned short NODE_BEFORE           = 0;
+        const unsigned short NODE_AFTER            = 1;
         const unsigned short NODE_BEFORE_AND_AFTER = 2;
-        const unsigned short NODE_INSIDE = 3;
+        const unsigned short NODE_INSIDE           = 3;
 
         short comparePoint(in Node refNode, 
                            in long offset)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
 
         boolean isPointInRange(in Node refNode, 
                                in long offset)
-            raises(RangeException, dom::DOMException);
+            raises(RangeException, DOMException);
     };
 
 }

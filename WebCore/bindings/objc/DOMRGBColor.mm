@@ -94,10 +94,6 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
     return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
-@end
-
-@implementation DOMRGBColor (DOMRGBColorExtensions)
-
 - (DOMCSSPrimitiveValue *)alpha
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);

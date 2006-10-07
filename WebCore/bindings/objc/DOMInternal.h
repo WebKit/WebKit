@@ -28,7 +28,6 @@
 #import "DOM.h"
 
 #import "Color.h"
-#import "DOMAbstractView.h"
 #import "DOMCSSRule.h"
 #import "DOMCSSValue.h"
 #import "DOMEvents.h"
@@ -48,6 +47,7 @@
 #endif // XPATH_SUPPORT
 
 // Auto-generated internal interfaces
+#import "DOMAbstractViewInternal.h"
 #import "DOMAttrInternal.h"
 #import "DOMCDATASectionInternal.h"
 #import "DOMCSSCharsetRuleInternal.h"
@@ -136,6 +136,7 @@
 #import "DOMNotationInternal.h"
 #import "DOMOverflowEventInternal.h"
 #import "DOMProcessingInstructionInternal.h"
+#import "DOMRangeInternal.h"
 #import "DOMRectInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
@@ -216,12 +217,10 @@
 namespace WebCore {
     class CSSRule;
     class CSSValue;
-    class DOMWindow;
     class Event;
     class Node;
     class NodeFilter;
     class NodeIterator;
-    class Range;
     class StyleSheet;
     class TreeWalker;
 
@@ -235,7 +234,6 @@ namespace WebCore {
 #endif // XPATH_SUPPORT
 
     typedef int ExceptionCode;
-    typedef DOMWindow AbstractView;
 }
 
 // Core Internal Interfaces
@@ -279,13 +277,6 @@ namespace WebCore {
 - (WebCore::Event *)_event;
 @end
 
-// Range Internal Interfaces
-
-@interface DOMRange (WebCoreInternal)
-+ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
-- (WebCore::Range *)_range;
-@end
-
 // Traversal Internal Interfaces
 
 @interface DOMNodeIterator (WebCoreInternal)
@@ -298,13 +289,6 @@ namespace WebCore {
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 + (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
-@end
-
-// Views Internal Interfaces
-
-@interface DOMAbstractView (WebCoreInternal)
-+ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
-- (WebCore::AbstractView *)_abstractView;
 @end
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,29 +24,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMObject.h>
-
-@class NSColor;
-@class DOMCSSPrimitiveValue;
-
-@interface DOMRGBColor : DOMObject
-#ifndef BUILDING_ON_TIGER
-@property(readonly) DOMCSSPrimitiveValue *red;
-@property(readonly) DOMCSSPrimitiveValue *green;
-@property(readonly) DOMCSSPrimitiveValue *blue;
-#else
-- (DOMCSSPrimitiveValue *)red;
-- (DOMCSSPrimitiveValue *)green;
-- (DOMCSSPrimitiveValue *)blue;
-#endif
-@end
-
-@interface DOMRGBColor (DOMRGBColorExtensions)
-#ifndef BUILDING_ON_TIGER
-@property(readonly) DOMCSSPrimitiveValue *alpha;
-@property(readonly) NSColor *color;
-#else
-- (DOMCSSPrimitiveValue *)alpha;
-- (NSColor *)color;
-#endif
-@end
+#import <WebCore/DOMRange.h>
+#import <WebCore/DOMRangeException.h>

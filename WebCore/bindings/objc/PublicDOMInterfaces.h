@@ -941,6 +941,36 @@
 - (void)initMouseEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail :(int)screenX :(int)screenY :(int)clientX :(int)clientY :(BOOL)ctrlKey :(BOOL)altKey :(BOOL)shiftKey :(BOOL)metaKey :(unsigned short)button :(id <DOMEventTarget>)relatedTarget;
 @end
 
+@interface DOMRange : DOMObject
+@property(readonly) DOMNode *startContainer;
+@property(readonly) int startOffset;
+@property(readonly) DOMNode *endContainer;
+@property(readonly) int endOffset;
+@property(readonly) BOOL collapsed;
+@property(readonly) DOMNode *commonAncestorContainer;
+- (void)setStart:(DOMNode *)refNode offset:(int)offset;
+- (void)setStart:(DOMNode *)refNode :(int)offset;
+- (void)setEnd:(DOMNode *)refNode offset:(int)offset;
+- (void)setEnd:(DOMNode *)refNode :(int)offset;
+- (void)setStartBefore:(DOMNode *)refNode;
+- (void)setStartAfter:(DOMNode *)refNode;
+- (void)setEndBefore:(DOMNode *)refNode;
+- (void)setEndAfter:(DOMNode *)refNode;
+- (void)collapse:(BOOL)toStart;
+- (void)selectNode:(DOMNode *)refNode;
+- (void)selectNodeContents:(DOMNode *)refNode;
+- (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange;
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
+- (void)deleteContents;
+- (DOMDocumentFragment *)extractContents;
+- (DOMDocumentFragment *)cloneContents;
+- (void)insertNode:(DOMNode *)newNode;
+- (void)surroundContents:(DOMNode *)newParent;
+- (DOMRange *)cloneRange;
+- (NSString *)toString;
+- (void)detach;
+@end
+
 @interface DOMNodeIterator : DOMObject
 @property(readonly) DOMNode *root;
 @property(readonly) unsigned whatToShow;

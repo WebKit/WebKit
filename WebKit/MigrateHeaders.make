@@ -163,7 +163,9 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMProcessingInstructionPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMRGBColor.h \
     $(PUBLIC_HEADERS_DIR)/DOMRange.h \
+    $(PRIVATE_HEADERS_DIR)/DOMRangePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMRangeException.h \
+    $(PUBLIC_HEADERS_DIR)/DOMRanges.h \
     $(PUBLIC_HEADERS_DIR)/DOMRect.h \
     $(PUBLIC_HEADERS_DIR)/DOMStyleSheet.h \
     $(PUBLIC_HEADERS_DIR)/DOMStyleSheetList.h \

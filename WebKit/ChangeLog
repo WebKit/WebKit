@@ -1,3 +1,12 @@
+2006-10-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11198
+        Auto-generate a few more Objective-C DOM interfaces
+
+        * MigrateHeaders.make:
+
 2006-10-07  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.

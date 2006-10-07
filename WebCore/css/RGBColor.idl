@@ -21,10 +21,18 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface RGBColor {
+    interface [ObjCCustomImplementation] RGBColor {
         readonly attribute CSSPrimitiveValue  red;
         readonly attribute CSSPrimitiveValue  green;
         readonly attribute CSSPrimitiveValue  blue;
+
+        // WebKit extensions
+#if !defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute CSSPrimitiveValue  alpha;
+#endif
+#if defined(LANGUAGE_OBJECTIVE_C)
+        readonly attribute Color              color;
+#endif
     };
 
 }

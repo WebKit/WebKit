@@ -56,6 +56,7 @@
 #import <WebCore/DOMNodeIteratorPrivate.h>
 #import <WebCore/DOMNodePrivate.h>
 #import <WebCore/DOMProcessingInstructionPrivate.h>
+#import <WebCore/DOMRangePrivate.h>
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
 

@@ -1,3 +1,37 @@
+2006-10-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11198
+        Auto-generate a few more Objective-C DOM interfaces
+
+        - Fully auto-generate DOMAbstractView and DOMRange.
+
+        - Auto-generate just the interface for DOMRGBColor.
+
+        - Add DOMRanges.h as the new top level file for Ranges
+          module.
+
+        - Add DOMRanges.h and DOMXPath.h to DOM.mm
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.h:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMAbstractView.h: Removed.
+        * bindings/objc/DOMAbstractView.mm: Removed.
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMRGBColor.h: Removed.
+        * bindings/objc/DOMRGBColor.mm:
+        * bindings/objc/DOMRange.h: Removed.
+        * bindings/objc/DOMRanges.h: Added.
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/RGBColor.idl:
+        * dom/Range.idl:
+        * page/AbstractView.idl: Added.
+
 2006-10-07  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Eric.

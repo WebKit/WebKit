@@ -228,6 +228,7 @@ sub GetClassName
     return "unsigned" if $name eq "unsigned long";
     return "int" if $name eq "long";
     return "NSURL" if $name eq "URL";
+    return "NSColor" if $name eq "Color";
     return "DOMAbstractView" if $name eq "DOMWindow";
     return $name if $codeGenerator->IsPrimitiveType($name) or $name eq "DOMImplementation" or $name eq "DOMTimeStamp";
 
@@ -251,6 +252,7 @@ sub GetImplClassName
     # special cases
     return "DOMImplementationFront" if $name eq "DOMImplementation";
     return "RectImpl" if $name eq "Rect";
+    return "DOMWindow" if $name eq "AbstractView";
 
     return $name;
 }
@@ -352,6 +354,7 @@ sub GetObjCType
 
     return "id <$name>" if IsProtocolType($type);
     return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
+    return "unsigned short" if $type eq "CompareHow";
     return "$name *";
 }
 
@@ -410,7 +413,7 @@ sub GetObjCTypeGetter
     return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL";
     return $argName . "EventTarget" if $type eq "EventTarget";
     return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
-
+    return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
     return "[$argName $typeGetterMethodName]";
 }
 
@@ -419,7 +422,7 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
+    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "CompareHow";
 
     if (IsProtocolType($type)) {
         $type = "DOM" . $type;
@@ -432,6 +435,8 @@ sub AddForwardDeclarationsForType
         $type = "DOMImplementation";
     } elsif ($type eq "DOMWindow") {
         $type = "DOMAbstractView";
+    } elsif ($type eq "Color") {
+        $type = "NSColor";
     } else {
         $type = "DOM" . $type;
     }
@@ -447,7 +452,7 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
+    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "Color" or $type eq "DOMTimeStamp" or $type eq "CompareHow";
 
     if (IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
@@ -456,14 +461,14 @@ sub AddIncludesForType
 
     # Temp DOMCSS.h
     if ($type eq "Rect") {
-        $implIncludes{"DOMRect.h"} = 1;
         $implIncludes{"RectImpl.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
     if ($type eq "RGBColor") {
-        $implIncludes{"DOMRGBColor.h"} = 1;
         $implIncludes{"Color.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
@@ -494,19 +499,19 @@ sub AddIncludesForType
     }
 
     if ($type eq "SVGRect") {
-        $implIncludes{"DOMSVGRect.h"} = 1;
         $implIncludes{"FloatRect.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
     if ($type eq "SVGPoint") {
-        $implIncludes{"DOMSVGPoint.h"} = 1;
         $implIncludes{"FloatPoint.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
     if ($type eq "SVGNumber") {
-        $implIncludes{"DOMSVGNumber.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
@@ -537,8 +542,6 @@ sub GenerateHeader
     my @protocolsToImplement = ();
     ($parentName, @protocolsToImplement) = GetParentAndProtocols($dataNode);
 
-    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
-
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
@@ -557,6 +560,14 @@ sub GenerateHeader
         $parentProtocol = GetClassHeaderName($parentProtocol);
         push(@headerContentHeader, "#import <WebCore/$parentProtocol.h>\n");
     }
+
+    # Special case needed for legacy support of DOMRange
+    if ($interfaceName eq "Range") {
+        push(@headerContentHeader, "#import <WebCore/DOMCore.h>\n");
+        push(@headerContentHeader, "#import <WebCore/DOMDocument.h>\n");
+        push(@headerContentHeader, "#import <WebCore/DOMRangeException.h>\n");
+    }
+
     push(@headerContentHeader, "\n");
 
     # - Add constants.

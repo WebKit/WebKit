@@ -42,6 +42,7 @@ VPATH = \
 
 ifeq ($(OS),MACOS)
 all : \
+    DOMAbstractView.h \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSSCharsetRule.h \
@@ -140,6 +141,8 @@ all : \
     DOMNotation.h \
     DOMOverflowEvent.h \
     DOMProcessingInstruction.h \
+    DOMRGBColor.h \
+    DOMRange.h \
     DOMRect.h \
     DOMSVGAElement.h \
     DOMSVGAngle.h \
