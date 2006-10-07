@@ -47,6 +47,9 @@ public:
     virtual void handleMouseMoveEvent(const PlatformMouseEvent&) {};
     virtual void handleMouseOutEvent(const PlatformMouseEvent&) {};
 
+    static int horizontalScrollbarHeight() { return 17; }
+    static int verticalScrollbarWidth() { return 17; }
+
 protected:    
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
