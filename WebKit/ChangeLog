@@ -1,3 +1,14 @@
+2006-10-07  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed/landed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11199
+        Update Session History when a load is committed rather than completed.
+
+        * COM/WebFrame.cpp:
+        (WebFrame::receivedResponse):
+        (WebFrame::receivedAllData):
+
 2006-10-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
