@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
     This file is part of the KDE project
 
@@ -63,8 +64,8 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Y, y)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterResX, filterResX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterResY, filterResY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResX, filterResX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResY, filterResY)
 
         KCanvasFilter *m_filter;
     };

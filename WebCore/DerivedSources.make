@@ -197,15 +197,26 @@ all : \
     DOMSVGFESpotLightElement.h \
     DOMSVGFETileElement.h \
     DOMSVGFETurbulenceElement.h \
+    DOMSVGFilterElement.h \
     DOMSVGFilterPrimitiveStandardAttributes.h \
+    DOMSVGFitToViewBox.h \
+    DOMSVGForeignObjectElement.h \
+    DOMSVGGElement.h \
+    DOMSVGGradientElement.h \
+    DOMSVGImageElement.h \
     DOMSVGLangSpace.h \
     DOMSVGLength.h \
     DOMSVGLengthList.h \
+    DOMSVGLineElement.h \
+    DOMSVGLinearGradientElement.h \
     DOMSVGLocatable.h \
+    DOMSVGMarkerElement.h \
+    DOMSVGMaskElement.h \
     DOMSVGMatrix.h \
     DOMSVGMetadataElement.h \
     DOMSVGNumber.h \
     DOMSVGNumberList.h \
+    DOMSVGPaint.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
     DOMSVGPoint.h \

@@ -328,6 +328,7 @@ sub GetBaseClass
 
     return $parent if $parent eq "Object" or $parent eq "CSSValue" or $parent eq "CSSRule" or $parent eq "StyleSheet";
     return "Event" if $parent eq "Event" or $parent eq "UIEvent";
+    return "CSSValue" if $parent eq "SVGColor";
     return "Node";
 }
 
@@ -354,7 +355,7 @@ sub GetObjCType
 
     return "id <$name>" if IsProtocolType($type);
     return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
-    return "unsigned short" if $type eq "CompareHow";
+    return "unsigned short" if $type eq "CompareHow" or $type eq "SVGPaintType";
     return "$name *";
 }
 
@@ -362,7 +363,7 @@ sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
+    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "SVGPaintType";
     return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
@@ -414,6 +415,7 @@ sub GetObjCTypeGetter
     return $argName . "EventTarget" if $type eq "EventTarget";
     return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
+    return "static_cast<WebCore::SVGPaint::SVGPaintType>($argName)" if $type eq "SVGPaintType";
     return "[$argName $typeGetterMethodName]";
 }
 
@@ -422,7 +424,7 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "CompareHow";
+    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "CompareHow" or $type eq "SVGPaintType";
 
     if (IsProtocolType($type)) {
         $type = "DOM" . $type;
@@ -452,7 +454,7 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "Color" or $type eq "DOMTimeStamp" or $type eq "CompareHow";
+    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "Color" or $type eq "DOMTimeStamp" or $type eq "CompareHow" or $type eq "SVGPaintType";
 
     if (IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;

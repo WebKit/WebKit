@@ -60,12 +60,15 @@
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
 
+// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
+// calls to the public method - (NSColor *)color.
 @interface DOMRGBColor (WebPrivate)
 - (NSColor *)_color;
 @end
 
+// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
+// calls to the public method - (NSString *)text.
 @interface DOMRange (WebPrivate)
-// uses same algorithm as innerText
 - (NSString *)_text;
 @end
 

@@ -112,6 +112,8 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 @implementation DOMRGBColor (WebPrivate)
 
+// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
+// calls to the public method - (NSColor *)color.
 - (NSColor *)_color
 {
     return [self color];

@@ -2,6 +2,44 @@
 
         Reviewed by Tim H.
 
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11206
+        10 more SVG Objective-C auto-generated bindings
+
+        - Auto-generate DOMSVGFilterElement, DOMSVGFitToViewBox, 
+          DOMSVGForeignObjectElement, DOMSVGGElement, DOMSVGGradientElement,
+          DOMSVGImageElement, DOMSVGLineElement, DOMSVGLinearGradientElement, 
+          DOMSVGMarkerElement, DOMSVGMaskElement and DOMSVGPaint.
+
+        - Auto-generate the text method for DOMRange.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMRGBColor.mm:
+        * bindings/objc/DOMSVG.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Range.idl:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterElement.idl:
+        * ksvg2/svg/SVGForeignObjectElement.idl:
+        * ksvg2/svg/SVGGElement.idl:
+        * ksvg2/svg/SVGGradientElement.idl:
+        * ksvg2/svg/SVGImageElement.idl:
+        * ksvg2/svg/SVGLineElement.idl:
+        * ksvg2/svg/SVGLinearGradientElement.idl:
+        * ksvg2/svg/SVGMarkerElement.idl:
+        * ksvg2/svg/SVGMaskElement.idl:
+        * ksvg2/svg/SVGPaint.idl:
+
+2006-10-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
         Patch for http://bugs.webkit.org/show_bug.cgi?id=11198
         Auto-generate a few more Objective-C DOM interfaces
 

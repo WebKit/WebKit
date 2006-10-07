@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-    interface [Conditional=SVG] SVGMaskElement :
-                                SVGElement,
-                                SVGTests,
-                                SVGLangSpace,
-                                SVGExternalResourcesRequired,
-                                SVGStylable {
+module svg {
+
+    interface [Conditional=SVG] SVGMaskElement : SVGElement,
+                                                 SVGTests,
+                                                 SVGLangSpace,
+                                                 SVGExternalResourcesRequired,
+                                                 SVGStylable {
         // TODO readonly attribute SVGAnimatedEnumeration maskUnits;
         // TODO readonly attribute SVGAnimatedEnumeration maskContentUnits;
 
@@ -39,4 +38,5 @@ module svg
         readonly attribute SVGAnimatedLength width;
         readonly attribute SVGAnimatedLength height;
     };
-};
+
+}

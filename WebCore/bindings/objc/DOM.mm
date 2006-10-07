@@ -432,7 +432,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMRange
 
-@implementation DOMRange (DOMRangeExtensions)
+@implementation DOMRange (WebPrivate)
 
 - (NSString *)description
 {
@@ -442,15 +442,8 @@ static Class elementClass(const WebCore::AtomicString& tagName)
                [self startContainer], [self startOffset], [self endContainer], [self endOffset]];
 }
 
-- (NSString *)text
-{
-    return [self _range]->text();
-}
-
-@end
-
-@implementation DOMRange (WebPrivate)
-
+// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
+// calls to the public method - (NSString *)text.
 - (NSString *)_text
 {
     return [self text];

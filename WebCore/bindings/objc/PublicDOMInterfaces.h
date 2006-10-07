@@ -948,6 +948,7 @@
 @property(readonly) int endOffset;
 @property(readonly) BOOL collapsed;
 @property(readonly) DOMNode *commonAncestorContainer;
+@property(readonly) NSString *text;
 - (void)setStart:(DOMNode *)refNode offset:(int)offset;
 - (void)setStart:(DOMNode *)refNode :(int)offset;
 - (void)setEnd:(DOMNode *)refNode offset:(int)offset;

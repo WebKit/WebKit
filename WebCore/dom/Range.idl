@@ -111,6 +111,10 @@ module ranges {
         boolean isPointInRange(in Node refNode, 
                                in long offset)
             raises(RangeException, DOMException);
+
+#if !defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute DOMString text;
+#endif
     };
 
 }
