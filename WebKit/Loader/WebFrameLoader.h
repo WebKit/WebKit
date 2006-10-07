@@ -34,6 +34,8 @@
 
 @class WebArchive;
 @class WebDataSource;
+@class WebFormState;
+@class WebFrameBridge;
 @class WebMainResourceLoader;
 @class WebLoader;
 @class WebResource;

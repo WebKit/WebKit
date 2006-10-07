@@ -31,6 +31,7 @@
 #import "WebDOMOperations.h"
 #import "WebFrame.h"
 #import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
 

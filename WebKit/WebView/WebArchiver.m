@@ -36,7 +36,7 @@
 #import "WebDOMOperationsPrivate.h"
 #import "WebFrame.h"
 #import "WebFrameBridge.h"
-#import "WebFramePrivate.h"
+#import "WebFrameInternal.h"
 #import "WebResource.h"
 
 @implementation WebArchiver

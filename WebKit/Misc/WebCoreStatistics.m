@@ -32,7 +32,7 @@
 #import <WebCore/WebCoreJavaScript.h>
 
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 
 @implementation WebCoreStatistics
 

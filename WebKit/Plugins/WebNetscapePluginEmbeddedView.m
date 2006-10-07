@@ -34,7 +34,7 @@
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginStream.h>

@@ -30,6 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebLocalizableStrings.h>

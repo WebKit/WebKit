@@ -1,3 +1,31 @@
+2006-10-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Refactored a whole bunch of WebFramePrivate.h SPI to WebFrameInternal
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        * History/WebHistoryItem.m:
+        * Loader/WebFrameLoader.h:
+        * Misc/WebCoreStatistics.m:
+        * Misc/WebElementDictionary.m:
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        * Plugins/WebPluginController.m:
+        * WebCoreSupport/WebViewFactory.m:
+        * WebView/WebArchiver.m:
+        * WebView/WebDataSource.m:
+        * WebView/WebFrame.m:
+        (-[WebFrame _isDescendantOfFrame:]):
+        (-[WebFrame _setShouldCreateRenderers:]):
+        (-[WebFrame _bodyBackgroundColor]):
+        (-[WebFrame _isFrameSet]):
+        (-[WebFrame _firstLayoutDone]):
+        (-[WebFrame _loadType]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLRepresentation.m:
+        * WebView/WebScriptDebugDelegate.m:
+
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

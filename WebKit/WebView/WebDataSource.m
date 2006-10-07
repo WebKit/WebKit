@@ -35,6 +35,7 @@
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocument.h"
 #import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
 #import "WebFrameLoader.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebHTMLRepresentation.h"

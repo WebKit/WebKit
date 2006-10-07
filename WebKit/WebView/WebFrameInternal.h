@@ -29,10 +29,14 @@
 // This header contains WebFrame declarations that can be used anywhere in WebKit, but are neither SPI nor API.
 
 #import <WebKit/WebFramePrivate.h>
+#import "WebPolicyDelegatePrivate.h"
 
 @class WebDocumentLoadState;
 @class WebInspector;
 @class WebFrameLoader;
+@class WebFrameView;
+@class WebFrameBridge;
+@class WebFormState;
 
 // One day we might want to expand the use of this kind of class such that we'd receive one
 // over the bridge, and possibly hand it on through to the FormsDelegate.
@@ -89,6 +93,69 @@
 - (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (WebDocumentLoadState *)_createDocumentLoadStateWithRequest:(NSURLRequest *)request;
 - (void)_didReceiveServerRedirectForProvisionalLoadForFrame;
+
+- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
+
+- (void)_detachFromParent;
+- (void)_detachChildren;
+- (void)_closeOldDataSources;
+- (void)_commitProvisionalLoad:(NSDictionary *)pageCache;
+- (void)_checkLoadCompleteForThisFrame;
+- (void)_handledOnloadEvents;
+- (void)_checkLoadComplete;
+- (WebFrameBridge *)_bridge;
+
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+
+- (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
+
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
+- (void)_clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress;
+
+- (void)_defersCallbacksChanged;
+
+- (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
+- (void)_viewDidMoveToHostWindow;
+
+- (void)_addChild:(WebFrame *)child;
+
+- (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
+
+- (WebHistoryItem *)_itemForSavingDocState;
+- (WebHistoryItem *)_itemForRestoringDocState;
+
+- (void)_saveDocumentAndScrollState;
+
+- (void)_setTitle:(NSString *)title;
+
+- (void)_receivedMainResourceError:(NSError *)error;
+
++ (CFAbsoluteTime)_timeOfLastCompletedLoad;
+- (BOOL)_canCachePage;
+- (void)_purgePageCache;
+
+- (void)_opened;
+// used to decide to use loadType=Same
+- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
+
+- (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
+- (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
+
+
+- (BOOL)_shouldCreateRenderers;
+
+- (int)_numPendingOrLoadingRequests:(BOOL)recurse;
+
+- (void)_reloadForPluginChanges;
+
+- (void)_attachScriptDebugger;
+- (void)_detachScriptDebugger;
+
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
 - (void)_restoreScrollPositionAndViewState;
 

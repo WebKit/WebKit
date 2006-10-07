@@ -33,7 +33,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebDocumentPrivate.h"
 #import "WebFrameBridge.h"
-#import "WebFramePrivate.h"
+#import "WebFrameInternal.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSObjectExtras.h"

@@ -31,22 +31,6 @@
 // But it also contains a bunch of internal stuff that should be moved to WebFrameInternal.h
 
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebPolicyDelegatePrivate.h>
-
-@class DOMDocument;
-@class DOMElement;
-@class DOMNode;
-@class NSMutableURLRequest;
-@class NSURLRequest;
-@class WebArchive;
-@class WebFrameBridge;
-@class WebFormState;
-@class WebFrameBridge;
-@class WebFrameView;
-@class WebHistoryItem;
-@class WebPolicyDecisionListener;
-@class WebScriptDebugger;
-@class WebView;
 
 // Keys for accessing the values in the page cache dictionary.
 extern NSString *WebPageCacheEntryDateKey;
@@ -66,77 +50,10 @@ typedef enum {
 } WebFrameLoadType;
 
 @interface WebFrame (WebPrivate)
-
-// Other private methods
-- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
-
-- (void)_detachFromParent;
-- (void)_detachChildren;
-- (void)_closeOldDataSources;
-- (void)_commitProvisionalLoad:(NSDictionary *)pageCache;
-- (void)_checkLoadCompleteForThisFrame;
-- (void)_handledOnloadEvents;
-- (void)_checkLoadComplete;
-- (WebFrameBridge *)_bridge;
-- (WebFrameLoadType)_loadType;
-
-- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-
-- (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
-
-- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)_clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress;
-
-- (void)_defersCallbacksChanged;
-
-- (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
-- (void)_viewDidMoveToHostWindow;
-
-- (void)_addChild:(WebFrame *)child;
-
-- (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
-
-- (WebHistoryItem *)_itemForSavingDocState;
-- (WebHistoryItem *)_itemForRestoringDocState;
-
-- (void)_saveDocumentAndScrollState;
-
-- (void)_setTitle:(NSString *)title;
-
-- (void)_receivedMainResourceError:(NSError *)error;
-
-+ (CFAbsoluteTime)_timeOfLastCompletedLoad;
-- (BOOL)_canCachePage;
-- (void)_purgePageCache;
-
-- (void)_opened;
-// used to decide to use loadType=Same
-- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
-
-- (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
-- (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
-
-- (void)_setShouldCreateRenderers:(BOOL)f;
-- (BOOL)_shouldCreateRenderers;
-
-- (int)_numPendingOrLoadingRequests:(BOOL)recurse;
-
-- (NSColor *)_bodyBackgroundColor;
-
-- (void)_reloadForPluginChanges;
-
 - (BOOL)_isDescendantOfFrame:(WebFrame *)frame;
+- (void)_setShouldCreateRenderers:(BOOL)f;
+- (NSColor *)_bodyBackgroundColor;
 - (BOOL)_isFrameSet;
-
-- (void)_attachScriptDebugger;
-- (void)_detachScriptDebugger;
-
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
-
 - (BOOL)_firstLayoutDone;
-
+- (WebFrameLoadType)_loadType;
 @end

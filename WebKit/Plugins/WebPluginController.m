@@ -30,7 +30,7 @@
 #import <WebKit/WebPluginController.h>
 
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>

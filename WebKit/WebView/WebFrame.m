@@ -222,7 +222,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 }
 
 @end
-
 static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
     return [(WebFrameBridge *)bridge webFrame];
@@ -261,7 +260,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 @end
 
-@implementation WebFrame (WebPrivate)
+@implementation WebFrame (WebInternal)
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
@@ -363,17 +362,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return Frame([[self _bridge] childFrameNamed:name]);
 }
 
-// FIXME: this exists only as a convenience for Safari, consider moving there
-- (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
-{
-    return [[self _bridge] isDescendantOfFrame:[ancestor _bridge]];
-}
-
-- (BOOL)_isFrameSet
-{
-    return [_private->bridge isFrameSet];
-}
-
 - (void)_detachChildren
 {
     // FIXME: is it really necessary to do this in reverse order any more?
@@ -422,11 +410,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     _private->bridge = nil;
 
     [self release];
-}
-
-- (WebFrameLoadType)_loadType
-{
-    return [_private->frameLoader loadType];
 }
 
 - (void)_makeDocumentView
@@ -1719,11 +1702,6 @@ exit:
     return Frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
 }
 
-- (void)_setShouldCreateRenderers:(BOOL)f
-{
-    [_private->bridge setShouldCreateRenderers:f];
-}
-
 - (BOOL)_shouldCreateRenderers
 {
     return [_private->bridge shouldCreateRenderers];
@@ -1739,11 +1717,6 @@ exit:
         num += [[frame _bridge] numPendingOrLoadingRequests];
 
     return num;
-}
-
-- (NSColor *)_bodyBackgroundColor
-{
-    return [_private->bridge bodyBackgroundColor];
 }
 
 - (void)_reloadForPluginChanges
@@ -1787,15 +1760,6 @@ exit:
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
     }
 }
-
-- (BOOL)_firstLayoutDone
-{
-    return [_private->frameLoader firstLayoutDone];
-}
-
-@end
-
-@implementation WebFrame (WebInternal)
 
 - (void)_didReceiveServerRedirectForProvisionalLoadForFrame
 {
@@ -2233,6 +2197,41 @@ exit:
     } else {
         [docView scrollPoint:point];
     }
+}
+
+@end
+
+@implementation WebFrame (WebPrivate)
+
+// FIXME: this exists only as a convenience for Safari, consider moving there
+- (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
+{
+    return [[self _bridge] isDescendantOfFrame:[ancestor _bridge]];
+}
+
+- (void)_setShouldCreateRenderers:(BOOL)f
+{
+    [_private->bridge setShouldCreateRenderers:f];
+}
+
+- (NSColor *)_bodyBackgroundColor
+{
+    return [_private->bridge bodyBackgroundColor];
+}
+
+- (BOOL)_isFrameSet
+{
+    return [_private->bridge isFrameSet];
+}
+
+- (BOOL)_firstLayoutDone
+{
+    return [_private->frameLoader firstLayoutDone];
+}
+
+- (WebFrameLoadType)_loadType
+{
+    return [_private->frameLoader loadType];
 }
 
 @end
