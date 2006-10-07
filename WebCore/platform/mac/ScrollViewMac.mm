@@ -277,13 +277,9 @@ void ScrollView::suppressScrollbars(bool suppressed,  bool repaintOnUnsuppress)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void ScrollView::addChild(Widget* child, int x, int y)
+void ScrollView::addChild(Widget* child)
 {
     ASSERT(child != this);
-    
-    // we don't need to do the offscreen position initialization that KDE needs
-    if (x != -500000)
-        child->move(x, y);
 
     NSView *thisView = getView();
     NSView *thisDocView = getDocumentView();

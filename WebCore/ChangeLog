@@ -1,3 +1,23 @@
+2006-10-06  Dave Hyatt  <hyatt@apple.com>
+
+        Implement a new method for obtaining accurate clip rectangles that can be used by plugins to properly clip.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::windowClipRect):
+        * platform/Widget.h:
+        (WebCore::Widget::geometryChanged):
+        (WebCore::Widget::handleMouseMoveEvent):
+        (WebCore::Widget::handleMouseReleaseEvent):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::addChild):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::documentClipRect):
+        * rendering/RenderLayer.h:
+
 2006-10-06  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.

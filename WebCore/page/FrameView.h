@@ -189,6 +189,8 @@ public:
     void updateDashboardRegions();
 #endif
 
+    virtual IntRect windowClipRect() const;
+
     virtual void scrollPointRecursively(int x, int y);
     virtual void setContentsPos(int x, int y);
 

@@ -30,6 +30,7 @@
 #include "CachedImage.h"
 #include "Cursor.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLDocument.h"
@@ -1480,6 +1481,29 @@ void FrameView::dispatchScheduledEvents()
         
         delete scheduledEvent;
     }    
+}
+
+IntRect FrameView::windowClipRect() const
+{
+    // Get our parent's clip rect.
+    IntRect clipRect(enclosingIntRect(visibleContentRect()));
+    clipRect.setLocation(contentsToWindow(clipRect.location()));
+    if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
+        return clipRect;
+
+    // Take our owner element and get the clip rect from the enclosing layer.
+    Element* elt = m_frame->document()->ownerElement();
+    RenderLayer* layer = elt->renderer()->enclosingLayer();
+
+    // Apply the clip from the layer.
+    FrameView* parentView = elt->document()->view();
+    IntRect layerClipRect = layer->documentClipRect();
+    layerClipRect.setLocation(parentView->contentsToWindow(layerClipRect.location()));
+    clipRect.intersect(layerClipRect);
+
+    // Now apply the clip from our ancestor.
+    clipRect.intersect(parentView->windowClipRect());
+    return clipRect;
 }
 
 }

@@ -300,6 +300,7 @@ public:
                         IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect);
     void calculateClipRects(const RenderLayer* rootLayer);
     ClipRects* clipRects() const { return m_clipRects; }
+    IntRect documentClipRect(); // Returns the foreground clip rect of the layer in the document's coordinate space.
 
     bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const;
 

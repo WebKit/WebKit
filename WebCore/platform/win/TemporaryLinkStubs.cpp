@@ -275,7 +275,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent&) { }
 void ScrollView::themeChanged() { }
 IntPoint ScrollView::convertChildToSelf(const Widget*, const IntPoint& p) const { return p; }
 IntPoint ScrollView::convertSelfToChild(const Widget*, const IntPoint& p) const { return p; }
-void ScrollView::scrolled() const {};
+void ScrollView::geometryChanged() const {};
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 void ScrollView::setFrameGeometry(const IntRect& r) { Widget::setFrameGeometry(r); }
 IntRect ScrollView::windowResizerRect() { return IntRect(); }

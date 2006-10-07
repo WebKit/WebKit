@@ -132,6 +132,11 @@ namespace WebCore {
 
         virtual void removeFromParent();
 
+        // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
+        // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
+        // This clip includes any clips that the widget itself sets up for its children.
+        virtual IntRect windowClipRect() const;
+
 #if PLATFORM(WIN)
         void setContainingWindow(HWND);
         HWND containingWindow() const;
@@ -139,7 +144,7 @@ namespace WebCore {
         void setParent(ScrollView*);
         ScrollView* parent() const;
 
-        virtual void scrolled() const {};
+        virtual void geometryChanged() const {};
 
         bool capturingMouse() const;
         void setCapturingMouse(bool);
@@ -163,8 +168,8 @@ namespace WebCore {
         void setSuppressInvalidation(bool);
 
         // These methods will be called on a widget while it is capturing the mouse.
-        virtual void handleMouseMoveEvent(const PlatformMouseEvent&) {};
-        virtual void handleMouseReleaseEvent(const PlatformMouseEvent&) {};
+        virtual void handleMouseMoveEvent(const PlatformMouseEvent&) {}
+        virtual void handleMouseReleaseEvent(const PlatformMouseEvent&) {}
 #endif
 
 #if PLATFORM(GDK)
