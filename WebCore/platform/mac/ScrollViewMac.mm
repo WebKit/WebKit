@@ -289,8 +289,8 @@ void ScrollView::addChild(Widget* child)
 #ifndef NDEBUG
     NSView *subview = child->getOuterView();
     
-    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
-        [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+    LOG(Frames, "Adding %p %@ with size w %d h %d\n", subview,
+        [(id)[subview class] className], (int)[subview frame].size.width, (int)[subview frame].size.height);
 #endif
     child->addToSuperview(thisView);
 }
