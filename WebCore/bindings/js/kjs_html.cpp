@@ -251,6 +251,8 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
   case Body:
     return toJS(exec, body);
   case Location:
+    if (!frame)
+      return jsNull();
     if (Window* win = Window::retrieveWindow(frame))
       return win->location();
     return jsUndefined();

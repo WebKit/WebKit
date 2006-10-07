@@ -1,3 +1,15 @@
+2006-10-07  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Eric.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10837
+        Bug 10837: REGRESSION: Yahoo New Charts Crashes WebKit
+
+        * fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.checksum: Added.
+        * fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.png: Added.
+        * fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.txt: Added.
+        * fast/dom/HTMLDocument/frameless-location-bugzilla10837.html: Added.
+
 2006-10-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

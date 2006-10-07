@@ -1,3 +1,15 @@
+2006-10-07  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Eric.
+
+        Bug 10837: REGRESSION: Yahoo New Charts Crashes WebKit
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10837
+
+        Return null when there is no frame. This matches Firefox.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::getValueProperty):
+
 2006-10-07  David Hyatt  <hyatt@apple.com>
 
         Implement scroll corner painting (a white rect fill) for overflow areas to cover up

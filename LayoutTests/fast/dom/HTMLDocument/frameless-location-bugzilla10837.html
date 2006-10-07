@@ -1,0 +1,15 @@
+<frameset cols="1,1">
+    <frame src="data:text/html,
+        <div id='result'>
+        FAILED
+        </div>
+        <script>
+            var f = parent.frames[1];
+            var d = f.document;
+            f.location = 'data:text/html,foo';
+            var test = d.location;
+            document.getElementById('result').innerHTML = 'PASSED';
+        </script>
+    ">
+    <frame src="about:blank">
+</frameset>
