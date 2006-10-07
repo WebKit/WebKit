@@ -1,3 +1,47 @@
+2006-10-07  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Linux/Gdk build fixes, primarily consisting of s/ScrollBar/Scrollbar/ and
+        matching recent ResourceLoader changes.
+
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::openURL):
+        (WebCore::FrameGdk::urlSelected):
+        * platform/gdk/PlatformScrollBar.h:
+        * platform/gdk/ResourceLoaderCurl.cpp:
+        (WebCore::ResourceLoader::start):
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::hScrollbarMode):
+        (WebCore::ScrollView::vScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameView::passMousePressEventToScrollbar):
+        (Widget::removeFromParent):
+        (ScrollView::addChild):
+        (ScrollView::updateScrollbars):
+        (ScrollView::scrollbarUnderMouse):
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+        (PlatformScrollbar::width):
+        (PlatformScrollbar::height):
+        (PlatformScrollbar::setEnabled):
+        (PlatformScrollbar::paint):
+        (PlatformScrollbar::updateThumbPosition):
+        (PlatformScrollbar::updateThumbProportion):
+        (PlatformScrollbar::setRect):
+        (Scrollbar::Scrollbar):
+        (Scrollbar::setSteps):
+        (Scrollbar::scroll):
+        (Scrollbar::setValue):
+        (Scrollbar::setProportion):
+
 2006-10-06  Dave Hyatt  <hyatt@apple.com>
 
         Implement a new method for obtaining accurate clip rectangles that can be used by plugins to properly clip.

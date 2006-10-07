@@ -130,8 +130,8 @@ bool FrameGdk::openURL(const KURL& url)
 {
     didOpenURL(url);
     begin(url);
-    ResourceLoader* job = new ResourceLoader(this, "GET", url);
-    job->start(document()->docLoader());
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", url);
+    loader->start(document()->docLoader());
     return true;
 }
 
@@ -146,8 +146,8 @@ void FrameGdk::urlSelected(const ResourceRequest& request)
     printf("------------------> LOADING NEW URL %s \n", url.url().ascii());
     didOpenURL(url);
     begin(url);
-    ResourceLoader* job = new ResourceLoader(this, "GET", url);
-    job->start(document()->docLoader());
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", url);
+    loader->start(document()->docLoader());
 }
 
 String FrameGdk::userAgent() const

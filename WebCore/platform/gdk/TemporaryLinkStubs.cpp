@@ -74,7 +74,7 @@ using namespace WebCore;
 static void notImplemented() { puts("Not yet implemented"); }
 
 void FrameView::updateBorder() { notImplemented(); }
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollBar*) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { return false; }
 bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
 bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
@@ -86,6 +86,7 @@ Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFoc
 void Widget::disableFlushDrawing() { notImplemented(); }
 GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
 void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
+void Widget::removeFromParent() { }
 
 JavaAppletWidget::JavaAppletWidget(IntSize const&, Element*, WTF::HashMap<String, String> const&) { notImplemented(); }
 
@@ -250,16 +251,16 @@ void Widget::setIsSelected(bool) { }
 void Widget::invalidate() { }
 void Widget::invalidateRect(const IntRect& r) { }
 
-void ScrollView::addChild(Widget*, int, int) { }
+void ScrollView::addChild(Widget*) { }
 void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }
 bool ScrollView::inWindow() const { return true; }
 void ScrollView::wheelEvent(PlatformWheelEvent&) { }
-void ScrollView::updateScrollBars() { }
+void ScrollView::updateScrollbars() { }
 int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize) { return 0; }
 IntPoint ScrollView::windowToContents(const IntPoint& point) const { return point; }
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const { return point; }
-PlatformScrollBar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
+PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
         const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
@@ -317,21 +318,21 @@ IntSize TextField::sizeForCharacterWidth(int) const { return IntSize(); }
 int TextField::baselinePosition(int) const { return 0; }
 void TextField::setLiveSearch(bool) { }
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { }
-PlatformScrollBar::~PlatformScrollBar() { }
-int PlatformScrollBar::width() const { return 0; }
-int PlatformScrollBar::height() const { return 0; }
-void PlatformScrollBar::setEnabled(bool) { }
-void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
-void PlatformScrollBar::updateThumbPosition() { }
-void PlatformScrollBar::updateThumbProportion() { }
-void PlatformScrollBar::setRect(const IntRect&) { }
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { }
+PlatformScrollbar::~PlatformScrollbar() { }
+int PlatformScrollbar::width() const { return 0; }
+int PlatformScrollbar::height() const { return 0; }
+void PlatformScrollbar::setEnabled(bool) { }
+void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { }
+void PlatformScrollbar::updateThumbPosition() { }
+void PlatformScrollbar::updateThumbProportion() { }
+void PlatformScrollbar::setRect(const IntRect&) { }
 
-ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize controlSize) { }
-void ScrollBar::setSteps(int, int) { }
-bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return 0; }
-bool ScrollBar::setValue(int) { return 0; }
-void ScrollBar::setProportion(int, int) { }
+Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize controlSize) { }
+void Scrollbar::setSteps(int, int) { }
+bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
+bool Scrollbar::setValue(int) { return false; }
+void Scrollbar::setProportion(int, int) { }
 
 ListBox::ListBox() { }
 ListBox::~ListBox() { }

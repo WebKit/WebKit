@@ -45,6 +45,7 @@ ResourceLoader::~ResourceLoader()
 
 bool ResourceLoader::start(DocLoader* docLoader)
 {
+    ref();
     ResourceLoaderManager::get()->add(this);
     return true;
 }
