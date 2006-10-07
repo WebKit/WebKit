@@ -76,6 +76,18 @@ typedef enum {
     NSMutableDictionary *pendingArchivedResources;
 
     WebFrameLoadType loadType;
+
+    // state we'll need to continue after waiting for the policy delegate's decision
+    NSURLRequest *policyRequest;
+    NSString *policyFrameName;
+    id policyTarget;
+    SEL policySelector;
+    WebFormState *policyFormState;
+    WebFrameLoadType policyLoadType;
+
+    BOOL delegateIsHandlingProvisionalLoadError;
+    BOOL delegateIsDecidingNavigationPolicy;
+    BOOL delegateIsHandlingUnimplementablePolicy;
 }
 
 - (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)wf;
@@ -185,5 +197,15 @@ typedef enum {
 
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)type;
+- (BOOL)delegateIsHandlingProvisionalLoadError;
+- (void)setDelegateIsHandlingProvisionalLoadError:(BOOL)is;
+
+- (void)invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
+- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)continueAfterWillSubmitForm:(WebPolicyAction)policy;
+- (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState;
+- (void)loadDataSource:(WebDataSource *)newDataSource withLoadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
+- (void)handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL;
 
 @end

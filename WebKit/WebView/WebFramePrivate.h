@@ -80,12 +80,6 @@ typedef enum {
 - (WebFrameBridge *)_bridge;
 - (WebFrameLoadType)_loadType;
 
-- (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
-
-- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
-
-- (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
-
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
@@ -112,10 +106,7 @@ typedef enum {
 
 - (void)_setTitle:(NSString *)title;
 
-- (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL;
 - (void)_receivedMainResourceError:(NSError *)error;
-
-- (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;

@@ -104,39 +104,7 @@ NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
-@interface NSObject (WebExtraPerformMethod)
-
-- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3;
-
-@end
-
-@implementation NSObject (WebExtraPerformMethod)
-
-- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3
-{
-    return objc_msgSend(self, aSelector, object1, object2, object3);
-}
-
-@end
-
-// One day we might want to expand the use of this kind of class such that we'd receive one
-// over the bridge, and possibly hand it on through to the FormsDelegate.
-// Today it is just used internally to keep some state as we make our way through a bunch
-// layers while doing a load.
-@interface WebFormState : NSObject
-{
-    DOMElement *_form;
-    NSDictionary *_values;
-    WebFrame *_sourceFrame;
-}
-- (id)initWithForm:(DOMElement *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame;
-- (DOMElement *)form;
-- (NSDictionary *)values;
-- (WebFrame *)sourceFrame;
-@end
-
 @interface WebFrame (ForwardDecls)
-- (WebDataSource *)_policyDataSource;
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
@@ -185,22 +153,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     // things below here should be moved
 
-    WebPolicyDecisionListener *listener;
-    // state we'll need to continue after waiting for the policy delegate's decision
-    NSURLRequest *policyRequest;
-    NSString *policyFrameName;
-    id policyTarget;
-    SEL policySelector;
-    WebFormState *policyFormState;
-
-    WebFrameLoadType policyLoadType;
-
     BOOL quickRedirectComing;
     BOOL sentRedirectNotification;
     BOOL isStoppingLoad;
-    BOOL delegateIsHandlingProvisionalLoadError;
-    BOOL delegateIsDecidingNavigationPolicy;
-    BOOL delegateIsHandlingUnimplementablePolicy;
     BOOL firstLayoutDone;
 }
 
@@ -231,11 +186,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [inspectors release];
 
-    ASSERT(listener == nil);
-    ASSERT(policyRequest == nil);
-    ASSERT(policyFrameName == nil);
-    ASSERT(policyTarget == nil);
-    ASSERT(policyFormState == nil);
     ASSERT(plugInViews == nil);
     
     [super dealloc];
@@ -844,7 +794,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     switch ([_private->frameLoader state]) {
         case WebFrameStateProvisional:
         {
-            if (_private->delegateIsHandlingProvisionalLoadError)
+            if ([_private->frameLoader delegateIsHandlingProvisionalLoadError])
                 return;
 
             WebDataSource *pd = [self provisionalDataSource];
@@ -861,11 +811,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
                     [[self webView] _didFailProvisionalLoadWithError:error forFrame:self];
-                    _private->delegateIsHandlingProvisionalLoadError = YES;
+                    [_private->frameLoader setDelegateIsHandlingProvisionalLoadError:YES];
                     [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                           didFailProvisionalLoadWithError:error
                                                                  forFrame:self];
-                    _private->delegateIsHandlingProvisionalLoadError = NO;
+                    [_private->frameLoader setDelegateIsHandlingProvisionalLoadError:NO];
                     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
 
                     // FIXME: can stopping loading here possibly have
@@ -1002,15 +952,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return _private->bridge;
 }
 
-- (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
-{
-    NSError *error = [NSError _webKitErrorWithDomain:WebKitErrorDomain code:code URL:URL];
-    WebView *wv = [self webView];
-    _private->delegateIsHandlingUnimplementablePolicy = YES;
-    [[wv _policyDelegateForwarder] webView:wv unableToImplementPolicyWithError:error frame:self];    
-    _private->delegateIsHandlingUnimplementablePolicy = NO;
-}
-
 // helper method that determines whether the subframes described by the item's subitems
 // match our own current frameset
 - (BOOL)_childFramesMatchItem:(WebHistoryItem *)item
@@ -1121,9 +1062,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
             if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]){
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
-                [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];   
+                [_private->frameLoader loadDataSource:newDataSource withLoadType:loadType formState:nil];   
                 inPageCache = YES;
-            }         
+            }
             else {
                 LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [[_private provisionalItem] URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
                 [item setHasPageCache: NO];
@@ -1328,180 +1269,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return [self _actionInformationForNavigationType:navType event:event originalURL:URL];
 }
 
-- (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
-{
-    [_private->listener _invalidate];
-    [_private->listener release];
-    _private->listener = nil;
-
-    NSURLRequest *request = _private->policyRequest;
-    NSString *frameName = _private->policyFrameName;
-    id target = _private->policyTarget;
-    SEL selector = _private->policySelector;
-    WebFormState *formState = _private->policyFormState;
-
-    _private->policyRequest = nil;
-    _private->policyFrameName = nil;
-    _private->policyTarget = nil;
-    _private->policySelector = nil;
-    _private->policyFormState = nil;
-
-    if (call) {
-        if (frameName) {
-            [target performSelector:selector withObject:nil withObject:nil withObject:nil];
-        } else {
-            [target performSelector:selector withObject:nil withObject:nil];
-        }
-    }
-
-    [request release];
-    [frameName release];
-    [target release];
-    [formState release];
-}
-
-- (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
-{
-    WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc]
-        _initWithTarget:self action:@selector(_continueAfterNewWindowPolicy:)];
-
-    _private->policyRequest = [request retain];
-    _private->policyTarget = [target retain];
-    _private->policyFrameName = [frameName retain];
-    _private->policySelector = selector;
-    _private->listener = [listener retain];
-    _private->policyFormState = [formState retain];
-
-    WebView *wv = [self webView];
-    [[wv _policyDelegateForwarder] webView:wv
-            decidePolicyForNewWindowAction:action
-                                   request:request
-                              newFrameName:frameName
-                          decisionListener:listener];
-    
-    [listener release];
-}
-
--(void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
-{
-    NSURLRequest *request = [[_private->policyRequest retain] autorelease];
-    NSString *frameName = [[_private->policyFrameName retain] autorelease];
-    id target = [[_private->policyTarget retain] autorelease];
-    SEL selector = _private->policySelector;
-    WebFormState *formState = [[_private->policyFormState retain] autorelease];
-
-    // will release _private->policy* objects, hence the above retains
-    [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
-
-    BOOL shouldContinue = NO;
-
-    switch (policy) {
-    case WebPolicyIgnore:
-        break;
-    case WebPolicyDownload:
-        // FIXME: should download full request
-        [[self webView] _downloadURL:[request URL]];
-        break;
-    case WebPolicyUse:
-        shouldContinue = YES;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:frameName withObject:formState];
-}
-
-- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request
-                              dataSource:(WebDataSource *)dataSource
-                               formState:(WebFormState *)formState
-                                 andCall:(id)target
-                            withSelector:(SEL)selector
-{    
-    NSDictionary *action = [[dataSource _documentLoadState] triggeringAction];
-    if (action == nil) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
-        [[dataSource _documentLoadState] setTriggeringAction:action];
-    }
-        
-    // Don't ask more than once for the same request or if we are loading an empty URL.
-    // This avoids confusion on the part of the client.
-    if ([request isEqual:[[dataSource _documentLoadState] lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
-        [target performSelector:selector withObject:request withObject:nil];
-        return;
-    }
-    
-    // We are always willing to show alternate content for unreachable URLs;
-    // treat it like a reload so it maintains the right state for b/f list.
-    if ([request _webDataRequestUnreachableURL] != nil) {
-        if (_private->policyLoadType == WebFrameLoadTypeForward
-            || _private->policyLoadType == WebFrameLoadTypeBack
-            || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward) {
-            _private->policyLoadType = WebFrameLoadTypeReload;
-        }
-        [target performSelector:selector withObject:request withObject:nil];
-        return;
-    }
-    
-    [[dataSource _documentLoadState] setLastCheckedRequest:request];
-
-    WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
-    
-    ASSERT(_private->policyRequest == nil);
-    _private->policyRequest = [request retain];
-    ASSERT(_private->policyTarget == nil);
-    _private->policyTarget = [target retain];
-    _private->policySelector = selector;
-    ASSERT(_private->listener == nil);
-    _private->listener = [listener retain];
-    ASSERT(_private->policyFormState == nil);
-    _private->policyFormState = [formState retain];
-
-    WebView *wv = [self webView];
-    _private->delegateIsDecidingNavigationPolicy = YES;
-    [[wv _policyDelegateForwarder] webView:wv
-           decidePolicyForNavigationAction:action
-                                   request:request
-                                     frame:self
-                          decisionListener:listener];
-    _private->delegateIsDecidingNavigationPolicy = NO;
-    
-    [listener release];
-}
-
--(void)_continueAfterNavigationPolicy:(WebPolicyAction)policy
-{
-    NSURLRequest *request = [[_private->policyRequest retain] autorelease];
-    id target = [[_private->policyTarget retain] autorelease];
-    SEL selector = _private->policySelector;
-    WebFormState *formState = [[_private->policyFormState retain] autorelease];
-    
-    // will release _private->policy* objects, hence the above retains
-    [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
-
-    BOOL shouldContinue = NO;
-
-    switch (policy) {
-    case WebPolicyIgnore:
-        break;
-    case WebPolicyDownload:
-        // FIXME: should download full request
-        [[self webView] _downloadURL:[request URL]];
-        break;
-    case WebPolicyUse:
-        if (![WebView _canHandleRequest:request]) {
-            [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
-        } else {
-            shouldContinue = YES;
-        }
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
-}
-
 -(void)_continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
     if (!request) {
@@ -1606,7 +1373,7 @@ exit:
         if (targetFrame != nil) {
             [targetFrame _loadURL:URL referrer:referrer loadType:loadType target:nil triggeringEvent:event form:form formValues:values];
         } else {
-            [self _checkNewWindowPolicyForRequest:request
+            [_private->frameLoader checkNewWindowPolicyForRequest:request
                                     action:action
                                  frameName:target
                                  formState:formState
@@ -1639,17 +1406,14 @@ exit:
         // We don't do this if we are submitting a form, explicitly reloading,
         // currently displaying a frameset, or if the new URL does not have a fragment.
         // These rules are based on what KHTML was doing in KHTMLPart::openURL.
-        
-        
+
         // FIXME: What about load types other than Standard and Reload?
 
         [[oldDataSource _documentLoadState] setTriggeringAction:action];
-        [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-        [self _checkNavigationPolicyForRequest:request
-                                    dataSource:oldDataSource
-                                     formState:formState
-                                       andCall:self
-                                  withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:formState:)];
+        [_private->frameLoader invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+        [_private->frameLoader checkNavigationPolicyForRequest:request
+            dataSource:oldDataSource formState:formState
+            andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:formState:)];
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         BOOL isRedirect = _private->quickRedirectComing;
@@ -1746,7 +1510,8 @@ exit:
         if (targetFrame != nil) {
             [[targetFrame _frameLoader] _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
         } else {
-            [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+            [_private->frameLoader checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self
+                withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
         }
         [request release];
         [formState release];
@@ -1884,16 +1649,6 @@ exit:
     [[[child dataSource] _documentLoadState] setOverrideEncoding:[[[self dataSource] _documentLoadState] overrideEncoding]];  
 }
 
-- (void)_resetBackForwardList
-{
-    // Note this doesn't verify the current load type as a b/f operation because it is called from
-    // a subframe in the case of a delegate bailing out of the nav before it even gets to provisional state.
-    ASSERT(self == [[self webView] mainFrame]);
-    WebHistoryItem *resetItem = [_private currentItem];
-    if (resetItem)
-        [[[self webView] backForwardList] goToItem:resetItem];
-}
-
 // If we bailed out of a b/f navigation, we might need to set the b/f cursor back to the current
 // item, because we optimistically move it right away at the start of the operation. But when
 // alternate content is loaded for an unreachableURL, we don't want to reset the b/f cursor.
@@ -1957,119 +1712,6 @@ exit:
     }
 }
 
-// Called after the FormsDelegate is done processing willSubmitForm:
--(void)_continueAfterWillSubmitForm:(WebPolicyAction)policy
-{
-    if (_private->listener) {
-        [_private->listener _invalidate];
-        [_private->listener release];
-        _private->listener = nil;
-    }
-    [_private->frameLoader startLoading];
-}
-
-- (void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
-{
-    // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
-    // nil _private->policyDataSource because loading the alternate page will have passed
-    // through this method already, nested; otherwise, _private->policyDataSource should still be set.
-    ASSERT([self _policyDataSource] || [[self provisionalDataSource] unreachableURL] != nil);
-
-    WebHistoryItem *item = [_private provisionalItem];
-
-    // Two reasons we can't continue:
-    //    1) Navigation policy delegate said we can't so request is nil. A primary case of this 
-    //       is the user responding Cancel to the form repost nag sheet.
-    //    2) User responded Cancel to an alert popped up by the before unload event handler.
-    // The "before unload" event handler runs only for the main frame.
-    BOOL canContinue = request && ([[self webView] mainFrame] != self || [_private->bridge shouldClose]);
-
-    if (!canContinue) {
-        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
-        // need to report that the client redirect was cancelled.
-        if (_private->quickRedirectComing)
-            [self _clientRedirectCancelledOrFinished:NO];
-
-        [_private->frameLoader _setPolicyDocumentLoadState:nil];
-        // If the navigation request came from the back/forward menu, and we punt on it, we have the 
-        // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
-        // we only do this when punting a navigation for the target frame or top-level frame.  
-        if (([item isTargetItem] || [[self webView] mainFrame] == self)
-            && (_private->policyLoadType == WebFrameLoadTypeForward
-                || _private->policyLoadType == WebFrameLoadTypeBack
-                || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward))
-            [[[self webView] mainFrame] _resetBackForwardList];
-        return;
-    }
-    
-    WebFrameLoadType loadType = _private->policyLoadType;
-    WebDataSource *dataSource = [[self _policyDataSource] retain];
-    
-    [self stopLoading];
-    [_private->frameLoader setLoadType:loadType];
-
-    [_private->frameLoader startProvisionalLoad:dataSource];
-
-    [dataSource release];
-    [_private->frameLoader _setPolicyDocumentLoadState:nil];
-    
-    
-    if (self == [[self webView] mainFrame])
-        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
-
-    if ((loadType == WebFrameLoadTypeForward ||
-        loadType == WebFrameLoadTypeBack ||
-        loadType == WebFrameLoadTypeIndexedBackForward) &&
-        [item hasPageCache]){
-        NSDictionary *pageCache = [[_private provisionalItem] pageCache];
-        if ([pageCache objectForKey:WebCorePageCacheStateKey]){
-            LOG (PageCache, "Restoring page from back/forward cache, %@\n", [[_private provisionalItem] URL]);
-            [[_private->frameLoader provisionalDataSource] _loadFromPageCache:pageCache];
-            return;
-        }
-    }
-
-    if (formState) {
-        // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
-        // mechanism across the willSubmitForm callout.
-        _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterWillSubmitForm:)];
-        [[[self webView] _formDelegate] frame:self sourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
-    } 
-    else {
-        [self _continueAfterWillSubmitForm:WebPolicyUse];
-    }
-}
-
-- (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
-{
-    ASSERT([self webView] != nil);
-
-    // Unfortunately the view must be non-nil, this is ultimately due
-    // to parser requiring a FrameView.  We should fix this dependency.
-
-    ASSERT([self frameView] != nil);
-
-    _private->policyLoadType = loadType;
-
-    WebFrame *parentFrame = [self parentFrame];
-    if (parentFrame)
-        [[newDataSource _documentLoadState] setOverrideEncoding:[[[parentFrame dataSource] _documentLoadState] overrideEncoding]];
-
-    WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
-    [loadState setFrameLoader:_private->frameLoader];
-    [loadState setDataSource:newDataSource];
-
-    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-
-    [_private->frameLoader _setPolicyDocumentLoadState:[newDataSource _documentLoadState]];
-
-    [self _checkNavigationPolicyForRequest:[newDataSource request]
-                                dataSource:newDataSource
-                                 formState:formState
-                                   andCall:self
-                              withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:formState:)];
-}
-
 // used to decide to use loadType=Same
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
 {
@@ -2093,7 +1735,7 @@ exit:
     }
 
     NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
-    [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+    [_private->frameLoader checkNewWindowPolicyForRequest:request action:action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
 // Return next frame to be traversed, visiting children after parent
@@ -2190,11 +1832,6 @@ exit:
 {
     [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
         didReceiveServerRedirectForProvisionalLoadForFrame:self];
-}
-
-- (WebDataSource *)_policyDataSource
-{
-    return [_private->frameLoader policyDataSource];
 }
 
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
@@ -2603,34 +2240,6 @@ exit:
         _private->firstLayoutDone = YES;
 }
 
-- (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
-{
-    NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
-    if (unreachableURL == nil) {
-        return NO;
-    }
-    
-    if (_private->policyLoadType != WebFrameLoadTypeForward
-        && _private->policyLoadType != WebFrameLoadTypeBack
-        && _private->policyLoadType != WebFrameLoadTypeIndexedBackForward) {
-        return NO;
-    }
-    
-    // We only treat unreachableURLs specially during the delegate callbacks
-    // for provisional load errors and navigation policy decisions. The former
-    // case handles well-formed URLs that can't be loaded, and the latter
-    // case handles malformed URLs and unknown schemes. Loading alternate content
-    // at other times behaves like a standard load.
-    WebDataSource *compareDataSource = nil;
-    if (_private->delegateIsDecidingNavigationPolicy || _private->delegateIsHandlingUnimplementablePolicy) {
-        compareDataSource = [self _policyDataSource];
-    } else if (_private->delegateIsHandlingProvisionalLoadError) {
-        compareDataSource = [self provisionalDataSource];
-    }
-    
-    return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
-}
-
 - (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState
 {
     return [(WebDocumentLoadStateMac *)loadState dataSource];
@@ -2816,7 +2425,7 @@ exit:
 
     _private->isStoppingLoad = YES;
     
-    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+    [_private->frameLoader invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
     [self _stopLoadingSubframes];
     [_private->frameLoader stopLoading];
@@ -2851,4 +2460,38 @@ exit:
 @end
 
 @implementation WebFrame (WebFrameLoaderClient)
+
+- (void)_resetBackForwardList
+{
+    // Note this doesn't verify the current load type as a b/f operation because it is called from
+    // a subframe in the case of a delegate bailing out of the nav before it even gets to provisional state.
+    ASSERT(self == [[self webView] mainFrame]);
+    WebHistoryItem *resetItem = [_private currentItem];
+    if (resetItem)
+        [[[self webView] backForwardList] goToItem:resetItem];
+}
+
+- (BOOL)_quickRedirectComing
+{
+    return _private->quickRedirectComing;
+}
+
+- (BOOL)_provisionalItemIsTarget
+{
+    return [[_private provisionalItem] isTargetItem];
+}
+
+- (BOOL)_loadProvisionalItemFromPageCache
+{
+    WebHistoryItem *item = [_private provisionalItem];
+    if (![item hasPageCache])
+        return NO;
+    NSDictionary *pageCache = [item pageCache];
+    if (![pageCache objectForKey:WebCorePageCacheStateKey])
+        return NO;
+    LOG(PageCache, "Restoring page from back/forward cache, %@", [item URL]);
+    [[self provisionalDataSource] _loadFromPageCache:pageCache];
+    return YES;
+}
+
 @end

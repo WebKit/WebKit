@@ -1,3 +1,48 @@
+2006-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - moved more data and the corresponding code from WebFrame to WebFrameLoader
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader cannotShowMIMETypeForURL:]):
+        (-[WebFrameLoader _checkNavigationPolicyForRequest:andCall:withSelector:]):
+        (-[WebFrameLoader shouldReloadToHandleUnreachableURLFromRequest:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader invalidatePendingPolicyDecisionCallingDefaultAction:]):
+        (-[WebFrameLoader checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrameLoader _continueAfterNewWindowPolicy:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueAfterNavigationPolicy:]):
+        (-[WebFrameLoader continueAfterWillSubmitForm:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDataSource:withLoadType:formState:]):
+        (-[WebFrameLoader handleUnimplementablePolicyWithErrorCode:forURL:]):
+        (-[WebFrameLoader delegateIsHandlingProvisionalLoadError]):
+        (-[WebFrameLoader setDelegateIsHandlingProvisionalLoadError:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[NSView setWebFrame::]):
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _loadRequest:inFrameNamed:]):
+        (-[WebFrame stopLoading]):
+        (-[WebFrame _resetBackForwardList]):
+        (-[WebFrame _quickRedirectComing]):
+        (-[WebFrame _provisionalItemIsTarget]):
+        (-[WebFrame _loadProvisionalItemFromPageCache]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Darin.
