@@ -46,6 +46,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebDataSourceInternal.h>
+#import <WebKit/WebFrameLoader.h>
 
 #import <WebCore/WebCoreFrameBridge.h>
 
@@ -373,7 +374,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]];
-        [_dataSource _stopLoadingWithError:error];
+        [[[_dataSource _documentLoadState] frameLoader] stopLoadingWithError:error];
         [error release];
     }        
 }

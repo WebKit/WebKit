@@ -30,6 +30,7 @@
 
 #import "WebDataProtocol.h"
 #import "WebDataSourceInternal.h"
+#import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -43,6 +44,8 @@
 #import "WebNSURLExtras.h"
 #import "WebPreferences.h"
 #import "WebResourcePrivate.h"
+#import "WebResourceLoadDelegate.h"
+#import "WebDefaultResourceLoadDelegate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
@@ -362,7 +365,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // FIXME: poor method name; also why is this not part of startProvisionalLoad:?
 - (void)startLoading
 {
-    [[self provisionalDataSource] _startLoading];
+    [provisionalDocumentLoadState prepareForLoadStart];
+        
+    if ([self isLoadingMainResource])
+        return;
+        
+    [[self provisionalDataSource] _setLoadingFromPageCache:NO];
+        
+    id identifier;
+    id resourceLoadDelegate = [[client webView] resourceLoadDelegate];
+    if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+        identifier = [resourceLoadDelegate webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoadState originalRequest] fromDataSource:[self provisionalDataSource]];
+    else
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoadState originalRequest] fromDataSource:[self provisionalDataSource]];
+    
+    if (![[provisionalDocumentLoadState frameLoader] startLoadingMainResourceWithRequest:[provisionalDocumentLoadState actualRequest] identifier:identifier])
+        [provisionalDocumentLoadState updateLoading];
 }
 
 - (void)startProvisionalLoad:(WebDataSource *)ds
@@ -384,42 +402,95 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
 {
-    return [[self activeDataSource] _identifierForInitialRequest:clientRequest];
+    WebView *webView = [client webView];
+        
+    // The identifier is released after the last callback, rather than in dealloc
+    // to avoid potential cycles.
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
+        return [[[webView resourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
+    else
+        return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
 }
 
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
 {
-    return [[self activeDataSource] _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
+    WebView *webView = [client webView];
+    
+    [clientRequest setValue:[webView userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
+        return [[webView resourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:[self activeDataSource]];
+    else
+        return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:[self activeDataSource]];
 }
 
 - (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    [[self activeDataSource] _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    WebView *webView = [client webView];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
 }
 
 - (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    [[self activeDataSource] _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    WebView *webView = [client webView];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
+    
 }
 
 - (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
 {
-    [[self activeDataSource] _didReceiveResponse:r forResource:identifier];
+    WebView *webView = [client webView];
+    
+    [[self activeDocumentLoadState] addResponse:r];
+    
+    [webView _incrementProgressForIdentifier:identifier response:r];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:[self activeDataSource]];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:[self activeDataSource]];
 }
 
 - (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
 {
-    [[self activeDataSource] _didReceiveData:data contentLength:lengthReceived forResource:identifier];
+    WebView *webView = [client webView];
+    
+    [webView _incrementProgressForIdentifier:identifier data:data];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:[self activeDataSource]];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:[self activeDataSource]];
 }
 
 - (void)_didFinishLoadingForResource:(id)identifier
-{
-    [[self activeDataSource] _didFinishLoadingForResource:identifier];
+{    
+    WebView *webView = [client webView];
+    
+    [webView _completeProgressForIdentifier:identifier];    
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:[self activeDataSource]];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:[self activeDataSource]];
 }
 
 - (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
 {
-    [[self activeDataSource] _didFailLoadingWithError:error forResource:identifier];
+    WebView *webView = [client webView];
+        
+    [webView _completeProgressForIdentifier:identifier];
+        
+    if (error)
+        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:[self activeDataSource]];
 }
 
 - (BOOL)_privateBrowsingEnabled
@@ -449,10 +520,34 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
-    WebDataSource *ds = [self activeDataSource];
-    [ds retain];
-    [ds _receivedMainResourceError:error complete:isComplete];
-    [ds release];
+    WebDocumentLoadState *loadState = [self activeDocumentLoadState];
+    [loadState retain];
+    
+    WebFrameBridge *bridge = [client _bridge];
+    
+    // Retain the bridge because the stop may release the last reference to it.
+    [bridge retain];
+ 
+    WebFrame *cli = [client retain];
+   
+    if (isComplete) {
+        // FIXME: Don't want to do this if an entirely new load is going, so should check
+        // that both data sources on the frame are either self or nil.
+        // Can't call [self _bridge] because we might not have commited yet
+        [bridge stop];
+        // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent loading plugin content twice.  See <rdar://problem/4258008>
+        if ([error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad)
+            [bridge handleFallbackContent];
+    }
+    
+    [bridge release];
+    
+    [cli _receivedMainResourceError:error];
+    [loadState mainReceivedError:error complete:isComplete];
+
+    [cli release];
+
+    [loadState release];
 }
 
 - (NSURLRequest *)initialRequest
@@ -472,7 +567,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy
 {
-    [[self activeDataSource] _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
+    [WebDownload _downloadWithLoadingConnection:connection
+                                        request:request
+                                       response:r
+                                       delegate:[[client webView] downloadDelegate]
+                                          proxy:proxy];
 }
 
 - (WebFrameBridge *)bridge
@@ -727,7 +826,11 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     listener = l;
     
     [l retain];
-    [[self activeDataSource] _decidePolicyForMIMEType:MIMEType decisionListener:l];
+
+    [[[client webView] _policyDelegateForwarder] webView:[client webView] decidePolicyForMIMEType:MIMEType
+                                                 request:[[self activeDocumentLoadState] request]
+                                                   frame:client
+                                        decisionListener:listener];
     [l release];
 }
 

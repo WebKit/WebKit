@@ -34,7 +34,6 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocument.h"
-#import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoader.h"
 #import "WebFrameLoadDelegate.h"
@@ -179,6 +178,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 }
 
+- (void)_setLoadingFromPageCache:(BOOL)loadingFromPageCache
+{
+    _private->loadingFromPageCache = loadingFromPageCache;
+}
+
 - (void)_clearUnarchivingState
 {
     [_private->unarchivingState release];
@@ -213,163 +217,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return repTypes;
 }
 
-- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
-{
-    WebView *wv = [self _webView];
-    [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:MIMEType
-                                   request:[self request]
-                                     frame:[self webFrame]
-                          decisionListener:listener];
-}
-
-- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
-{
-    // MOVABLE
-    WebFrameBridge *bridge = [[self webFrame] _bridge];
-    
-    // Retain the bridge because the stop may release the last reference to it.
-    [bridge retain];
-    
-    if (isComplete) {
-        // FIXME: Don't want to do this if an entirely new load is going, so should check
-        // that both data sources on the frame are either self or nil.
-        // Can't call [self _bridge] because we might not have commited yet
-        [bridge stop];
-        // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent loading plugin content twice.  See <rdar://problem/4258008>
-        if ([error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad)
-            [bridge handleFallbackContent];
-    }
-    
-    [bridge release];
-    
-    [[self webFrame] _receivedMainResourceError:error];
-    [_private->loadState mainReceivedError:error complete:isComplete];
-}
-
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy
-{
-    [WebDownload _downloadWithLoadingConnection:connection
-                                        request:request
-                                       response:r
-                                       delegate:[[self _webView] downloadDelegate]
-                                          proxy:proxy];
-}
-
-- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    [webView _completeProgressForIdentifier:identifier];
-    
-    if (error)
-        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:self];
-}
-
-- (void)_didFinishLoadingForResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    [webView _completeProgressForIdentifier:identifier];    
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:self];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:self];
-}
-
-- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    [webView _incrementProgressForIdentifier:identifier data:data];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:self];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:self];
-}
-
-- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    [_private->loadState addResponse:r];
-    
-    [webView _incrementProgressForIdentifier:identifier response:r];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:self];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:self];
-}
-
-- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:self];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:self];
-}
-
-- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
-{
-    WebView *webView = [self _webView];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:self];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:self];
-}
-
-- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
-{
-    WebView *webView = [self _webView];
-    
-    [clientRequest _web_setHTTPUserAgent:[webView userAgentForURL:[clientRequest URL]]];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
-        return [[webView resourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:self];
-    else
-        return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:self];
-}        
-
-- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
-{
-    WebView *webView = [self _webView];
-    
-    // The identifier is released after the last callback, rather than in dealloc
-    // to avoid potential cycles.
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
-        return [[[webView resourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:self] retain];
-    else
-        return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:self] retain];
-}
-
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
 {
     return [_private->unarchivingState archivedResourceForURL:URL];
-}
-
-- (void)_startLoading
-{
-    [_private->loadState prepareForLoadStart];
-    
-    if ([[_private->loadState frameLoader] isLoadingMainResource])
-        return;
-    
-    _private->loadingFromPageCache = NO;
-    
-    id identifier;
-    id resourceLoadDelegate = [[self _webView] resourceLoadDelegate];
-    if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-        identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
-    else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
-    
-    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:[_private->loadState actualRequest] identifier:identifier])
-        [_private->loadState updateLoading];
 }
 
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement
@@ -460,11 +310,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
-}
-
-- (void)_stopLoadingWithError:(NSError *)error
-{
-    [[_private->loadState frameLoader] stopLoadingWithError:error];
 }
 
 - (BOOL)_loadingFromPageCache

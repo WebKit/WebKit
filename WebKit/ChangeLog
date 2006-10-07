@@ -1,3 +1,27 @@
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Move all delegate dispatching code out of WebDataSource.
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader _identifierForInitialRequest:]):
+        (-[WebFrameLoader _willSendRequest:forResource:redirectResponse:]):
+        (-[WebFrameLoader _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _didReceiveData:contentLength:forResource:]):
+        (-[WebFrameLoader _didFinishLoadingForResource:]):
+        (-[WebFrameLoader _didFailLoadingWithError:forResource:]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebFrameLoader _checkContentPolicyForMIMEType:andCall:withSelector:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setLoadingFromPageCache:]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        * WebView/WebDataSourceInternal.h:
+
 2006-10-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
