@@ -53,6 +53,9 @@ public:
 
     bool scrollbarHit(NSScrollerPart);
 
+    static int horizontalScrollbarHeight() { return 15; }
+    static int verticalScrollbarWidth() { return 15; }
+    
 protected:    
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();

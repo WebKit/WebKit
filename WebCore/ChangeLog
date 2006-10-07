@@ -1,3 +1,30 @@
+2006-10-07  David Hyatt  <hyatt@apple.com>
+
+        Implement scroll corner painting (a white rect fill) for overflow areas to cover up
+        scrollbar joins properly.
+
+        Refactor painting of scrollbars and resizers into common functions.  Eliminate the
+        extra 20 bytes per RenderLayer by cutting out m_resizerImage and m_resizerControlRect.
+
+        Reviewed by mitz
+
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        * platform/mac/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::horizontalScrollbarHeight):
+        (WebCore::PlatformScrollbar::verticalScrollbarWidth):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::scrollCornerRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayer.h:
+
 2006-10-07  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.
