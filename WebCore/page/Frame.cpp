@@ -35,7 +35,6 @@
 #include "CSSPropertyNames.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
-#include "DeprecatedStringList.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "Decoder.h"
@@ -1616,22 +1615,6 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
 
   // Handle mailto: forms
   if (u.protocol() == "mailto") {
-      // 1)  Check for attach= and strip it
-      DeprecatedString q = u.query().mid(1);
-      DeprecatedStringList nvps = DeprecatedStringList::split("&", q);
-      bool triedToAttach = false;
-
-      for (DeprecatedStringList::Iterator nvp = nvps.begin(); nvp != nvps.end(); ++nvp) {
-         DeprecatedStringList pair = DeprecatedStringList::split("=", *nvp);
-         if (pair.count() >= 2) {
-            if (pair.first().lower() == "attach") {
-               nvp = nvps.remove(nvp);
-               triedToAttach = true;
-            }
-         }
-      }
-
-
       // 2)  Append body=
       DeprecatedString bodyEnc;
       if (contentType.lower() == "multipart/form-data")
@@ -1647,9 +1630,12 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
       } else
          bodyEnc = KURL::encode_string(formData.flattenToString().deprecatedString());
 
-      nvps.append(String::sprintf("body=%s", bodyEnc.latin1()).deprecatedString());
-      q = nvps.join("&");
-      u.setQuery(q);
+      DeprecatedString query = u.query();
+      if (!query.isEmpty())
+          query += '&';
+      query += String::sprintf("&body=%s", bodyEnc.latin1()).deprecatedString();
+      
+      u.setQuery(query);
   } 
 
   if (strcmp(action, "get") == 0) {

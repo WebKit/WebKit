@@ -32,7 +32,6 @@
 #include "Cache.h"
 #include "CachedImage.h"
 #include "CachedResource.h"
-#include "DeprecatedStringList.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
