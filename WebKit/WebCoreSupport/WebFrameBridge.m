@@ -34,6 +34,7 @@
 #import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
+#import "WebDocumentLoader.h"
 #import "WebEditingDelegate.h"
 #import "WebFormDataStream.h"
 #import "WebFormDelegate.h"

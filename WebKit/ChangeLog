@@ -1,3 +1,48 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - remove unneeded non-Loader header includes from WebFrameLoader.h (split WebFrameLoadType into
+        two coincidentally matching enums)
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (isBackForwardLoadType):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader isReplacing]):
+        (-[WebFrameLoader setReplacing]):
+        (-[WebFrameLoader loadType]):
+        (-[WebFrameLoader setLoadType:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDataSource:withLoadType:formState:]):
+        (-[WebFrameLoader didFirstLayout]):
+        * WebCoreSupport/WebFrameBridge.m:
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):
+        (-[WebFrame _goToItem:withLoadType:]):
+        (-[WebFrame _actionInformationForLoadType:isFormSubmission:event:originalURL:]):
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _itemForRestoringDocState]):
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrame _loadType]):
+        (-[WebFrame loadRequest:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebView.m:
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

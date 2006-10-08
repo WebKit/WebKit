@@ -33,9 +33,10 @@
 #import "WebFrameLoaderClient.h"
 #import "WebPolicyDelegatePrivate.h"
 
+#import "WebFrameLoader.h"
+
 @class WebDocumentLoader;
 @class WebInspector;
-@class WebFrameLoader;
 @class WebFrameView;
 @class WebFrameBridge;
 @class WebFormState;
@@ -104,7 +105,7 @@
 - (void)_checkLoadComplete;
 - (WebFrameBridge *)_bridge;
 
-- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(FrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 

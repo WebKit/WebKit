@@ -44,6 +44,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
+#import "WebDocumentLoader.h"
 #import "WebDownload.h"
 #import "WebDownloadInternal.h"
 #import "WebDynamicScrollBarsView.h"

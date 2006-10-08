@@ -35,6 +35,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameLoaderClient.h"
 #import "WebHistory.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
@@ -645,20 +646,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)_loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(FrameLoadType)_loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"Referer"];
     [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
-    if (_loadType == WebFrameLoadTypeReload) {
+    if (_loadType == FrameLoadTypeReload) {
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     }
     
     // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
     // policy of LoadFromOrigin, but I didn't test that.
-    ASSERT(_loadType != WebFrameLoadTypeSame);
+    ASSERT(_loadType != FrameLoadTypeSame);
     
     NSDictionary *action = [client _actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = nil;
@@ -690,8 +691,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (!isFormSubmission
-        && _loadType != WebFrameLoadTypeReload
-        && _loadType != WebFrameLoadTypeSame
+        && _loadType != FrameLoadTypeReload
+        && _loadType != FrameLoadTypeSame
         && ![self shouldReloadForCurrent:URL andDestination:[[client _bridge] URL]]
         
         // We don't want to just scroll if a link from within a
@@ -723,7 +724,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
             // frame, where the user has clicked on the same link repeatedly.
-            [self setLoadType:WebFrameLoadTypeSame];
+            [self setLoadType:FrameLoadTypeSame];
         }            
     }
     
@@ -788,7 +789,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)commitProvisionalLoad:(NSDictionary *)pageCache
 {
-    bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
+    bool reload = loadType == FrameLoadTypeReload || loadType == FrameLoadTypeReloadAllowingStaleData;
     
     WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
     NSURLResponse *response = [provisionalDataSource response];
@@ -796,7 +797,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
         ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
     
-    if (loadType != WebFrameLoadTypeReplace)
+    if (loadType != FrameLoadTypeReplace)
         [self closeOldDataSources];
     
     if (!pageCache)
@@ -1120,19 +1121,19 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     listener = nil;
 }
 
-static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
+static inline BOOL isBackForwardLoadType(FrameLoadType type)
 {
     switch (type) {
-        case WebFrameLoadTypeStandard:
-        case WebFrameLoadTypeReload:
-        case WebFrameLoadTypeReloadAllowingStaleData:
-        case WebFrameLoadTypeSame:
-        case WebFrameLoadTypeInternal:
-        case WebFrameLoadTypeReplace:
+        case FrameLoadTypeStandard:
+        case FrameLoadTypeReload:
+        case FrameLoadTypeReloadAllowingStaleData:
+        case FrameLoadTypeSame:
+        case FrameLoadTypeInternal:
+        case FrameLoadTypeReplace:
             return false;
-        case WebFrameLoadTypeBack:
-        case WebFrameLoadTypeForward:
-        case WebFrameLoadTypeIndexedBackForward:
+        case FrameLoadTypeBack:
+        case FrameLoadTypeForward:
+        case FrameLoadTypeIndexedBackForward:
             return true;
     }
     ASSERT_NOT_REACHED();
@@ -1164,7 +1165,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 
 - (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
 {
-    WebFrameLoadType type;
+    FrameLoadType type;
     
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
@@ -1174,9 +1175,9 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [client _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-        type = WebFrameLoadTypeSame;
+        type = FrameLoadTypeSame;
     } else
-        type = WebFrameLoadTypeStandard;
+        type = FrameLoadTypeStandard;
     
     [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
     [newDataSource _addToUnarchiveState:archive];
@@ -1185,14 +1186,14 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     // visiting in the b/f list, we treat it as a reload so the b/f list 
     // is appropriately maintained.
     if ([self shouldReloadToHandleUnreachableURLFromRequest:request]) {
-        ASSERT(type == WebFrameLoadTypeStandard);
-        type = WebFrameLoadTypeReload;
+        ASSERT(type == FrameLoadTypeStandard);
+        type = FrameLoadTypeReload;
     }
     
     [self loadDataSource:newDataSource withLoadType:type formState:nil];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)type formState:(WebFormState *)formState
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)type formState:(WebFormState *)formState
 {
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
@@ -1223,7 +1224,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     
     [policyDocumentLoader setOverrideEncoding:encoding];
 
-    [self loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
+    [self loadDataSource:newDataSource withLoadType:FrameLoadTypeReloadAllowingStaleData formState:nil];
 }
 
 - (void)reload
@@ -1259,7 +1260,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 
     [policyDocumentLoader setOverrideEncoding:[[ds _documentLoader] overrideEncoding]];
     
-    [self loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
+    [self loadDataSource:newDataSource withLoadType:FrameLoadTypeReload formState:nil];
 }
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame
@@ -1279,12 +1280,12 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 
 - (BOOL)isReplacing
 {
-    return loadType == WebFrameLoadTypeReplace;
+    return loadType == FrameLoadTypeReplace;
 }
 
 - (void)setReplacing
 {
-    loadType = WebFrameLoadTypeReplace;
+    loadType = FrameLoadTypeReplace;
 }
 
 - (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
@@ -1353,12 +1354,12 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     }
 }
 
-- (WebFrameLoadType)loadType
+- (FrameLoadType)loadType
 {
     return loadType;
 }
 
-- (void)setLoadType:(WebFrameLoadType)type
+- (void)setLoadType:(FrameLoadType)type
 {
     loadType = type;
 }
@@ -1469,7 +1470,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     // treat it like a reload so it maintains the right state for b/f list.
     if ([request _webDataRequestUnreachableURL] != nil) {
         if (isBackForwardLoadType(policyLoadType))
-            policyLoadType = WebFrameLoadTypeReload;
+            policyLoadType = FrameLoadTypeReload;
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1577,7 +1578,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
         return;
     }
     
-    WebFrameLoadType type = policyLoadType;
+    FrameLoadType type = policyLoadType;
     WebDataSource *dataSource = [[self policyDataSource] retain];
     
     [self stopLoading];
@@ -1591,7 +1592,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     if (client == [[client webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
-    if (type == WebFrameLoadTypeForward || type == WebFrameLoadTypeBack || type == WebFrameLoadTypeIndexedBackForward) {
+    if (type == FrameLoadTypeForward || type == FrameLoadTypeBack || type == FrameLoadTypeIndexedBackForward) {
         if ([client _loadProvisionalItemFromPageCache])
             return;
     }
@@ -1607,7 +1608,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     }
 }
 
-- (void)loadDataSource:(WebDataSource *)newDataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState
+- (void)loadDataSource:(WebDataSource *)newDataSource withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
 {
     ASSERT([client webView] != nil);
 
@@ -1660,7 +1661,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 - (void)didFirstLayout
 {
     if ([[client webView] backForwardList]) {
-        if (loadType == WebFrameLoadTypeForward || loadType == WebFrameLoadTypeBack || loadType == WebFrameLoadTypeIndexedBackForward)
+        if (loadType == FrameLoadTypeForward || loadType == FrameLoadTypeBack || loadType == FrameLoadTypeIndexedBackForward)
             [client _restoreScrollPositionAndViewState];
     }
     
