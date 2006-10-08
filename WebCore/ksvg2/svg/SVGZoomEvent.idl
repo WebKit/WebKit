@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGZoomEvent : events::UIEvent { 
-    readonly attribute SVGRect zoomRectScreen;
-    readonly attribute float previousScale;
-    readonly attribute SVGPoint previousTranslate;
-    readonly attribute float newScale;
-    readonly attribute SVGPoint newTranslate;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGZoomEvent : events::UIEvent { 
+        readonly attribute SVGRect zoomRectScreen;
+        readonly attribute float previousScale;
+        readonly attribute SVGPoint previousTranslate;
+        readonly attribute float newScale;
+        readonly attribute SVGPoint newTranslate;
+    };
+
+}

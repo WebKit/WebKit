@@ -55,6 +55,8 @@ my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarg
                         "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
                         "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "SVGAnimatedPoints" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);
+my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
 # FIXME: need to add the SVG base types to this hash.
 my %baseTypeHash = ("Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
@@ -214,7 +216,7 @@ sub GenerateModule
 {
     my $object = shift;
     my $dataNode = shift;
-    
+
     $module = $dataNode->module;
 }
 
@@ -224,11 +226,10 @@ sub GetClassName
 
     # special cases
     return "NSString" if IsStringType($name);
+    return "NS$name" if IsNativeObjCType($name);
     return "BOOL" if $name eq "boolean";
     return "unsigned" if $name eq "unsigned long";
     return "int" if $name eq "long";
-    return "NSURL" if $name eq "URL";
-    return "NSColor" if $name eq "Color";
     return "DOMAbstractView" if $name eq "DOMWindow";
     return $name if $codeGenerator->IsPrimitiveType($name) or $name eq "DOMImplementation" or $name eq "DOMTimeStamp";
 
@@ -348,6 +349,22 @@ sub IsStringType
     return 0;
 }
 
+sub IsNativeObjCType
+{
+    $type = shift;
+
+    return 1 if $nativeObjCTypeHash{$type};
+    return 0;
+}
+
+sub IsNonPointerType
+{
+    $type = shift;
+
+    return 1 if $nonPointerTypeHash{$type} or $codeGenerator->IsPrimitiveType($type);
+    return 0;
+}
+
 sub GetObjCType
 {
     my $type = shift;
@@ -363,7 +380,7 @@ sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "SVGPaintType";
+    return "" if IsNonPointerType($type) or IsStringType($type) or IsNativeObjCType($type);
     return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
@@ -388,8 +405,6 @@ sub GetObjCTypeGetterName
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
-
     my $typeGetter = "";
     if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
         $typeGetter = $type;
@@ -409,13 +424,15 @@ sub GetObjCTypeGetter
 {
     my $argName = shift;
     my $type = $codeGenerator->StripModule(shift);
-    my $typeGetterMethodName = GetObjCTypeGetterName($type);
 
-    return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL";
+    return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or IsNativeObjCType($type);
     return $argName . "EventTarget" if $type eq "EventTarget";
-    return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
     return "static_cast<WebCore::SVGPaint::SVGPaintType>($argName)" if $type eq "SVGPaintType";
+
+    my $typeGetterMethodName = GetObjCTypeGetterName($type);
+
+    return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
     return "[$argName $typeGetterMethodName]";
 }
 
@@ -424,37 +441,28 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp" or $type eq "CompareHow" or $type eq "SVGPaintType";
+    return if IsNonPointerType($type) ;
+
+    my $class = GetClassName($type);
 
     if (IsProtocolType($type)) {
-        $type = "DOM" . $type;
-        $headerForwardDeclarationsForProtocols{$type} = 1 if $public;
-        $privateHeaderForwardDeclarationsForProtocols{$type} = 1 if !$public and !$headerForwardDeclarationsForProtocols{$type};
+        $headerForwardDeclarationsForProtocols{$class} = 1 if $public;
+        $privateHeaderForwardDeclarationsForProtocols{$class} = 1 if !$public and !$headerForwardDeclarationsForProtocols{$class};
         return;
     }
 
-    if ($type eq "DOMImplementation") {
-        $type = "DOMImplementation";
-    } elsif ($type eq "DOMWindow") {
-        $type = "DOMAbstractView";
-    } elsif ($type eq "Color") {
-        $type = "NSColor";
-    } else {
-        $type = "DOM" . $type;
-    }
-
-    $headerForwardDeclarations{$type} = 1 if $public;
+    $headerForwardDeclarations{$class} = 1 if $public;
 
     # Private headers include the public header, so only add a forward declaration to the private header
     # if the public header does not already have the same forward declaration.
-    $privateHeaderForwardDeclarations{$type} = 1 if !$public and !$headerForwardDeclarations{$type};
+    $privateHeaderForwardDeclarations{$class} = 1 if !$public and !$headerForwardDeclarations{$class};
 }
 
 sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "Color" or $type eq "DOMTimeStamp" or $type eq "CompareHow" or $type eq "SVGPaintType";
+    return if IsNonPointerType($type) or IsNativeObjCType($type);
 
     if (IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
@@ -932,6 +940,8 @@ sub GenerateImplementation
                 push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
                 $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
                 $getterContentTail .= ")]";
+            } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
+                $getterContentTail .= ".toInt()";
             } elsif ($idlType eq "RGBColor" or $idlType eq "SVGPoint" or $idlType eq "SVGRect" or $idlType eq "SVGNumber") {
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
                 $getterContentTail .= "]";
@@ -978,6 +988,10 @@ sub GenerateImplementation
                 my $setterName = "set" . ucfirst($attributeInterfaceName);
                 my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
+
+                if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
+                    $arg = "WebCore::String::number($arg)";
+                }
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
 

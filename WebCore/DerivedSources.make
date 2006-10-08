@@ -219,18 +219,40 @@ all : \
     DOMSVGPaint.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
+    DOMSVGPatternElement.h \
     DOMSVGPoint.h \
+    DOMSVGPointList.h \
+    DOMSVGPolygonElement.h \
+    DOMSVGPolylineElement.h \
     DOMSVGPreserveAspectRatio.h \
+    DOMSVGRadialGradientElement.h \
     DOMSVGRect.h \
     DOMSVGRectElement.h \
+    DOMSVGRenderingIntent.h \
+    DOMSVGScriptElement.h \
+    DOMSVGSetElement.h \
+    DOMSVGStopElement.h \
     DOMSVGStringList.h \
     DOMSVGStylable.h \
     DOMSVGStyleElement.h \
+    DOMSVGSwitchElement.h \
+    DOMSVGSymbolElement.h \
+    DOMSVGTRefElement.h \
+    DOMSVGTSpanElement.h \
     DOMSVGTests.h \
+    DOMSVGTextContentElement.h \
+    DOMSVGTextElement.h \
+    DOMSVGTextPositioningElement.h \
+    DOMSVGTitleElement.h \
     DOMSVGTransform.h \
     DOMSVGTransformList.h \
     DOMSVGTransformable.h \
     DOMSVGURIReference.h \
+    DOMSVGUnitTypes.h \
+    DOMSVGUseElement.h \
+    DOMSVGViewElement.h \
+    DOMSVGZoomAndPan.h \
+    DOMSVGZoomEvent.h \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
     DOMText.h \

@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, ObjCCustomImplementation] HTMLAppletElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement] HTMLAppletElement : HTMLElement {
                  attribute DOMString align;
                  attribute DOMString alt;
                  attribute DOMString archive;
@@ -28,14 +28,14 @@ module html {
                  attribute DOMString codeBase;
                  attribute DOMString height;
 #if defined(LANGUAGE_OBJECTIVE_C)
-                 attribute long hspace;
+                 attribute [ConvertFromString] long hspace;
 #else
                  attribute DOMString hspace;
 #endif
                  attribute DOMString name;
                  attribute DOMString object;
 #if defined(LANGUAGE_OBJECTIVE_C)
-                 attribute long vspace;
+                 attribute [ConvertFromString] long vspace;
 #else
                  attribute DOMString vspace;
 #endif

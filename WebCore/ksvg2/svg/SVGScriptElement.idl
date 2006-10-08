@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGScriptElement : 
-                SVGElement,
-                SVGURIReference,
-                SVGExternalResourcesRequired { 
-             attribute core::DOMString type;
-                         // raises DOMException on setting
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGScriptElement : SVGElement,
+                                                   SVGURIReference,
+                                                   SVGExternalResourcesRequired {
+                 attribute DOMString type
+                     /*setter raises(DOMException)*/;
+    };
+
+}

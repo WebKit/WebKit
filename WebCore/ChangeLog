@@ -1,3 +1,52 @@
+2006-10-08  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11215
+        Yet another round of Objective-C SVG DOM bindings auto-generation
+
+        - Auto-generate DOMSVGPatternElement, DOMSVGPointList, DOMSVGPolygonElement, 
+          DOMSVGPolylineElement, DOMSVGRadialGradientElement, DOMSVGRenderingIntent,
+          DOMSVGScriptElement, DOMSVGSetElement, DOMSVGStopElement, DOMSVGSwitchElement, 
+          DOMSVGSymbolElement, DOMSVGTRefElement, DOMSVGTSpanElement, 
+          DOMSVGTextContentElement, DOMSVGTextElement, DOMSVGTextPositioningElement, 
+          DOMSVGTitleElement, DOMSVGUnitTypes, DOMSVGUseElement, DOMSVGViewElement, 
+          DOMSVGZoomAndPan and DOMSVGZoomEvent.
+
+        - Auto-generate the implementations of DOMHTMLAppletElement and DOMHTMLEmbedElement
+          using the new [ConvertFromString] property.
+
+        - Add forward declarations for NS* types to auto-generated classes.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMHTMLAppletElement.mm: Removed.
+        * bindings/objc/DOMHTMLEmbedElement.mm: Removed.
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * ksvg2/svg/SVGPatternElement.idl:
+        * ksvg2/svg/SVGPolygonElement.idl:
+        * ksvg2/svg/SVGPolylineElement.idl:
+        * ksvg2/svg/SVGRadialGradientElement.idl:
+        * ksvg2/svg/SVGRenderingIntent.idl:
+        * ksvg2/svg/SVGScriptElement.idl:
+        * ksvg2/svg/SVGSetElement.idl:
+        * ksvg2/svg/SVGStopElement.idl:
+        * ksvg2/svg/SVGSwitchElement.idl:
+        * ksvg2/svg/SVGSymbolElement.idl:
+        * ksvg2/svg/SVGTRefElement.idl:
+        * ksvg2/svg/SVGTSpanElement.idl:
+        * ksvg2/svg/SVGTextContentElement.idl:
+        * ksvg2/svg/SVGTextElement.idl:
+        * ksvg2/svg/SVGTextPositioningElement.idl:
+        * ksvg2/svg/SVGTitleElement.idl:
+        * ksvg2/svg/SVGUseElement.idl:
+        * ksvg2/svg/SVGViewElement.idl:
+        * ksvg2/svg/SVGZoomEvent.idl:
+
 2006-10-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
