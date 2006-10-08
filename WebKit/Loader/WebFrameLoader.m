@@ -264,7 +264,7 @@
 
     [policyDocumentLoadState release];
     [loadState retain];
-    policyDocumentLoadState = nil;
+    policyDocumentLoadState = loadState;
 }
    
 - (void)clearDataSource
@@ -848,18 +848,33 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     listener = nil;
 }
 
+static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
+{
+    switch (type) {
+        case WebFrameLoadTypeStandard:
+        case WebFrameLoadTypeReload:
+        case WebFrameLoadTypeReloadAllowingStaleData:
+        case WebFrameLoadTypeSame:
+        case WebFrameLoadTypeInternal:
+        case WebFrameLoadTypeReplace:
+            return false;
+        case WebFrameLoadTypeBack:
+        case WebFrameLoadTypeForward:
+        case WebFrameLoadTypeIndexedBackForward:
+            return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 - (BOOL)shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
 {
     NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
-    if (unreachableURL == nil) {
+    if (unreachableURL == nil)
         return NO;
-    }
     
-    if (policyLoadType != WebFrameLoadTypeForward
-        && policyLoadType != WebFrameLoadTypeBack
-        && policyLoadType != WebFrameLoadTypeIndexedBackForward) {
+    if (!isBackForwardLoadType(policyLoadType))
         return NO;
-    }
     
     // We only treat unreachableURLs specially during the delegate callbacks
     // for provisional load errors and navigation policy decisions. The former
@@ -1186,11 +1201,8 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
     if ([request _webDataRequestUnreachableURL] != nil) {
-        if (policyLoadType == WebFrameLoadTypeForward
-                || policyLoadType == WebFrameLoadTypeBack
-                || policyLoadType == WebFrameLoadTypeIndexedBackForward) {
+        if (isBackForwardLoadType(policyLoadType))
             policyLoadType = WebFrameLoadTypeReload;
-        }
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1288,14 +1300,13 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
             [client _clientRedirectCancelledOrFinished:NO];
 
         [self _setPolicyDocumentLoadState:nil];
+
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || [[client webView] mainFrame] == client)
-            && (policyLoadType == WebFrameLoadTypeForward
-                || policyLoadType == WebFrameLoadTypeBack
-                || policyLoadType == WebFrameLoadTypeIndexedBackForward))
+        if ((isTargetItem || [[client webView] mainFrame] == client) && isBackForwardLoadType(policyLoadType))
             [(WebFrame <WebFrameLoaderClient> *)[[client webView] mainFrame] _resetBackForwardList];
+
         return;
     }
     
