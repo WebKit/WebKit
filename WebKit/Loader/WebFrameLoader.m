@@ -30,6 +30,7 @@
 
 #import "WebDataProtocol.h"
 #import "WebDataSourceInternal.h"
+#import "WebDocumentLoadStateMac.h"
 #import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
@@ -255,9 +256,15 @@
 
 - (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    [loadState retain];
+    if (policyDocumentLoadState == loadState)
+        return;
+
+    if (policyDocumentLoadState != provisionalDocumentLoadState && policyDocumentLoadState != documentLoadState)
+        [policyDocumentLoadState detachFromFrameLoader];
+
     [policyDocumentLoadState release];
-    policyDocumentLoadState = loadState;
+    [loadState retain];
+    policyDocumentLoadState = nil;
 }
    
 - (void)clearDataSource
@@ -860,11 +867,10 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     // case handles malformed URLs and unknown schemes. Loading alternate content
     // at other times behaves like a standard load.
     WebDataSource *compareDataSource = nil;
-    if (delegateIsDecidingNavigationPolicy || delegateIsHandlingUnimplementablePolicy) {
+    if (delegateIsDecidingNavigationPolicy || delegateIsHandlingUnimplementablePolicy)
         compareDataSource = [self policyDataSource];
-    } else if (delegateIsHandlingProvisionalLoadError) {
+    else if (delegateIsHandlingProvisionalLoadError)
         compareDataSource = [self provisionalDataSource];
-    }
     
     return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
 }
@@ -873,6 +879,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     WebFrameLoadType type;
     
+    ASSERT(!policyDocumentLoadState);
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
 
@@ -900,11 +907,11 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)type formState:(WebFormState *)formState
 {
+    ASSERT(!policyDocumentLoadState);
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
 
     [policyDocumentLoadState setTriggeringAction:action];
-
     [policyDocumentLoadState setOverrideEncoding:[[self documentLoadState] overrideEncoding]];
 
     [self loadDataSource:newDataSource withLoadType:type formState:formState];
@@ -922,6 +929,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
         [request setURL:unreachableURL];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+    ASSERT(!policyDocumentLoadState);
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
     [request release];
@@ -949,6 +957,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     if (unreachableURL != nil)
         initialRequest = [NSURLRequest requestWithURL:unreachableURL];
     
+    ASSERT(!policyDocumentLoadState);
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:initialRequest];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
     NSMutableURLRequest *request = [newDataSource request];
@@ -1125,7 +1134,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [decisionListener release];
 }
 
--(void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
+- (void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
 {
     NSURLRequest *request = [[policyRequest retain] autorelease];
     NSString *frameName = [[policyFrameName retain] autorelease];
@@ -1331,17 +1340,18 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
     policyLoadType = type;
 
+    WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
+
     WebFrame *parentFrame = [client parentFrame];
     if (parentFrame)
-        [[newDataSource _documentLoadState] setOverrideEncoding:[[[parentFrame dataSource] _documentLoadState] overrideEncoding]];
+        [loadState setOverrideEncoding:[[[parentFrame dataSource] _documentLoadState] overrideEncoding]];
 
-    WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
     [loadState setFrameLoader:self];
     [loadState setDataSource:newDataSource];
 
     [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
-    [self _setPolicyDocumentLoadState:[newDataSource _documentLoadState]];
+    [self _setPolicyDocumentLoadState:loadState];
 
     [self checkNavigationPolicyForRequest:[newDataSource request]
                                dataSource:newDataSource

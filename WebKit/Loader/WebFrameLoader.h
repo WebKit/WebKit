@@ -123,7 +123,6 @@ typedef enum {
 - (WebDocumentLoadState *)activeDocumentLoadState;
 - (WebDocumentLoadState *)documentLoadState;
 - (WebDocumentLoadState *)provisionalDocumentLoadState;
-- (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (WebFrameState)state;
 - (void)clearDataSource;
 - (void)setupForReplace;

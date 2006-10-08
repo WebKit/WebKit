@@ -1,3 +1,26 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix two recently introduced leaks: one of an NSString, the other of a WebDataSource
+
+        * Loader/WebDocumentLoadState.m: (-[WebDocumentLoadState setTitle:]):
+        Rearranged code to avoid storage leak in case of identical title.
+
+        * Loader/WebFrameLoader.h: Removed _setPolicyDocumentLoadState: method
+        from the header.
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setPolicyDocumentLoadState:]): Added logic to call detachFromFrameLoader
+        as needed if this load state is going away rather than moving on to become the provisional
+        load state.
+        (-[WebFrameLoader shouldReloadToHandleUnreachableURLFromRequest:]): Tweaked formatting.
+        (-[WebFrameLoader _loadRequest:archive:]): Added an assertion.
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]): Added an assertion.
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]): Added an assertion.
+        (-[WebFrameLoader reload]): Added an assertion.
+        (-[WebFrameLoader loadDataSource:withLoadType:formState:]): Added a local variable to avoid
+        calling _documentLoadState over and over again.
+
 2006-10-07  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed/landed by Adam.
