@@ -26,48 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDocumentLoadStateMac.h"
+#import <WebKit/WebDocumentLoader.h>
 
-#import <JavaScriptCore/Assertions.h>
+@class WebDataSource;
 
-#import <WebKitSystemInterface.h>
-
-@implementation WebDocumentLoadStateMac
-
-
-- (id)initWithRequest:(NSURLRequest *)req
+@interface WebDocumentLoaderMac : WebDocumentLoader
 {
-    self = [super initWithRequest:req];
-    return self;
+    @public
+    WebDataSource *dataSource;
 }
 
-- (void)dealloc
-{
-    [dataSource release];
-    
-    [super dealloc];
-}    
-
-- (void)setDataSource:(WebDataSource *)ds
-{
-    [ds retain];
-    [dataSource release];
-    dataSource = ds;    
-}
-
-- (WebDataSource *)dataSource
-{
-    return dataSource;
-}
-
-- (void)detachFromFrameLoader
-{
-    [super detachFromFrameLoader];
-    [self setDataSource:nil];
-}
+- (id)initWithRequest:(NSURLRequest *)request;
+- (void)setDataSource:(WebDataSource *)dataSource;
+- (WebDataSource *)dataSource;
 
 @end
-
-
-
-

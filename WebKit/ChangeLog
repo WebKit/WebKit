@@ -1,5 +1,124 @@
 2006-10-08  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Maciej.
+
+        - changed "document load state" to "document loader"
+
+        * Loader/WebDocumentLoadState.h: Removed.
+        * Loader/WebDocumentLoadState.m: Removed.
+        * Loader/WebDocumentLoader.h: Added.
+        * Loader/WebDocumentLoader.m: Added.
+        (-[WebDocumentLoader setMainDocumentError:]):
+        (-[WebDocumentLoader mainReceivedError:complete:]):
+        (-[WebDocumentLoader finishedLoading]):
+        (-[WebDocumentLoader commitLoadWithData:]):
+        (-[WebDocumentLoader setupForReplaceByMIMEType:]):
+        (-[WebDocumentLoader updateLoading]):
+        (-[WebDocumentLoader setTitle:]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader dealloc]):
+        (-[WebFrameLoader activeDocumentLoader]):
+        (-[WebFrameLoader activeDataSource]):
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        (-[WebFrameLoader dataSource]):
+        (-[WebFrameLoader setDocumentLoader:]):
+        (-[WebFrameLoader documentLoader]):
+        (-[WebFrameLoader policyDataSource]):
+        (-[WebFrameLoader setPolicyDocumentLoader:]):
+        (-[WebFrameLoader clearDataSource]):
+        (-[WebFrameLoader provisionalDataSource]):
+        (-[WebFrameLoader provisionalDocumentLoader]):
+        (-[WebFrameLoader setProvisionalDocumentLoader:]):
+        (-[WebFrameLoader _clearProvisionalDataSource]):
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader clearProvisionalLoad]):
+        (-[WebFrameLoader commitProvisionalLoad]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader startProvisionalLoad:]):
+        (-[WebFrameLoader setupForReplace]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _originalRequest]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader _receivedData:]):
+        (-[WebFrameLoader _setRequest:]):
+        (-[WebFrameLoader _isStopping]):
+        (-[WebFrameLoader _setupForReplaceByMIMEType:]):
+        (-[WebFrameLoader _setResponse:]):
+        (-[WebFrameLoader _mainReceivedError:complete:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader _checkContentPolicyForMIMEType:andCall:withSelector:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader finishedLoadingDocument:]):
+        (-[WebFrameLoader committedLoadWithDocumentLoader:data:]):
+        (-[WebFrameLoader revertToProvisionalWithDocumentLoader:]):
+        (-[WebFrameLoader documentLoader:setMainDocumentError:]):
+        (-[WebFrameLoader documentLoader:mainReceivedCompleteError:]):
+        (-[WebFrameLoader finalSetupForReplaceWithDocumentLoader:]):
+        (-[WebFrameLoader willChangeTitleForDocument:]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDataSource:withLoadType:formState:]):
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge receivedData:textEncodingName:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _mainDocumentError]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _bridge]):
+        (-[WebDataSource _webView]):
+        (-[WebDataSource _URLForHistory]):
+        (-[WebDataSource _documentLoader]):
+        (-[WebDataSource _initWithDocumentLoader:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource data]):
+        (-[WebDataSource webFrame]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        (-[WebDataSource response]):
+        (-[WebDataSource textEncodingName]):
+        (-[WebDataSource isLoading]):
+        (-[WebDataSource unreachableURL]):
+        (-[WebDataSource webArchive]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebDocumentLoadStateMac.h: Removed.
+        * WebView/WebDocumentLoadStateMac.m: Removed.
+        * WebView/WebDocumentLoaderMac.h: Added.
+        * WebView/WebDocumentLoaderMac.m: Added.
+        * WebView/WebFrame.m:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _receivedMainResourceError:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _addChild:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _dataSourceForDocumentLoader:]):
+        (-[WebFrame _createDocumentLoaderWithRequest:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation title]):
+        * WebView/WebView.m:
+        (-[WebView _mainFrameOverrideEncoding]):
+
+2006-10-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11218

@@ -31,7 +31,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import "WebPolicyDelegatePrivate.h"
 
-@class WebDocumentLoadState;
+@class WebDocumentLoader;
 @class WebInspector;
 @class WebFrameLoader;
 @class WebFrameView;
@@ -90,8 +90,8 @@
 - (void)_provisionalLoadStarted;
 - (void)_prepareForDataSourceReplacement;
 - (void)_frameLoadCompleted;
-- (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState;
-- (WebDocumentLoadState *)_createDocumentLoadStateWithRequest:(NSURLRequest *)request;
+- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader;
+- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request;
 - (void)_didReceiveServerRedirectForProvisionalLoadForFrame;
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;

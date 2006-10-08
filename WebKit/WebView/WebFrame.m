@@ -35,7 +35,7 @@
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
-#import "WebDocumentLoadStateMac.h"
+#import "WebDocumentLoaderMac.h"
 #import "WebFormDataStream.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoadDelegate.h"
@@ -294,7 +294,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     WebHistoryItem *bfItem;
 
     if (useOriginal)
-        request = [[dataSrc _documentLoadState] originalRequestCopy];
+        request = [[dataSrc _documentLoader] originalRequestCopy];
     else
         request = [dataSrc request];
 
@@ -303,7 +303,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         originalURL = unreachableURL;
     } else {
         URL = [request URL];
-        originalURL = [[[dataSrc _documentLoadState] originalRequestCopy] URL];
+        originalURL = [[[dataSrc _documentLoader] originalRequestCopy] URL];
     }
 
     LOG (History, "creating item for %@", request);
@@ -432,7 +432,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 - (void)_receivedMainResourceError:(NSError *)error
 {
     if ([_private->frameLoader state] == WebFrameStateProvisional) {
-        NSURL *failedURL = [[[_private->frameLoader provisionalDocumentLoadState] originalRequestCopy] URL];
+        NSURL *failedURL = [[[_private->frameLoader provisionalDocumentLoader] originalRequestCopy] URL];
         // When we are pre-commit, the currentItem is where the pageCache data resides
         NSDictionary *pageCache = [[_private currentItem] pageCache];
         [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
@@ -524,7 +524,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 }
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
-                NSURL *URL = [[[[ds _documentLoadState] originalRequestCopy] URL] _webkit_canonicalize];
+                NSURL *URL = [[[[ds _documentLoader] originalRequestCopy] URL] _webkit_canonicalize];
                 WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
                 WebHistoryItem *oldItem = [sharedHistory itemForURL:URL];
                 if (oldItem)
@@ -540,7 +540,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 break;
                 
             case WebFrameLoadTypeStandard:
-                if (![[ds _documentLoadState] isClientRedirect]) {
+                if (![[ds _documentLoader] isClientRedirect]) {
                     // Add item to history and BF list
                     NSURL *URL = [ds _URLForHistory];
                     if (URL && ![URL _web_isEmpty]){
@@ -575,7 +575,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
-                ASSERT(![[ds _documentLoadState] isClientRedirect]);
+                ASSERT(![[ds _documentLoader] isClientRedirect]);
                 WebFrame *parentFrame = [self parentFrame];
                 if (parentFrame) {
                     WebHistoryItem *parentItem = [parentFrame->_private currentItem];
@@ -725,7 +725,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 // Called after we send an openURL:... down to WebCore.
 - (void)_opened
 {
-    if ([_private->frameLoader loadType] == WebFrameLoadTypeStandard && [[[self dataSource] _documentLoadState] isClientRedirect]) {
+    if ([_private->frameLoader loadType] == WebFrameLoadTypeStandard && [[[self dataSource] _documentLoader] isClientRedirect]) {
         // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
         // khtml has closed the URL and saved away the form state.
         WebHistoryItem *item = [_private currentItem];
@@ -742,7 +742,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [view setNeedsLayout: YES];
         [view layout];
 
-        NSArray *responses = [[_private->frameLoader documentLoadState] responses];
+        NSArray *responses = [[_private->frameLoader documentLoader] responses];
         NSURLResponse *response;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
@@ -762,7 +762,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         // premature release.
         [[_private currentItem] setHasPageCache:NO];
 
-        [[_private->frameLoader documentLoadState] setPrimaryLoadComplete:YES];
+        [[_private->frameLoader documentLoader] setPrimaryLoadComplete:YES];
         // why only this frame and not parent frames?
         [self _checkLoadCompleteForThisFrame];
     }
@@ -804,7 +804,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                     // must be, to be in this branch of the if? And is it ok to just do 
                     // a full-on stopLoading?
                     [self _stopLoadingSubframes];
-                    [[pd _documentLoadState] stopLoading];
+                    [[pd _documentLoader] stopLoading];
 
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
@@ -1021,7 +1021,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
         // Fake the URL change by updating the data source's request.  This will no longer
         // be necessary if we do the better fix described above.
-        [[_private->frameLoader documentLoadState] replaceRequestURLForAnchorScrollWithURL:itemURL];
+        [[_private->frameLoader documentLoader] replaceRequestURLForAnchorScrollWithURL:itemURL];
         
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didChangeLocationWithinPageForFrame:self];
@@ -1262,7 +1262,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
     _private->quickRedirectComing = NO;
 
-    [[_private->frameLoader documentLoadState] replaceRequestURLForAnchorScrollWithURL:URL];
+    [[_private->frameLoader documentLoader] replaceRequestURLForAnchorScrollWithURL:URL];
     if (!isRedirect && ![self _shouldTreatURLAsSameAsCurrent:URL]) {
         // NB: must happen after _setURL, since we add based on the current request.
         // Must also happen before we openURL and displace the scroll position, since
@@ -1390,7 +1390,7 @@ exit:
 
         // FIXME: What about load types other than Standard and Reload?
 
-        [[oldDataSource _documentLoadState] setTriggeringAction:action];
+        [[oldDataSource _documentLoader] setTriggeringAction:action];
         [_private->frameLoader invalidatePendingPolicyDecisionCallingDefaultAction:YES];
         [_private->frameLoader checkNavigationPolicyForRequest:request
             dataSource:oldDataSource formState:formState
@@ -1402,7 +1402,7 @@ exit:
         if (isRedirect) {
             LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [self name], self, (int)isRedirect);
             _private->quickRedirectComing = NO;
-            [[[self provisionalDataSource] _documentLoadState] setIsClientRedirect:YES];
+            [[[self provisionalDataSource] _documentLoader] setIsClientRedirect:YES];
         } else if (sameURL) {
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
@@ -1598,7 +1598,7 @@ exit:
 - (void)_addChild:(WebFrame *)child
 {
     [[self _bridge] appendChild:[child _bridge]];
-    [[[child dataSource] _documentLoadState] setOverrideEncoding:[[[self dataSource] _documentLoadState] overrideEncoding]];  
+    [[[child dataSource] _documentLoader] setOverrideEncoding:[[[self dataSource] _documentLoader] overrideEncoding]];  
 }
 
 // If we bailed out of a b/f navigation, we might need to set the b/f cursor back to the current
@@ -2093,7 +2093,7 @@ exit:
             && loadType != WebFrameLoadTypeReloadAllowingStaleData
             && loadType != WebFrameLoadTypeSame
             && ![[self dataSource] isLoading]
-            && ![[_private->frameLoader documentLoadState] isStopping]) {
+            && ![[_private->frameLoader documentLoader] isStopping]) {
         if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
             if (![item pageCache]){
                 // Add the items to this page's cache.
@@ -2154,20 +2154,20 @@ exit:
     [_private->frameLoader frameLoadCompleted];
 }
 
-- (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState
+- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
 {
-    return [(WebDocumentLoadStateMac *)loadState dataSource];
+    return [(WebDocumentLoaderMac *)loader dataSource];
 }
 
-- (WebDocumentLoadState *)_createDocumentLoadStateWithRequest:(NSURLRequest *)request
+- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request
 {
-    WebDocumentLoadStateMac *loadState = [[WebDocumentLoadStateMac alloc] initWithRequest:request];
+    WebDocumentLoaderMac *loader = [[WebDocumentLoaderMac alloc] initWithRequest:request];
     
-    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoadState:loadState];
-    [loadState setDataSource:dataSource];
+    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader];
+    [loader setDataSource:dataSource];
     [dataSource release];
 
-    return loadState;
+    return loader;
 }
 
 /*

@@ -478,7 +478,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)setTitle:(NSString *)title
 {
-    [[[_frame _frameLoader] documentLoadState] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
+    [[[_frame _frameLoader] documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
 }
 
 - (void)setStatusText:(NSString *)status
@@ -491,7 +491,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = [[[_frame _frameLoader] documentLoadState] overrideEncoding];
+    NSString *encoding = [[[_frame _frameLoader] documentLoader] overrideEncoding];
     BOOL userChosen = encoding != nil;
     if (encoding == nil) {
         encoding = textEncodingName;

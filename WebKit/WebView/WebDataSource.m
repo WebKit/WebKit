@@ -53,13 +53,13 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import "WebDocumentLoadStateMac.h"
+#import "WebDocumentLoaderMac.h"
 
 @interface WebDataSourcePrivate : NSObject
 {
     @public
     
-    WebDocumentLoadStateMac *loadState;
+    WebDocumentLoaderMac *loader;
    
     id <WebDocumentRepresentation> representation;
     
@@ -75,9 +75,9 @@
 
 - (void)dealloc
 {
-    ASSERT(![loadState isLoading]);
+    ASSERT(![loader isLoading]);
 
-    [loadState release];
+    [loader release];
     
     [representation release];
     [unarchivingState release];
@@ -123,7 +123,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSError *)_mainDocumentError
 {
-    return [_private->loadState mainDocumentError];
+    return [_private->loader mainDocumentError];
 }
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
@@ -285,9 +285,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_loadFromPageCache:(NSDictionary *)pageCache
 {
-    [_private->loadState prepareForLoadStart];
+    [_private->loader prepareForLoadStart];
     _private->loadingFromPageCache = YES;
-    [_private->loadState setCommitted:YES];
+    [_private->loader setCommitted:YES];
     [[self webFrame] _commitProvisionalLoad:pageCache];
 }
 
@@ -298,13 +298,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebFrameBridge *)_bridge
 {
-    ASSERT([_private->loadState isCommitted]);
+    ASSERT([_private->loader isCommitted]);
     return [[self webFrame] _bridge];
 }
 
 - (WebView *)_webView
 {
-    return [[[_private->loadState frameLoader] webFrame] webView];
+    return [[[_private->loader frameLoader] webFrame] webView];
 }
 
 - (BOOL)_isDocumentHTML
@@ -337,9 +337,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-    NSURL *URL = [[_private->loadState originalRequestCopy] URL];
+    NSURL *URL = [[_private->loader originalRequestCopy] URL];
     if ([WebDataProtocol _webIsDataProtocolURL:URL])
-        URL = [[_private->loadState originalRequestCopy] _webDataRequestUnreachableURL];
+        URL = [[_private->loader originalRequestCopy] _webDataRequestUnreachableURL];
     
     return [URL _webkit_canonicalize];
 }
@@ -351,12 +351,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [_private->unarchivingState addArchive:archive];
 }
 
-- (WebDocumentLoadState *)_documentLoadState
+- (WebDocumentLoader *)_documentLoader
 {
-    return _private->loadState;
+    return _private->loader;
 }
 
-- (id)_initWithDocumentLoadState:(WebDocumentLoadStateMac *)loadState
+- (id)_initWithDocumentLoader:(WebDocumentLoaderMac *)loader
 {
     self = [super init];
     if (!self) {
@@ -365,10 +365,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     _private = [[WebDataSourcePrivate alloc] init];
     
-    _private->loadState = [loadState retain];
+    _private->loader = [loader retain];
         
-    LOG(Loading, "creating datasource for %@", [[_private->loadState request] URL]);
-    WKSupportsMultipartXMixedReplace([_private->loadState request]);
+    LOG(Loading, "creating datasource for %@", [[_private->loader request] URL]);
+    WKSupportsMultipartXMixedReplace([_private->loader request]);
     
     ++WebDataSourceCount;
     
@@ -382,12 +382,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 -(id)initWithRequest:(NSURLRequest *)request
 {
-    return [self _initWithDocumentLoadState:[[WebDocumentLoadState alloc] initWithRequest:request]];
+    return [self _initWithDocumentLoader:[[WebDocumentLoader alloc] initWithRequest:request]];
 }
 
 - (void)dealloc
 {
-    ASSERT([[_private->loadState frameLoader] activeDataSource] != self || ![[_private->loadState frameLoader] isLoading]);
+    ASSERT([[_private->loader frameLoader] activeDataSource] != self || ![[_private->loader frameLoader] isLoading]);
 
     --WebDataSourceCount;
     
@@ -405,7 +405,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSData *)data
 {
-    return [_private->loadState mainResourceData];
+    return [_private->loader mainResourceData];
 }
 
 - (id <WebDocumentRepresentation>)representation
@@ -415,30 +415,30 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebFrame *)webFrame
 {
-    return [[_private->loadState frameLoader] webFrame];
+    return [[_private->loader frameLoader] webFrame];
 }
 
 -(NSURLRequest *)initialRequest
 {
-    NSURLRequest *clientRequest = [[_private->loadState originalRequest] _webDataRequestExternalRequest];
+    NSURLRequest *clientRequest = [[_private->loader originalRequest] _webDataRequestExternalRequest];
     if (!clientRequest)
-        clientRequest = [_private->loadState originalRequest];
+        clientRequest = [_private->loader originalRequest];
     return clientRequest;
 }
 
 -(NSMutableURLRequest *)request
 {
-    return [_private->loadState request];
+    return [_private->loader request];
 }
 
 - (NSURLResponse *)response
 {
-    return [_private->loadState response];
+    return [_private->loader response];
 }
 
 - (NSString *)textEncodingName
 {
-    NSString *textEncodingName = [_private->loadState overrideEncoding];
+    NSString *textEncodingName = [_private->loader overrideEncoding];
 
     if (!textEncodingName)
         textEncodingName = [[self response] textEncodingName];
@@ -448,7 +448,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (BOOL)isLoading
 {
-    return [_private->loadState isLoadingInAPISense];
+    return [_private->loader isLoadingInAPISense];
 }
 
 // Returns nil or the page title.
@@ -459,13 +459,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSURL *)unreachableURL
 {
-    return [[_private->loadState originalRequest] _webDataRequestUnreachableURL];
+    return [[_private->loader originalRequest] _webDataRequestUnreachableURL];
 }
 
 - (WebArchive *)webArchive
 {
     // it makes no sense to grab a WebArchive from an uncommitted document.
-    if (![_private->loadState isCommitted])
+    if (![_private->loader isCommitted])
         return nil;
 
     return [WebArchiver archiveFrame:[self webFrame]];

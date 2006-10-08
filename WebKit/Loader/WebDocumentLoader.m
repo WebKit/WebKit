@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDocumentLoadState.h"
+#import "WebDocumentLoader.h"
 
 #import <JavaScriptCore/Assertions.h>
 #import "WebFrameLoader.h"
@@ -35,7 +35,7 @@
 
 #import <WebKitSystemInterface.h>
 
-@implementation WebDocumentLoadState
+@implementation WebDocumentLoader
 
 - (id)initWithRequest:(NSURLRequest *)req
 {
@@ -180,7 +180,7 @@
     [mainDocumentError release];
     mainDocumentError = error;
     
-    [frameLoader documentLoadState:self setMainDocumentError:error];
+    [frameLoader documentLoader:self setMainDocumentError:error];
  }
 
 - (NSError *)mainDocumentError
@@ -202,7 +202,7 @@
     [self setMainDocumentError:error];
     
     if (isComplete) {
-        [frameLoader documentLoadState:self mainReceivedCompleteError:error];
+        [frameLoader documentLoader:self mainReceivedCompleteError:error];
     }
 }
 
@@ -263,7 +263,7 @@
 {
     gotFirstByte = YES;   
     [self commitIfReady];
-    [frameLoader finishedLoadingDocumentLoadState:self];
+    [frameLoader finishedLoadingDocument:self];
     [[self bridge] end];
 }
 
@@ -294,7 +294,7 @@
     [self retain];
     [self commitIfReady];
     
-    [frameLoader committedLoadWithDocumentLoadState:self data:data];
+    [frameLoader committedLoadWithDocumentLoader:self data:data];
 
     [self release];
 }
@@ -320,31 +320,31 @@
     NSString *oldMIMEType = [response MIMEType];
     
     if (![self doesProgressiveLoadWithMIMEType:oldMIMEType]) {
-        [frameLoader revertToProvisionalWithDocumentLoadState:self];
+        [frameLoader revertToProvisionalWithDocumentLoader:self];
         [self setupForReplace];
         [self commitLoadWithData:[self mainResourceData]];
     }
     
-    [frameLoader finishedLoadingDocumentLoadState:self];
+    [frameLoader finishedLoadingDocument:self];
     [[self bridge] end];
     
     [frameLoader setReplacing];
     gotFirstByte = NO;
     
     if ([self doesProgressiveLoadWithMIMEType:newMIMEType]) {
-        [frameLoader revertToProvisionalWithDocumentLoadState:self];
+        [frameLoader revertToProvisionalWithDocumentLoader:self];
         [self setupForReplace];
     }
     
     [frameLoader stopLoadingSubresources];
     [frameLoader stopLoadingPlugIns];
 
-    [frameLoader finalSetupForReplaceWithDocumentLoadState:self];
+    [frameLoader finalSetupForReplaceWithDocumentLoader:self];
 }
 
 - (void)updateLoading
 {
-    ASSERT(self == [frameLoader activeDocumentLoadState]);
+    ASSERT(self == [frameLoader activeDocumentLoader]);
     
     [self setLoading:[frameLoader isLoading]];
 }
@@ -490,10 +490,10 @@
     CFStringTrimWhitespace((CFMutableStringRef)trimmed);
 
     if ([trimmed length] != 0 && ![pageTitle isEqualToString:trimmed]) {
-        [frameLoader willChangeTitleForDocumentLoadState:self];
+        [frameLoader willChangeTitleForDocument:self];
         [pageTitle release];
         pageTitle = [trimmed copy];
-        [frameLoader didChangeTitleForDocumentLoadState:self];
+        [frameLoader didChangeTitleForDocument:self];
     }
 
     [trimmed release];

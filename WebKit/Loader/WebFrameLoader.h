@@ -28,7 +28,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "WebDocumentLoadState.h"
+#import "WebDocumentLoader.h"
 #import "WebFrameLoaderClient.h"
 #import "WebFramePrivate.h"
 
@@ -67,9 +67,9 @@ typedef enum {
     NSMutableArray *plugInStreamLoaders;
     
     WebFrame <WebFrameLoaderClient> *client;
-    WebDocumentLoadState *documentLoadState;
-    WebDocumentLoadState *provisionalDocumentLoadState;
-    WebDocumentLoadState *policyDocumentLoadState;
+    WebDocumentLoader *documentLoader;
+    WebDocumentLoader *provisionalDocumentLoader;
+    WebDocumentLoader *policyDocumentLoader;
         
     WebFrameState state;
     
@@ -120,9 +120,9 @@ typedef enum {
 - (WebDataSource *)provisionalDataSource;
 - (WebDataSource *)policyDataSource;
 - (WebDataSource *)activeDataSource;
-- (WebDocumentLoadState *)activeDocumentLoadState;
-- (WebDocumentLoadState *)documentLoadState;
-- (WebDocumentLoadState *)provisionalDocumentLoadState;
+- (WebDocumentLoader *)activeDocumentLoader;
+- (WebDocumentLoader *)documentLoader;
+- (WebDocumentLoader *)provisionalDocumentLoader;
 - (WebFrameState)state;
 - (void)clearDataSource;
 - (void)setupForReplace;
@@ -186,19 +186,19 @@ typedef enum {
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame;
 - (WebFrameBridge *)bridge;
-- (void)finishedLoadingDocumentLoadState:(WebDocumentLoadState *)loadState;
+- (void)finishedLoadingDocument:(WebDocumentLoader *)loader;
 - (void)commitProvisitionalLoad;
-- (void)committedLoadWithDocumentLoadState:(WebDocumentLoadState *)loadState data:(NSData *)data;
+- (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
 - (BOOL)isReplacing;
 - (void)setReplacing;
-- (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState;
-- (void)documentLoadState:(WebDocumentLoadState *)loadState setMainDocumentError:(NSError *)error;
-- (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error;
-- (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState;
+- (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader;
+- (void)documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error;
+- (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error;
+- (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader;
 - (void)prepareForLoadStart;
 - (BOOL)subframeIsLoading;
-- (void)willChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState;
-- (void)didChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState;
+- (void)willChangeTitleForDocument:(WebDocumentLoader *)loader;
+- (void)didChangeTitleForDocument:(WebDocumentLoader *)loader;
 
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)type;

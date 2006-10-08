@@ -30,7 +30,7 @@
 
 #import "WebDataProtocol.h"
 #import "WebDataSourceInternal.h"
-#import "WebDocumentLoadStateMac.h"
+#import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
@@ -70,25 +70,25 @@
     [mainResourceLoader release];
     [subresourceLoaders release];
     [plugInStreamLoaders release];
-    [documentLoadState release];
-    [provisionalDocumentLoadState release];
+    [documentLoader release];
+    [provisionalDocumentLoader release];
  
-    ASSERT(!policyDocumentLoadState);
+    ASSERT(!policyDocumentLoader);
     
     [super dealloc];
 }
 
-- (WebDocumentLoadState *)activeDocumentLoadState
+- (WebDocumentLoader *)activeDocumentLoader
 {
     if (state == WebFrameStateProvisional)
-        return provisionalDocumentLoadState;
+        return provisionalDocumentLoader;
     
-    return documentLoadState;    
+    return documentLoader;    
 }
 
 - (WebDataSource *)activeDataSource
 {
-    return [client _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
+    return [client _dataSourceForDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
@@ -101,13 +101,13 @@
     if (!plugInStreamLoaders)
         plugInStreamLoaders = [[NSMutableArray alloc] init];
     [plugInStreamLoaders addObject:loader];
-    [[self activeDocumentLoadState] setLoading:YES];
+    [[self activeDocumentLoader] setLoading:YES];
 }
 
 - (void)removePlugInStreamLoader:(WebLoader *)loader
 {
     [plugInStreamLoaders removeObject:loader];
-    [[self activeDocumentLoadState] updateLoading];
+    [[self activeDocumentLoader] updateLoading];
 }    
 
 - (void)defersCallbacksChanged
@@ -172,17 +172,17 @@
 
 - (void)addSubresourceLoader:(WebLoader *)loader
 {
-    ASSERT(!provisionalDocumentLoadState);
+    ASSERT(!provisionalDocumentLoader);
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
-    [[self activeDocumentLoadState] setLoading:YES];
+    [[self activeDocumentLoader] setLoading:YES];
 }
 
 - (void)removeSubresourceLoader:(WebLoader *)loader
 {
     [subresourceLoaders removeObject:loader];
-    [[self activeDocumentLoadState] updateLoading];
+    [[self activeDocumentLoader] updateLoading];
 }
 
 - (NSData *)mainResourceData
@@ -226,77 +226,77 @@
 
 - (WebDataSource *)dataSource
 {
-    return [client _dataSourceForDocumentLoadState:documentLoadState]; 
+    return [client _dataSourceForDocumentLoader:documentLoader]; 
 }
 
-- (void)_setDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)setDocumentLoader:(WebDocumentLoader *)loader
 {
-    if (loadState == nil && documentLoadState == nil)
+    if (loader == nil && documentLoader == nil)
         return;
     
-    ASSERT(loadState != documentLoadState);
+    ASSERT(loader != documentLoader);
     
     [client _prepareForDataSourceReplacement];
-    [documentLoadState detachFromFrameLoader];
+    [documentLoader detachFromFrameLoader];
     
-    [loadState retain];
-    [documentLoadState release];
-    documentLoadState = loadState;
+    [loader retain];
+    [documentLoader release];
+    documentLoader = loader;
 }
 
-- (WebDocumentLoadState *)documentLoadState
+- (WebDocumentLoader *)documentLoader
 {
-    return documentLoadState;
+    return documentLoader;
 }
 
 - (WebDataSource *)policyDataSource
 {
-    return [client _dataSourceForDocumentLoadState:policyDocumentLoadState];     
+    return [client _dataSourceForDocumentLoader:policyDocumentLoader];     
 }
 
-- (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)setPolicyDocumentLoader:(WebDocumentLoader *)loader
 {
-    if (policyDocumentLoadState == loadState)
+    if (policyDocumentLoader == loader)
         return;
 
-    if (policyDocumentLoadState != provisionalDocumentLoadState && policyDocumentLoadState != documentLoadState)
-        [policyDocumentLoadState detachFromFrameLoader];
+    if (policyDocumentLoader != provisionalDocumentLoader && policyDocumentLoader != documentLoader)
+        [policyDocumentLoader detachFromFrameLoader];
 
-    [policyDocumentLoadState release];
-    [loadState retain];
-    policyDocumentLoadState = loadState;
+    [policyDocumentLoader release];
+    [loader retain];
+    policyDocumentLoader = loader;
 }
    
 - (void)clearDataSource
 {
-    [self _setDocumentLoadState:nil];
+    [self setDocumentLoader:nil];
 }
 
 - (WebDataSource *)provisionalDataSource 
 {
-    return [client _dataSourceForDocumentLoadState:provisionalDocumentLoadState]; 
+    return [client _dataSourceForDocumentLoader:provisionalDocumentLoader]; 
 }
 
-- (WebDocumentLoadState *)provisionalDocumentLoadState
+- (WebDocumentLoader *)provisionalDocumentLoader
 {
-    return provisionalDocumentLoadState;
+    return provisionalDocumentLoader;
 }
 
-- (void)_setProvisionalDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)setProvisionalDocumentLoader:(WebDocumentLoader *)loader
 {
-    ASSERT(!loadState || !provisionalDocumentLoadState);
+    ASSERT(!loader || !provisionalDocumentLoader);
 
-    if (provisionalDocumentLoadState != documentLoadState)
-        [provisionalDocumentLoadState detachFromFrameLoader];
+    if (provisionalDocumentLoader != documentLoader)
+        [provisionalDocumentLoader detachFromFrameLoader];
 
-    [loadState retain];
-    [provisionalDocumentLoadState release];
-    provisionalDocumentLoadState = loadState;
+    [loader retain];
+    [provisionalDocumentLoader release];
+    provisionalDocumentLoader = loader;
 }
 
 - (void)_clearProvisionalDataSource
 {
-    [self _setProvisionalDocumentLoadState:nil];
+    [self setProvisionalDocumentLoader:nil];
 }
 
 - (WebFrameState)state
@@ -323,10 +323,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Loading, "%@:  transition from %s to %s", [client name], stateNames[state], stateNames[newState]);
     if ([client webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [client name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoadState] loadingStartedTime]);
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [client name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoader] loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && client == [[client webView] mainFrame])
-        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoadState] loadingStartedTime]);
+        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoader] loadingStartedTime]);
     
     state = newState;
     
@@ -335,13 +335,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     else if (state == WebFrameStateComplete) {
         [client _frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        [[self documentLoadState] stopRecordingResponses];
+        [[self documentLoader] stopRecordingResponses];
     }
 }
 
 - (void)clearProvisionalLoad
 {
-    [self _setProvisionalDocumentLoadState:nil];
+    [self setProvisionalDocumentLoader:nil];
     [[client webView] _progressCompleted:client];
     [self _setState:WebFrameStateComplete];
 }
@@ -356,15 +356,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self stopLoadingSubresources];
     [self stopLoadingPlugIns];
 
-    [self _setDocumentLoadState:provisionalDocumentLoadState];
-    [self _setProvisionalDocumentLoadState:nil];
+    [self setDocumentLoader:provisionalDocumentLoader];
+    [self setProvisionalDocumentLoader:nil];
     [self _setState:WebFrameStateCommittedPage];
 }
 
 - (void)stopLoading
 {
-    [[self provisionalDocumentLoadState] stopLoading];
-    [[self documentLoadState] stopLoading];
+    [[self provisionalDocumentLoader] stopLoading];
+    [[self documentLoader] stopLoading];
     [self _clearProvisionalDataSource];
     [self clearArchivedResources];
 }
@@ -372,7 +372,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // FIXME: poor method name; also why is this not part of startProvisionalLoad:?
 - (void)startLoading
 {
-    [provisionalDocumentLoadState prepareForLoadStart];
+    [provisionalDocumentLoader prepareForLoadStart];
         
     if ([self isLoadingMainResource])
         return;
@@ -382,26 +382,26 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     id identifier;
     id resourceLoadDelegate = [[client webView] resourceLoadDelegate];
     if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-        identifier = [resourceLoadDelegate webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoadState originalRequest] fromDataSource:[self provisionalDataSource]];
+        identifier = [resourceLoadDelegate webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDataSource:[self provisionalDataSource]];
     else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoadState originalRequest] fromDataSource:[self provisionalDataSource]];
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDataSource:[self provisionalDataSource]];
     
-    if (![[provisionalDocumentLoadState frameLoader] startLoadingMainResourceWithRequest:[provisionalDocumentLoadState actualRequest] identifier:identifier])
-        [provisionalDocumentLoadState updateLoading];
+    if (![[provisionalDocumentLoader frameLoader] startLoadingMainResourceWithRequest:[provisionalDocumentLoader actualRequest] identifier:identifier])
+        [provisionalDocumentLoader updateLoading];
 }
 
 - (void)startProvisionalLoad:(WebDataSource *)ds
 {
-    [self _setProvisionalDocumentLoadState:[ds _documentLoadState]];
+    [self setProvisionalDocumentLoader:[ds _documentLoader]];
     [self _setState:WebFrameStateProvisional];
 }
 
 - (void)setupForReplace
 {
     [self _setState:WebFrameStateProvisional];
-    WebDocumentLoadState *old = provisionalDocumentLoadState;
-    provisionalDocumentLoadState = documentLoadState;
-    documentLoadState = nil;
+    WebDocumentLoader *old = provisionalDocumentLoader;
+    provisionalDocumentLoader = documentLoader;
+    documentLoader = nil;
     [old release];
     
     [client _detachChildren];
@@ -456,7 +456,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebView *webView = [client webView];
     
-    [[self activeDocumentLoadState] addResponse:r];
+    [[self activeDocumentLoader] addResponse:r];
     
     [webView _incrementProgressForIdentifier:identifier response:r];
     
@@ -517,7 +517,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSURLRequest *)_originalRequest
 {
-    return [[self activeDocumentLoadState] originalRequestCopy];
+    return [[self activeDocumentLoader] originalRequestCopy];
 }
 
 - (WebFrame *)webFrame
@@ -527,8 +527,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
-    WebDocumentLoadState *loadState = [self activeDocumentLoadState];
-    [loadState retain];
+    WebDocumentLoader *loader = [self activeDocumentLoader];
+    [loader retain];
     
     WebFrameBridge *bridge = [client _bridge];
     
@@ -550,11 +550,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [bridge release];
     
     [cli _receivedMainResourceError:error];
-    [loadState mainReceivedError:error complete:isComplete];
+    [loader mainReceivedError:error complete:isComplete];
 
     [cli release];
 
-    [loadState release];
+    [loader release];
 }
 
 - (NSURLRequest *)initialRequest
@@ -564,12 +564,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_receivedData:(NSData *)data
 {
-    [[self activeDocumentLoadState] receivedData:data];
+    [[self activeDocumentLoader] receivedData:data];
 }
 
 - (void)_setRequest:(NSURLRequest *)request
 {
-    [[self activeDocumentLoadState] setRequest:request];
+    [[self activeDocumentLoader] setRequest:request];
 }
 
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy
@@ -593,22 +593,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (BOOL)_isStopping
 {
-    return [[self activeDocumentLoadState] isStopping];
+    return [[self activeDocumentLoader] isStopping];
 }
 
 - (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
 {
-    [[self activeDocumentLoadState] setupForReplaceByMIMEType:newMIMEType];
+    [[self activeDocumentLoader] setupForReplaceByMIMEType:newMIMEType];
 }
 
 - (void)_setResponse:(NSURLResponse *)response
 {
-    [[self activeDocumentLoadState] setResponse:response];
+    [[self activeDocumentLoader] setResponse:response];
 }
 
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
 {
-    [[self activeDocumentLoadState] mainReceivedError:error complete:isComplete];
+    [[self activeDocumentLoader] mainReceivedError:error complete:isComplete];
 }
 
 - (void)_finishedLoading
@@ -616,14 +616,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebDataSource *ds = [self activeDataSource];
     
     [self retain];
-    [[self activeDocumentLoadState] finishedLoading];
+    [[self activeDocumentLoader] finishedLoading];
 
     if ([ds _mainDocumentError] || ![ds webFrame]) {
         [self release];
         return;
     }
 
-    [[self activeDocumentLoadState] setPrimaryLoadComplete:YES];
+    [[self activeDocumentLoader] setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [client _checkLoadComplete];
@@ -835,7 +835,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [l retain];
 
     [[[client webView] _policyDelegateForwarder] webView:[client webView] decidePolicyForMIMEType:MIMEType
-                                                 request:[[self activeDocumentLoadState] request]
+                                                 request:[[self activeDocumentLoader] request]
                                                    frame:client
                                         decisionListener:listener];
     [l release];
@@ -894,9 +894,9 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 {
     WebFrameLoadType type;
     
-    ASSERT(!policyDocumentLoadState);
-    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    ASSERT(!policyDocumentLoader);
+    policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
 
     NSMutableURLRequest *r = [newDataSource request];
     [client _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
@@ -906,7 +906,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     } else
         type = WebFrameLoadTypeStandard;
     
-    [policyDocumentLoadState setOverrideEncoding:[[self documentLoadState] overrideEncoding]];
+    [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
     [newDataSource _addToUnarchiveState:archive];
     
     // When we loading alternate content for an unreachable URL that we're
@@ -922,12 +922,12 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)type formState:(WebFormState *)formState
 {
-    ASSERT(!policyDocumentLoadState);
-    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    ASSERT(!policyDocumentLoader);
+    policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
 
-    [policyDocumentLoadState setTriggeringAction:action];
-    [policyDocumentLoadState setOverrideEncoding:[[self documentLoadState] overrideEncoding]];
+    [policyDocumentLoader setTriggeringAction:action];
+    [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
 
     [self loadDataSource:newDataSource withLoadType:type formState:formState];
 }
@@ -944,12 +944,12 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
         [request setURL:unreachableURL];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-    ASSERT(!policyDocumentLoadState);
-    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    ASSERT(!policyDocumentLoader);
+    policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
     [request release];
     
-    [policyDocumentLoadState setOverrideEncoding:encoding];
+    [policyDocumentLoader setOverrideEncoding:encoding];
 
     [self loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
 }
@@ -972,9 +972,9 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     if (unreachableURL != nil)
         initialRequest = [NSURLRequest requestWithURL:unreachableURL];
     
-    ASSERT(!policyDocumentLoadState);
-    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:initialRequest];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    ASSERT(!policyDocumentLoader);
+    policyDocumentLoader = [client _createDocumentLoaderWithRequest:initialRequest];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
     NSMutableURLRequest *request = [newDataSource request];
 
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -982,10 +982,10 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     // If we're about to rePOST, set up action so the app can warn the user
     if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
-        [policyDocumentLoadState setTriggeringAction:action];
+        [policyDocumentLoader setTriggeringAction:action];
     }
 
-    [policyDocumentLoadState setOverrideEncoding:[[ds _documentLoadState] overrideEncoding]];
+    [policyDocumentLoader setOverrideEncoding:[[ds _documentLoader] overrideEncoding]];
     
     [self loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
 }
@@ -995,9 +995,9 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [client _didReceiveServerRedirectForProvisionalLoadForFrame];
 }
 
-- (void)finishedLoadingDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)finishedLoadingDocument:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoadState:loadState] _finishedLoading];
+    [[client _dataSourceForDocumentLoader:loader] _finishedLoading];
 }
 
 - (void)commitProvisitionalLoad
@@ -1005,9 +1005,9 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [client _commitProvisionalLoad:nil];
 }
 
-- (void)committedLoadWithDocumentLoadState:(WebDocumentLoadState *)loadState data:(NSData *)data
+- (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data
 {
-    [[client _dataSourceForDocumentLoadState:loadState] _receivedData:data];
+    [[client _dataSourceForDocumentLoader:loader] _receivedData:data];
 }
 
 - (BOOL)isReplacing
@@ -1020,27 +1020,27 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     loadType = WebFrameLoadTypeReplace;
 }
 
-- (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoadState:loadState] _revertToProvisionalState];
+    [[client _dataSourceForDocumentLoader:loader] _revertToProvisionalState];
 }
 
-- (void)documentLoadState:(WebDocumentLoadState *)loadState setMainDocumentError:(NSError *)error
+- (void)documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
 {
-    [[client _dataSourceForDocumentLoadState:loadState] _setMainDocumentError:error];
+    [[client _dataSourceForDocumentLoader:loader] _setMainDocumentError:error];
 }
 
-- (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error
+- (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error
 {
-    [loadState setPrimaryLoadComplete:YES];
+    [loader setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [client _checkLoadComplete];
 }
 
-- (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoadState:loadState] _clearUnarchivingState];
+    [[client _dataSourceForDocumentLoader:loader] _clearUnarchivingState];
 }
 
 - (void)prepareForLoadStart
@@ -1056,31 +1056,31 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     return [client _subframeIsLoading];
 }
 
-- (void)willChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)willChangeTitleForDocument:(WebDocumentLoader *)loader
 {
     // FIXME: should do this only in main frame case, right?
     [[client webView] _willChangeValueForKey:_WebMainFrameTitleKey];
 }
 
-- (void)didChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
+- (void)didChangeTitleForDocument:(WebDocumentLoader *)loader
 {
     // FIXME: should do this only in main frame case, right?
     [[client webView] _didChangeValueForKey:_WebMainFrameTitleKey];
 
     // The title doesn't get communicated to the WebView until we are committed.
-    if ([loadState isCommitted]) {
-        NSURL *URLForHistory = [[client _dataSourceForDocumentLoadState:loadState] _URLForHistory];
+    if ([loader isCommitted]) {
+        NSURL *URLForHistory = [[client _dataSourceForDocumentLoader:loader] _URLForHistory];
         if (URLForHistory != nil) {
             WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
-            [entry setTitle:[loadState title]];
+            [entry setTitle:[loader title]];
         
             // Must update the entries in the back-forward list too.  This must go through the WebFrame because
             // it has the right notion of the current b/f item.
-            [client _setTitle:[loadState title]];
+            [client _setTitle:[loader title]];
         
             [[client webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
             [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                                      didReceiveTitle:[loadState title]
+                                                      didReceiveTitle:[loader title]
                                                              forFrame:client];
         }
     }
@@ -1185,15 +1185,15 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
                                 andCall:(id)target
                            withSelector:(SEL)selector
 {
-    NSDictionary *action = [[dataSource _documentLoadState] triggeringAction];
+    NSDictionary *action = [[dataSource _documentLoader] triggeringAction];
     if (action == nil) {
         action = [client _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
-        [[dataSource _documentLoadState]  setTriggeringAction:action];
+        [[dataSource _documentLoader]  setTriggeringAction:action];
     }
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:[[dataSource _documentLoadState] lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
+    if ([request isEqual:[[dataSource _documentLoader] lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1207,7 +1207,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
         return;
     }
     
-    [[dataSource _documentLoadState] setLastCheckedRequest:request];
+    [[dataSource _documentLoader] setLastCheckedRequest:request];
 
     WebPolicyDecisionListener *decisionListener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterNavigationPolicy:)];
     
@@ -1299,7 +1299,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
         if ([client _quickRedirectComing])
             [client _clientRedirectCancelledOrFinished:NO];
 
-        [self _setPolicyDocumentLoadState:nil];
+        [self setPolicyDocumentLoader:nil];
 
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
@@ -1319,7 +1319,7 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [self startProvisionalLoad:dataSource];
 
     [dataSource release];
-    [self _setPolicyDocumentLoadState:nil];
+    [self setPolicyDocumentLoader:nil];
     
     if (client == [[client webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
@@ -1351,18 +1351,18 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 
     policyLoadType = type;
 
-    WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
+    WebDocumentLoaderMac *loader = (WebDocumentLoaderMac *)[newDataSource _documentLoader];
 
     WebFrame *parentFrame = [client parentFrame];
     if (parentFrame)
-        [loadState setOverrideEncoding:[[[parentFrame dataSource] _documentLoadState] overrideEncoding]];
+        [loader setOverrideEncoding:[[[parentFrame dataSource] _documentLoader] overrideEncoding]];
 
-    [loadState setFrameLoader:self];
-    [loadState setDataSource:newDataSource];
+    [loader setFrameLoader:self];
+    [loader setDataSource:newDataSource];
 
     [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
-    [self _setPolicyDocumentLoadState:loadState];
+    [self setPolicyDocumentLoader:loader];
 
     [self checkNavigationPolicyForRequest:[newDataSource request]
                                dataSource:newDataSource
