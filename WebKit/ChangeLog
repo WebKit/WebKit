@@ -1,3 +1,77 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - move WebFrameLoader creation and ownership from WebFrame to WebFrameBridge
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader stopLoadingSubframes]):
+        (-[WebFrameLoader closeOldDataSources]):
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        (-[WebFrameBridge dealloc]):
+        (-[WebFrameBridge loader]):
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge receivedData:textEncodingName:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameBridge reportClientRedirectCancelled:]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge didFirstLayout]):
+        (-[WebFrameBridge imageTitleForFilename:size:]):
+        (-[WebFrameBridge notifyIconChanged:]):
+        (-[WebFrameBridge originalRequestURL]):
+        (-[WebFrameBridge isLoadTypeReload]):
+        * WebView/WebFrame.m:
+        (-[NSView setWebFrame::]):
+        (-[WebFramePrivate dealloc]):
+        (-[WebFramePrivate setWebFrameView:]):
+        (-[WebFramePrivate setProvisionalItem:]):
+        (-[WebFrame _webDataRequestForData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _setTitle:]):
+        (-[WebFrame _defersCallbacksChanged]):
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _itemForSavingDocState]):
+        (-[WebFrame _itemForRestoringDocState]):
+        (-[WebFrame _saveDocumentAndScrollState]):
+        (-[WebFrame _shouldTreatURLAsSameAsCurrent:]):
+        (-[WebFrame _loadRequest:inFrameNamed:]):
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]):
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _restoreScrollPositionAndViewState]):
+        (-[WebFrame _firstLayoutDone]):
+        (-[WebFrame _loadType]):
+        (-[WebFrame frameView]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame stopLoading]):
+        (-[WebFrame reload]):
+        (-[WebFrame _resetBackForwardList]):
+        (-[WebFrame _invalidateCurrentItemPageCache]):
+        (-[WebFrame _provisionalItemIsTarget]):
+        (-[WebFrame _loadProvisionalItemFromPageCache]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

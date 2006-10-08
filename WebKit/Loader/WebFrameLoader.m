@@ -373,7 +373,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)stopLoadingSubframes
 {
     for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child frameLoader] stopLoading];
+        [[(WebFrameBridge *)child loader] stopLoading];
 }
 
 - (void)stopLoading
@@ -779,7 +779,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // FIXME: is it important for this traversal to be postorder instead of preorder?
     // FIXME: add helpers for postorder traversal?
     for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
+        [[(WebFrameBridge *)child loader] closeOldDataSources];
     
     if (documentLoader)
         [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] willCloseFrame:client];
