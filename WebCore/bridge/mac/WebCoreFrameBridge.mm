@@ -596,10 +596,13 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame->stopLoading();
 }
 
-- (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache
+- (void)didNotOpenURL:(NSURL *)URL
 {
     m_frame->didNotOpenURL(KURL(URL).url());
+}
 
+- (void)invalidatePageCache:(NSDictionary *)pageCache
+{
     // We might have made a page cache item, but now we're bailing out due to an error before we ever
     // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
     // so that the existing view (that wenever got far enough to replace) can continue being used.

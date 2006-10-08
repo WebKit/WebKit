@@ -229,7 +229,8 @@ typedef enum {
 - (void)closeURL;
 - (void)stopLoading;
 
-- (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache;
+- (void)didNotOpenURL:(NSURL *)URL;
+- (void)invalidatePageCache:(NSDictionary *)pageCache;
 
 - (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer;
 - (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame;
