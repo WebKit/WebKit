@@ -6,7 +6,7 @@
           REGRESSION: Assertion failure in WebFrameLoader when going back from a file: or data: URL
 
         Also added a helper function in WebFrameLoader so code that checks for back/forward load types
-        is easier to read.
+        are easier to read.
 
         * Loader/WebFrameLoader.m:
         (-[WebFrameLoader _setPolicyDocumentLoadState:]): Fixed line of code that was setting the load
