@@ -5,7 +5,7 @@
         - fix http://bugs.webkit.org/show_bug.cgi?id=11218
           REGRESSION: Assertion failure in WebFrameLoader when going back from a file: or data: URL
 
-        Also added a helper function in WebFrameLoader so code that checks for back/forward load types
+        Also added a helper function in WebFrameLoader so that checks for back/forward load types
         are easier to read.
 
         * Loader/WebFrameLoader.m:
