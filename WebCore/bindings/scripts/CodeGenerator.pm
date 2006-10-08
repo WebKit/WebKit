@@ -201,7 +201,9 @@ sub ScanDirectory
 
     return if ($endCondition eq 1) and ($reportAllFiles eq 0);
 
-    $thisDir = "$ENV{SOURCE_ROOT}/$directory";
+    my $sourceRoot = $ENV{SOURCE_ROOT} || "";
+    $thisDir = "$sourceRoot/$directory";
+
     opendir(DIR, $thisDir) or die "[ERROR] Can't open directory $thisDir: \"$!\"\n";
 
     my @names = readdir(DIR) or die "[ERROR] Cant't read directory $thisDir \"$!\"\n";
