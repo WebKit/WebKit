@@ -1,5 +1,13 @@
 2006-10-07  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Maciej.
+
+        Remove crossDomain, it was unused and is one of the last functions that use DeprecatedStringList.        
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        
+2006-10-07  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Convert a bunch of RefPtr<StringImpl> to String.

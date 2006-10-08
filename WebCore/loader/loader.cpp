@@ -44,31 +44,6 @@
 
 namespace WebCore {
 
-static bool crossDomain(const DeprecatedString& a, const DeprecatedString& b)
-{
-    if (a == b)
-        return false;
-
-    DeprecatedStringList l1 = DeprecatedStringList::split('.', a);
-    DeprecatedStringList l2 = DeprecatedStringList::split('.', b);
-
-    while (l1.count() > l2.count())
-        l1.pop_front();
-
-    while (l2.count() > l1.count())
-        l2.pop_front();
-
-    while (l2.count() >= 2) {
-        if (l1 == l2)
-            return false;
-
-        l1.pop_front();
-        l2.pop_front();
-    }
-
-    return true;
-}
-
 Loader::Loader()
 {
     m_requestsPending.setAutoDelete(true);
@@ -107,8 +82,6 @@ void Loader::servePendingRequests()
         DeprecatedString domain = r.host();
         if (req->docLoader()->doc()->isHTMLDocument())
             domain = static_cast<HTMLDocument*>(req->docLoader()->doc())->domain().deprecatedString();
-        if (crossDomain(u.host(), domain))
-            loader->addMetaData("cross-domain", "true");
     }
 
     if (loader->start(req->docLoader()))
