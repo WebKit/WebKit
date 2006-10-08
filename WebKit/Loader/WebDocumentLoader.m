@@ -255,7 +255,7 @@
 {
     if (gotFirstByte && !committed) {
         committed = YES;
-        [frameLoader commitProvisitionalLoad];
+        [frameLoader commitProvisionalLoad:nil];
     }
 }
 

@@ -476,9 +476,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return dataSource;
 }
 
+- (WebFrameLoader *)frameLoader
+{
+    return [_frame _frameLoader];
+}
+
 - (void)setTitle:(NSString *)title
 {
-    [[[_frame _frameLoader] documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
+    [[[self frameLoader] documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
 }
 
 - (void)setStatusText:(NSString *)status
@@ -648,12 +653,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    [_frame _clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
+    [[self frameLoader] clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
 }
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [_frame _clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
+    [[self frameLoader] clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
 }
 
 - (void)close
@@ -710,7 +715,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         loadType = WebFrameLoadTypeInternal;
     else
         loadType = WebFrameLoadTypeStandard;
-    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
+    [[self frameLoader] loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
         [[targetFrame _bridge] activateWindow];

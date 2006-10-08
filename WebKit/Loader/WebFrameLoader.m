@@ -319,6 +319,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _timeOfLastCompletedLoad;
 }
 
+- (void)provisionalLoadStarted
+{
+    firstLayoutDone = NO;
+    [[client _bridge] provisionalLoadStarted];
+
+    [client _provisionalLoadStarted];
+}
+
 - (void)_setState:(WebFrameState)newState
 {
     LOG(Loading, "%@:  transition from %s to %s", [client name], stateNames[state], stateNames[newState]);
@@ -331,9 +339,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     state = newState;
     
     if (state == WebFrameStateProvisional)
-        [client _provisionalLoadStarted];
+        [self provisionalLoadStarted];
     else if (state == WebFrameStateComplete) {
         [client _frameLoadCompleted];
+        [self frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
         [[self documentLoader] stopRecordingResponses];
     }
@@ -361,12 +370,29 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _setState:WebFrameStateCommittedPage];
 }
 
+- (void)stopLoadingSubframes
+{
+    for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
+        [[(WebFrameBridge *)child frameLoader] stopLoading];
+}
+
 - (void)stopLoading
 {
-    [[self provisionalDocumentLoader] stopLoading];
-    [[self documentLoader] stopLoading];
+    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
+    if (isStoppingLoad)
+        return;
+    
+    isStoppingLoad = YES;
+    
+    [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+    
+    [self stopLoadingSubframes];
+    [provisionalDocumentLoader stopLoading];
+    [documentLoader stopLoading];
     [self _clearProvisionalDataSource];
     [self clearArchivedResources];
+
+    isStoppingLoad = NO;    
 }
 
 // FIXME: poor method name; also why is this not part of startProvisionalLoad:?
@@ -386,7 +412,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDataSource:[self provisionalDataSource]];
     
-    if (![[provisionalDocumentLoader frameLoader] startLoadingMainResourceWithRequest:[provisionalDocumentLoader actualRequest] identifier:identifier])
+    if (![self startLoadingMainResourceWithRequest:[provisionalDocumentLoader actualRequest] identifier:identifier])
         [provisionalDocumentLoader updateLoading];
 }
 
@@ -547,14 +573,260 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [bridge handleFallbackContent];
     }
     
-    [bridge release];
+    if ([self state] == WebFrameStateProvisional) {
+        NSURL *failedURL = [[provisionalDocumentLoader originalRequestCopy] URL];
+        [bridge didNotOpenURL:failedURL];
+        [client _invalidateCurrentItemPageCache];
+        
+        // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
+        // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
+        // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are definitely
+        // not going to use this provisional resource, as it was cancelled, notify the frame load delegate that the redirect
+        // has ended.
+        if (sentRedirectNotification)
+            [self clientRedirectCancelledOrFinished:NO];
+    }
     
-    [cli _receivedMainResourceError:error];
+    
     [loader mainReceivedError:error complete:isComplete];
 
+    [bridge release];
     [cli release];
-
     [loader release];
+}
+
+- (void)clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress
+{
+    // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
+    // the redirect succeeded.  We should either rename this API, or add a new method, like
+    // -webView:didFinishClientRedirectForFrame:
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                            didCancelClientRedirectForFrame:client];
+    if (!cancelWithLoadInProgress)
+        quickRedirectComing = NO;
+    
+    sentRedirectNotification = NO;
+    
+    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
+}
+
+- (void)clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
+{
+    LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [client name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
+    
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                             willPerformClientRedirectToURL:URL
+                                                      delay:seconds
+                                                   fireDate:date
+                                                   forFrame:client];
+    
+    // Remember that we sent a redirect notification to the frame load delegate so that when we commit
+    // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
+    sentRedirectNotification = YES;
+    
+    // If a "quick" redirect comes in an, we set a special mode so we treat the next
+    // load as part of the same navigation.
+    
+    if (!documentLoader || isJavaScriptFormAction) {
+        // If we don't have a dataSource, we have no "original" load on which to base a redirect,
+        // so we better just treat the redirect as a normal load.
+        quickRedirectComing = NO;
+        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
+    } else {
+        quickRedirectComing = lockHistory;
+        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
+    }
+}
+
+- (BOOL)shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
+{
+    return !(([currentURL fragment] || [destinationURL fragment]) &&
+             [[currentURL _webkit_URLByRemovingFragment] isEqual:[destinationURL _webkit_URLByRemovingFragment]]);
+}
+
+// main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)_loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+{
+    BOOL isFormSubmission = (values != nil);
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"Referer"];
+    [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
+    if (_loadType == WebFrameLoadTypeReload) {
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    }
+    
+    // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
+    // policy of LoadFromOrigin, but I didn't test that.
+    ASSERT(_loadType != WebFrameLoadTypeSame);
+    
+    NSDictionary *action = [client _actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
+    WebFormState *formState = nil;
+    if (form && values)
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
+    
+    if (target != nil) {
+        WebFrame *targetFrame = [client findFrameNamed:target];
+        if (targetFrame != nil) {
+            [[targetFrame _frameLoader] loadURL:URL referrer:referrer loadType:_loadType target:nil triggeringEvent:event form:form formValues:values];
+        } else {
+            [self checkNewWindowPolicyForRequest:request
+                                          action:action
+                                       frameName:target
+                                       formState:formState
+                                         andCall:self
+                                    withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+        }
+        [request release];
+        [formState release];
+        return;
+    }
+    
+    WebDataSource *oldDataSource = [[self dataSource] retain];
+    
+    BOOL sameURL = [client _shouldTreatURLAsSameAsCurrent:URL];
+    
+    // Make sure to do scroll to anchor processing even if the URL is
+    // exactly the same so pages with '#' links and DHTML side effects
+    // work properly.
+    if (!isFormSubmission
+        && _loadType != WebFrameLoadTypeReload
+        && _loadType != WebFrameLoadTypeSame
+        && ![self shouldReloadForCurrent:URL andDestination:[[client _bridge] URL]]
+        
+        // We don't want to just scroll if a link from within a
+        // frameset is trying to reload the frameset into _top.
+        && ![[client _bridge] isFrameSet]) {
+        
+        // Just do anchor navigation within the existing content.
+        
+        // We don't do this if we are submitting a form, explicitly reloading,
+        // currently displaying a frameset, or if the new URL does not have a fragment.
+        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
+        
+        // FIXME: What about load types other than Standard and Reload?
+        
+        [[oldDataSource _documentLoader] setTriggeringAction:action];
+        [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+        [self checkNavigationPolicyForRequest:request
+                                                    dataSource:oldDataSource formState:formState
+                                                       andCall:self withSelector:@selector(continueFragmentScrollAfterNavigationPolicy:formState:)];
+    } else {
+        // must grab this now, since this load may stop the previous load and clear this flag
+        BOOL isRedirect = quickRedirectComing;
+        [self _loadRequest:request triggeringAction:action loadType:_loadType formState:formState];
+        if (isRedirect) {
+            LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [client name], self, (int)isRedirect);
+            quickRedirectComing = NO;
+            [provisionalDocumentLoader setIsClientRedirect:YES];
+        } else if (sameURL) {
+            // Example of this case are sites that reload the same URL with a different cookie
+            // driving the generated content, or a master frame with links that drive a target
+            // frame, where the user has clicked on the same link repeatedly.
+            [self setLoadType:WebFrameLoadTypeSame];
+        }            
+    }
+    
+    [request release];
+    [oldDataSource release];
+    [formState release];
+}
+
+-(void)continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
+{
+    if (!request)
+        return;
+    
+    NSURL *URL = [request URL];
+    
+    BOOL isRedirect = quickRedirectComing;
+    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
+    quickRedirectComing = NO;
+    
+    [documentLoader replaceRequestURLForAnchorScrollWithURL:URL];
+    if (!isRedirect && ![client _shouldTreatURLAsSameAsCurrent:URL]) {
+        // NB: must happen after _setURL, since we add based on the current request.
+        // Must also happen before we openURL and displace the scroll position, since
+        // adding the BF item will save away scroll state.
+        
+        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
+        // it was done, currItem is now set the that slow doc, and prevItem is whatever was
+        // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
+        // though its load is not yet done.  I think this all works out OK, for one because
+        // we have already saved away the scroll and doc state for the long slow load,
+        // but it's not an obvious case.
+
+        [client _addHistoryItemForFragmentScroll];
+    }
+    
+    [[client _bridge] scrollToAnchorWithURL:URL];
+    
+    if (!isRedirect) {
+        // This will clear previousItem from the rest of the frame tree tree that didn't
+        // doing any loading.  We need to make a pass on this now, since for anchor nav
+        // we'll not go through a real load and reach Completed state
+        [client _checkLoadComplete];
+    }
+    
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                        didChangeLocationWithinPageForFrame:client];
+
+    [client _didFinishLoad];
+}
+
+- (void)closeOldDataSources
+{
+    // FIXME: is it important for this traversal to be postorder instead of preorder?
+    // FIXME: add helpers for postorder traversal?
+    for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
+        [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
+    
+    if (documentLoader)
+        [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] willCloseFrame:client];
+    [[client webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
+}
+
+- (void)commitProvisionalLoad:(NSDictionary *)pageCache
+{
+    bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
+    
+    WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
+    NSURLResponse *response = [provisionalDataSource response];
+    
+    NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
+        ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
+    
+    if (loadType != WebFrameLoadTypeReplace)
+        [self closeOldDataSources];
+    
+    if (!pageCache)
+        [provisionalDataSource _makeRepresentation];
+    
+    [client _transitionToCommitted:pageCache];
+    
+    // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
+    // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
+    // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
+    // just about to commit a new page, there cannot possibly be a pending redirect at this point.
+    if (sentRedirectNotification)
+        [self clientRedirectCancelledOrFinished:NO];
+    
+    NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
+    NSURL *URL = baseURL ? baseURL : [response URL];
+    
+    if (!URL || [URL _web_isEmpty])
+        URL = [NSURL URLWithString:@"about:blank"];    
+    
+    [[client _bridge] openURL:URL
+                     reload:reload 
+                contentType:[response MIMEType]
+                    refresh:[headers objectForKey:@"Refresh"]
+               lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(response))
+                  pageCache:pageCache];
+    
+    [client _opened];
+    
+    [provisionalDataSource release];
 }
 
 - (NSURLRequest *)initialRequest
@@ -1000,11 +1272,6 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [[client _dataSourceForDocumentLoader:loader] _finishedLoading];
 }
 
-- (void)commitProvisitionalLoad
-{
-    [client _commitProvisionalLoad:nil];
-}
-
 - (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data
 {
     [[client _dataSourceForDocumentLoader:loader] _receivedData:data];
@@ -1296,8 +1563,8 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
         // need to report that the client redirect was cancelled.
-        if ([client _quickRedirectComing])
-            [client _clientRedirectCancelledOrFinished:NO];
+        if (quickRedirectComing)
+            [self clientRedirectCancelledOrFinished:NO];
 
         [self setPolicyDocumentLoader:nil];
 
@@ -1403,11 +1670,6 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:client];
 }
 
-- (void)provisionalLoadStarted
-{
-    firstLayoutDone = NO;
-}
-
 - (void)frameLoadCompleted
 {
     // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
@@ -1418,6 +1680,11 @@ static inline BOOL isBackForwardLoadType(WebFrameLoadType type)
 - (BOOL)firstLayoutDone
 {
     return firstLayoutDone;
+}
+
+- (BOOL)isQuickRedirectComing
+{
+    return quickRedirectComing;
 }
 
 @end

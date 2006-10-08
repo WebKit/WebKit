@@ -113,7 +113,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
-- (void)_stopLoadingSubframes;
 @end
 
 @interface WebFrame (FrameTraversal)
@@ -149,12 +148,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     NSMutableSet *plugInViews;
     NSMutableSet *inspectors;
-    
-    // things below here should be moved
-
-    BOOL quickRedirectComing;
-    BOOL sentRedirectNotification;
-    BOOL isStoppingLoad;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -284,6 +277,16 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
+- (void)_addHistoryItemForFragmentScroll
+{
+    [self _addBackForwardItemClippedAtTarget:NO];
+}
+
+- (void)_didFinishLoad
+{
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];    
+}
+
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal
 {
     WebDataSource *dataSrc = [self dataSource];
@@ -371,18 +374,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [child _detachFromParent];
 }
 
-- (void)_closeOldDataSources
-{
-    // FIXME: is it important for this traversal to be postorder instead of preorder?
-    // FIXME: add helpers for postorder traversal?
-    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
-        [child _closeOldDataSources];
-
-    if ([_private->frameLoader dataSource])
-        [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] willCloseFrame:self];
-    [[self webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
-}
-
 - (void)_detachFromParent
 {
     WebFrameBridge *bridge = [_private->bridge retain];
@@ -427,26 +418,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
     [documentView setDataSource:[_private->frameLoader dataSource]];
-}
-
-- (void)_receivedMainResourceError:(NSError *)error
-{
-    if ([_private->frameLoader state] == WebFrameStateProvisional) {
-        NSURL *failedURL = [[[_private->frameLoader provisionalDocumentLoader] originalRequestCopy] URL];
-        // When we are pre-commit, the currentItem is where the pageCache data resides
-        NSDictionary *pageCache = [[_private currentItem] pageCache];
-        [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
-        // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
-        [[_private currentItem] setHasPageCache:NO];
-        
-        // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
-        // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
-        // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are definitely
-        // not going to use this provisional resource, as it was cancelled, notify the frame load delegate that the redirect
-        // has ended.
-        if (_private->sentRedirectNotification)
-            [self _clientRedirectCancelledOrFinished:NO];
-    }
 }
 
 - (void)_transitionToCommitted:(NSDictionary *)pageCache
@@ -623,50 +594,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (void)_commitProvisionalLoad:(NSDictionary *)pageCache
-{
-    WebFrameLoadType loadType = [_private->frameLoader loadType];
-    bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
-    
-    WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
-    NSURLResponse *response = [provisionalDataSource response];
-
-    NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
-        ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
-    
-    if (loadType != WebFrameLoadTypeReplace)
-        [self _closeOldDataSources];
-    
-    if (!pageCache)
-        [provisionalDataSource _makeRepresentation];
-    
-    [self _transitionToCommitted:pageCache];
-
-    // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
-    // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
-    // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
-    // just about to commit a new page, there cannot possibly be a pending redirect at this point.
-    if (_private->sentRedirectNotification)
-        [self _clientRedirectCancelledOrFinished:NO];
-    
-    NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
-    NSURL *URL = baseURL ? baseURL : [response URL];
-
-    if (!URL || [URL _web_isEmpty])
-        URL = [NSURL URLWithString:@"about:blank"];    
-
-    [[self _bridge] openURL:URL
-                    reload:reload 
-                    contentType:[response MIMEType]
-                    refresh:[headers objectForKey:@"Refresh"]
-                    lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(response))
-                    pageCache:pageCache];
-    
-    [self _opened];
-
-    [provisionalDataSource release];
-}
-
 - (BOOL)_canCachePage
 {
     return [[[self webView] backForwardList] _usesPageCache];
@@ -720,6 +647,50 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [pageCache setObject:[[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
     }
     return YES;
+}
+
+- (void)_provisionalLoadStarted
+{
+    WebFrameLoadType loadType = [_private->frameLoader loadType];
+    
+    // FIXME: This is OK as long as no one resizes the window,
+    // but in the case where someone does, it means garbage outside
+    // the occupied part of the scroll view.
+    [[[self frameView] _scrollView] setDrawsBackground:NO];
+    
+    // Cache the page, if possible.
+    // Don't write to the cache if in the middle of a redirect, since we will want to
+    // store the final page we end up on.
+    // No point writing to the cache on a reload or loadSame, since we will just write
+    // over it again when we leave that page.
+    WebHistoryItem *item = [_private currentItem];
+    if ([self _canCachePage]
+        && [_private->bridge canCachePage]
+        && item
+        && ![_private->frameLoader isQuickRedirectComing]
+        && loadType != WebFrameLoadTypeReload 
+        && loadType != WebFrameLoadTypeReloadAllowingStaleData
+        && loadType != WebFrameLoadTypeSame
+        && ![[self dataSource] isLoading]
+        && ![[_private->frameLoader documentLoader] isStopping]) {
+        if ([[[self dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]]) {
+            if (![item pageCache]){
+                // Add the items to this page's cache.
+                if ([self _createPageCacheForItem:item]) {
+                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+                    
+                    // See if any page caches need to be purged after the addition of this
+                    // new page cache.
+                    [self _purgePageCache];
+                }
+                else
+                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+            }
+        } else
+            // Put the document into a null state, so it can be restored correctly.
+            [_private->bridge clear];
+    } else
+        LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }
 
 // Called after we send an openURL:... down to WebCore.
@@ -803,7 +774,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                     // any effect, if isLoading is false, which it
                     // must be, to be in this branch of the if? And is it ok to just do 
                     // a full-on stopLoading?
-                    [self _stopLoadingSubframes];
+                    [_private->frameLoader stopLoadingSubframes];
                     [[pd _documentLoader] stopLoading];
 
                     // Finish resetting the load state, but only if another load hasn't been started by the
@@ -954,12 +925,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return YES; // found matches for all itemTargets
 }
 
-- (BOOL)_shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
-{
-    return !(([currentURL fragment] || [destinationURL fragment]) &&
-    [[currentURL _webkit_URLByRemovingFragment] isEqual: [destinationURL _webkit_URLByRemovingFragment]]);
-}
-
 // Walk the frame tree and ensure that the URLs match the URLs in the item.
 - (BOOL)_URLsMatchItem:(WebHistoryItem *)item
 {
@@ -998,7 +963,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     
     // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
     // Perhaps they should.
-    if (!formData && ![self _shouldReloadForCurrent:itemURL andDestination:currentURL] && [self _URLsMatchItem:item] )
+    if (!formData && ![_private->frameLoader shouldReloadForCurrent:itemURL andDestination:currentURL] && [self _URLsMatchItem:item] )
     {
 #if 0
         // FIXME:  We need to normalize the code paths for anchor navigation.  Something
@@ -1250,47 +1215,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return [self _actionInformationForNavigationType:navType event:event originalURL:URL];
 }
 
--(void)_continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
-{
-    if (!request) {
-        return;
-    }
-
-    NSURL *URL = [request URL];
-
-    BOOL isRedirect = _private->quickRedirectComing;
-    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
-    _private->quickRedirectComing = NO;
-
-    [[_private->frameLoader documentLoader] replaceRequestURLForAnchorScrollWithURL:URL];
-    if (!isRedirect && ![self _shouldTreatURLAsSameAsCurrent:URL]) {
-        // NB: must happen after _setURL, since we add based on the current request.
-        // Must also happen before we openURL and displace the scroll position, since
-        // adding the BF item will save away scroll state.
-
-        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
-        // it was done, currItem is now set the that slow doc, and prevItem is whatever was
-        // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
-        // though its load is not yet done.  I think this all works out OK, for one because
-        // we have already saved away the scroll and doc state for the long slow load,
-        // but it's not an obvious case.
-        [self _addBackForwardItemClippedAtTarget:NO];
-    }
-
-    [_private->bridge scrollToAnchorWithURL:URL];
-    
-    if (!isRedirect) {
-        // This will clear previousItem from the rest of the frame tree tree that didn't
-        // doing any loading.  We need to make a pass on this now, since for anchor nav
-        // we'll not go through a real load and reach Completed state
-        [self _checkLoadComplete];
-    }
-
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
-                      didChangeLocationWithinPageForFrame:self];
-    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
-}
-
 - (void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
 {
     if (!request)
@@ -1325,95 +1249,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 exit:
     [self release];
-}
-
-// main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
-{
-    BOOL isFormSubmission = (values != nil);
-
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request _web_setHTTPReferrer:referrer];
-    [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
-    if (loadType == WebFrameLoadTypeReload) {
-        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-    }
-
-    // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
-    // policy of LoadFromOrigin, but I didn't test that.
-    ASSERT(loadType != WebFrameLoadTypeSame);
-
-    NSDictionary *action = [self _actionInformationForLoadType:loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
-    WebFormState *formState = nil;
-    if (form && values) {
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:self];
-    }
-
-    if (target != nil) {
-        WebFrame *targetFrame = [self findFrameNamed:target];
-        if (targetFrame != nil) {
-            [targetFrame _loadURL:URL referrer:referrer loadType:loadType target:nil triggeringEvent:event form:form formValues:values];
-        } else {
-            [_private->frameLoader checkNewWindowPolicyForRequest:request
-                                    action:action
-                                 frameName:target
-                                 formState:formState
-                                   andCall:self
-                              withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
-        }
-        [request release];
-        [formState release];
-        return;
-    }
-
-    WebDataSource *oldDataSource = [[self dataSource] retain];
-
-    BOOL sameURL = [self _shouldTreatURLAsSameAsCurrent:URL];
-
-    // Make sure to do scroll to anchor processing even if the URL is
-    // exactly the same so pages with '#' links and DHTML side effects
-    // work properly.
-    if (!isFormSubmission
-        && loadType != WebFrameLoadTypeReload
-        && loadType != WebFrameLoadTypeSame
-        && ![self _shouldReloadForCurrent:URL andDestination:[_private->bridge URL]]
-
-        // We don't want to just scroll if a link from within a
-        // frameset is trying to reload the frameset into _top.
-        && ![_private->bridge isFrameSet]) {
-        
-        // Just do anchor navigation within the existing content.
-        
-        // We don't do this if we are submitting a form, explicitly reloading,
-        // currently displaying a frameset, or if the new URL does not have a fragment.
-        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
-
-        // FIXME: What about load types other than Standard and Reload?
-
-        [[oldDataSource _documentLoader] setTriggeringAction:action];
-        [_private->frameLoader invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-        [_private->frameLoader checkNavigationPolicyForRequest:request
-            dataSource:oldDataSource formState:formState
-            andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:formState:)];
-    } else {
-        // must grab this now, since this load may stop the previous load and clear this flag
-        BOOL isRedirect = _private->quickRedirectComing;
-        [_private->frameLoader _loadRequest:request triggeringAction:action loadType:loadType formState:formState];
-        if (isRedirect) {
-            LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [self name], self, (int)isRedirect);
-            _private->quickRedirectComing = NO;
-            [[[self provisionalDataSource] _documentLoader] setIsClientRedirect:YES];
-        } else if (sameURL) {
-            // Example of this case are sites that reload the same URL with a different cookie
-            // driving the generated content, or a master frame with links that drive a target
-            // frame, where the user has clicked on the same link repeatedly.
-            [_private->frameLoader setLoadType:WebFrameLoadTypeSame];
-        }            
-    }
-
-    [request release];
-    [oldDataSource release];
-    [formState release];
 }
 
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame
@@ -1460,7 +1295,7 @@ exit:
     if (archive) {
         [childFrame loadArchive:archive];
     } else {
-        [childFrame _loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
+        [[childFrame _frameLoader] loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
     }
 }
 
@@ -1503,49 +1338,6 @@ exit:
 
     [request release];
     [formState release];
-}
-
-- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
-{
-    LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [self name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
-
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
-                                willPerformClientRedirectToURL:URL
-                                                         delay:seconds
-                                                      fireDate:date
-                                                      forFrame:self];
-                                                      
-    // Remember that we sent a redirect notification to the frame load delegate so that when we commit
-    // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
-    _private->sentRedirectNotification = YES;
-    
-    // If a "quick" redirect comes in an, we set a special mode so we treat the next
-    // load as part of the same navigation.
-
-    if (![self dataSource] || isJavaScriptFormAction) {
-        // If we don't have a dataSource, we have no "original" load on which to base a redirect,
-        // so we better just treat the redirect as a normal load.
-        _private->quickRedirectComing = NO;
-        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
-    } else {
-        _private->quickRedirectComing = lockHistory;
-        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
-    }
-}
-
-- (void)_clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress
-{
-    // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
-    // the redirect succeeded.  We should either rename this API, or add a new method, like
-    // -webView:didFinishClientRedirectForFrame:
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
-                               didCancelClientRedirectForFrame:self];
-    if (!cancelWithLoadInProgress)
-        _private->quickRedirectComing = NO;
-        
-    _private->sentRedirectNotification = NO;
-    
-    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
 }
 
 - (void)_setTitle:(NSString *)title
@@ -1982,12 +1774,6 @@ exit:
     ASSERT([[[self webView] mainFrame] _atMostOneFrameHasSelection]);
 }
 
-- (void)_stopLoadingSubframes
-{
-    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
-        [child stopLoading];
-}
-
 - (BOOL)_subframeIsLoading
 {
     // It's most likely that the last added frame is the last to load so we walk backwards.
@@ -2068,52 +1854,6 @@ exit:
     return _private->frameLoader;
 }
 
-- (void)_provisionalLoadStarted
-{
-    [_private->frameLoader provisionalLoadStarted];
-    [_private->bridge provisionalLoadStarted];
-    
-    // FIXME: This is OK as long as no one resizes the window,
-    // but in the case where someone does, it means garbage outside
-    // the occupied part of the scroll view.
-    [[[self frameView] _scrollView] setDrawsBackground:NO];
-    
-    // Cache the page, if possible.
-    // Don't write to the cache if in the middle of a redirect, since we will want to
-    // store the final page we end up on.
-    // No point writing to the cache on a reload or loadSame, since we will just write
-    // over it again when we leave that page.
-    WebHistoryItem *item = [_private currentItem];
-    WebFrameLoadType loadType = [_private->frameLoader loadType];
-    if ([self _canCachePage]
-            && [_private->bridge canCachePage]
-            && item
-            && !_private->quickRedirectComing
-            && loadType != WebFrameLoadTypeReload 
-            && loadType != WebFrameLoadTypeReloadAllowingStaleData
-            && loadType != WebFrameLoadTypeSame
-            && ![[self dataSource] isLoading]
-            && ![[_private->frameLoader documentLoader] isStopping]) {
-        if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
-            if (![item pageCache]){
-                // Add the items to this page's cache.
-                if ([self _createPageCacheForItem:item]) {
-                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
-                    
-                    // See if any page caches need to be purged after the addition of this
-                    // new page cache.
-                    [self _purgePageCache];
-                }
-                else
-                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
-            }
-        } else
-            // Put the document into a null state, so it can be restored correctly.
-            [_private->bridge clear];
-    } else
-        LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
-}
-
 - (void)_prepareForDataSourceReplacement
 {
     if (![_private->frameLoader dataSource]) {
@@ -2151,7 +1891,6 @@ exit:
     if ([[self webView] drawsBackground])
         [sv setDrawsBackground:YES];
     [_private setPreviousItem:nil];
-    [_private->frameLoader frameLoadCompleted];
 }
 
 - (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
@@ -2397,18 +2136,7 @@ exit:
 
 - (void)stopLoading
 {
-    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
-    if (_private->isStoppingLoad)
-        return;
-
-    _private->isStoppingLoad = YES;
-    
-    [_private->frameLoader invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-
-    [self _stopLoadingSubframes];
     [_private->frameLoader stopLoading];
-
-    _private->isStoppingLoad = NO;
 }
 
 - (void)reload
@@ -2449,9 +2177,15 @@ exit:
         [[[self webView] backForwardList] goToItem:resetItem];
 }
 
-- (BOOL)_quickRedirectComing
+- (void)_invalidateCurrentItemPageCache
 {
-    return _private->quickRedirectComing;
+    // When we are pre-commit, the currentItem is where the pageCache data resides
+    NSDictionary *pageCache = [[_private currentItem] pageCache];
+
+    [[self _bridge] invalidatePageCache:pageCache];
+    
+    // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
+    [[_private currentItem] setHasPageCache:NO];
 }
 
 - (BOOL)_provisionalItemIsTarget

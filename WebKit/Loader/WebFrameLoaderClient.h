@@ -31,9 +31,9 @@
 @protocol WebFrameLoaderClient
 
 - (void)_resetBackForwardList;
-- (BOOL)_quickRedirectComing;
 
 - (BOOL)_provisionalItemIsTarget;
 - (BOOL)_loadProvisionalItemFromPageCache;
+- (void)_invalidateCurrentItemPageCache;
 
 @end

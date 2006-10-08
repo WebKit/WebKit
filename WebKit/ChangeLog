@@ -1,3 +1,51 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - move remaining movable data fields from WebFrameLoader to WebFrame
+
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState commitIfReady]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader provisionalLoadStarted]):
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader stopLoadingSubframes]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader clientRedirectCancelledOrFinished:]):
+        (-[WebFrameLoader clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameLoader shouldReloadForCurrent:andDestination:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader isQuickRedirectComing]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge frameLoader]):
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameBridge reportClientRedirectCancelled:]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _loadFromPageCache:]):
+        * WebView/WebFrame.m:
+        (-[NSView setWebFrame::]):
+        (-[WebFrame _addHistoryItemForFragmentScroll]):
+        (-[WebFrame _didFinishLoad]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _frameLoadCompleted]):
+        (-[WebFrame stopLoading]):
+        (-[WebFrame _invalidateCurrentItemPageCache]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.

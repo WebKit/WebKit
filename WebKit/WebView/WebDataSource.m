@@ -288,7 +288,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [_private->loader prepareForLoadStart];
     _private->loadingFromPageCache = YES;
     [_private->loader setCommitted:YES];
-    [[self webFrame] _commitProvisionalLoad:pageCache];
+    [[_private->loader frameLoader] commitProvisionalLoad:pageCache];
 }
 
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName

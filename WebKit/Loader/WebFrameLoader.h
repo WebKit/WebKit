@@ -41,6 +41,7 @@
 @class WebResource;
 @class WebFrame;
 @class WebPolicyDecisionListener;
+@class DOMElement;
 
 typedef enum {
     WebFrameStateProvisional,
@@ -92,6 +93,9 @@ typedef enum {
     BOOL delegateIsHandlingUnimplementablePolicy;
 
     BOOL firstLayoutDone;
+    BOOL quickRedirectComing;
+    BOOL sentRedirectNotification;
+    BOOL isStoppingLoad;    
 }
 
 - (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)wf;
@@ -112,6 +116,7 @@ typedef enum {
 - (void)stopLoadingWithError:(NSError *)error;
 - (void)clearProvisionalLoad;
 - (void)stopLoading;
+- (void)stopLoadingSubframes;
 - (void)markLoadComplete;
 - (void)commitProvisionalLoad;
 - (void)startLoading;
@@ -187,7 +192,6 @@ typedef enum {
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame;
 - (WebFrameBridge *)bridge;
 - (void)finishedLoadingDocument:(WebDocumentLoader *)loader;
-- (void)commitProvisitionalLoad;
 - (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
 - (BOOL)isReplacing;
 - (void)setReplacing;
@@ -215,5 +219,12 @@ typedef enum {
 
 - (void)didFirstLayout;
 - (BOOL)firstLayoutDone;
+
+- (void)clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress;
+- (void)clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+- (void)commitProvisionalLoad:(NSDictionary *)pageCache;
+- (BOOL)isQuickRedirectComing;
+- (BOOL)shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL;
 
 @end
