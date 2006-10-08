@@ -53,7 +53,7 @@ namespace WebCore {
                                const String& keyIdentifier, unsigned keyLocation,
                                bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
-        String keyIdentifier() const { return m_keyIdentifier.get(); }
+        String keyIdentifier() const { return m_keyIdentifier; }
         unsigned keyLocation() const { return m_keyLocation; }
     
         bool altGraphKey() const { return m_altGraphKey; }
@@ -68,7 +68,7 @@ namespace WebCore {
 
     private:
         PlatformKeyboardEvent* m_keyEvent;
-        RefPtr<StringImpl> m_keyIdentifier;
+        String m_keyIdentifier;
         unsigned m_keyLocation;
         bool m_altGraphKey : 1;
     };

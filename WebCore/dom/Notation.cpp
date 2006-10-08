@@ -30,15 +30,15 @@ Notation::Notation(Document* doc) : ContainerNode(doc)
 
 Notation::Notation(Document* doc, const String& name, const String& publicId, const String& systemId)
     : ContainerNode(doc)
-    , m_name(name.impl())
-    , m_publicId(publicId.impl())
-    , m_systemId(systemId.impl())
+    , m_name(name)
+    , m_publicId(publicId)
+    , m_systemId(systemId)
 {
 }
 
 String Notation::nodeName() const
 {
-    return m_name.get();
+    return m_name;
 }
 
 Node::NodeType Notation::nodeType() const

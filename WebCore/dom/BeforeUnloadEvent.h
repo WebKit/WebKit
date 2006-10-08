@@ -37,10 +37,10 @@ namespace WebCore {
         virtual bool storesResultAsString() const;
         virtual void storeResult(const String&);
 
-        String result() const { return m_result.get(); }
+        String result() const { return m_result; }
 
     private:
-        RefPtr<StringImpl> m_result;
+        String m_result;
     };
 
 } // namespace WebCore

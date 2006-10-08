@@ -42,7 +42,7 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
     : UIEventWithKeyState(key.isKeyUp() ? keyupEvent : key.isAutoRepeat() ? keypressEvent : keydownEvent,
                           true, true, view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
     , m_keyEvent(new PlatformKeyboardEvent(key))
-    , m_keyIdentifier(String(key.keyIdentifier()).impl())
+    , m_keyIdentifier(key.keyIdentifier())
     , m_keyLocation(key.isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD)
     , m_altGraphKey(false)
 {
@@ -53,7 +53,7 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, bool canBubble, bool
                              bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
     : UIEventWithKeyState(eventType, canBubble, cancelable, view, 0, ctrlKey, altKey, shiftKey, metaKey)
     , m_keyEvent(0)
-    , m_keyIdentifier(keyIdentifier.impl())
+    , m_keyIdentifier(keyIdentifier)
     , m_keyLocation(keyLocation)
     , m_altGraphKey(altGraphKey)
 {
@@ -73,7 +73,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
 
     initUIEvent(type, canBubble, cancelable, view, 0);
 
-    m_keyIdentifier = keyIdentifier.impl();
+    m_keyIdentifier = keyIdentifier;
     m_keyLocation = keyLocation;
     m_ctrlKey = ctrlKey;
     m_shiftKey = shiftKey;

@@ -1,3 +1,64 @@
+2006-10-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Convert a bunch of RefPtr<StringImpl> to String.
+        
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::didTellBridgeAboutLoad):
+        (WebCore::FrameMac::haveToldBridgeAboutLoad):
+        * dom/BeforeUnloadEvent.cpp:
+        (WebCore::BeforeUnloadEvent::storeResult):
+        * dom/BeforeUnloadEvent.h:
+        (WebCore::BeforeUnloadEvent::result):
+        * dom/Document.cpp:
+        (WebCore::Document::createEntityReference):
+        * dom/Entity.cpp:
+        (WebCore::Entity::Entity):
+        (WebCore::Entity::nodeName):
+        (WebCore::Entity::toString):
+        * dom/Entity.h:
+        (WebCore::Entity::publicId):
+        (WebCore::Entity::systemId):
+        (WebCore::Entity::notationName):
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::EntityReference):
+        (WebCore::EntityReference::nodeName):
+        (WebCore::EntityReference::cloneNode):
+        (WebCore::EntityReference::toString):
+        * dom/EntityReference.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::initKeyboardEvent):
+        * dom/KeyboardEvent.h:
+        (WebCore::KeyboardEvent::keyIdentifier):
+        * dom/MutationEvent.cpp:
+        (WebCore::MutationEvent::MutationEvent):
+        (WebCore::MutationEvent::initMutationEvent):
+        * dom/MutationEvent.h:
+        (WebCore::MutationEvent::prevValue):
+        (WebCore::MutationEvent::newValue):
+        (WebCore::MutationEvent::attrName):
+        * dom/Notation.cpp:
+        (WebCore::Notation::Notation):
+        (WebCore::Notation::nodeName):
+        * dom/Notation.h:
+        (WebCore::Notation::publicId):
+        (WebCore::Notation::systemId):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::setData):
+        (WebCore::ProcessingInstruction::nodeName):
+        (WebCore::ProcessingInstruction::nodeValue):
+        (WebCore::ProcessingInstruction::cloneNode):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::toString):
+        * dom/ProcessingInstruction.h:
+        (WebCore::ProcessingInstruction::target):
+        (WebCore::ProcessingInstruction::data):
+        (WebCore::ProcessingInstruction::localHref):
+
 2006-10-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

@@ -32,7 +32,7 @@ class EntityReference : public ContainerNode
 {
 public:
     EntityReference(Document*);
-    EntityReference(Document*, StringImpl* entityName);
+    EntityReference(Document*, const String& entityName);
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
@@ -41,7 +41,7 @@ public:
     virtual String toString() const;
 
 private:
-    RefPtr<StringImpl> m_entityName;
+    String m_entityName;
 };
 
 } //namespace

@@ -461,7 +461,7 @@ PassRefPtr<EntityReference> Document::createEntityReference(const String &name, 
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    return new EntityReference(this, name.impl());
+    return new EntityReference(this, name);
 }
 
 PassRefPtr<EditingText> Document::createEditingTextNode(const String &text)

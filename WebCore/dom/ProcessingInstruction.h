@@ -40,8 +40,8 @@ public:
     virtual ~ProcessingInstruction();
 
     // DOM methods & attributes for Notation
-    String target() const { return m_target.get(); }
-    String data() const { return m_data.get(); }
+    String target() const { return m_target; }
+    String data() const { return m_data; }
     void setData(const String&, ExceptionCode&);
 
     virtual String nodeName() const;
@@ -53,7 +53,7 @@ public:
     virtual bool offsetInCharacters() const;
 
     // Other methods (not part of DOM)
-    String localHref() const { return m_localHref.get(); }
+    String localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
     bool checkStyleSheet();
     virtual void setCSSStyleSheet(const String& URL, const String& charset, const String& sheet);
@@ -72,9 +72,9 @@ public:
 private:
     void parseStyleSheet(const String& sheet);
 
-    RefPtr<StringImpl> m_target;
-    RefPtr<StringImpl> m_data;
-    RefPtr<StringImpl> m_localHref;
+    String m_target;
+    String m_data;
+    String m_localHref;
     CachedResource* m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading;

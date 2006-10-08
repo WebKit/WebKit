@@ -2911,12 +2911,12 @@ WebCoreKeyboardUIMode FrameMac::keyboardUIMode() const
 
 void FrameMac::didTellBridgeAboutLoad(const String& URL)
 {
-    urlsBridgeKnowsAbout.add(URL.impl());
+    urlsBridgeKnowsAbout.add(URL);
 }
 
 bool FrameMac::haveToldBridgeAboutLoad(const String& URL)
 {
-    return urlsBridgeKnowsAbout.contains(URL.impl());
+    return urlsBridgeKnowsAbout.contains(URL);
 }
 
 void FrameMac::clear()

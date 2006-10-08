@@ -43,7 +43,7 @@ bool BeforeUnloadEvent::storesResultAsString() const
 
 void BeforeUnloadEvent::storeResult(const String& s)
 {
-    m_result = s.impl();
+    m_result = s;
 }
 
 } // namespace WebCore

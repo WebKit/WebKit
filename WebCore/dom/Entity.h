@@ -36,9 +36,9 @@ public:
     Entity(Document*, const String& publicId, const String& systemId, const String& notationName);
 
     // DOM methods & attributes for Entity
-    String publicId() const { return m_publicId.get(); }
-    String systemId() const { return m_systemId.get(); }
-    String notationName() const { return m_notationName.get(); }
+    String publicId() const { return m_publicId; }
+    String systemId() const { return m_systemId; }
+    String notationName() const { return m_notationName; }
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
@@ -47,10 +47,10 @@ public:
     virtual String toString() const;
 
 private:
-    RefPtr<StringImpl> m_publicId;
-    RefPtr<StringImpl> m_systemId;
-    RefPtr<StringImpl> m_notationName;
-    RefPtr<StringImpl> m_name;
+    String m_publicId;
+    String m_systemId;
+    String m_notationName;
+    String m_name;
 };
 
 } //namespace

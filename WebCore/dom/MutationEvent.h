@@ -49,18 +49,18 @@ namespace WebCore {
                                const String& attrName, unsigned short attrChange);
 
         Node* relatedNode() const { return m_relatedNode.get(); }
-        String prevValue() const { return m_prevValue.get(); }
-        String newValue() const { return m_newValue.get(); }
-        String attrName() const { return m_attrName.get(); }
+        String prevValue() const { return m_prevValue; }
+        String newValue() const { return m_newValue; }
+        String attrName() const { return m_attrName; }
         unsigned short attrChange() const { return m_attrChange; }
 
         virtual bool isMutationEvent() const;
 
     private:
         RefPtr<Node> m_relatedNode;
-        RefPtr<StringImpl> m_prevValue;
-        RefPtr<StringImpl> m_newValue;
-        RefPtr<StringImpl> m_attrName;
+        String m_prevValue;
+        String m_newValue;
+        String m_attrName;
         unsigned short m_attrChange;
     };
 
