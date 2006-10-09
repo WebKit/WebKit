@@ -46,7 +46,6 @@
 #include "KURL.h"
 #include "PlatformScrollBar.h"
 #include "ScrollBar.h"
-#include "JavaAppletWidget.h"
 #include "Page.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
@@ -165,6 +164,7 @@ void FrameWin::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::RootObject* FrameWin::bindingRootObject() { notImplemented(); return 0; }
+Widget* FrameWin::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
 void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }

@@ -1,5 +1,11 @@
 2006-10-09  Anders Carlsson  <acarlsson@apple.com>
 
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::createJavaAppletWidget):
+        Try fixing the Win32 build.
+
+2006-10-09  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         Move applet widget creation to Frame and get rid of JavaAppletWidget.
