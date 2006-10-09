@@ -134,6 +134,7 @@
 #import "DOMMouseEventInternal.h"
 #import "DOMMutationEventInternal.h"
 #import "DOMNamedNodeMapInternal.h"
+#import "DOMNodeIteratorInternal.h"
 #import "DOMNodeListInternal.h"
 #import "DOMNotationInternal.h"
 #import "DOMOverflowEventInternal.h"
@@ -142,6 +143,7 @@
 #import "DOMRectInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
+#import "DOMTreeWalkerInternal.h"
 #import "DOMUIEventInternal.h"
 #import "DOMWheelEventInternal.h"
 
@@ -211,8 +213,27 @@
 #import "DOMSVGMetadataElementInternal.h"
 #import "DOMSVGNumberListInternal.h"
 #import "DOMSVGPaint.h"
+#import "DOMSVGPathSegArcAbsInternal.h"
+#import "DOMSVGPathSegArcRelInternal.h"
+#import "DOMSVGPathSegClosePathInternal.h"
+#import "DOMSVGPathSegCurvetoCubicAbsInternal.h"
+#import "DOMSVGPathSegCurvetoCubicRelInternal.h"
+#import "DOMSVGPathSegCurvetoCubicSmoothAbsInternal.h"
+#import "DOMSVGPathSegCurvetoCubicSmoothRelInternal.h"
+#import "DOMSVGPathSegCurvetoQuadraticAbsInternal.h"
+#import "DOMSVGPathSegCurvetoQuadraticRelInternal.h"
+#import "DOMSVGPathSegCurvetoQuadraticSmoothAbsInternal.h"
+#import "DOMSVGPathSegCurvetoQuadraticSmoothRelInternal.h"
 #import "DOMSVGPathSegInternal.h"
+#import "DOMSVGPathSegLinetoAbsInternal.h"
+#import "DOMSVGPathSegLinetoHorizontalAbsInternal.h"
+#import "DOMSVGPathSegLinetoHorizontalRelInternal.h"
+#import "DOMSVGPathSegLinetoRelInternal.h"
+#import "DOMSVGPathSegLinetoVerticalAbsInternal.h"
+#import "DOMSVGPathSegLinetoVerticalRelInternal.h"
 #import "DOMSVGPathSegListInternal.h"
+#import "DOMSVGPathSegMovetoAbsInternal.h"
+#import "DOMSVGPathSegMovetoRelInternal.h"
 #import "DOMSVGPatternElementInternal.h"
 #import "DOMSVGPointListInternal.h"
 #import "DOMSVGPolygonElementInternal.h"
@@ -221,6 +242,7 @@
 #import "DOMSVGRadialGradientElementInternal.h"
 #import "DOMSVGRectElementInternal.h"
 #import "DOMSVGRenderingIntentInternal.h"
+#import "DOMSVGSVGElementInternal.h"
 #import "DOMSVGScriptElementInternal.h"
 #import "DOMSVGSetElementInternal.h"
 #import "DOMSVGStopElementInternal.h"
@@ -253,9 +275,7 @@ namespace WebCore {
     class Event;
     class Node;
     class NodeFilter;
-    class NodeIterator;
     class StyleSheet;
-    class TreeWalker;
 
 #ifdef SVG_SUPPORT
     class FloatPoint;
@@ -265,8 +285,6 @@ namespace WebCore {
 #ifdef XPATH_SUPPORT
     class XPathNSResolver;
 #endif // XPATH_SUPPORT
-
-    typedef int ExceptionCode;
 }
 
 // Core Internal Interfaces
@@ -312,14 +330,6 @@ namespace WebCore {
 
 // Traversal Internal Interfaces
 
-@interface DOMNodeIterator (WebCoreInternal)
-+ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter;
-@end
-
-@interface DOMTreeWalker (WebCoreInternal)
-+ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
-@end
-
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 + (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
 @end
@@ -356,20 +366,36 @@ namespace WebCore {
 
 #endif // XPATH_SUPPORT
 
+namespace WebCore {
 
-// Helper functions for DOM wrappers and gluing to Objective-C
+    // Helper functions for DOM wrappers and gluing to Objective-C
 
-NSObject* getDOMWrapper(DOMObjectInternal*);
-void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);
+    typedef int ExceptionCode;
 
-template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapper(reinterpret_cast<DOMObjectInternal*>(impl)); }
-template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapper(wrapper, reinterpret_cast<DOMObjectInternal*>(impl)); }
-void removeDOMWrapper(DOMObjectInternal*);
+    NSObject* getDOMWrapper(DOMObjectInternal*);
+    void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);
+    void removeDOMWrapper(DOMObjectInternal*);
 
-void raiseDOMException(WebCore::ExceptionCode);
+    template <class Source>
+    inline id getDOMWrapper(Source impl)
+    {
+        return getDOMWrapper(reinterpret_cast<DOMObjectInternal*>(impl));
+    }
 
-inline void raiseOnDOMError(WebCore::ExceptionCode ec) 
-{
-    if (ec) 
-        raiseDOMException(ec);
-}
+    template <class Source>
+    inline void addDOMWrapper(NSObject* wrapper, Source impl)
+    {
+        addDOMWrapper(wrapper, reinterpret_cast<DOMObjectInternal*>(impl));
+    }
+
+    void raiseDOMException(ExceptionCode);
+
+    inline void raiseOnDOMError(ExceptionCode ec) 
+    {
+        if (ec) 
+            raiseDOMException(ec);
+    }
+
+    NSString* displayString(const String&, const Node*);
+
+} // namespace WebCore

@@ -21,7 +21,7 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [CustomMarkFunction, ObjCNoInternal] NodeIterator {
+    interface [CustomMarkFunction] NodeIterator {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
         readonly attribute [ObjCIvar] NodeFilter filter;

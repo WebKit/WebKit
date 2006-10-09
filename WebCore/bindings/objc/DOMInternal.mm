@@ -29,6 +29,8 @@
 #import "Document.h"
 #import "Event.h"
 #import "FrameMac.h"
+#import "Node.h"
+#import "PlatformString.h"
 #import "Range.h"
 #import "RangeException.h"
 #import "SVGException.h"
@@ -37,15 +39,10 @@
 #import "kjs_dom.h"
 #import "kjs_proxy.h"
 
-using namespace WebCore;
-
-using KJS::ExecState;
-using KJS::Interpreter;
-using KJS::JSObject;
-using KJS::Bindings::RootObject;
-
 //------------------------------------------------------------------------------------------
 // Wrapping WebCore implementation objects
+
+namespace WebCore {
 
 static HashMap<DOMObjectInternal*, NSObject*>* wrapperCache;
 
@@ -70,6 +67,9 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     wrapperCache->remove(impl);
 }
 
+} // namespace WebCore
+
+
 //------------------------------------------------------------------------------------------
 // Exceptions
 
@@ -82,6 +82,8 @@ NSString * const DOMSVGException = @"DOMSVGException";
 #ifdef XPATH_SUPPORT
 NSString * const DOMXPathException = @"DOMXPathException";
 #endif // XPATH_SUPPORT
+
+namespace WebCore {
 
 void raiseDOMException(ExceptionCode ec)
 {
@@ -114,12 +116,14 @@ void raiseDOMException(ExceptionCode ec)
     [exception raise];
 }
 
+} // namespace WebCore
+
 //------------------------------------------------------------------------------------------
 
 @implementation WebScriptObject (WebScriptObjectInternal)
 
 // Only called by DOMObject subclass.
-- _init
+- (id)_init
 {
     self = [super init];
 
@@ -147,19 +151,35 @@ void raiseDOMException(ExceptionCode ec)
     
     // Extract the WebCore::Node from the ObjectiveC wrapper.
     DOMNode *n = (DOMNode *)self;
-    Node *nodeImpl = [n _node];
+    WebCore::Node *nodeImpl = [n _node];
 
     // Dig up Interpreter and ExecState.
-    Frame *frame = nodeImpl->document()->frame();
-    Interpreter *interpreter = frame->jScript()->interpreter();
-    ExecState *exec = interpreter->globalExec();
+    WebCore::Frame *frame = nodeImpl->document()->frame();
+    KJS::Interpreter *interpreter = frame->jScript()->interpreter();
+    KJS::ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    JSObject *scriptImp = static_cast<JSObject *>(toJS(exec, nodeImpl));
+    KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(KJS::toJS(exec, nodeImpl));
 
-    const RootObject *executionContext = Mac(frame)->bindingRootObject();
+    const KJS::Bindings::RootObject *executionContext = WebCore::Mac(frame)->bindingRootObject();
 
     [self _initializeWithObjectImp:scriptImp originExecutionContext:executionContext executionContext:executionContext];
 }
 
 @end
+
+namespace WebCore {
+
+NSString* displayString(const String& string, const Node* node)
+{
+    if (!node)
+        return string;
+    Document* document = node->document();
+    if (!document)
+        return string;
+    String copy(string);
+    copy.replace('\\', document->backslashAsCurrencySymbol());
+    return copy;
+}
+
+} // namespace WebCore

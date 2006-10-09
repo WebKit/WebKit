@@ -218,7 +218,26 @@ all : \
     DOMSVGNumberList.h \
     DOMSVGPaint.h \
     DOMSVGPathSeg.h \
+    DOMSVGPathSegArcAbs.h \
+    DOMSVGPathSegArcRel.h \
+    DOMSVGPathSegClosePath.h \
+    DOMSVGPathSegCurvetoCubicAbs.h \
+    DOMSVGPathSegCurvetoCubicRel.h \
+    DOMSVGPathSegCurvetoCubicSmoothAbs.h \
+    DOMSVGPathSegCurvetoCubicSmoothRel.h \
+    DOMSVGPathSegCurvetoQuadraticAbs.h \
+    DOMSVGPathSegCurvetoQuadraticRel.h \
+    DOMSVGPathSegCurvetoQuadraticSmoothAbs.h \
+    DOMSVGPathSegCurvetoQuadraticSmoothRel.h \
+    DOMSVGPathSegLinetoAbs.h \
+    DOMSVGPathSegLinetoHorizontalAbs.h \
+    DOMSVGPathSegLinetoHorizontalRel.h \
+    DOMSVGPathSegLinetoRel.h \
+    DOMSVGPathSegLinetoVerticalAbs.h \
+    DOMSVGPathSegLinetoVerticalRel.h \
     DOMSVGPathSegList.h \
+    DOMSVGPathSegMovetoAbs.h \
+    DOMSVGPathSegMovetoRel.h \
     DOMSVGPatternElement.h \
     DOMSVGPoint.h \
     DOMSVGPointList.h \
@@ -229,6 +248,7 @@ all : \
     DOMSVGRect.h \
     DOMSVGRectElement.h \
     DOMSVGRenderingIntent.h \
+    DOMSVGSVGElement.h \
     DOMSVGScriptElement.h \
     DOMSVGSetElement.h \
     DOMSVGStopElement.h \

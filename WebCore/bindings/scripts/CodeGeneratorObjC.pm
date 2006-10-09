@@ -62,13 +62,13 @@ my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType"
 my %baseTypeHash = ("Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
-                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1);
+                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "SVGPathSeg" => 1);
 
 # Constants
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
-my $exceptionRaiseOnError = "raiseOnDOMError(ec);";
+my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
 
 # Default Licence Templates
 my $headerLicenceTemplate = << "EOF";
@@ -327,10 +327,18 @@ sub GetBaseClass
 {
     $parent = shift;
 
-    return $parent if $parent eq "Object" or $parent eq "CSSValue" or $parent eq "CSSRule" or $parent eq "StyleSheet";
-    return "Event" if $parent eq "Event" or $parent eq "UIEvent";
+    return $parent if $parent eq "Object" or IsBaseType($parent);
+    return "Event" if $parent eq "UIEvent";
     return "CSSValue" if $parent eq "SVGColor";
     return "Node";
+}
+
+sub IsBaseType
+{
+    $type = shift;
+
+    return 1 if $baseTypeHash{$type};
+    return 0;
 }
 
 sub IsProtocolType
@@ -469,7 +477,6 @@ sub AddIncludesForType
         return;
     }
 
-    # Temp DOMCSS.h
     if ($type eq "Rect") {
         $implIncludes{"RectImpl.h"} = 1;
         $implIncludes{"DOM$type.h"} = 1;
@@ -482,14 +489,12 @@ sub AddIncludesForType
         return;
     }
 
-    # Temp DOMViews.h
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMAbstractView.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
 
-    # Temp DOMImplementationFront.h
     if ($type eq "DOMImplementation") {
         $implIncludes{"DOMImplementationFront.h"} = 1;
         $implIncludes{"DOM$type.h"} = 1;
@@ -524,6 +529,13 @@ sub AddIncludesForType
         $implIncludes{"DOM$type.h"} = 1;
         return;
     }
+
+    if ($type =~ /(\w+)(Abs|Rel)$/) {
+        $implIncludes{"$1.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
+        return;
+    }
+
 
     # FIXME: won't compile without these
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
@@ -808,6 +820,8 @@ sub GenerateImplementation
 
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
         $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+    } elsif ($interfaceName =~ /(\w+)(Abs|Rel)$/) {
+        $implIncludes{"$1.h"} = 1;
     } else {
         $implIncludes{"$implClassName.h"} = 1;
     }
@@ -922,15 +936,23 @@ sub GenerateImplementation
                 $getterContentTail .= "]";
             } elsif ($attributeName =~ /(\w+)DisplayString$/) {
                 my $attributeToDisplay = $1;
-                $getterContentHead = "IMPL->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
-                $implIncludes{"Document.h"} = 1;
+                $getterContentHead = "WebCore::displayString(IMPL->$attributeToDisplay(), [self _element]";
             } elsif ($attributeName =~ /^absolute(\w+)URL$/) {
                 my $typeOfURL = $1;
                 $getterContentHead = "[self _getURLAttribute:";
                 if ($typeOfURL eq "Link") {
                     $getterContentTail = "\@\"href\"]";
-                } elsif ($typeOfURL eq "Image" and $interfaceName eq "HTMLImageElement") {
-                    $getterContentTail = "\@\"src\"]";
+                } elsif ($typeOfURL eq "Image") {
+                    if ($interfaceName eq "HTMLObjectElement") {
+                        $getterContentTail = "\@\"data\"]";
+                    } else {
+                        $getterContentTail = "\@\"src\"]";
+                    }
+                    unless ($interfaceName eq "HTMLImageElement") {
+                        push(@customGetterContent, "    if (!IMPL->renderer() || !IMPL->renderer()->isImage())\n");
+                        push(@customGetterContent, "        return nil;\n");
+                        $implIncludes{"RenderObject.h"} = 1;
+                    }
                 }
                 $implIncludes{"DOMPrivate.h"} = 1;
             } elsif ($idlType eq "NodeFilter") {
@@ -1196,18 +1218,41 @@ sub GenerateImplementation
         push(@implContent, "    return IMPL;\n");
         push(@implContent, "}\n\n");
 
+        my @ivarsToRetain = ();
+        my $ivarsToInit = "";
+        my $typeMakerSigAddition = "";
+        if (@ivars > 0) {
+            my @ivarsInitSig = ();
+            my @ivarsInitCall = ();
+            foreach $attribute (@ivars) {
+                my $name = $attribute->signature->name;
+                my $memberName = "m_" . $name;
+                my $varName = "in" . $name;
+                my $type = GetObjCType($attribute->signature->type);
+                push(@ivarsInitSig, "$name:($type)$varName");
+                push(@ivarsInitCall, "$name:$varName");
+                push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
+            }
+            $ivarsToInit = " " . join(" ", @ivarsInitCall);
+            $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
+        }
+
         # - Type-Maker
         my $typeMakerName = GetObjCTypeMaker($interfaceName);
-        my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl";
+        my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
+
         if ($parentImplClassName eq "Object") {        
             # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             my $initWithImplName = "_initWith" . $implClassName;
-            push(@implContent, "- (id)$initWithImplName:($implClassNameWithNamespace *)impl\n");
+            my $initWithSig = "- (id)$initWithImplName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
+
+            push(@implContent, "$initWithSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    [super _init];\n");
             push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(impl);\n");
             push(@implContent, "    impl->ref();\n");
-            push(@implContent, "    addDOMWrapper(self, impl);\n");
+            push(@implContent, "    WebCore::addDOMWrapper(self, impl);\n");
+            push(@implContent, @ivarsToRetain);
             push(@implContent, "    return self;\n");
             push(@implContent, "}\n\n");
 
@@ -1217,10 +1262,10 @@ sub GenerateImplementation
             push(@implContent, "    if (!impl)\n");
             push(@implContent, "        return nil;\n");
             push(@implContent, "    id cachedInstance;\n");
-            push(@implContent, "    cachedInstance = getDOMWrapper(impl);\n");
+            push(@implContent, "    cachedInstance = WebCore::getDOMWrapper(impl);\n");
             push(@implContent, "    if (cachedInstance)\n");
             push(@implContent, "        return [[cachedInstance retain] autorelease];\n");
-            push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
+            push(@implContent, "    return [[[self alloc] $initWithImplName:impl" . $ivarsToInit . "] autorelease];\n");
             push(@implContent, "}\n\n");
         } else {
             my $internalBaseType = "DOM$baseClass";
@@ -1245,8 +1290,8 @@ sub GenerateImplementation
             push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
         }
         push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
-        push(@intenalHeaderContent, "- ($implClassNameWithNamespace *)$typeGetterName;\n");
-        push(@intenalHeaderContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl;\n");
+        push(@intenalHeaderContent, $typeGetterSig . ";\n");
+        push(@intenalHeaderContent, $typeMakerSig . ";\n");
         push(@intenalHeaderContent, "\@end\n");
     }
 

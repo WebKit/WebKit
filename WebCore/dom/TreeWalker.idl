@@ -21,13 +21,13 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [CustomMarkFunction, ObjCNoInternal] TreeWalker {
+    interface [CustomMarkFunction] TreeWalker {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
         readonly attribute [ObjCIvar] NodeFilter filter;
         readonly attribute boolean expandEntityReferences;        
-        attribute Node currentNode
-            setter raises (DOMException);
+                 attribute Node currentNode
+                     setter raises(DOMException);
 
         Node parentNode();
         Node firstChild();
@@ -39,5 +39,3 @@ module traversal {
     };
 
 }
-
- 

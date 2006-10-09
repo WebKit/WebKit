@@ -43,6 +43,10 @@ module html {
         // Introduced in DOM Level 2:
         readonly attribute Document        contentDocument;
 
+#if defined(LANGUAGE_OBJECTIVE_C)
+        // Objective-C extension:
+        readonly attribute URL             absoluteImageURL;
+#endif
     };
 
 }

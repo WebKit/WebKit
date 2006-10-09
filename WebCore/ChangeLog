@@ -1,3 +1,109 @@
+2006-10-09  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11234
+        Assorted Objective-C bindings changes
+
+        - Auto-generate DOMSVGPathSegArcAbs, DOMSVGPathSegArcRel, DOMSVGPathSegClosePath, 
+          DOMSVGPathSegCurvetoCubicAbs, DOMSVGPathSegCurvetoCubicRel, 
+          DOMSVGPathSegCurvetoCubicSmoothAbs, DOMSVGPathSegCurvetoCubicSmoothRel, 
+          DOMSVGPathSegCurvetoQuadraticAbs, DOMSVGPathSegCurvetoQuadraticRel, 
+          DOMSVGPathSegCurvetoQuadraticSmoothAbs, DOMSVGPathSegCurvetoQuadraticSmoothRel, 
+          DOMSVGPathSegLinetoAbs, DOMSVGPathSegLinetoHorizontalAbs, 
+          DOMSVGPathSegLinetoHorizontalRel, DOMSVGPathSegLinetoRel, 
+          DOMSVGPathSegLinetoVerticalAbs, DOMSVGPathSegLinetoVerticalRel, 
+          DOMSVGPathSegMovetoAbs, DOMSVGPathSegMovetoRel and DOMSVGSVGElement.
+
+        - Auto-generate absoluteImageURL method for DOMHTMLInputElement and
+          DOMHTMLObjectElement.
+
+        - Auto-generate the internal methods for classes with ivars (notably 
+          DOMNodeIterator and DOMTreeWalker)
+
+        - Put more methods in the WebCore namespace and factor out the  
+          displayString method into DOMInternal.h as done by Darin in his 
+          patch for http://bugs.webkit.org/show_bug.cgi?id=11219.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode _initWithNode:WebCore::]):
+        (+[DOMNode _nodeWith:WebCore::]):
+        (-[DOMNode addEventListener:listener:useCapture:]):
+        (-[DOMNode removeEventListener:listener:useCapture:]):
+        (-[DOMNode dispatchEvent:]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        (-[DOMNodeFilter _initWithNodeFilter:WebCore::]):
+        (+[DOMNodeFilter _nodeFilterWith:WebCore::]):
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMStyleSheet _initWithStyleSheet:WebCore::]):
+        (+[DOMStyleSheet _styleSheetWith:WebCore::]):
+        (-[DOMCSSRule _initWithCSSRule:WebCore::]):
+        (+[DOMCSSRule _CSSRuleWith:WebCore::]):
+        (-[DOMCSSValue _initWithCSSValue:WebCore::]):
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent _initWithEvent:WebCore::]):
+        (+[DOMEvent _eventWith:WebCore::]):
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]):
+        * bindings/objc/DOMInternal.h:
+        (-[DOMNodeFilter WebCore::]):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _init]):
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        (WebCore::displayString):
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject dealloc]):
+        (-[DOMObject finalize]):
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor dealloc]):
+        (-[DOMRGBColor finalize]):
+        (-[DOMRGBColor color]):
+        (-[DOMRGBColor _initWithRGB:WebCore::]):
+        (+[DOMRGBColor _RGBColorWithRGB:WebCore::]):
+        * bindings/objc/DOMSVG.h:
+        * bindings/objc/DOMSVGPathSegInternal.h: Added.
+        * bindings/objc/DOMSVGPathSegInternal.mm: Added.
+        (-[DOMSVGPathSeg WebCore::]):
+        (-[DOMSVGPathSeg _initWithSVGPathSeg:WebCore::]):
+        (+[DOMSVGPathSeg _SVGPathSegWith:WebCore::]):
+        * bindings/objc/DOMXPath.mm:
+        (-[DOMNativeXPathNSResolver _initWithXPathNSResolver:WebCore::]):
+        (+[DOMNativeXPathNSResolver _xpathNSResolverWith:WebCore::]):
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/NodeIterator.idl:
+        * dom/TreeWalker.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLObjectElement.idl:
+        * ksvg2/svg/SVGDocument.idl:
+        * ksvg2/svg/SVGElement.idl:
+        * ksvg2/svg/SVGPathSeg.idl:
+        * ksvg2/svg/SVGPathSegArcAbs.idl:
+        * ksvg2/svg/SVGPathSegArcRel.idl:
+        * ksvg2/svg/SVGPathSegClosePath.idl:
+        * ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl:
+        * ksvg2/svg/SVGPathSegCurvetoCubicRel.idl:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl:
+        * ksvg2/svg/SVGPathSegLinetoAbs.idl:
+        * ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl:
+        * ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl:
+        * ksvg2/svg/SVGPathSegLinetoRel.idl:
+        * ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl:
+        * ksvg2/svg/SVGPathSegLinetoVerticalRel.idl:
+        * ksvg2/svg/SVGPathSegMovetoAbs.idl:
+        * ksvg2/svg/SVGPathSegMovetoRel.idl:
+
 2006-10-09  Don Gibson  <dgibson77@gmail.com>
 
         Unreviewed build fix.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGPathSegArcRel : SVGPathSeg { 
-             attribute float   x;
-                         // raises DOMException on setting
-             attribute float   y;
-                         // raises DOMException on setting
-             attribute float   r1;
-                         // raises DOMException on setting
-             attribute float   r2;
-                         // raises DOMException on setting
-             attribute float   angle;
-                         // raises DOMException on setting
-             attribute boolean largeArcFlag;
-                         // raises DOMException on setting
-             attribute boolean sweepFlag;
-                         // raises DOMException on setting
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGPathSegArcRel : SVGPathSeg {
+                 attribute float   x
+                     /*setter raises(DOMException)*/;
+                 attribute float   y
+                     /*setter raises(DOMException)*/;
+                 attribute float   r1
+                     /*setter raises(DOMException)*/;
+                 attribute float   r2
+                     /*setter raises(DOMException)*/;
+                 attribute float   angle
+                     /*setter raises(DOMException)*/;
+                 attribute boolean largeArcFlag
+                     /*setter raises(DOMException)*/;
+                 attribute boolean sweepFlag
+                     /*setter raises(DOMException)*/;
+    };
+
+}

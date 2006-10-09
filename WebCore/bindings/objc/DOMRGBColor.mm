@@ -27,11 +27,13 @@
 #import "config.h"
 #import "DOMRGBColor.h"
 
-#import "DOMInternal.h"
-#import <wtf/GetPtr.h>
+#import "CSSPrimitiveValue.h"
 #import "Color.h"
 #import "DOMCSSPrimitiveValue.h"
-#import "CSSPrimitiveValue.h"
+#import "DOMInternal.h"
+#import <wtf/GetPtr.h>
+
+namespace WebCore {
 
 static CFMutableDictionaryRef wrapperCache = NULL;
 
@@ -58,18 +60,20 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
     CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void*>(value));
 }
 
+} // namespace WebCore
+
 
 @implementation DOMRGBColor
 
 - (void)dealloc
 {
-    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
+    WebCore::removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     [super dealloc];
 }
 
 - (void)finalize
 {
-    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
+    WebCore::removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     [super finalize];
 }
 
@@ -105,7 +109,7 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 - (NSColor *)color
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    return nsColor(WebCore::Color(rgb));
+    return WebCore::nsColor(WebCore::Color(rgb));
 }
 
 @end
@@ -127,17 +131,16 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(value);
-    setWrapperForRGB(self, value);
+    WebCore::setWrapperForRGB(self, value);
     return self;
 }
 
 + (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value
 {
     id cachedInstance;
-    cachedInstance = getWrapperForRGB(value);
+    cachedInstance = WebCore::getWrapperForRGB(value);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
-    
     return [[[self alloc] _initWithRGB:value] autorelease];
 }
 

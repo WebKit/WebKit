@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,13 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#import "DOMSVGPathSeg.h"
 
-    interface [Conditional=SVG] SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg {
-                 attribute float   x
-                     /*setter raises(DOMException)*/;
-                 attribute float   y
-                     /*setter raises(DOMException)*/;
-    };
+namespace WebCore { class SVGPathSeg; }
 
-}
+@interface DOMSVGPathSeg (WebCoreInternal)
+- (WebCore::SVGPathSeg *)_SVGPathSeg;
++ (DOMSVGPathSeg *)_SVGPathSegWith:(WebCore::SVGPathSeg *)impl;
+@end

@@ -68,7 +68,7 @@ namespace WebCore {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(self, impl);
+    WebCore::addDOMWrapper(self, impl);
     return self;
 }
 
@@ -78,7 +78,7 @@ namespace WebCore {
         return nil;
 
     id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
+    cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -107,7 +107,7 @@ namespace WebCore {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(self, impl);
+    WebCore::addDOMWrapper(self, impl);
     return self;
 }
 
@@ -117,7 +117,7 @@ namespace WebCore {
         return nil;
 
     id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
+    cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
 
@@ -166,7 +166,7 @@ namespace WebCore {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(self, impl);
+    WebCore::addDOMWrapper(self, impl);
     return self;
 }
 
@@ -176,7 +176,7 @@ namespace WebCore {
         return nil;
 
     id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
+    cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
 

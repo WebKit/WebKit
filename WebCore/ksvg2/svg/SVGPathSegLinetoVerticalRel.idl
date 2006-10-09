@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGPathSegLinetoVerticalRel : SVGPathSeg { 
-             attribute float   y;
-                         // raises DOMException on setting
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGPathSegLinetoVerticalRel : SVGPathSeg {
+                 attribute float   y
+                     /*setter raises(DOMException)*/;
+    };
+
+}

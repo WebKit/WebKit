@@ -198,7 +198,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(self, impl);
+    WebCore::addDOMWrapper(self, impl);
     return self;
 }
 
@@ -208,7 +208,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
+    cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -315,10 +315,10 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
     
     WebCore::EventListener *wrapper = ObjCEventListener::create(listener);
-    EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
+    WebCore::EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
     wrapper->deref();
 }
 
@@ -331,10 +331,10 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
     if (WebCore::EventListener *wrapper = ObjCEventListener::find(listener))
-        EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
+        WebCore::EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
@@ -346,11 +346,11 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (BOOL)dispatchEvent:(DOMEvent *)event
 {
     if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
     WebCore::ExceptionCode ec = 0;
-    BOOL result = EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
-    raiseOnDOMError(ec);
+    BOOL result = WebCore::EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
+    WebCore::raiseOnDOMError(ec);
     return result;
 }
 
@@ -359,7 +359,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMElement
 
-// FIXME: this should be auto-genenerate in DOMElement.mm
+// FIXME: this should be auto-generated in DOMElement.mm
 @implementation DOMElement (DOMElementAppKitExtensions)
 
 // FIXME: this should be implemented in the implementation
@@ -388,7 +388,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 }
 
 // FIXME: this should be implemented in the implementation
-- (NSData*)_imageTIFFRepresentation
+- (NSData *)_imageTIFFRepresentation
 {
     WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
@@ -455,6 +455,8 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMNodeFilter
 
+// FIXME: This implementation should be in it's own file.
+
 @implementation DOMNodeFilter
 
 - (id)_initWithNodeFilter:(WebCore::NodeFilter *)impl
@@ -464,7 +466,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
-    addDOMWrapper(self, impl);
+    WebCore::addDOMWrapper(self, impl);
     return self;
 }
 
@@ -474,7 +476,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
+    cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -503,82 +505,6 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (short)acceptNode:(DOMNode *)node
 {
     return [self _nodeFilter]->acceptNode([node _node]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMNodeIterator
-
-@implementation DOMNodeIterator(WebCoreInternal)
-
-- (id)_initWithNodeIterator:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    m_filter = [filter retain];
-    return self;
-}
-
-- (WebCore::NodeIterator *)_nodeIterator
-{
-    return reinterpret_cast<WebCore::NodeIterator*>(_internal);
-}
-
-+ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithNodeIterator:impl filter:filter] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMTreeWalker
-
-@implementation DOMTreeWalker (WebCoreInternal)
-
-- (id)_initWithTreeWalker:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    m_filter = [filter retain];
-    return self;
-}
-
-- (WebCore::TreeWalker *)_treeWalker
-{
-    return reinterpret_cast<WebCore::TreeWalker *>(_internal);
-}
-
-+ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithTreeWalker:impl filter:filter] autorelease];
 }
 
 @end
@@ -623,7 +549,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 //------------------------------------------------------------------------------------------
 // DOMDocument (DOMDocumentTraversal)
 
-// FIXME: this should be auto-genenerate in DOMDocument.mm
+// FIXME: this should be auto-generated in DOMDocument.mm
 @implementation DOMDocument (DOMDocumentTraversal)
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
@@ -633,7 +559,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
         cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
-    raiseOnDOMError(ec);
+    WebCore::raiseOnDOMError(ec);
     return [DOMNodeIterator _nodeIteratorWith:impl.get() filter:filter];
 }
 
@@ -644,7 +570,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
         cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
-    raiseOnDOMError(ec);
+    WebCore::raiseOnDOMError(ec);
     return [DOMTreeWalker _treeWalkerWith:impl.get() filter:filter];
 }
 

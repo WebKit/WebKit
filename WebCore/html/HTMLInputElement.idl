@@ -60,6 +60,7 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:
         readonly attribute DOMString       altDisplayString;
+        readonly attribute URL             absoluteImageURL;
 #endif
     };
 

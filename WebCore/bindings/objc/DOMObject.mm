@@ -52,14 +52,14 @@
 - (void)dealloc
 {
     if (_internal)
-        removeDOMWrapper(_internal);
+        WebCore::removeDOMWrapper(_internal);
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        removeDOMWrapper(_internal);
+        WebCore::removeDOMWrapper(_internal);
     [super finalize];
 }
 

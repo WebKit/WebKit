@@ -75,37 +75,6 @@
 
 @end
 
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLInputElement
-
-@implementation DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-
-- (NSURL *)absoluteImageURL
-{
-    if (![self _HTMLInputElement]->renderer() || ![self _HTMLInputElement]->renderer()->isImage())
-        return nil;
-    return [self _getURLAttribute:@"src"];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLObjectElement
-
-@implementation DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
-
-- (NSURL *)absoluteImageURL
-{
-    if (![self _HTMLObjectElement]->renderer() || ![self _HTMLObjectElement]->renderer()->isImage())
-        return nil;
-    return [self _getURLAttribute:@"data"];
-}
-
-@end
-
-
 #pragma mark DOM EXTENSIONS
 
 // This #import is used only by viewForElement and should be deleted 
@@ -174,7 +143,8 @@ static NSView *viewForElement(DOMElement *element)
 {
     WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
     if (inputElement) {
-        WebCore::String newValue = inputElement->value().replace(targetRange.location, targetRange.length, replacementString);
+        WebCore::String newValue = inputElement->value();
+        newValue.replace(targetRange.location, targetRange.length, replacementString);
         inputElement->setValue(newValue);
         inputElement->setSelectionRange(index, newValue.length());
     }
