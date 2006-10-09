@@ -99,8 +99,6 @@ IntPoint Widget::convertSelfToChild(const Widget*, const IntPoint& p) const { re
 void Widget::setParent(ScrollView*) {}
 ScrollView* Widget::parent() const { return 0; }
 
-JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,WTF::HashMap<String,String> const&) { notImplemented(); }
-
 void TextField::selectAll() { notImplemented(); }
 void TextField::addSearchResult() { notImplemented(); }
 int TextField::selectionStart() const { notImplemented(); return 0; }
