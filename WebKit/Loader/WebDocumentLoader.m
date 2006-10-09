@@ -190,7 +190,7 @@
     return stopping;
 }
 
-- (WebFrameBridge *)bridge
+- (WebCoreFrameBridge *)bridge
 {
     return [frameLoader bridge];
 }

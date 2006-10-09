@@ -1,3 +1,46 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed, landed, tweaked a bit by Darin.
+
+        - removed most uses of WebFrameBridge from WebFrameLoader
+          (WebCoreFrameBridge use is OK)
+
+        * Loader/WebDocumentLoader.m:
+        (-[WebDocumentLoader bridge]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader initWithFrame:client:]):
+        (-[WebFrameLoader defersCallbacksChanged]):
+        (-[WebFrameLoader defersCallbacks]):
+        (-[WebFrameLoader provisionalLoadStarted]):
+        (-[WebFrameLoader stopLoadingSubframes]):
+        (-[WebFrameLoader _willSendRequest:forResource:redirectResponse:]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader bridge]):
+        (-[WebFrameLoader _handleFallbackContent]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:documentLoader:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrameLoader loadRequest:inFrameNamed:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader detachFromParent]):
+        (-[WebFrameLoader addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrameLoader safeLoadURL:]):
+        (-[WebFrameLoader actionInformationForLoadType:isFormSubmission:event:originalURL:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _atMostOneFrameHasSelection]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

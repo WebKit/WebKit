@@ -32,11 +32,11 @@
 #import "WebDocumentLoader.h"
 #import "WebFormDataStream.h"
 #import "WebFormState.h"
-#import "WebFrameBridge.h"
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
+#import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
@@ -73,11 +73,12 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 @implementation WebFrameLoader
 
-- (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)c
+- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(WebFrame <WebFrameLoaderClient> *)c
 {
     self = [super init];
     if (self) {
         client = c;
+        frameBridge = bridge;
         state = WebFrameStateCommittedPage;
     }
     return self;    
@@ -121,14 +122,14 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)defersCallbacksChanged
 {
-    BOOL defers = [[client _bridge] defersLoading];
+    BOOL defers = [frameBridge defersLoading];
     for (WebFrame *frame = client; frame; frame = [frame _traverseNextFrameStayWithin:client])
         [[frame _frameLoader] setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
 {
-    return [[client _bridge] defersLoading];
+    return [frameBridge defersLoading];
 }
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -308,7 +309,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)provisionalLoadStarted
 {
     firstLayoutDone = NO;
-    [[client _bridge] provisionalLoadStarted];
+    [frameBridge provisionalLoadStarted];
 
     [client _provisionalLoadStarted];
 }
@@ -350,7 +351,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)stopLoadingSubframes
 {
-    for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
+    for (WebCoreFrameBridge *child = [frameBridge firstChild]; child; child = [child nextSibling])
         [[(WebFrameBridge *)child frameLoader] stopLoading];
 }
 
@@ -417,7 +418,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
 {
-    [clientRequest setValue:[[client _bridge] userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
+    [clientRequest setValue:[frameBridge userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
     return [client _dispatchResource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDocumentLoader:[self activeDocumentLoader]];
 }
 
@@ -488,7 +489,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebDocumentLoader *loader = [self activeDocumentLoader];
     [loader retain];
     
-    WebFrameBridge *bridge = [client _bridge];
+    WebCoreFrameBridge *bridge = frameBridge;
     
     // Retain the bridge because the stop may release the last reference to it.
     [bridge retain];
@@ -584,7 +585,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:[client _bridge]];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
     
     if (target != nil) {
         WebFrame *targetFrame = [client findFrameNamed:target];
@@ -613,11 +614,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!isFormSubmission
         && _loadType != FrameLoadTypeReload
         && _loadType != FrameLoadTypeSame
-        && ![self shouldReloadForCurrent:URL andDestination:[[client _bridge] URL]]
+        && ![self shouldReloadForCurrent:URL andDestination:[frameBridge URL]]
         
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
-        && ![[client _bridge] isFrameSet]) {
+        && ![frameBridge isFrameSet]) {
         
         // Just do anchor navigation within the existing content.
         
@@ -678,7 +679,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [client _addHistoryItemForFragmentScroll];
     }
     
-    [[client _bridge] scrollToAnchorWithURL:URL];
+    [frameBridge scrollToAnchorWithURL:URL];
     
     if (!isRedirect) {
         // This will clear previousItem from the rest of the frame tree tree that didn't
@@ -695,7 +696,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     // FIXME: is it important for this traversal to be postorder instead of preorder?
     // FIXME: add helpers for postorder traversal?
-    for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
+    for (WebCoreFrameBridge *child = [frameBridge firstChild]; child; child = [child nextSibling])
         [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
     
     if (documentLoader)
@@ -769,7 +770,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!URL || [URL _web_isEmpty])
         URL = [NSURL URLWithString:@"about:blank"];    
     
-    [[client _bridge] openURL:URL
+    [frameBridge openURL:URL
                      reload:reload 
                 contentType:[response MIMEType]
                     refresh:[headers objectForKey:@"Refresh"]
@@ -802,14 +803,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [client _downloadWithLoadingConnection:connection request:request response:response proxy:proxy];
 }
 
-- (WebFrameBridge *)bridge
+- (WebCoreFrameBridge *)bridge
 {
-    return [client _bridge];
+    return frameBridge;
 }
 
 - (void)_handleFallbackContent
 {
-    [[self bridge] handleFallbackContent];
+    [frameBridge handleFallbackContent];
 }
 
 - (BOOL)_isStopping
@@ -836,7 +837,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebDocumentLoader *dl = [self activeDocumentLoader];
     
-    WebFrameBridge *bridge = [self bridge];
+    WebCoreFrameBridge *bridge = frameBridge;
 
     [bridge retain];
     [dl finishedLoading];
@@ -1152,7 +1153,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // If we're about to rePOST, set up action so the app can warn the user
     if (isCaseInsensitiveEqual([request HTTPMethod], @"POST")) {
-        NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeFormResubmitted
+        NSDictionary *action = [self actionInformationForNavigationType:NavigationTypeFormResubmitted
             event:nil originalURL:[request URL]];
         [policyDocumentLoader setTriggeringAction:action];
     }
@@ -1338,7 +1339,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     NSDictionary *action = [loader triggeringAction];
     if (action == nil) {
-        action = [self actionInformationForNavigationType:WebNavigationTypeOther
+        action = [self actionInformationForNavigationType:NavigationTypeOther
             event:nil originalURL:[request URL]];
         [loader setTriggeringAction:action];
     }
@@ -1434,7 +1435,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
-    BOOL canContinue = request && (![self isLoadingMainFrame] || [[self bridge] shouldClose]);
+    BOOL canContinue = request && (![self isLoadingMainFrame] || [frameBridge shouldClose]);
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
@@ -1557,7 +1558,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
     WebDocumentLoader *pdl = provisionalDocumentLoader;
-    [[client _bridge] closeURL];
+    [frameBridge closeURL];
     if (pdl != provisionalDocumentLoader)
         return;
 
@@ -1712,14 +1713,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!request)
         return;
 
-    WebFrameBridge *bridge = [self bridge];
+    WebCoreFrameBridge <WebCoreFrameBridge> *bridge = frameBridge;
     [bridge retain];
 
     WebFrame *mainFrame = [client _dispatchCreateWebViewWithRequest:nil];
     if (!mainFrame)
         goto exit;
 
-    WebFrameBridge *mainBridge = [mainFrame _bridge];
+    WebCoreFrameBridge *mainBridge = [mainFrame _frameLoader]->frameBridge;
     [mainBridge retain];
 
     [mainBridge setName:frameName];
@@ -1777,7 +1778,7 @@ exit:
         return;
     }
 
-    NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeOther
+    NSDictionary *action = [self actionInformationForNavigationType:NavigationTypeOther
         event:nil originalURL:[request URL]];
     [self checkNewWindowPolicyForRequest:request action:action frameName:frameName formState:nil
         andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
@@ -1803,7 +1804,7 @@ exit:
     NSDictionary *action = [self actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:[client _bridge]];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
 
     if (target != nil) {
         WebFrame *targetFrame = [client findFrameNamed:target];
@@ -1830,7 +1831,7 @@ exit:
 
 - (void)detachFromParent
 {
-    WebFrameBridge *bridge = [[self bridge] retain];
+    WebCoreFrameBridge *bridge = [frameBridge retain];
 
     [bridge closeURL];
     [self stopLoading];
@@ -1839,7 +1840,7 @@ exit:
     [client _detachedFromParent2];
     [self setDocumentLoader:nil];
     [client _detachedFromParent3];
-    [[[client parentFrame] _bridge] removeChild:bridge];
+    [[frameBridge parent] removeChild:bridge];
 
     NSObject <WebFrameLoaderClient>* c = [client retain];
     [bridge close];
@@ -1851,7 +1852,7 @@ exit:
 
 - (void)addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
 {
-    [request setValue:[[client _bridge] userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
+    [request setValue:[frameBridge userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     if ([self loadType] == FrameLoadTypeReload)
         [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
@@ -1871,7 +1872,7 @@ exit:
 - (void)safeLoadURL:(NSURL *)URL
 {
    // Call the bridge because this is where our security checks are made.
-    [[self bridge] loadURL:URL 
+    [frameBridge loadURL:URL 
                   referrer:[[[documentLoader request] URL] _web_originalDataAsString]
                     reload:NO
                userGesture:YES       
@@ -1883,18 +1884,18 @@ exit:
 
 - (NSDictionary *)actionInformationForLoadType:(FrameLoadType)type isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL
 {
-    WebNavigationType navType;
+    NavigationType navType;
     if (isFormSubmission) {
-        navType = WebNavigationTypeFormSubmitted;
+        navType = NavigationTypeFormSubmitted;
     } else if (event == nil) {
         if (type == FrameLoadTypeReload)
-            navType = WebNavigationTypeReload;
+            navType = NavigationTypeReload;
         else if (isBackForwardLoadType(type))
-            navType = WebNavigationTypeBackForward;
+            navType = NavigationTypeBackForward;
         else
-            navType = WebNavigationTypeOther;
+            navType = NavigationTypeOther;
     } else {
-        navType = WebNavigationTypeLinkClicked;
+        navType = NavigationTypeLinkClicked;
     }
     return [self actionInformationForNavigationType:navType event:event originalURL:URL];
 }

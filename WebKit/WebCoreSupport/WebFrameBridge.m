@@ -122,7 +122,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ++WebBridgeCount;
     
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    _frameLoader = [[WebFrameLoader alloc] initWithClient:_frame];
+    _frameLoader = [[WebFrameLoader alloc] initWithFrame:self client:_frame];
 
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];
@@ -138,7 +138,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ++WebBridgeCount;
     
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    _frameLoader = [[WebFrameLoader alloc] initWithClient:_frame];
+    _frameLoader = [[WebFrameLoader alloc] initWithFrame:self client:_frame];
 
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];

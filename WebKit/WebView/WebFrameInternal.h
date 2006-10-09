@@ -102,8 +102,6 @@
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
 
-- (BOOL)_shouldCreateRenderers;
-
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse;
 
 - (void)_reloadForPluginChanges;

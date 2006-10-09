@@ -32,7 +32,7 @@
 @class WebDocumentLoader;
 @class WebFormState;
 @class WebFrame;
-@class WebFrameBridge;
+@class WebCoreFrameBridge;
 @class WebLoader;
 @class WebMainResourceLoader;
 @protocol WebFrameLoaderClient;
@@ -79,7 +79,10 @@ typedef enum {
 
 BOOL isBackForwardLoadType(FrameLoadType type);
 
-@interface WebFrameLoader : NSObject {
+@interface WebFrameLoader : NSObject 
+{
+    WebCoreFrameBridge *frameBridge;
+    
     WebMainResourceLoader *mainResourceLoader;
     
     NSMutableArray *subresourceLoaders;
@@ -116,7 +119,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
     BOOL isStoppingLoad;    
 }
 
-- (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)client;
+- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(WebFrame <WebFrameLoaderClient> *)client;
 - (void)addPlugInStreamLoader:(WebLoader *)loader;
 - (void)removePlugInStreamLoader:(WebLoader *)loader;
 - (void)setDefersCallbacks:(BOOL)defers;
@@ -201,7 +204,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame;
-- (WebFrameBridge *)bridge;
+- (WebCoreFrameBridge *)bridge;
 - (void)finishedLoadingDocument:(WebDocumentLoader *)loader;
 - (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
 - (BOOL)isReplacing;

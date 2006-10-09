@@ -856,11 +856,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return Frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
 }
 
-- (BOOL)_shouldCreateRenderers
-{
-    return [_private->bridge shouldCreateRenderers];
-}
-
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
 {
     if (!recurse)
@@ -1007,11 +1002,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [documentView deselectAll];
 }
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 
-- (BOOL)_atMostOneFrameHasSelection;
+- (BOOL)_atMostOneFrameHasSelection
 {
-    // FIXME: 4186050 is one known case that makes this debug check fail
+    // FIXME: 4186050 is one known case that makes this debug check fail.
     BOOL found = NO;
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
         if ([frame _hasSelection]) {
@@ -1020,7 +1015,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             found = YES;
         }
     }
-
     return YES;
 }
 #endif
@@ -1195,7 +1189,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 @implementation WebFrame (WebPrivate)
 
-// FIXME: this exists only as a convenience for Safari, consider moving there
+// FIXME: Yhis exists only as a convenience for Safari, consider moving there.
 - (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
 {
     return [[self _bridge] isDescendantOfFrame:[ancestor _bridge]];
