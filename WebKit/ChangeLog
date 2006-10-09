@@ -1,3 +1,72 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - moved a few methods from WebFrame to WebFrameLoader
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader stopLoadingSubframes]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (isBackForwardLoadType):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader didFirstLayout]):
+        (-[WebFrameLoader frameLoadCompleted]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrameLoader sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        (-[WebFrameLoader requestFromDelegateForRequest:identifier:error:]):
+        (-[WebFrameLoader loadRequest:inFrameNamed:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * Loader/WebFrameLoaderClient.h:
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        (-[WebFrameBridge dealloc]):
+        (-[WebFrameBridge frameLoader]):
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge receivedData:textEncodingName:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameBridge reportClientRedirectCancelled:]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge didFirstLayout]):
+        (-[WebFrameBridge notifyIconChanged:]):
+        (-[WebFrameBridge originalRequestURL]):
+        (-[WebFrameBridge isLoadTypeReload]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadComplete]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _actionInformationForLoadType:isFormSubmission:event:originalURL:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _updateBackground]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame _frameLoadCompleted]):
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _updateHistoryForCommit]):
+        (-[WebFrame _updateHistoryForReload]):
+        (-[WebFrame _updateHistoryForStandardLoad]):
+        (-[WebFrame _updateHistoryForBackForwardNavigation]):
+        (-[WebFrame _updateHistoryForInternalLoad]):
+        (-[WebFrame _tokenForLoadErrorReset]):
+        (-[WebFrame _resetAfterLoadError:]):
+        (-[WebFrame _doNotResetAfterLoadError:]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-09  Mark Rowe  <bdash@webkit.org>
 
         Rubber-stamped by Darin.

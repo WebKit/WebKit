@@ -66,8 +66,6 @@
 // Note that callers should not perform any ops on these views that could change the set of frames
 - (NSArray *)_documentViews;
 
-- (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
-- (void)_sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
 - (void)_safeLoadURL:(NSURL *)URL;
 
 - (BOOL)_hasSelection;
@@ -100,17 +98,12 @@
 
 - (void)_detachFromParent;
 - (void)_detachChildren;
-- (void)_checkLoadCompleteForThisFrame;
 - (void)_handledOnloadEvents;
 - (void)_checkLoadComplete;
 - (WebFrameBridge *)_bridge;
 
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(FrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-
-- (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
-
 
 - (void)_defersCallbacksChanged;
 
@@ -153,7 +146,6 @@
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
 - (void)_restoreScrollPositionAndViewState;
-- (void)_transitionToCommitted:(NSDictionary *)pageCache;
 
 - (void)_provisionalLoadStarted;
 -(NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;

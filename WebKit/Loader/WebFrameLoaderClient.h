@@ -28,6 +28,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+typedef struct LoadErrorResetToken LoadErrorResetToken;
+
 @protocol WebFrameLoaderClient
 
 - (void)_resetBackForwardList;
@@ -35,5 +37,18 @@
 - (BOOL)_provisionalItemIsTarget;
 - (BOOL)_loadProvisionalItemFromPageCache;
 - (void)_invalidateCurrentItemPageCache;
+
+- (void)_makeDocumentView;
+
+- (void)_updateHistoryForCommit;
+
+- (void)_updateHistoryForBackForwardNavigation;
+- (void)_updateHistoryForReload;
+- (void)_updateHistoryForStandardLoad;
+- (void)_updateHistoryForInternalLoad;
+
+- (LoadErrorResetToken *)_tokenForLoadErrorReset;
+- (void)_resetAfterLoadError:(LoadErrorResetToken *)token;
+- (void)_doNotResetAfterLoadError:(LoadErrorResetToken *)token;
 
 @end

@@ -30,8 +30,11 @@
 
 #import "WebDataProtocol.h"
 #import "WebDataSourceInternal.h"
+#import "WebDefaultResourceLoadDelegate.h"
+#import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
+#import "WebFormDataStream.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -44,14 +47,16 @@
 #import "WebMainResourceLoader.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
 #import "WebPreferences.h"
-#import "WebResourcePrivate.h"
 #import "WebResourceLoadDelegate.h"
-#import "WebDefaultResourceLoadDelegate.h"
+#import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
+#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
+#include "WebFrameViewInternal.h"
 
 @implementation WebFrameLoader
 
@@ -342,7 +347,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (state == WebFrameStateProvisional)
         [self provisionalLoadStarted];
     else if (state == WebFrameStateComplete) {
-        [client _frameLoadCompleted];
         [self frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
         [[self documentLoader] stopRecordingResponses];
@@ -374,7 +378,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)stopLoadingSubframes
 {
     for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child loader] stopLoading];
+        [[(WebFrameBridge *)child frameLoader] stopLoading];
 }
 
 - (void)stopLoading
@@ -567,7 +571,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (isComplete) {
         // FIXME: Don't want to do this if an entirely new load is going, so should check
         // that both data sources on the frame are either self or nil.
-        // Can't call [self _bridge] because we might not have commited yet
+        // Can't call _bridge because we might not have commited yet
         [bridge stop];
         // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent loading plugin content twice.  See <rdar://problem/4258008>
         if ([error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad)
@@ -780,7 +784,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // FIXME: is it important for this traversal to be postorder instead of preorder?
     // FIXME: add helpers for postorder traversal?
     for (WebCoreFrameBridge *child = [[client _bridge] firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child loader] closeOldDataSources];
+        [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
     
     if (documentLoader)
         [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] willCloseFrame:client];
@@ -803,7 +807,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!pageCache)
         [provisionalDataSource _makeRepresentation];
     
-    [client _transitionToCommitted:pageCache];
+    [self transitionToCommitted:pageCache];
     
     // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
     // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
@@ -888,11 +892,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebDataSource *ds = [self activeDataSource];
     
-    [self retain];
+    [[self bridge] retain];
     [[self activeDocumentLoader] finishedLoading];
 
     if ([ds _mainDocumentError] || ![ds webFrame]) {
-        [self release];
+        [[self bridge] release];
         return;
     }
 
@@ -901,7 +905,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [client _checkLoadComplete];
 
-    [self release];
+    [[self bridge] release];
 }
 
 - (void)_notifyIconChanged:(NSURL *)iconURL
@@ -1121,7 +1125,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     listener = nil;
 }
 
-static inline BOOL isBackForwardLoadType(FrameLoadType type)
+BOOL isBackForwardLoadType(FrameLoadType type)
 {
     switch (type) {
         case FrameLoadTypeStandard:
@@ -1592,7 +1596,7 @@ static inline BOOL isBackForwardLoadType(FrameLoadType type)
     if (client == [[client webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
-    if (type == FrameLoadTypeForward || type == FrameLoadTypeBack || type == FrameLoadTypeIndexedBackForward) {
+    if (isBackForwardLoadType(type)) {
         if ([client _loadProvisionalItemFromPageCache])
             return;
     }
@@ -1648,23 +1652,13 @@ static inline BOOL isBackForwardLoadType(FrameLoadType type)
     delegateIsHandlingUnimplementablePolicy = NO;
 }
 
-- (BOOL)delegateIsHandlingProvisionalLoadError
-{
-    return delegateIsHandlingProvisionalLoadError;
-}
-
-- (void)setDelegateIsHandlingProvisionalLoadError:(BOOL)is
-{
-    delegateIsHandlingProvisionalLoadError = is;
-}
-
 - (void)didFirstLayout
 {
     if ([[client webView] backForwardList]) {
-        if (loadType == FrameLoadTypeForward || loadType == FrameLoadTypeBack || loadType == FrameLoadTypeIndexedBackForward)
+        if (isBackForwardLoadType(loadType))
             [client _restoreScrollPositionAndViewState];
     }
-    
+
     firstLayoutDone = YES;
 
     WebView *wv = [client webView];
@@ -1673,6 +1667,8 @@ static inline BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)frameLoadCompleted
 {
+    [client _frameLoadCompleted];
+
     // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
     if ([self dataSource])
         firstLayoutDone = YES;
@@ -1686,6 +1682,385 @@ static inline BOOL isBackForwardLoadType(FrameLoadType type)
 - (BOOL)isQuickRedirectComing
 {
     return quickRedirectComing;
+}
+
+- (void)transitionToCommitted:(NSDictionary *)pageCache
+{
+    ASSERT([client webView] != nil);
+    
+    switch ([self state]) {
+        case WebFrameStateProvisional:
+            goto keepGoing;
+        
+        case WebFrameStateCommittedPage:
+        case WebFrameStateComplete:
+            break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return;
+
+keepGoing:
+
+    [[[[client frameView] _scrollView] contentView] setCopiesOnScroll:YES];
+
+    [client _updateHistoryForCommit];
+
+    // The call to closeURL invokes the unload event handler, which can execute arbitrary
+    // JavaScript. If the script initiates a new load, we need to abandon the current load,
+    // or the two will stomp each other.
+    WebDataSource *pd = [self provisionalDataSource];
+    [[client _bridge] closeURL];
+    if (pd != [self provisionalDataSource])
+        return;
+
+    [self commitProvisionalLoad];
+
+    // Handle adding the URL to the back/forward list.
+    WebDataSource *ds = [self dataSource];
+    NSString *ptitle = [ds pageTitle];
+
+    switch (loadType) {
+    case WebFrameLoadTypeForward:
+    case WebFrameLoadTypeBack:
+    case WebFrameLoadTypeIndexedBackForward:
+        if ([[client webView] backForwardList]) {
+            [client _updateHistoryForBackForwardNavigation];
+            
+            // Create a document view for this document, or used the cached view.
+            if (pageCache) {
+                NSView <WebDocumentView> *cachedView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
+                ASSERT(cachedView != nil);
+                [[client frameView] _setDocumentView:cachedView];
+            } else
+                [client _makeDocumentView];
+        }
+        break;
+
+    case WebFrameLoadTypeReload:
+    case WebFrameLoadTypeSame:
+    case WebFrameLoadTypeReplace:
+        [client _updateHistoryForReload];
+        [client _makeDocumentView];
+        break;
+
+    // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with the above case
+    case WebFrameLoadTypeReloadAllowingStaleData:
+        [client _makeDocumentView];
+        break;
+
+    case WebFrameLoadTypeStandard:
+        [client _updateHistoryForStandardLoad];
+        [client _makeDocumentView];
+        break;
+
+    case WebFrameLoadTypeInternal:
+        [client _updateHistoryForInternalLoad];
+        [client _makeDocumentView];
+        break;
+
+    // FIXME Remove this check when dummy ds is removed (whatever "dummy ds" is).
+    // An exception should be thrown if we're in the WebFrameLoadTypeUninitialized state.
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    // Tell the client we've committed this URL.
+    ASSERT([[client frameView] documentView] != nil);
+    [[client webView] _didCommitLoadForFrame:client];
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] didCommitLoadForFrame:client];
+    
+    // If we have a title let the WebView know about it.
+    if (ptitle)
+        [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                                                didReceiveTitle:ptitle
+                                                       forFrame:client];
+}
+
+- (void)checkLoadCompleteForThisFrame
+{
+    ASSERT([client webView] != nil);
+
+    switch ([self state]) {
+        case WebFrameStateProvisional: {
+            if (delegateIsHandlingProvisionalLoadError)
+                return;
+
+            WebDataSource *pd = [self provisionalDataSource];
+
+            LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [client name]);
+            // If we've received any errors we may be stuck in the provisional state and actually complete.
+            NSError *error = [pd _mainDocumentError];
+            if (error != nil) {
+                // Check all children first.
+                LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [client name]);
+                LoadErrorResetToken *resetToken = [client _tokenForLoadErrorReset];
+                BOOL shouldReset = YES;
+                if (![pd isLoading]) {
+                    LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [client name]);
+                    [[client webView] _didFailProvisionalLoadWithError:error forFrame:client];
+                    delegateIsHandlingProvisionalLoadError = YES;
+                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                                            didFailProvisionalLoadWithError:error
+                                                                   forFrame:client];
+                    delegateIsHandlingProvisionalLoadError = NO;
+                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
+
+                    // FIXME: can stopping loading here possibly have
+                    // any effect, if isLoading is false, which it
+                    // must be, to be in this branch of the if? And is it ok to just do 
+                    // a full-on stopLoading?
+                    [self stopLoadingSubframes];
+                    [[pd _documentLoader] stopLoading];
+
+                    // Finish resetting the load state, but only if another load hasn't been started by the
+                    // delegate callback.
+                    if (pd == [self provisionalDataSource])
+                        [self clearProvisionalLoad];
+                    else {
+                        NSURL *unreachableURL = [[self provisionalDataSource] unreachableURL];
+                        if (unreachableURL != nil && [unreachableURL isEqual:[[pd request] URL]])
+                            shouldReset = NO;
+                    }
+                }
+                if (shouldReset)
+                    [client _resetAfterLoadError:resetToken];
+                else
+                    [client _doNotResetAfterLoadError:resetToken];
+            }
+            return;
+        }
+        
+        case WebFrameStateCommittedPage: {
+            WebDataSource *ds = [self dataSource];
+            
+            if (![ds isLoading]) {
+                WebFrameView *thisView = [client frameView];
+                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
+                ASSERT(thisDocumentView != nil);
+
+                [self markLoadComplete];
+
+                // FIXME: Is this subsequent work important if we already navigated away?
+                // Maybe there are bugs because of that, or extra work we can skip because
+                // the new page is ready.
+
+                // Tell the just loaded document to layout.  This may be necessary
+                // for non-html content that needs a layout message.
+                if (!([[self dataSource] _isDocumentHTML])) {
+                    [thisDocumentView setNeedsLayout:YES];
+                    [thisDocumentView layout];
+                    [thisDocumentView setNeedsDisplay:YES];
+                }
+                 
+                // If the user had a scroll point scroll to it.  This will override
+                // the anchor point.  After much discussion it was decided by folks
+                // that the user scroll point should override the anchor point.
+                if ([[client webView] backForwardList]) {
+                    switch ([self loadType]) {
+                    case WebFrameLoadTypeForward:
+                    case WebFrameLoadTypeBack:
+                    case WebFrameLoadTypeIndexedBackForward:
+                    case WebFrameLoadTypeReload:
+                        [client _restoreScrollPositionAndViewState];
+                        break;
+
+                    case WebFrameLoadTypeStandard:
+                    case WebFrameLoadTypeInternal:
+                    case WebFrameLoadTypeReloadAllowingStaleData:
+                    case WebFrameLoadTypeSame:
+                    case WebFrameLoadTypeReplace:
+                        // Do nothing.
+                        break;
+
+                    default:
+                        ASSERT_NOT_REACHED();
+                        break;
+                    }
+                }
+
+                NSError *error = [ds _mainDocumentError];
+                if (error != nil) {
+                    [[client webView] _didFailLoadWithError:error forFrame:client];
+                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                                                     didFailLoadWithError:error
+                                                                 forFrame:client];
+                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
+                } else {
+                    [[client webView] _didFinishLoadForFrame:client];
+                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                                                    didFinishLoadForFrame:client];
+                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:nil];
+                }
+                
+                [[client webView] _progressCompleted:client];
+ 
+                return;
+            }
+            return;
+        }
+        
+        case WebFrameStateComplete:
+            LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [client name]);
+            // Even if already complete, we might have set a previous item on a frame that
+            // didn't do any data loading on the past transaction. Make sure to clear these out.
+            [client _frameLoadCompleted];
+            return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+- (void)continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
+{
+    if (!request)
+        return;
+
+    [[self bridge] retain];
+
+    WebView *webView = nil;
+    WebView *currentWebView = [client webView];
+    id wd = [currentWebView UIDelegate];
+    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        webView = [wd webView:currentWebView createWebViewWithRequest:nil];
+    else
+        webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
+    if (!webView)
+        goto exit;
+
+    WebFrame *frame = [webView mainFrame];
+    if (!frame)
+        goto exit;
+
+    [[frame _bridge] retain];
+
+    [[frame _bridge] setName:frameName];
+
+    [[webView _UIDelegateForwarder] webViewShow:webView];
+
+    [[frame _bridge] setOpener:[client _bridge]];
+    [[frame _frameLoader] _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
+
+    [[frame _bridge] release];
+
+exit:
+    [[self bridge] release];
+}
+
+- (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 
+{    
+    WebView *wv = [client webView];
+    id delegate = [wv resourceLoadDelegate];
+    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
+    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
+    WebDataSource *dataSource = [self dataSource];
+        
+    if (response != nil) {
+        if (implementations.delegateImplementsDidReceiveResponse)
+            [delegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
+        else
+            [sharedDelegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
+    }
+    
+    if (length > 0) {
+        if (implementations.delegateImplementsDidReceiveContentLength)
+            [delegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInteger)length fromDataSource:dataSource];
+        else
+            [sharedDelegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInteger)length fromDataSource:dataSource];
+    }
+    
+    if (error == nil) {
+        if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+            [delegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
+        else
+            [sharedDelegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
+        [client _checkLoadComplete];
+    } else {
+        [[wv _resourceLoadDelegateForwarder] webView:wv resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+    }
+}
+
+- (NSURLRequest *)requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error
+{
+    ASSERT(request != nil);
+    
+    WebView *wv = [client webView];
+    id delegate = [wv resourceLoadDelegate];
+    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
+    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
+    WebDataSource *dataSource = [self dataSource];
+    
+    if (implementations.delegateImplementsIdentifierForRequest)
+        *identifier = [delegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+    else
+        *identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+
+    NSURLRequest *newRequest;
+    if (implementations.delegateImplementsWillSendRequest)
+        newRequest = [delegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
+    else
+        newRequest = [sharedDelegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
+    
+    if (newRequest == nil)
+        *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+    else
+        *error = nil;
+    
+    return newRequest;
+}
+
+- (void)loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName
+{
+    if (frameName == nil) {
+        [client loadRequest:request];
+        return;
+    }
+
+    WebFrame *frame = [client findFrameNamed:frameName];
+    if (frame != nil) {
+        [frame loadRequest:request];
+        return;
+    }
+
+    NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
+    [self checkNewWindowPolicyForRequest:request action:action frameName:frameName formState:nil
+        andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+}
+
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target
+    data:(NSArray *)postData contentType:(NSString *)contentType
+    triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+{
+    // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
+    // This prevents a potential bug which may cause a page with a form that uses itself
+    // as an action to be returned from the cache without submitting.
+
+    // FIXME: Where's the code that implements what the comment above says?
+
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [client _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
+    [request _web_setHTTPReferrer:referrer];
+    [request setHTTPMethod:@"POST"];
+    webSetHTTPBody(request, postData);
+    [request _web_setHTTPContentType:contentType];
+
+    NSDictionary *action = [client _actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
+    WebFormState *formState = nil;
+    if (form && values)
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
+
+    if (target != nil) {
+        WebFrame *targetFrame = [client findFrameNamed:target];
+        if (targetFrame != nil)
+            [[targetFrame _frameLoader] _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
+        else
+            [self checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState
+                andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+    } else
+        [self _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
+
+    [request release];
+    [formState release];
 }
 
 @end
