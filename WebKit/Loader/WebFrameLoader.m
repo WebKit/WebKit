@@ -41,6 +41,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
+#import "WebFormDataStream.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebHistory.h"
@@ -49,7 +50,7 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebResourceLoadDelegate.h"
+#import "WebNSURLRequestExtras.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebDefaultResourceLoadDelegate.h"
@@ -1788,7 +1789,7 @@ keepGoing:
             if (delegateIsHandlingProvisionalLoadError)
                 return;
 
-            WebDataSource *pd = [self provisionalDataSource];
+            WebDataSource *pd = [[self provisionalDataSource] retain];
 
             LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [client name]);
             // If we've received any errors we may be stuck in the provisional state and actually complete.
@@ -1830,6 +1831,7 @@ keepGoing:
                 else
                     [client _doNotResetAfterLoadError:resetToken];
             }
+            [pd release];
             return;
         }
         

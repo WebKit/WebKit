@@ -1,5 +1,13 @@
 2006-10-08  Darin Adler  <darin@apple.com>
 
+        - build fix (also a fix for a crasher I forgot to commit before)
+
+        * Loader/WebFrameLoader.m: Added some missing includes.
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        Added a needed retain/release.
+
+2006-10-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
         
         - quick fix to loader problem causing layout test failures
