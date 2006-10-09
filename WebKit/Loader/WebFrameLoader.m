@@ -39,6 +39,7 @@
 #import <WebKitSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
+#import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebFrameInternal.h"
 #import "WebFrameViewInternal.h"
@@ -50,6 +51,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
+#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 
 @implementation WebFrameLoader

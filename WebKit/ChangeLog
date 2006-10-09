@@ -1,5 +1,13 @@
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+        
+        - fix accidental build break due to editing while committing
+
+        * Loader/WebFrameLoader.m:
+
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - move all WebFrameLoadDelegate methods across client interface
