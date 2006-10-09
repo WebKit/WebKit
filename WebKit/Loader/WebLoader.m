@@ -26,16 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebLoader.h>
+#import "WebLoader.h"
 
+#import "WebDataProtocol.h"
+#import "WebFrameLoader.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebFrameLoader.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;

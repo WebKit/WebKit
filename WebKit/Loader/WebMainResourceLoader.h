@@ -27,8 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#import <WebKit/WebLoader.h>
+#import "WebLoader.h"
 
 @interface WebMainResourceLoader : WebLoader
 {

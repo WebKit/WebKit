@@ -149,6 +149,9 @@ _wkGetGlyphVectorNumGlyphs
 _wkGetGlyphVectorRecordSize
 _wkGetMIMETypeForExtension
 _wkGetNSFontATSUFontId
+_wkGetNSURLResponseCalculatedExpiration
+_wkGetNSURLResponseLastModifiedDate
+_wkGetNSURLResponseMustRevalidate
 _wkInitializeGlyphVector
 _wkPathFromFont
 _wkPopupMenu

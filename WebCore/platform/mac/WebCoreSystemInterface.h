@@ -43,12 +43,14 @@ typedef struct _NSRect NSRect;
 @class NSFont;
 @class NSMutableURLRequest;
 #else
+typedef struct NSDate NSDate;
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
 typedef struct NSMenu NSMenu;
 typedef struct NSMutableURLRequest NSMutableURLRequest;
 typedef struct NSString NSString;
 typedef struct NSURLConnection NSURLConnection;
+typedef struct NSURLResponse NSURLResponse;
 typedef struct NSView NSView;
 typedef struct objc_object *id;
 #endif
@@ -90,6 +92,9 @@ extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
 extern NSString* (*wkGetMIMETypeForExtension)(NSString*);
 extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
+extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
+extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
+extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 extern NSString* (*wkPathFromFont)(NSFont*);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);

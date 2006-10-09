@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebLoader.h>
+#import "WebLoader.h"
+
 #import <WebCore/WebCoreResourceLoader.h>
 
 @class WebFrameLoader;

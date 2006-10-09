@@ -36,7 +36,7 @@
 #import "WebMainResourceLoader.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
-#import <WebKitSystemInterface.h>
+#import <WebCore/WebCoreSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
@@ -803,7 +803,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                      reload:reload 
                 contentType:[response MIMEType]
                     refresh:[headers objectForKey:@"Refresh"]
-               lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(response))
+               lastModified:(pageCache ? nil : wkGetNSURLResponseLastModifiedDate(response))
                   pageCache:pageCache];
     
     [self opened];
@@ -981,15 +981,13 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     }
 }
 
-- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)theResponse
+- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)response
 {
-    if (WKGetNSURLResponseMustRevalidate(theResponse)) {
+    if (wkGetNSURLResponseMustRevalidate(response))
         return NO;
-    } else if (WKGetNSURLResponseCalculatedExpiration(theResponse) - CFAbsoluteTimeGetCurrent() < 1) {
+    if (wkGetNSURLResponseCalculatedExpiration(response) - CFAbsoluteTimeGetCurrent() < 1)
         return NO;
-    } else {
-        return YES;
-    }
+    return YES;
 }
 
 - (NSMutableDictionary *)pendingArchivedResources

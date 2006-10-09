@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNetscapePlugInStreamLoader.h>
+#import "WebNetscapePlugInStreamLoader.h"
 
-#import <WebKit/WebFrameLoader.h>
+#import "WebFrameLoader.h"
 
 @implementation WebNetscapePlugInStreamLoader
 

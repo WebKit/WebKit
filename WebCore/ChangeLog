@@ -1,3 +1,21 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - added a bit more WebCoreSystemInterface
+
+            wkGetNSURLResponseCalculatedExpiration
+            wkGetNSURLResponseLastModifiedDate
+            wkGetNSURLResponseMustRevalidate
+
+        * WebCore.exp: Added the new symbols.
+        * platform/mac/WebCoreSystemInterface.h: Ditto.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
+        - quiet down the code generation script
+
+        * bindings/scripts/CodeGenerator.pm:
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

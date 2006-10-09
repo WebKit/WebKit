@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDataProtocol.h>
+#import "WebDataProtocol.h"
 
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>

@@ -32,6 +32,8 @@ my $useLayerOnTop = 0;
 
 my $codeGenerator = 0;
 
+my $verbose = 0;
+
 my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, 
                          "unsigned int" => 1, "unsigned short" => 1,
                          "unsigned long" => 1, "float" => 1,
@@ -89,7 +91,7 @@ sub ProcessDocument
     unless (defined($codeGenerator)) {
         my $classes = $useDocument->classes;
         foreach my $class (@$classes) {
-            print "Skipping $useGenerator code generation for IDL interface \"" . $class->name . "\".\n";
+            print "Skipping $useGenerator code generation for IDL interface \"" . $class->name . "\".\n" if $verbose;
         }
         return;
     }
@@ -99,7 +101,7 @@ sub ProcessDocument
 
     my $classes = $useDocument->classes;
     foreach my $class (@$classes) {
-        print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n";
+        print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateInterface($class, $defines);
     }
 
@@ -142,7 +144,7 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
         }
 
         if ($foundFilename ne "") {
-            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n";
+            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n" if $verbose;
 
             # Step #2: Parse the found IDL file (in quiet mode).
             my $parser = IDLParser->new(1);
@@ -157,7 +159,7 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
                 my $functionsMax = @{$class->functions};
                 my $attributesMax = @{$class->attributes};
 
-                print "  |  |>  -> Inherting $constantsMax constants, $functionsMax functions, $attributesMax attributes...\n  |  |>\n";
+                print "  |  |>  -> Inheriting $constantsMax constants, $functionsMax functions, $attributesMax attributes...\n  |  |>\n" if $verbose;
 
                 # Step #5: Concatenate data
                 push(@$constantsRef, $_) foreach (@{$class->constants});

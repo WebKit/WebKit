@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebSubresourceLoader.h>
+#import "WebSubresourceLoader.h"
 
-#import <JavaScriptCore/Assertions.h>
+#import "WebFormDataStream.h"
+#import "WebFrameLoader.h"
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreResourceLoader.h>
-#import <WebKit/WebFormDataStream.h>
-#import <WebKit/WebFrameLoader.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
 @implementation WebSubresourceLoader
