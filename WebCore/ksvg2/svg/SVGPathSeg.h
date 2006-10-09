@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
-
 #include "ksvg.h"
 
 namespace WebCore
@@ -35,7 +34,7 @@ namespace WebCore
     class SVGPathSeg : public Shared<SVGPathSeg>
     {
     public:
-        SVGPathSeg(const SVGStyledElement *context = 0);
+        SVGPathSeg(const SVGStyledElement* context = 0);
         virtual ~SVGPathSeg();
         
         enum SVGPathSegType {
@@ -66,7 +65,7 @@ namespace WebCore
         virtual String toString() const { return ""; }
 
     protected:
-        const SVGStyledElement *m_context;
+        const SVGStyledElement* m_context;
     };
 
 } // namespace WebCore

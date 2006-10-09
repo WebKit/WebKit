@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,12 +23,13 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGPathSegCurvetoCubic.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = m_x1 = m_y1 = m_x2 = m_y2 = 0.0;
 }
@@ -41,7 +42,7 @@ void SVGPathSegCurvetoCubicAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -54,7 +55,7 @@ void SVGPathSegCurvetoCubicAbs::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -67,7 +68,7 @@ void SVGPathSegCurvetoCubicAbs::setX1(double x1)
 {
     m_x1 = x1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -80,7 +81,7 @@ void SVGPathSegCurvetoCubicAbs::setY1(double y1)
 {
     m_y1 = y1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -93,7 +94,7 @@ void SVGPathSegCurvetoCubicAbs::setX2(double x2)
 {
     m_x2 = x2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -106,7 +107,7 @@ void SVGPathSegCurvetoCubicAbs::setY2(double y2)
 {
     m_y2 = y2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -118,8 +119,8 @@ double SVGPathSegCurvetoCubicAbs::y2() const
 
 
 
-SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = m_x1 = m_y1 = m_x2 = m_y2 = 0.0;
 }
@@ -132,7 +133,7 @@ void SVGPathSegCurvetoCubicRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -145,7 +146,7 @@ void SVGPathSegCurvetoCubicRel::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -158,7 +159,7 @@ void SVGPathSegCurvetoCubicRel::setX1(double x1)
 {
     m_x1 = x1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -171,7 +172,7 @@ void SVGPathSegCurvetoCubicRel::setY1(double y1)
 {
     m_y1 = y1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -184,7 +185,7 @@ void SVGPathSegCurvetoCubicRel::setX2(double x2)
 {
     m_x2 = x2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -197,13 +198,15 @@ void SVGPathSegCurvetoCubicRel::setY2(double y2)
 {
     m_y2 = y2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicRel::y2() const
 {
     return m_y2;
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,7 +24,7 @@
 #define KSVG_SVGPathSegClosePathImpl_H
 #ifdef SVG_SUPPORT
 
-#include <ksvg2/svg/SVGPathSeg.h>
+#include "SVGPathSeg.h"
 
 namespace WebCore
 {

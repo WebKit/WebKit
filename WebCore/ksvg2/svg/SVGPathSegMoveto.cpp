@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,12 +23,13 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGPathSegMoveto.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -41,7 +42,7 @@ void SVGPathSegMovetoAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -54,7 +55,7 @@ void SVGPathSegMovetoAbs::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -66,8 +67,8 @@ double SVGPathSegMovetoAbs::y() const
 
 
 
-SVGPathSegMovetoRel::SVGPathSegMovetoRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegMovetoRel::SVGPathSegMovetoRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -80,7 +81,7 @@ void SVGPathSegMovetoRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -93,13 +94,15 @@ void SVGPathSegMovetoRel::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 double SVGPathSegMovetoRel::y() const
 {
     return m_y;
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,5 +1,56 @@
 2006-10-09  Rob Buis  <buis@kde.org>
 
+        Reviewed by olliej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in SVGPath* classes.
+
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::getPointAtLength):
+        (WebCore::SVGPathElement::createSVGPathSegClosePath):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        (WebCore::SVGPathElement::svgMoveTo):
+        (WebCore::SVGPathElement::svgLineTo):
+        (WebCore::SVGPathElement::svgLineToHorizontal):
+        (WebCore::SVGPathElement::svgLineToVertical):
+        (WebCore::SVGPathElement::svgCurveToCubic):
+        (WebCore::SVGPathElement::svgCurveToCubicSmooth):
+        (WebCore::SVGPathElement::svgCurveToQuadratic):
+        (WebCore::SVGPathElement::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathElement::svgArcTo):
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        (WebCore::SVGPathElement::pathSegList):
+        (WebCore::SVGPathElement::normalizedPathSegList):
+        (WebCore::SVGPathElement::animatedPathSegList):
+        (WebCore::SVGPathElement::animatedNormalizedPathSegList):
+        (WebCore::SVGPathElement::toPathData):
+        * ksvg2/svg/SVGPathElement.h:
+        (WebCore::SVGPathElement::rendererIsNeeded):
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPathSegArc.cpp:
+
+2006-10-09  Rob Buis  <buis@kde.org>
+
         Reviewed by aroben.
 
         http://bugs.webkit.org/show_bug.cgi?id=11217

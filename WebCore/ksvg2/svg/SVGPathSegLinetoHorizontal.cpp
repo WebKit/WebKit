@@ -23,12 +23,13 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGPathSegLinetoHorizontal.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = 0.0;
 }
@@ -41,7 +42,7 @@ void SVGPathSegLinetoHorizontalAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -52,8 +53,8 @@ double SVGPathSegLinetoHorizontalAbs::x() const
 
 
 
-SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = 0.0;
 }
@@ -66,13 +67,15 @@ void SVGPathSegLinetoHorizontalRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoHorizontalRel::x() const
 {
     return m_x;
+}
+
 }
 
 // vim:ts=4:noet

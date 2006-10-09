@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,12 +23,13 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGPathSegArc.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegArcAbs::SVGPathSegArcAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegArcAbs::SVGPathSegArcAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
     m_largeArcFlag = m_sweepFlag = false;
@@ -42,7 +43,7 @@ void SVGPathSegArcAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -55,7 +56,7 @@ void SVGPathSegArcAbs::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -68,7 +69,7 @@ void SVGPathSegArcAbs::setR1(double r1)
 {
     m_r1 = r1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -81,7 +82,7 @@ void SVGPathSegArcAbs::setR2(double r2)
 {
     m_r2 = r2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -94,7 +95,7 @@ void SVGPathSegArcAbs::setAngle(double angle)
 {
     m_angle = angle;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -107,7 +108,7 @@ void SVGPathSegArcAbs::setLargeArcFlag(bool largeArcFlag)
 {
     m_largeArcFlag = largeArcFlag;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -120,7 +121,7 @@ void SVGPathSegArcAbs::setSweepFlag(bool sweepFlag)
 {
     m_sweepFlag = sweepFlag;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -131,8 +132,8 @@ bool SVGPathSegArcAbs::sweepFlag() const
 
 
 
-SVGPathSegArcRel::SVGPathSegArcRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegArcRel::SVGPathSegArcRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
     m_largeArcFlag = m_sweepFlag = false;
@@ -146,7 +147,7 @@ void SVGPathSegArcRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -159,7 +160,7 @@ void SVGPathSegArcRel::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -172,7 +173,7 @@ void SVGPathSegArcRel::setR1(double r1)
 {
     m_r1 = r1;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -185,7 +186,7 @@ void SVGPathSegArcRel::setR2(double r2)
 {
     m_r2 = r2;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -198,7 +199,7 @@ void SVGPathSegArcRel::setAngle(double angle)
 {
     m_angle = angle;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -211,7 +212,7 @@ void SVGPathSegArcRel::setLargeArcFlag(bool largeArcFlag)
 {
     m_largeArcFlag = largeArcFlag;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -224,13 +225,15 @@ void SVGPathSegArcRel::setSweepFlag(bool sweepFlag)
 {
     m_sweepFlag = sweepFlag;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 bool SVGPathSegArcRel::sweepFlag() const
 {
     return m_sweepFlag;
+}
+
 }
 
 // vim:ts=4:noet

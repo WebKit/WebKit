@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,14 +24,14 @@
 #define KSVG_SVGPathSegLinetoImpl_H
 #ifdef SVG_SUPPORT
 
-#include <ksvg2/svg/SVGPathSeg.h>
+#include "SVGPathSeg.h"
 
 namespace WebCore
 {
     class SVGPathSegLinetoAbs : public SVGPathSeg
     { 
     public:
-        SVGPathSegLinetoAbs(const SVGStyledElement *context = 0);
+        SVGPathSegLinetoAbs(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegLinetoAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
@@ -52,7 +52,7 @@ namespace WebCore
     class SVGPathSegLinetoRel : public SVGPathSeg
     { 
     public:
-        SVGPathSegLinetoRel(const SVGStyledElement *context = 0);
+        SVGPathSegLinetoRel(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegLinetoRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_REL; }

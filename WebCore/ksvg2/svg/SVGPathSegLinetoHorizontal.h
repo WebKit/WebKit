@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,14 +24,14 @@
 #define KSVG_SVGPathSegLinetoHorizontalImpl_H
 #ifdef SVG_SUPPORT
 
-#include <ksvg2/svg/SVGPathSeg.h>
+#include "SVGPathSeg.h"
 
 namespace WebCore
 {
     class SVGPathSegLinetoHorizontalAbs : public SVGPathSeg
     {
     public:
-        SVGPathSegLinetoHorizontalAbs(const SVGStyledElement *context = 0);
+        SVGPathSegLinetoHorizontalAbs(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegLinetoHorizontalAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
@@ -48,7 +48,7 @@ namespace WebCore
     class SVGPathSegLinetoHorizontalRel : public SVGPathSeg
     {
     public:
-        SVGPathSegLinetoHorizontalRel(const SVGStyledElement *context = 0);
+        SVGPathSegLinetoHorizontalRel(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegLinetoHorizontalRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }

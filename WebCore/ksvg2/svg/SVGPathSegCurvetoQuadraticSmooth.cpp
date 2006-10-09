@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,12 +23,13 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGPathSegCurvetoQuadraticSmooth.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -41,7 +42,7 @@ void SVGPathSegCurvetoQuadraticSmoothAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -54,7 +55,7 @@ void SVGPathSegCurvetoQuadraticSmoothAbs::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -65,8 +66,8 @@ double SVGPathSegCurvetoQuadraticSmoothAbs::y() const
 
 
 
-SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -79,7 +80,7 @@ void SVGPathSegCurvetoQuadraticSmoothRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -92,13 +93,15 @@ void SVGPathSegCurvetoQuadraticSmoothRel::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticSmoothRel::y() const
 {
     return m_y;
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,7 +31,7 @@ namespace WebCore
     class SVGPathSegArcAbs : public SVGPathSeg
     {
     public:
-        SVGPathSegArcAbs(const SVGStyledElement *context = 0);
+        SVGPathSegArcAbs(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegArcAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
@@ -73,7 +73,7 @@ namespace WebCore
     class SVGPathSegArcRel : public SVGPathSeg
     {
     public:
-        SVGPathSegArcRel(const SVGStyledElement *context = 0);
+        SVGPathSegArcRel(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegArcRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }

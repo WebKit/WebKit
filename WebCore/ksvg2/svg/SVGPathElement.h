@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,12 +24,12 @@
 #define KSVG_SVGPathElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "svgpathparser.h"
-#include "SVGLangSpace.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGAnimatedPathData.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTests.h"
+#include "svgpathparser.h"
 
 namespace WebCore
 {
@@ -54,11 +54,11 @@ namespace WebCore
     class SVGPathSegCurvetoQuadraticSmoothAbs;
     class SVGPathSegCurvetoQuadraticSmoothRel;
     class SVGPathElement : public SVGStyledTransformableElement,
-                               public SVGTests,
-                               public SVGLangSpace,
-                               public SVGExternalResourcesRequired,
-                               public SVGAnimatedPathData,
-                               public SVGPathParser
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired,
+                           public SVGAnimatedPathData,
+                           public SVGPathParser
     {
     public:
         SVGPathElement(const QualifiedName&, Document*);
@@ -69,35 +69,35 @@ namespace WebCore
         FloatPoint getPointAtLength(double distance);
         unsigned long getPathSegAtLength(double distance);
 
-        SVGPathSegClosePath *createSVGPathSegClosePath();
-        SVGPathSegMovetoAbs *createSVGPathSegMovetoAbs(double x, double y, const SVGStyledElement *context = 0);
-        SVGPathSegMovetoRel *createSVGPathSegMovetoRel(double x, double y, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoAbs *createSVGPathSegLinetoAbs(double x, double y, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoRel *createSVGPathSegLinetoRel(double x, double y, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoCubicAbs *createSVGPathSegCurvetoCubicAbs(double x, double y, double x1, double y1, double x2, double y2, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoCubicRel *createSVGPathSegCurvetoCubicRel(double x, double y, double x1, double y1, double x2, double y2, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoQuadraticAbs *createSVGPathSegCurvetoQuadraticAbs(double x, double y, double x1, double y1, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoQuadraticRel *createSVGPathSegCurvetoQuadraticRel(double x, double y, double x1, double y1, const SVGStyledElement *context = 0);
-        SVGPathSegArcAbs *createSVGPathSegArcAbs(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, const SVGStyledElement *context = 0);
-        SVGPathSegArcRel *createSVGPathSegArcRel(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoHorizontalAbs *createSVGPathSegLinetoHorizontalAbs(double x, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoHorizontalRel *createSVGPathSegLinetoHorizontalRel(double x, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoVerticalAbs *createSVGPathSegLinetoVerticalAbs(double y, const SVGStyledElement *context = 0);
-        SVGPathSegLinetoVerticalRel *createSVGPathSegLinetoVerticalRel(double y, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoCubicSmoothAbs *createSVGPathSegCurvetoCubicSmoothAbs(double x, double y, double x2, double y2, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoCubicSmoothRel *createSVGPathSegCurvetoCubicSmoothRel(double x, double y, double x2, double y2, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoQuadraticSmoothAbs *createSVGPathSegCurvetoQuadraticSmoothAbs(double x, double y, const SVGStyledElement *context = 0);
-        SVGPathSegCurvetoQuadraticSmoothRel *createSVGPathSegCurvetoQuadraticSmoothRel(double x, double y, const SVGStyledElement *context = 0);
+        SVGPathSegClosePath* createSVGPathSegClosePath();
+        SVGPathSegMovetoAbs* createSVGPathSegMovetoAbs(double x, double y, const SVGStyledElement* context = 0);
+        SVGPathSegMovetoRel* createSVGPathSegMovetoRel(double x, double y, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoAbs* createSVGPathSegLinetoAbs(double x, double y, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoRel* createSVGPathSegLinetoRel(double x, double y, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoCubicAbs* createSVGPathSegCurvetoCubicAbs(double x, double y, double x1, double y1, double x2, double y2, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoCubicRel* createSVGPathSegCurvetoCubicRel(double x, double y, double x1, double y1, double x2, double y2, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoQuadraticAbs* createSVGPathSegCurvetoQuadraticAbs(double x, double y, double x1, double y1, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoQuadraticRel* createSVGPathSegCurvetoQuadraticRel(double x, double y, double x1, double y1, const SVGStyledElement* context = 0);
+        SVGPathSegArcAbs* createSVGPathSegArcAbs(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, const SVGStyledElement* context = 0);
+        SVGPathSegArcRel* createSVGPathSegArcRel(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoHorizontalAbs* createSVGPathSegLinetoHorizontalAbs(double x, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoHorizontalRel* createSVGPathSegLinetoHorizontalRel(double x, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoVerticalAbs* createSVGPathSegLinetoVerticalAbs(double y, const SVGStyledElement* context = 0);
+        SVGPathSegLinetoVerticalRel* createSVGPathSegLinetoVerticalRel(double y, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoCubicSmoothAbs* createSVGPathSegCurvetoCubicSmoothAbs(double x, double y, double x2, double y2, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoCubicSmoothRel* createSVGPathSegCurvetoCubicSmoothRel(double x, double y, double x2, double y2, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoQuadraticSmoothAbs* createSVGPathSegCurvetoQuadraticSmoothAbs(double x, double y, const SVGStyledElement* context = 0);
+        SVGPathSegCurvetoQuadraticSmoothRel* createSVGPathSegCurvetoQuadraticSmoothRel(double x, double y, const SVGStyledElement* context = 0);
 
         // Derived from: 'SVGAnimatedPathData'
-        virtual SVGPathSegList *pathSegList() const;
-        virtual SVGPathSegList *normalizedPathSegList() const;
-        virtual SVGPathSegList *animatedPathSegList() const;
-        virtual SVGPathSegList *animatedNormalizedPathSegList() const;
+        virtual SVGPathSegList* pathSegList() const;
+        virtual SVGPathSegList* normalizedPathSegList() const;
+        virtual SVGPathSegList* animatedPathSegList() const;
+        virtual SVGPathSegList* animatedNormalizedPathSegList() const;
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
     protected:

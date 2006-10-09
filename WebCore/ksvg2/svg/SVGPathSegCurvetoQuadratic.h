@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,7 +31,7 @@ namespace WebCore
     class SVGPathSegCurvetoQuadraticAbs : public SVGPathSeg
     { 
     public:
-        SVGPathSegCurvetoQuadraticAbs(const SVGStyledElement *context = 0);
+        SVGPathSegCurvetoQuadraticAbs(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegCurvetoQuadraticAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
@@ -60,7 +60,7 @@ namespace WebCore
     class SVGPathSegCurvetoQuadraticRel : public SVGPathSeg 
     { 
     public:
-        SVGPathSegCurvetoQuadraticRel(const SVGStyledElement *context = 0);
+        SVGPathSegCurvetoQuadraticRel(const SVGStyledElement* context = 0);
         virtual ~SVGPathSegCurvetoQuadraticRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }

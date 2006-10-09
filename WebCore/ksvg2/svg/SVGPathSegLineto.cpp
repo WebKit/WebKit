@@ -22,14 +22,14 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-
 #include "SVGPathSegLineto.h"
+
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -42,7 +42,7 @@ void SVGPathSegLinetoAbs::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -55,7 +55,7 @@ void SVGPathSegLinetoAbs::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -64,8 +64,8 @@ double SVGPathSegLinetoAbs::y() const
     return m_y;
 }
 
-SVGPathSegLinetoRel::SVGPathSegLinetoRel(const SVGStyledElement *context)
-: SVGPathSeg(context)
+SVGPathSegLinetoRel::SVGPathSegLinetoRel(const SVGStyledElement* context)
+    : SVGPathSeg(context)
 {
     m_x = m_y = 0.0;
 }
@@ -78,7 +78,7 @@ void SVGPathSegLinetoRel::setX(double x)
 {
     m_x = x;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -91,13 +91,15 @@ void SVGPathSegLinetoRel::setY(double y)
 {
     m_y = y;
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoRel::y() const
 {
     return m_y;
+}
+
 }
 
 // vim:ts=4:noet
