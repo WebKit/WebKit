@@ -1716,7 +1716,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
 {
-    return [NSString stringWithFormat:UI_STRING("%@ %.0f√ó%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
+    return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
 }
 
 - (void)notifyIconChanged:(NSURL*)iconURL
