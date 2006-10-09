@@ -36,7 +36,6 @@
 
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebFrameLoader.h>
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.

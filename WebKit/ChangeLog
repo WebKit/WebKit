@@ -1,3 +1,19 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - avoid need for WebKitSystemInterface in loader code, via WebCore cover for wkSupportsMultipartXMixedReplace
+
+        * Loader/WebDocumentLoader.m:
+        (-[WebDocumentLoader initWithRequest:]):
+        * Loader/WebMainResourceLoader.m:
+        * Loader/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]):
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _initWithDocumentLoader:]):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         - build fix (also a fix for a crasher I forgot to commit before)

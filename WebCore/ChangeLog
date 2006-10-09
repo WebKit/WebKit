@@ -1,3 +1,13 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - more code laundering - add wkSupportsMultipartXMixedReplace
+
+        * WebCore.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2006-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin and Oliver.

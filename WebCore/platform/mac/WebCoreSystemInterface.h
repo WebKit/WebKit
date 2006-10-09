@@ -41,10 +41,12 @@ typedef struct _NSRect NSRect;
 
 #ifdef __OBJC__
 @class NSFont;
+@class NSMutableURLRequest;
 #else
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
 typedef struct NSMenu NSMenu;
+typedef struct NSMutableURLRequest NSMutableURLRequest;
 typedef struct NSString NSString;
 typedef struct NSURLConnection NSURLConnection;
 typedef struct NSView NSView;
@@ -100,6 +102,7 @@ extern void (*wkSetUpFontCache)(size_t);
 extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
 extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
+extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 
 #ifdef __cplusplus
 }

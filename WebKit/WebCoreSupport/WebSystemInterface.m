@@ -72,6 +72,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateCustomCFReadStream);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(CreateNSURLConnectionDelegateProxy);
+    INIT(SupportsMultipartXMixedReplace);
     
     didInit = true;
 }

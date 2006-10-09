@@ -32,8 +32,7 @@
 #import "WebFrameLoader.h"
 #import "WebDataProtocol.h"
 #import "WebFrameBridge.h"
-
-#import <WebKitSystemInterface.h>
+#import <WebCore/WebCoreSystemInterface.h>
 
 @implementation WebDocumentLoader
 
@@ -46,6 +45,7 @@
     originalRequest = [req retain];
     originalRequestCopy = [originalRequest copy];
     request = [originalRequest mutableCopy];
+    wkSupportsMultipartXMixedReplace(request);
 
     return self;
 }

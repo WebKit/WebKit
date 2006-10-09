@@ -368,12 +368,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->loader = [loader retain];
         
     LOG(Loading, "creating datasource for %@", [[_private->loader request] URL]);
-    WKSupportsMultipartXMixedReplace([_private->loader request]);
     
     ++WebDataSourceCount;
     
-    return self;
-    
+    return self;    
 }
 
 @end
