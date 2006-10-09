@@ -572,10 +572,10 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_focusRootNode:(id)sender
 {
-    int index = [sender selectedRow];
-    if (index == -1 || !sender)
+    int index = [_private->treeOutlineView selectedRow];
+    if (index == -1 || !_private->treeOutlineView)
         return;
-    DOMNode *node = [sender itemAtRow:index];
+    DOMNode *node = [_private->treeOutlineView itemAtRow:index];
     if (![node isSameNode:[self rootDOMNode]])
         [self setRootDOMNode:node];
 }
@@ -995,7 +995,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     return nil;
 }
 
-- (void)outlineView:(NSOutlineView *)outlineView willDisplayOutlineCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item
+- (void)outlineView:(NSOutlineView *)outlineView willDisplayOutlineCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item
 {
     if (outlineView == _private->treeOutlineView)
         [cell setImage:([cell state] ? _private->downArrowImage : _private->rightArrowImage)];
