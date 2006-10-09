@@ -1,3 +1,13 @@
+2006-10-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Tiny changes to help reorganize WebFrameLoader code in WebKit
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Added "createInstance"
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (+[WebCoreIconDatabaseBridge sharedInstance]): Added, uses createInstance from WebKit side
+
 2006-10-09  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

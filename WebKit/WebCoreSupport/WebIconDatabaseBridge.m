@@ -59,17 +59,9 @@
     [super _setHaveNoIconForIconURL:iconURL];
 }
 
-+ (WebCoreIconDatabaseBridge *)sharedInstance
-{
-    static WebCoreIconDatabaseBridge* bridge = nil;
-    if (!bridge) {
-        // Need to CFRetain something that's in a global variable, since we want it to
-        // hang around forever, even when running under GC.
-        bridge = [[WebIconDatabaseBridge alloc] _init];
-        CFRetain(bridge);
-        [bridge release];
-    }
-    return bridge;
++ (WebCoreIconDatabaseBridge *)createInstance
+{    
+    return [[WebIconDatabaseBridge alloc] _init];
 }
 
 - (void)dealloc

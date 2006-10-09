@@ -1,3 +1,14 @@
+2006-10-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Fix to elminate WebIconDatabaseBridge.h from WebFrameLoader
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _notifyIconChanged:]):
+        * WebCoreSupport/WebIconDatabaseBridge.m:
+        (+[WebIconDatabaseBridge createInstance]):
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
