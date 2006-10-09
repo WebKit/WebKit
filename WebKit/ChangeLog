@@ -1,3 +1,70 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - moved more methods to WebFrameLoader from WebFrame
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader defersCallbacksChanged]):
+        (-[WebFrameLoader startLoadingMainResourceWithRequest:identifier:]):
+        (-[WebFrameLoader setState:]):
+        (-[WebFrameLoader clearProvisionalLoad]):
+        (-[WebFrameLoader markLoadComplete]):
+        (-[WebFrameLoader commitProvisionalLoad]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader startProvisionalLoad:]):
+        (-[WebFrameLoader setupForReplace]):
+        (-[WebFrameLoader _identifierForInitialRequest:]):
+        (-[WebFrameLoader _finishedLoadingResource]):
+        (-[WebFrameLoader _receivedError:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader opened]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader documentLoader:mainReceivedCompleteError:]):
+        (-[WebFrameLoader subframeIsLoading]):
+        (-[WebFrameLoader checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueAfterNewWindowPolicy:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrameLoader sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        (-[WebFrameLoader loadRequest:inFrameNamed:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader detachChildren]):
+        (-[WebFrameLoader detachFromParent]):
+        (-[WebFrameLoader addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrameLoader safeLoadURL:]):
+        (-[WebFrameLoader actionInformationForLoadType:isFormSubmission:event:originalURL:]):
+        (-[WebFrameLoader actionInformationForNavigationType:event:originalURL:]):
+        (-[WebFrameLoader checkLoadComplete]):
+        * Loader/WebFrameLoaderClient.h:
+        * Loader/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge close]):
+        (-[WebFrameBridge tokenizerProcessedData]):
+        (-[WebFrameBridge frameDetached]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _detachedFromParent1]):
+        (-[WebFrame _detachedFromParent2]):
+        (-[WebFrame _detachedFromParent3]):
+        (-[WebFrame _detachedFromParent4]):
+        (-[WebFrame _updateHistoryAfterClientRedirect]):
+        (-[WebFrame _loadedFromPageCache]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebPDFView.m:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        * WebView/WebView.m:
+        (-[WebView _close]):
+        (-[WebView setDefersCallbacks:]):
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

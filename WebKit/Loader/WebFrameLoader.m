@@ -35,6 +35,7 @@
 #import "WebMainResourceLoader.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
+#import <WebKitSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
@@ -44,6 +45,8 @@
 #import "WebFormDataStream.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLView.h"
 #import "WebHistory.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
@@ -53,11 +56,9 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
-#import "WebDefaultResourceLoadDelegate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
-#import "WebFrameViewInternal.h"
 
 @implementation WebFrameLoader
 
@@ -98,11 +99,6 @@
     return [client _dataSourceForDocumentLoader:[self activeDocumentLoader]];
 }
 
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
-{
-    return [[self activeDataSource] _archivedSubresourceForURL:URL];
-}
-
 - (void)addPlugInStreamLoader:(WebLoader *)loader
 {
     if (!plugInStreamLoaders)
@@ -119,7 +115,9 @@
 
 - (void)defersCallbacksChanged
 {
-    [self setDefersCallbacks:[[client webView] defersCallbacks]];
+    BOOL defers = [[client webView] defersCallbacks];
+    for (WebFrame *frame = client; frame; frame = [frame _traverseNextFrameStayWithin:client])
+        [[frame _frameLoader] setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
@@ -213,7 +211,7 @@
     mainResourceLoader = [[WebMainResourceLoader alloc] initWithFrameLoader:self];
     
     [mainResourceLoader setIdentifier:identifier];
-    [client _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
+    [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
     if (![mainResourceLoader loadWithRequest:request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
@@ -274,11 +272,6 @@
     policyDocumentLoader = loader;
 }
    
-- (void)clearDataSource
-{
-    [self setDocumentLoader:nil];
-}
-
 - (WebDataSource *)provisionalDataSource 
 {
     return [client _dataSourceForDocumentLoader:provisionalDocumentLoader]; 
@@ -301,17 +294,12 @@
     provisionalDocumentLoader = loader;
 }
 
-- (void)_clearProvisionalDataSource
-{
-    [self setProvisionalDocumentLoader:nil];
-}
-
 - (WebFrameState)state
 {
     return state;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
@@ -334,11 +322,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [client _provisionalLoadStarted];
 }
 
-- (void)_setState:(WebFrameState)newState
+- (void)setState:(WebFrameState)newState
 {
     LOG(Loading, "%@:  transition from %s to %s", [client name], stateNames[state], stateNames[newState]);
     if ([client webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [client name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoader] loadingStartedTime]);
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load",
+            [client name], stateNames[state], stateNames[newState],
+            CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoader] loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && client == [[client webView] mainFrame])
         LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoader] loadingStartedTime]);
@@ -358,12 +348,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [self setProvisionalDocumentLoader:nil];
     [[client webView] _progressCompleted:client];
-    [self _setState:WebFrameStateComplete];
+    [self setState:WebFrameStateComplete];
 }
 
 - (void)markLoadComplete
 {
-    [self _setState:WebFrameStateComplete];
+    [self setState:WebFrameStateComplete];
 }
 
 - (void)commitProvisionalLoad
@@ -373,7 +363,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [self setDocumentLoader:provisionalDocumentLoader];
     [self setProvisionalDocumentLoader:nil];
-    [self _setState:WebFrameStateCommittedPage];
+    [self setState:WebFrameStateCommittedPage];
 }
 
 - (void)stopLoadingSubframes
@@ -395,7 +385,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self stopLoadingSubframes];
     [provisionalDocumentLoader stopLoading];
     [documentLoader stopLoading];
-    [self _clearProvisionalDataSource];
+    [self setProvisionalDocumentLoader:nil];
     [self clearArchivedResources];
 
     isStoppingLoad = NO;    
@@ -425,30 +415,31 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)startProvisionalLoad:(WebDataSource *)ds
 {
     [self setProvisionalDocumentLoader:[ds _documentLoader]];
-    [self _setState:WebFrameStateProvisional];
+    [self setState:WebFrameStateProvisional];
 }
 
 - (void)setupForReplace
 {
-    [self _setState:WebFrameStateProvisional];
+    [self setState:WebFrameStateProvisional];
     WebDocumentLoader *old = provisionalDocumentLoader;
     provisionalDocumentLoader = documentLoader;
     documentLoader = nil;
     [old release];
     
-    [client _detachChildren];
+    [self detachChildren];
 }
 
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
 {
     WebView *webView = [client webView];
         
-    // The identifier is released after the last callback, rather than in dealloc
+    // The identifier is released after the last callback, rather than in dealloc,
     // to avoid potential cycles.
     if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
-        return [[[webView resourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
-    else
-        return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
+        return [[[webView resourceLoadDelegate] webView:webView
+            identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
+    return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView
+        identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
 }
 
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
@@ -539,12 +530,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_finishedLoadingResource
 {
-    [client _checkLoadComplete];
+    [self checkLoadComplete];
 }
 
 - (void)_receivedError:(NSError *)error
 {
-    [client _checkLoadComplete];
+    [self checkLoadComplete];
 }
 
 - (NSURLRequest *)_originalRequest
@@ -657,16 +648,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"Referer"];
-    [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
-    if (_loadType == FrameLoadTypeReload) {
+    [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
+    if (_loadType == FrameLoadTypeReload)
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-    }
     
     // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
     // policy of LoadFromOrigin, but I didn't test that.
     ASSERT(_loadType != FrameLoadTypeSame);
     
-    NSDictionary *action = [client _actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
+    NSDictionary *action = [self actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
         formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
@@ -771,7 +761,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // This will clear previousItem from the rest of the frame tree tree that didn't
         // doing any loading.  We need to make a pass on this now, since for anchor nav
         // we'll not go through a real load and reach Completed state
-        [client _checkLoadComplete];
+        [self checkLoadComplete];
     }
     
     [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
@@ -790,6 +780,43 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (documentLoader)
         [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] willCloseFrame:client];
     [[client webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
+}
+
+// Called after we send an openURL:... down to WebCore.
+- (void)opened
+{
+    if ([self loadType] == FrameLoadTypeStandard && [[[self dataSource] _documentLoader] isClientRedirect])
+        [client _updateHistoryAfterClientRedirect];
+
+    if ([[self dataSource] _loadingFromPageCache]) {
+        // Force a layout to update view size and thereby update scrollbars.
+        NSView <WebDocumentView> *view = [[client frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)view setNeedsToApplyStyles:YES];
+        [view setNeedsLayout: YES];
+        [view layout];
+
+        NSArray *responses = [[self documentLoader] responses];
+        NSURLResponse *response;
+        int i, count = [responses count];
+        for (i = 0; i < count; i++) {
+            response = [responses objectAtIndex: i];
+            // FIXME: If the WebKit client changes or cancels the request, this is not respected.
+            NSError *error;
+            id identifier;
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
+            [self requestFromDelegateForRequest:request identifier:&identifier error:&error];
+            [self sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:(unsigned)[response expectedContentLength] error:error];
+            [request release];
+        }
+        
+        [client _loadedFromPageCache];
+
+        [[self documentLoader] setPrimaryLoadComplete:YES];
+
+        // FIXME: Why only this frame and not parent frames?
+        [self checkLoadCompleteForThisFrame];
+    }
 }
 
 - (void)commitProvisionalLoad:(NSDictionary *)pageCache
@@ -830,7 +857,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(response))
                   pageCache:pageCache];
     
-    [client _opened];
+    [self opened];
     
     [provisionalDataSource release];
 }
@@ -906,7 +933,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[self activeDocumentLoader] setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
-    [client _checkLoadComplete];
+    [self checkLoadComplete];
 
     [bridge release];
 }
@@ -1032,7 +1059,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 - (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
 {
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        WebResource *resource = [self _archivedSubresourceForURL:originalURL];
+        WebResource *resource = [[self activeDataSource] _archivedSubresourceForURL:originalURL];
         if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
             CFDictionarySetValue((CFMutableDictionaryRef)[self pendingArchivedResources], loader, resource);
             // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
@@ -1054,11 +1081,6 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     
     if (![pendingArchivedResources count])
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
-}
-
-- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
-{
-    [client _addExtraFieldsToRequest:request mainResource:mainResource alwaysFromRequest:f];
 }
 
 - (void)cannotShowMIMETypeForURL:(NSURL *)URL
@@ -1179,7 +1201,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
 
     NSMutableURLRequest *r = [newDataSource request];
-    [client _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
+    [self addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
         type = FrameLoadTypeSame;
@@ -1261,7 +1283,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
     // If we're about to rePOST, set up action so the app can warn the user
     if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
-        NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
+        NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeFormResubmitted
+            event:nil originalURL:[request URL]];
         [policyDocumentLoader setTriggeringAction:action];
     }
 
@@ -1310,7 +1333,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [loader setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
-    [client _checkLoadComplete];
+    [self checkLoadComplete];
 }
 
 - (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
@@ -1328,7 +1351,11 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (BOOL)subframeIsLoading
 {
-    return [client _subframeIsLoading];
+    // It's most likely that the last added frame is the last to load so we walk backwards.
+    for (WebFrame *frame = [client _lastChildFrame]; frame; frame = [frame _previousSiblingFrame])
+        if ([[frame dataSource] isLoading] || [[frame provisionalDataSource] isLoading])
+            return YES;
+    return NO;
 }
 
 - (void)willChangeTitleForDocument:(WebDocumentLoader *)loader
@@ -1405,7 +1432,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 - (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
     WebPolicyDecisionListener *decisionListener = [[WebPolicyDecisionListener alloc]
-        _initWithTarget:self action:@selector(_continueAfterNewWindowPolicy:)];
+        _initWithTarget:self action:@selector(continueAfterNewWindowPolicy:)];
 
     policyRequest = [request retain];
     policyTarget = [target retain];
@@ -1424,7 +1451,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [decisionListener release];
 }
 
-- (void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
+- (void)continueAfterNewWindowPolicy:(WebPolicyAction)policy
 {
     NSURLRequest *request = [[policyRequest retain] autorelease];
     NSString *frameName = [[policyFrameName retain] autorelease];
@@ -1462,7 +1489,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 {
     NSDictionary *action = [[dataSource _documentLoader] triggeringAction];
     if (action == nil) {
-        action = [client _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
+        action = [self actionInformationForNavigationType:WebNavigationTypeOther
+            event:nil originalURL:[request URL]];
         [[dataSource _documentLoader]  setTriggeringAction:action];
     }
         
@@ -1980,7 +2008,7 @@ exit:
             [delegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
         else
             [sharedDelegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
-        [client _checkLoadComplete];
+        [self checkLoadComplete];
     } else {
         [[wv _resourceLoadDelegateForwarder] webView:wv resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
@@ -2028,7 +2056,8 @@ exit:
         return;
     }
 
-    NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
+    NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeOther
+        event:nil originalURL:[request URL]];
     [self checkNewWindowPolicyForRequest:request action:action frameName:frameName formState:nil
         andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
@@ -2044,13 +2073,13 @@ exit:
     // FIXME: Where's the code that implements what the comment above says?
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [client _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
+    [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
     [request _web_setHTTPReferrer:referrer];
     [request setHTTPMethod:@"POST"];
     webSetHTTPBody(request, postData);
     [request _web_setHTTPContentType:contentType];
 
-    NSDictionary *action = [client _actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
+    NSDictionary *action = [self actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
         formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
@@ -2067,6 +2096,140 @@ exit:
 
     [request release];
     [formState release];
+}
+
+- (void)detachChildren
+{
+    // FIXME: is it really necessary to do this in reverse order any more?
+    WebFrame *child = [client _lastChildFrame];
+    WebFrame *prev = [child _previousSiblingFrame];
+    for (; child; child = prev, prev = [child _previousSiblingFrame])
+        [[child _frameLoader] detachFromParent];
+}
+
+- (void)detachFromParent
+{
+    WebFrameBridge *bridge = [[self bridge] retain];
+
+    [bridge closeURL];
+    [self stopLoading];
+    [client _detachedFromParent1];
+    [self detachChildren];
+    [client _detachedFromParent2];
+    [self setDocumentLoader:nil];
+    [client _detachedFromParent3];
+    [[[client parentFrame] _bridge] removeChild:bridge];
+
+    NSObject <WebFrameLoaderClient>* c = [client retain];
+    [bridge close];
+    [c _detachedFromParent4];
+    [c release];
+
+    [bridge release];
+}
+
+- (void)addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
+{
+    [request _web_setHTTPUserAgent:[[client webView] userAgentForURL:[request URL]]];
+    
+    if ([self loadType] == FrameLoadTypeReload)
+        [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
+    
+    // Don't set the cookie policy URL if it's already been set.
+    if ([request mainDocumentURL] == nil) {
+        if (mainResource && (client == [[client webView] mainFrame] || f))
+            [request setMainDocumentURL:[request URL]];
+        else
+            [request setMainDocumentURL:[[[[client webView] mainFrame] dataSource] _URL]];
+    }
+    
+    if (mainResource)
+        [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
+}
+
+- (void)safeLoadURL:(NSURL *)URL
+{
+   // Call the bridge because this is where our security checks are made.
+    [[self bridge] loadURL:URL 
+                  referrer:[[[[self dataSource] request] URL] _web_originalDataAsString]
+                    reload:NO
+               userGesture:YES       
+                    target:nil
+           triggeringEvent:[NSApp currentEvent]
+                      form:nil 
+                formValues:nil];
+}
+
+- (NSDictionary *)actionInformationForLoadType:(FrameLoadType)type isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL
+{
+    WebNavigationType navType;
+    if (isFormSubmission) {
+        navType = WebNavigationTypeFormSubmitted;
+    } else if (event == nil) {
+        if (type == FrameLoadTypeReload)
+            navType = WebNavigationTypeReload;
+        else if (isBackForwardLoadType(type))
+            navType = WebNavigationTypeBackForward;
+        else
+            navType = WebNavigationTypeOther;
+    } else {
+        navType = WebNavigationTypeLinkClicked;
+    }
+    return [self actionInformationForNavigationType:navType event:event originalURL:URL];
+}
+
+- (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSRightMouseDown:
+        case NSOtherMouseDown:
+        case NSLeftMouseUp:
+        case NSRightMouseUp:
+        case NSOtherMouseUp: {
+            NSView *topViewInEventWindow = [[event window] contentView];
+            NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
+            while (viewContainingPoint != nil) {
+                if ([viewContainingPoint isKindOfClass:[WebView class]])
+                    break;
+                viewContainingPoint = [viewContainingPoint superview];
+            }
+            if (viewContainingPoint != nil) {
+                NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
+                NSDictionary *elementInfo = [(WebView *)viewContainingPoint elementAtPoint:point];
+                return [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                    elementInfo, WebActionElementKey,
+                    [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
+                    [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+                    URL, WebActionOriginalURLKey,
+                    nil];
+            }
+        }
+            
+        // fall through
+        
+        default:
+            return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+                URL, WebActionOriginalURLKey,
+                nil];
+    }
+}
+
+// Called every time a resource is completely loaded, or an error is received.
+- (void)checkLoadComplete
+{
+    ASSERT([client webView] != nil);
+
+    WebFrame *parent;
+    for (WebFrame *frame = client; frame; frame = parent) {
+        [frame retain];
+        [[frame _frameLoader] checkLoadCompleteForThisFrame];
+        parent = [frame parentFrame];
+        [frame release];
+    }
 }
 
 @end

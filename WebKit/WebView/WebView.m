@@ -621,7 +621,7 @@ static bool debugWidget = true;
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
 
-    [[self mainFrame] _detachFromParent];
+    [[[self mainFrame] _frameLoader] detachFromParent];
     [_private->_pageBridge close];
     [_private->_pageBridge release];
     _private->_pageBridge = nil;
@@ -699,7 +699,7 @@ static bool debugWidget = true;
     }
 
     _private->defersCallbacks = defers;
-    [[self mainFrame] _defersCallbacksChanged];
+    [[[self mainFrame] _frameLoader] defersCallbacksChanged];
 }
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request

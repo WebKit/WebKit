@@ -66,13 +66,10 @@
 // Note that callers should not perform any ops on these views that could change the set of frames
 - (NSArray *)_documentViews;
 
-- (void)_safeLoadURL:(NSURL *)URL;
-
 - (BOOL)_hasSelection;
 - (void)_clearSelection;
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
-- (BOOL)_subframeIsLoading;
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge;
 
 - (void)_addPlugInView:(NSView *)plugInView;
@@ -81,7 +78,6 @@
 // This should be called when leaving a page or closing the WebView
 - (void)_willCloseURL;
 
-- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f;
 - (BOOL)_isMainFrame;
 
 - (void)_addInspector:(WebInspector *)inspector;
@@ -96,23 +92,16 @@
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 
-- (void)_detachFromParent;
-- (void)_detachChildren;
 - (void)_handledOnloadEvents;
-- (void)_checkLoadComplete;
 - (WebFrameBridge *)_bridge;
 
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(FrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
 
-- (void)_defersCallbacksChanged;
-
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)_viewDidMoveToHostWindow;
 
 - (void)_addChild:(WebFrame *)child;
-
-- (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
 
 - (WebHistoryItem *)_itemForSavingDocState;
 - (WebHistoryItem *)_itemForRestoringDocState;
@@ -125,13 +114,11 @@
 - (BOOL)_canCachePage;
 - (void)_purgePageCache;
 
-- (void)_opened;
 // used to decide to use loadType=Same
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
 
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
-
 
 - (BOOL)_shouldCreateRenderers;
 
@@ -148,7 +135,6 @@
 - (void)_restoreScrollPositionAndViewState;
 
 - (void)_provisionalLoadStarted;
--(NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 - (void)_addHistoryItemForFragmentScroll;
 - (void)_didFinishLoad;
 
@@ -156,6 +142,15 @@
 
 @interface NSObject (WebInternalFrameLoadDelegate)
 - (void)webFrame:(WebFrame *)webFrame didFinishLoadWithError:(NSError *)error;
+@end
+
+@interface WebFrame (FrameTraversal)
+- (WebFrame *)_firstChildFrame;
+- (WebFrame *)_lastChildFrame;
+- (unsigned)_childFrameCount;
+- (WebFrame *)_previousSiblingFrame;
+- (WebFrame *)_nextSiblingFrame;
+- (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
 @end
 
 @interface WebFrame (WebFrameLoaderClient) <WebFrameLoaderClient>

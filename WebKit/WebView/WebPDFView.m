@@ -641,10 +641,8 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 // links within the PDFView.  
 - (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)URL
 {
-    if (URL != nil) {    
-        WebFrame *frame = [dataSource webFrame];
-        [frame _safeLoadURL:URL];
-    }
+    if (URL != nil)
+        [[[dataSource webFrame] _frameLoader] safeLoadURL:URL];
 }
 
 /*** WebDocumentText protocol implementation ***/

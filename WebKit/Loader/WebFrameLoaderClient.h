@@ -49,8 +49,17 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_updateHistoryForStandardLoad;
 - (void)_updateHistoryForInternalLoad;
 
+- (void)_updateHistoryAfterClientRedirect;
+
 - (LoadErrorResetToken *)_tokenForLoadErrorReset;
 - (void)_resetAfterLoadError:(LoadErrorResetToken *)token;
 - (void)_doNotResetAfterLoadError:(LoadErrorResetToken *)token;
+
+- (void)_detachedFromParent1;
+- (void)_detachedFromParent2;
+- (void)_detachedFromParent3;
+- (void)_detachedFromParent4;
+
+- (void)_loadedFromPageCache;
 
 @end

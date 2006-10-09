@@ -123,7 +123,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
         [newRequest setCachePolicy:[[fl _originalRequest] cachePolicy]];
     setHTTPReferrer(newRequest, referrer);
     
-    [fl _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
+    [fl addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
             
     if (![loader loadWithRequest:newRequest])
         loader = nil;

@@ -670,6 +670,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [super close];
     [_frame release];
     _frame = nil;
+    [_frameLoader release];
+    _frameLoader = nil;
 }
 
 - (void)activateWindow
@@ -876,7 +878,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)tokenizerProcessedData
 {
-    [_frame _checkLoadComplete];
+    [_frameLoader checkLoadComplete];
 }
 
 - (NSString *)incomingReferrer
@@ -1337,7 +1339,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)frameDetached
 {
     [_frame stopLoading];
-    [_frame _detachFromParent];
+    [_frameLoader detachFromParent];
 }
 
 - (void)setHasBorder:(BOOL)hasBorder

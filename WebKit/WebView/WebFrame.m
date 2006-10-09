@@ -105,22 +105,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @interface WebFrame (ForwardDecls)
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
-- (NSDictionary *)_actionInformationForLoadType:(FrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
-
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item;
-
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
-@end
-
-@interface WebFrame (FrameTraversal)
-- (WebFrame *)_firstChildFrame;
-- (WebFrame *)_lastChildFrame;
-- (unsigned)_childFrameCount;
-- (WebFrame *)_previousSiblingFrame;
-- (WebFrame *)_nextSiblingFrame;
-- (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
 @end
 
 @interface NSView (WebFramePluginHosting)
@@ -353,44 +341,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return Frame([[self _bridge] childFrameNamed:name]);
 }
 
-- (void)_detachChildren
-{
-    // FIXME: is it really necessary to do this in reverse order any more?
-    WebFrame *child = [self _lastChildFrame];
-    WebFrame *prev = [child _previousSiblingFrame];
-    for (; child; child = prev, prev = [child _previousSiblingFrame])
-        [child _detachFromParent];
-}
-
-- (void)_detachFromParent
-{
-    WebFrameBridge *bridge = [_private->bridge retain];
-
-    [bridge closeURL];
-    [self stopLoading];
-
-    [self _saveScrollPositionAndViewStateToItem:_private->currentItem];
-    [self _detachChildren];
-    [_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:self];
-
-    [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
-
-    [[self _frameLoader] clearDataSource];
-    [_private setWebFrameView:nil];
-
-    [self retain]; // retain self temporarily because dealloc can re-enter this method
-
-    [[[self parentFrame] _bridge] removeChild:bridge];
-
-    [bridge close];
-    [bridge release];
-
-    bridge = nil;
-    _private->bridge = nil;
-
-    [self release];
-}
-
 - (BOOL)_canCachePage
 {
     return [[[self webView] backForwardList] _usesPageCache];
@@ -490,69 +440,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }
 
-// Called after we send an openURL:... down to WebCore.
-- (void)_opened
-{
-    if ([[self _frameLoader] loadType] == FrameLoadTypeStandard && [[[self dataSource] _documentLoader] isClientRedirect]) {
-        // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
-        // khtml has closed the URL and saved away the form state.
-        WebHistoryItem *item = _private->currentItem;
-        [item setDocumentState:nil];
-        [item setScrollPoint:NSZeroPoint];
-    }
-
-    if ([[self dataSource] _loadingFromPageCache]){
-        // Force a layout to update view size and thereby update scrollbars.
-        NSView <WebDocumentView> *view = [[self frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view setNeedsToApplyStyles:YES];
-        }
-        [view setNeedsLayout: YES];
-        [view layout];
-
-        NSArray *responses = [[[self _frameLoader] documentLoader] responses];
-        NSURLResponse *response;
-        int i, count = [responses count];
-        for (i = 0; i < count; i++){
-            response = [responses objectAtIndex: i];
-            // FIXME: If the WebKit client changes or cancels the request, this is not respected.
-            NSError *error;
-            id identifier;
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
-            [[self _frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];
-            [[self _frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:(unsigned)[response expectedContentLength] error:error];
-            [request release];
-        }
-        
-        // Release the resources kept in the page cache.  They will be
-        // reset when we leave this page.  The core side of the page cache
-        // will have already been invalidated by the bridge to prevent
-        // premature release.
-        [_private->currentItem setHasPageCache:NO];
-
-        [[[self _frameLoader] documentLoader] setPrimaryLoadComplete:YES];
-        // why only this frame and not parent frames?
-        [[self _frameLoader] checkLoadCompleteForThisFrame];
-    }
-}
-
 - (void)_handledOnloadEvents
 {
     [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didHandleOnloadEventsForFrame:self];
-}
-
-// Called every time a resource is completely loaded, or an error is received.
-- (void)_checkLoadComplete
-{
-    ASSERT([self webView] != nil);
-
-    WebFrame *parent;
-    for (WebFrame *frame = self; frame; frame = parent) {
-        [frame retain];
-        [[frame _frameLoader] checkLoadCompleteForThisFrame];
-        parent = [frame parentFrame];
-        [frame release];
-    }
 }
 
 - (WebFrameBridge *)_bridge
@@ -675,7 +565,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         
         if (!inPageCache) {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
-            [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(formData != nil) ? YES : NO];
+            [[self _frameLoader] addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(formData != nil) ? YES : NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
             NSDictionary *action;
@@ -698,10 +588,10 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 if (synchResponse == nil) { 
                     // Not in WF cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-                    action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
+                    action = [[self _frameLoader] actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
                 } else {
                     // We can use the cache, don't use navType=resubmit
-                    action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
+                    action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
                 }
             } else {
                 switch (loadType) {
@@ -725,7 +615,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                         ASSERT_NOT_REACHED();
                 }
 
-                action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
+                action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
             }
 
             [[self _frameLoader] _loadRequest:request triggeringAction:action loadType:loadType formState:nil];
@@ -806,67 +696,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
--(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSRightMouseDown:
-        case NSOtherMouseDown:
-        case NSLeftMouseUp:
-        case NSRightMouseUp:
-        case NSOtherMouseUp:
-        {
-            NSView *topViewInEventWindow = [[event window] contentView];
-            NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-            while (viewContainingPoint != nil) {
-                if ([viewContainingPoint isKindOfClass:[WebHTMLView class]]) {
-                    break;
-                }
-                viewContainingPoint = [viewContainingPoint superview];
-            }
-            if (viewContainingPoint != nil) {
-                NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-                NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint elementAtPoint:point];
-        
-                return [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-                    elementInfo, WebActionElementKey,
-                    [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
-                    [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-                    URL, WebActionOriginalURLKey,
-                    nil];
-            }
-        }
-            
-        // fall through
-        
-        default:
-            return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-                URL, WebActionOriginalURLKey,
-                nil];
-    }
-}
-
--(NSDictionary *)_actionInformationForLoadType:(FrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL
-{
-    WebNavigationType navType;
-    if (isFormSubmission) {
-        navType = WebNavigationTypeFormSubmitted;
-    } else if (event == nil) {
-        if (loadType == FrameLoadTypeReload)
-            navType = WebNavigationTypeReload;
-        else if (isBackForwardLoadType(loadType))
-            navType = WebNavigationTypeBackForward;
-        else
-            navType = WebNavigationTypeOther;
-    } else {
-        navType = WebNavigationTypeLinkClicked;
-    }
-    return [self _actionInformationForNavigationType:navType event:event originalURL:URL];
-}
-
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame
 {
     WebHistoryItem *parentItem = _private->currentItem;
@@ -936,12 +765,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             [item setScrollPoint:point];
         }
     }
-}
-
-- (void)_defersCallbacksChanged
-{
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        [[frame _frameLoader] defersCallbacksChanged];
 }
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -1019,7 +842,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-// used to decide to use loadType=Same
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
 {
     WebHistoryItem *item = _private->currentItem;
@@ -1167,19 +989,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return _private->internalLoadDelegate;
 }
 
-- (void)_safeLoadURL:(NSURL *)URL
-{
-   // Call the bridge because this is where our security checks are made.
-    [[self _bridge] loadURL:URL 
-                    referrer:[[[[self dataSource] request] URL] _web_originalDataAsString]
-                      reload:NO
-                 userGesture:YES       
-                      target:nil
-             triggeringEvent:[NSApp currentEvent]
-                        form:nil 
-                  formValues:nil];
-}
-
 - (void)_unmarkAllMisspellings
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
@@ -1249,15 +1058,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     ASSERT([[[self webView] mainFrame] _atMostOneFrameHasSelection]);
 }
 
-- (BOOL)_subframeIsLoading
-{
-    // It's most likely that the last added frame is the last to load so we walk backwards.
-    for (WebFrame *frame = [self _lastChildFrame]; frame; frame = [frame _previousSiblingFrame])
-        if ([[frame dataSource] isLoading] || [[frame provisionalDataSource] isLoading])
-            return YES;
-    return NO;
-}
-
 - (void)_addPlugInView:(NSView *)plugInView
 {
     ASSERT([plugInView respondsToSelector:@selector(setWebFrame:)]);
@@ -1284,25 +1084,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 - (void)_willCloseURL
 {
     [self _removeAllPlugInViews];
-}
-
-- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
-{
-    [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
-    
-    if ([[self _frameLoader] loadType] == FrameLoadTypeReload)
-        [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
-    
-    // Don't set the cookie policy URL if it's already been set.
-    if ([request mainDocumentURL] == nil) {
-        if (mainResource && (self == [[self webView] mainFrame] || f))
-            [request setMainDocumentURL:[request URL]];
-        else
-            [request setMainDocumentURL:[[[[self webView] mainFrame] dataSource] _URL]];
-    }
-    
-    if (mainResource)
-        [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
 }
 
 - (BOOL)_isMainFrame
@@ -1357,7 +1138,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [window endEditingFor:firstResp];
     }
     
-    [self _detachChildren];
+    [[self _frameLoader] detachChildren];
 }
 
 - (void)_frameLoadCompleted
@@ -1818,6 +1599,45 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
     WebHistoryItem *item = (WebHistoryItem *)token;
     [item release];
+}
+
+- (void)_detachedFromParent1
+{
+    [self _saveScrollPositionAndViewStateToItem:_private->currentItem];
+}
+
+- (void)_detachedFromParent2
+{
+    [_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:self];
+    [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
+}
+
+- (void)_detachedFromParent3
+{
+    [_private setWebFrameView:nil];
+}
+
+- (void)_detachedFromParent4
+{
+    _private->bridge = nil;
+}
+
+- (void)_updateHistoryAfterClientRedirect
+{
+    // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
+    // khtml has closed the URL and saved away the form state.
+    WebHistoryItem *item = _private->currentItem;
+    [item setDocumentState:nil];
+    [item setScrollPoint:NSZeroPoint];
+}
+
+- (void)_loadedFromPageCache
+{
+    // Release the resources kept in the page cache.
+    // They will be reset when we leave this page.
+    // The WebCore side of the page cache will have already been invalidated by
+    // the bridge to prevent premature release.
+    [_private->currentItem setHasPageCache:NO];
 }
 
 @end
