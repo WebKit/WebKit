@@ -1701,7 +1701,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)handledOnloadEvents
 {
-    [_frame _handledOnloadEvents];
+    [_frame _dispatchDidHandleOnloadEventsForFrame];
 }
 
 - (void)closeURL

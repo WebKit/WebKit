@@ -400,14 +400,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
         
     [[self provisionalDataSource] _setLoadingFromPageCache:NO];
+
+    id identifier = [client _dispatchIdentifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDocumentLoader:provisionalDocumentLoader];
         
-    id identifier;
-    id resourceLoadDelegate = [[client webView] resourceLoadDelegate];
-    if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-        identifier = [resourceLoadDelegate webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDataSource:[self provisionalDataSource]];
-    else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[client webView] identifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDataSource:[self provisionalDataSource]];
-    
     if (![self startLoadingMainResourceWithRequest:[provisionalDocumentLoader actualRequest] identifier:identifier])
         [provisionalDocumentLoader updateLoading];
 }
@@ -431,15 +426,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
 {
-    WebView *webView = [client webView];
-        
+    // FIXME: why retain here, but not in the other place this happens?
+
     // The identifier is released after the last callback, rather than in dealloc,
-    // to avoid potential cycles.
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
-        return [[[webView resourceLoadDelegate] webView:webView
-            identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
-    return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView
-        identifierForInitialRequest:clientRequest fromDataSource:[self activeDataSource]] retain];
+    // to avoid potential cycles.    
+    return [[client _dispatchIdentifierForInitialRequest:clientRequest fromDocumentLoader:[self activeDocumentLoader]] retain];
 }
 
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
@@ -1295,7 +1286,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame
 {
-    [client _didReceiveServerRedirectForProvisionalLoadForFrame];
+    [client _dispatchDidReceiveServerRedirectForProvisionalLoadForFrame];
 }
 
 - (void)finishedLoadingDocument:(WebDocumentLoader *)loader

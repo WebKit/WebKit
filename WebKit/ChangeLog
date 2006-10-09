@@ -1,3 +1,23 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - started adding some _dispatch methods to WebFrameLoaderClient for delegate dispatch
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader didReceiveServerRedirectForProvisionalLoadForFrame]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge handledOnloadEvents]):
+        * WebView/WebFrame.m:
+        (dataSource):
+        (-[WebFrame _dataSourceForDocumentLoader:]):
+        (-[WebFrame _dispatchDidHandleOnloadEventsForFrame]):
+        (-[WebFrame _dispatchDidReceiveServerRedirectForProvisionalLoadForFrame]):
+        (-[WebFrame _dispatchIdentifierForInitialRequest:fromDocumentLoader:]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

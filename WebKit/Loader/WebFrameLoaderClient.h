@@ -30,6 +30,7 @@
 
 typedef struct LoadErrorResetToken LoadErrorResetToken;
 
+@class WebDocumentLoader;
 @protocol WebFrameLoaderClient
 
 - (void)_resetBackForwardList;
@@ -61,5 +62,9 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_detachedFromParent4;
 
 - (void)_loadedFromPageCache;
+
+- (void)_dispatchDidHandleOnloadEventsForFrame;
+- (void)_dispatchDidReceiveServerRedirectForProvisionalLoadForFrame;
+- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)request fromDocumentLoader:(WebDocumentLoader *)loader;
 
 @end

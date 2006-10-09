@@ -440,11 +440,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }
 
-- (void)_handledOnloadEvents
-{
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didHandleOnloadEventsForFrame:self];
-}
-
 - (WebFrameBridge *)_bridge
 {
     return _private->bridge;
@@ -920,12 +915,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (void)_didReceiveServerRedirectForProvisionalLoadForFrame
-{
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
-        didReceiveServerRedirectForProvisionalLoadForFrame:self];
-}
-
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
 {
     self = [super init];
@@ -1152,9 +1141,14 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [_private setPreviousItem:nil];
 }
 
-- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
+static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 {
     return [(WebDocumentLoaderMac *)loader dataSource];
+}
+
+- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
+{
+    return dataSource(loader);
 }
 
 - (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request
@@ -1601,6 +1595,28 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [item release];
 }
 
+- (void)_dispatchDidHandleOnloadEventsForFrame
+{
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didHandleOnloadEventsForFrame:self];
+}
+
+- (void)_dispatchDidReceiveServerRedirectForProvisionalLoadForFrame
+{
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
+       didReceiveServerRedirectForProvisionalLoadForFrame:self];
+}
+
+- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)request fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    id resourceLoadDelegate = [webView resourceLoadDelegate];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
+        return [resourceLoadDelegate webView:webView identifierForInitialRequest:request fromDataSource:dataSource(loader)];
+
+    return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:request fromDataSource:dataSource(loader)];
+}
+    
 - (void)_detachedFromParent1
 {
     [self _saveScrollPositionAndViewStateToItem:_private->currentItem];
