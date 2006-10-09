@@ -106,11 +106,6 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     return documentLoader;    
 }
 
-- (WebDataSource *)activeDataSource
-{
-    return [client _dataSourceForDocumentLoader:[self activeDocumentLoader]];
-}
-
 - (void)addPlugInStreamLoader:(WebLoader *)loader
 {
     if (!plugInStreamLoaders)
@@ -241,11 +236,6 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [mainResourceLoader cancelWithError:error];
 }
 
-- (WebDataSource *)dataSource
-{
-    return [client _dataSourceForDocumentLoader:documentLoader]; 
-}
-
 - (void)setDocumentLoader:(WebDocumentLoader *)loader
 {
     if (loader == nil && documentLoader == nil)
@@ -266,11 +256,6 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     return documentLoader;
 }
 
-- (WebDataSource *)policyDataSource
-{
-    return [client _dataSourceForDocumentLoader:policyDocumentLoader];     
-}
-
 - (void)setPolicyDocumentLoader:(WebDocumentLoader *)loader
 {
     if (policyDocumentLoader == loader)
@@ -284,11 +269,6 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     policyDocumentLoader = loader;
 }
    
-- (WebDataSource *)provisionalDataSource 
-{
-    return [client _dataSourceForDocumentLoader:provisionalDocumentLoader]; 
-}
-
 - (WebDocumentLoader *)provisionalDocumentLoader
 {
     return provisionalDocumentLoader;
@@ -343,7 +323,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoader] loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && client == [[client webView] mainFrame])
-        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoader] loadingStartedTime]);
+        LOG(DocumentLoad, "completed %@ (%f seconds)", [[documentLoader request] URL], CFAbsoluteTimeGetCurrent() - [documentLoader loadingStartedTime]);
     
     state = newState;
     
@@ -410,8 +390,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         
     if ([self isLoadingMainResource])
         return;
-        
-    [[self provisionalDataSource] _setLoadingFromPageCache:NO];
+
+    [client _clearLoadingFromPageCacheForDocumentLoader:provisionalDocumentLoader];
 
     id identifier = [client _dispatchIdentifierForInitialRequest:[provisionalDocumentLoader originalRequest] fromDocumentLoader:provisionalDocumentLoader];
         
@@ -419,9 +399,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [provisionalDocumentLoader updateLoading];
 }
 
-- (void)startProvisionalLoad:(WebDataSource *)ds
+- (void)startProvisionalLoad:(WebDocumentLoader *)loader
 {
-    [self setProvisionalDocumentLoader:[ds _documentLoader]];
+    [self setProvisionalDocumentLoader:loader];
     [self setState:WebFrameStateProvisional];
 }
 
@@ -581,7 +561,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [client name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
+    LOG(Redirect, "%@(%p) Client redirect to: %@, [self documentLoader] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [client name], self, URL, [self documentLoader], (int)lockHistory, (int)isJavaScriptFormAction);
     
     [client _dispatchWillPerformClientRedirectToURL:URL delay:seconds fireDate:date];
     
@@ -646,7 +626,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
     
-    WebDataSource *oldDataSource = [[self dataSource] retain];
+    WebDocumentLoader *oldDocumentLoader = [documentLoader retain];
     
     BOOL sameURL = [client _shouldTreatURLAsSameAsCurrent:URL];
     
@@ -670,11 +650,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         
         // FIXME: What about load types other than Standard and Reload?
         
-        [[oldDataSource _documentLoader] setTriggeringAction:action];
+        [oldDocumentLoader setTriggeringAction:action];
         [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
         [self checkNavigationPolicyForRequest:request
-                                                    dataSource:oldDataSource formState:formState
-                                                       andCall:self withSelector:@selector(continueFragmentScrollAfterNavigationPolicy:formState:)];
+                                   documentLoader:oldDocumentLoader formState:formState
+                                      andCall:self withSelector:@selector(continueFragmentScrollAfterNavigationPolicy:formState:)];
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         BOOL isRedirect = quickRedirectComing;
@@ -692,7 +672,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     [request release];
-    [oldDataSource release];
+    [oldDocumentLoader release];
     [formState release];
 }
 
@@ -752,10 +732,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // Called after we send an openURL:... down to WebCore.
 - (void)opened
 {
-    if ([self loadType] == FrameLoadTypeStandard && [[[self dataSource] _documentLoader] isClientRedirect])
+    if ([self loadType] == FrameLoadTypeStandard && [documentLoader isClientRedirect])
         [client _updateHistoryAfterClientRedirect];
 
-    if ([[self dataSource] _loadingFromPageCache]) {
+    if ([client _isDocumentLoaderLoadingFromPageCache:documentLoader]) {
         // Force a layout to update view size and thereby update scrollbars.
         [client _forceLayout];
 
@@ -786,8 +766,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     bool reload = loadType == FrameLoadTypeReload || loadType == FrameLoadTypeReloadAllowingStaleData;
     
-    WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
-    NSURLResponse *response = [provisionalDataSource response];
+    WebDocumentLoader *pdl = [provisionalDocumentLoader retain];
+    
+    NSURLResponse *response = [pdl response];
     
     NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
         ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
@@ -796,7 +777,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self closeOldDataSources];
     
     if (!pageCache)
-        [provisionalDataSource _makeRepresentation];
+        [client _makeRepresentationForDocumentLoader:pdl];
     
     [self transitionToCommitted:pageCache];
     
@@ -807,7 +788,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (sentRedirectNotification)
         [self clientRedirectCancelledOrFinished:NO];
     
-    NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
+    NSURL *baseURL = [[provisionalDocumentLoader request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
     
     if (!URL || [URL _web_isEmpty])
@@ -822,12 +803,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [self opened];
     
-    [provisionalDataSource release];
+    [pdl release];
 }
 
 - (NSURLRequest *)initialRequest
 {
-    return [[self activeDataSource] initialRequest];
+    return [[self activeDocumentLoader] initialRequest];
 }
 
 - (void)_receivedData:(NSData *)data
@@ -878,20 +859,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_finishedLoading
 {
-    WebDataSource *ds = [self activeDataSource];
+    WebDocumentLoader *dl = [self activeDocumentLoader];
     
     WebFrameBridge *bridge = [self bridge];
 
     [bridge retain];
-    [[self activeDocumentLoader] finishedLoading];
+    [dl finishedLoading];
 
-    if ([ds _mainDocumentError] || ![ds webFrame]) {
+    if ([dl mainDocumentError] || ![dl frameLoader]) {
         [bridge release];
         return;
     }
 
-    [[self activeDocumentLoader] setPrimaryLoadComplete:YES];
-    [client _dispatchDidLoadMainResourceForDocumentLoader:[self activeDocumentLoader]];
+    [dl setPrimaryLoadComplete:YES];
+    [client _dispatchDidLoadMainResourceForDocumentLoader:dl];
     [self checkLoadComplete];
 
     [bridge release];
@@ -904,7 +885,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [[client webView] _willChangeValueForKey:_WebMainFrameIconKey];
     
-    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString] withSize:WebIconSmallSize];
     
     [client _dispatchDidReceiveIcon:icon];
     
@@ -913,7 +894,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSURL *)_URL
 {
-    return [[self activeDataSource] _URL];
+    return [[self activeDocumentLoader] URL];
 }
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request
@@ -1005,7 +986,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
 {
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        WebResource *resource = [[self activeDataSource] _archivedSubresourceForURL:originalURL];
+        WebResource *resource = [client _archivedSubresourceForURL:originalURL fromDocumentLoader:[self activeDocumentLoader]];
         if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
             CFDictionarySetValue((CFMutableDictionaryRef)[self pendingArchivedResources], loader, resource);
             // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
@@ -1069,7 +1050,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel
 {
     [self checkNavigationPolicyForRequest:newRequest
-                              dataSource:[self activeDataSource]
+                           documentLoader:[self activeDocumentLoader]
                                 formState:nil
                                   andCall:obj
                              withSelector:sel];
@@ -1108,13 +1089,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // case handles well-formed URLs that can't be loaded, and the latter
     // case handles malformed URLs and unknown schemes. Loading alternate content
     // at other times behaves like a standard load.
-    WebDataSource *compareDataSource = nil;
+    WebDocumentLoader *compareDocumentLoader = nil;
     if (delegateIsDecidingNavigationPolicy || delegateIsHandlingUnimplementablePolicy)
-        compareDataSource = [self policyDataSource];
+        compareDocumentLoader = policyDocumentLoader;
     else if (delegateIsHandlingProvisionalLoadError)
-        compareDataSource = [self provisionalDataSource];
+        compareDocumentLoader = [self provisionalDocumentLoader];
     
-    return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
+    return compareDocumentLoader != nil && [unreachableURL isEqual:[[compareDocumentLoader request] URL]];
 }
 
 - (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
@@ -1144,54 +1125,50 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         type = FrameLoadTypeReload;
     }
     
-    [self loadDataSource:newDataSource withLoadType:type formState:nil];
+    [self loadDocumentLoader:policyDocumentLoader withLoadType:type formState:nil];
 }
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)type formState:(WebFormState *)formState
 {
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
 
     [policyDocumentLoader setTriggeringAction:action];
     [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
 
-    [self loadDataSource:newDataSource withLoadType:type formState:formState];
+    [self loadDocumentLoader:policyDocumentLoader withLoadType:type formState:formState];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
 {
-    WebDataSource *ds = [self dataSource];
-    if (ds == nil)
+    if (documentLoader == nil)
         return;
 
-    NSMutableURLRequest *request = [[ds request] mutableCopy];
-    NSURL *unreachableURL = [ds unreachableURL];
+    NSMutableURLRequest *request = [[documentLoader request] mutableCopy];
+    NSURL *unreachableURL = [documentLoader unreachableURL];
     if (unreachableURL != nil)
         [request setURL:unreachableURL];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
     [request release];
     
     [policyDocumentLoader setOverrideEncoding:encoding];
 
-    [self loadDataSource:newDataSource withLoadType:FrameLoadTypeReloadAllowingStaleData formState:nil];
+    [self loadDocumentLoader:policyDocumentLoader withLoadType:FrameLoadTypeReloadAllowingStaleData formState:nil];
 }
 
 - (void)reload
 {
-    WebDataSource *ds = [self dataSource];
-    if (ds == nil)
+    if (documentLoader == nil)
         return;
 
-    NSMutableURLRequest *initialRequest = [ds request];
+    NSMutableURLRequest *initialRequest = [documentLoader request];
     
     // If a window is created by javascript, its main frame can have an empty but non-nil URL.
     // Reloading in this case will lose the current contents (see 4151001).
-    if ([[[[ds request] URL] absoluteString] length] == 0)
+    if ([[[[documentLoader request] URL] absoluteString] length] == 0)
         return;
 
     // Replace error-page URL with the URL we were trying to reach.
@@ -1201,8 +1178,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:initialRequest];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
-    NSMutableURLRequest *request = [newDataSource request];
+    NSMutableURLRequest *request = [policyDocumentLoader request];
 
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
@@ -1213,9 +1189,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [policyDocumentLoader setTriggeringAction:action];
     }
 
-    [policyDocumentLoader setOverrideEncoding:[[ds _documentLoader] overrideEncoding]];
+    [policyDocumentLoader setOverrideEncoding:[documentLoader overrideEncoding]];
     
-    [self loadDataSource:newDataSource withLoadType:FrameLoadTypeReload formState:nil];
+    [self loadDocumentLoader:policyDocumentLoader withLoadType:FrameLoadTypeReload formState:nil];
 }
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame
@@ -1395,21 +1371,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 - (void)checkNavigationPolicyForRequest:(NSURLRequest *)request
-                             dataSource:(WebDataSource *)dataSource
+                         documentLoader:(WebDocumentLoader *)loader
                               formState:(WebFormState *)formState
                                 andCall:(id)target
                            withSelector:(SEL)selector
 {
-    NSDictionary *action = [[dataSource _documentLoader] triggeringAction];
+    NSDictionary *action = [loader triggeringAction];
     if (action == nil) {
         action = [self actionInformationForNavigationType:WebNavigationTypeOther
             event:nil originalURL:[request URL]];
-        [[dataSource _documentLoader]  setTriggeringAction:action];
+        [loader setTriggeringAction:action];
     }
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:[[dataSource _documentLoader] lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
+    if ([request isEqual:[loader lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1423,7 +1399,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
     
-    [[dataSource _documentLoader] setLastCheckedRequest:request];
+    [loader setLastCheckedRequest:request];
 
     WebPolicyDecisionListener *decisionListener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterNavigationPolicy:)];
     
@@ -1493,7 +1469,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
     // through this method already, nested; otherwise, policyDataSource should still be set.
-    ASSERT([self policyDataSource] || [[self provisionalDataSource] unreachableURL] != nil);
+    ASSERT(policyDocumentLoader || [provisionalDocumentLoader unreachableURL] != nil);
 
     BOOL isTargetItem = [client _provisionalItemIsTarget];
 
@@ -1522,18 +1498,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     FrameLoadType type = policyLoadType;
-    WebDataSource *dataSource = [[self policyDataSource] retain];
+    WebDocumentLoader *dl = [policyDocumentLoader retain];
     
     [self stopLoading];
     loadType = type;
 
-    [self startProvisionalLoad:dataSource];
+    [self startProvisionalLoad:dl];
 
-    [dataSource release];
+    [dl release];
     [self setPolicyDocumentLoader:nil];
     
     if (client == [[client webView] mainFrame])
-        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
+        LOG(DocumentLoad, "loading %@", [[[self provisionalDocumentLoader] request] URL]);
 
     if (isBackForwardLoadType(type)) {
         if ([client _loadProvisionalItemFromPageCache])
@@ -1551,7 +1527,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)loadDataSource:(WebDataSource *)newDataSource withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
+- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
 {
     ASSERT([client webView] != nil);
 
@@ -1561,8 +1537,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT([client frameView] != nil);
 
     policyLoadType = type;
-
-    WebDocumentLoader *loader = [newDataSource _documentLoader];
 
     WebFrame *parentFrame = [client parentFrame];
     if (parentFrame)
@@ -1574,8 +1548,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [self setPolicyDocumentLoader:loader];
 
-    [self checkNavigationPolicyForRequest:[newDataSource request]
-                               dataSource:newDataSource
+    [self checkNavigationPolicyForRequest:[loader request]
+                           documentLoader:loader
                                 formState:formState
                                   andCall:self
                              withSelector:@selector(continueLoadRequestAfterNavigationPolicy:formState:)];
@@ -1605,7 +1579,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [client _frameLoadCompleted];
 
     // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
-    if ([self dataSource])
+    if (documentLoader)
         firstLayoutDone = YES;
 }
 
@@ -1643,16 +1617,16 @@ keepGoing:
     // The call to closeURL invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
-    WebDataSource *pd = [self provisionalDataSource];
+    WebDocumentLoader *pdl = provisionalDocumentLoader;
     [[client _bridge] closeURL];
-    if (pd != [self provisionalDataSource])
+    if (pdl != provisionalDocumentLoader)
         return;
 
     [self commitProvisionalLoad];
 
     // Handle adding the URL to the back/forward list.
-    WebDataSource *ds = [self dataSource];
-    NSString *ptitle = [ds pageTitle];
+    WebDocumentLoader *dl = documentLoader;
+    NSString *ptitle = [dl title];
 
     switch (loadType) {
     case WebFrameLoadTypeForward:
@@ -1716,17 +1690,17 @@ keepGoing:
             if (delegateIsHandlingProvisionalLoadError)
                 return;
 
-            WebDataSource *pd = [[self provisionalDataSource] retain];
+            WebDocumentLoader *pdl = [provisionalDocumentLoader retain];
 
             LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [client name]);
             // If we've received any errors we may be stuck in the provisional state and actually complete.
-            NSError *error = [pd _mainDocumentError];
+            NSError *error = [pdl mainDocumentError];
             if (error != nil) {
                 // Check all children first.
                 LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [client name]);
                 LoadErrorResetToken *resetToken = [client _tokenForLoadErrorReset];
                 BOOL shouldReset = YES;
-                if (![pd isLoading]) {
+                if (![pdl isLoadingInAPISense]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [client name]);
                     [[client webView] _didFailProvisionalLoadWithError:error forFrame:client];
                     delegateIsHandlingProvisionalLoadError = YES;
@@ -1740,15 +1714,15 @@ keepGoing:
                     // must be, to be in this branch of the if? And is it ok to just do 
                     // a full-on stopLoading?
                     [self stopLoadingSubframes];
-                    [[pd _documentLoader] stopLoading];
+                    [pdl stopLoading];
 
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
-                    if (pd == [self provisionalDataSource])
+                    if (pdl == provisionalDocumentLoader)
                         [self clearProvisionalLoad];
                     else {
-                        NSURL *unreachableURL = [[self provisionalDataSource] unreachableURL];
-                        if (unreachableURL != nil && [unreachableURL isEqual:[[pd request] URL]])
+                        NSURL *unreachableURL = [provisionalDocumentLoader unreachableURL];
+                        if (unreachableURL != nil && [unreachableURL isEqual:[[pdl request] URL]])
                             shouldReset = NO;
                     }
                 }
@@ -1757,31 +1731,21 @@ keepGoing:
                 else
                     [client _doNotResetAfterLoadError:resetToken];
             }
-            [pd release];
+            [pdl release];
             return;
         }
         
         case WebFrameStateCommittedPage: {
-            WebDataSource *ds = [self dataSource];
+            WebDocumentLoader *dl = documentLoader;
             
-            if (![ds isLoading]) {
-                WebFrameView *thisView = [client frameView];
-                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
-                ASSERT(thisDocumentView != nil);
-
+            if (![dl isLoadingInAPISense]) {
                 [self markLoadComplete];
 
                 // FIXME: Is this subsequent work important if we already navigated away?
                 // Maybe there are bugs because of that, or extra work we can skip because
                 // the new page is ready.
 
-                // Tell the just loaded document to layout.  This may be necessary
-                // for non-html content that needs a layout message.
-                if (!([[self dataSource] _isDocumentHTML])) {
-                    [thisDocumentView setNeedsLayout:YES];
-                    [thisDocumentView layout];
-                    [thisDocumentView setNeedsDisplay:YES];
-                }
+                [client _forceLayoutForNonHTML];
                  
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
@@ -1809,7 +1773,7 @@ keepGoing:
                     }
                 }
 
-                NSError *error = [ds _mainDocumentError];
+                NSError *error = [dl mainDocumentError];
                 if (error != nil) {
                     [[client webView] _didFailLoadWithError:error forFrame:client];
                     [client _dispatchDidFailLoadWithError:error];
@@ -2003,7 +1967,7 @@ exit:
 {
    // Call the bridge because this is where our security checks are made.
     [[self bridge] loadURL:URL 
-                  referrer:[[[[self dataSource] request] URL] _web_originalDataAsString]
+                  referrer:[[[documentLoader request] URL] _web_originalDataAsString]
                     reload:NO
                userGesture:YES       
                     target:nil

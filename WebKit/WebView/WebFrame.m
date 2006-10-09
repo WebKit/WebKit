@@ -550,7 +550,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
             if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]) {
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
-                [[self _frameLoader] loadDataSource:newDataSource withLoadType:loadType formState:nil];   
+                [[self _frameLoader] loadDocumentLoader:[newDataSource _documentLoader] withLoadType:loadType formState:nil];   
                 inPageCache = YES;
             } else {
                 LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
@@ -1101,7 +1101,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_prepareForDataSourceReplacement
 {
-    if (![[self _frameLoader] dataSource]) {
+    if (![self dataSource]) {
         ASSERT(![self _childFrameCount]);
         return;
     }
@@ -1326,12 +1326,12 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (WebDataSource *)provisionalDataSource
 {
-    return [[self _frameLoader] provisionalDataSource];
+    return dataSource([[self _frameLoader] provisionalDocumentLoader]);
 }
 
 - (WebDataSource *)dataSource
 {
-    return [[self _frameLoader] dataSource];
+    return dataSource([[self _frameLoader] documentLoader]);
 }
 
 - (void)loadRequest:(NSURLRequest *)request
@@ -1466,7 +1466,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_makeDocumentView
 {
-    NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:[[self _frameLoader] dataSource]];
+    NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:[self dataSource]];
     if (!documentView)
         return;
 
@@ -1478,7 +1478,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
-    [documentView setDataSource:[[self _frameLoader] dataSource]];
+    [documentView setDataSource:[self dataSource]];
 }
 
 - (void)_forceLayout
@@ -1513,7 +1513,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [currItem setHasPageCache:NO];
     if ([[self _frameLoader] loadType] == WebFrameLoadTypeReload)
         [self _saveScrollPositionAndViewStateToItem:currItem];
-    WebDataSource *dataSource = [[self _frameLoader] dataSource];
+    WebDataSource *dataSource = [self dataSource];
     NSURLRequest *request = [dataSource request];
     // Sometimes loading a page again leads to a different result because of cookies. Bugzilla 4072
     if ([request _webDataRequestUnreachableURL] == nil)
@@ -1528,7 +1528,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_updateHistoryForStandardLoad
 {
-    WebDataSource *dataSource = [[self _frameLoader] dataSource];
+    WebDataSource *dataSource = [self dataSource];
     if (![[dataSource _documentLoader] isClientRedirect]) {
         NSURL *URL = [dataSource _URLForHistory];
         if (URL && ![URL _web_isEmpty]) {
@@ -1568,7 +1568,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_updateHistoryForInternalLoad
 {
     // Add an item to the item tree for this frame
-    ASSERT(![[[[self _frameLoader] dataSource] _documentLoader] isClientRedirect]);
+    ASSERT(![[[self _frameLoader] documentLoader] isClientRedirect]);
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame) {
         WebHistoryItem *parentItem = parentFrame->_private->currentItem;
@@ -1888,6 +1888,41 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[self webView]
             didLoadMainResourceForDataSource:dataSource(loader)];
+}
+
+- (void)_forceLayoutForNonHTML
+{
+    WebFrameView *thisView = [self frameView];
+    NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
+    ASSERT(thisDocumentView != nil);
+    
+    // Tell the just loaded document to layout.  This may be necessary
+    // for non-html content that needs a layout message.
+    if (!([[self dataSource] _isDocumentHTML])) {
+        [thisDocumentView setNeedsLayout:YES];
+        [thisDocumentView layout];
+        [thisDocumentView setNeedsDisplay:YES];
+    }
+}
+
+- (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _setLoadingFromPageCache:NO];
+}
+
+- (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)loader
+{
+    return [dataSource(loader) _loadingFromPageCache];
+}
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    return [dataSource(loader) _archivedSubresourceForURL:URL];
+}
+
+- (void)_makeRepresentationForDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _makeRepresentation];
 }
 
 @end

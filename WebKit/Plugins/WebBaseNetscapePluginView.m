@@ -32,7 +32,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFrameInternal.h> 
 #import <WebKit/WebFrameLoader.h> 
@@ -1897,7 +1897,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     // don't let a plugin start any loads if it is no longer part of a document that is being
     // displayed
-    if ([self dataSource] !=  [[[self webFrame] _frameLoader] activeDataSource])
+    if ([[self dataSource] _documentLoader] !=  [[[self webFrame] _frameLoader] activeDocumentLoader])
         return NPERR_GENERIC_ERROR;
     
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];

@@ -52,6 +52,9 @@
 
 - (void)dealloc
 {
+    ASSERT([frameLoader activeDocumentLoader] != self || ![frameLoader isLoading]);
+    
+
     [mainResourceData release];
     [originalRequest release];
     [originalRequestCopy release];
@@ -110,9 +113,27 @@
     return clientRequest;
 }
 
+- (NSURLRequest *)initialRequest
+{
+    NSURLRequest *clientRequest = [[self originalRequest] _webDataRequestExternalRequest];
+    if (!clientRequest)
+        clientRequest = [self originalRequest];
+    return clientRequest;
+}
+
 - (NSMutableURLRequest *)actualRequest
 {
     return request;
+}
+
+- (NSURL *)URL
+{
+    return [[self request] URL];
+}
+
+- (NSURL *)unreachableURL
+{
+    return [[self originalRequest] _webDataRequestUnreachableURL];
 }
 
 - (void)replaceRequestURLForAnchorScrollWithURL:(NSURL *)URL

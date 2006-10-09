@@ -30,7 +30,6 @@
 
 @class DOMElement;
 @class WebArchive;
-@class WebDataSource;
 @class WebDocumentLoader;
 @class WebFormState;
 @class WebFrame;
@@ -139,11 +138,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)markLoadComplete;
 - (void)commitProvisionalLoad;
 - (void)startLoading;
-- (void)startProvisionalLoad:(WebDataSource *)dataSource;
-- (WebDataSource *)dataSource;
-- (WebDataSource *)provisionalDataSource;
-- (WebDataSource *)policyDataSource;
-- (WebDataSource *)activeDataSource;
+- (void)startProvisionalLoad:(WebDocumentLoader *)loader;
 - (WebDocumentLoader *)activeDocumentLoader;
 - (WebDocumentLoader *)documentLoader;
 - (WebDocumentLoader *)provisionalDocumentLoader;
@@ -225,10 +220,10 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 
 - (void)invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
 - (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
-- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request documentLoader:(WebDocumentLoader *)loader formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 - (void)continueAfterWillSubmitForm:(WebPolicyAction)policy;
 - (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState;
-- (void)loadDataSource:(WebDataSource *)newDataSource withLoadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
+- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
 - (void)handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL;
 
 - (void)didFirstLayout;

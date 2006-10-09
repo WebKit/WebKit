@@ -1,5 +1,69 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+        
+        - remove WebDataSource from the WebFrameLoader interface (and thereby from a lot of internal use)
+
+        * Loader/WebDocumentLoader.h:
+        * Loader/WebDocumentLoader.m:
+        (-[WebDocumentLoader dealloc]):
+        (-[WebDocumentLoader initialRequest]):
+        (-[WebDocumentLoader URL]):
+        (-[WebDocumentLoader unreachableURL]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader setState:]):
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader startProvisionalLoad:]):
+        (-[WebFrameLoader clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader opened]):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader initialRequest]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader _URL]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrameLoader _checkNavigationPolicyForRequest:andCall:withSelector:]):
+        (-[WebFrameLoader shouldReloadToHandleUnreachableURLFromRequest:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:documentLoader:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+        (-[WebFrameLoader frameLoadCompleted]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        (-[WebFrameLoader safeLoadURL:]):
+        * Loader/WebFrameLoaderClient.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge originalRequestURL]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _URL]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource unreachableURL]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _updateHistoryForReload]):
+        (-[WebFrame _updateHistoryForStandardLoad]):
+        (-[WebFrame _updateHistoryForInternalLoad]):
+        (-[WebFrame _forceLayoutForNonHTML]):
+        (-[WebFrame _clearLoadingFromPageCacheForDocumentLoader:]):
+        (-[WebFrame _isDocumentLoaderLoadingFromPageCache:]):
+        (-[WebFrame _archivedSubresourceForURL:fromDocumentLoader:]):
+        (-[WebFrame _makeRepresentationForDocumentLoader:]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - removed need for WebFrameLoader to now about WebDocumentLoaderMac 

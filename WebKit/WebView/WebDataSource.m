@@ -280,7 +280,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    return [[self request] URL];
+    return [_private->loader URL];
 }
 
 - (void)_loadFromPageCache:(NSDictionary *)pageCache
@@ -385,8 +385,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)dealloc
 {
-    ASSERT([[_private->loader frameLoader] activeDataSource] != self || ![[_private->loader frameLoader] isLoading]);
-
     --WebDataSourceCount;
     
     [_private release];
@@ -418,10 +416,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 -(NSURLRequest *)initialRequest
 {
-    NSURLRequest *clientRequest = [[_private->loader originalRequest] _webDataRequestExternalRequest];
-    if (!clientRequest)
-        clientRequest = [_private->loader originalRequest];
-    return clientRequest;
+    return [_private->loader initialRequest];
 }
 
 -(NSMutableURLRequest *)request
@@ -457,7 +452,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSURL *)unreachableURL
 {
-    return [[_private->loader originalRequest] _webDataRequestUnreachableURL];
+    return [_private->loader unreachableURL];
 }
 
 - (WebArchive *)webArchive

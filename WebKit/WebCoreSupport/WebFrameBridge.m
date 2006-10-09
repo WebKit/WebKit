@@ -1727,7 +1727,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (NSURL*)originalRequestURL
 {
-    return [[[_frameLoader activeDataSource] initialRequest] URL];
+    return [[[_frameLoader activeDocumentLoader] initialRequest] URL];
 }
 
 - (BOOL)isLoadTypeReload
