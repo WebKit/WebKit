@@ -1,3 +1,13 @@
+2006-10-09  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Remove redundant call to Frame::cancelAndClear from ~Frame, since it's
+        already called frome ~FrameMac.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+
 2006-10-09  Anders Carlsson  <acarlsson@apple.com>
 
         * bridge/win/FrameWin.h:
