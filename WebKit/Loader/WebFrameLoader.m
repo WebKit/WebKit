@@ -39,10 +39,8 @@
 #import <WebKitSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
-#import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebFrameInternal.h"
-#import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLView.h"
 #import "WebIconDatabasePrivate.h"
@@ -52,7 +50,6 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
-#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 
 @implementation WebFrameLoader
@@ -552,8 +549,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
     // the redirect succeeded.  We should either rename this API, or add a new method, like
     // -webView:didFinishClientRedirectForFrame:
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                            didCancelClientRedirectForFrame:client];
+    [client _dispatchDidCancelClientRedirectForFrame];
+
     if (!cancelWithLoadInProgress)
         quickRedirectComing = NO;
     
@@ -566,11 +563,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [client name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
     
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                             willPerformClientRedirectToURL:URL
-                                                      delay:seconds
-                                                   fireDate:date
-                                                   forFrame:client];
+    [client _dispatchWillPerformClientRedirectToURL:URL delay:seconds fireDate:date];
     
     // Remember that we sent a redirect notification to the frame load delegate so that when we commit
     // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
@@ -718,10 +711,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // we'll not go through a real load and reach Completed state
         [self checkLoadComplete];
     }
-    
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                        didChangeLocationWithinPageForFrame:client];
-
+ 
+    [client _dispatchDidChangeLocationWithinPageForFrame];
     [client _didFinishLoad];
 }
 
@@ -733,7 +724,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
     
     if (documentLoader)
-        [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] willCloseFrame:client];
+        [client _dispatchWillCloseFrame];
+
     [[client webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
 }
 
@@ -899,9 +891,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
     
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                               didReceiveIcon:icon
-                                                     forFrame:client];
+    [client _dispatchDidReceiveIcon:icon];
     
     [[client webView] _didChangeValueForKey:_WebMainFrameIconKey];
 }
@@ -1297,8 +1287,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 {
     [[client webView] _progressStarted:client];
     [[client webView] _didStartProvisionalLoadForFrame:client];
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                               didStartProvisionalLoadForFrame:client];    
+    [client _dispatchDidStartProvisionalLoadForFrame];
 }
 
 - (BOOL)subframeIsLoading
@@ -1329,8 +1318,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
             // This must go through the WebFrame because it has the right notion of the current b/f item.
             [client _setTitle:[loader title] forURL:URLForHistory];
             [[client webView] setMainFrameDocumentReady:YES]; // update observers with new DOMDocument
-            [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                didReceiveTitle:[loader title] forFrame:client];
+
+            [client _dispatchDidReceiveTitle:[loader title]];
         }
     }
 }
@@ -1746,13 +1735,11 @@ keepGoing:
     // Tell the client we've committed this URL.
     ASSERT([[client frameView] documentView] != nil);
     [[client webView] _didCommitLoadForFrame:client];
-    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView] didCommitLoadForFrame:client];
+    [client _dispatchDidCommitLoadForFrame];
     
     // If we have a title let the WebView know about it.
     if (ptitle)
-        [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                                didReceiveTitle:ptitle
-                                                       forFrame:client];
+        [client _dispatchDidReceiveTitle:ptitle];
 }
 
 - (void)checkLoadCompleteForThisFrame
@@ -1778,9 +1765,8 @@ keepGoing:
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [client name]);
                     [[client webView] _didFailProvisionalLoadWithError:error forFrame:client];
                     delegateIsHandlingProvisionalLoadError = YES;
-                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                            didFailProvisionalLoadWithError:error
-                                                                   forFrame:client];
+                    [client _dispatchDidFailProvisionalLoadWithError:error];
+
                     delegateIsHandlingProvisionalLoadError = NO;
                     [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
 
@@ -1861,14 +1847,11 @@ keepGoing:
                 NSError *error = [ds _mainDocumentError];
                 if (error != nil) {
                     [[client webView] _didFailLoadWithError:error forFrame:client];
-                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                                     didFailLoadWithError:error
-                                                                 forFrame:client];
+                    [client _dispatchDidFailLoadWithError:error];
                     [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
                 } else {
                     [[client webView] _didFinishLoadForFrame:client];
-                    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                                    didFinishLoadForFrame:client];
+                    [client _dispatchDidFinishLoadForFrame];
                     [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:nil];
                 }
                 

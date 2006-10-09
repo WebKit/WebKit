@@ -1,3 +1,33 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - move all WebFrameLoadDelegate methods across client interface
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader clientRedirectCancelledOrFinished:]):
+        (-[WebFrameLoader clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader prepareForLoadStart]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _dispatchDidCancelClientRedirectForFrame]):
+        (-[WebFrame _dispatchWillPerformClientRedirectToURL:delay:fireDate:]):
+        (-[WebFrame _dispatchDidChangeLocationWithinPageForFrame]):
+        (-[WebFrame _dispatchWillCloseFrame]):
+        (-[WebFrame _dispatchDidReceiveIcon:]):
+        (-[WebFrame _dispatchDidStartProvisionalLoadForFrame]):
+        (-[WebFrame _dispatchDidReceiveTitle:]):
+        (-[WebFrame _dispatchDidCommitLoadForFrame]):
+        (-[WebFrame _dispatchDidFailProvisionalLoadWithError:]):
+        (-[WebFrame _dispatchDidFailLoadWithError:]):
+        (-[WebFrame _dispatchDidFinishLoadForFrame]):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

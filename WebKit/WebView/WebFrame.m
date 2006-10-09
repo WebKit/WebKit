@@ -1687,7 +1687,77 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     WebView *webView = [self webView];
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource(loader)];
 }
-    
+
+- (void)_dispatchDidCancelClientRedirectForFrame
+{
+    WebView *webView = [self webView];
+    [[webView _frameLoadDelegateForwarder] webView:webView didCancelClientRedirectForFrame:self];
+}
+
+- (void)_dispatchWillPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView
+                         willPerformClientRedirectToURL:URL
+                                                  delay:seconds
+                                               fireDate:date
+                                               forFrame:self];
+}
+
+- (void)_dispatchDidChangeLocationWithinPageForFrame
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didChangeLocationWithinPageForFrame:self];
+}
+
+- (void)_dispatchWillCloseFrame
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView willCloseFrame:self];
+}
+
+- (void)_dispatchDidReceiveIcon:(NSImage *)icon
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didReceiveIcon:icon forFrame:self];
+}
+
+- (void)_dispatchDidStartProvisionalLoadForFrame
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didStartProvisionalLoadForFrame:self];    
+}
+
+- (void)_dispatchDidReceiveTitle:(NSString *)title
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didReceiveTitle:title forFrame:self];
+}
+
+- (void)_dispatchDidCommitLoadForFrame
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:self];
+}
+
+- (void)_dispatchDidFailProvisionalLoadWithError:(NSError *)error
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didFailProvisionalLoadWithError:error forFrame:self];
+}
+
+- (void)_dispatchDidFailLoadWithError:(NSError *)error
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didFailLoadWithError:error forFrame:self];
+}
+
+- (void)_dispatchDidFinishLoadForFrame
+{
+    WebView *webView = [self webView];   
+    [[webView _frameLoadDelegateForwarder] webView:webView didFinishLoadForFrame:self];
+}
+
 - (void)_detachedFromParent1
 {
     [self _saveScrollPositionAndViewStateToItem:_private->currentItem];
