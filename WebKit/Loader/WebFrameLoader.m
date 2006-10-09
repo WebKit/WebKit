@@ -31,6 +31,7 @@
 #import "WebDataProtocol.h"
 #import "WebDocumentLoader.h"
 #import "WebFormDataStream.h"
+#import "WebFormState.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
@@ -590,7 +591,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:[client _bridge]];
     
     if (target != nil) {
         WebFrame *targetFrame = [client findFrameNamed:target];
@@ -1498,7 +1499,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
         // mechanism across the willSubmitForm callout.
         listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
-        [[[client webView] _formDelegate] frame:client sourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
+        [[[client webView] _formDelegate] frame:client sourceFrame:[(WebFrameBridge *)[formState sourceFrame] webFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
     } 
     else {
         [self continueAfterWillSubmitForm:WebPolicyUse];
@@ -1872,7 +1873,7 @@ exit:
     NSDictionary *action = [self actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:client];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:[client _bridge]];
 
     if (target != nil) {
         WebFrame *targetFrame = [client findFrameNamed:target];

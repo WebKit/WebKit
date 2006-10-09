@@ -41,22 +41,6 @@
 @class WebFrameBridge;
 @class WebFormState;
 
-// One day we might want to expand the use of this kind of class such that we'd receive one
-// over the bridge, and possibly hand it on through to the FormsDelegate.
-// Today it is just used internally to keep some state as we make our way through a bunch
-// layers while doing a load.
-@interface WebFormState : NSObject
-{
-    DOMElement *_form;
-    NSDictionary *_values;
-    WebFrame *_sourceFrame;
-}
-- (id)initWithForm:(DOMElement *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame;
-- (DOMElement *)form;
-- (NSDictionary *)values;
-- (WebFrame *)sourceFrame;
-@end
-
 @interface WebFrame (WebInternal)
 
 - (void)_updateBackground;

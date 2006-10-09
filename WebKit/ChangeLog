@@ -1,5 +1,28 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Alice.
+
+        - moved WebFormState into Loader directory and tweaked to void WebKit dependencies
+        
+        * Loader/WebDocumentLoader.h:
+        * Loader/WebFormState.h: Added.
+        * Loader/WebFormState.m: Added.
+        (-[WebFormState initWithForm:values:sourceFrame:]):
+        (-[WebFormState dealloc]):
+        (-[WebFormState form]):
+        (-[WebFormState values]):
+        (-[WebFormState sourceFrame]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrame.m:
+        * WebView/WebFrameInternal.h:
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
 
         - remove dependency on WebNSURLRequestExtras.h

@@ -56,6 +56,8 @@
 		654B3C3C0A82C47200E1AE3D /* WebSubresourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 654B3C320A82C47200E1AE3D /* WebSubresourceLoader.m */; };
 		6550B7C7099EFAE90090D781 /* WebArchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B7C5099EFAE90090D781 /* WebArchiver.h */; };
 		6550B7C8099EFAE90090D781 /* WebArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 6550B7C6099EFAE90090D781 /* WebArchiver.m */; };
+		656D8B540ADA4EA400B34CBB /* WebFormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D8B520ADA4EA400B34CBB /* WebFormState.h */; };
+		656D8B550ADA4EA400B34CBB /* WebFormState.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D8B530ADA4EA400B34CBB /* WebFormState.m */; };
 		658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 658A40950A14853B005E6987 /* WebDataSourceInternal.h */; };
 		659044280A9D3B4200E89459 /* WebDocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 659044260A9D3B4200E89459 /* WebDocumentLoader.h */; };
 		659044290A9D3B4200E89459 /* WebDocumentLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 659044270A9D3B4200E89459 /* WebDocumentLoader.m */; };
@@ -385,6 +387,8 @@
 		654B3C320A82C47200E1AE3D /* WebSubresourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebSubresourceLoader.m; sourceTree = "<group>"; };
 		6550B7C5099EFAE90090D781 /* WebArchiver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebArchiver.h; sourceTree = "<group>"; };
 		6550B7C6099EFAE90090D781 /* WebArchiver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebArchiver.m; sourceTree = "<group>"; };
+		656D8B520ADA4EA400B34CBB /* WebFormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormState.h; sourceTree = "<group>"; };
+		656D8B530ADA4EA400B34CBB /* WebFormState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebFormState.m; sourceTree = "<group>"; };
 		6578F5DE045F817400000128 /* WebDownload.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownload.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6578F5DF045F817400000128 /* WebDownload.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDownload.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -807,6 +811,8 @@
 				659044270A9D3B4200E89459 /* WebDocumentLoader.m */,
 				6538B1C60A90596D00A07522 /* WebFormDataStream.h */,
 				6538B1C70A90596D00A07522 /* WebFormDataStream.m */,
+				656D8B520ADA4EA400B34CBB /* WebFormState.h */,
+				656D8B530ADA4EA400B34CBB /* WebFormState.m */,
 				654B3C290A82C47200E1AE3D /* WebFrameLoader.h */,
 				654B3C2A0A82C47200E1AE3D /* WebFrameLoader.m */,
 				930653930AD6FEF6008E969A /* WebFrameLoaderClient.h */,
@@ -1225,6 +1231,7 @@
 				1C0D40870AC1C8F40009C113 /* WebKitVersionChecks.h in Headers */,
 				65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */,
 				930653940AD6FEF6008E969A /* WebFrameLoaderClient.h in Headers */,
+				656D8B540ADA4EA400B34CBB /* WebFormState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1453,6 +1460,7 @@
 				659044290A9D3B4200E89459 /* WebDocumentLoader.m in Sources */,
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
 				65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.m in Sources */,
+				656D8B550ADA4EA400B34CBB /* WebFormState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

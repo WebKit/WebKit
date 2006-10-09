@@ -35,12 +35,10 @@
 @class WebFrameBridge;
 @class WebLoader;
 @class WebMainResourceLoader;
-@class WebArchive;
 @protocol WebFrameLoaderClient;
 
 @class WebArchive;
 @class WebPolicyDecisionListener;
-@class WebResource;
 
 typedef enum {
     WebFrameStateProvisional,

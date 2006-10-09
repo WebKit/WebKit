@@ -1228,45 +1228,6 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 @end
 
-@implementation WebFormState : NSObject
-
-- (id)initWithForm:(DOMElement *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    _form = [form retain];
-    _values = [values copy];
-    _sourceFrame = [sourceFrame retain];
-    return self;
-}
-
-- (void)dealloc
-{
-    [_form release];
-    [_values release];
-    [_sourceFrame release];
-    [super dealloc];
-}
-
-- (DOMElement *)form
-{
-    return _form;
-}
-
-- (NSDictionary *)values
-{
-    return _values;
-}
-
-- (WebFrame *)sourceFrame
-{
-    return _sourceFrame;
-}
-
-@end
-
 @implementation WebFrame
 
 - (id)init
