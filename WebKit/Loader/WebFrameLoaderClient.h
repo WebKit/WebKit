@@ -36,6 +36,7 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 @protocol WebFrameLoaderClient
 
+- (BOOL)_hasBackForwardList;
 - (void)_resetBackForwardList;
 
 - (BOOL)_provisionalItemIsTarget;
@@ -111,5 +112,19 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader;
 - (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)documentLoader;
+
+- (void)_progressStarted;
+- (void)_progressCompleted;
+
+- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
+- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)data;
+- (void)_completeProgressForIdentifier:(id)identifier;
+
+- (void)_setMainFrameDocumentReady:(BOOL)ready;
+
+- (void)_willChangeTitleForDocument:(WebDocumentLoader *)loader;
+- (void)_didChangeTitleForDocument:(WebDocumentLoader *)loader;
+
+- (void)_startDownloadWithRequest:(NSURLRequest *)request;
 
 @end

@@ -786,7 +786,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 // Return the item that we would reset to, so we can decide later whether to actually reset.
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo
 {
-    if (isBackForwardLoadType([[self _frameLoader] loadType]) && self == [[self webView] mainFrame])
+    if (isBackForwardLoadType([[self _frameLoader] loadType]) && [self _isMainFrame])
         return _private->currentItem;
     return nil;
 }
@@ -1381,12 +1381,17 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 @implementation WebFrame (WebFrameLoaderClient)
 
+- (BOOL)_hasBackForwardList
+{
+    return [[self webView] backForwardList] != nil;
+}
+
 - (void)_resetBackForwardList
 {
     // Note this doesn't verify the current load type as a b/f operation because it is called from
     // a subframe in the case of a delegate bailing out of the nav before it even gets to provisional state.
-    ASSERT(self == [[self webView] mainFrame]);
-    WebHistoryItem *resetItem = _private->currentItem;
+    WebFrame *mainFrame = [[self webView] mainFrame];
+    WebHistoryItem *resetItem = mainFrame->_private->currentItem;
     if (resetItem)
         [[[self webView] backForwardList] goToItem:resetItem];
 }
@@ -1690,12 +1695,16 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_dispatchDidReceiveIcon:(NSImage *)icon
 {
     WebView *webView = [self webView];   
+    ASSERT([self _isMainFrame]);
+    [webView _willChangeValueForKey:_WebMainFrameIconKey];
     [[webView _frameLoadDelegateForwarder] webView:webView didReceiveIcon:icon forFrame:self];
+    [webView _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (void)_dispatchDidStartProvisionalLoadForFrame
 {
     WebView *webView = [self webView];   
+    [webView _didStartProvisionalLoadForFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didStartProvisionalLoadForFrame:self];    
 }
 
@@ -1708,25 +1717,32 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_dispatchDidCommitLoadForFrame
 {
     WebView *webView = [self webView];   
+    [webView _didCommitLoadForFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:self];
 }
 
 - (void)_dispatchDidFailProvisionalLoadWithError:(NSError *)error
 {
     WebView *webView = [self webView];   
+    [webView _didFailProvisionalLoadWithError:error forFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didFailProvisionalLoadWithError:error forFrame:self];
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
 }
 
 - (void)_dispatchDidFailLoadWithError:(NSError *)error
 {
     WebView *webView = [self webView];   
+    [webView _didFailLoadWithError:error forFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didFailLoadWithError:error forFrame:self];
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
 }
 
 - (void)_dispatchDidFinishLoadForFrame
 {
     WebView *webView = [self webView];   
+    [webView _didFinishLoadForFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didFinishLoadForFrame:self];
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
 }
 
 - (void)_dispatchDidFirstLayoutInFrame
@@ -1884,6 +1900,54 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_makeRepresentationForDocumentLoader:(WebDocumentLoader *)loader
 {
     [dataSource(loader) _makeRepresentation];
+}
+
+- (void)_progressStarted
+{
+    [[self webView] _progressStarted:self];
+}
+
+- (void)_progressCompleted
+{
+    [[self webView] _progressCompleted:self];
+}
+
+- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response
+{
+    [[self webView] _incrementProgressForIdentifier:identifier response:response];
+}
+
+- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)data
+{
+    [[self webView] _incrementProgressForIdentifier:identifier data:data];
+}
+
+- (void)_completeProgressForIdentifier:(id)identifier
+{
+    [[self webView] _completeProgressForIdentifier:identifier];
+}
+
+- (void)_setMainFrameDocumentReady:(BOOL)ready
+{
+    [[self webView] setMainFrameDocumentReady:ready];
+}
+
+- (void)_willChangeTitleForDocument:(WebDocumentLoader *)loader
+{
+    // FIXME: Should do this only in main frame case, right?
+    [[self webView] _willChangeValueForKey:_WebMainFrameTitleKey];
+}
+
+- (void)_didChangeTitleForDocument:(WebDocumentLoader *)loader
+{
+    // FIXME: Should do this only in main frame case, right?
+    [[self webView] _didChangeValueForKey:_WebMainFrameTitleKey];
+}
+
+- (void)_startDownloadWithRequest:(NSURLRequest *)request
+{
+    // FIXME: Should download full request.
+    [[self webView] _downloadURL:[request URL]];
 }
 
 @end

@@ -28,8 +28,6 @@
 
 // This header contains the WebFrame SPI.
 
-// But it also contains a bunch of internal stuff that should be moved to WebFrameInternal.h
-
 #import <WebKit/WebFrame.h>
 
 // Keys for accessing the values in the page cache dictionary.

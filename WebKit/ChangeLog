@@ -1,3 +1,52 @@
+2006-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - removed almost all direct use of WebView from WebFrameLoader
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader defersCallbacksChanged]):
+        (-[WebFrameLoader defersCallbacks]):
+        (-[WebFrameLoader clearProvisionalLoad]):
+        (-[WebFrameLoader _willSendRequest:forResource:redirectResponse:]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _didReceiveData:contentLength:forResource:]):
+        (-[WebFrameLoader _didFinishLoadingForResource:]):
+        (-[WebFrameLoader _didFailLoadingWithError:forResource:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader prepareForLoadStart]):
+        (-[WebFrameLoader willChangeTitleForDocument:]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader continueAfterNewWindowPolicy:]):
+        (-[WebFrameLoader continueAfterNavigationPolicy:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader didFirstLayout]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        (-[WebFrameLoader addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrame.m:
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _hasBackForwardList]):
+        (-[WebFrame _resetBackForwardList]):
+        (-[WebFrame _dispatchDidReceiveIcon:]):
+        (-[WebFrame _dispatchDidStartProvisionalLoadForFrame]):
+        (-[WebFrame _dispatchDidCommitLoadForFrame]):
+        (-[WebFrame _dispatchDidFailProvisionalLoadWithError:]):
+        (-[WebFrame _dispatchDidFailLoadWithError:]):
+        (-[WebFrame _dispatchDidFinishLoadForFrame]):
+        (-[WebFrame _progressStarted]):
+        (-[WebFrame _progressCompleted]):
+        (-[WebFrame _incrementProgressForIdentifier:response:]):
+        (-[WebFrame _incrementProgressForIdentifier:data:]):
+        (-[WebFrame _completeProgressForIdentifier:]):
+        (-[WebFrame _setMainFrameDocumentReady:]):
+        (-[WebFrame _willChangeTitleForDocument:]):
+        (-[WebFrame _didChangeTitleForDocument:]):
+        (-[WebFrame _startDownloadWithRequest:]):
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alice.

@@ -121,14 +121,14 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)defersCallbacksChanged
 {
-    BOOL defers = [[client webView] defersCallbacks];
+    BOOL defers = [[client _bridge] defersLoading];
     for (WebFrame *frame = client; frame; frame = [frame _traverseNextFrameStayWithin:client])
         [[frame _frameLoader] setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
 {
-    return [[client webView] defersCallbacks];
+    return [[client _bridge] defersLoading];
 }
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -329,7 +329,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)clearProvisionalLoad
 {
     [self setProvisionalDocumentLoader:nil];
-    [[client webView] _progressCompleted:client];
+    [client _progressCompleted];
     [self setState:WebFrameStateComplete];
 }
 
@@ -417,8 +417,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
 {
-    WebView *webView = [client webView];
-    [clientRequest setValue:[webView userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
+    [clientRequest setValue:[[client _bridge] userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
     return [client _dispatchResource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDocumentLoader:[self activeDocumentLoader]];
 }
 
@@ -436,31 +435,25 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [[self activeDocumentLoader] addResponse:r];
     
-    [[client webView] _incrementProgressForIdentifier:identifier response:r];
+    [client _incrementProgressForIdentifier:identifier response:r];
     [client _dispatchResource:identifier didReceiveResponse:r fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
 {
-    WebView *webView = [client webView];
-    [webView _incrementProgressForIdentifier:identifier data:data];
-
+    [client _incrementProgressForIdentifier:identifier data:data];
     [client _dispatchResource:identifier didReceiveContentLength:lengthReceived fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didFinishLoadingForResource:(id)identifier
 {    
-    WebView *webView = [client webView];
-    [webView _completeProgressForIdentifier:identifier];
+    [client _completeProgressForIdentifier:identifier];
     [client _dispatchResource:identifier didFinishLoadingFromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
 {
-    WebView *webView = [client webView];
-        
-    [webView _completeProgressForIdentifier:identifier];
-        
+    [client _completeProgressForIdentifier:identifier];
     if (error)
         [client _dispatchResource:identifier didFailLoadingWithError:error fromDocumentLoader:[self activeDocumentLoader]];
 }
@@ -708,7 +701,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (documentLoader)
         [client _dispatchWillCloseFrame];
 
-    [[client webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
+    [client _setMainFrameDocumentReady:NO]; // stop giving out the actual DOMDocument to observers
 }
 
 // Called after we send an openURL:... down to WebCore.
@@ -863,15 +856,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_notifyIconChanged:(NSURL *)iconURL
 {
     ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    ASSERT(client == [[client webView] mainFrame]);
-
-    [[client webView] _willChangeValueForKey:_WebMainFrameIconKey];
-    
     NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-    
     [client _dispatchDidReceiveIcon:icon];
-    
-    [[client webView] _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (NSURL *)_URL
@@ -1225,8 +1211,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)prepareForLoadStart
 {
-    [[client webView] _progressStarted:client];
-    [[client webView] _didStartProvisionalLoadForFrame:client];
+    [client _progressStarted];
     [client _dispatchDidStartProvisionalLoadForFrame];
 }
 
@@ -1241,14 +1226,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)willChangeTitleForDocument:(WebDocumentLoader *)loader
 {
-    // FIXME: should do this only in main frame case, right?
-    [[client webView] _willChangeValueForKey:_WebMainFrameTitleKey];
+    [client _willChangeTitleForDocument:loader];
 }
 
 - (void)didChangeTitleForDocument:(WebDocumentLoader *)loader
 {
-    // FIXME: should do this only in main frame case, right?
-    [[client webView] _didChangeValueForKey:_WebMainFrameTitleKey];
+    [client _didChangeTitleForDocument:loader];
 
     // The title doesn't get communicated to the WebView until we are committed.
     if ([loader isCommitted]) {
@@ -1257,8 +1240,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // Must update the entries in the back-forward list too.
             // This must go through the WebFrame because it has the right notion of the current b/f item.
             [client _setTitle:[loader title] forURL:URLForHistory];
-            [[client webView] setMainFrameDocumentReady:YES]; // update observers with new DOMDocument
-
+            [client _setMainFrameDocumentReady:YES]; // update observers with new DOMDocument
             [client _dispatchDidReceiveTitle:[loader title]];
         }
     }
@@ -1333,23 +1315,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // will release policy* objects, hence the above retains
     [self invalidatePendingPolicyDecisionCallingDefaultAction:NO];
 
-    BOOL shouldContinue = NO;
-
     switch (policy) {
-    case WebPolicyIgnore:
-        break;
-    case WebPolicyDownload:
-        // FIXME: should download full request
-        [[client webView] _downloadURL:[request URL]];
-        break;
-    case WebPolicyUse:
-        shouldContinue = YES;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
+        case WebPolicyIgnore:
+            request = nil;
+            break;
+        case WebPolicyDownload:
+            [client _startDownloadWithRequest:request];
+            request = nil;
+            break;
+        case WebPolicyUse:
+            break;
     }
 
-    objc_msgSend(target, selector, shouldContinue ? request : nil, frameName, formState);
+    objc_msgSend(target, selector, request, frameName, formState);
 }
 
 - (void)checkNavigationPolicyForRequest:(NSURLRequest *)request
@@ -1412,27 +1390,23 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // will release policy* objects, hence the above retains
     [self invalidatePendingPolicyDecisionCallingDefaultAction:NO];
 
-    BOOL shouldContinue = NO;
-
     switch (policy) {
-    case WebPolicyIgnore:
-        break;
-    case WebPolicyDownload:
-        // FIXME: should download full request
-        [[client webView] _downloadURL:[request URL]];
-        break;
-    case WebPolicyUse:
-        if (![WebView _canHandleRequest:request]) {
-            [self handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
-        } else {
-            shouldContinue = YES;
-        }
-        break;
-    default:
-        ASSERT_NOT_REACHED();
+        case WebPolicyIgnore:
+            request = nil;
+            break;
+        case WebPolicyDownload:
+            [client _startDownloadWithRequest:request];
+            request = nil;
+            break;
+        case WebPolicyUse:
+            if (![WebView _canHandleRequest:request]) {
+                [self handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
+                request = nil;
+            }
+            break;
     }
 
-    [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
+    [target performSelector:selector withObject:request withObject:formState];
 }
 
 // Called after the FormsDelegate is done processing willSubmitForm:
@@ -1460,7 +1434,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
-    BOOL canContinue = request && ([[client webView] mainFrame] != client || [[self bridge] shouldClose]);
+    BOOL canContinue = request && (![self isLoadingMainFrame] || [[self bridge] shouldClose]);
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
@@ -1473,8 +1447,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || [[client webView] mainFrame] == client) && isBackForwardLoadType(policyLoadType))
-            [(WebFrame <WebFrameLoaderClient> *)[[client webView] mainFrame] _resetBackForwardList];
+        if ((isTargetItem || [self isLoadingMainFrame]) && isBackForwardLoadType(policyLoadType))
+            [client _resetBackForwardList];
 
         return;
     }
@@ -1500,10 +1474,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // mechanism across the willSubmitForm callout.
         listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
         [[[client webView] _formDelegate] frame:client sourceFrame:[(WebFrameBridge *)[formState sourceFrame] webFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
-    } 
-    else {
+    } else
         [self continueAfterWillSubmitForm:WebPolicyUse];
-    }
 }
 
 - (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
@@ -1544,10 +1516,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)didFirstLayout
 {
-    if ([[client webView] backForwardList]) {
-        if (isBackForwardLoadType(loadType))
-            [client _restoreScrollPositionAndViewState];
-    }
+    if (isBackForwardLoadType(loadType) && [client _hasBackForwardList])
+        [client _restoreScrollPositionAndViewState];
 
     firstLayoutDone = YES;
     [client _dispatchDidFirstLayoutInFrame];
@@ -1575,20 +1545,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)transitionToCommitted:(NSDictionary *)pageCache
 {
     ASSERT([client webView] != nil);
-    
-    switch ([self state]) {
-        case WebFrameStateProvisional:
-            goto keepGoing;
-        
-        case WebFrameStateCommittedPage:
-        case WebFrameStateComplete:
-            break;
-    }
+    ASSERT([self state] == WebFrameStateProvisional);
 
-    ASSERT_NOT_REACHED();
-    return;
-
-keepGoing:
+    if ([self state] != WebFrameStateProvisional)
+        return;
 
     [client _setCopiesOnScroll];
     [client _updateHistoryForCommit];
@@ -1611,7 +1571,7 @@ keepGoing:
     case WebFrameLoadTypeForward:
     case WebFrameLoadTypeBack:
     case WebFrameLoadTypeIndexedBackForward:
-        if ([[client webView] backForwardList]) {
+        if ([client _hasBackForwardList]) {
             [client _updateHistoryForBackForwardNavigation];
 
             // Create a document view for this document, or used the cached view.
@@ -1652,7 +1612,6 @@ keepGoing:
 
     // Tell the client we've committed this URL.
     ASSERT([[client frameView] documentView] != nil);
-    [[client webView] _didCommitLoadForFrame:client];
     [client _dispatchDidCommitLoadForFrame];
     
     // If we have a title let the WebView know about it.
@@ -1678,12 +1637,9 @@ keepGoing:
                 LoadErrorResetToken *resetToken = [client _tokenForLoadErrorReset];
                 BOOL shouldReset = YES;
                 if (![pdl isLoadingInAPISense]) {
-                    [[client webView] _didFailProvisionalLoadWithError:error forFrame:client];
                     delegateIsHandlingProvisionalLoadError = YES;
                     [client _dispatchDidFailProvisionalLoadWithError:error];
-
                     delegateIsHandlingProvisionalLoadError = NO;
-                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
 
                     // FIXME: can stopping loading here possibly have
                     // any effect, if isLoading is false, which it
@@ -1723,44 +1679,18 @@ keepGoing:
 
                 [client _forceLayoutForNonHTML];
                  
-                // If the user had a scroll point scroll to it.  This will override
-                // the anchor point.  After much discussion it was decided by folks
-                // that the user scroll point should override the anchor point.
-                if ([[client webView] backForwardList]) {
-                    switch ([self loadType]) {
-                    case WebFrameLoadTypeForward:
-                    case WebFrameLoadTypeBack:
-                    case WebFrameLoadTypeIndexedBackForward:
-                    case WebFrameLoadTypeReload:
-                        [client _restoreScrollPositionAndViewState];
-                        break;
-
-                    case WebFrameLoadTypeStandard:
-                    case WebFrameLoadTypeInternal:
-                    case WebFrameLoadTypeReloadAllowingStaleData:
-                    case WebFrameLoadTypeSame:
-                    case WebFrameLoadTypeReplace:
-                        // Do nothing.
-                        break;
-
-                    default:
-                        ASSERT_NOT_REACHED();
-                        break;
-                    }
-                }
+                // If the user had a scroll point, scroll to it, overriding the anchor point if any.
+                if ((isBackForwardLoadType([self loadType]) || [self loadType] == WebFrameLoadTypeReload)
+                        && [client _hasBackForwardList])
+                    [client _restoreScrollPositionAndViewState];
 
                 NSError *error = [dl mainDocumentError];
-                if (error != nil) {
-                    [[client webView] _didFailLoadWithError:error forFrame:client];
+                if (error != nil)
                     [client _dispatchDidFailLoadWithError:error];
-                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:error];
-                } else {
-                    [[client webView] _didFinishLoadForFrame:client];
+                else
                     [client _dispatchDidFinishLoadForFrame];
-                    [[client _internalLoadDelegate] webFrame:client didFinishLoadWithError:nil];
-                }
                 
-                [[client webView] _progressCompleted:client];
+                [client _progressCompleted];
  
                 return;
             }
@@ -1921,14 +1851,14 @@ exit:
 
 - (void)addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
 {
-    [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
+    [request setValue:[[client _bridge] userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     if ([self loadType] == FrameLoadTypeReload)
         [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
     
     // Don't set the cookie policy URL if it's already been set.
     if ([request mainDocumentURL] == nil) {
-        if (mainResource && (client == [[client webView] mainFrame] || f))
+        if (mainResource && ([self isLoadingMainFrame] || f))
             [request setMainDocumentURL:[request URL]];
         else
             [request setMainDocumentURL:[[[[client webView] mainFrame] dataSource] _URL]];
