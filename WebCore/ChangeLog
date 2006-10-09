@@ -1,3 +1,25 @@
+2006-10-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11220
+          Fix manual test for http://bugs.webkit.org/show_bug.cgi?id=8276
+
+        Subversion does not support resource forks and HFS metadata, so
+        the resources for this test need to be on a disk image.
+
+        * manual-tests/plain-text-paste.html: Changed instructions to refer to the disk image.
+        * manual-tests/resources/plain-text-paste.dmg: Added.
+        * manual-tests/resources/plain-text-paste/._1.textClipping: Removed.
+        * manual-tests/resources/plain-text-paste/._2.textClipping: Removed.
+        * manual-tests/resources/plain-text-paste/._4.txt: Removed.
+        * manual-tests/resources/plain-text-paste/._5.webloc: Removed.
+        * manual-tests/resources/plain-text-paste/1.textClipping: Removed.
+        * manual-tests/resources/plain-text-paste/2.textClipping: Removed.
+        * manual-tests/resources/plain-text-paste/3.gif: Removed.
+        * manual-tests/resources/plain-text-paste/4.txt: Removed.
+        * manual-tests/resources/plain-text-paste/5.webloc: Removed.
+
 2006-10-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
