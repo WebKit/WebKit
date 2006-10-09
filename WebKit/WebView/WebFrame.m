@@ -1783,10 +1783,8 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_updateHistoryForInternalLoad
 {
-    WebDataSource *dataSource = [[self _frameLoader] dataSource];
-
     // Add an item to the item tree for this frame
-    ASSERT(![[dataSource _documentLoader] isClientRedirect]);
+    ASSERT(![[[[self _frameLoader] dataSource] _documentLoader] isClientRedirect]);
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame) {
         WebHistoryItem *parentItem = parentFrame->_private->currentItem;
