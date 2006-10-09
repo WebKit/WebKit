@@ -47,10 +47,11 @@
         <dirname>.</dirname>
         <pic>on</pic>
         <threading>multi</threading>
-        <warnings>no</warnings>
-		<cxxflags>-w</cxxflags>
+        <warnings>default</warnings>
+        <cxx-rtti>off</cxx-rtti>
+        <cxx-exceptions>off</cxx-exceptions>
+        <debug-info>on</debug-info>
         <include>$(SRCDIR)/platform/gdk</include>
-		<cflags>-w</cflags>
     	<define>BUILDING_GDK__</define>
     	<define>BUILDING_CAIRO__</define>
 		<include>platform/gdk</include>

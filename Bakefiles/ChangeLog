@@ -1,8 +1,17 @@
+2006-10-09  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Geoff.
+
+        Improve gdk build compiler options.
+
+        * Bakefiles.bkgen:
+        * presets.bkl:
+
 2006-10-03  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Eric.
 
-        Stop Bakefile-generated Makefile from running `pkg-config' multiple times per file.
+        Stop Bakefile-generated Makefile from running pkg-config multiple times per file.
 
         * presets.bkl: Make use of "options" and Python commands to run pkg-config etc up front.
 

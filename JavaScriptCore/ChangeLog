@@ -1,3 +1,11 @@
+2006-10-09  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Geoff.
+
+        Improve gdk build compiler flags (show warning, no rtti and exceptions).
+
+        * jscore.bkl:
+
 2006-10-06  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Brady.

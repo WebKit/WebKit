@@ -1,3 +1,20 @@
+2006-10-09  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Geoff.
+
+        Fix memory leaks discovered via valgrind. Gdk build fixes.
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * make-generated-sources.sh:
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::draw):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::horizontalScrollbarHeight):
+        (WebCore::PlatformScrollbar::verticalScrollbarWidth):
+
 2006-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Beth.

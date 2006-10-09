@@ -37,10 +37,6 @@ and WebCore. Include this file to use these settings.
 
     <template id="jscore">
         <include>$(SRCDIR)/../JavaScriptCore</include>
-        <if cond="FORMAT in ['msvc', 'msvs2005']">
-            <!-- MSVC chokes on #import, so don't use ForwardingHeaders... -->
-            <include>$(SRCDIR)/../JavaScriptCore/os-win32</include><!-- stdint.h is here -->
-        </if>
         <if cond="FORMAT=='gnu'">
             <ldflags>$(SRCDIR)/../JavaScriptCore/libjscore.a</ldflags>
         </if>

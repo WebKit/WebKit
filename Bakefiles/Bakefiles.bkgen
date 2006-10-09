@@ -39,7 +39,7 @@ Build configuration script for Bakefile.
 
     <!-- List of output formats to generate: -->
     <add-formats>
-        msvc,msvs2005,gnu <!-- xcode2 -->
+        gnu <!-- xcode2,msvc,msvs2005 -->
     </add-formats>
 
     <!-- webcore gdk is Unix-only for now, right? -->

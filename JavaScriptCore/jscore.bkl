@@ -54,7 +54,6 @@ JavaScriptCore Bakefile project file.
         <include>$(SRCDIR)/bindings</include>
         <include>$(SRCDIR)/bindings/c</include>
         <include>$(SRCDIR)/bindings/jni</include>
-        <include>$(SRCDIR)/kxmlcore</include>
         <include>$(SRCDIR)/DerivedSources/JavaScriptCore</include>
 
         <define>APPLE_CHANGES=1</define>
@@ -100,6 +99,10 @@ JavaScriptCore Bakefile project file.
     <lib id="jscore" template="jscore_base">
         <objects-depend>dftables</objects-depend>
         <pre-build-target>DerivedSources</pre-build-target>
+        <warnings>default</warnings>
+        <cxx-rtti>off</cxx-rtti>
+        <cxx-exceptions>off</cxx-exceptions>
+        <debug-info>on</debug-info>
         <sources>
             $(JSCORE_SOURCES_WTF)
             $(JSCORE_SOURCES_PCRE)

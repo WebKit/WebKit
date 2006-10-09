@@ -45,7 +45,7 @@ class FrameGdk : public Frame, ResourceLoaderClient {
 public:
     FrameGdk(Page*, Element*);
     FrameGdk(GdkDrawable*);
-    ~FrameGdk();
+    virtual ~FrameGdk();
 
     void handleGdkEvent(GdkEvent*);
     virtual bool openURL(const KURL&);

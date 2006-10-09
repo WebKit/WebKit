@@ -179,6 +179,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             GraphicsContext* ctx = new GraphicsContext(cr);
             paint(ctx, IntRect(clip.x, clip.y, clip.width, clip.height));
             delete ctx;
+            cairo_destroy(cr);
             gdk_window_end_paint (event->any.window);
             break;
         }

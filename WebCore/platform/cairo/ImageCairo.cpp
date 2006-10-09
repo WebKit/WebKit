@@ -106,6 +106,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& s
     cairo_rectangle(context, 0, 0, dstRect.width(), dstRect.height());
     cairo_fill(context);
 
+    cairo_pattern_destroy(pattern);
     cairo_restore(context);
 
     startAnimation();

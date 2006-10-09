@@ -61,9 +61,8 @@
         <include>$(TOPDIR)/WebCore/platform/gdk</include>
         <pic>on</pic>
         <threading>multi</threading>
-        <warnings>no</warnings>
-        <cxxflags>-w</cxxflags>
-        <cflags>-w</cflags>
+        <warnings>default</warnings>
+        <debug-info>on</debug-info>
 
         <define>BUILDING_GDK__</define>
         <define>BUILDING_CAIRO__</define>
@@ -73,6 +72,10 @@
 	<set var="TOPDIR">../..</set>
     <exe id="gdklauncher" template="webcore_gdk_link">        
 		<ldflags>-L$(TOPDIR)/WebCore/Projects/gdk -lwebcore-gdk</ldflags>
+        <warnings>default</warnings>
+        <cxx-rtti>off</cxx-rtti>
+        <cxx-exceptions>off</cxx-exceptions>
+        <debug-info>on</debug-info>
         <sources>		
           main.cpp
 		</sources>

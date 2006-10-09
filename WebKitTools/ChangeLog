@@ -1,3 +1,18 @@
+2006-10-09  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Geoff.
+
+        Add -exit-after-loading option to make gdklauncher quit after fully loading and rendering
+        a page. This allows automatic testing via e.g. valgrind.
+
+        * GdkLauncher/gdklauncher.bkl:
+        * GdkLauncher/main.cpp:
+        (LauncherFrameGdk::LauncherFrameGdk):
+        (LauncherFrameGdk::setExitAfterLoading):
+        (LauncherFrameGdk::handledOnloadEvents):
+        (handle_event):
+        (main):
+
 2006-10-06  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Timothy.
