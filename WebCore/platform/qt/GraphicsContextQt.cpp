@@ -431,7 +431,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     QPolygonF polygon(npoints);
 
     for (size_t i = 0; i < npoints; i++)
-        polygon << points[i];
+        polygon[i] = points[i];
 
     m_data->p().save();
     m_data->p().setRenderHint(QPainter::Antialiasing, shouldAntialias);
