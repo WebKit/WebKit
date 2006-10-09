@@ -1495,9 +1495,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     policyLoadType = type;
 
-    WebFrame *parentFrame = [client parentFrame];
+    WebCoreFrameBridge *parentFrame = [[self bridge] parent];
     if (parentFrame)
-        [loader setOverrideEncoding:[[[parentFrame _frameLoader] documentLoader] overrideEncoding]];
+        [loader setOverrideEncoding:[[[(WebFrameBridge *)parentFrame frameLoader] documentLoader] overrideEncoding]];
 
     [loader setFrameLoader:self];
 

@@ -1,3 +1,14 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        (Was reviewed as part of a larger patch but it looks like Darin already did the rest of it)
+        
+        - avoid a needless use of WebFrame
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+
 2006-10-09  Brady Eidson  <beidson@apple.com>
 
         A *real* fake fix for the layouttest problem until the real fix
