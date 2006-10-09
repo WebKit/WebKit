@@ -1,5 +1,14 @@
 2006-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Beth.
+
+        Fix LayoutTests/fast/css/case-transform.html with Qt - the last crashing layout test.
+
+        * platform/qt/GlyphMapQt.cpp: Handle UTF-16 characters properly
+        (WebCore::GlyphMap::fillPage):
+
+2006-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Unreviewed build fix.
 
         Fix for Qt/Linux build, based on fixes to the Win32 build in r16928 and r16929.

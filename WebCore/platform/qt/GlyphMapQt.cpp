@@ -31,13 +31,28 @@
 #include "GlyphMap.h"
 
 #include "FontData.h"
+#include <unicode/utf16.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
 bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
-    for (unsigned i = 0; i < bufferLength; i++)
-        page->setGlyphDataForIndex(i, buffer[i], fontData);
+    bool isUtf16 = bufferLength != GlyphPage::size;
+
+    for (unsigned i = 0; i < GlyphPage::size; i++) {
+        UChar32 character;
+
+        if(isUtf16) {
+            UChar lead = buffer[i * 2];
+            UChar trail = buffer[i * 2 + 1];
+            character = U16_GET_SUPPLEMENTARY(lead, trail);
+        } else {
+            character = buffer[i];
+        }
+
+        page->setGlyphDataForIndex(i, character, fontData);
+    }
 
     return true;
 }
