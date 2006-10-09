@@ -39,7 +39,6 @@
 #import <WebCore/WebCoreSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
-#import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebFrameInternal.h"
 #import "WebFrameViewInternal.h"
@@ -51,7 +50,6 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
-#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 
 @implementation WebFrameLoader
@@ -1078,10 +1076,8 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     
     [l retain];
 
-    [[[client webView] _policyDelegateForwarder] webView:[client webView] decidePolicyForMIMEType:MIMEType
-                                                 request:[[self activeDocumentLoader] request]
-                                                   frame:client
-                                        decisionListener:listener];
+    [client _dispatchDecidePolicyForMIMEType:MIMEType request:[[self activeDocumentLoader] request] decisionListener:listener];
+
     [l release];
 }
 
@@ -1377,12 +1373,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     listener = [decisionListener retain];
     policyFormState = [formState retain];
 
-    WebView *wv = [client webView];
-    [[wv _policyDelegateForwarder] webView:wv
-            decidePolicyForNewWindowAction:action
-                                   request:request
-                              newFrameName:frameName
-                          decisionListener:decisionListener];
+    [client _dispatchDecidePolicyForNewWindowAction:action request:request newFrameName:frameName decisionListener:decisionListener];
     
     [decisionListener release];
 }
@@ -1460,13 +1451,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     ASSERT(policyFormState == nil);
     policyFormState = [formState retain];
 
-    WebView *wv = [client webView];
     delegateIsDecidingNavigationPolicy = YES;
-    [[wv _policyDelegateForwarder] webView:wv
-           decidePolicyForNavigationAction:action
-                                   request:request
-                                     frame:client
-                          decisionListener:decisionListener];
+    [client _dispatchDecidePolicyForNavigationAction:action request:request decisionListener:decisionListener];
     delegateIsDecidingNavigationPolicy = NO;
     
     [decisionListener release];
@@ -1613,9 +1599,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 - (void)handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
     NSError *error = [NSError _webKitErrorWithDomain:WebKitErrorDomain code:code URL:URL];
-    WebView *wv = [client webView];
     delegateIsHandlingUnimplementablePolicy = YES;
-    [[wv _policyDelegateForwarder] webView:wv unableToImplementPolicyWithError:error frame:client];    
+    [client _dispatchUnableToImplementPolicyWithError:error];
     delegateIsHandlingUnimplementablePolicy = NO;
 }
 
@@ -1627,9 +1612,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     }
 
     firstLayoutDone = YES;
-
-    WebView *wv = [client webView];
-    [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:client];
+    [client _dispatchDidFirstLayoutInFrame];
 }
 
 - (void)frameLoadCompleted
@@ -1881,17 +1864,7 @@ keepGoing:
     WebFrameBridge *bridge = [self bridge];
     [bridge retain];
 
-    WebView *webView = nil;
-    WebView *currentWebView = [client webView];
-    id wd = [currentWebView UIDelegate];
-    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        webView = [wd webView:currentWebView createWebViewWithRequest:nil];
-    else
-        webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
-    if (!webView)
-        goto exit;
-
-    WebFrame *mainFrame = [webView mainFrame];
+    WebFrame *mainFrame = [client _dispatchCreateWebViewWithRequest:nil];
     if (!mainFrame)
         goto exit;
 
@@ -1900,7 +1873,7 @@ keepGoing:
 
     [mainBridge setName:frameName];
 
-    [[webView _UIDelegateForwarder] webViewShow:webView];
+    [mainFrame _dispatchShow];
 
     [mainBridge setOpener:bridge];
     [[mainFrame _frameLoader] _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];

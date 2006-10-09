@@ -1758,6 +1758,61 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [[webView _frameLoadDelegateForwarder] webView:webView didFinishLoadForFrame:self];
 }
 
+- (void)_dispatchDidFirstLayoutInFrame
+{
+    WebView *webView = [self webView];
+    [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:self];
+}
+
+- (WebFrame *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request
+{
+    WebView *currentWebView = [self webView];
+    id wd = [currentWebView UIDelegate];
+    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        return [[wd webView:currentWebView createWebViewWithRequest:request] mainFrame];
+
+    return [[[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request] mainFrame];
+}
+
+- (void)_dispatchShow
+{
+    WebView *webView = [self webView];
+    [[webView _UIDelegateForwarder] webViewShow:webView];
+}
+
+- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener
+{
+    WebView *webView = [self webView];
+
+    [[webView _policyDelegateForwarder] webView:webView decidePolicyForMIMEType:MIMEType request:request frame:self decisionListener:decisionListener];
+}
+
+- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(WebPolicyDecisionListener *)decisionListener
+{
+    WebView *webView = [self webView];
+    [[webView _policyDelegateForwarder] webView:webView
+            decidePolicyForNewWindowAction:action
+                                   request:request
+                              newFrameName:frameName
+                          decisionListener:decisionListener];
+}
+
+- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener
+{
+    WebView *webView = [self webView];
+    [[webView _policyDelegateForwarder] webView:webView
+                decidePolicyForNavigationAction:action
+                                        request:request
+                                          frame:self
+                               decisionListener:decisionListener];
+}
+
+- (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error
+{
+    WebView *webView = [self webView];
+    [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:self];    
+}
+
 - (void)_detachedFromParent1
 {
     [self _saveScrollPositionAndViewStateToItem:_private->currentItem];

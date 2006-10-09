@@ -31,6 +31,7 @@
 typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 @class WebDocumentLoader;
+@class WebPolicyDecisionListener;
 @protocol WebFrameLoaderClient
 
 - (void)_resetBackForwardList;
@@ -87,6 +88,14 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDidFailProvisionalLoadWithError:(NSError *)error;
 - (void)_dispatchDidFailLoadWithError:(NSError *)error;
 - (void)_dispatchDidFinishLoadForFrame;
+- (void)_dispatchDidFirstLayoutInFrame;
 
+- (WebFrame *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request;
+- (void)_dispatchShow;
+
+- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener;
+- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(WebPolicyDecisionListener *)decisionListener;
+- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener;
+- (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error;
 
 @end

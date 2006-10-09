@@ -1,3 +1,26 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - pass remaining delegate methods across client interface
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _checkContentPolicyForMIMEType:andCall:withSelector:]):
+        (-[WebFrameLoader checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrameLoader handleUnimplementablePolicyWithErrorCode:forURL:]):
+        (-[WebFrameLoader didFirstLayout]):
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _dispatchDidFirstLayoutInFrame]):
+        (-[WebFrame _dispatchCreateWebViewWithRequest:]):
+        (-[WebFrame _dispatchShow]):
+        (-[WebFrame _dispatchDecidePolicyForMIMEType:request:decisionListener:]):
+        (-[WebFrame _dispatchDecidePolicyForNewWindowAction:request:newFrameName:decisionListener:]):
+        (-[WebFrame _dispatchDecidePolicyForNavigationAction:request:decisionListener:]):
+        (-[WebFrame _dispatchUnableToImplementPolicyWithError:]):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
