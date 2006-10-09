@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,10 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGRectElement.h"
 
-#include "Attr.h"
-#include "KRenderingDevice.h"
-#include "KRenderingFillPainter.h"
-#include "KRenderingPaintServerSolid.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -59,7 +55,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Height
 ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry.get())
 
-void SVGRectElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
@@ -100,10 +96,10 @@ Path SVGRectElement::toPathData() const
     return Path::createRectangle(rect);
 }
 
-const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElement *context)
+const SVGStyledElement* SVGRectElement::pushAttributeContext(const SVGStyledElement* context)
 {
     // All attribute's contexts are equal (so just take the one from 'x').
-    const SVGStyledElement *restore = x()->context();
+    const SVGStyledElement* restore = x()->context();
 
     x()->setContext(context);
     y()->setContext(context);

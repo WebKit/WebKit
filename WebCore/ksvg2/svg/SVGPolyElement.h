@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,21 +24,21 @@
 #define KSVG_SVGPolyElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "svgpathparser.h"
-#include "SVGLangSpace.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGAnimatedPoints.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTests.h"
+#include "svgpathparser.h"
 
 namespace WebCore
 {
     class SVGPolyElement :  public SVGStyledTransformableElement,
-                                public SVGTests,
-                                public SVGLangSpace,
-                                public SVGExternalResourcesRequired,
-                                public SVGAnimatedPoints,
-                                public SVGPolyParser
+                            public SVGTests,
+                            public SVGLangSpace,
+                            public SVGExternalResourcesRequired,
+                            public SVGAnimatedPoints,
+                            public SVGPolyParser
     {
     public:
         SVGPolyElement(const QualifiedName&, Document*);
@@ -47,12 +47,12 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // Derived from: 'SVGAnimatedPoints'
-        virtual SVGPointList *points() const;
-        virtual SVGPointList *animatedPoints() const;
+        virtual SVGPointList* points() const;
+        virtual SVGPointList* animatedPoints() const;
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
  
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
 
         virtual void notifyAttributeChange() const;
 

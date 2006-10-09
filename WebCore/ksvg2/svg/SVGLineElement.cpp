@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,18 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGLineElement.h"
 
 #include "FloatPoint.h"
-
-#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGLineElement.h"
 #include "SVGLength.h"
+#include "SVGNames.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document *doc)
+SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -54,7 +52,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, Y1, y1
 ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2.get())
 
-void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
@@ -67,9 +65,9 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
         y2BaseValue()->setValueAsString(value);
     else
     {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr)) return;
+        if (SVGLangSpace::parseMappedAttribute(attr)) return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
@@ -82,10 +80,10 @@ Path SVGLineElement::toPathData() const
     return Path::createLine(FloatPoint(_x1, _y1), FloatPoint(_x2, _y2));
 }
 
-const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElement *context)
+const SVGStyledElement* SVGLineElement::pushAttributeContext(const SVGStyledElement* context)
 {
     // All attribute's contexts are equal (so just take the one from 'x1').
-    const SVGStyledElement *restore = x1()->context();
+    const SVGStyledElement* restore = x1()->context();
 
     x1()->setContext(context);
     y1()->setContext(context);
@@ -105,6 +103,8 @@ bool SVGLineElement::hasPercentageValues() const
         return true;
 
     return false;
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,18 +24,18 @@
 #define KSVG_SVGRectElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
+#include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
-#include "SVGExternalResourcesRequired.h"
+#include "SVGTests.h"
 
 namespace WebCore
 {
     class SVGLength;
     class SVGRectElement : public SVGStyledTransformableElement,
-                               public SVGTests,
-                               public SVGLangSpace,
-                               public SVGExternalResourcesRequired
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired
     {
     public:
         SVGRectElement(const QualifiedName&, Document*);
@@ -44,12 +44,12 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGRectElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
-        virtual const SVGStyledElement *pushAttributeContext(const SVGStyledElement *context);
+        virtual const SVGStyledElement* pushAttributeContext(const SVGStyledElement* context);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

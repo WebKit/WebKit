@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,18 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGEllipseElement.h"
 
 #include "FloatPoint.h"
-
-#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGEllipseElement.h"
 #include "SVGLength.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
-SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document *doc)
+SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -54,7 +52,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Cy,
 ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry.get())
 
-void SVGEllipseElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
@@ -84,10 +82,10 @@ Path SVGEllipseElement::toPathData() const
     return Path::createEllipse(FloatPoint(_cx, _cy), _rx, _ry);
 }
 
-const SVGStyledElement *SVGEllipseElement::pushAttributeContext(const SVGStyledElement *context)
+const SVGStyledElement* SVGEllipseElement::pushAttributeContext(const SVGStyledElement* context)
 {
     // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement *restore = cx()->context();
+    const SVGStyledElement* restore = cx()->context();
 
     cx()->setContext(context);
     cy()->setContext(context);

@@ -1,3 +1,48 @@
+2006-10-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by aroben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg shape classes.
+
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        (WebCore::SVGCircleElement::pushAttributeContext):
+        * ksvg2/svg/SVGCircleElement.h:
+        (WebCore::SVGCircleElement::rendererIsNeeded):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.h:
+        (WebCore::SVGEllipseElement::rendererIsNeeded):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        (WebCore::SVGLineElement::pushAttributeContext):
+        * ksvg2/svg/SVGLineElement.h:
+        (WebCore::SVGLineElement::rendererIsNeeded):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::rendererIsNeeded):
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        (WebCore::SVGPolygonElement::SVGPolygonElement):
+        (WebCore::SVGPolygonElement::toPathData):
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        (WebCore::SVGPolylineElement::SVGPolylineElement):
+        (WebCore::SVGPolylineElement::toPathData):
+        * ksvg2/svg/SVGPolylineElement.h:
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        (WebCore::SVGRectElement::pushAttributeContext):
+        * ksvg2/svg/SVGRectElement.h:
+        (WebCore::SVGRectElement::rendererIsNeeded):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

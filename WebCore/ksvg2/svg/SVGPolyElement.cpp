@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,16 +24,20 @@
 #ifdef SVG_SUPPORT
 #include "SVGPolyElement.h"
 
-#include "Attr.h"
 #include "Document.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGPointList.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGAnimatedPoints(), SVGPolyParser()
+SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGAnimatedPoints()
+    , SVGPolyParser()
 {
 }
 
@@ -41,26 +45,26 @@ SVGPolyElement::~SVGPolyElement()
 {
 }
 
-SVGPointList *SVGPolyElement::points() const
+SVGPointList* SVGPolyElement::points() const
 {
     return lazy_create<SVGPointList>(m_points);
 }
 
-SVGPointList *SVGPolyElement::animatedPoints() const
+SVGPointList* SVGPolyElement::animatedPoints() const
 {
     return 0;
 }
 
-void SVGPolyElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::pointsAttr) {
         ExceptionCode ec = 0;
         points()->clear(ec);
         parsePoints(attr->value().deprecatedString());
     } else {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr)) return;
+        if (SVGLangSpace::parseMappedAttribute(attr)) return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
@@ -92,13 +96,15 @@ void SVGPolyElement::notifyAttributeChange() const
     }
 
     String p("points");
-    RefPtr<Attr> attr = const_cast<SVGPolyElement *>(this)->getAttributeNode(p.impl());
+    RefPtr<Attr> attr = const_cast<SVGPolyElement*>(this)->getAttributeNode(p.impl());
     if (attr) {
         ExceptionCode ec = 0;
         ignoreNotifications = true; // prevent recursion.
         attr->setValue(_points, ec);
         ignoreNotifications = false;
     }
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,18 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGCircleElement.h"
 
 #include "FloatPoint.h"
-
-#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGCircleElement.h"
 #include "SVGLength.h"
+#include "SVGNames.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document *doc)
+SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -52,7 +50,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cx, 
 ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
 
-void SVGCircleElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
@@ -80,10 +78,10 @@ Path SVGCircleElement::toPathData() const
     return Path::createCircle(FloatPoint(_cx, _cy), _r);
 }
 
-const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledElement *context)
+const SVGStyledElement* SVGCircleElement::pushAttributeContext(const SVGStyledElement* context)
 {
     // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement *restore = cx()->context();
+    const SVGStyledElement* restore = cx()->context();
 
     cx()->setContext(context);
     cy()->setContext(context);
@@ -101,6 +99,8 @@ bool SVGCircleElement::hasPercentageValues() const
         return true;
 
     return false;
+}
+
 }
 
 // vim:ts=4:noet
