@@ -1,3 +1,58 @@
+2006-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - eliminated WebFrameLoader dependency on WebDataSourceInternal.h,
+          WebIconDatabasePrivate.h, and WebKitErrorsPrivate.h, along with
+          most but not all references to WebView
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader cancelledErrorWithRequest:]):
+        (-[WebFrameLoader fileDoesNotExistErrorWithResponse:]):
+        (-[WebFrameLoader handleUnimplementablePolicyWithError:]):
+        (-[WebFrameLoader cannotShowMIMETypeWithResponse:]):
+        (-[WebFrameLoader interruptForPolicyChangeErrorWithRequest:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader finishedLoadingDocument:]):
+        (-[WebFrameLoader committedLoadWithDocumentLoader:data:]):
+        (-[WebFrameLoader revertToProvisionalWithDocumentLoader:]):
+        (-[WebFrameLoader documentLoader:setMainDocumentError:]):
+        (-[WebFrameLoader finalSetupForReplaceWithDocumentLoader:]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader continueAfterNavigationPolicy:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        (-[WebFrameLoader requestFromDelegateForRequest:identifier:error:]):
+        (-[WebFrameLoader addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrameLoader checkLoadComplete]):
+        * Loader/WebFrameLoaderClient.h:
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _addDocumentLoader:toUnarchiveState:]):
+        (-[WebFrame _formDelegate]):
+        (-[WebFrame _finishedLoadingDocument:]):
+        (-[WebFrame _committedLoadWithDocumentLoader:data:]):
+        (-[WebFrame _revertToProvisionalWithDocumentLoader:]):
+        (-[WebFrame _documentLoader:setMainDocumentError:]):
+        (-[WebFrame _finalSetupForReplaceWithDocumentLoader:]):
+        (-[WebFrame _URLForHistoryForDocumentLoader:]):
+        (-[WebFrame _cancelledErrorWithRequest:]):
+        (-[WebFrame _cannotShowURLErrorWithRequest:]):
+        (-[WebFrame _interruptForPolicyChangeErrorWithRequest:]):
+        (-[WebFrame _cannotShowMIMETypeErrorWithResponse:]):
+        (-[WebFrame _fileDoesNotExistErrorWithResponse:]):
+        (-[WebFrame _shouldFallBackForError:]):
+        (-[WebFrame _hasWebView]):
+        (-[WebFrame _mainFrameURL]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed, landed, tweaked a bit by Darin.

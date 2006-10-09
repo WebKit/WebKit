@@ -242,7 +242,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
         BOOL isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
         if (![WebFrameLoader _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
-            [frameLoader cannotShowMIMETypeForURL:URL];
+            [frameLoader cannotShowMIMETypeWithResponse:r];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
                 [self stopLoadingForPolicyChange];

@@ -1185,6 +1185,16 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     }
 }
 
+- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive
+{
+    [dataSource(loader) _addToUnarchiveState:archive];
+}
+
+- (id <WebFormDelegate>)_formDelegate
+{
+    return [[self webView] _formDelegate];
+}
+
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -1942,6 +1952,79 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 {
     // FIXME: Should download full request.
     [[self webView] _downloadURL:[request URL]];
+}
+
+- (void)_finishedLoadingDocument:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _finishedLoading];
+}
+
+- (void)_committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data
+{
+    [dataSource(loader) _receivedData:data];
+}
+
+- (void)_revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _revertToProvisionalState];
+}
+
+- (void)_documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
+{
+    [dataSource(loader) _setMainDocumentError:error];
+}
+
+- (void)_finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _clearUnarchivingState];
+}
+
+- (NSURL *)_URLForHistoryForDocumentLoader:(WebDocumentLoader *)loader
+{
+    return [dataSource(loader) _URLForHistory];
+}
+
+- (NSError *)_cancelledErrorWithRequest:(NSURLRequest *)request
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+}
+
+- (NSError *)_cannotShowURLErrorWithRequest:(NSURLRequest *)request
+{
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:[request URL]];
+}
+
+- (NSError *)_interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request
+{
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
+}
+
+- (NSError *)_cannotShowMIMETypeErrorWithResponse:(NSURLResponse *)response
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:WebKitErrorCannotShowMIMEType URL:[response URL]];    
+}
+
+- (NSError *)_fileDoesNotExistErrorWithResponse:(NSURLResponse *)response
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:[response URL]];    
+}
+
+- (BOOL)_shouldFallBackForError:(NSError *)error
+{
+    // FIXME: Needs to check domain.
+    // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent
+    // loading plugin content twice.  See <rdar://problem/4258008>
+    return [error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad;
+}
+
+- (BOOL)_hasWebView
+{
+    return [self webView] != nil;
+}
+
+- (NSURL *)_mainFrameURL
+{
+    return [[[[self webView] mainFrame] dataSource] _URL];
 }
 
 @end

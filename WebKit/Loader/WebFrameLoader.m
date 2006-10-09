@@ -37,12 +37,10 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
 #import <WebCore/WebCoreFrameBridge.h>
+#import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
-#import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
-#import "WebIconDatabasePrivate.h"
-#import "WebKitErrorsPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebViewInternal.h"
@@ -118,7 +116,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 {
     [plugInStreamLoaders removeObject:loader];
     [[self activeDocumentLoader] updateLoading];
-}    
+}
 
 - (void)defersCallbacksChanged
 {
@@ -501,8 +499,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // that both data sources on the frame are either self or nil.
         // Can't call _bridge because we might not have commited yet
         [bridge stop];
-        // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent loading plugin content twice.  See <rdar://problem/4258008>
-        if ([error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad)
+        if ([cli _shouldFallBackForError:error])
             [bridge handleFallbackContent];
     }
     
@@ -856,8 +853,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_notifyIconChanged:(NSURL *)iconURL
 {
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
+    NSImage *icon = [[WebCoreIconDatabaseBridge sharedInstance]
+        iconForPageURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString]
+        withSize:NSMakeSize(16, 16)];
     [client _dispatchDidReceiveIcon:icon];
 }
 
@@ -868,12 +867,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+    return [client _cancelledErrorWithRequest:request];
 }
 
 - (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:[response URL]];    
+    return [client _fileDoesNotExistErrorWithResponse:response];    
 }
 
 - (void)clearArchivedResources
@@ -979,14 +978,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
 }
 
-- (void)cannotShowMIMETypeForURL:(NSURL *)URL
+- (void)handleUnimplementablePolicyWithError:(NSError *)error
 {
-    [self handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];    
+    delegateIsHandlingUnimplementablePolicy = YES;
+    [client _dispatchUnableToImplementPolicyWithError:error];
+    delegateIsHandlingUnimplementablePolicy = NO;
+}
+
+- (void)cannotShowMIMETypeWithResponse:(NSURLResponse *)response
+{
+    [self handleUnimplementablePolicyWithError:[client _cannotShowMIMETypeErrorWithResponse:response]];    
 }
 
 - (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
+    return [client _interruptForPolicyChangeErrorWithRequest:request];
 }
 
 - (BOOL)isHostedByObjectElement
@@ -1073,9 +1079,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
-    WebDataSource *newDataSource = [client _dataSourceForDocumentLoader:policyDocumentLoader];
 
-    NSMutableURLRequest *r = [newDataSource request];
+    NSMutableURLRequest *r = [policyDocumentLoader request];
     [self addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -1084,7 +1089,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         type = FrameLoadTypeStandard;
     
     [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
-    [newDataSource _addToUnarchiveState:archive];
+    [client _addDocumentLoader:policyDocumentLoader toUnarchiveState:archive];
     
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
@@ -1170,12 +1175,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)finishedLoadingDocument:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoader:loader] _finishedLoading];
+    [client _finishedLoadingDocument:loader];
 }
 
 - (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data
 {
-    [[client _dataSourceForDocumentLoader:loader] _receivedData:data];
+    [client _committedLoadWithDocumentLoader:loader data:data];
 }
 
 - (BOOL)isReplacing
@@ -1190,12 +1195,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoader:loader] _revertToProvisionalState];
+    [client _revertToProvisionalWithDocumentLoader:loader];
 }
 
 - (void)documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
 {
-    [[client _dataSourceForDocumentLoader:loader] _setMainDocumentError:error];
+    [client _documentLoader:loader setMainDocumentError:error];
 }
 
 - (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error
@@ -1207,7 +1212,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [[client _dataSourceForDocumentLoader:loader] _clearUnarchivingState];
+    [client _finalSetupForReplaceWithDocumentLoader:loader];
 }
 
 - (void)prepareForLoadStart
@@ -1236,7 +1241,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // The title doesn't get communicated to the WebView until we are committed.
     if ([loader isCommitted]) {
-        NSURL *URLForHistory = [[client _dataSourceForDocumentLoader:loader] _URLForHistory];
+        NSURL *URLForHistory = [client _URLForHistoryForDocumentLoader:loader];
         if (URLForHistory != nil) {
             // Must update the entries in the back-forward list too.
             // This must go through the WebFrame because it has the right notion of the current b/f item.
@@ -1401,7 +1406,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             break;
         case WebPolicyUse:
             if (![WebView _canHandleRequest:request]) {
-                [self handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
+                [self handleUnimplementablePolicyWithError:[client _cannotShowURLErrorWithRequest:request]];
                 request = nil;
             }
             break;
@@ -1465,23 +1470,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [dl release];
     [self setPolicyDocumentLoader:nil];
     
-    if (isBackForwardLoadType(type)) {
-        if ([client _loadProvisionalItemFromPageCache])
-            return;
-    }
+    if (isBackForwardLoadType(type) && [client _loadProvisionalItemFromPageCache])
+        return;
 
     if (formState) {
         // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
         // mechanism across the willSubmitForm callout.
         listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
-        [[[client webView] _formDelegate] frame:client sourceFrame:[(WebFrameBridge *)[formState sourceFrame] webFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
+        [[client _formDelegate] frame:client sourceFrame:[(WebFrameBridge *)[formState sourceFrame] webFrame]
+            willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
     } else
         [self continueAfterWillSubmitForm:WebPolicyUse];
 }
 
 - (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
 {
-    ASSERT([client webView] != nil);
+    ASSERT([client _hasWebView]);
 
     // Unfortunately the view must be non-nil, this is ultimately due
     // to parser requiring a FrameView.  We should fix this dependency.
@@ -1492,7 +1496,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     WebFrame *parentFrame = [client parentFrame];
     if (parentFrame)
-        [loader setOverrideEncoding:[[[parentFrame dataSource] _documentLoader] overrideEncoding]];
+        [loader setOverrideEncoding:[[[parentFrame _frameLoader] documentLoader] overrideEncoding]];
 
     [loader setFrameLoader:self];
 
@@ -1505,14 +1509,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                 formState:formState
                                   andCall:self
                              withSelector:@selector(continueLoadRequestAfterNavigationPolicy:formState:)];
-}
-
-- (void)handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
-{
-    NSError *error = [NSError _webKitErrorWithDomain:WebKitErrorDomain code:code URL:URL];
-    delegateIsHandlingUnimplementablePolicy = YES;
-    [client _dispatchUnableToImplementPolicyWithError:error];
-    delegateIsHandlingUnimplementablePolicy = NO;
 }
 
 - (void)didFirstLayout
@@ -1545,7 +1541,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)transitionToCommitted:(NSDictionary *)pageCache
 {
-    ASSERT([client webView] != nil);
+    ASSERT([client _hasWebView]);
     ASSERT([self state] == WebFrameStateProvisional);
 
     if ([self state] != WebFrameStateProvisional)
@@ -1622,7 +1618,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)checkLoadCompleteForThisFrame
 {
-    ASSERT([client webView] != nil);
+    ASSERT([client _hasWebView]);
 
     switch ([self state]) {
         case WebFrameStateProvisional: {
@@ -1758,7 +1754,7 @@ exit:
     NSURLRequest *newRequest = [client _dispatchResource:*identifier willSendRequest:request redirectResponse:nil fromDocumentLoader:documentLoader];
     
     if (newRequest == nil)
-        *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+        *error = [client _cancelledErrorWithRequest:request];
     else
         *error = nil;
     
@@ -1862,7 +1858,7 @@ exit:
         if (mainResource && ([self isLoadingMainFrame] || f))
             [request setMainDocumentURL:[request URL]];
         else
-            [request setMainDocumentURL:[[[[client webView] mainFrame] dataSource] _URL]];
+            [request setMainDocumentURL:[client _mainFrameURL]];
     }
     
     if (mainResource)
@@ -1943,7 +1939,7 @@ exit:
 // Called every time a resource is completely loaded, or an error is received.
 - (void)checkLoadComplete
 {
-    ASSERT([client webView] != nil);
+    ASSERT([client _hasWebView]);
 
     WebFrame *parent;
     for (WebFrame *frame = client; frame; frame = parent) {

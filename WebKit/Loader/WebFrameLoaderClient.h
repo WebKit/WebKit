@@ -36,6 +36,8 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 @protocol WebFrameLoaderClient
 
+- (BOOL)_hasWebView; // mainly for assertions
+
 - (BOOL)_hasBackForwardList;
 - (void)_resetBackForwardList;
 
@@ -122,9 +124,27 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 - (void)_setMainFrameDocumentReady:(BOOL)ready;
 
+- (void)_startDownloadWithRequest:(NSURLRequest *)request;
+
 - (void)_willChangeTitleForDocument:(WebDocumentLoader *)loader;
 - (void)_didChangeTitleForDocument:(WebDocumentLoader *)loader;
 
-- (void)_startDownloadWithRequest:(NSURLRequest *)request;
+- (void)_revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
+- (void)_finishedLoadingDocument:(WebDocumentLoader *)loader;
+- (void)_documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error;
+- (void)_finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader;
+- (NSURL *)_URLForHistoryForDocumentLoader:(WebDocumentLoader *)loader;
+
+- (NSError *)_cancelledErrorWithRequest:(NSURLRequest *)request;
+- (NSError *)_cannotShowURLErrorWithRequest:(NSURLRequest *)request;
+- (NSError *)_interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request;
+
+- (NSError *)_cannotShowMIMETypeErrorWithResponse:(NSURLResponse *)response;
+- (NSError *)_fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
+
+- (BOOL)_shouldFallBackForError:(NSError *)error;
+
+- (NSURL *)_mainFrameURL;
 
 @end
