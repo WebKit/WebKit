@@ -37,7 +37,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
 #import <WebCore/WebCoreFrameBridge.h>
-#import <WebCore/WebCoreIconDatabaseBridge.h>
+#import "WebIconDatabaseBridge.h"
+//#import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
 #import "WebFrameInternal.h"
