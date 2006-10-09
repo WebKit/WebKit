@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,8 +24,8 @@
 #define KSVG_SVGFETurbulenceElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
 {
@@ -50,9 +50,9 @@ namespace WebCore
 
         // 'SVGFETurbulenceElement' functions
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual KCanvasFETurbulence *filterEffect() const;
+        virtual KCanvasFETurbulence* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -64,7 +64,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, Seed, seed)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, StitchTiles, stitchTiles)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, Type, type)
-        mutable KCanvasFETurbulence *m_filterEffect;
+        mutable KCanvasFETurbulence* m_filterEffect;
     };
 
 } // namespace WebCore

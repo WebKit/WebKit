@@ -21,8 +21,8 @@
 #define KSVG_SVGFEDisplacementMapElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
     

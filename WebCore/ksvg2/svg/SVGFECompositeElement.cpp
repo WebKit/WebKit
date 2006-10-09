@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,17 +22,11 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "KCanvasFilters.h"
-#include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFECompositeElement.h"
+
+#include "KRenderingDevice.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -65,17 +59,17 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr)
     {
-        if(value == "over")
+        if (value == "over")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OVER);
-        else if(value == "in")
+        else if (value == "in")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_IN);
-        else if(value == "out")
+        else if (value == "out")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OUT);
-        else if(value == "atop")
+        else if (value == "atop")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ATOP);
-        else if(value == "xor")
+        else if (value == "xor")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_XOR);
-        else if(value == "arithmetic")
+        else if (value == "arithmetic")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
     }
     else if (attr->name() == SVGNames::inAttr)

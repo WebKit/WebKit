@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,19 +22,14 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFEBlendElement.h"
+
+#include "KRenderingDevice.h"
+#include "SVGHelper.h"
 
 namespace WebCore {
 
-SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document *doc)
+SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_mode(0)
     , m_filterEffect(0)
@@ -50,23 +45,21 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In1, in
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Enumeration, enumeration, Mode, mode, SVGNames::modeAttr.localName(), m_mode)
 
-void SVGFEBlendElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::modeAttr)
-    {
-        if(value == "normal")
+    if (attr->name() == SVGNames::modeAttr) {
+        if (value == "normal")
             setModeBaseValue(SVG_FEBLEND_MODE_NORMAL);
-        else if(value == "multiply")
+        else if (value == "multiply")
             setModeBaseValue(SVG_FEBLEND_MODE_MULTIPLY);
-        else if(value == "screen")
+        else if (value == "screen")
             setModeBaseValue(SVG_FEBLEND_MODE_SCREEN);
-        else if(value == "darken")
+        else if (value == "darken")
             setModeBaseValue(SVG_FEBLEND_MODE_DARKEN);
-        else if(value == "lighten")
+        else if (value == "lighten")
             setModeBaseValue(SVG_FEBLEND_MODE_LIGHTEN);
-    }
-    else if (attr->name() == SVGNames::inAttr)
+    } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
@@ -74,10 +67,10 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEBlend *SVGFEBlendElement::filterEffect() const
+KCanvasFEBlend* SVGFEBlendElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEBlend *>(renderingDevice()->createFilterEffect(FE_BLEND));
+        m_filterEffect = static_cast<KCanvasFEBlend*>(renderingDevice()->createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()-1));

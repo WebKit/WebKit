@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,20 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGFEGaussianBlurElement.h"
 
-#include "KCanvasFilters.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerGradient.h"
-
-#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGRenderStyle.h"
-#include "SVGFEGaussianBlurElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
-SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document *doc)
+SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_stdDeviationX(0.0)
     , m_stdDeviationY(0.0)
@@ -56,27 +52,26 @@ void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDev
 {
 }
 
-void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
         Vector<String> numbers = value.split(' ');
         setStdDeviationXBaseValue(numbers[0].toDouble());
-        if(numbers.size() == 1)
+        if (numbers.size() == 1)
             setStdDeviationYBaseValue(numbers[0].toDouble());
         else
             setStdDeviationYBaseValue(numbers[1].toDouble());
-    }
-    else if (attr->name() == SVGNames::inAttr)
+    } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEGaussianBlur *SVGFEGaussianBlurElement::filterEffect() const
+KCanvasFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+        m_filterEffect = static_cast<KCanvasFEGaussianBlur*>(renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());

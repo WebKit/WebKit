@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,14 +22,14 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGHelper.h"
 #include "SVGFEMergeNodeElement.h"
 
-using namespace WebCore;
+#include "SVGHelper.h"
 
-SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document *doc) : SVGElement(tagName, doc)
+namespace WebCore {
+
+SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)
+    : SVGElement(tagName, doc)
 {
 }
 
@@ -39,7 +39,7 @@ SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEMergeNodeElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 
-void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
@@ -48,6 +48,7 @@ void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute *attr)
         SVGElement::parseMappedAttribute(attr);
 }
 
+}
 
 // vim:ts=4:noet
 #endif // SVG_SUPPORT

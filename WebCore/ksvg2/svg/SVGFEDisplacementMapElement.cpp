@@ -20,17 +20,12 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFEDisplacementMapElement.h"
 
-using namespace WebCore;
+#include "KRenderingDevice.h"
+#include "SVGHelper.h"
+
+namespace WebCore {
 
 SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -54,13 +49,13 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, double, Number, numbe
 
 KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {
-    if(key == "R")
+    if (key == "R")
         return CS_RED;
-    else if(key == "G")
+    else if (key == "G")
         return CS_GREEN;
-    else if(key == "B")
+    else if (key == "B")
         return CS_BLUE;
-    else if(key == "A")
+    else if (key == "A")
         return CS_ALPHA;
     //error
     return (KCChannelSelectorType)-1;
@@ -96,5 +91,7 @@ KCanvasFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
     m_filterEffect->setScale(scale());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
+}
+
 }
 #endif // SVG_SUPPORT

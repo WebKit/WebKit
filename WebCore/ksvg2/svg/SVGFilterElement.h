@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
     This file is part of the KDE project
@@ -25,31 +25,30 @@
 #define KSVG_SVGFilterElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGStyledElement.h"
-#include "SVGExternalResourcesRequired.h"
-
 #include "KCanvasFilters.h"
+#include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledElement.h"
+#include "SVGURIReference.h"
 
 namespace WebCore {
     class SVGLength;
 
     class SVGFilterElement : public SVGStyledElement,
-                                 public SVGURIReference,
-                                 public SVGLangSpace,
-                                 public SVGExternalResourcesRequired
+                             public SVGURIReference,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired
     {
     public:
         SVGFilterElement(const QualifiedName&, Document*);
         virtual ~SVGFilterElement();
 
-        virtual KCanvasFilter *canvasResource();
+        virtual KCanvasFilter* canvasResource();
 
         // 'SVGFilterElement' functions
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -67,7 +66,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResX, filterResX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResY, filterResY)
 
-        KCanvasFilter *m_filter;
+        KCanvasFilter* m_filter;
     };
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,15 +24,17 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEFuncGElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGFEFuncGElement::SVGFEFuncGElement(const QualifiedName& tagName, Document *doc) : 
+SVGFEFuncGElement::SVGFEFuncGElement(const QualifiedName& tagName, Document* doc) : 
 SVGComponentTransferFunctionElement(tagName, doc)
 {
 }
 
 SVGFEFuncGElement::~SVGFEFuncGElement()
 {
+}
+
 }
 
 // vim:ts=4:noet

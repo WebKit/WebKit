@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,18 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
-#include "SVGFEComponentTransferElement.h"
 #include "SVGComponentTransferFunctionElement.h"
+
+#include "SVGFEComponentTransferElement.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
 #include "SVGNumberList.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document *doc)
+SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
     , m_type(0)
     , m_tableValues(new SVGNumberList)
@@ -57,20 +55,20 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, double, Numbe
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, double, Number, number, Exponent, exponent, SVGNames::exponentAttr.localName(), m_exponent)
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, double, Number, number, Offset, offset, SVGNames::offsetAttr.localName(), m_offset)
 
-void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr)
     {
-        if(value == "identity")
+        if (value == "identity")
             setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY);
-        else if(value == "table")
+        else if (value == "table")
             setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_TABLE);
-        else if(value == "discrete")
+        else if (value == "discrete")
             setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE);
-        else if(value == "linear")
+        else if (value == "linear")
             setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_LINEAR);
-        else if(value == "gamma")
+        else if (value == "gamma")
             setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_GAMMA);
     }
     else if (attr->name() == SVGNames::tableValuesAttr)
@@ -98,13 +96,15 @@ KCComponentTransferFunction SVGComponentTransferFunctionElement::transferFunctio
     func.amplitude = amplitude();
     func.exponent = exponent();
     func.offset = offset();
-    SVGNumberList *numbers = tableValues();
+    SVGNumberList* numbers = tableValues();
 
     ExceptionCode ec = 0;
     unsigned int nr = numbers->numberOfItems();
     for (unsigned int i = 0; i < nr; i++)
         func.tableValues.append(numbers->getItem(i, ec));
     return func;
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,21 +22,17 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-#include <wtf/Assertions.h>
-
-#include "SVGUnitTypes.h"
-#include "SVGNames.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGLength.h"
-#include "SVGStyledElement.h"
+
 #include "SVGFilterElement.h"
+#include "SVGLength.h"
+#include "SVGNames.h"
+#include "SVGStyledElement.h"
+#include "SVGUnitTypes.h"
 
-#include <kcanvas/KCanvasFilters.h>
+namespace WebCore {
 
-using namespace WebCore;
-
-SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document *doc)
+SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
     , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
@@ -58,7 +54,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, String, String, string, Result, result, SVGNames::resultAttr.localName(), m_result)
 
-void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute *attr)
+void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
@@ -75,14 +71,14 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute 
         return SVGStyledElement::parseMappedAttribute(attr);
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEffect *filterEffect) const
+void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEffect* filterEffect) const
 {
     ASSERT(filterEffect);
     if (!filterEffect)
         return;
     bool bbox = false;
     if (parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
-        bbox = static_cast<SVGFilterElement *>(parentNode())->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+        bbox = static_cast<SVGFilterElement*>(parentNode())->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
     x()->setBboxRelative(bbox);
     y()->setBboxRelative(bbox);
@@ -96,6 +92,8 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEf
         filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
 
     filterEffect->setResult(result());
+}
+
 }
 
 // vim:ts=4:noet

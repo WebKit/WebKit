@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,22 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "KCanvasFilters.h"
-#include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFEColorMatrixElement.h"
+
+#include "KRenderingDevice.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
 #include "SVGNumberList.h"
 
 namespace WebCore {
 
-SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc)
+SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_type(0)
     , m_values(new SVGNumberList)
@@ -54,17 +48,17 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, String, string, I
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, SVGNumberList*, NumberList, numberList, Values, values, SVGNames::valuesAttr.localName(), m_values.get())
 
-void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {
-        if(value == "matrix")
+        if (value == "matrix")
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_MATRIX);
-        else if(value == "saturate")
+        else if (value == "saturate")
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_SATURATE);
-        else if(value == "hueRotate")
+        else if (value == "hueRotate")
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
-        else if(value == "luminanceToAlpha")
+        else if (value == "luminanceToAlpha")
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
     }
     else if (attr->name() == SVGNames::inAttr)
@@ -75,21 +69,21 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
+KCanvasFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEColorMatrix *>(renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+        m_filterEffect = static_cast<KCanvasFEColorMatrix*>(renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
     if (!m_filterEffect)
         return 0;
         
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     DeprecatedValueList<float> _values;
-    SVGNumberList *numbers = values();
+    SVGNumberList* numbers = values();
 
     ExceptionCode ec = 0;
     unsigned int nr = numbers->numberOfItems();
-    for(unsigned int i = 0;i < nr;i++)
+    for (unsigned int i = 0;i < nr;i++)
         _values.append(numbers->getItem(i, ec));
     m_filterEffect->setValues(_values);
     m_filterEffect->setType((KCColorMatrixType)(type() - 1));

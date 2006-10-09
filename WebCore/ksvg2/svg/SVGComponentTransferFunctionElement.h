@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,8 +24,8 @@
 #define KSVG_SVGComponentTransferFunctionElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGElement.h"
 #include "KCanvasFilters.h"
+#include "SVGElement.h"
 
 namespace WebCore
 {
@@ -48,7 +48,7 @@ namespace WebCore
 
         // 'SVGComponentTransferFunctionElement' functions
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
         
         KCComponentTransferFunction transferFunction() const;
 

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
 
     This library is free software; you can redistribute it and/or
@@ -23,8 +23,8 @@
 #define KSVG_SVGFESpecularLightingElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
 {
@@ -38,9 +38,9 @@ namespace WebCore
         
         // 'SVGFEDiffuseLightingElement' functions
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
         
-        virtual KCanvasFESpecularLighting *filterEffect() const;
+        virtual KCanvasFESpecularLighting* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -54,7 +54,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthY, kernelUnitLengthY)
         //need other properties here...
-        mutable KCanvasFESpecularLighting *m_filterEffect;
+        mutable KCanvasFESpecularLighting* m_filterEffect;
         
         //light management
         void updateLights() const;

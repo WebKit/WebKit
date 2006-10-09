@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,8 +24,8 @@
 #define KSVG_SVGFECompositeElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
 {
@@ -48,9 +48,9 @@ namespace WebCore
 
         // 'SVGFECompositeElement' functions
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual KCanvasFEComposite *filterEffect() const;
+        virtual KCanvasFEComposite* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -63,7 +63,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K2, k2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K3, k3)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K4, k4)
-        mutable KCanvasFEComposite *m_filterEffect;
+        mutable KCanvasFEComposite* m_filterEffect;
     };
 
 } // namespace WebCore

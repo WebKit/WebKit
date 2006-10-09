@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
 
     This library is free software; you can redistribute it and/or
@@ -17,26 +17,21 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
- */
+*/
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
-#include "SVGColor.h"
-#include "SVGFELightElement.h"
 #include "SVGFESpecularLightingElement.h"
 
+#include "KRenderingDevice.h"
+#include "SVGColor.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGFELightElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document *doc)
+SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_specularConstant(0.0)
     , m_specularExponent(0.0)
@@ -61,7 +56,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, numb
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, SVGColor*, Color, color, LightingColor, lightingColor, SVGNames::lighting_colorAttr.localName(), m_lightingColor.get())
 
-void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 {    
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
@@ -85,10 +80,10 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFESpecularLighting *SVGFESpecularLightingElement::filterEffect() const
+KCanvasFESpecularLighting* SVGFESpecularLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<KCanvasFESpecularLighting *>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
+        m_filterEffect = static_cast<KCanvasFESpecularLighting*>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()));
@@ -106,15 +101,18 @@ void SVGFESpecularLightingElement::updateLights() const
     if (!m_filterEffect)
         return;
 
-    KCLightSource *light = 0;    
-    for (Node *n = firstChild(); n; n = n->nextSibling()) {
+    KCLightSource* light = 0;    
+    for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feDistantLightTag)||n->hasTagName(SVGNames::fePointLightTag)||n->hasTagName(SVGNames::feSpotLightTag)) {
-            SVGFELightElement *lightNode = static_cast<SVGFELightElement *>(n); 
+            SVGFELightElement* lightNode = static_cast<SVGFELightElement*>(n); 
             light = lightNode->lightSource();
             break;
         }
     }
     m_filterEffect->setLightSource(light);
 }
+
+}
+
 #endif // SVG_SUPPORT
 

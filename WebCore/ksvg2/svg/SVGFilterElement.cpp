@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
     This file is part of the KDE project
@@ -23,20 +23,20 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGFilterElement.h"
 
+#include "Attr.h"
 #include "KRenderingDevice.h"
 #include "KCanvasFilters.h"
-#include "SVGUnitTypes.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include "SVGHelper.h"
 #include "SVGLength.h"
+#include "SVGNames.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document *doc)
+SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGLangSpace()
@@ -80,24 +80,20 @@ void SVGFilterElement::setFilterRes(unsigned long, unsigned long) const
 {
 }
 
-void SVGFilterElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::filterUnitsAttr)
-    {
-        if(value == "userSpaceOnUse")
+    if (attr->name() == SVGNames::filterUnitsAttr) {
+        if (value == "userSpaceOnUse")
             setFilterUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if(value == "objectBoundingBox")
+        else if (value == "objectBoundingBox")
             setFilterUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    else if (attr->name() == SVGNames::primitiveUnitsAttr)
-    {
-        if(value == "userSpaceOnUse")
+    } else if (attr->name() == SVGNames::primitiveUnitsAttr) {
+        if (value == "userSpaceOnUse")
             setPrimitiveUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if(value == "objectBoundingBox")
+        else if (value == "objectBoundingBox")
             setPrimitiveUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    else if (attr->name() == SVGNames::xAttr)
+    } else if (attr->name() == SVGNames::xAttr)
         xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
         yBaseValue()->setValueAsString(value);
@@ -105,23 +101,22 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute *attr)
         widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
         heightBaseValue()->setValueAsString(value);
-    else
-    {
-        if(SVGURIReference::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+    else {
+        if (SVGURIReference::parseMappedAttribute(attr)) return;
+        if (SVGLangSpace::parseMappedAttribute(attr)) return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
 }
 
-KCanvasFilter *SVGFilterElement::canvasResource()
+KCanvasFilter* SVGFilterElement::canvasResource()
 {
     if (!attached())
         return 0;
 
     if (!m_filter)
-        m_filter = static_cast<KCanvasFilter *>(renderingDevice()->createResource(RS_FILTER));
+        m_filter = static_cast<KCanvasFilter*>(renderingDevice()->createResource(RS_FILTER));
 
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
@@ -138,10 +133,10 @@ KCanvasFilter *SVGFilterElement::canvasResource()
 
     // TODO : use switch/case instead?
     m_filter->clearEffects();
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement *element = svg_dynamic_cast(n);
-        if(element && element->isFilterEffect()) {
-            SVGFilterPrimitiveStandardAttributes *fe = static_cast<SVGFilterPrimitiveStandardAttributes *>(element);
+    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
+        SVGElement* element = svg_dynamic_cast(n);
+        if (element && element->isFilterEffect()) {
+            SVGFilterPrimitiveStandardAttributes* fe = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
             if (fe->filterEffect())
                 m_filter->addFilterEffect(fe->filterEffect());
         }

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,8 +24,8 @@
 #define KSVG_SVGFEGaussianBlurElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
 {
@@ -40,9 +40,9 @@ namespace WebCore
         void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual KCanvasFEGaussianBlur *filterEffect() const;
+        virtual KCanvasFEGaussianBlur* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -51,7 +51,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationY, stdDeviationY)
-        mutable KCanvasFEGaussianBlur *m_filterEffect;
+        mutable KCanvasFEGaussianBlur* m_filterEffect;
     };
 
 } // namespace WebCore

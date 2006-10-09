@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,20 +22,13 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "KCanvasFilters.h"
-#include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
-
-#include "ksvg.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFETurbulenceElement.h"
+
+#include "KRenderingDevice.h"
 
 namespace WebCore {
 
-SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document *doc)
+SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_baseFrequencyX(0.0)
     , m_baseFrequencyY(0.0)
@@ -59,33 +52,27 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, long, Integer, integer, Nu
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr.localName(), m_stitchTiles)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
 
-void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::typeAttr)
-    {
-        if(value == "fractalNoise")
+    if (attr->name() == SVGNames::typeAttr) {
+        if (value == "fractalNoise")
             setTypeBaseValue(SVG_TURBULENCE_TYPE_FRACTALNOISE);
-        else if(value == "turbulence")
+        else if (value == "turbulence")
             setTypeBaseValue(SVG_TURBULENCE_TYPE_TURBULENCE);
-    }
-    else if (attr->name() == SVGNames::stitchTilesAttr)
-    {
-        if(value == "stitch")
+    } else if (attr->name() == SVGNames::stitchTilesAttr) {
+        if (value == "stitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_STITCH);
-        else if(value == "nostitch")
+        else if (value == "nostitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_NOSTITCH);
-    }
-    else if (attr->name() == SVGNames::baseFrequencyAttr)
-    {
+    } else if (attr->name() == SVGNames::baseFrequencyAttr) {
         Vector<String> numbers = value.split(' ');
         setBaseFrequencyXBaseValue(numbers[0].toDouble());
-        if(numbers.size() == 1)
+        if (numbers.size() == 1)
             setBaseFrequencyYBaseValue(numbers[0].toDouble());
         else
             setBaseFrequencyYBaseValue(numbers[1].toDouble());
-    }
-    else if (attr->name() == SVGNames::seedAttr)
+    } else if (attr->name() == SVGNames::seedAttr)
         setSeedBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::numOctavesAttr)
         setNumOctavesBaseValue(value.deprecatedString().toUInt());
@@ -93,10 +80,10 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFETurbulence *SVGFETurbulenceElement::filterEffect() const
+KCanvasFETurbulence* SVGFETurbulenceElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETurbulence *>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<KCanvasFETurbulence*>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     

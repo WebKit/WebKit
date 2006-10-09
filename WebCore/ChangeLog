@@ -1,5 +1,56 @@
 2006-10-09  Rob Buis  <buis@kde.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in filter classes.
+
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::parseMappedAttribute):
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute):
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::stringToChannel):
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEFuncAElement.cpp:
+        (WebCore::SVGFEFuncAElement::SVGFEFuncAElement):
+        * ksvg2/svg/SVGFEFuncBElement.cpp:
+        (WebCore::SVGFEFuncBElement::SVGFEFuncBElement):
+        * ksvg2/svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::SVGFEFuncGElement):
+        * ksvg2/svg/SVGFEFuncRElement.cpp:
+        (WebCore::SVGFEFuncRElement::SVGFEFuncRElement):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::parseMappedAttribute):
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        (WebCore::SVGFELightElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::SVGFEMergeElement):
+
+2006-10-09  Rob Buis  <buis@kde.org>
+
         Reviewed by olliej.
 
         http://bugs.webkit.org/show_bug.cgi?id=11217

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,20 +22,15 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGFEMergeElement.h"
+
+#include "KRenderingDevice.h"
 #include "SVGFEMergeNodeElement.h"
+#include "SVGHelper.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document *doc)
+SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_filterEffect(0)
 {
@@ -46,10 +41,10 @@ SVGFEMergeElement::~SVGFEMergeElement()
     delete m_filterEffect;
 }
 
-KCanvasFEMerge *SVGFEMergeElement::filterEffect() const
+KCanvasFEMerge* SVGFEMergeElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEMerge *>(renderingDevice()->createFilterEffect(FE_MERGE));
+        m_filterEffect = static_cast<KCanvasFEMerge*>(renderingDevice()->createFilterEffect(FE_MERGE));
     if (!m_filterEffect)
         return 0;
     setStandardAttributes(m_filterEffect);
@@ -57,12 +52,14 @@ KCanvasFEMerge *SVGFEMergeElement::filterEffect() const
     Vector<String> mergeInputs;
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feMergeNodeTag))
-            mergeInputs.append(static_cast<SVGFEMergeNodeElement *>(n)->in1());
+            mergeInputs.append(static_cast<SVGFEMergeNodeElement*>(n)->in1());
     }
 
     m_filterEffect->setMergeInputs(mergeInputs);
 
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet
