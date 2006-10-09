@@ -47,7 +47,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
-#import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
 
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
@@ -893,8 +892,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     [[self activeDocumentLoader] setPrimaryLoadComplete:YES];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
+    [client _dispatchDidLoadMainResourceForDocumentLoader:[self activeDocumentLoader]];
     [self checkLoadComplete];
 
     [bridge release];
@@ -1259,8 +1257,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error
 {
     [loader setPrimaryLoadComplete:YES];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
+    [client _dispatchDidLoadMainResourceForDocumentLoader:[self activeDocumentLoader]];
     [self checkLoadComplete];
 }
 

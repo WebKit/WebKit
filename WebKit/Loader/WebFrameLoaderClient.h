@@ -103,4 +103,6 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener;
 - (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error;
 
+- (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader;
+
 @end

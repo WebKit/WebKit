@@ -1,3 +1,16 @@
+2006-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - passed calls that require WebScriptDebugServer across the client interface
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader documentLoader:mainReceivedCompleteError:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _dispatchDidLoadMainResourceForDocumentLoader:]):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

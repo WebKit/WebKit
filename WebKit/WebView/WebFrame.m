@@ -62,6 +62,7 @@
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugDelegatePrivate.h"
+#import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebKit/DOM.h>
@@ -1880,6 +1881,13 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_setCopiesOnScroll
 {
     [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
+}
+
+- (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader
+{
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:[self webView]
+            didLoadMainResourceForDataSource:dataSource(loader)];
 }
 
 @end
