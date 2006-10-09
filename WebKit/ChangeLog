@@ -1,3 +1,31 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - wean WebFrameLoader from WebDataSource private stuff
+        
+        (actually just tweaks tot he above to make merging my future
+        patches easier since Darin did a lot of the same stuff)
+
+        * Loader/WebDocumentLoader.h:
+        * Loader/WebDocumentLoader.m:
+        (-[WebDocumentLoader URLForHistory]):
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader revertToProvisionalWithDocumentLoader:]):
+        (-[WebFrameLoader documentLoader:setMainDocumentError:]):
+        (-[WebFrameLoader finalSetupForReplaceWithDocumentLoader:]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _URLForHistory]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _addDocumentLoader:toUnarchiveState:]):
+        (-[WebFrame _revertToProvisionalStateForDocumentLoader:]):
+        (-[WebFrame _setMainDocumentError:forDocumentLoader:]):
+        (-[WebFrame _clearUnarchivingStateForLoader:]):
+
 2006-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
@@ -147,9 +175,10 @@
 
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+>>>>>>> .r16935
         Reviewed by Alice.
 
-        - moved WebFormState into Loader directory and tweaked to void WebKit dependencies
+        - moved WebFormState into Loader directory and tweaked to avoid WebKit dependencies
         
         * Loader/WebDocumentLoader.h:
         * Loader/WebFormState.h: Added.

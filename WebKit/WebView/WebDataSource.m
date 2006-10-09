@@ -334,14 +334,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSURL *)_URLForHistory
 {
-    // Return the URL to be used for history and B/F list.
-    // Returns nil for WebDataProtocol URLs that aren't alternates 
-    // for unreachable URLs, because these can't be stored in history.
-    NSURL *URL = [[_private->loader originalRequestCopy] URL];
-    if ([WebDataProtocol _webIsDataProtocolURL:URL])
-        URL = [[_private->loader originalRequestCopy] _webDataRequestUnreachableURL];
-    
-    return [URL _webkit_canonicalize];
+    return [[_private->loader URLForHistory] _webkit_canonicalize];
 }
 
 - (void)_addToUnarchiveState:(WebArchive *)archive

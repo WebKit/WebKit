@@ -113,7 +113,11 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 - (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader;
-- (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)documentLoader;
+- (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)loader;
+- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive;
+- (void)_revertToProvisionalStateForDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_clearUnarchivingStateForLoader:(WebDocumentLoader *)loader;
 
 - (void)_progressStarted;
 - (void)_progressCompleted;
@@ -129,12 +133,10 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_willChangeTitleForDocument:(WebDocumentLoader *)loader;
 - (void)_didChangeTitleForDocument:(WebDocumentLoader *)loader;
 
-- (void)_revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
 - (void)_finishedLoadingDocument:(WebDocumentLoader *)loader;
 - (void)_documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error;
 - (void)_finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader;
-- (NSURL *)_URLForHistoryForDocumentLoader:(WebDocumentLoader *)loader;
 
 - (NSError *)_cancelledErrorWithRequest:(NSURLRequest *)request;
 - (NSError *)_cannotShowURLErrorWithRequest:(NSURLRequest *)request;

@@ -1195,12 +1195,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [client _revertToProvisionalWithDocumentLoader:loader];
+    [client _revertToProvisionalStateForDocumentLoader:loader];
 }
 
 - (void)documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
 {
-    [client _documentLoader:loader setMainDocumentError:error];
+    [client _setMainDocumentError:error forDocumentLoader:loader];
 }
 
 - (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error
@@ -1212,7 +1212,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
 {
-    [client _finalSetupForReplaceWithDocumentLoader:loader];
+    [client _clearUnarchivingStateForLoader:loader];
 }
 
 - (void)prepareForLoadStart
@@ -1241,7 +1241,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // The title doesn't get communicated to the WebView until we are committed.
     if ([loader isCommitted]) {
-        NSURL *URLForHistory = [client _URLForHistoryForDocumentLoader:loader];
+        NSURL *URLForHistory = [[loader URLForHistory] _webkit_canonicalize];
         if (URLForHistory != nil) {
             // Must update the entries in the back-forward list too.
             // This must go through the WebFrame because it has the right notion of the current b/f item.

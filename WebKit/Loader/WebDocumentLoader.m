@@ -520,4 +520,16 @@
     [trimmed release];
 }
 
+- (NSURL *)URLForHistory
+{
+    // Return the URL to be used for history and B/F list.
+    // Returns nil for WebDataProtocol URLs that aren't alternates 
+    // for unreachable URLs, because these can't be stored in history.
+    NSURL *URL = [originalRequestCopy URL];
+    if ([WebDataProtocol _webIsDataProtocolURL:URL])
+        URL = [originalRequestCopy _webDataRequestUnreachableURL];
+
+    return URL;
+}
+
 @end

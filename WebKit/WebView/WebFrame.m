@@ -1906,6 +1906,26 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [dataSource(loader) _makeRepresentation];
 }
 
+- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive
+{
+    [dataSource(loader) _addToUnarchiveState:archive];
+}
+
+- (void)_revertToProvisionalStateForDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _revertToProvisionalState];
+}
+
+- (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _setMainDocumentError:error];
+}
+
+- (void)_clearUnarchivingStateForLoader:(WebDocumentLoader *)loader
+{
+    [dataSource(loader) _clearUnarchivingState];
+}
+
 - (void)_progressStarted
 {
     [[self webView] _progressStarted:self];
@@ -1964,11 +1984,6 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [dataSource(loader) _receivedData:data];
 }
 
-- (void)_revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader
-{
-    [dataSource(loader) _revertToProvisionalState];
-}
-
 - (void)_documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
 {
     [dataSource(loader) _setMainDocumentError:error];
@@ -1977,11 +1992,6 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
 {
     [dataSource(loader) _clearUnarchivingState];
-}
-
-- (NSURL *)_URLForHistoryForDocumentLoader:(WebDocumentLoader *)loader
-{
-    return [dataSource(loader) _URLForHistory];
 }
 
 - (NSError *)_cancelledErrorWithRequest:(NSURLRequest *)request
