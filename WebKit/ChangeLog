@@ -2,6 +2,35 @@
 
         Reviewed by Darin.
         
+        - pass all WebResourceLoadDelegate methods across client, removing need to include related headers
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _willSendRequest:forResource:redirectResponse:]):
+        (-[WebFrameLoader _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _didReceiveData:contentLength:forResource:]):
+        (-[WebFrameLoader _didFinishLoadingForResource:]):
+        (-[WebFrameLoader _didFailLoadingWithError:forResource:]):
+        (-[WebFrameLoader sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        (-[WebFrameLoader requestFromDelegateForRequest:identifier:error:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _dispatchDidHandleOnloadEventsForFrame]):
+        (-[WebFrame _dispatchDidReceiveServerRedirectForProvisionalLoadForFrame]):
+        (-[WebFrame _dispatchIdentifierForInitialRequest:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:willSendRequest:redirectResponse:fromDocumentLoader:]):
+        (-[WebFrame _dispatchDidReceiveAuthenticationChallenge:forResource:fromDocumentLoader:]):
+        (-[WebFrame _dispatchDidCancelAuthenticationChallenge:forResource:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didReceiveResponse:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didReceiveContentLength:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didFinishLoadingFromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didFailLoadingWithError:fromDocumentLoader:]):
+
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
         - started adding some _dispatch methods to WebFrameLoaderClient for delegate dispatch
 
         * Loader/WebFrameLoader.m:

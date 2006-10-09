@@ -66,5 +66,12 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDidHandleOnloadEventsForFrame;
 - (void)_dispatchDidReceiveServerRedirectForProvisionalLoadForFrame;
 - (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)request fromDocumentLoader:(WebDocumentLoader *)loader;
+- (NSURLRequest *)_dispatchResource:(id)identifier willSendRequest:(NSURLRequest *)clientRequest redirectResponse:(NSURLResponse *)redirectResponse fromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchDidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchDidCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchResource:(id)identifier didReceiveResponse:(NSURLResponse *)r fromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchResource:(id)identifier didReceiveContentLength:(int)lengthReceived fromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchResource:(id)identifier didFinishLoadingFromDocumentLoader:(WebDocumentLoader *)loader;
+- (void)_dispatchResource:(id)identifier didFailLoadingWithError:error fromDocumentLoader:(WebDocumentLoader *)loader;
 
 @end

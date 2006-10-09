@@ -1597,24 +1597,96 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_dispatchDidHandleOnloadEventsForFrame
 {
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didHandleOnloadEventsForFrame:self];
+    WebView *webView = [self webView];
+    [[webView _frameLoadDelegateForwarder] webView:webView didHandleOnloadEventsForFrame:self];
 }
 
 - (void)_dispatchDidReceiveServerRedirectForProvisionalLoadForFrame
 {
-    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
+    WebView *webView = [self webView];
+    [[webView _frameLoadDelegateForwarder] webView:webView
        didReceiveServerRedirectForProvisionalLoadForFrame:self];
 }
 
-- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)request fromDocumentLoader:(WebDocumentLoader *)loader
+- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)clientRequest fromDocumentLoader:(WebDocumentLoader *)loader
 {
     WebView *webView = [self webView];
     id resourceLoadDelegate = [webView resourceLoadDelegate];
     
     if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
-        return [resourceLoadDelegate webView:webView identifierForInitialRequest:request fromDataSource:dataSource(loader)];
+        return [resourceLoadDelegate webView:webView identifierForInitialRequest:clientRequest fromDataSource:dataSource(loader)];
 
-    return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:request fromDataSource:dataSource(loader)];
+    return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:dataSource(loader)];
+}
+
+- (NSURLRequest *)_dispatchResource:(id)identifier willSendRequest:(NSURLRequest *)clientRequest redirectResponse:(NSURLResponse *)redirectResponse fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    id resourceLoadDelegate = [webView resourceLoadDelegate];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
+        return [resourceLoadDelegate webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource(loader)];
+    else
+        return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource(loader)];
+}
+
+- (void)_dispatchDidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    id resourceLoadDelegate = [webView resourceLoadDelegate];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge)
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
+}
+
+- (void)_dispatchDidCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    id resourceLoadDelegate = [webView resourceLoadDelegate];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge)
+        [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
+}
+
+- (void)_dispatchResource:(id)identifier didReceiveResponse:(NSURLResponse *)r fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource(loader)];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource(loader)];
+}
+
+- (void)_dispatchResource:(id)identifier didReceiveContentLength:(int)lengthReceived fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:dataSource(loader)];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:dataSource(loader)];
+}
+
+- (void)_dispatchResource:(id)identifier didFinishLoadingFromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource(loader)];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource(loader)];
+}
+
+
+- (void)_dispatchResource:(id)identifier didFailLoadingWithError:error fromDocumentLoader:(WebDocumentLoader *)loader
+{
+    WebView *webView = [self webView];
+    [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource(loader)];
 }
     
 - (void)_detachedFromParent1

@@ -38,7 +38,6 @@
 #import <WebKitSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
-#import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
@@ -54,7 +53,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
@@ -436,72 +434,41 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
 {
     WebView *webView = [client webView];
-    
     [clientRequest setValue:[webView userAgentForURL:[clientRequest URL]] forHTTPHeaderField:@"User-Agent"];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
-        return [[webView resourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:[self activeDataSource]];
-    else
-        return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:[self activeDataSource]];
+    return [client _dispatchResource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    WebView *webView = [client webView];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
+    [client _dispatchDidReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    WebView *webView = [client webView];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:[self activeDataSource]];
-    
+    [client _dispatchDidCancelAuthenticationChallenge:currentWebChallenge forResource:identifier fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
 {
-    WebView *webView = [client webView];
-    
     [[self activeDocumentLoader] addResponse:r];
     
-    [webView _incrementProgressForIdentifier:identifier response:r];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:[self activeDataSource]];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:[self activeDataSource]];
+    [[client webView] _incrementProgressForIdentifier:identifier response:r];
+    [client _dispatchResource:identifier didReceiveResponse:r fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
 {
     WebView *webView = [client webView];
-    
     [webView _incrementProgressForIdentifier:identifier data:data];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:[self activeDataSource]];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:[self activeDataSource]];
+
+    [client _dispatchResource:identifier didReceiveContentLength:lengthReceived fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didFinishLoadingForResource:(id)identifier
 {    
     WebView *webView = [client webView];
-    
-    [webView _completeProgressForIdentifier:identifier];    
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:[self activeDataSource]];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:[self activeDataSource]];
+    [webView _completeProgressForIdentifier:identifier];
+    [client _dispatchResource:identifier didFinishLoadingFromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
@@ -511,7 +478,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [webView _completeProgressForIdentifier:identifier];
         
     if (error)
-        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:[self activeDataSource]];
+        [client _dispatchResource:identifier didFailLoadingWithError:error fromDocumentLoader:[self activeDocumentLoader]];
 }
 
 - (BOOL)_privateBrowsingEnabled
@@ -1974,57 +1941,24 @@ exit:
 
 - (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 
 {    
-    WebView *wv = [client webView];
-    id delegate = [wv resourceLoadDelegate];
-    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
-    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
-    WebDataSource *dataSource = [self dataSource];
-        
-    if (response != nil) {
-        if (implementations.delegateImplementsDidReceiveResponse)
-            [delegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
-        else
-            [sharedDelegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
-    }
+    if (response != nil)
+        [client _dispatchResource:identifier didReceiveResponse:response fromDocumentLoader:documentLoader];
     
-    if (length > 0) {
-        if (implementations.delegateImplementsDidReceiveContentLength)
-            [delegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInteger)length fromDataSource:dataSource];
-        else
-            [sharedDelegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInteger)length fromDataSource:dataSource];
-    }
+    if (length > 0)
+        [client _dispatchResource:identifier didReceiveContentLength:(WebNSUInteger)length fromDocumentLoader:documentLoader];
     
-    if (error == nil) {
-        if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-            [delegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
-        else
-            [sharedDelegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
-        [self checkLoadComplete];
-    } else {
-        [[wv _resourceLoadDelegateForwarder] webView:wv resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
-    }
+    if (error == nil)
+        [client _dispatchResource:identifier didFinishLoadingFromDocumentLoader:documentLoader];
+    else
+        [client _dispatchResource:identifier didFailLoadingWithError:error fromDocumentLoader:documentLoader];
 }
 
 - (NSURLRequest *)requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error
 {
     ASSERT(request != nil);
     
-    WebView *wv = [client webView];
-    id delegate = [wv resourceLoadDelegate];
-    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
-    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
-    WebDataSource *dataSource = [self dataSource];
-    
-    if (implementations.delegateImplementsIdentifierForRequest)
-        *identifier = [delegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
-    else
-        *identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
-
-    NSURLRequest *newRequest;
-    if (implementations.delegateImplementsWillSendRequest)
-        newRequest = [delegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
-    else
-        newRequest = [sharedDelegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
+    *identifier = [client _dispatchIdentifierForInitialRequest:request fromDocumentLoader:documentLoader]; 
+    NSURLRequest *newRequest = [client _dispatchResource:*identifier willSendRequest:request redirectResponse:nil fromDocumentLoader:documentLoader];
     
     if (newRequest == nil)
         *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
