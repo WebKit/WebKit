@@ -2,6 +2,21 @@
 
         Reviewed by Oliver.
         
+        - removed unneeded logging code so I can take WebKitLogging.h out and remove a WebKit dependency
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader setState:]):
+        (-[WebFrameLoader clientRedirectCancelledOrFinished:]):
+        (-[WebFrameLoader clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
         - remove WebDataSource from the WebFrameLoader interface (and thereby from a lot of internal use)
 
         * Loader/WebDocumentLoader.h:

@@ -42,7 +42,6 @@
 #import "WebFrameInternal.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
-#import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
@@ -315,16 +314,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 - (void)setState:(WebFrameState)newState
-{
-    LOG(Loading, "%@:  transition from %s to %s", [client name], stateNames[state], stateNames[newState]);
-    if ([client webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load",
-            [client name], stateNames[state], stateNames[newState],
-            CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoader] loadingStartedTime]);
-    
-    if (newState == WebFrameStateComplete && client == [[client webView] mainFrame])
-        LOG(DocumentLoad, "completed %@ (%f seconds)", [[documentLoader request] URL], CFAbsoluteTimeGetCurrent() - [documentLoader loadingStartedTime]);
-    
+{    
     state = newState;
     
     if (state == WebFrameStateProvisional)
@@ -555,14 +545,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         quickRedirectComing = NO;
     
     sentRedirectNotification = NO;
-    
-    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
 }
 
 - (void)clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    LOG(Redirect, "%@(%p) Client redirect to: %@, [self documentLoader] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [client name], self, URL, [self documentLoader], (int)lockHistory, (int)isJavaScriptFormAction);
-    
     [client _dispatchWillPerformClientRedirectToURL:URL delay:seconds fireDate:date];
     
     // Remember that we sent a redirect notification to the frame load delegate so that when we commit
@@ -576,10 +562,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // If we don't have a dataSource, we have no "original" load on which to base a redirect,
         // so we better just treat the redirect as a normal load.
         quickRedirectComing = NO;
-        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
     } else {
         quickRedirectComing = lockHistory;
-        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
     }
 }
 
@@ -660,7 +644,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         BOOL isRedirect = quickRedirectComing;
         [self _loadRequest:request triggeringAction:action loadType:_loadType formState:formState];
         if (isRedirect) {
-            LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [client name], self, (int)isRedirect);
             quickRedirectComing = NO;
             [provisionalDocumentLoader setIsClientRedirect:YES];
         } else if (sameURL) {
@@ -684,7 +667,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSURL *URL = [request URL];
     
     BOOL isRedirect = quickRedirectComing;
-    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [client name], self, (int)quickRedirectComing);
     quickRedirectComing = NO;
     
     [documentLoader replaceRequestURLForAnchorScrollWithURL:URL];
@@ -1508,9 +1490,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [dl release];
     [self setPolicyDocumentLoader:nil];
     
-    if (client == [[client webView] mainFrame])
-        LOG(DocumentLoad, "loading %@", [[[self provisionalDocumentLoader] request] URL]);
-
     if (isBackForwardLoadType(type)) {
         if ([client _loadProvisionalItemFromPageCache])
             return;
@@ -1692,16 +1671,13 @@ keepGoing:
 
             WebDocumentLoader *pdl = [provisionalDocumentLoader retain];
 
-            LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [client name]);
             // If we've received any errors we may be stuck in the provisional state and actually complete.
             NSError *error = [pdl mainDocumentError];
             if (error != nil) {
                 // Check all children first.
-                LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [client name]);
                 LoadErrorResetToken *resetToken = [client _tokenForLoadErrorReset];
                 BOOL shouldReset = YES;
                 if (![pdl isLoadingInAPISense]) {
-                    LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [client name]);
                     [[client webView] _didFailProvisionalLoadWithError:error forFrame:client];
                     delegateIsHandlingProvisionalLoadError = YES;
                     [client _dispatchDidFailProvisionalLoadWithError:error];
@@ -1792,7 +1768,6 @@ keepGoing:
         }
         
         case WebFrameStateComplete:
-            LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [client name]);
             // Even if already complete, we might have set a previous item on a frame that
             // didn't do any data loading on the past transaction. Make sure to clear these out.
             [client _frameLoadCompleted];
