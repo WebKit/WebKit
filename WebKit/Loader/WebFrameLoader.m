@@ -854,8 +854,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_notifyIconChanged:(NSURL *)iconURL
 {
-    ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
-    NSImage *icon = [[WebCoreIconDatabaseBridge sharedInstance]
+    ASSERT([[WebIconDatabaseBridge sharedInstance] _isEnabled]);
+    NSImage *icon = [[WebIconDatabaseBridge sharedInstance]
         iconForPageURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString]
         withSize:NSMakeSize(16, 16)];
     [client _dispatchDidReceiveIcon:icon];

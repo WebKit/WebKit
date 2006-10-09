@@ -1,5 +1,12 @@
 2006-10-09  Brady Eidson  <beidson@apple.com>
 
+        A *real* fake fix for the layouttest problem until the real fix
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _notifyIconChanged:]):
+
+2006-10-09  Brady Eidson  <beidson@apple.com>
+
         Quick layouttest fix until I make the real fix
 
         * Loader/WebFrameLoader.m:
