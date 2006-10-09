@@ -99,6 +99,7 @@ public:
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     virtual KJS::Bindings::RootObject* bindingRootObject();
+    virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
 
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>);

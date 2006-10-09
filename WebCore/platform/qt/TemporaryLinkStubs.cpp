@@ -47,7 +47,6 @@
 #include "KURL.h"
 #include "ScrollBar.h"
 #include "PlatformScrollBar.h"
-#include "JavaAppletWidget.h"
 #include "ScrollBar.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
@@ -66,8 +65,6 @@
 using namespace WebCore;
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
-
-JavaAppletWidget::JavaAppletWidget(IntSize const&, Element*, WTF::HashMap<String, String> const&) { notImplemented(); }
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { notImplemented(); return FloatRect(); }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }

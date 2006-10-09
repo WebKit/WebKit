@@ -360,6 +360,12 @@ KJS::Bindings::RootObject* FrameQt::bindingRootObject()
     return 0;
 }
 
+Widget* FrameQt::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&)
+{
+    notImplemented();
+    return 0; 
+}
+
 void FrameQt::registerCommandForUndo(PassRefPtr<EditCommand>)
 {
     notImplemented();
