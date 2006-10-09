@@ -185,6 +185,8 @@ Frame::Frame(Page* page, Element* ownerElement)
 
 Frame::~Frame()
 {
+    // FIXME: We should not be doing all this work inside the destructor
+
     ASSERT(!d->m_lifeSupportTimer.isActive());
 
 #ifndef NDEBUG
@@ -847,7 +849,9 @@ void Frame::gotoAnchor()
 
 void Frame::finishedParsing()
 {
-  RefPtr<Frame> protector(this);
+  // This method can be called from our destructor, in which case we shouldn't protect ourselves
+  // because doing so will cause us to re-enter our destructor when protector goes out of scope.
+  RefPtr<Frame> protector = refCount() > 0 ? this : 0;
   checkCompleted();
 
   if (!d->m_view)
