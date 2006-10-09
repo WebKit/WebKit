@@ -60,9 +60,20 @@
     return dataSource;
 }
 
+- (void)setFrameLoader:(WebFrameLoader *)fl
+{
+    [super setFrameLoader:fl];
+    if (detachedDataSource) {
+        ASSERT(!dataSource);
+        [self setDataSource:detachedDataSource];
+        detachedDataSource = nil;
+    }
+}
+
 - (void)detachFromFrameLoader
 {
     [super detachFromFrameLoader];
+    detachedDataSource = dataSource;
     [self setDataSource:nil];
 }
 

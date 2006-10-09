@@ -34,6 +34,7 @@
 {
     @public
     WebDataSource *dataSource;
+    WebDataSource *detachedDataSource; // not retained
 }
 
 - (id)initWithRequest:(NSURLRequest *)request;

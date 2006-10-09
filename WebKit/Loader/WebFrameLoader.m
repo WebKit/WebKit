@@ -39,7 +39,6 @@
 #import <WebCore/WebCoreSystemInterface.h>
 
 #import "WebDataSourceInternal.h"
-#import "WebDocumentLoaderMac.h"
 #import "WebFrameInternal.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
@@ -1563,14 +1562,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     policyLoadType = type;
 
-    WebDocumentLoaderMac *loader = (WebDocumentLoaderMac *)[newDataSource _documentLoader];
+    WebDocumentLoader *loader = [newDataSource _documentLoader];
 
     WebFrame *parentFrame = [client parentFrame];
     if (parentFrame)
         [loader setOverrideEncoding:[[[parentFrame dataSource] _documentLoader] overrideEncoding]];
 
     [loader setFrameLoader:self];
-    [loader setDataSource:newDataSource];
 
     [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
