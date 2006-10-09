@@ -892,11 +892,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebDataSource *ds = [self activeDataSource];
     
-    [[self bridge] retain];
+    WebFrameBridge *bridge = [self bridge];
+
+    [bridge retain];
     [[self activeDocumentLoader] finishedLoading];
 
     if ([ds _mainDocumentError] || ![ds webFrame]) {
-        [[self bridge] release];
+        [bridge release];
         return;
     }
 
@@ -905,7 +907,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [client _checkLoadComplete];
 
-    [[self bridge] release];
+    [bridge release];
 }
 
 - (void)_notifyIconChanged:(NSURL *)iconURL
@@ -1916,7 +1918,8 @@ keepGoing:
     if (!request)
         return;
 
-    [[self bridge] retain];
+    WebFrameBridge *bridge = [self bridge];
+    [bridge retain];
 
     WebView *webView = nil;
     WebView *currentWebView = [client webView];
@@ -1928,23 +1931,24 @@ keepGoing:
     if (!webView)
         goto exit;
 
-    WebFrame *frame = [webView mainFrame];
-    if (!frame)
+    WebFrame *mainFrame = [webView mainFrame];
+    if (!mainFrame)
         goto exit;
 
-    [[frame _bridge] retain];
+    WebFrameBridge *mainBridge = [mainFrame _bridge];
+    [mainBridge retain];
 
-    [[frame _bridge] setName:frameName];
+    [mainBridge setName:frameName];
 
     [[webView _UIDelegateForwarder] webViewShow:webView];
 
-    [[frame _bridge] setOpener:[client _bridge]];
-    [[frame _frameLoader] _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
+    [mainBridge setOpener:bridge];
+    [[mainFrame _frameLoader] _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
 
-    [[frame _bridge] release];
+    [mainBridge release];
 
 exit:
-    [[self bridge] release];
+    [bridge release];
 }
 
 - (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 

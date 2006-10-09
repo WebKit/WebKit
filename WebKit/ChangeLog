@@ -1,3 +1,15 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+        
+        - quick fix to loader problem causing layout test failures
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _finishedLoading]): Use a local variable for the bridge
+        that we retain/release.
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        Same here.
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
