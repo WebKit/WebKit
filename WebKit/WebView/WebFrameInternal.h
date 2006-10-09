@@ -106,7 +106,7 @@
 
 - (void)_saveDocumentAndScrollState;
 
-- (void)_setTitle:(NSString *)title;
+- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL;
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;

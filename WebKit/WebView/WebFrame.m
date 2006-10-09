@@ -36,6 +36,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
+#import "WebDownloadInternal.h"
 #import "WebFormDataStream.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoadDelegate.h"
@@ -546,13 +547,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             NSDictionary *pageCache = [item pageCache];
             NSDate *cacheDate = [pageCache objectForKey: WebPageCacheEntryDateKey];
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
-
-            if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]){
+            if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]) {
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
                 [[self _frameLoader] loadDataSource:newDataSource withLoadType:loadType formState:nil];   
                 inPageCache = YES;
-            }
-            else {
+            } else {
                 LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
                 [item setHasPageCache: NO];
             }
@@ -726,15 +725,15 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 
     WebArchive *archive = [[self dataSource] _popSubframeArchiveWithName:[childFrame name]];
-    if (archive) {
+    if (archive)
         [childFrame loadArchive:archive];
-    } else {
+    else
         [[childFrame _frameLoader] loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
-    }
 }
 
-- (void)_setTitle:(NSString *)title
+- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL
 {
+    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:title];
     [_private->currentItem setTitle:title];
 }
 
@@ -1726,6 +1725,15 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     // The WebCore side of the page cache will have already been invalidated by
     // the bridge to prevent premature release.
     [_private->currentItem setHasPageCache:NO];
+}
+
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)response proxy:(id)proxy
+{
+    [WebDownload _downloadWithLoadingConnection:connection
+                                        request:request
+                                       response:response
+                                       delegate:[[self webView] downloadDelegate]
+                                          proxy:proxy];
 }
 
 @end

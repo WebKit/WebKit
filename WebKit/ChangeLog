@@ -1,3 +1,28 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - removed some of the WebKit dependencies in WebFrameLoader
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _setTitle:forURL:]):
+        (-[WebFrame _downloadWithLoadingConnection:request:response:proxy:]):
+        * WebView/WebFrameInternal.h:
+
+        - some other tweaks
+
+        * Misc/WebNSURLRequestExtras.m:
+        (-[NSMutableURLRequest _web_setHTTPReferrer:]):
+        (-[NSMutableURLRequest _web_setHTTPUserAgent:]):
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -30,6 +30,7 @@
 
 #import "WebDataProtocol.h"
 #import "WebDocumentLoader.h"
+#import "WebFormDataStream.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
@@ -40,17 +41,13 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
-#import "WebDownloadInternal.h"
-#import "WebFormDataStream.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLView.h"
-#import "WebHistory.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
-#import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
@@ -629,7 +626,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                        frameName:target
                                        formState:formState
                                          andCall:self
-                                    withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+                                    withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
         }
         [request release];
         [formState release];
@@ -835,13 +832,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[self activeDocumentLoader] setRequest:request];
 }
 
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection
+    request:(NSURLRequest *)request response:(NSURLResponse *)response proxy:(id)proxy
 {
-    [WebDownload _downloadWithLoadingConnection:connection
-                                        request:request
-                                       response:r
-                                       delegate:[[client webView] downloadDelegate]
-                                          proxy:proxy];
+    [client _downloadWithLoadingConnection:connection request:request response:response proxy:proxy];
 }
 
 - (WebFrameBridge *)bridge
@@ -1240,7 +1234,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
+    if ([[request HTTPMethod] compare:@"POST" options:(NSCaseInsensitiveSearch | NSLiteralSearch)] == NSOrderedSame) {
         NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeFormResubmitted
             event:nil originalURL:[request URL]];
         [policyDocumentLoader setTriggeringAction:action];
@@ -1331,17 +1325,12 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     if ([loader isCommitted]) {
         NSURL *URLForHistory = [[client _dataSourceForDocumentLoader:loader] _URLForHistory];
         if (URLForHistory != nil) {
-            WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
-            [entry setTitle:[loader title]];
-        
-            // Must update the entries in the back-forward list too.  This must go through the WebFrame because
-            // it has the right notion of the current b/f item.
-            [client _setTitle:[loader title]];
-        
-            [[client webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
+            // Must update the entries in the back-forward list too.
+            // This must go through the WebFrame because it has the right notion of the current b/f item.
+            [client _setTitle:[loader title] forURL:URLForHistory];
+            [[client webView] setMainFrameDocumentReady:YES]; // update observers with new DOMDocument
             [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
-                                                      didReceiveTitle:[loader title]
-                                                             forFrame:client];
+                didReceiveTitle:[loader title] forFrame:client];
         }
     }
 }

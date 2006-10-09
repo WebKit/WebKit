@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSURLRequestExtras.h>
+#import "WebNSURLRequestExtras.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebNSURLExtras.h>
+#import "WebNSURLExtras.h"
 
 #define WebContentType  (@"Content-Type")
 #define WebUserAgent    (@"User-Agent")
@@ -60,7 +59,6 @@
 
 @end
 
-
 @implementation NSMutableURLRequest (WebNSURLRequestExtras)
 
 - (void)_web_setHTTPContentType:(NSString *)contentType
@@ -68,25 +66,23 @@
     [self setValue:contentType forHTTPHeaderField:WebContentType];
 }
 
-- (void)_web_setHTTPReferrer:(NSString *)theReferrer
+- (void)_web_setHTTPReferrer:(NSString *)referrer
 {
     // Do not set the referrer to a string that refers to a file URL.
     // That is a potential security hole.
-    if ([theReferrer _webkit_isFileURL]) {
+    if ([referrer _webkit_isFileURL])
         return;
-    }
 
     // Don't allow empty Referer: headers; some servers refuse them
-    if( [theReferrer length] == 0 )
-        theReferrer = nil;
+    if ([referrer length] == 0)
+        return;
 
-    [self setValue:theReferrer forHTTPHeaderField:WebReferrer];
+    [self setValue:referrer forHTTPHeaderField:WebReferrer];
 }
 
-- (void)_web_setHTTPUserAgent:(NSString *)theUserAgent
+- (void)_web_setHTTPUserAgent:(NSString *)userAgent
 {
-    [self setValue:theUserAgent forHTTPHeaderField:WebUserAgent];
+    [self setValue:userAgent forHTTPHeaderField:WebUserAgent];
 }
 
 @end
-
