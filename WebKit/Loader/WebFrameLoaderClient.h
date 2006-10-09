@@ -38,6 +38,8 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (BOOL)_loadProvisionalItemFromPageCache;
 - (void)_invalidateCurrentItemPageCache;
 
+- (BOOL)_privateBrowsingEnabled;
+
 - (void)_makeDocumentView;
 
 - (void)_updateHistoryForCommit;

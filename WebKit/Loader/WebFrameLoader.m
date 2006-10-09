@@ -29,34 +29,34 @@
 #import "WebFrameLoader.h"
 
 #import "WebDataProtocol.h"
+#import "WebDocumentLoader.h"
+#import "WebFrameBridge.h"
+#import "WebFrameLoaderClient.h"
+#import "WebMainResourceLoader.h"
+#import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOMHTML.h>
+
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
-#import "WebFormDataStream.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
-#import "WebFrameLoaderClient.h"
 #import "WebHistory.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebMainResourceLoader.h"
-#import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebNSURLRequestExtras.h"
-#import "WebPreferences.h"
+#import "WebResourceLoadDelegate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
+#import "WebDefaultResourceLoadDelegate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/DOMHTML.h>
-#include "WebFrameViewInternal.h"
+#import "WebFrameViewInternal.h"
 
 @implementation WebFrameLoader
 
@@ -533,7 +533,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (BOOL)_privateBrowsingEnabled
 {
-    return [[[client webView] preferences] privateBrowsingEnabled];
+    return [client _privateBrowsingEnabled];
 }
 
 - (void)_finishedLoadingResource
@@ -1031,7 +1031,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
         WebResource *resource = [self _archivedSubresourceForURL:originalURL];
         if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
-            [[self pendingArchivedResources] _webkit_setObject:resource forUncopiedKey:loader];
+            CFDictionarySetValue((CFMutableDictionaryRef)[self pendingArchivedResources], loader, resource);
             // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
             [self deliverArchivedResourcesAfterDelay];
             return YES;

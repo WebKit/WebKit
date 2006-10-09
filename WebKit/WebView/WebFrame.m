@@ -1684,6 +1684,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return YES;
 }
 
+- (BOOL)_privateBrowsingEnabled
+{
+    return [[[self webView] preferences] privateBrowsingEnabled];
+}
+
 - (void)_makeDocumentView
 {
     NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:[[self _frameLoader] dataSource]];

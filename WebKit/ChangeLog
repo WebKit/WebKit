@@ -1,3 +1,17 @@
+2006-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - removed a few includes from WebFrameLoader, fixed up as appropriate
+        - segregated header includes into ones that need to go away to move the code and ones that don't
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _privateBrowsingEnabled]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _privateBrowsingEnabled]):
+
 2006-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
