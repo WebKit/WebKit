@@ -34,7 +34,6 @@
 @class WebDocumentLoader;
 @class WebFormState;
 @class WebFrame;
-@class WebFrame;
 @class WebFrameBridge;
 @class WebLoader;
 @class WebMainResourceLoader;

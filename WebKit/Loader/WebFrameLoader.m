@@ -41,8 +41,6 @@
 #import "WebDataSourceInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebFrameInternal.h"
-#import "WebFrameViewInternal.h"
-#import "WebHTMLView.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -51,6 +49,30 @@
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
+
+static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
+{
+    return [a caseInsensitiveCompare:b] == NSOrderedSame;
+}
+
+BOOL isBackForwardLoadType(FrameLoadType type)
+{
+    switch (type) {
+        case FrameLoadTypeStandard:
+        case FrameLoadTypeReload:
+        case FrameLoadTypeReloadAllowingStaleData:
+        case FrameLoadTypeSame:
+        case FrameLoadTypeInternal:
+        case FrameLoadTypeReplace:
+            return false;
+        case FrameLoadTypeBack:
+        case FrameLoadTypeForward:
+        case FrameLoadTypeIndexedBackForward:
+            return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
 
 @implementation WebFrameLoader
 
@@ -737,11 +759,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     if ([[self dataSource] _loadingFromPageCache]) {
         // Force a layout to update view size and thereby update scrollbars.
-        NSView <WebDocumentView> *view = [[client frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)view setNeedsToApplyStyles:YES];
-        [view setNeedsLayout: YES];
-        [view layout];
+        [client _forceLayout];
 
         NSArray *responses = [[self documentLoader] responses];
         NSURLResponse *response;
@@ -903,16 +921,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                      code:NSURLErrorCancelled
-                                       URL:[request URL]];
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
 }
 
 - (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                code:NSURLErrorFileDoesNotExist
-                                                 URL:[response URL]];    
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:[response URL]];    
 }
 
 - (void)clearArchivedResources
@@ -945,11 +959,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     
     [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
-}
-
-static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
-{
-    return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
 
 // The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
@@ -1088,25 +1097,6 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     listener = nil;
 }
 
-BOOL isBackForwardLoadType(FrameLoadType type)
-{
-    switch (type) {
-        case FrameLoadTypeStandard:
-        case FrameLoadTypeReload:
-        case FrameLoadTypeReloadAllowingStaleData:
-        case FrameLoadTypeSame:
-        case FrameLoadTypeInternal:
-        case FrameLoadTypeReplace:
-            return false;
-        case FrameLoadTypeBack:
-        case FrameLoadTypeForward:
-        case FrameLoadTypeIndexedBackForward:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 - (BOOL)shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
 {
     NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
@@ -1220,7 +1210,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request HTTPMethod] compare:@"POST" options:(NSCaseInsensitiveSearch | NSLiteralSearch)] == NSOrderedSame) {
+    if (isCaseInsensitiveEqual([request HTTPMethod], @"POST")) {
         NSDictionary *action = [self actionInformationForNavigationType:WebNavigationTypeFormResubmitted
             event:nil originalURL:[request URL]];
         [policyDocumentLoader setTriggeringAction:action];
@@ -1652,8 +1642,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 keepGoing:
 
-    [[[[client frameView] _scrollView] contentView] setCopiesOnScroll:YES];
-
+    [client _setCopiesOnScroll];
     [client _updateHistoryForCommit];
 
     // The call to closeURL invokes the unload event handler, which can execute arbitrary
@@ -1676,13 +1665,11 @@ keepGoing:
     case WebFrameLoadTypeIndexedBackForward:
         if ([[client webView] backForwardList]) {
             [client _updateHistoryForBackForwardNavigation];
-            
+
             // Create a document view for this document, or used the cached view.
-            if (pageCache) {
-                NSView <WebDocumentView> *cachedView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
-                ASSERT(cachedView != nil);
-                [[client frameView] _setDocumentView:cachedView];
-            } else
+            if (pageCache)
+                [client _setDocumentViewFromPageCache:pageCache];
+            else
                 [client _makeDocumentView];
         }
         break;

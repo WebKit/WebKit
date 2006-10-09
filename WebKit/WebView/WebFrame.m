@@ -1480,6 +1480,15 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [documentView setDataSource:[[self _frameLoader] dataSource]];
 }
 
+- (void)_forceLayout
+{
+    NSView <WebDocumentView> *view = [[self frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)view setNeedsToApplyStyles:YES];
+    [view setNeedsLayout:YES];
+    [view layout];
+}
+
 - (void)_updateHistoryForCommit
 {
     WebFrameLoadType type = [[self _frameLoader] loadType];
@@ -1859,6 +1868,18 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
                                        response:response
                                        delegate:[[self webView] downloadDelegate]
                                           proxy:proxy];
+}
+
+- (void)_setDocumentViewFromPageCache:(NSDictionary *)pageCache
+{
+    NSView <WebDocumentView> *cachedView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
+    ASSERT(cachedView != nil);
+    [[self frameView] _setDocumentView:cachedView];
+}
+
+- (void)_setCopiesOnScroll
+{
+    [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
 }
 
 @end

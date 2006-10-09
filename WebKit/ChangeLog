@@ -1,3 +1,25 @@
+2006-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - passed calls that require WebHTMLView or WebFrameView calls across
+          the client interface
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (isCaseInsensitiveEqual):
+        (isBackForwardLoadType):
+        (-[WebFrameLoader opened]):
+        (-[WebFrameLoader cancelledErrorWithRequest:]):
+        (-[WebFrameLoader fileDoesNotExistErrorWithResponse:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _forceLayout]):
+        (-[WebFrame _setDocumentViewFromPageCache:]):
+        (-[WebFrame _setCopiesOnScroll]):
+
 2006-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
