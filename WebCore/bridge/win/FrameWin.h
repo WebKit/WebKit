@@ -62,6 +62,7 @@ public:
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
     virtual Plugin* createPlugin(Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
+    virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
 
     virtual void scheduleClose();
 

@@ -1,5 +1,10 @@
 2006-10-09  Anders Carlsson  <acarlsson@apple.com>
 
+        * bridge/win/FrameWin.h:
+        Add function declaration.
+        
+2006-10-09  Anders Carlsson  <acarlsson@apple.com>
+
         * platform/win/TemporaryLinkStubs.cpp:
         (FrameWin::createJavaAppletWidget):
         Try fixing the Win32 build.
