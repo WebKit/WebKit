@@ -539,7 +539,8 @@ public:
   virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::RootObject* bindingRootObject() = 0;
-
+  virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args) = 0;
+  
   virtual void markMisspellingsInAdjacentWords(const VisiblePosition&) = 0;
   virtual void markMisspellings(const Selection&) = 0;
   virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID) = 0;

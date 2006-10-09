@@ -1,3 +1,18 @@
+2006-10-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move applet widget creation to Frame and get rid of JavaAppletWidget.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/JavaAppletWidget.h: Removed.
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::createJavaAppletWidget):
+        * bridge/mac/JavaAppletWidget.mm: Removed.
+        * page/Frame.h:
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+
 2006-10-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1083,6 +1083,41 @@ NPObject *FrameMac::windowScriptNPObject()
     return _windowScriptNPObject;
 }
 
+Widget* FrameMac::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)
+{
+    Widget* result = new Widget;
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSMutableArray *attributeNames = [[NSMutableArray alloc] init];
+    NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
+    
+    DeprecatedString baseURLString;
+    HashMap<String, String>::const_iterator end = args.end();
+    for (HashMap<String, String>::const_iterator it = args.begin(); it != end; ++it) {
+        if (it->first.lower() == "baseurl")
+            baseURLString = it->second.deprecatedString();
+        [attributeNames addObject:it->first];
+        [attributeValues addObject:it->second];
+    }
+    
+    if (baseURLString.isEmpty())
+        baseURLString = document()->baseURL();
+
+    result->setView([_bridge viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                                         attributeNames:attributeNames
+                                        attributeValues:attributeValues
+                                                baseURL:completeURL(baseURLString).getNSURL()
+                                             DOMElement:[DOMElement _elementWith:element]]);
+    [attributeNames release];
+    [attributeValues release];
+    view()->addChild(result);
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return result;
+}
+
 void FrameMac::partClearedInBegin()
 {
     if (jScriptEnabled())

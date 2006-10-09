@@ -25,10 +25,10 @@
 #include "RenderApplet.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTMLAppletElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
-#include "JavaAppletWidget.h"
 
 namespace WebCore {
 
@@ -80,7 +80,10 @@ void RenderApplet::createWidgetIfNecessary()
             if (!p->name().isEmpty())
                 m_args.set(p->name(), p->value());
         }
-    setWidget(new JavaAppletWidget(IntSize(width, height), static_cast<Element*>(node()), m_args));
+    
+    Frame* frame = document()->frame();
+    ASSERT(frame);
+    setWidget(frame->createJavaAppletWidget(IntSize(width, height), static_cast<Element*>(node()), m_args));
 }
 
 void RenderApplet::layout()
