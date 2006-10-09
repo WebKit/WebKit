@@ -1,6 +1,18 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
+
+        - remove dependency on WebNSURLRequestExtras.h
+        
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
         
         - removed unneeded logging code so I can take WebKitLogging.h out and remove a WebKit dependency
 

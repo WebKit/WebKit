@@ -29,16 +29,18 @@
 #import <Cocoa/Cocoa.h>
 
 @class DOMElement;
-@class WebArchive;
 @class WebDocumentLoader;
 @class WebFormState;
 @class WebFrame;
 @class WebFrameBridge;
 @class WebLoader;
 @class WebMainResourceLoader;
+@class WebArchive;
+@protocol WebFrameLoaderClient;
+
+@class WebArchive;
 @class WebPolicyDecisionListener;
 @class WebResource;
-@protocol WebFrameLoaderClient;
 
 typedef enum {
     WebFrameStateProvisional,

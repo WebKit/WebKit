@@ -43,7 +43,6 @@
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebNSURLExtras.h"
-#import "WebNSURLRequestExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebViewInternal.h"
 
@@ -579,7 +578,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     BOOL isFormSubmission = (values != nil);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"Referer"];
+    [request setValue:referrer forHTTPHeaderField:@"Referer"];
     [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
     if (_loadType == FrameLoadTypeReload)
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -1865,10 +1864,10 @@ exit:
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
-    [request _web_setHTTPReferrer:referrer];
+    [request setValue:referrer forHTTPHeaderField:@"Referer"];
     [request setHTTPMethod:@"POST"];
     webSetHTTPBody(request, postData);
-    [request _web_setHTTPContentType:contentType];
+    [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
 
     NSDictionary *action = [self actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;
@@ -1921,7 +1920,7 @@ exit:
 
 - (void)addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
 {
-    [request _web_setHTTPUserAgent:[[client webView] userAgentForURL:[request URL]]];
+    [request setValue:[[client webView] userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     if ([self loadType] == FrameLoadTypeReload)
         [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
