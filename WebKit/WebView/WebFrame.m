@@ -51,6 +51,8 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebLoader.h"
+#import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
@@ -133,6 +135,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     NSMutableSet *plugInViews;
     NSMutableSet *inspectors;
+
+    NSMutableDictionary *pendingArchivedResources;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -155,10 +159,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [scriptDebugger release];
     
+    ASSERT(plugInViews == nil);
     [inspectors release];
 
-    ASSERT(plugInViews == nil);
-    
+    [pendingArchivedResources release];
+
     [super dealloc];
 }
 
@@ -1304,7 +1309,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     // FIXME: is this the right place to reset loadType? Perhaps this should be done
     // after loading is finished or aborted.
     [[self _frameLoader] setLoadType:FrameLoadTypeStandard];
-    [[self _frameLoader] _loadRequest:request archive:nil];
+    WebDocumentLoader *documentLoader = [self _createDocumentLoaderWithRequest:request];
+    [[self _frameLoader] loadDocumentLoader:documentLoader];
+    [documentLoader release];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -1348,7 +1355,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        [[self _frameLoader] _loadRequest:request archive:archive];
+        WebDocumentLoader *documentLoader = [self _createDocumentLoaderWithRequest:request];
+        [dataSource(documentLoader) _addToUnarchiveState:archive];
+        [[self _frameLoader] loadDocumentLoader:documentLoader];
     }
 }
 
@@ -1896,19 +1905,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     return [dataSource(loader) _loadingFromPageCache];
 }
 
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL fromDocumentLoader:(WebDocumentLoader *)loader
-{
-    return [dataSource(loader) _archivedSubresourceForURL:URL];
-}
-
 - (void)_makeRepresentationForDocumentLoader:(WebDocumentLoader *)loader
 {
     [dataSource(loader) _makeRepresentation];
-}
-
-- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive
-{
-    [dataSource(loader) _addToUnarchiveState:archive];
 }
 
 - (void)_revertToProvisionalStateForDocumentLoader:(WebDocumentLoader *)loader
@@ -2035,6 +2034,156 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (NSURL *)_mainFrameURL
 {
     return [[[[self webView] mainFrame] dataSource] _URL];
+}
+
+// The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
+// FIXME: It would be nice to eventually to share this code somehow.
+- (BOOL)_canUseResourceForRequest:(NSURLRequest *)request
+{
+    NSURLRequestCachePolicy policy = [request cachePolicy];
+    if (policy == NSURLRequestReturnCacheDataElseLoad)
+        return YES;
+    if (policy == NSURLRequestReturnCacheDataDontLoad)
+        return YES;
+    if (policy == NSURLRequestReloadIgnoringCacheData)
+        return NO;
+    if ([request valueForHTTPHeaderField:@"must-revalidate"] != nil)
+        return NO;
+    if ([request valueForHTTPHeaderField:@"proxy-revalidate"] != nil)
+        return NO;
+    if ([request valueForHTTPHeaderField:@"If-Modified-Since"] != nil)
+        return NO;
+    if ([request valueForHTTPHeaderField:@"Cache-Control"] != nil)
+        return NO;
+    if ([@"POST" _webkit_isCaseInsensitiveEqualToString:[request HTTPMethod]])
+        return NO;
+    return YES;
+}
+
+- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)response
+{
+    if (WKGetNSURLResponseMustRevalidate(response))
+        return NO;
+    if (WKGetNSURLResponseCalculatedExpiration(response) - CFAbsoluteTimeGetCurrent() < 1)
+        return NO;
+    return YES;
+}
+
+- (void)_deliverArchivedResourcesAfterDelay
+{
+    if (![_private->pendingArchivedResources count] || [[self _frameLoader] defersCallbacks])
+        return;
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
+    [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
+}
+
+- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
+{
+    if (![[r URL] isEqual:originalURL])
+        return NO;
+    if (![self _canUseResourceForRequest:r])
+        return NO;
+    WebResource *resource = [dataSource([[self _frameLoader] activeDocumentLoader]) _archivedSubresourceForURL:originalURL];
+    if (!resource)
+        return NO;
+    if (![self _canUseResourceWithResponse:[resource _response]])
+        return NO;
+    if (!_private->pendingArchivedResources)
+        _private->pendingArchivedResources = [[NSMutableDictionary alloc] init];
+    [_private->pendingArchivedResources _webkit_setObject:resource forUncopiedKey:loader];
+    // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+    [self _deliverArchivedResourcesAfterDelay];
+    return YES;
+}
+
+- (BOOL)_archiveLoadPendingForLoader:(WebLoader *)loader
+{
+    return [_private->pendingArchivedResources objectForKey:loader] != nil;
+}
+
+- (void)_cancelPendingArchiveLoadForLoader:(WebLoader *)loader
+{
+    [_private->pendingArchivedResources removeObjectForKey:loader];
+    
+    if (![_private->pendingArchivedResources count])
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
+}
+
+- (void)_clearArchivedResources
+{
+    [_private->pendingArchivedResources removeAllObjects];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
+}
+
+- (void)_deliverArchivedResources
+{
+    if (![_private->pendingArchivedResources count] || [[self _frameLoader] defersCallbacks])
+        return;
+        
+    NSEnumerator *keyEnum = [_private->pendingArchivedResources keyEnumerator];
+    WebLoader *loader;
+    while ((loader = [keyEnum nextObject])) {
+        WebResource *resource = [_private->pendingArchivedResources objectForKey:loader];
+        [loader didReceiveResponse:[resource _response]];
+        NSData *data = [resource data];
+        [loader didReceiveData:data lengthReceived:[data length] allAtOnce:YES];
+        [loader didFinishLoading];
+    }
+    
+    [_private->pendingArchivedResources removeAllObjects];
+}
+
+- (void)_setDefersCallbacks:(BOOL)defers
+{
+    if (!defers)
+        [self _deliverArchivedResourcesAfterDelay];
+}
+
+- (BOOL)_canHandleRequest:(NSURLRequest *)request
+{
+    return [WebView _canHandleRequest:request];
+}
+
+- (BOOL)_canShowMIMEType:(NSString *)MIMEType
+{
+    return [WebView canShowMIMEType:MIMEType];
+}
+
+- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
+{
+    return [WebView _representationExistsForURLScheme:URLScheme];
+}
+
+- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
+{
+    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
+}
+
+- (NSDictionary *)_elementForEvent:(NSEvent *)event
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSRightMouseDown:
+        case NSOtherMouseDown:
+        case NSLeftMouseUp:
+        case NSRightMouseUp:
+        case NSOtherMouseUp:
+            break;
+        default:
+            return nil;
+    }
+
+    NSView *topViewInEventWindow = [[event window] contentView];
+    NSView *viewContainingPoint = [topViewInEventWindow hitTest:
+        [topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
+    while (viewContainingPoint) {
+        if ([viewContainingPoint isKindOfClass:[WebView class]])
+            return [(WebView *)viewContainingPoint elementAtPoint:
+                [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil]];
+        viewContainingPoint = [viewContainingPoint superview];
+    }
+    return nil;
 }
 
 @end

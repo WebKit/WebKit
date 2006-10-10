@@ -1,3 +1,46 @@
+2006-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminated uses of WebResource and WebView from WebFrameLoader
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader setDefersCallbacks:]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrameLoader archiveLoadPendingForLoader:]):
+        (-[WebFrameLoader cancelPendingArchiveLoadForLoader:]):
+        (-[WebFrameLoader _canShowMIMEType:]):
+        (-[WebFrameLoader _representationExistsForURLScheme:]):
+        (-[WebFrameLoader _generatedMIMETypeForURLScheme:]):
+        (-[WebFrameLoader loadDocumentLoader:]):
+        (-[WebFrameLoader continueAfterNavigationPolicy:]):
+        (-[WebFrameLoader sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        (-[WebFrameLoader actionInformationForNavigationType:event:originalURL:]):
+        * Loader/WebFrameLoaderClient.h:
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        (-[WebMainResourceLoader loadWithRequestNow:]):
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame _canUseResourceForRequest:]):
+        (-[WebFrame _canUseResourceWithResponse:]):
+        (-[WebFrame _deliverArchivedResourcesAfterDelay]):
+        (-[WebFrame _willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrame _archiveLoadPendingForLoader:]):
+        (-[WebFrame _cancelPendingArchiveLoadForLoader:]):
+        (-[WebFrame _clearArchivedResources]):
+        (-[WebFrame _deliverArchivedResources]):
+        (-[WebFrame _setDefersCallbacks:]):
+        (-[WebFrame _canHandleRequest:]):
+        (-[WebFrame _canShowMIMEType:]):
+        (-[WebFrame _representationExistsForURLScheme:]):
+        (-[WebFrame _generatedMIMETypeForURLScheme:]):
+        (-[WebFrame _elementForEvent:]):
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

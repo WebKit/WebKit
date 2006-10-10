@@ -37,7 +37,6 @@
 @class WebMainResourceLoader;
 @protocol WebFrameLoaderClient;
 
-@class WebArchive;
 @class WebPolicyDecisionListener;
 
 typedef enum {
@@ -97,8 +96,6 @@ BOOL isBackForwardLoadType(FrameLoadType type);
     
     WebPolicyDecisionListener *listener;
     
-    NSMutableDictionary *pendingArchivedResources;
-
     FrameLoadType loadType;
 
     // state we'll need to continue after waiting for the policy delegate's decision
@@ -182,23 +179,20 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
 - (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
-- (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
 - (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader;
-- (void)deliverArchivedResourcesAfterDelay;
 - (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader;
-- (void)clearArchivedResources;
 - (void)cannotShowMIMETypeWithResponse:(NSURLResponse *)response;
 - (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request;
 - (BOOL)isHostedByObjectElement;
 - (BOOL)isLoadingMainFrame;
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType;
-+ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
-+ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
+- (BOOL)_canShowMIMEType:(NSString *)MIMEType;
+- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
+- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 - (void)_notifyIconChanged:(NSURL *)iconURL;
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel;
 - (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel;
 - (void)cancelContentPolicy;
-- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive;
 - (void)reload;
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
@@ -226,6 +220,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)checkNavigationPolicyForRequest:(NSURLRequest *)request documentLoader:(WebDocumentLoader *)loader formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 - (void)continueAfterWillSubmitForm:(WebPolicyAction)policy;
 - (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState;
+- (void)loadDocumentLoader:(WebDocumentLoader *)loader;
 - (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
 
 - (void)didFirstLayout;

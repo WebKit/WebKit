@@ -31,6 +31,7 @@
 typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 @class WebDocumentLoader;
+@class WebLoader;
 @class WebPolicyDecisionListener;
 @class WebResource;
 
@@ -52,8 +53,6 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_setDocumentViewFromPageCache:(NSDictionary *)dictionary;
 - (void)_forceLayout;
 - (void)_forceLayoutForNonHTML;
-
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL fromDocumentLoader:(WebDocumentLoader *)loader;
 
 - (void)_updateHistoryForCommit;
 
@@ -114,7 +113,6 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader;
 - (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)loader;
-- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive;
 - (void)_revertToProvisionalStateForDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_clearUnarchivingStateForLoader:(WebDocumentLoader *)loader;
@@ -148,5 +146,19 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (BOOL)_shouldFallBackForError:(NSError *)error;
 
 - (NSURL *)_mainFrameURL;
+
+- (void)_setDefersCallbacks:(BOOL)defers;
+
+- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
+- (BOOL)_archiveLoadPendingForLoader:(WebLoader *)loader;
+- (void)_cancelPendingArchiveLoadForLoader:(WebLoader *)loader;
+- (void)_clearArchivedResources;
+
+- (BOOL)_canHandleRequest:(NSURLRequest *)request;
+- (BOOL)_canShowMIMEType:(NSString *)MIMEType;
+- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
+- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
+
+- (NSDictionary *)_elementForEvent:(NSEvent *)event;
 
 @end

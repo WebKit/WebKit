@@ -241,7 +241,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
         BOOL isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
-        if (![WebFrameLoader _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
+        if (![frameLoader _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
             [frameLoader cannotShowMIMETypeWithResponse:r];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
@@ -289,7 +289,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
         [super didReceiveResponse:r];
     }
 
-    if (![frameLoader _isStopping] && (shouldLoadAsEmptyDocument(URL) || [WebFrameLoader _representationExistsForURLScheme:[URL scheme]])) {
+    if (![frameLoader _isStopping] && (shouldLoadAsEmptyDocument(URL) || [frameLoader _representationExistsForURLScheme:[URL scheme]])) {
         [self didFinishLoading];
     }
     
@@ -392,12 +392,12 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
         return r;
     }
 
-    if (shouldLoadEmpty || [WebFrameLoader _representationExistsForURLScheme:[URL scheme]]) {
+    if (shouldLoadEmpty || [frameLoader _representationExistsForURLScheme:[URL scheme]]) {
         NSString *MIMEType;
         if (shouldLoadEmpty) {
             MIMEType = @"text/html";
         } else {
-            MIMEType = [WebFrameLoader _generatedMIMETypeForURLScheme:[URL scheme]];
+            MIMEType = [frameLoader _generatedMIMETypeForURLScheme:[URL scheme]];
         }
 
         NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType

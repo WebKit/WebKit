@@ -40,6 +40,9 @@
 #import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
+#import "WebFrameInternal.h"
+#import "WebNSURLExtras.h"
+
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
@@ -138,7 +141,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     while ((loader = [e nextObject]))
         [loader setDefersCallbacks:defers];
 
-    [self deliverArchivedResourcesAfterDelay];
+    [client _setDefersCallbacks:defers];
 }
 
 - (void)stopLoadingPlugIns
@@ -362,7 +365,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [provisionalDocumentLoader stopLoading];
     [documentLoader stopLoading];
     [self setProvisionalDocumentLoader:nil];
-    [self clearArchivedResources];
+    [client _clearArchivedResources];
 
     isStoppingLoad = NO;    
 }
@@ -884,107 +887,19 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     return [client _fileDoesNotExistErrorWithResponse:response];    
 }
 
-- (void)clearArchivedResources
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
 {
-    [pendingArchivedResources removeAllObjects];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
-}
-
-- (void)deliverArchivedResources
-{
-    if (![pendingArchivedResources count] || [self defersCallbacks])
-        return;
-        
-    NSEnumerator *keyEnum = [pendingArchivedResources keyEnumerator];
-    WebLoader *loader;
-    while ((loader = [keyEnum nextObject])) {
-        WebResource *resource = [pendingArchivedResources objectForKey:loader];
-        [loader didReceiveResponse:[resource _response]];
-        NSData *data = [resource data];
-        [loader didReceiveData:data lengthReceived:[data length] allAtOnce:YES];
-        [loader didFinishLoading];
-    }
-    
-    [pendingArchivedResources removeAllObjects];
-}
-
-- (void)deliverArchivedResourcesAfterDelay
-{
-    if (![pendingArchivedResources count] || [self defersCallbacks])
-        return;
-    
-    [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
-}
-
-// The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
-// FIXME: It would be nice to eventually to share this code somehow.
-- (BOOL)_canUseResourceForRequest:(NSURLRequest *)theRequest
-{
-    NSURLRequestCachePolicy policy = [theRequest cachePolicy];
-    
-    if (policy == NSURLRequestReturnCacheDataElseLoad) {
-        return YES;
-    } else if (policy == NSURLRequestReturnCacheDataDontLoad) {
-        return YES;
-    } else if (policy == NSURLRequestReloadIgnoringCacheData) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"must-revalidate"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"proxy-revalidate"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"If-Modified-Since"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
-        return NO;
-    } else if (isCaseInsensitiveEqual(@"POST", [theRequest HTTPMethod])) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
-
-- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)response
-{
-    if (wkGetNSURLResponseMustRevalidate(response))
-        return NO;
-    if (wkGetNSURLResponseCalculatedExpiration(response) - CFAbsoluteTimeGetCurrent() < 1)
-        return NO;
-    return YES;
-}
-
-- (NSMutableDictionary *)pendingArchivedResources
-{
-    if (!pendingArchivedResources)
-        pendingArchivedResources = [[NSMutableDictionary alloc] init];
-    
-    return pendingArchivedResources;
-}
-
-- (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
-{
-    if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        WebResource *resource = [client _archivedSubresourceForURL:originalURL fromDocumentLoader:[self activeDocumentLoader]];
-        if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
-            CFDictionarySetValue((CFMutableDictionaryRef)[self pendingArchivedResources], loader, resource);
-            // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-            [self deliverArchivedResourcesAfterDelay];
-            return YES;
-        }
-    }
-    return NO;
+    return [client _willUseArchiveForRequest:request originalURL:originalURL loader:loader];
 }
 
 - (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader
 {
-    return [pendingArchivedResources objectForKey:loader] != nil;
+    return [client _archiveLoadPendingForLoader:loader];
 }
 
 - (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader
 {
-    [pendingArchivedResources removeObjectForKey:loader];
-    
-    if (![pendingArchivedResources count])
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
+    [client _cancelPendingArchiveLoadForLoader:loader];
 }
 
 - (void)handleUnimplementablePolicyWithError:(NSError *)error
@@ -1016,19 +931,19 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     return [client _isMainFrame];
 }
 
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType
+- (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [WebView canShowMIMEType:MIMEType];
+    return [client _canShowMIMEType:MIMEType];
 }
 
-+ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
+- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
 {
-    return [WebView _representationExistsForURLScheme:URLScheme];
+    return [client _representationExistsForURLScheme:URLScheme];
 }
 
-+ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
+- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
 {
-    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
+    return [client _generatedMIMETypeForURLScheme:URLScheme];
 }
 
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel
@@ -1082,28 +997,26 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     return compareDocumentLoader != nil && [unreachableURL isEqual:[[compareDocumentLoader request] URL]];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
+- (void)loadDocumentLoader:(WebDocumentLoader *)newDocumentLoader
 {
-    FrameLoadType type;
-    
     ASSERT(!policyDocumentLoader);
-    policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
+    policyDocumentLoader = [newDocumentLoader retain];
 
     NSMutableURLRequest *r = [policyDocumentLoader request];
     [self addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
-    if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
+    FrameLoadType type;
+    if ([client _shouldTreatURLAsSameAsCurrent:[[policyDocumentLoader originalRequest] URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
         type = FrameLoadTypeSame;
     } else
         type = FrameLoadTypeStandard;
     
     [policyDocumentLoader setOverrideEncoding:[[self documentLoader] overrideEncoding]];
-    [client _addDocumentLoader:policyDocumentLoader toUnarchiveState:archive];
     
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
     // is appropriately maintained.
-    if ([self shouldReloadToHandleUnreachableURLFromRequest:request]) {
+    if ([self shouldReloadToHandleUnreachableURLFromRequest:[policyDocumentLoader originalRequest]]) {
         ASSERT(type == FrameLoadTypeStandard);
         type = FrameLoadTypeReload;
     }
@@ -1414,7 +1327,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
             request = nil;
             break;
         case WebPolicyUse:
-            if (![WebView _canHandleRequest:request]) {
+            if (![client _canHandleRequest:request]) {
                 [self handleUnimplementablePolicyWithError:[client _cannotShowURLErrorWithRequest:request]];
                 request = nil;
             }
@@ -1747,7 +1660,7 @@ exit:
         [client _dispatchResource:identifier didReceiveResponse:response fromDocumentLoader:documentLoader];
     
     if (length > 0)
-        [client _dispatchResource:identifier didReceiveContentLength:(WebNSUInteger)length fromDocumentLoader:documentLoader];
+        [client _dispatchResource:identifier didReceiveContentLength:length fromDocumentLoader:documentLoader];
     
     if (error == nil)
         [client _dispatchResource:identifier didFinishLoadingFromDocumentLoader:documentLoader];
@@ -1908,42 +1821,20 @@ exit:
 
 - (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
 {
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSRightMouseDown:
-        case NSOtherMouseDown:
-        case NSLeftMouseUp:
-        case NSRightMouseUp:
-        case NSOtherMouseUp: {
-            NSView *topViewInEventWindow = [[event window] contentView];
-            NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-            while (viewContainingPoint != nil) {
-                if ([viewContainingPoint isKindOfClass:[WebView class]])
-                    break;
-                viewContainingPoint = [viewContainingPoint superview];
-            }
-            if (viewContainingPoint != nil) {
-                NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-                NSDictionary *elementInfo = [(WebView *)viewContainingPoint elementAtPoint:point];
-                return [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-                    elementInfo, WebActionElementKey,
-                    [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
-                    [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-                    URL, WebActionOriginalURLKey,
-                    nil];
-            }
-        }
-            
-        // fall through
-        
-        default:
-            return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-                URL, WebActionOriginalURLKey,
-                nil];
-    }
+    NSDictionary *elementInfo = [client _elementForEvent:event];
+    if (elementInfo)
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+            elementInfo, WebActionElementKey,
+            [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
+            [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+            URL, WebActionOriginalURLKey,
+            nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+        [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+        URL, WebActionOriginalURLKey,
+        nil];
 }
 
 // Called every time a resource is completely loaded, or an error is received.
