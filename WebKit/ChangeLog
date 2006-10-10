@@ -1,3 +1,11 @@
+2006-10-10  Darin Adler  <darin@apple.com>
+
+        - corrected an archive regression caused by loader refactoring
+          (pointed out by Graham Dennis)
+
+        * WebView/WebFrame.m: (-[WebFrame _deliverArchivedResourcesAfterDelay]):
+        Fix selector name.
+
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

@@ -1945,7 +1945,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         return;
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
-    [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
+    [self performSelector:@selector(_deliverArchivedResources) withObject:nil afterDelay:0];
 }
 
 - (BOOL)_willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
