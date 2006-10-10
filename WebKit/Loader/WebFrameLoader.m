@@ -40,11 +40,6 @@
 #import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
-#import "WebFrameInternal.h"
-#import "WebNSURLExtras.h"
-#import "WebResourcePrivate.h"
-#import "WebViewInternal.h"
-
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
@@ -564,13 +559,27 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
              [[currentURL _webkit_URLByRemovingFragment] isEqual:[destinationURL _webkit_URLByRemovingFragment]]);
 }
 
+static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
+{
+    // Do not set the referrer to a string that refers to a file URL.
+    // That is a potential security hole.
+    if ([referrer _webkit_isFileURL])
+        return;
+
+    // Don't allow empty Referer: headers; some servers refuse them
+    if ([referrer length] == 0)
+        return;
+
+    [request setValue:referrer forHTTPHeaderField:@"Referer"];
+}
+
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(FrameLoadType)_loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request setValue:referrer forHTTPHeaderField:@"Referer"];
+    setHTTPReferrer(request, referrer);
     [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
     if (_loadType == FrameLoadTypeReload)
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -1792,7 +1801,8 @@ exit:
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
-    [request setValue:referrer forHTTPHeaderField:@"Referer"];
+
+    setHTTPReferrer(request, referrer);
     [request setHTTPMethod:@"POST"];
     webSetHTTPBody(request, postData);
     [request setValue:contentType forHTTPHeaderField:@"Content-Type"];

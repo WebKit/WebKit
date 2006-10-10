@@ -1,3 +1,15 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - do all the stuff that setting the referrer should
+
+        * Loader/WebFrameLoader.m:
+        (setHTTPReferrer):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-10-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
