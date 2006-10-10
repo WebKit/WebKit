@@ -66,6 +66,7 @@ HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     , m_size(0)
     , m_multiple(false)
     , m_recalcListItems(false)
+    , m_lastOnChangeIndex(0)
 {
     document()->registerFormElementWithState(this);
 }
@@ -153,7 +154,7 @@ void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
     }
 }
 
-void HTMLSelectElement::setSelectedIndex(int index, bool deselect)
+void HTMLSelectElement::setSelectedIndex(int index, bool deselect, bool fireOnChange)
 {
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(index);
@@ -164,6 +165,10 @@ void HTMLSelectElement::setSelectedIndex(int index, bool deselect)
     }
     if (deselect)
         deselectItems(element);
+    if (fireOnChange) {
+        m_lastOnChangeIndex = index;
+        onChange();
+    }
 }
 
 int HTMLSelectElement::length() const
@@ -512,6 +517,16 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
     setChanged(true);
 }
 
+void HTMLSelectElement::dispatchBlurEvent()
+{
+#if !ARROW_KEYS_POP_MENU
+    if (selectedIndex() != m_lastOnChangeIndex) {
+        m_lastOnChangeIndex = selectedIndex();
+        onChange();
+    }
+#endif
+    HTMLGenericFormElement::dispatchBlurEvent();
+}
 void HTMLSelectElement::defaultEventHandler(Event* evt)
 {
     if (usesMenuList())
@@ -555,7 +570,10 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             if (index > 0)
                 setSelectedIndex(--index);
             handled = true;
+        } else if (keyIdentifier == "Enter" && index != m_lastOnChangeIndex) {
+            setSelectedIndex(index, true, true);
         }
+
 #endif
         if (handled)
             evt->setDefaultHandled();

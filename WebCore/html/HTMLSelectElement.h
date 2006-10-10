@@ -54,8 +54,10 @@ public:
 
     virtual void recalcStyle(StyleChange);
 
+    virtual void dispatchBlurEvent();
+
     int selectedIndex() const;
-    void setSelectedIndex(int index, bool deselect = true);
+    void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
     void notifyOptionSelected(HTMLOptionElement* selectedOption, bool selected);
     
     virtual bool isEnumeratable() const { return true; }
@@ -136,6 +138,7 @@ private:
     int m_size;
     bool m_multiple;
     mutable bool m_recalcListItems;
+    int m_lastOnChangeIndex;
 
     HTMLCollection::CollectionInfo m_collectionInfo;
 };

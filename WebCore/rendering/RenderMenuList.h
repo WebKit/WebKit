@@ -57,9 +57,10 @@ public:
     void hidePopup();
 
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
-    void valueChanged(unsigned listIndex);
+    void valueChanged(unsigned listIndex, bool fireOnChange = true);
 
     String text();
+    void setTextFromOption(int optionIndex);
 
 protected:
     virtual bool hasLineIfEmpty() const { return true; }

@@ -1,3 +1,26 @@
+2006-10-10  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Improve popup menu behavior.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Cache
+        m_lastOnChangeIndex so we know when to fire onChange.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Added parameter to
+        specify whether we should fire onChange.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): Fire onChange on blur.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Fire
+        onChange when using the Enter key to change the selection.
+        * html/HTMLSelectElement.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateFromElement): Extract setText logic
+        into its own method.
+        (WebCore::RenderMenuList::setTextFromOption): New method.
+        (WebCore::RenderMenuList::valueChanged): Let setSelectedIndex call
+        onChange instead of calling it directly here.
+        * rendering/RenderMenuList.h:
+
 2006-10-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth. 

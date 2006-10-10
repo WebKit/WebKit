@@ -120,7 +120,16 @@ void RenderMenuList::updateFromElement()
         m_optionsChanged = false;
     }
 
-    int i = select->optionToListIndex(select->selectedIndex());
+    setTextFromOption(select->selectedIndex());
+}
+
+void RenderMenuList::setTextFromOption(int optionIndex)
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    const Vector<HTMLElement*>& listItems = select->listItems();
+    int size = listItems.size();
+
+    int i = select->optionToListIndex(optionIndex);
     String text = "";
     if (i >= 0 && i < size) {
         HTMLElement* element = listItems[i];
@@ -235,11 +244,10 @@ void RenderMenuList::hidePopup()
     m_popupIsVisible = false;
 }
 
-void RenderMenuList::valueChanged(unsigned listIndex)
+void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    select->setSelectedIndex(select->listToOptionIndex(listIndex));
-    select->onChange();
+    select->setSelectedIndex(select->listToOptionIndex(listIndex), true, fireOnChange);
 }
 
 }
