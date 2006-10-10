@@ -30,7 +30,7 @@
 #include "Shared.h"
 #include <wtf/Vector.h>
 
-#if __APPLE__
+#if PLATFORM(CG)
 typedef struct CGShading* CGShadingRef;
 #endif
 
@@ -48,7 +48,7 @@ namespace WebCore {
 
         void getColor(float value, float* r, float* g, float* b, float* a);
 
-#if __APPLE__
+#if PLATFORM(CG)
         CGShadingRef platformShading();
 #endif
 
@@ -73,7 +73,7 @@ namespace WebCore {
         mutable bool m_stopsSorted;
         mutable int m_lastStop;
 
-#if __APPLE__
+#if PLATFORM(CG)
         CGShadingRef m_shading;
 #endif
     };

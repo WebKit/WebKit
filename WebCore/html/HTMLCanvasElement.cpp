@@ -138,7 +138,7 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled())
         return;
-#if __APPLE__
+#if PLATFORM(CG)
     if (CGImageRef image = createPlatformImage()) {
         CGContextDrawImage(p->platformContext(), p->roundToDevicePixels(r), image);
         CGImageRelease(image);
@@ -171,7 +171,7 @@ void HTMLCanvasElement::createDrawingContext() const
     m_data = fastCalloc(h, bytesPerRow);
     if (!m_data)
         return;
-#if __APPLE__
+#if PLATFORM(CG)
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, h, 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     CGContextScaleCTM(bitmapContext, w / unscaledWidth, h / unscaledHeight);
@@ -188,7 +188,7 @@ GraphicsContext* HTMLCanvasElement::drawingContext() const
     return m_drawingContext;
 }
 
-#if __APPLE__
+#if PLATFORM(CG)
 
 CGImageRef HTMLCanvasElement::createPlatformImage() const
 {

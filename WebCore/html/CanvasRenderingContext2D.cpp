@@ -420,7 +420,7 @@ void CanvasRenderingContext2D::fill()
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     CGContextBeginPath(c->platformContext());
     CGContextAddPath(c->platformContext(), state().m_path.platformPath());
 
@@ -446,7 +446,7 @@ void CanvasRenderingContext2D::stroke()
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     CGContextBeginPath(c->platformContext());
     CGContextAddPath(c->platformContext(), state().m_path.platformPath());
 
@@ -507,7 +507,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     CGRect rect = CGRectMake(x, y, width, height);
 
     willDraw(rect);
@@ -583,7 +583,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     const CGFloat components[2] = { grayLevel, 1 };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
     CGColorRef color = CGColorCreate(colorSpace, components);
@@ -603,7 +603,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     RGBA32 rgba = CSSParser::parseColor(color);
     const CGFloat components[4] = {
         ((rgba >> 16) & 0xFF) / 255.0,
@@ -629,7 +629,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     const CGFloat components[2] = { grayLevel, alpha };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
     CGColorRef color = CGColorCreate(colorSpace, components);
@@ -649,7 +649,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     const CGFloat components[4] = { r, g, b, a };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef shadowColor = CGColorCreate(colorSpace, components);
@@ -669,7 +669,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!dc)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     const CGFloat components[5] = { c, m, y, k, a };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceCMYK();
     CGColorRef shadowColor = CGColorCreate(colorSpace, components);
@@ -693,7 +693,7 @@ void CanvasRenderingContext2D::applyShadow()
     if (!c)
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     RGBA32 rgba = state().m_shadowColor.isEmpty() ? 0 : CSSParser::parseColor(state().m_shadowColor);
     const CGFloat components[4] = {
         ((rgba >> 16) & 0xFF) / 255.0,
@@ -797,7 +797,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     FloatRect destRect = c->roundToDevicePixels(dstRect);
         
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     CGImageRef platformImage = canvas->createPlatformImage();
     if (!platformImage)
         return;
@@ -903,7 +903,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     if (ec)
         return 0;
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
+#if PLATFORM(CG)
     CGImageRef image = canvas->createPlatformImage();
     if (!image)
         return 0;
@@ -935,7 +935,7 @@ void CanvasRenderingContext2D::applyStrokePattern()
     if (!c)
         return;
 
-#if __APPLE__
+#if PLATFORM(CG)
     // Check for case where the pattern is already set.
     CGAffineTransform m = CGContextGetCTM(c->platformContext());
     if (state().m_appliedStrokePattern
@@ -969,7 +969,7 @@ void CanvasRenderingContext2D::applyFillPattern()
     if (!c)
         return;
 
-#if __APPLE__
+#if PLATFORM(CG)
     // Check for case where the pattern is already set.
     CGAffineTransform m = CGContextGetCTM(c->platformContext());
     if (state().m_appliedFillPattern

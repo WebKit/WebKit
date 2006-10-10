@@ -32,7 +32,7 @@
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 
-#if __APPLE__
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -181,7 +181,7 @@ namespace WebCore {
             CompositeOperator m_globalComposite;
             bool m_appliedStrokePattern;
             bool m_appliedFillPattern;
-#if __APPLE__
+#if PLATFORM(CG)
             CGAffineTransform m_strokeStylePatternTransform;
             CGAffineTransform m_fillStylePatternTransform;
 #endif

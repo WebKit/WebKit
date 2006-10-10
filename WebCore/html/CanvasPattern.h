@@ -29,7 +29,7 @@
 #include "CachedResourceClient.h"
 #include "Shared.h"
 
-#if __APPLE__
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -44,23 +44,23 @@ namespace WebCore {
     public:
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
-#if __APPLE__
+#if PLATFORM(CG)
         CanvasPattern(CGImageRef, bool repeatX, bool repeatY);
 #endif
         CanvasPattern(CachedImage*, bool repeatX, bool repeatY);
         ~CanvasPattern();
 
-#if __APPLE__
+#if PLATFORM(CG)
         CGImageRef platformImage() const { return m_platformImage; }
 #endif
         CachedImage* cachedImage() const { return m_cachedImage; }
 
-#if __APPLE__
+#if PLATFORM(CG)
         CGPatternRef createPattern(const CGAffineTransform&);
 #endif
 
     private:
-#if __APPLE__
+#if PLATFORM(CG)
         const CGImageRef m_platformImage;
 #endif
         CachedImage* const m_cachedImage;

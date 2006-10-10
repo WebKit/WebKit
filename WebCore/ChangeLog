@@ -1,3 +1,37 @@
+2006-10-09  Oliver Hunt <ohunt@apple.com>
+
+        Reviewed by Anders.
+
+        Correcting ifdef's
+
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::CanvasGradient::~CanvasGradient):
+        (WebCore::CanvasGradient::addColorStop):
+        * html/CanvasGradient.h:
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        (WebCore::CanvasPattern::~CanvasPattern):
+        * html/CanvasPattern.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::createDrawingContext):
+        * html/HTMLCanvasElement.h:
+
 2006-10-09  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

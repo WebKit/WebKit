@@ -29,8 +29,8 @@
 #include "HTMLElement.h"
 #include "IntSize.h"
 
-#if __APPLE__
-// FIXME: Mac-specific parts need to move to the platform directory.
+#if PLATFORM(CG)
+// FIXME: CG-specific parts need to move to the platform directory.
 typedef struct CGContext* CGContextRef;
 typedef struct CGImage* CGImageRef;
 #endif
@@ -65,7 +65,7 @@ public:
 
     GraphicsContext* drawingContext() const;
 
-#if __APPLE__
+#if PLATFORM(CG)
     CGImageRef createPlatformImage() const;
 #endif
 

@@ -63,7 +63,7 @@ void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool&
     ec = SYNTAX_ERR;
 }
 
-#if __APPLE__
+#if PLATFORM(CG)
 
 CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY)
     : m_platformImage(image)
@@ -77,7 +77,7 @@ CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY)
 
 CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeatY)
     :
-#if __APPLE__
+#if PLATFORM(CG)
       m_platformImage(0)
     ,
 #endif
@@ -91,14 +91,14 @@ CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeat
 
 CanvasPattern::~CanvasPattern()
 {
-#if __APPLE__
+#if PLATFORM(CG)
     CGImageRelease(m_platformImage);
 #endif
     if (m_cachedImage)
         m_cachedImage->deref(this);
 }
 
-#if __APPLE__
+#if PLATFORM(CG)
 
 static void patternCallback(void* info, CGContextRef context)
 {
