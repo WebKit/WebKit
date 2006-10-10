@@ -41,7 +41,6 @@
 #import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
-#import "WebFrameInternal.h"
 #import "WebNSURLExtras.h"
 
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
@@ -70,7 +69,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 @implementation WebFrameLoader
 
-- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(WebFrame <WebFrameLoaderClient> *)c
+- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(id<WebFrameLoaderClient>)c
 {
     self = [super init];
     if (self) {
@@ -120,8 +119,8 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 - (void)defersCallbacksChanged
 {
     BOOL defers = [frameBridge defersLoading];
-    for (WebFrame *frame = client; frame; frame = [frame _traverseNextFrameStayWithin:client])
-        [[frame _frameLoader] setDefersCallbacks:defers];
+    for (WebCoreFrameBridge *frame = frameBridge; frame; frame = [frame traverseNextFrameStayWithin:frameBridge])
+        [[frame frameLoader] setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
@@ -486,7 +485,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // Retain the bridge because the stop may release the last reference to it.
     [bridge retain];
  
-    NSObject<WebFrameLoaderClient> *cli = [client retain];
+    id<WebFrameLoaderClient> cli = [client retain];
    
     if (isComplete) {
         // FIXME: Don't want to do this if an entirely new load is going, so should check
@@ -1142,8 +1141,8 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 - (BOOL)subframeIsLoading
 {
     // It's most likely that the last added frame is the last to load so we walk backwards.
-    for (WebFrame *frame = [client _lastChildFrame]; frame; frame = [frame _previousSiblingFrame])
-        if ([[frame dataSource] isLoading] || [[frame provisionalDataSource] isLoading])
+    for (WebCoreFrameBridge *frame = [frameBridge lastChild]; frame; frame = [frame previousSibling])
+        if ([[[frame frameLoader] documentLoader] isLoadingInAPISense] || [[[frame frameLoader] provisionalDocumentLoader] isLoadingInAPISense])
             return YES;
     return NO;
 }
@@ -1524,7 +1523,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     }
 
     // Tell the client we've committed this URL.
-    ASSERT([[client frameView] documentView] != nil);
+    ASSERT([client _hasFrameView]);
     [client _dispatchDidCommitLoadForFrame];
     
     // If we have a title let the WebView know about it.
@@ -1743,10 +1742,10 @@ exit:
 - (void)detachChildren
 {
     // FIXME: is it really necessary to do this in reverse order any more?
-    WebFrame *child = [client _lastChildFrame];
-    WebFrame *prev = [child _previousSiblingFrame];
-    for (; child; child = prev, prev = [child _previousSiblingFrame])
-        [[child _frameLoader] detachFromParent];
+    WebCoreFrameBridge *child = [frameBridge lastChild];
+    WebCoreFrameBridge *prev = [child previousSibling];
+    for (; child; child = prev, prev = [child previousSibling])
+        [[child frameLoader] detachFromParent];
 }
 
 - (void)detachFromParent
@@ -1762,7 +1761,7 @@ exit:
     [client _detachedFromParent3];
     [[frameBridge parent] removeChild:bridge];
 
-    NSObject <WebFrameLoaderClient>* c = [client retain];
+    id<WebFrameLoaderClient> c = [client retain];
     [bridge close];
     [c _detachedFromParent4];
     [c release];
@@ -1849,16 +1848,16 @@ NSString *ActionOriginalURLKey = @"WebActionOriginalURLKey";
 {
     ASSERT([client _hasWebView]);
 
-    WebFrame *parent;
-    for (WebFrame *frame = client; frame; frame = parent) {
+    WebCoreFrameBridge *parent;
+    for (WebCoreFrameBridge *frame = frameBridge; frame; frame = parent) {
         [frame retain];
-        [[frame _frameLoader] checkLoadCompleteForThisFrame];
-        parent = [frame parentFrame];
+        [[frame frameLoader] checkLoadCompleteForThisFrame];
+        parent = [frame parent];
         [frame release];
     }
 }
 
-- (NSObject<WebFrameLoaderClient> *)client
+- (id<WebFrameLoaderClient>)client
 {
     return client;
 }

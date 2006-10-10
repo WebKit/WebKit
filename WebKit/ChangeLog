@@ -1,5 +1,20 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+        
+        - sever final WebFrame dependencies
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader initWithFrame:client:]):
+        (-[WebFrameLoader defersCallbacksChanged]):
+        (-[WebFrameLoader subframeIsLoading]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader detachChildren]):
+        (-[WebFrameLoader checkLoadComplete]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Brady.
         
         - convert more WebFrameLoader stuff to be independent of WebFrame

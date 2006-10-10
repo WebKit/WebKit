@@ -37,7 +37,7 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 @class WebPolicyDecider;
 @class WebResource;
 
-@protocol WebFrameLoaderClient
+@protocol WebFrameLoaderClient <NSObject>
 
 - (BOOL)_hasWebView; // mainly for assertions
 - (BOOL)_hasFrameView; // ditto
