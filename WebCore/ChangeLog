@@ -1,3 +1,30 @@
+2006-10-10  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej.
+
+        - convert many of the loader source files to Objective-C++ to prepare
+          to convert some of them to C++
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/mac/WebDataProtocol.m: Removed.
+        * loader/mac/WebDocumentLoader.m: Removed.
+        * loader/mac/WebFormState.m: Removed.
+        * loader/mac/WebFrameLoader.m: Removed.
+        * loader/mac/WebLoader.m: Removed.
+        * loader/mac/WebMainResourceLoader.m: Removed.
+        * loader/mac/WebNetscapePlugInStreamLoader.m: Removed.
+        * loader/mac/WebPolicyDecider.m: Removed.
+        * loader/mac/WebSubresourceLoader.m: Removed.
+        * loader/mac/WebDataProtocol.mm: Added.
+        * loader/mac/WebDocumentLoader.mm: Added.
+        * loader/mac/WebFormState.mm: Added.
+        * loader/mac/WebFrameLoader.mm: Added.
+        * loader/mac/WebLoader.mm: Added.
+        * loader/mac/WebMainResourceLoader.mm: Added.
+        * loader/mac/WebNetscapePlugInStreamLoader.mm: Added.
+        * loader/mac/WebPolicyDecider.mm: Added.
+        * loader/mac/WebSubresourceLoader.mm: Added.
+
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mitz.
