@@ -1614,14 +1614,14 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:self];
 }
 
-- (WebFrame *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request
+- (WebCoreFrameBridge *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request
 {
     WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        return [[wd webView:currentWebView createWebViewWithRequest:request] mainFrame];
+        return [[[wd webView:currentWebView createWebViewWithRequest:request] mainFrame] _bridge];
 
-    return [[[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request] mainFrame];
+    return [[[[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request] mainFrame] _bridge];
 }
 
 - (void)_dispatchShow

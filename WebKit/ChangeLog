@@ -1,5 +1,34 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Brady.
+        
+        - convert more WebFrameLoader stuff to be independent of WebFrame
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader stopLoadingSubframes]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader closeOldDataSources]):
+        (-[WebFrameLoader isHostedByObjectElement]):
+        (-[WebFrameLoader isLoadingMainFrame]):
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+        (-[WebFrameLoader transitionToCommitted:]):
+        (-[WebFrameLoader checkLoadCompleteForThisFrame]):
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrameLoader loadRequest:inFrameNamed:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader actionInformationForNavigationType:event:originalURL:]):
+        (-[WebFrameLoader client]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _webView]):
+        (-[WebDataSource webFrame]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _dispatchCreateWebViewWithRequest:]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders and Oliver.
         
         - move a bunch of WebFrame methods from the Internal category to the WebFrameLoader protocol

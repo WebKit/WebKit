@@ -105,7 +105,7 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (void)_dispatchDidFinishLoadForFrame;
 - (void)_dispatchDidFirstLayoutInFrame;
 
-- (WebFrame *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request;
+- (WebCoreFrameBridge *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request;
 - (void)_dispatchShow;
 
 - (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider;

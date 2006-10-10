@@ -349,7 +349,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)stopLoadingSubframes
 {
     for (WebCoreFrameBridge *child = [frameBridge firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child frameLoader] stopLoading];
+        [[child frameLoader] stopLoading];
 }
 
 - (void)stopLoading
@@ -476,11 +476,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [[self activeDocumentLoader] originalRequestCopy];
 }
 
-- (WebFrame *)webFrame
-{
-    return client;
-}
-
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
     WebDocumentLoader *loader = [self activeDocumentLoader];
@@ -491,7 +486,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // Retain the bridge because the stop may release the last reference to it.
     [bridge retain];
  
-    WebFrame *cli = [client retain];
+    NSObject<WebFrameLoaderClient> *cli = [client retain];
    
     if (isComplete) {
         // FIXME: Don't want to do this if an entirely new load is going, so should check
@@ -598,9 +593,9 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
         formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
     
     if (target != nil) {
-        WebFrame *targetFrame = [client findFrameNamed:target];
+        WebCoreFrameBridge *targetFrame = [frameBridge findFrameNamed:target];
         if (targetFrame != nil) {
-            [[targetFrame _frameLoader] loadURL:URL referrer:referrer loadType:_loadType target:nil triggeringEvent:event form:form formValues:values];
+            [[targetFrame frameLoader] loadURL:URL referrer:referrer loadType:_loadType target:nil triggeringEvent:event form:form formValues:values];
         } else {
             [self checkNewWindowPolicyForRequest:request
                                           action:action
@@ -707,7 +702,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     // FIXME: is it important for this traversal to be postorder instead of preorder?
     // FIXME: add helpers for postorder traversal?
     for (WebCoreFrameBridge *child = [frameBridge firstChild]; child; child = [child nextSibling])
-        [[(WebFrameBridge *)child frameLoader] closeOldDataSources];
+        [[child frameLoader] closeOldDataSources];
     
     if (documentLoader)
         [client _dispatchWillCloseFrame];
@@ -923,13 +918,13 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 - (BOOL)isHostedByObjectElement
 {
     // Handle <object> fallback for error cases.            
-    DOMHTMLElement *hostElement = [client frameElement];
+    DOMHTMLElement *hostElement = [frameBridge frameElement];
     return hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]];
 }
 
 - (BOOL)isLoadingMainFrame
 {
-    return [client _isMainFrame];
+    return [frameBridge isMainFrame];
 }
 
 - (BOOL)_canShowMIMEType:(NSString *)MIMEType
@@ -1411,13 +1406,13 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     // Unfortunately the view must be non-nil, this is ultimately due
     // to parser requiring a FrameView.  We should fix this dependency.
 
-    ASSERT([client frameView] != nil);
+    ASSERT([client _hasFrameView]);
 
     policyLoadType = type;
 
     WebCoreFrameBridge *parentFrame = [[self bridge] parent];
     if (parentFrame)
-        [loader setOverrideEncoding:[[[(WebFrameBridge *)parentFrame frameLoader] documentLoader] overrideEncoding]];
+        [loader setOverrideEncoding:[[[parentFrame frameLoader] documentLoader] overrideEncoding]];
 
     [loader setFrameLoader:self];
 
@@ -1486,9 +1481,9 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     NSString *ptitle = [dl title];
 
     switch (loadType) {
-    case WebFrameLoadTypeForward:
-    case WebFrameLoadTypeBack:
-    case WebFrameLoadTypeIndexedBackForward:
+    case FrameLoadTypeForward:
+    case FrameLoadTypeBack:
+    case FrameLoadTypeIndexedBackForward:
         if ([client _hasBackForwardList]) {
             [client _updateHistoryForBackForwardNavigation];
 
@@ -1500,30 +1495,30 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
         }
         break;
 
-    case WebFrameLoadTypeReload:
-    case WebFrameLoadTypeSame:
-    case WebFrameLoadTypeReplace:
+    case FrameLoadTypeReload:
+    case FrameLoadTypeSame:
+    case FrameLoadTypeReplace:
         [client _updateHistoryForReload];
         [client _makeDocumentView];
         break;
 
-    // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with the above case
-    case WebFrameLoadTypeReloadAllowingStaleData:
+    // FIXME - just get rid of this case, and merge FrameLoadTypeReloadAllowingStaleData with the above case
+    case FrameLoadTypeReloadAllowingStaleData:
         [client _makeDocumentView];
         break;
 
-    case WebFrameLoadTypeStandard:
+    case FrameLoadTypeStandard:
         [client _updateHistoryForStandardLoad];
         [client _makeDocumentView];
         break;
 
-    case WebFrameLoadTypeInternal:
+    case FrameLoadTypeInternal:
         [client _updateHistoryForInternalLoad];
         [client _makeDocumentView];
         break;
 
     // FIXME Remove this check when dummy ds is removed (whatever "dummy ds" is).
-    // An exception should be thrown if we're in the WebFrameLoadTypeUninitialized state.
+    // An exception should be thrown if we're in the FrameLoadTypeUninitialized state.
     default:
         ASSERT_NOT_REACHED();
     }
@@ -1598,7 +1593,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
                 [client _forceLayoutForNonHTML];
                  
                 // If the user had a scroll point, scroll to it, overriding the anchor point if any.
-                if ((isBackForwardLoadType([self loadType]) || [self loadType] == WebFrameLoadTypeReload)
+                if ((isBackForwardLoadType([self loadType]) || [self loadType] == FrameLoadTypeReload)
                         && [client _hasBackForwardList])
                     [client _restoreScrollPositionAndViewState];
 
@@ -1633,19 +1628,16 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     WebCoreFrameBridge <WebCoreFrameBridge> *bridge = frameBridge;
     [bridge retain];
 
-    WebFrame *mainFrame = [client _dispatchCreateWebViewWithRequest:nil];
-    if (!mainFrame)
+    WebCoreFrameBridge *mainBridge = [client _dispatchCreateWebViewWithRequest:nil];
+    if (!mainBridge)
         goto exit;
-
-    WebCoreFrameBridge *mainBridge = [mainFrame _frameLoader]->frameBridge;
-    [mainBridge retain];
 
     [mainBridge setName:frameName];
 
-    [mainFrame _dispatchShow];
+    [[[mainBridge frameLoader] client] _dispatchShow];
 
     [mainBridge setOpener:bridge];
-    [[mainFrame _frameLoader] _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
+    [[mainBridge frameLoader] _loadRequest:request triggeringAction:nil loadType:FrameLoadTypeStandard formState:formState];
 
     [mainBridge release];
 
@@ -1699,9 +1691,9 @@ exit:
         return;
     }
 
-    WebFrame *frame = [client findFrameNamed:frameName];
+    WebCoreFrameBridge *frame = [frameBridge findFrameNamed:frameName];
     if (frame != nil) {
-        [[frame _frameLoader] loadRequest:request];
+        [[frame frameLoader] loadRequest:request];
         return;
     }
 
@@ -1735,9 +1727,9 @@ exit:
         formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
 
     if (target != nil) {
-        WebFrame *targetFrame = [client findFrameNamed:target];
+        WebCoreFrameBridge *targetFrame = [frameBridge findFrameNamed:target];
         if (targetFrame != nil)
-            [[targetFrame _frameLoader] _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
+            [[targetFrame frameLoader] _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
         else
             [self checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState
                 andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
@@ -1827,22 +1819,28 @@ exit:
     }
     return [self actionInformationForNavigationType:navType event:event originalURL:URL];
 }
+ 
+NSString *ActionNavigationTypeKey = @"WebActionNavigationTypeKey";
+NSString *ActionElementKey = @"WebActionElementKey";
+NSString *ActionButtonKey = @"WebActionButtonKey"; 
+NSString *ActionModifierFlagsKey = @"WebActionModifierFlagsKey";
+NSString *ActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 - (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
 {
     NSDictionary *elementInfo = [client _elementForEvent:event];
     if (elementInfo)
         return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-            elementInfo, WebActionElementKey,
-            [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
-            [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-            URL, WebActionOriginalURLKey,
+            [NSNumber numberWithInt:navigationType], ActionNavigationTypeKey,
+            elementInfo, ActionElementKey,
+            [NSNumber numberWithInt:[event buttonNumber]], ActionButtonKey,
+            [NSNumber numberWithInt:[event modifierFlags]], ActionModifierFlagsKey,
+            URL, ActionOriginalURLKey,
             nil];
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-        [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-        URL, WebActionOriginalURLKey,
+        [NSNumber numberWithInt:navigationType], ActionNavigationTypeKey,
+        [NSNumber numberWithInt:[event modifierFlags]], ActionModifierFlagsKey,
+        URL, ActionOriginalURLKey,
         nil];
 }
 
@@ -1858,6 +1856,11 @@ exit:
         parent = [frame parentFrame];
         [frame release];
     }
+}
+
+- (NSObject<WebFrameLoaderClient> *)client
+{
+    return client;
 }
 
 @end

@@ -304,7 +304,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebView *)_webView
 {
-    return [[[_private->loader frameLoader] webFrame] webView];
+    return [(WebFrame *)[[_private->loader frameLoader] client] webView];
 }
 
 - (BOOL)_isDocumentHTML
@@ -404,7 +404,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebFrame *)webFrame
 {
-    return [[_private->loader frameLoader] webFrame];
+    return (WebFrame *)[[_private->loader frameLoader] client];
 }
 
 -(NSURLRequest *)initialRequest

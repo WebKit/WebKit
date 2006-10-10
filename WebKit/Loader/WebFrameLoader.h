@@ -163,7 +163,6 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)_finishedLoadingResource;
 - (void)_receivedError:(NSError *)error;
 - (NSURLRequest *)_originalRequest;
-- (WebFrame *)webFrame;
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete;
 - (NSURLRequest *)initialRequest;
 - (void)_receivedData:(NSData *)data;
@@ -251,4 +250,6 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
 - (NSDictionary *)actionInformationForLoadType:(FrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
+- (NSObject<WebFrameLoaderClient> *)client;
+   
 @end
