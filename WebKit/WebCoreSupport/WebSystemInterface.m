@@ -76,6 +76,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamError);
     INIT(SignalCFReadStreamHasBytes);
     INIT(SupportsMultipartXMixedReplace);
+    INIT(NSURLProtocolClassForReqest);
     
     didInit = true;
 }

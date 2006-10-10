@@ -1,3 +1,47 @@
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - split out some NSURL extras to be moved to WebCore
+
+        * Loader/LoaderNSURLExtras.h: Added.
+        * Loader/LoaderNSURLExtras.m: Added.
+        (urlByRemovingComponent):
+        (urlByRemovingFragment):
+        (urlOriginalDataAsString):
+        (urlOriginalData):
+        (urlWithData):
+        (WebCFAutorelease):
+        (urlWithDataRelativeToURL):
+        (urlByRemovingResourceSpecifier):
+        (urlIsFileURL):
+        (stringIsFileURL):
+        (urlIsEmpty):
+        (canonicalURL):
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader shouldReloadForCurrent:andDestination:]):
+        (setHTTPReferrer):
+        (-[WebFrameLoader commitProvisionalLoad:]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader didChangeTitleForDocument:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:documentLoader:formState:andCall:withSelector:]):
+        (-[WebFrameLoader safeLoadURL:]):
+        * Misc/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:]):
+        (+[NSURL _web_URLWithData:relativeToURL:]):
+        (-[NSURL _web_originalData]):
+        (-[NSURL _web_originalDataAsString]):
+        (-[NSURL _web_isEmpty]):
+        (-[NSURL _webkit_canonicalize]):
+        (-[NSURL _webkit_URLByRemovingComponent:]):
+        (-[NSURL _webkit_URLByRemovingFragment]):
+        (-[NSURL _webkit_URLByRemovingResourceSpecifier]):
+        (-[NSURL _webkit_isFileURL]):
+        (-[NSString _webkit_isFileURL]):
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

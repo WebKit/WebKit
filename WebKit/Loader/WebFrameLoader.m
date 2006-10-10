@@ -28,6 +28,7 @@
 
 #import "WebFrameLoader.h"
 
+#import "LoaderNSURLExtras.h"
 #import "WebDataProtocol.h"
 #import "WebDocumentLoader.h"
 #import "WebFormDataStream.h"
@@ -40,8 +41,6 @@
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebCore/WebCoreSystemInterface.h>
-
-#import "WebNSURLExtras.h"
 
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
@@ -554,14 +553,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
 {
     return !(([currentURL fragment] || [destinationURL fragment]) &&
-             [[currentURL _webkit_URLByRemovingFragment] isEqual:[destinationURL _webkit_URLByRemovingFragment]]);
+             [urlByRemovingFragment(currentURL) isEqual:urlByRemovingFragment(destinationURL)]);
 }
 
 static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 {
     // Do not set the referrer to a string that refers to a file URL.
     // That is a potential security hole.
-    if ([referrer _webkit_isFileURL])
+    if (stringIsFileURL(referrer))
         return;
 
     // Don't allow empty Referer: headers; some servers refuse them
@@ -771,7 +770,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     NSURL *baseURL = [[provisionalDocumentLoader request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
     
-    if (!URL || [URL _web_isEmpty])
+    if (!URL || urlIsEmpty(URL))
         URL = [NSURL URLWithString:@"about:blank"];    
     
     [frameBridge openURL:URL
@@ -862,7 +861,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 {
     ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
     NSImage *icon = [[WebCoreIconDatabaseBridge sharedInstance]
-        iconForPageURL:[[[self activeDocumentLoader] URL] _web_originalDataAsString]
+        iconForPageURL:urlOriginalDataAsString([[self activeDocumentLoader] URL])
         withSize:NSMakeSize(16, 16)];
     [client _dispatchDidReceiveIcon:icon];
 }
@@ -1158,7 +1157,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 
     // The title doesn't get communicated to the WebView until we are committed.
     if ([loader isCommitted]) {
-        NSURL *URLForHistory = [[loader URLForHistory] _webkit_canonicalize];
+        NSURL *URLForHistory = canonicalURL([loader URLForHistory]);
         if (URLForHistory != nil) {
             // Must update the entries in the back-forward list too.
             // This must go through the WebFrame because it has the right notion of the current b/f item.
@@ -1267,7 +1266,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:[loader lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
+    if ([request isEqual:[loader lastCheckedRequest]] || urlIsEmpty([request URL])) {
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1792,7 +1791,7 @@ exit:
 {
    // Call the bridge because this is where our security checks are made.
     [frameBridge loadURL:URL 
-                  referrer:[[[documentLoader request] URL] _web_originalDataAsString]
+                  referrer:urlOriginalDataAsString([[documentLoader request] URL])
                     reload:NO
                userGesture:YES       
                     target:nil

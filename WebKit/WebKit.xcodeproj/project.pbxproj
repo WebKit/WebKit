@@ -74,6 +74,8 @@
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */; };
+		65E1FDF90ADB8ED7003E1DC1 /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E1FDF70ADB8ED7003E1DC1 /* LoaderNSURLExtras.h */; };
+		65E1FDFA0ADB8ED7003E1DC1 /* LoaderNSURLExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E1FDF80ADB8ED7003E1DC1 /* LoaderNSURLExtras.m */; };
 		65EEDE53084FFB920002DB25 /* WebNSCalendarDateExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */; };
 		65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */; };
 		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; };
@@ -417,6 +419,8 @@
 		65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSUserDefaultsExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150307EFFEBF009B8BF7 /* WebPluginContainerCheck.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerCheck.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginContainerCheck.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65E1FDF70ADB8ED7003E1DC1 /* LoaderNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLExtras.h; sourceTree = "<group>"; };
+		65E1FDF80ADB8ED7003E1DC1 /* LoaderNSURLExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LoaderNSURLExtras.m; sourceTree = "<group>"; };
 		65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSCalendarDateExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSCalendarDateExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSFileManagerExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -816,6 +820,8 @@
 		654B3C280A82C47200E1AE3D /* Loader */ = {
 			isa = PBXGroup;
 			children = (
+				65E1FDF70ADB8ED7003E1DC1 /* LoaderNSURLExtras.h */,
+				65E1FDF80ADB8ED7003E1DC1 /* LoaderNSURLExtras.m */,
 				651A93850A83F883007FEDF0 /* WebDataProtocol.h */,
 				651A93860A83F883007FEDF0 /* WebDataProtocol.m */,
 				659044260A9D3B4200E89459 /* WebDocumentLoader.h */,
@@ -1250,6 +1256,7 @@
 				658BA6610ADB2D8900AEB387 /* WebPolicyDecider.h in Headers */,
 				658BA6FC0ADB39DE00AEB387 /* WebPolicyDeciderMac.h in Headers */,
 				51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */,
+				65E1FDF90ADB8ED7003E1DC1 /* LoaderNSURLExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1481,6 +1488,7 @@
 				656D8B550ADA4EA400B34CBB /* WebFormState.m in Sources */,
 				658BA6620ADB2D8900AEB387 /* WebPolicyDecider.m in Sources */,
 				658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */,
+				65E1FDFA0ADB8ED7003E1DC1 /* LoaderNSURLExtras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
