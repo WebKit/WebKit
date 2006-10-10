@@ -34,6 +34,7 @@
 #import "WebFormState.h"
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
+#import "WebPolicyDecider.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
 #import <WebCore/WebCoreFrameBridge.h>
@@ -957,21 +958,21 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 
 - (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel
 {
-    WebPolicyDecisionListener *l = [[WebPolicyDecisionListener alloc] _initWithTarget:obj action:sel];
-    listener = l;
+    WebPolicyDecider *d = [client _createPolicyDeciderWithTarget:obj action:sel];
+    policyDecider = d;
     
-    [l retain];
+    [d retain];
 
-    [client _dispatchDecidePolicyForMIMEType:MIMEType request:[[self activeDocumentLoader] request] decisionListener:listener];
+    [client _dispatchDecidePolicyForMIMEType:MIMEType request:[[self activeDocumentLoader] request] decider:d];
 
-    [l release];
+    [d release];
 }
 
 - (void)cancelContentPolicy
 {
-    [listener _invalidate];
-    [listener release];
-    listener = nil;
+    [policyDecider invalidate];
+    [policyDecider release];
+    policyDecider = nil;
 }
 
 - (BOOL)shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
@@ -1186,9 +1187,9 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 
 - (void)invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
 {
-    [listener _invalidate];
-    [listener release];
-    listener = nil;
+    [policyDecider invalidate];
+    [policyDecider release];
+    policyDecider = nil;
 
     NSURLRequest *request = policyRequest;
     NSString *frameName = policyFrameName;
@@ -1217,19 +1218,18 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 
 - (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
-    WebPolicyDecisionListener *decisionListener = [[WebPolicyDecisionListener alloc]
-        _initWithTarget:self action:@selector(continueAfterNewWindowPolicy:)];
+    WebPolicyDecider *decider = [client _createPolicyDeciderWithTarget:self action:@selector(continueAfterNewWindowPolicy:)];
 
     policyRequest = [request retain];
     policyTarget = [target retain];
     policyFrameName = [frameName retain];
     policySelector = selector;
-    listener = [decisionListener retain];
+    policyDecider = [decider retain];
     policyFormState = [formState retain];
 
-    [client _dispatchDecidePolicyForNewWindowAction:action request:request newFrameName:frameName decisionListener:decisionListener];
+    [client _dispatchDecidePolicyForNewWindowAction:action request:request newFrameName:frameName decider:decider];
     
-    [decisionListener release];
+    [decider release];
 }
 
 - (void)continueAfterNewWindowPolicy:(WebPolicyAction)policy
@@ -1289,23 +1289,23 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     
     [loader setLastCheckedRequest:request];
 
-    WebPolicyDecisionListener *decisionListener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterNavigationPolicy:)];
+    WebPolicyDecider *decider = [client _createPolicyDeciderWithTarget:self action:@selector(continueAfterNavigationPolicy:)];
     
     ASSERT(policyRequest == nil);
     policyRequest = [request retain];
     ASSERT(policyTarget == nil);
     policyTarget = [target retain];
     policySelector = selector;
-    ASSERT(listener == nil);
-    listener = [decisionListener retain];
+    ASSERT(policyDecider == nil);
+    policyDecider = [decider retain];
     ASSERT(policyFormState == nil);
     policyFormState = [formState retain];
 
     delegateIsDecidingNavigationPolicy = YES;
-    [client _dispatchDecidePolicyForNavigationAction:action request:request decisionListener:decisionListener];
+    [client _dispatchDecidePolicyForNavigationAction:action request:request decider:decider];
     delegateIsDecidingNavigationPolicy = NO;
     
-    [decisionListener release];
+    [decider release];
 }
 
 - (void)continueAfterNavigationPolicy:(WebPolicyAction)policy
@@ -1340,10 +1340,10 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 // Called after the FormsDelegate is done processing willSubmitForm:
 - (void)continueAfterWillSubmitForm:(WebPolicyAction)policy
 {
-    if (listener) {
-        [listener _invalidate];
-        [listener release];
-        listener = nil;
+    if (policyDecider) {
+        [policyDecider invalidate];
+        [policyDecider release];
+        policyDecider = nil;
     }
     [self startLoading];
 }
@@ -1398,9 +1398,8 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     if (formState) {
         // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
         // mechanism across the willSubmitForm callout.
-        listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
-        [[client _formDelegate] frame:client sourceFrame:[(WebFrameBridge *)[formState sourceFrame] webFrame]
-            willSubmitForm:[formState form] withValues:[formState values] submissionListener:listener];
+        policyDecider = [client _createPolicyDeciderWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
+        [client _dispatchSourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionDecider:policyDecider];
     } else
         [self continueAfterWillSubmitForm:WebPolicyUse];
 }

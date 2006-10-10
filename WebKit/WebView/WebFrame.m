@@ -60,6 +60,7 @@
 #import "WebNullPluginView.h"
 #import "WebPlugin.h"
 #import "WebPluginController.h"
+#import "WebPolicyDeciderMac.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
@@ -1780,37 +1781,52 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     [[webView _UIDelegateForwarder] webViewShow:webView];
 }
 
-- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener
+- (WebPolicyDecider *)_createPolicyDeciderWithTarget:(id)target action:(SEL)action
+{
+    return [[WebPolicyDeciderMac alloc] initWithTarget:target action:action];
+}
+
+static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *decider)
+{
+    return [(WebPolicyDeciderMac *)decider decisionListener];
+}
+
+- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider
 {
     WebView *webView = [self webView];
 
-    [[webView _policyDelegateForwarder] webView:webView decidePolicyForMIMEType:MIMEType request:request frame:self decisionListener:decisionListener];
+    [[webView _policyDelegateForwarder] webView:webView decidePolicyForMIMEType:MIMEType request:request frame:self decisionListener:decisionListener(decider)];
 }
 
-- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(WebPolicyDecisionListener *)decisionListener
+- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decider:(WebPolicyDecider *)decider
 {
     WebView *webView = [self webView];
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:action
                                    request:request
                               newFrameName:frameName
-                          decisionListener:decisionListener];
+                          decisionListener:decisionListener(decider)];
 }
 
-- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener
+- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider
 {
     WebView *webView = [self webView];
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:action
                                         request:request
                                           frame:self
-                               decisionListener:decisionListener];
+                               decisionListener:decisionListener(decider)];
 }
 
 - (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error
 {
     WebView *webView = [self webView];
     [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:self];    
+}
+
+- (void)_dispatchSourceFrame:(WebCoreFrameBridge *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider
+{
+    [[self _formDelegate] frame:self sourceFrame:Frame(sourceFrame) willSubmitForm:form withValues:values submissionListener:decisionListener(decider)];
 }
 
 - (void)_detachedFromParent1

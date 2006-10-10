@@ -30,9 +30,11 @@
 
 typedef struct LoadErrorResetToken LoadErrorResetToken;
 
+@class DOMElement;
+@class WebCoreFrameBridge;
 @class WebDocumentLoader;
 @class WebLoader;
-@class WebPolicyDecisionListener;
+@class WebPolicyDecider;
 @class WebResource;
 
 @protocol WebFrameLoaderClient
@@ -105,10 +107,12 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (WebFrame *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request;
 - (void)_dispatchShow;
 
-- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener;
-- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(WebPolicyDecisionListener *)decisionListener;
-- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decisionListener:(WebPolicyDecisionListener *)decisionListener;
+- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider;
+- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decider:(WebPolicyDecider *)decider;
+- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider;
 - (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error;
+
+- (void)_dispatchSourceFrame:(WebCoreFrameBridge *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider;
 
 - (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader;
 - (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader;
@@ -160,5 +164,7 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 
 - (NSDictionary *)_elementForEvent:(NSEvent *)event;
+
+- (WebPolicyDecider *)_createPolicyDeciderWithTarget:(id)obj action:(SEL)selector;
 
 @end
