@@ -1,3 +1,16 @@
+2006-10-10  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix crash on launch in nightly builds after r16965.
+
+        Safari will sometimes call through to -[NSURL _webkit_canonicalize] before creating a WebView.  If this happens,
+        InitWebCoreSystemInterface has not yet been called so the call to wkNSURLProtocolClassForReqest is via a garbage
+        pointer.
+
+        * Misc/WebNSURLExtras.m:
+        (-[NSURL _webkit_canonicalize]): Ensure InitWebCoreSystemInterface is called prior to canonicalURL.
+
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

@@ -37,6 +37,7 @@
 #import "LoaderNSURLExtras.h"
 
 #import <WebKitSystemInterface.h>
+#import "WebSystemInterface.h"
 
 #import <Foundation/NSURLRequest.h>
 
@@ -464,6 +465,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 - (NSURL *)_webkit_canonicalize
 {
+    InitWebCoreSystemInterface();
     return canonicalURL(self);
 }
 
