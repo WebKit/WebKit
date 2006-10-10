@@ -238,6 +238,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState;
 - (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
 - (NSURLRequest *)requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
+- (void)loadRequest:(NSURLRequest *)request;
 - (void)loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 

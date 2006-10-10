@@ -68,10 +68,7 @@
 - (void)_removeInspector:(WebInspector *)inspector;
 
 - (WebFrameLoader *)_frameLoader;
-- (void)_prepareForDataSourceReplacement;
-- (void)_frameLoadCompleted;
 - (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader;
-- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request;
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 
@@ -90,14 +87,10 @@
 
 - (void)_saveDocumentAndScrollState;
 
-- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL;
-
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;
 - (void)_purgePageCache;
 
-// used to decide to use loadType=Same
-- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
 
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
@@ -112,14 +105,7 @@
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
-- (void)_restoreScrollPositionAndViewState;
-
-- (void)_provisionalLoadStarted;
-- (void)_addHistoryItemForFragmentScroll;
-- (void)_didFinishLoad;
-
 - (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive;
-- (id <WebFormDelegate>)_formDelegate;
 
 @end
 

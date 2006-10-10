@@ -1682,16 +1682,26 @@ exit:
     return newRequest;
 }
 
+- (void)loadRequest:(NSURLRequest *)request
+{
+    // FIXME: is this the right place to reset loadType? Perhaps this should be done
+    // after loading is finished or aborted.
+    [self setLoadType:FrameLoadTypeStandard];
+    WebDocumentLoader *dl = [client _createDocumentLoaderWithRequest:request];
+    [self loadDocumentLoader:dl];
+    [dl release];
+}
+
 - (void)loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName
 {
     if (frameName == nil) {
-        [client loadRequest:request];
+        [self loadRequest:request];
         return;
     }
 
     WebFrame *frame = [client findFrameNamed:frameName];
     if (frame != nil) {
-        [frame loadRequest:request];
+        [[frame _frameLoader] loadRequest:request];
         return;
     }
 

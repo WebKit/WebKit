@@ -1,5 +1,31 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders and Oliver.
+        
+        - move a bunch of WebFrame methods from the Internal category to the WebFrameLoader protocol
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader loadRequest:]):
+        (-[WebFrameLoader loadRequest:inFrameNamed:]):
+        * Loader/WebFrameLoaderClient.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame _dispatchDidCommitLoadForFrame]):
+        (-[WebFrame _hasFrameView]):
+        (-[WebFrame _frameLoadCompleted]):
+        (-[WebFrame _restoreScrollPositionAndViewState]):
+        (-[WebFrame _setTitle:forURL:]):
+        (-[WebFrame _createDocumentLoaderWithRequest:]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _didFinishLoad]):
+        (-[WebFrame _addHistoryItemForFragmentScroll]):
+        (-[WebFrame _shouldTreatURLAsSameAsCurrent:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed, build fix.
         
         - added forgotten files

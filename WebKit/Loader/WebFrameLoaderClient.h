@@ -40,6 +40,7 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 @protocol WebFrameLoaderClient
 
 - (BOOL)_hasWebView; // mainly for assertions
+- (BOOL)_hasFrameView; // ditto
 
 - (BOOL)_hasBackForwardList;
 - (void)_resetBackForwardList;
@@ -166,5 +167,16 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 - (NSDictionary *)_elementForEvent:(NSEvent *)event;
 
 - (WebPolicyDecider *)_createPolicyDeciderWithTarget:(id)obj action:(SEL)selector;
+
+- (void)_frameLoadCompleted;
+- (void)_restoreScrollPositionAndViewState;
+- (void)_provisionalLoadStarted;
+    // used to decide to use loadType=Same
+- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
+- (void)_addHistoryItemForFragmentScroll;
+- (void)_didFinishLoad;
+- (void)_prepareForDataSourceReplacement;
+- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request;
+- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL;
 
 @end

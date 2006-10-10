@@ -261,16 +261,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (void)_addHistoryItemForFragmentScroll
-{
-    [self _addBackForwardItemClippedAtTarget:NO];
-}
-
-- (void)_didFinishLoad
-{
-    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];    
-}
-
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal
 {
     WebDataSource *dataSrc = [self dataSource];
@@ -402,50 +392,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [pageCache setObject:[[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
     }
     return YES;
-}
-
-- (void)_provisionalLoadStarted
-{
-    FrameLoadType loadType = [[self _frameLoader] loadType];
-    
-    // FIXME: This is OK as long as no one resizes the window,
-    // but in the case where someone does, it means garbage outside
-    // the occupied part of the scroll view.
-    [[[self frameView] _scrollView] setDrawsBackground:NO];
-    
-    // Cache the page, if possible.
-    // Don't write to the cache if in the middle of a redirect, since we will want to
-    // store the final page we end up on.
-    // No point writing to the cache on a reload or loadSame, since we will just write
-    // over it again when we leave that page.
-    WebHistoryItem *item = _private->currentItem;
-    if ([self _canCachePage]
-        && [_private->bridge canCachePage]
-        && item
-        && ![[self _frameLoader] isQuickRedirectComing]
-        && loadType != FrameLoadTypeReload 
-        && loadType != FrameLoadTypeReloadAllowingStaleData
-        && loadType != FrameLoadTypeSame
-        && ![[self dataSource] isLoading]
-        && ![[[self _frameLoader] documentLoader] isStopping]) {
-        if ([[[self dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]]) {
-            if (![item pageCache]){
-                // Add the items to this page's cache.
-                if ([self _createPageCacheForItem:item]) {
-                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
-                    
-                    // See if any page caches need to be purged after the addition of this
-                    // new page cache.
-                    [self _purgePageCache];
-                }
-                else
-                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
-            }
-        } else
-            // Put the document into a null state, so it can be restored correctly.
-            [_private->bridge clear];
-    } else
-        LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }
 
 - (WebFrameBridge *)_bridge
@@ -738,12 +684,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [[childFrame _frameLoader] loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
 }
 
-- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL
-{
-    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:title];
-    [_private->currentItem setTitle:title];
-}
-
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item
 {
     if (item) {
@@ -842,13 +782,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [frame _saveScrollPositionAndViewStateToItem:frame->_private->currentItem];
     }
 }
-
-- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
-{
-    WebHistoryItem *item = _private->currentItem;
-    NSString* URLString = [URL _web_originalDataAsString];
-    return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
-}    
 
 // Return next frame to be traversed, visiting children after parent
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
@@ -1099,48 +1032,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return [_private->bridge frameLoader];
 }
 
-- (void)_prepareForDataSourceReplacement
-{
-    if (![self dataSource]) {
-        ASSERT(![self _childFrameCount]);
-        return;
-    }
-    
-    // Make sure that any work that is triggered by resigning first reponder can get done.
-    // The main example where this came up is the textDidEndEditing that is sent to the
-    // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
-    // remove the views as a side-effect of freeing the bridge, at which point we can't
-    // post the FormDelegate messages.
-    //
-    // Note that this can also take FirstResponder away from a child of our frameView that
-    // is not in a child frame's view.  This is OK because we are in the process
-    // of loading new content, which will blow away all editors in this top frame, and if
-    // a non-editor is firstReponder it will not be affected by endEditingFor:.
-    // Potentially one day someone could write a DocView whose editors were not all
-    // replaced by loading new content, but that does not apply currently.
-    NSView *frameView = [self frameView];
-    NSWindow *window = [frameView window];
-    NSResponder *firstResp = [window firstResponder];
-    if ([firstResp isKindOfClass:[NSView class]]
-        && [(NSView *)firstResp isDescendantOf:frameView])
-    {
-        [window endEditingFor:firstResp];
-    }
-    
-    [[self _frameLoader] detachChildren];
-}
-
-- (void)_frameLoadCompleted
-{
-    // Note: Can be called multiple times.
-    // Even if already complete, we might have set a previous item on a frame that
-    // didn't do any data loading on the past transaction. Make sure to clear these out.
-    NSScrollView *sv = [[self frameView] _scrollView];
-    if ([[self webView] drawsBackground])
-        [sv setDrawsBackground:YES];
-    [_private setPreviousItem:nil];
-}
-
 static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 {
     return [(WebDocumentLoaderMac *)loader dataSource];
@@ -1149,46 +1040,6 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
 {
     return dataSource(loader);
-}
-
-- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request
-{
-    WebDocumentLoaderMac *loader = [[WebDocumentLoaderMac alloc] initWithRequest:request];
-    
-    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader];
-    [loader setDataSource:dataSource];
-    [dataSource release];
-
-    return loader;
-}
-
-/*
-    There is a race condition between the layout and load completion that affects restoring the scroll position.
-    We try to restore the scroll position at both the first layout and upon load completion.
-
-    1) If first layout happens before the load completes, we want to restore the scroll position then so that the
-       first time we draw the page is already scrolled to the right place, instead of starting at the top and later
-       jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
-       which case the restore silent fails and we will fix it in when we try to restore on doc completion.
-    2) If the layout happens after the load completes, the attempt to restore at load completion time silently
-       fails.  We then successfully restore it when the layout happens.
- */
-
-- (void)_restoreScrollPositionAndViewState
-{
-    ASSERT(_private->currentItem);
-    NSView <WebDocumentView> *docView = [[self frameView] documentView];
-    NSPoint point = [_private->currentItem scrollPoint];
-    if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
-        id state = [_private->currentItem viewState];
-        if (state) {
-            [(id <_WebDocumentViewState>)docView setViewState:state];
-        }
-        
-        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
-    } else {
-        [docView scrollPoint:point];
-    }
 }
 
 - (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive
@@ -1307,12 +1158,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    // FIXME: is this the right place to reset loadType? Perhaps this should be done
-    // after loading is finished or aborted.
-    [[self _frameLoader] setLoadType:FrameLoadTypeStandard];
-    WebDocumentLoader *documentLoader = [self _createDocumentLoaderWithRequest:request];
-    [[self _frameLoader] loadDocumentLoader:documentLoader];
-    [documentLoader release];
+    [[self _frameLoader] loadRequest:request];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -1730,6 +1576,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_dispatchDidCommitLoadForFrame
 {
+    // Tell the client we've committed this URL.
+    ASSERT([[self frameView] documentView] != nil);
+
     WebView *webView = [self webView];   
     [webView _didCommitLoadForFrame:self];
     [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:self];
@@ -2047,6 +1896,11 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     return [self webView] != nil;
 }
 
+- (BOOL)_hasFrameView
+{
+    return [self frameView] != nil;
+}
+
 - (NSURL *)_mainFrameURL
 {
     return [[[[self webView] mainFrame] dataSource] _URL];
@@ -2200,6 +2054,155 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         viewContainingPoint = [viewContainingPoint superview];
     }
     return nil;
+}
+
+- (void)_frameLoadCompleted
+{
+    // Note: Can be called multiple times.
+    // Even if already complete, we might have set a previous item on a frame that
+    // didn't do any data loading on the past transaction. Make sure to clear these out.
+    NSScrollView *sv = [[self frameView] _scrollView];
+    if ([[self webView] drawsBackground])
+        [sv setDrawsBackground:YES];
+    [_private setPreviousItem:nil];
+}
+
+/*
+ There is a race condition between the layout and load completion that affects restoring the scroll position.
+ We try to restore the scroll position at both the first layout and upon load completion.
+ 
+ 1) If first layout happens before the load completes, we want to restore the scroll position then so that the
+ first time we draw the page is already scrolled to the right place, instead of starting at the top and later
+ jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
+ which case the restore silent fails and we will fix it in when we try to restore on doc completion.
+ 2) If the layout happens after the load completes, the attempt to restore at load completion time silently
+ fails.  We then successfully restore it when the layout happens.
+ */
+
+- (void)_restoreScrollPositionAndViewState
+{
+    ASSERT(_private->currentItem);
+    NSView <WebDocumentView> *docView = [[self frameView] documentView];
+    NSPoint point = [_private->currentItem scrollPoint];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
+        id state = [_private->currentItem viewState];
+        if (state) {
+            [(id <_WebDocumentViewState>)docView setViewState:state];
+        }
+        
+        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
+    } else {
+        [docView scrollPoint:point];
+    }
+}
+
+- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL
+{
+    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:title];
+    [_private->currentItem setTitle:title];
+}
+
+- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request
+{
+    WebDocumentLoaderMac *loader = [[WebDocumentLoaderMac alloc] initWithRequest:request];
+    
+    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader];
+    [loader setDataSource:dataSource];
+    [dataSource release];
+    
+    return loader;
+}
+
+- (void)_prepareForDataSourceReplacement
+{
+    if (![self dataSource]) {
+        ASSERT(![self _childFrameCount]);
+        return;
+    }
+    
+    // Make sure that any work that is triggered by resigning first reponder can get done.
+    // The main example where this came up is the textDidEndEditing that is sent to the
+    // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
+    // remove the views as a side-effect of freeing the bridge, at which point we can't
+    // post the FormDelegate messages.
+    //
+    // Note that this can also take FirstResponder away from a child of our frameView that
+    // is not in a child frame's view.  This is OK because we are in the process
+    // of loading new content, which will blow away all editors in this top frame, and if
+    // a non-editor is firstReponder it will not be affected by endEditingFor:.
+    // Potentially one day someone could write a DocView whose editors were not all
+    // replaced by loading new content, but that does not apply currently.
+    NSView *frameView = [self frameView];
+    NSWindow *window = [frameView window];
+    NSResponder *firstResp = [window firstResponder];
+    if ([firstResp isKindOfClass:[NSView class]]
+        && [(NSView *)firstResp isDescendantOf:frameView])
+    {
+        [window endEditingFor:firstResp];
+    }
+    
+    [[self _frameLoader] detachChildren];
+}
+
+- (void)_didFinishLoad
+{
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];    
+}
+
+- (void)_addHistoryItemForFragmentScroll
+{
+    [self _addBackForwardItemClippedAtTarget:NO];
+}
+
+- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
+{
+    WebHistoryItem *item = _private->currentItem;
+    NSString* URLString = [URL _web_originalDataAsString];
+    return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
+}    
+
+- (void)_provisionalLoadStarted
+{
+    FrameLoadType loadType = [[self _frameLoader] loadType];
+    
+    // FIXME: This is OK as long as no one resizes the window,
+    // but in the case where someone does, it means garbage outside
+    // the occupied part of the scroll view.
+    [[[self frameView] _scrollView] setDrawsBackground:NO];
+    
+    // Cache the page, if possible.
+    // Don't write to the cache if in the middle of a redirect, since we will want to
+    // store the final page we end up on.
+    // No point writing to the cache on a reload or loadSame, since we will just write
+    // over it again when we leave that page.
+    WebHistoryItem *item = _private->currentItem;
+    if ([self _canCachePage]
+        && [_private->bridge canCachePage]
+        && item
+        && ![[self _frameLoader] isQuickRedirectComing]
+        && loadType != FrameLoadTypeReload 
+        && loadType != FrameLoadTypeReloadAllowingStaleData
+        && loadType != FrameLoadTypeSame
+        && ![[self dataSource] isLoading]
+        && ![[[self _frameLoader] documentLoader] isStopping]) {
+        if ([[[self dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]]) {
+            if (![item pageCache]){
+                // Add the items to this page's cache.
+                if ([self _createPageCacheForItem:item]) {
+                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+                    
+                    // See if any page caches need to be purged after the addition of this
+                    // new page cache.
+                    [self _purgePageCache];
+                }
+                else
+                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+            }
+        } else
+            // Put the document into a null state, so it can be restored correctly.
+            [_private->bridge clear];
+    } else
+        LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }
 
 @end
