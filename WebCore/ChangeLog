@@ -1,5 +1,12 @@
 2006-10-09  Adam Roben  <aroben@apple.com>
 
+        Backing out accidental commit.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::finishedParsing):
+
+2006-10-09  Adam Roben  <aroben@apple.com>
+
         Reviewed by Darin.
 
         Add ASSERTs to RefPtr to make sure we don't ref within a destructor, as
