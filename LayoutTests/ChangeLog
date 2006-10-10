@@ -1,3 +1,13 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - test case that ensures Referer[sic] header is sent
+
+        * http/tests/misc/referrer-expected.txt: Added.
+        * http/tests/misc/referrer.html: Added.
+        * http/tests/misc/resources/referrer-result.php: Added.
+
 2006-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
