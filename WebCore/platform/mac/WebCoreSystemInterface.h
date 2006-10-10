@@ -42,12 +42,14 @@ typedef struct _NSRect NSRect;
 #ifdef __OBJC__
 @class NSFont;
 @class NSMutableURLRequest;
+@class NSURLRequest;
 #else
 typedef struct NSDate NSDate;
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
 typedef struct NSMenu NSMenu;
 typedef struct NSMutableURLRequest NSMutableURLRequest;
+typedef struct NSURLRequest NSURLRequest;
 typedef struct NSString NSString;
 typedef struct NSURLConnection NSURLConnection;
 typedef struct NSURLResponse NSURLResponse;
@@ -108,6 +110,7 @@ extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
 extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
 extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
+extern Class (*wkNSURLProtocolClassForReqest)(NSURLRequest *);
 
 #ifdef __cplusplus
 }

@@ -71,3 +71,4 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
+Class (*wkNSURLProtocolClassForReqest)(NSURLRequest *);

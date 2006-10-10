@@ -153,6 +153,7 @@ _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
 _wkInitializeGlyphVector
+_wkNSURLProtocolClassForReqest
 _wkPathFromFont
 _wkPopupMenu
 _wkReleaseStyleGroup

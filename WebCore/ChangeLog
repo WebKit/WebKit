@@ -1,3 +1,13 @@
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver (sort of?)
+
+        - WebCore part of moving down NSURL extras
+
+        * WebCore.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2006-10-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
