@@ -1,5 +1,15 @@
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+        
+        - added forgotten files
+
+        * Loader/WebPolicyDecider.h: Added.
+        * Loader/WebPolicyDecider.m: Added.
+        (-[WebPolicyDecider invalidate]):
+
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Brady.
         
         - add wrapper for WebPolicyDecisionListener so we can remove the dependency from WebFrameLoader.
