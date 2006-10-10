@@ -1,3 +1,50 @@
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+        
+        - moved a whole bunch of stuff over to WebCore - updated includes appropriately
+
+        * Loader/LoaderNSURLExtras.h: Removed.
+        * Loader/LoaderNSURLExtras.m: Removed.
+        * Loader/WebDataProtocol.h: Removed.
+        * Loader/WebDataProtocol.m: Removed.
+        * Loader/WebDocumentLoader.h: Removed.
+        * Loader/WebDocumentLoader.m: Removed.
+        * Loader/WebFormDataStream.h: Removed.
+        * Loader/WebFormDataStream.m: Removed.
+        * Loader/WebFormState.h: Removed.
+        * Loader/WebFormState.m: Removed.
+        * Loader/WebFrameLoader.h: Removed.
+        * Loader/WebFrameLoader.m: Removed.
+        * Loader/WebFrameLoaderClient.h: Removed.
+        * Loader/WebLoader.h: Removed.
+        * Loader/WebLoader.m: Removed.
+        * Loader/WebMainResourceLoader.h: Removed.
+        * Loader/WebMainResourceLoader.m: Removed.
+        * Loader/WebNetscapePlugInStreamLoader.h: Removed.
+        * Loader/WebNetscapePlugInStreamLoader.m: Removed.
+        * Loader/WebPlugInStreamLoaderDelegate.h: Removed.
+        * Loader/WebPolicyDecider.h: Removed.
+        * Loader/WebPolicyDecider.m: Removed.
+        * Loader/WebSubresourceLoader.h: Removed.
+        * Loader/WebSubresourceLoader.m: Removed.
+        * Misc/WebNSURLExtras.m:
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        * Plugins/WebNetscapePluginStream.m:
+        * Plugins/WebPluginContainerCheck.m:
+        * Plugins/WebPluginController.m:
+        * WebCoreSupport/WebFrameBridge.m:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebFrame.m:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.m:
+        * WebView/WebPolicyDeciderMac.h:
+        * WebView/WebPolicyDelegate.m:
+        * WebView/WebView.m:
+
 2006-10-10  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.

@@ -29,8 +29,8 @@
 
 #import "LoaderNSURLExtras.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import <wtf/Assertions.h>
+#import "WebCoreSystemInterface.h"
 
 NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component)
 {

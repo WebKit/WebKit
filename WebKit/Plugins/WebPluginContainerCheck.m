@@ -41,7 +41,7 @@
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewInternal.h>
-#import <WebKit/WebFrameLoader.h>
+#import <WebCore/WebFrameLoader.h>
 #import <objc/objc-runtime.h>
 
 @implementation WebPluginContainerCheck

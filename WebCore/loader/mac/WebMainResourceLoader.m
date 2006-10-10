@@ -34,8 +34,8 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import <wtf/Assertions.h>
+#import "WebCoreSystemInterface.h"
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 
@@ -327,7 +327,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [frameLoader _setResponse:r];
-    _contentLength = [r expectedContentLength];
+    _contentLength = (int)[r expectedContentLength];
 
     _response = [r retain];
     [self checkContentPolicy];

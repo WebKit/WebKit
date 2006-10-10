@@ -1,5 +1,27 @@
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+
+        - moved a big honkin' pile of code over from WebKit; made minimal needed changes to compile
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/mac/LoaderNSURLExtras.m: Added.
+        * loader/mac/WebDataProtocol.m: Added.
+        * loader/mac/WebDocumentLoader.m: Added.
+        * loader/mac/WebFormDataStream.m: Added.
+        * loader/mac/WebFrameLoader.m: Added.
+        * loader/mac/WebLoader.m: Added.
+        (-[NSURLProtocol didReceiveResponse:]):
+        (-[NSURLProtocol didReceiveData:lengthReceived:allAtOnce:]):
+        * loader/mac/WebMainResourceLoader.m: Added.
+        (-[WebMainResourceLoader didReceiveResponse:]):
+        * loader/mac/WebPolicyDecider.m: Added.
+        * loader/mac/WebSubresourceLoader.h: Added.
+        * loader/mac/WebSubresourceLoader.m: Added.
+
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver (sort of?)
 
         - WebCore part of moving down NSURL extras

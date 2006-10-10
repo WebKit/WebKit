@@ -37,7 +37,7 @@
 #import <WebKit/WebBaseNetscapePluginViewInternal.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebClipView.h>
-#import <WebKit/WebDataProtocol.h>
+#import <WebCore/WebDataProtocol.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>

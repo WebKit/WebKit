@@ -29,7 +29,7 @@
 #import "WebDataProtocol.h"
 
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 static NSString *WebDataRequestPropertyKey = @"WebDataRequest";

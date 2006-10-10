@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebLoader.h"
+#import "WebPolicyDecider.h"
+#import <wtf/Assertions.h>
 
-#import <WebCore/WebCoreResourceLoader.h>
+@implementation WebPolicyDecider
 
-@class WebFrameLoader;
 
-@protocol WebCoreResourceHandle;
-@protocol WebCoreResourceLoader;
-
-@interface WebSubresourceLoader : WebLoader <WebCoreResourceHandle>
+- (void)invalidate
 {
-    id <WebCoreResourceLoader> coreLoader;
+    ASSERT_NOT_REACHED();
 }
-
-- (void)signalFinish;
-
-+ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                    withMethod:(NSString *)method
-                                           URL:(NSURL *)URL 
-                                 customHeaders:(NSDictionary *)customHeaders
-                                      referrer:(NSString *)referrer 
-                                forFrameLoader:(WebFrameLoader *)loader;
-
-+ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                    withMethod:(NSString *)method
-                                           URL:(NSURL *)URL 
-                                 customHeaders:(NSDictionary *)customHeaders
-                                      postData:(NSArray *)postData 
-                                      referrer:(NSString *)referrer 
-                                forFrameLoader:(WebFrameLoader *)loader;
 
 @end

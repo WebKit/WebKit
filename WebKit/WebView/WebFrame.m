@@ -30,17 +30,17 @@
 
 #import "WebArchive.h"
 #import "WebBackForwardList.h"
-#import "WebDataProtocol.h"
+#import <WebCore/WebDataProtocol.h>
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
-#import "WebFormDataStream.h"
+#import <WebCore/WebFormDataStream.h>
 #import "WebFrameBridge.h"
 #import "WebFrameLoadDelegate.h"
-#import "WebFrameLoader.h"
+#import <WebCore/WebFrameLoader.h>
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -51,7 +51,7 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
-#import "WebLoader.h"
+#import <WebCore/WebLoader.h>
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"

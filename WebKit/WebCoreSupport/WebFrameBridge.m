@@ -34,13 +34,13 @@
 #import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
-#import "WebDocumentLoader.h"
+#import <WebCore/WebDocumentLoader.h>
 #import "WebEditingDelegate.h"
-#import "WebFormDataStream.h"
 #import "WebFormDelegate.h"
+#import <WebCore/WebFormDataStream.h>
 #import "WebFrameInternal.h"
-#import "WebFrameLoadDelegate.h"
-#import "WebFrameLoader.h"
+#import <WebKit/WebFrameLoadDelegate.h>
+#import <WebCore/WebFrameLoader.h>
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -54,7 +54,7 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitSystemBits.h"
-#import "WebLoader.h"
+#import <WebCore/WebLoader.h>
 #import "WebLocalizableStrings.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
@@ -72,7 +72,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
-#import "WebSubresourceLoader.h"
+#import <WebCore/WebSubresourceLoader.h>
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>

@@ -34,7 +34,7 @@
 #import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebLocalizableStrings.h>
-#import "LoaderNSURLExtras.h"
+#import <WebCore/LoaderNSURLExtras.h>
 
 #import <WebKitSystemInterface.h>
 #import "WebSystemInterface.h"

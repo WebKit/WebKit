@@ -34,7 +34,7 @@
 #import "WebBaseNetscapePluginView.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDashboardRegion.h"
-#import "WebDataProtocol.h"
+#import <WebCore/WebDataProtocol.h>
 #import "WebDataSourceInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultFrameLoadDelegate.h"
@@ -44,7 +44,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
-#import "WebDocumentLoader.h"
+#import <WebCore/WebDocumentLoader.h>
 #import "WebDownload.h"
 #import "WebDownloadInternal.h"
 #import "WebDynamicScrollBarsView.h"
@@ -52,7 +52,7 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import "WebFrameLoader.h"
+#import <WebCore/WebFrameLoader.h>
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"

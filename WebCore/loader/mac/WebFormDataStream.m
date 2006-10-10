@@ -33,8 +33,8 @@
 #import <sys/types.h>
 #import <sys/stat.h>
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import <wtf/Assertions.h>
+#import "WebCoreSystemInterface.h"
 
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void *context);
 

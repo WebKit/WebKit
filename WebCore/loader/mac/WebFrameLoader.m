@@ -36,11 +36,11 @@
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
 #import "WebPolicyDecider.h"
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 #import <WebKit/DOMHTML.h>
-#import <WebCore/WebCoreFrameBridge.h>
-#import <WebCore/WebCoreIconDatabaseBridge.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import "WebCoreFrameBridge.h"
+#import "WebCoreIconDatabaseBridge.h"
+#import "WebCoreSystemInterface.h"
 
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {

@@ -35,7 +35,7 @@
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFrameInternal.h> 
-#import <WebKit/WebFrameLoader.h> 
+#import <WebCore/WebFrameLoader.h> 
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>

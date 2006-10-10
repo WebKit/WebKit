@@ -30,13 +30,13 @@
 
 #import "WebArchive.h"
 #import "WebArchiver.h"
-#import "WebDataProtocol.h"
-#import "WebDataSourceInternal.h"
+#import <WebCore/WebDataProtocol.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocument.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import "WebFrameLoader.h"
+#import <WebCore/WebFrameLoader.h>
 #import "WebFrameLoadDelegate.h"
 #import "WebHTMLRepresentation.h"
 #import "WebKitErrorsPrivate.h"

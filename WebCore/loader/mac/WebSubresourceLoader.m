@@ -31,9 +31,9 @@
 #import "WebFormDataStream.h"
 #import "WebFrameLoader.h"
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreResourceLoader.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import <wtf/Assertions.h>
+#import "WebCoreResourceLoader.h"
+#import "WebCoreSystemInterface.h"
 
 @implementation WebSubresourceLoader
 

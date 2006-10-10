@@ -28,11 +28,11 @@
 
 #import "WebDocumentLoader.h"
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 #import "WebFrameLoader.h"
 #import "WebDataProtocol.h"
-#import "WebFrameBridge.h"
-#import <WebCore/WebCoreSystemInterface.h>
+#import "WebCoreFrameBridge.h"
+#import "WebCoreSystemInterface.h"
 
 @implementation WebDocumentLoader
 

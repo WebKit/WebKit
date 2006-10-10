@@ -34,8 +34,8 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreSystemInterface.h>
+#import <wtf/Assertions.h>
+#import "WebCoreSystemInterface.h"
 
 static unsigned inNSURLConnectionCallback;
 static BOOL NSURLConnectionSupportsBufferedData;
@@ -335,9 +335,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
-    if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
-        r = [[[NSURLResponse alloc] initWithURL:[request _webDataRequestExternalURL] MIMEType:[r MIMEType] expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
-    }
+    if([WebDataProtocol _webIsDataProtocolURL:[r URL]])
+        r = [[[NSURLResponse alloc] initWithURL:[request _webDataRequestExternalURL] MIMEType:[r MIMEType] expectedContentLength:(int)[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
 
     [r retain];
     [response release];
@@ -362,7 +361,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     [self addData:data allAtOnce:allAtOnce];
     
-    [frameLoader _didReceiveData:data contentLength:lengthReceived forResource:identifier];
+    [frameLoader _didReceiveData:data contentLength:(int)lengthReceived forResource:identifier];
 
     [self release];
 }

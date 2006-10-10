@@ -29,7 +29,7 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebDocumentLoader.h>
+#import <WebCore/WebDocumentLoader.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
@@ -47,7 +47,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebFrameLoader.h>
+#import <WebCore/WebFrameLoader.h>
 
 #import <WebCore/WebCoreFrameBridge.h>
 

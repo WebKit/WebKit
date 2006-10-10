@@ -28,7 +28,6 @@
 
 #import <WebKit/WebNetscapePluginStream.h>
 
-#import <WebKit/WebLoader.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
@@ -36,10 +35,10 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNetscapePluginStreamLoader.h>
+#import <WebCore/WebNetscapePluginStreamLoader.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewInternal.h>
-#import <WebKit/WebFrameLoader.h>
+#import <WebCore/WebFrameLoader.h>
 
 #import <Foundation/NSURLConnection.h>
 
