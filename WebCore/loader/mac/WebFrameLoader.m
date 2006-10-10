@@ -1630,6 +1630,8 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     if (!mainBridge)
         goto exit;
 
+    [mainBridge retain];
+
     [mainBridge setName:frameName];
 
     [[[mainBridge frameLoader] client] _dispatchShow];

@@ -1,5 +1,16 @@
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mitz.
+
+        - fixed REGRESSION (r16960): crash on navigating to site
+        http://www.zoominfo.com/Search/CompanyDetail.aspx?CompanyID=62948057&cs=QGDwILZIE
+        
+        * loader/mac/WebFrameLoader.m:
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        Add back a mistakenly removed retain.
+
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed, build fix.
 
         - fixed release build
