@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,19 +24,16 @@
 #ifdef SVG_SUPPORT
 #include "SVGAnimationElement.h"
 
-#include "Attr.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "DOMImplementation.h"
-#include "ksvgcssproperties.h"
 #include "KSVGTimeScheduler.h"
 #include "PlatformString.h"
-#include "SVGDocumentExtensions.h"
 #include "SVGHelper.h"
-#include "SVGStyledElement.h"
 #include "SVGSVGElement.h"
+#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
+#include "ksvgcssproperties.h"
 #include <float.h>
 #include <math.h>
 #include <wtf/Vector.h>
@@ -73,15 +70,15 @@ SVGAnimationElement::~SVGAnimationElement()
 {
 }
 
-SVGElement *SVGAnimationElement::targetElement() const
+SVGElement* SVGAnimationElement::targetElement() const
 {
     if (!m_targetElement) {
         if (!m_href.isEmpty()) {
-            Element *element = ownerDocument()->getElementById(SVGURIReference::getTarget(m_href));
+            Element* element = ownerDocument()->getElementById(SVGURIReference::getTarget(m_href));
             m_targetElement = svg_dynamic_cast(element);
         } else if (parentNode()) {
-            Node *target = parentNode();
-            while(target != 0) {
+            Node* target = parentNode();
+            while (target) {
                 if (target->nodeType() != ELEMENT_NODE)
                     target = target->parentNode();
                 else
@@ -114,7 +111,7 @@ double SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
     return m_simpleDuration;
 }
 
-void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name().matches(XLinkNames::hrefAttr))
@@ -400,10 +397,10 @@ String SVGAnimationElement::targetAttribute() const
     if (!targetElement())
         return String();
     
-    SVGElement *target = targetElement();
-    SVGStyledElement *styled = NULL;
+    SVGElement* target = targetElement();
+    SVGStyledElement* styled = 0;
     if (target && target->isStyled())
-        styled = static_cast<SVGStyledElement *>(target);
+        styled = static_cast<SVGStyledElement*>(target);
     
     String ret;
 

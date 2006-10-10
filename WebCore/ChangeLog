@@ -1,3 +1,33 @@
+2006-10-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg animation classes.
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        (WebCore::SVGAnimateTransformElement::parseMappedAttribute):
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        (WebCore::SVGAnimateTransformElement::calculateRotationFromMatrix):
+        (WebCore::SVGAnimateTransformElement::initialMatrix):
+        (WebCore::SVGAnimateTransformElement::transformMatrix):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimatedPathData.cpp:
+        * ksvg2/svg/SVGAnimatedPathData.h:
+        * ksvg2/svg/SVGAnimatedPoints.cpp:
+        * ksvg2/svg/SVGAnimatedPoints.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::targetElement):
+
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

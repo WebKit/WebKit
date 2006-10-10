@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,19 +22,18 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-
-#include "SVGColor.h"
 #include "SVGAnimateColorElement.h"
+
+#include "Document.h"
 #include "KSVGTimeScheduler.h"
 #include "PlatformString.h"
-#include "Document.h"
-#include "SVGDocumentExtensions.h"
+#include "SVGColor.h"
 #include "SVGSVGElement.h"
 #include <math.h>
 
 namespace WebCore {
 
-SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document *doc)
+SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
     , m_toColor(new SVGColor())
     , m_fromColor(new SVGColor())
@@ -60,8 +59,7 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
         m_initialColor = temp->color();
 
         // Animation mode handling
-        switch(detectAnimationMode())
-        {
+        switch (detectAnimationMode()) {
             case TO_ANIMATION:
             case FROM_TO_ANIMATION:
             {

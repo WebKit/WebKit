@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,8 +24,8 @@
 #define SVGAnimateTransformElement_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTransform.h"
 #include "SVGAnimationElement.h"
+#include "SVGTransform.h"
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ namespace WebCore {
 
         // Helpers
         RefPtr<SVGTransform> parseTransformValue(const String&) const;
-        void calculateRotationFromMatrix(const AffineTransform&, double &angle, double &cx, double &cy) const;
+        void calculateRotationFromMatrix(const AffineTransform&, double& angle, double& cx, double& cy) const;
 
         SVGMatrix* initialMatrix() const;
         SVGMatrix* transformMatrix() const;

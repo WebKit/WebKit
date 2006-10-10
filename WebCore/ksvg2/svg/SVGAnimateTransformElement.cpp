@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,29 +22,22 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
+#include "SVGAnimateTransformElement.h"
 
-#include <kcanvas/RenderPath.h>
-
+#include "KSVGTimeScheduler.h"
 #include "SVGAngle.h"
 #include "SVGMatrix.h"
-#include "SVGTransform.h"
 #include "SVGStyledTransformableElement.h"
-#include "SVGTransformList.h"
-#include "SVGTransformList.h"
-#include "SVGAnimateTransformElement.h"
-#include "KSVGTimeScheduler.h"
-#include "Document.h"
-#include "SVGDocumentExtensions.h"
 #include "SVGSVGElement.h"
-
+#include "SVGTransform.h"
+#include "SVGTransformList.h"
 #include <math.h>
 
 using namespace std;
 
 namespace WebCore {
 
-SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document *doc)
+SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
     , m_currentItem(-1)
     , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
@@ -58,7 +51,7 @@ SVGAnimateTransformElement::~SVGAnimateTransformElement()
 {
 }
 
-void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::typeAttr) {
         const String& value = attr->value();
@@ -84,12 +77,12 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
         
         // Save initial transform... (needed for fill="remove" or additve="sum")
         if (targetElement()->isStyledTransformable()) {
-            SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(targetElement());
+            SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement());
             RefPtr<SVGTransformList> transformList = transform->transformBaseValue();
             if (transformList) {
                 ExceptionCode ec = 0;
                 for (unsigned long i = 0; i < transformList->numberOfItems(); i++) {
-                    SVGTransform *value = transformList->getItem(i, ec).get();;
+                    SVGTransform* value = transformList->getItem(i, ec).get();;
                     if (!value)
                         continue;
                         
@@ -102,8 +95,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
         }
                 
         // Animation mode handling
-        switch(detectAnimationMode())
-        {
+        switch (detectAnimationMode()) {
             case TO_ANIMATION:
             case FROM_TO_ANIMATION:
             {        
@@ -146,8 +138,8 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
                 if (!m_fromTransform)
                     m_fromTransform = new SVGTransform();
 
-                SVGMatrix *byMatrix = m_toTransform->matrix();
-                SVGMatrix *fromMatrix = m_fromTransform->matrix();
+                SVGMatrix* byMatrix = m_toTransform->matrix();
+                SVGMatrix* fromMatrix = m_fromTransform->matrix();
 
                 byMatrix->multiply(fromMatrix);
 
@@ -231,8 +223,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             m_transformMatrix->multiply(m_lastMatrix.get());
     }
     
-    switch(m_type)
-    {
+    switch (m_type) {
         case SVGTransform::SVG_TRANSFORM_TRANSLATE:
         {
             double dx = ((qToMatrix.dx() - qFromMatrix.dx()) * useTimePercentage) + qFromMatrix.dx();
@@ -322,7 +313,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
         m_initialTransform = 0;
 
         if (!isFrozen()) {
-            SVGMatrix *initial = initialMatrix();
+            SVGMatrix* initial = initialMatrix();
             if (initial)
                 m_transformMatrix = initial;
             else
@@ -341,8 +332,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Strin
 
     RefPtr<SVGTransform> parsedTransform = new SVGTransform();
     
-    switch(m_type)
-    {
+    switch (m_type) {
         case SVGTransform::SVG_TRANSFORM_TRANSLATE:
         {
             double tx = 0.0, ty = 0.0;
@@ -421,7 +411,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Strin
     return parsedTransform;
 }
 
-void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransform &matrix, double &angle, double &cx, double &cy) const
+void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransform& matrix, double& angle, double& cx, double& cy) const
 {
     double cosa = matrix.m11();
     double sina = -matrix.m21();
@@ -447,12 +437,12 @@ void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransfo
     angle = 0.0;
 }
 
-SVGMatrix *SVGAnimateTransformElement::initialMatrix() const
+SVGMatrix* SVGAnimateTransformElement::initialMatrix() const
 {
     if (!targetElement()->isStyledTransformable())
         return 0;
-    SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(targetElement());
-    SVGTransformList *transformList = (transform ? transform->transformBaseValue() : 0);
+    SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement());
+    SVGTransformList* transformList = (transform ? transform->transformBaseValue() : 0);
     if (!transformList)
         return 0;
     
@@ -460,13 +450,13 @@ SVGMatrix *SVGAnimateTransformElement::initialMatrix() const
     if (!result)
         return 0;
 
-    SVGMatrix *ret = result->matrix();
+    SVGMatrix* ret = result->matrix();
     ret->ref();
 
     return ret;
 }
 
-SVGMatrix *SVGAnimateTransformElement::transformMatrix() const
+SVGMatrix* SVGAnimateTransformElement::transformMatrix() const
 {
     return m_transformMatrix.get();
 }

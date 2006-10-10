@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,13 +25,12 @@
 #include "SVGAnimateElement.h"
 
 #include "KSVGTimeScheduler.h"
-#include "Document.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGSVGElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document *doc)
+SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
     , m_currentItem(-1)
 {
@@ -50,8 +49,7 @@ void SVGAnimateElement::handleTimerEvent(double timePercentage)
         m_savedTo = attr.deprecatedString();
 
         // Animation mode handling
-        switch(detectAnimationMode())
-        {
+        switch (detectAnimationMode()) {
 /*            case TO_ANIMATION:
             case FROM_TO_ANIMATION:
             {
@@ -205,6 +203,8 @@ void SVGAnimateElement::handleTimerEvent(double timePercentage)
         // Reset...
         m_currentItem = -1;
     }
+}
+
 }
 
 // vim:ts=4:noet
