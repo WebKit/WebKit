@@ -28,12 +28,11 @@
 #define NodeFilter_h
 
 #include "NodeFilterCondition.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class NodeFilter : public Shared<NodeFilter>, Noncopyable {
+    class NodeFilter : public Shared<NodeFilter> {
     public:
         /**
          * The following constants are returned by the acceptNode()

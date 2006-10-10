@@ -23,7 +23,6 @@
 
 #include "Shared.h"
 
-#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
@@ -42,7 +41,7 @@ class GraphicsContext;
 class IntRect;
 class String;
     
-class Icon : public Shared<Icon>, Noncopyable {
+class Icon : public Shared<Icon> {
 public:
     Icon();
     ~Icon();

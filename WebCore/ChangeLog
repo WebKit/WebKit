@@ -1,3 +1,28 @@
+2006-10-09  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Add ASSERTs to RefPtr to make sure we don't ref within a destructor, as
+        this could cause recursive calls to the destructor. RefPtr now also
+        inherits from Noncopyable.
+
+        * dom/NodeFilter.h:
+        * dom/Traversal.h:
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::finishedParsing):
+        * page/Frame.h:
+        * page/Plugin.h:
+        * platform/FontFallbackList.h:
+        * platform/Icon.h:
+        * platform/Shared.h:
+        (WebCore::Shared::Shared):
+        (WebCore::Shared::ref):
+        (WebCore::Shared::deref):
+        (WebCore::Shared::hasOneRef):
+        (WebCore::Shared::refCount):
+        * platform/StringImpl.h:
+
 2006-10-09  Oliver Hunt <ohunt@apple.com>
 
         Reviewed by Anders.

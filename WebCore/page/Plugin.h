@@ -22,13 +22,12 @@
 #define PLUGIN_H
 
 #include "Shared.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     class Widget;
 
-    class Plugin : public Shared<Plugin>, Noncopyable {
+    class Plugin : public Shared<Plugin> {
     public:
         Plugin(Widget* view) : m_view(view) { }
         Widget* view() const { return m_view; }

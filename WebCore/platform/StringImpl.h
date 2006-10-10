@@ -28,7 +28,6 @@
 #include "UChar.h"
 #include <kjs/identifier.h>
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <limits.h>
 
@@ -50,7 +49,7 @@ struct UCharBufferTranslator;
 struct CStringTranslator;
 struct Length;
 
-class StringImpl : public Shared<StringImpl>, Noncopyable {
+class StringImpl : public Shared<StringImpl> {
 private:
     struct WithOneRef { };
     StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false) { ref(); }

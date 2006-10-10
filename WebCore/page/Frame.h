@@ -94,7 +94,7 @@ enum ObjectContentType {
     ObjectContentPlugin
 };
 
-class Frame : public Shared<Frame>, Noncopyable {
+class Frame : public Shared<Frame> {
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 

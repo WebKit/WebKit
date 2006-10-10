@@ -27,7 +27,6 @@
 #define DOMWindow_h
 
 #include "Shared.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ namespace WebCore {
     class Frame;
     class String;
     
-    class DOMWindow : public Shared<DOMWindow>, Noncopyable {
+    class DOMWindow : public Shared<DOMWindow> {
     public:
         DOMWindow(Frame*);
         Frame* frame();

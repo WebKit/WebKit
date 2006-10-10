@@ -29,7 +29,6 @@
 
 #include "Shared.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -37,7 +36,7 @@ namespace WebCore {
     class Node;
     class NodeFilter;
 
-    class Traversal : public Shared<Traversal>, Noncopyable {
+    class Traversal : public Shared<Traversal> {
     public:
         Traversal(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
         virtual ~Traversal();
