@@ -2583,6 +2583,11 @@ static NSCharacterSet *_getPostSmartSet(void)
     m_frame->setProhibitsScrolling(prohibits);
 }
 
+- (BOOL)isMainFrame
+{
+    return m_frame->page()->mainFrame() == m_frame;
+}
+
 @end
 
 @implementation WebCoreFrameBridge (WebCoreBridgeInternal)

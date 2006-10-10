@@ -1,3 +1,13 @@
+2006-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - added isMainFrame and frameLoader to WebCoreFrameBridge for ease of future code motion
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isMainFrame]):
+
 2006-10-09  Adam Roben  <aroben@apple.com>
 
         Backing out accidental commit.

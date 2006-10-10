@@ -206,6 +206,8 @@ typedef enum {
 - (WebCoreFrameBridge *)previousSibling;
 - (WebCoreFrameBridge *)nextSibling;
 
+- (BOOL)isMainFrame;
+
 - (void)appendChild:(WebCoreFrameBridge *)child;
 - (void)removeChild:(WebCoreFrameBridge *)child;
 
@@ -507,7 +509,11 @@ typedef enum {
 // In NSArray objects for post data, NSData objects represent literal data, and NSString objects represent encoded files.
 // The encoding is the standard form encoding for uploading files.
 
+@class WebFrameLoader;
+
 @protocol WebCoreFrameBridge
+
+- (WebFrameLoader *)frameLoader;
 
 - (void)frameDetached;
 - (NSView *)documentView;
