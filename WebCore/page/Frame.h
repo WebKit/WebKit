@@ -524,6 +524,8 @@ public:
   virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
   virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
   
+  void updateSelectionForMouseDragOverPosition(const VisiblePosition&);
+
   void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
 
   virtual void urlSelected(const DeprecatedString& url, const String& target);
@@ -640,7 +642,12 @@ public:
   void selectFrameElementInParentIfFullySelected();
   
   virtual bool mouseDownMayStartSelect() const { return true; }
+  bool mouseDownMayStartAutoscroll() const;
+  void setMouseDownMayStartAutoscroll(bool b);
 
+  bool mouseDownMayStartDrag() const;
+  void setMouseDownMayStartDrag(bool b);
+  
   void handleFallbackContent();
 
 private:
@@ -749,6 +756,9 @@ private:
     void setNeedsReapplyStyles();
 
   virtual IntRect windowResizerRect() const { return IntRect(); }
+  
+  void stopAutoscrollTimer();
+  RenderObject* autoscrollRenderer() const;
 
 protected:
     virtual void startRedirectionTimer();
@@ -758,7 +768,7 @@ protected:
     
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
-    void stopAutoscrollTimer();
+    void setAutoscrollRenderer(RenderObject*);
 
  private:
   void emitLoadEvent();

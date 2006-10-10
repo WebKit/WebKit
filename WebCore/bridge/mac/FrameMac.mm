@@ -152,9 +152,7 @@ FrameMac::FrameMac(Page* page, Element* ownerElement)
     , _bridge(nil)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
-    , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
-    , _mouseDownMayStartAutoscroll(false)
     , _activationEventNumber(0)
     , _bindingRoot(0)
     , _windowScriptObject(0)
@@ -1408,11 +1406,9 @@ void FrameMac::handleMousePressEvent(const MouseEventWithHitTestResults& event)
     _mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode());
     
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
-    _mouseDownMayStartDrag = singleClick;
+    setMouseDownMayStartDrag(singleClick);
 
     d->m_mousePressNode = event.targetNode();
-
-    _mouseDownMayStartAutoscroll = d->m_mousePressNode && d->m_mousePressNode->renderer() && d->m_mousePressNode->renderer()->shouldAutoscroll();
     
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -1587,8 +1583,8 @@ NSView *FrameMac::mouseDownViewIfStillGood()
 bool FrameMac::eventMayStartDrag(NSEvent *event) const
 {
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
-    // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we set
-    // _mouseDownMayStartDrag in handleMousePressEvent
+    // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
+    // in handleMousePressEvent
     
     if ([event type] != NSLeftMouseDown || [event clickCount] != 1) {
         return false;
@@ -1650,24 +1646,24 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
 
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
-        if (_mouseDownMayStartDrag && !_dragSrc) {
+        if (mouseDownMayStartDrag() && !_dragSrc) {
             BOOL tempFlag1, tempFlag2;
             [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
             _dragSrcMayBeDHTML = tempFlag1;
             _dragSrcMayBeUA = tempFlag2;
             if (!_dragSrcMayBeDHTML && !_dragSrcMayBeUA) {
-                _mouseDownMayStartDrag = false;     // no element is draggable
+                setMouseDownMayStartDrag(false);     // no element is draggable
             }
         }
         
-        if (_mouseDownMayStartDrag && !_dragSrc) {
+        if (mouseDownMayStartDrag() && !_dragSrc) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->hitTest(nodeInfo, m_mouseDownPos);
             Node *node = nodeInfo.innerNode();
             _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), _dragSrcIsDHTML) : 0;
             if (!_dragSrc) {
-                _mouseDownMayStartDrag = false;     // no element is draggable
+                setMouseDownMayStartDrag(false);     // no element is draggable
             } else {
                 // remember some facts about this source, while we have a NodeInfo handy
                 node = nodeInfo.URLElement();
@@ -1682,15 +1678,15 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         
         // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
         // or else we bail on the dragging stuff and allow selection to occur
-        if (_mouseDownMayStartDrag && _dragSrcInSelection && [_currentEvent timestamp] - _mouseDownTimestamp < TextDragDelay) {
-            _mouseDownMayStartDrag = false;
+        if (mouseDownMayStartDrag() && _dragSrcInSelection && [_currentEvent timestamp] - _mouseDownTimestamp < TextDragDelay) {
+            setMouseDownMayStartDrag(false);
             // ...but if this was the first click in the window, we don't even want to start selection
             if (_activationEventNumber == [_currentEvent eventNumber]) {
                 _mouseDownMayStartSelect = false;
             }
         }
 
-        if (_mouseDownMayStartDrag) {
+        if (mouseDownMayStartDrag()) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->setCursor(pointerCursor());
             
@@ -1723,12 +1719,12 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                         _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint() + delta);
                     } 
 
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && mayCopy();
+                    setMouseDownMayStartDrag(dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && mayCopy());
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(ClipboardMac::ImageWritable);
                     
-                    if (_mouseDownMayStartDrag) {
+                    if (mouseDownMayStartDrag()) {
                         // gather values from DHTML element, if it set any
                         _dragClipboard->sourceOperation(&srcOp);
 
@@ -1746,17 +1742,17 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     }
                 }
                 
-                if (_mouseDownMayStartDrag) {
+                if (mouseDownMayStartDrag()) {
                     BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
                     if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
                         PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
                         dispatchDragSrcEvent(dragendEvent, event);
-                        _mouseDownMayStartDrag = false;
+                        setMouseDownMayStartDrag(false);
                     }
                 } 
 
-                if (!_mouseDownMayStartDrag) {
+                if (!mouseDownMayStartDrag()) {
                     // something failed to start the drag, cleanup
                     freeClipboard();
                     _dragSrc = 0;
@@ -1766,30 +1762,8 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
             // No more default handling (like selection), whether we're past the hysteresis bounds or not
             return;
         }
-        if (!_mouseDownMayStartSelect && !_mouseDownMayStartAutoscroll) {
+        if (!mouseDownMayStartSelect() && !mouseDownMayStartAutoscroll())
             return;
-        }
-
-        // Don't allow dragging or click handling after we've started selecting.
-        _mouseDownMayStartDrag = false;
-        d->m_view->invalidateClick();
-
-        Node* node = event.targetNode();
-        RenderObject* renderer = 0;
-        if (node)
-            renderer = node->renderer();
-            
-        // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
-        // Otherwise, let the bridge handle it so the view can scroll itself.
-        while (renderer && !renderer->shouldAutoscroll())
-            renderer = renderer->parent();
-        if (renderer)
-            handleAutoscroll(renderer);
-        else {
-            if (!d->m_autoscrollTimer.isActive())
-                startAutoscrollTimer();
-            [_bridge handleAutoscrollForMouseDragged:_currentEvent];
-        }
             
     } else {
         // If we allowed the other side of the bridge to handle a drag
@@ -2008,10 +1982,10 @@ void FrameMac::mouseDown(NSEvent *event)
     m_mouseDownPos = d->m_view->windowToContents(IntPoint(loc));
     _mouseDownTimestamp = [event timestamp];
 
-    _mouseDownMayStartDrag = false;
+    setMouseDownMayStartDrag(false);
     _mouseDownMayStartSelect = false;
-    _mouseDownMayStartAutoscroll = false;
-
+    setMouseDownMayStartAutoscroll(false);
+    
     v->handleMousePressEvent(event);
     
     ASSERT(_currentEvent == event);

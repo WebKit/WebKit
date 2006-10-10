@@ -102,6 +102,8 @@ namespace WebCore {
             , m_iconLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
             , m_autoscrollRenderer(0)
+            , m_mouseDownMayStartAutoscroll(false)
+            , m_mouseDownMayStartDrag(false)
             , m_paintRestriction(PaintRestrictionNone)
             , m_markedTextUsesUnderlines(false)
             , m_highlightTextMatches(false)
@@ -222,6 +224,8 @@ namespace WebCore {
         
         Timer<Frame> m_autoscrollTimer;
         RenderObject* m_autoscrollRenderer;
+        bool m_mouseDownMayStartAutoscroll;
+        bool m_mouseDownMayStartDrag;
         
         RefPtr<Node> m_elementToDraw;
         PaintRestriction m_paintRestriction;

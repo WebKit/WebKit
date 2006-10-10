@@ -1,3 +1,59 @@
+2006-10-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth. 
+
+
+        - Fix for <rdar://problem/4707489> After timers fix, crash below RenderLayer::autoscroll after moving/destroying active <input type=text>
+          and <rdar://problem/4707519> After timers fix, crash below RenderLayer::autoscroll after moving/destroying active textarea
+
+        Moved autoscroll code to the Frame class
+
+        * bridge/mac/FrameMac.h: Moved _mouseDownMayStartDrag and _mouseDownMayStartAutoscroll flags to the frame.
+        * bridge/mac/FrameMac.mm: Use new getters and setters for drag and autoscroll flags.  Moved autoscroll code to Frame::handleMouseMoveEvent.
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::handleMousePressEvent):
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::mouseDown):
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed handleAutoscrollForMouseDragged, which called over the bridge for AppKit to do autoscroll for us.
+        Now we scroll our views in WebCore.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::handleMousePressEvent): Initialize the mouseDownMayStartAutoscroll flag.
+        (WebCore::Frame::handleMouseMoveEvent): Now kicks off autoscroll if appropriate.  Moved from FrameMac.
+        (WebCore::Frame::updateSelectionForMouseDragOverPosition): Factored code out from handleMouseMoveEvent so we can update the selection from autoscroll too.
+        (WebCore::Frame::mouseDownMayStartAutoscroll): Added.
+        (WebCore::Frame::setMouseDownMayStartAutoscroll): Added.
+        (WebCore::Frame::mouseDownMayStartDrag): Added.
+        (WebCore::Frame::setMouseDownMayStartDrag): Added.
+        (WebCore::Frame::autoscrollRenderer): Added
+        (WebCore::Frame::setAutoscrollRenderer): Added.
+        (WebCore::Frame::handleAutoscroll): Updated to use autoscrollRenderer getter and setter.
+        (WebCore::Frame::autoscrollTimerFired): ditto.
+        (WebCore::Frame::stopAutoscrollTimer): ditto. 
+        * page/Frame.h: Made autoscrollRenderer and stopAutoscrollTimer public, so the renderer being autoscrolled can kill the timer when it dies.
+
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate): Added mouseDownMayStartDrag and mouseDownMayStartAutoscroll flags.  Moved from FrameMac.
+
+        * page/FrameView.cpp: Store the current mouse position in window coordinates.  The callers can convert to their own coordinate space.
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::FrameView::handleMouseDoubleClickEvent):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll): Rewrote this to scroll recursively, and to scroll based on the mouse position (not the selection).  
+         We also need to update the selection here, since autoscroll can occur without a mouseMove event, and the selection needs to get reset as we scroll.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::autoscroll): Convert the mouse coordinates to the right space.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldAutoscroll): Also return true if the renderer is a root (so we know to autoscroll views too)
+        (WebCore::RenderObject::destroy): If this renderer is being autoscrolled, stop the frame's autoscroll timer.
+
 2006-10-10  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.

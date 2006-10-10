@@ -1,3 +1,14 @@
+2006-10-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Removed handleAutoscrollForMouseDragged.  Except for autoscroll caused by drag and drop, all other
+        autoscrolling should be done in WebCore instead of in AppKit.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        * WebView/WebHTMLView.m:
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-10-10  Darin Adler  <darin@apple.com>
 
         - corrected an archive regression caused by loader refactoring

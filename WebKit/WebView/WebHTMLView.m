@@ -1467,12 +1467,6 @@ static WebHTMLView *lastHitView = nil;
     return startedDrag;
 }
 
-- (void)_handleAutoscrollForMouseDragged:(NSEvent *)event
-{
-    [self autoscroll:event];
-    [self _startAutoscrollTimer:event];
-}
-
 - (BOOL)_mayStartDragAtEventLocation:(NSPoint)location
 {
     WebHTMLView *topHTMLView = [self _topHTMLView];

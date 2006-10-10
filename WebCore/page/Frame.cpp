@@ -1932,6 +1932,9 @@ void Frame::handleMousePressEvent(const MouseEventWithHitTestResults& event)
         }
         handleMousePressEventSingleClick(event);
     }
+    
+   setMouseDownMayStartAutoscroll(mouseDownMayStartSelect() || 
+        (d->m_mousePressNode && d->m_mousePressNode->renderer() && d->m_mousePressNode->renderer()->shouldAutoscroll()));
 }
 
 void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
@@ -1942,14 +1945,34 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
 
     Node *innerNode = event.targetNode();
 
-    if (event.event().button() != 0 || !innerNode || !innerNode->renderer() || !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
+    if (event.event().button() != 0 || !innerNode || !innerNode->renderer())
         return;
 
-    // handle making selection
+     if (mouseDownMayStartAutoscroll()) {            
+        // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
+        // Otherwise, let the bridge handle it so the view can scroll itself.
+        RenderObject* renderer = innerNode->renderer();
+        while (renderer && !renderer->shouldAutoscroll())
+            renderer = renderer->parent();
+        if (renderer)
+            handleAutoscroll(renderer);
+                
+        setMouseDownMayStartDrag(false);
+        view()->invalidateClick();
+    }
+    
+    if (mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
+        // handle making selection
+        IntPoint vPoint = view()->windowToContents(event.event().pos());        
+        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
 
-    IntPoint vPoint = view()->windowToContents(event.event().pos());
-    VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
+        updateSelectionForMouseDragOverPosition(pos);
+    }
 
+}
+
+void Frame::updateSelectionForMouseDragOverPosition(const VisiblePosition& pos)
+{
     // Don't modify the selection if we're not on a node.
     if (pos.isNull())
         return;
@@ -2627,6 +2650,26 @@ void Frame::selectFrameElementInParentIfFullySelected()
     }
 }
 
+bool Frame::mouseDownMayStartAutoscroll() const
+{
+    return d->m_mouseDownMayStartAutoscroll;
+}
+
+void Frame::setMouseDownMayStartAutoscroll(bool b)
+{
+    d->m_mouseDownMayStartAutoscroll = b;
+}
+
+bool Frame::mouseDownMayStartDrag() const
+{
+    return d->m_mouseDownMayStartDrag;
+}
+
+void Frame::setMouseDownMayStartDrag(bool b)
+{
+    d->m_mouseDownMayStartDrag = b;
+}
+
 void Frame::handleFallbackContent()
 {
     Element* owner = ownerElement();
@@ -2846,7 +2889,7 @@ void Frame::handleAutoscroll(RenderObject* renderer)
 {
     if (d->m_autoscrollTimer.isActive())
         return;
-    d->m_autoscrollRenderer = renderer;
+    setAutoscrollRenderer(renderer);
     startAutoscrollTimer();
 }
 
@@ -2856,9 +2899,18 @@ void Frame::autoscrollTimerFired(Timer<Frame>*)
         stopAutoscrollTimer();
         return;
     }
-    if (d->m_autoscrollRenderer) {
-        d->m_autoscrollRenderer->autoscroll();
-    } 
+    if (RenderObject* r = autoscrollRenderer())
+        r->autoscroll();
+}
+
+RenderObject* Frame::autoscrollRenderer() const
+{
+    return d->m_autoscrollRenderer;
+}
+
+void Frame::setAutoscrollRenderer(RenderObject* renderer)
+{
+    d->m_autoscrollRenderer = renderer;
 }
 
 RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowShadowContent)
@@ -2922,7 +2974,7 @@ void Frame::startAutoscrollTimer()
 
 void Frame::stopAutoscrollTimer()
 {
-    d->m_autoscrollRenderer = 0;
+    setAutoscrollRenderer(0);
     d->m_autoscrollTimer.stop();
 }
 

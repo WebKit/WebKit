@@ -353,9 +353,7 @@ private:
     NSView* _mouseDownView;
     bool _mouseDownWasInSubframe;
     bool _sendingEventToSubview;
-    bool _mouseDownMayStartDrag;
     bool _mouseDownMayStartSelect;
-    bool _mouseDownMayStartAutoscroll;
     PlatformMouseEvent m_mouseDown;
     // in our view's coords
     IntPoint m_mouseDownPos;

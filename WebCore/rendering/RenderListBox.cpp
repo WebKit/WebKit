@@ -355,8 +355,7 @@ HTMLOptionElement* RenderListBox::optionAtPoint(int x, int y)
 
 void RenderListBox::autoscroll()
 {
-    int mouseX = document()->frame()->view()->currentMousePosition().x();
-    int mouseY = document()->frame()->view()->currentMousePosition().y();
+    IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->view()->currentMousePosition());
     IntRect bounds = absoluteBoundingBoxRect();
 
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
@@ -364,12 +363,12 @@ void RenderListBox::autoscroll()
     HTMLOptionElement* element = 0;
     int rows = size();
     int offset = m_indexOffset;
-    if (mouseY < bounds.y() && scrollToRevealElementAtListIndex(offset - 1) && items[offset - 1]->hasTagName(optionTag))
+    if (pos.y() < bounds.y() && scrollToRevealElementAtListIndex(offset - 1) && items[offset - 1]->hasTagName(optionTag))
         element = static_cast<HTMLOptionElement*>(items[offset - 1]);
-    else if (mouseY > bounds.bottom() && scrollToRevealElementAtListIndex(offset + rows) && items[offset + rows - 1]->hasTagName(optionTag))
+    else if (pos.y() > bounds.bottom() && scrollToRevealElementAtListIndex(offset + rows) && items[offset + rows - 1]->hasTagName(optionTag))
         element = static_cast<HTMLOptionElement*>(items[offset + rows - 1]);
     else
-        element = optionAtPoint(mouseX, mouseY);
+        element = optionAtPoint(pos.x(), pos.y());
         
     if (element) {
         select->setSelectedIndex(element->index(), !select->multiple());
