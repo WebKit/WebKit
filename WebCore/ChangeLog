@@ -1,5 +1,13 @@
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+
+        - fixed release build
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Eric.
 
         - moved a big honkin' pile of code over from WebKit; made minimal needed changes to compile
