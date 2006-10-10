@@ -29,7 +29,7 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebIconDatabase.h>
 
-@class WebFileDatabase;
+
 @class WebCoreIconDatabaseBridge;
 @class WebDataSource;
 
@@ -37,6 +37,9 @@
 
 @public
     WebCoreIconDatabaseBridge *databaseBridge;
+    id delegate;
+    
+    BOOL delegateDefaultIconForURL;
     
     NSMutableDictionary *htmlIcons;
     NSMutableDictionary *defaultIcons;

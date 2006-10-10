@@ -106,6 +106,7 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @param size
 */
 - (NSImage *)defaultIconWithSize:(NSSize)size;
+- (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size;
 
 /*!
     @method retainIconForURL:
@@ -120,6 +121,9 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @param URL
 */
 - (void)releaseIconForURL:(NSString *)URL;
+
+- (void)setDelegate:(id)delegate;
+- (id)delegate;
 
 @end
 

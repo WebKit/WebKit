@@ -27,6 +27,7 @@
  */
 #import <WebKit/WebIconDatabase.h>
 
+#import "WebIconDatabaseDelegate.h"
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -80,7 +81,7 @@ NSSize WebIconLargeSize = {128, 128};
     [super init];
     
     _private = [[WebIconDatabasePrivate alloc] init];
-
+    
     // Get/create the shared database bridge - bail if we fail
     _private->databaseBridge = [WebIconDatabaseBridge sharedInstance];
     if (!_private->databaseBridge) {
@@ -135,14 +136,16 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.height);
 
     if (!URL || ![self _isEnabled])
-        return [self defaultIconWithSize:size];
+        return [self defaultIconForURL:URL withSize:size];
 
     // FIXME - <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
       
     NSImage* image = [_private->databaseBridge iconForPageURL:URL withSize:size];
-    return image ? image : [self defaultIconWithSize:size];
+    if (image)
+        return image;
+    return [self defaultIconForURL:URL withSize:size];
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size
@@ -167,6 +170,13 @@ NSSize WebIconLargeSize = {128, 128};
     return [_private->databaseBridge defaultIconWithSize:size];
 }
 
+- (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size
+{
+    if (_private->delegateDefaultIconForURL)
+        return [_private->delegate webIconDatabase:self defaultIconForURL:URL withSize:size];
+    return [_private->databaseBridge defaultIconWithSize:size];
+}
+
 - (void)retainIconForURL:(NSString *)URL
 {
     ASSERT(URL);
@@ -184,6 +194,18 @@ NSSize WebIconLargeSize = {128, 128};
 
     [_private->databaseBridge releaseIconForURL:pageURL];
 }
+
+- (void)setDelegate:(id)delegate
+{
+    _private->delegate = delegate;
+    _private->delegateDefaultIconForURL = [delegate respondsToSelector:@selector(webIconDatabase:defaultIconForURL:withSize:)];
+}
+
+- (id)delegate
+{
+    return _private->delegate;
+}
+
 @end
 
 
