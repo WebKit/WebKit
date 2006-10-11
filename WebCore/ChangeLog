@@ -1,5 +1,14 @@
 2006-10-10  Oliver Hunt  <oliver@apple.com>
 
+        rubber stamped by Anders.
+
+        More buildbot bustage
+
+        * kcanvas/SVGInlineFlowBox.cpp:
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+
+2006-10-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Anders 
 
         Unbreak build bots
