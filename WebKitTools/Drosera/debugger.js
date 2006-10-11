@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
+ * Copyright (C) 2006 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,6 +109,34 @@ function headerMouseOut(element) {
     element.style.background = "url(glossyHeader.png) repeat-x";
 }
 
+function filesDividerDragStart(event) 
+{
+    dividerDragStart(document.getElementById("filesDivider"), filesDividerDrag, filesDividerDragEnd, event, "col-resize");
+}
+
+function filesDividerDragEnd(event) 
+{
+    dividerDragEnd(document.getElementById("filesDivider"), filesDividerDrag, filesDividerDragEnd, event);
+}
+
+function filesDividerDrag(event) 
+{
+    var element = document.getElementById("filesDivider");
+    if (document.getElementById("filesDivider").dragging == true) {
+        var masterMain = document.getElementById("masterMain");
+        var main = document.getElementById("main");
+        var fileBrowser = document.getElementById("fileBrowser");
+        var x = event.clientX + window.scrollX;
+        var delta = element.dragLastX - x;
+        var newWidth = constrainedWidthFromElement(fileBrowser.clientWidth - delta, masterMain, 0.1, 0.9);
+        if ((fileBrowser.clientWidth - delta) == newWidth) // the width wasn't constrained
+            element.dragLastX = x;
+        fileBrowser.style.width = newWidth + "px";
+        main.style.left = newWidth + "px";
+        event.preventDefault();
+    }
+}
+
 function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) {
     element.dragging = true;
     element.dragLastY = event.clientY + window.scrollY;
@@ -118,12 +147,61 @@ function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) {
     event.preventDefault();
 }
 
+function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
+    element.dragging = false;
+    document.removeEventListener("mousemove", dividerDrag, true);
+    document.removeEventListener("mouseup", dividerDragEnd, true);
+    document.body.style.cursor = null;
+}
+
+function dividerDrag(event) {
+    var element = document.getElementById("divider");
+    if (document.getElementById("divider").dragging == true) {
+        var main = document.getElementById("main");
+        var top = document.getElementById("info");
+        var bottom = document.getElementById("body");
+        var y = event.clientY + window.scrollY;
+        var delta = element.dragLastY - y;
+        var newHeight = constrainedHeightFromElement(top.clientHeight - delta, main);
+        if ((top.clientHeight - delta) == newHeight) // the height wasn't constrained
+            element.dragLastY = y;
+        top.style.height = newHeight + "px";
+        bottom.style.top = newHeight + "px";
+        event.preventDefault();
+    }
+}
+
 function sourceDividerDragStart(event) {
     dividerDragStart(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event, "row-resize");
 }
 
+function sourceDividerDragEnd(event) {
+    dividerDragEnd(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event);
+}
+
 function infoDividerDragStart(event) {
     dividerDragStart(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event, "col-resize");
+}
+
+function infoDividerDragEnd(event) {
+    dividerDragEnd(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event);
+}
+
+function infoDividerDrag(event) {
+    var element = document.getElementById("infoDivider");
+    if (document.getElementById("infoDivider").dragging == true) {
+        var main = document.getElementById("main");
+        var leftPane = document.getElementById("leftPane");
+        var rightPane = document.getElementById("rightPane");
+        var x = event.clientX + window.scrollX;
+        var delta = element.dragLastX - x;
+        var newWidth = constrainedWidthFromElement(leftPane.clientWidth - delta, main);
+        if ((leftPane.clientWidth - delta) == newWidth) // the width wasn't constrained
+            element.dragLastX = x;
+        leftPane.style.width = newWidth + "px";
+        rightPane.style.left = newWidth + "px";
+        event.preventDefault();
+    }
 }
 
 function columnResizerDragStart(event) {
@@ -134,21 +212,6 @@ function columnResizerDragStart(event) {
 function columnResizerDragEnd(event) {
     isResizingColumn = false;
     dividerDragEnd(document.getElementById("variableColumnResizer"), columnResizerDrag, columnResizerDragEnd, event);
-}
-
-function infoDividerDragEnd(event) {
-    dividerDragEnd(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event);
-}
-
-function sourceDividerDragEnd(event) {
-    dividerDragEnd(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event);
-}
-
-function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
-    element.dragging = false;
-    document.removeEventListener("mousemove", dividerDrag, true);
-    document.removeEventListener("mouseup", dividerDragEnd, true);
-    document.body.style.cursor = null;
 }
 
 function columnResizerDrag(event) {
@@ -175,11 +238,14 @@ function columnResizerDrag(event) {
     }
 }
 
-function constrainedWidthFromElement(width, element) {
-    if (width < element.clientWidth * 0.25)
-        width = element.clientWidth * 0.25;
-    else if (width > element.clientWidth * 0.75)
-        width = element.clientWidth * 0.75;
+function constrainedWidthFromElement(width, element, constrainLeft, constrainRight) {
+    if (constrainLeft === undefined) constrainLeft = 0.25;
+    if (constrainRight === undefined) constrainRight = 0.75;
+    
+    if (width < element.clientWidth * constrainLeft)
+        width = element.clientWidth * constrainLeft;
+    else if (width > element.clientWidth * constrainRight)
+        width = element.clientWidth * constrainRight;
     return width;
 }
 
@@ -191,43 +257,10 @@ function constrainedHeightFromElement(height, element) {
     return height;
 }
 
-function infoDividerDrag(event) {
-    var element = document.getElementById("infoDivider");
-    if (document.getElementById("infoDivider").dragging == true) {
-        var main = document.getElementById("main");
-        var leftPane = document.getElementById("leftPane");
-        var rightPane = document.getElementById("rightPane");
-        var x = event.clientX + window.scrollX;
-        var delta = element.dragLastX - x;
-        var newWidth = constrainedWidthFromElement(leftPane.clientWidth - delta, main);
-        if ((leftPane.clientWidth - delta) == newWidth) // the width wasn't constrained
-            element.dragLastX = x;
-        leftPane.style.width = newWidth + "px";
-        rightPane.style.left = newWidth + "px";
-        event.preventDefault();
-    }
-}
-
-function dividerDrag(event) {
-    var element = document.getElementById("divider");
-    if (document.getElementById("divider").dragging == true) {
-        var main = document.getElementById("main");
-        var top = document.getElementById("info");
-        var bottom = document.getElementById("body");
-        var y = event.clientY + window.scrollY;
-        var delta = element.dragLastY - y;
-        var newHeight = constrainedHeightFromElement(top.clientHeight - delta, main);
-        if ((top.clientHeight - delta) == newHeight) // the height wasn't constrained
-            element.dragLastY = y;
-        top.style.height = newHeight + "px";
-        bottom.style.top = newHeight + "px";
-        event.preventDefault();
-    }
-}
-
 function loaded() {
     document.getElementById("divider").addEventListener("mousedown", sourceDividerDragStart, false);
     document.getElementById("infoDivider").addEventListener("mousedown", infoDividerDragStart, false);
+    document.getElementById("filesDivider").addEventListener("mousedown", filesDividerDragStart, false);
     document.getElementById("variableColumnResizer").addEventListener("mousedown", columnResizerDragStart, false);
 }
 
@@ -495,6 +528,7 @@ function totalOffsetTop(element, stop)
 function switchFile()
 {
     var filesSelect = document.getElementById("files");
+    fileClicked(filesSelect.options[filesSelect.selectedIndex].value, false);
     loadFile(filesSelect.options[filesSelect.selectedIndex].value, true);
 }
 
@@ -768,7 +802,8 @@ function loadFile(fileIndex, manageNavLists)
             break;
         }
     }
-
+    
+    
     if (manageNavLists) {
         nextFiles = new Array();
         if (currentFile != -1)
@@ -802,6 +837,124 @@ function updateFileSource(source, url, force)
     }
 }
 
+/**
+* ParsedURL - this object chops up full URL into two parts: 
+ * 1) The domain: everything from http:// to the end of the domain name
+ * 2) The relative path: everything after the domain
+ *
+ * @param string url URL to be processed
+ */
+function ParsedURL(url)
+{
+    // Since we're getting the URL from the browser, we're safe to assume the URL is already well formatted
+    // and so there is no need for more sophisticated regular expression here
+    var url_parts = url.match(/(http[s]?:\/\/(www)?\.?(\w|\.|-)+\w(:\d{1,5})?)\/?(.*)/);
+    
+    // the domain here is considered the whole http://www.example.org:8000 string for display purposes
+    this.domain = url_parts[1];
+    // the relative path is everything following the domain
+    this.relativePath = "/" + url_parts[5];
+}
+
+/**
+* SiteBrowser - modifies the file tree via DOM as new files are being open
+ *
+ */
+function SiteBrowser()
+{
+    var fileBrowser = document.getElementById("filesBrowserSites");
+    
+    this.addURL = function add(url, fileIndex)
+    {
+        var parsedURL = new ParsedURL(url);
+        var divs = fileBrowser.getElementsByTagName("div");
+        
+        if (divs.length == 0) { 
+            addNewDomain(parsedURL, fileIndex);
+        } else {
+            var isNew = true;
+            for (var i = 0; i < divs.length; i++) {
+                if (divs[i].id == parsedURL.domain) {
+                    var uls = divs[i].getElementsByTagName("ul");
+                    var ul = (uls.length > 0) ? uls[0] : document.createElement("ul");
+                    var li = document.createElement("li");
+                    
+                    li.id = fileIndex;
+                    li.addEventListener("click", fileBrowserMouseEvents, false);
+                    li.title = li.innerText = parsedURL.relativePath ? parsedURL.relativePath : "/";
+                    ul.appendChild(li);
+                    isNew = false;
+                    break;
+                }
+            }
+            if (isNew) {
+                addNewDomain(parsedURL, fileIndex);
+            }
+        }
+    }
+    
+    this.selectInitialFile = function sf()
+    {
+        if (currentFile == -1)
+            document.getElementById("1").className = "active";
+    }
+    
+    function addNewDomain(parsedURL, fileIndex)
+    {
+        var div = document.createElement("div");
+        var ul = document.createElement("ul");
+        var li = document.createElement("li");
+        
+        div.id = div.innerText = div.title = parsedURL.domain;
+        div.addEventListener("click", fileBrowserMouseEvents, false);
+        // Maybe we can add some roll-overs here...
+        //div.addEventListener("mouseover", fileBrowserMouseEvents, false);
+        //div.addEventListener("mouseout", fileBrowserMouseEvents, false);
+        li.id = fileIndex;
+        li.addEventListener("click", fileBrowserMouseEvents, false);
+        li.title = li.innerText = parsedURL.relativePath ? parsedURL.relativePath : "/";
+        ul.appendChild(li);
+        div.appendChild(ul);
+        fileBrowser.appendChild(div);        
+    }
+}
+
+function fileBrowserMouseEvents(event)
+{
+    switch (event.type)
+    {
+        case "click":
+            // If we clicked on a site, collapse/expand it, if on a file, display it. Since we're only capturing this
+            // event from either a DIV or LI element, we don't have to worry about any ambiguity
+            (event.target.nodeName.toUpperCase() == "DIV") ? toggleCollapseSite(event) : fileClicked(event.target.id);
+            break;
+    }
+}
+
+function fileClicked(fileId, shouldLoadFile)
+{
+    if (shouldLoadFile === undefined) shouldLoadFile = true;
+    
+    document.getElementById(currentFile).className  = "passive";
+    document.getElementById(fileId).className       = "active";
+    if (shouldLoadFile) 
+        loadFile(fileId, false);
+}
+
+function toggleCollapseSite(event)
+{
+    var thisSite = document.getElementById(event.target.id);
+    var siteFiles = thisSite.getElementsByTagName("ul");
+    
+    if (siteFiles[0].style.display == "block" || !siteFiles[0].style.display) {
+        siteFiles[0].style.display = "none";
+        thisSite.className = "collapsed"; 
+    } else {
+        siteFiles[0].style.display = "block";
+        thisSite.className = "expanded";
+    }
+}
+
 function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
 {
     var fileIndex = filesLookup[url];
@@ -830,6 +983,11 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         option.value = fileIndex;
         option.text = (file.url ? file.url : "(unknown script)");
         filesSelect.appendChild(option);
+
+        var siteBrowser = new SiteBrowser();
+        siteBrowser.addURL(file.url, fileIndex);
+        siteBrowser.selectInitialFile();        
+        
         firstLoad = true;
     }
 
@@ -843,7 +1001,7 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         updateFileSource((fileSource.length ? fileSource : source), url, false);
 
     if (currentFile == -1)
-        loadFile(fileIndex, true);
+        loadFile(fileIndex, false);
 }
 
 function jumpToLine(sourceId, line)

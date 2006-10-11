@@ -1,3 +1,22 @@
+2006-10-10  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Tim H.
+
+        Bug 9778: http://bugs.webkit.org/show_bug.cgi?id=9778 
+
+        * ChangeLog:
+        * Drosera/Drosera.xcodeproj/project.pbxproj: Added files
+        * Drosera/English.lproj/Debugger.nib/info.nib: Resized the main window and WebView
+        * Drosera/English.lproj/Debugger.nib/keyedobjects.nib: Resized the main window and WebView
+        * Drosera/Images/SourceArrowOpen.png: Added.
+        * Drosera/Images/fileIcon.jpg: Added.
+        * Drosera/Images/siteCollapsed.tif: Added.
+        * Drosera/Images/siteExpanded.tif: Added.
+        * Drosera/Images/siteIcon.tif: Added.
+        * Drosera/debugger.css: Added File Browser styles
+        * Drosera/debugger.html: Added File Browser UI
+        * Drosera/debugger.js: Added File Browser functionality
+
 2006-10-10  Darin Adler  <darin@apple.com>
 
         * Scripts/do-file-rename: Added.

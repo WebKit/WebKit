@@ -1,5 +1,6 @@
 <!--
 Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+Copyright (C) 2006 Vladimir Olexa (vladimir.olexa@gmail.com)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -36,6 +37,18 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </style>
 </head>
 <body onload="loaded()">
+<div id="masterMain">
+<div id="fileBrowser">
+<div id="fileList">
+<table id="fileListTableHeader">
+<tr class="column"><th onmousedown="headerMouseDown(this);" onmouseup="headerMouseUp(this);" onmouseout="headerMouseOut(this);">Files</th><th class="scrollCorner"></th></tr>
+</table>
+<div id="filesBrowserSites">
+</div>
+<div class="footer"></div>
+</div>
+<div id="filesDivider"></div>
+</div>
 <div id="main">
 <div id="info">
 <div id="leftPane">
@@ -70,7 +83,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <button class="popup"><select size="1" id="files" onchange="switchFile()"></select><div id="filesPopupButtonContent"><span class="placeholder">no files loaded</span></div></button>
 </div>
 <div id="sourcesContainer"><iframe id="sources" src="viewer.html"></iframe></div>
-<div id="footer"></div>
+<div class="footer"></div>
+</div>
 </div>
 </div>
 </body>

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15CE85540ADBEA620078A734 /* fileIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15CE854F0ADBEA610078A734 /* fileIcon.jpg */; };
+		15CE85550ADBEA620078A734 /* siteCollapsed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 15CE85500ADBEA610078A734 /* siteCollapsed.tif */; };
+		15CE85560ADBEA620078A734 /* siteExpanded.tif in Resources */ = {isa = PBXBuildFile; fileRef = 15CE85510ADBEA610078A734 /* siteExpanded.tif */; };
+		15CE85570ADBEA620078A734 /* siteIcon.tif in Resources */ = {isa = PBXBuildFile; fileRef = 15CE85520ADBEA610078A734 /* siteIcon.tif */; };
+		15CE85580ADBEA620078A734 /* SourceArrowOpen.png in Resources */ = {isa = PBXBuildFile; fileRef = 15CE85530ADBEA610078A734 /* SourceArrowOpen.png */; };
 		1C2632D30A4AF0A800EA7CD8 /* verticalSplitterBar.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D10A4AF0A800EA7CD8 /* verticalSplitterBar.tiff */; };
 		1C2632D40A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D20A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff */; };
 		1C2632D70A4AF0B800EA7CD8 /* SourceArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D50A4AF0B800EA7CD8 /* SourceArrow.png */; };
@@ -76,6 +81,11 @@
 /* Begin PBXFileReference section */
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		15CE854F0ADBEA610078A734 /* fileIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fileIcon.jpg; sourceTree = "<group>"; };
+		15CE85500ADBEA610078A734 /* siteCollapsed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = siteCollapsed.tif; sourceTree = "<group>"; };
+		15CE85510ADBEA610078A734 /* siteExpanded.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = siteExpanded.tif; sourceTree = "<group>"; };
+		15CE85520ADBEA610078A734 /* siteIcon.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = siteIcon.tif; sourceTree = "<group>"; };
+		15CE85530ADBEA610078A734 /* SourceArrowOpen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SourceArrowOpen.png; sourceTree = "<group>"; };
 		1C2632D10A4AF0A800EA7CD8 /* verticalSplitterBar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = verticalSplitterBar.tiff; sourceTree = "<group>"; };
 		1C2632D20A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = verticalSplitterDimple.tiff; sourceTree = "<group>"; };
 		1C2632D50A4AF0B800EA7CD8 /* SourceArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SourceArrow.png; sourceTree = "<group>"; };
@@ -191,6 +201,11 @@
 		1CC058B70A44A210006FE533 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				15CE854F0ADBEA610078A734 /* fileIcon.jpg */,
+				15CE85500ADBEA610078A734 /* siteCollapsed.tif */,
+				15CE85510ADBEA610078A734 /* siteExpanded.tif */,
+				15CE85520ADBEA610078A734 /* siteIcon.tif */,
+				15CE85530ADBEA610078A734 /* SourceArrowOpen.png */,
 				1C6F84510A58EDFE004FCD89 /* console.png */,
 				1C4FF7530A44F6320000D05D /* gutter.png */,
 				1C4FF91F0A45F3520000D05D /* glossyHeader.png */,
@@ -353,9 +368,12 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Drosera" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* SafariBug */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				8D15AC270486D014006FF6A4 /* Drosera */,
 				1CD8D54C0A4902B000E5677B /* Drosera (Nightly Launcher) */,
@@ -422,6 +440,11 @@
 				63A9E23F0AD4869300C079EE /* breakpointEditor.css in Resources */,
 				63A9E2400AD4869400C079EE /* breakpointEditor.html in Resources */,
 				63A9E2410AD4869400C079EE /* breakpointEditor.js in Resources */,
+				15CE85540ADBEA620078A734 /* fileIcon.jpg in Resources */,
+				15CE85550ADBEA620078A734 /* siteCollapsed.tif in Resources */,
+				15CE85560ADBEA620078A734 /* siteExpanded.tif in Resources */,
+				15CE85570ADBEA620078A734 /* siteIcon.tif in Resources */,
+				15CE85580ADBEA620078A734 /* SourceArrowOpen.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
