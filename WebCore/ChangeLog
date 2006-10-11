@@ -1,3 +1,17 @@
+2006-10-10  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Oliver.
+
+        Make FileChooser ref-counted.
+
+        * platform/FileChooser.h:
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::create):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl):
+        * rendering/RenderFileUploadControl.h:
+
 2006-10-10  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

@@ -85,6 +85,12 @@ using namespace WebCore;
 
 namespace WebCore {
     
+PassRefPtr<FileChooser> FileChooser::create(Document* document, RenderFileUploadControl* uploadControl)
+{
+    PassRefPtr<FileChooser> fileChooser(new FileChooser(document, uploadControl));
+    return fileChooser;
+}
+
 FileChooser::FileChooser(Document* document, RenderFileUploadControl* uploadControl)
     : m_document(document)
     , m_icon(0)

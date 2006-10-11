@@ -39,9 +39,9 @@ class Document;
 class RenderFileUploadControl;
 class String;
 
-class FileChooser {
+class FileChooser : public Shared<FileChooser> {
 public:
-    FileChooser(Document*, RenderFileUploadControl*);
+    static PassRefPtr<FileChooser> create(Document*, RenderFileUploadControl*);
     ~FileChooser();
     
     void openFileChooser();
@@ -62,6 +62,8 @@ private:
     String m_filename;
     RefPtr<Icon> m_icon;
     RenderFileUploadControl* m_uploadControl;
+
+    FileChooser(Document*, RenderFileUploadControl*);
     
 #if PLATFORM(MAC)
     OpenPanelController* m_controller;
