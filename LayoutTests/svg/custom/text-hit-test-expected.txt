@@ -1,19 +1,19 @@
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 8 of #text > text > g > svg > #document to 8 of #text > text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > text > g > svg > #document to 8 of #text > text > g > svg > #document toDOMRange:range from 8 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > text > g > svg > #document to 8 of #text > text > g > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 5 of #text > text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,0) size 0x0
-      KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
-        RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 57x18
-            text run at (0,0) width 57: "Click me"
-        RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 42x18
-            text run at (0,0) width 42: "Status:"
-        RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 43x18
-            text run at (0,0) width 43: "Passed"
-selection start: position 8 of child 0 {#text} of child 1 {text} of child 3 {g} of child 0 {svg} of document
-selection end:   position 0 of child 3 {text} of child 3 {g} of child 0 {svg} of document
+    KCanvasContainer {svg} at (20,112) size 246x156
+      KCanvasContainer {g} at (20,112) size 246x156 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+        RenderSVGText {text} at (70,70) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 57x18
+            text run at (0,-14) width 57: "Click me"
+        RenderSVGText {text} at (10,130) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 42x18
+            text run at (0,-14) width 42: "Status:"
+        RenderSVGText {text} at (90,130) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 43x18
+            text run at (0,-14) width 43: "Passed"
+selection start: position 0 of child 0 {#text} of child 1 {text} of child 3 {g} of child 0 {svg} of document
+selection end:   position 5 of child 0 {#text} of child 1 {text} of child 3 {g} of child 0 {svg} of document

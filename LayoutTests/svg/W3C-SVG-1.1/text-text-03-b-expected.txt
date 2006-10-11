@@ -1,38 +1,38 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (49,224) size 382x66
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 76x39
-            text run at (0,0) width 76: "Plain"
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 80x39
-            text run at (0,0) width 80: "Italic"
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 79x39
-            text run at (0,0) width 79: "Bold"
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 153x39
-            text run at (0,0) width 153: "Underline"
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 203x39
-            text run at (0,0) width 203: "Line through"
-        RenderSVGText {text} at (0,0) size 480x39
-          RenderText {#text} at (0,0) size 471x39
-            text run at (0,0) width 471: "Bold, italic and underlined"
-        KCanvasContainer {g} at (49,224) size 382x66
+      KCanvasContainer {g} at (1,28) size 471x262
+        RenderSVGText {text} at (19,61) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 76x39
+            text run at (0,-32) width 76: "Plain"
+        RenderSVGText {text} at (142,61) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 80x39
+            text run at (0,-32) width 80: "Italic"
+        RenderSVGText {text} at (257,60) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 79x39
+            text run at (0,-32) width 79: "Bold"
+        RenderSVGText {text} at (224,110) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 153x39
+            text run at (0,-32) width 153: "Underline"
+        RenderSVGText {text} at (39,147) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 203x39
+            text run at (0,-32) width 203: "Line through"
+        RenderSVGText {text} at (1,200) size 480x39
+          RenderSVGInlineText {#text} at (0,-32) size 471x39
+            text run at (0,-32) width 471: "Bold, italic and underlined"
+        KCanvasContainer {g} at (49,223) size 382x67
           KCanvasItem {rect} at (49,224) size 382x66 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M50.00,225.00L430.00,225.00L430.00,289.00L50.00,289.00"]
-          KCanvasContainer {g} at (0,0) size 0x0
-            RenderSVGText {text} at (0,0) size 480x28
-              RenderText {#text} at (0,0) size 343x27
-                text run at (0,0) width 343: "Each line of text which flows in a"
-            RenderSVGText {text} at (0,0) size 480x28
-              RenderText {#text} at (0,0) size 347x27
-                text run at (0,0) width 347: "rectangular box has to be broken"
-            RenderSVGText {text} at (0,0) size 480x28
-              RenderText {#text} at (0,0) size 212x27
-                text run at (0,0) width 212: "into separated lines."
-      RenderSVGText {text} at (0,0) size 480x46
-        RenderText {#text} at (0,0) size 264x46
-          text run at (0,0) width 264: "$Revision: 1.1 $"
+          KCanvasContainer {g} at (55,223) size 347x67
+            RenderSVGText {text} at (55,245) size 480x27
+              RenderSVGInlineText {#text} at (0,-22) size 343x27
+                text run at (0,-22) width 343: "Each line of text which flows in a"
+            RenderSVGText {text} at (55,265) size 480x27
+              RenderSVGInlineText {#text} at (0,-22) size 347x27
+                text run at (0,-22) width 347: "rectangular box has to be broken"
+            RenderSVGText {text} at (55,285) size 480x27
+              RenderSVGInlineText {#text} at (0,-22) size 212x27
+                text run at (0,-22) width 212: "into separated lines."
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

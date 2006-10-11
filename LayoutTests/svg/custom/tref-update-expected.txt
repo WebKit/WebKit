@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,0) size 0x0
-      KCanvasContainer {defs} at (0,0) size 0x0
+    KCanvasContainer {svg} at (0,-23.33) size 116.67x63.33
+      KCanvasContainer {defs} at (0,-23.33) size 83.33x30
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 44x18
-            text run at (0,0) width 44: "Failure"
+          RenderSVGInlineText {#text} at (0,-14) size 44x18
+            text run at (0,-14) width 44: "Failure"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 50x18
-            text run at (0,0) width 50: "Success"
-      RenderSVGText {text} at (0,0) size 800x18
-        RenderInline {tref} at (0,0) size 50x18
-          RenderText {#text} at (0,0) size 50x18
-            text run at (0,0) width 50: "Success"
-        RenderText {#text} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,-14) size 50x18
+            text run at (0,-14) width 50: "Success"
+      RenderSVGText {text} at (20,20) size 800x18
+        RenderSVGInline {tref} at (0,0) size 50x18
+          RenderSVGInlineText {#text} at (0,-14) size 50x18
+            text run at (0,-14) width 50: "Success"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

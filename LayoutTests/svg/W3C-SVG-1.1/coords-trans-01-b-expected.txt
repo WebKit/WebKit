@@ -76,7 +76,7 @@ layer at (0,0) size 480x360
           KCanvasItem {line} at (450,40) size 1x250.50 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M450.50,10.00L450.50,260.50"]
           KCanvasItem {line} at (460,40) size 1x250.50 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M460.50,10.00L460.50,260.50"]
           KCanvasItem {line} at (470,40) size 1x250.50 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M470.50,10.00L470.50,260.50"]
-        KCanvasContainer {g} at (48,88) size 325x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+        KCanvasContainer {g} at (40,66) size 375x137 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
           KCanvasContainer {g} at (50,90) size 320x110
             KCanvasContainer {g} at (50,90) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
               KCanvasItem {rect} at (50,90) size 20x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L20.00,0.00L20.00,2.00L0.00,2.00"]
@@ -93,38 +93,38 @@ layer at (0,0) size 480x360
             KCanvasContainer {g} at (210,160) size 40x40 [transform={m=((2.00,0.00)(0.00,2.00)) t=(210.00,120.00)}]
               KCanvasItem {rect} at (210,160) size 40x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L20.00,0.00L20.00,1.00L0.00,1.00"]
               KCanvasItem {rect} at (210,160) size 2x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L1.00,0.00L1.00,20.00L0.00,20.00"]
-          KCanvasContainer {g} at (48,88) size 325x115
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 106x18
-                text run at (0,0) width 106: "translate (50, 50)"
+          KCanvasContainer {g} at (40,66) size 375x137
+            RenderSVGText {text} at (40,40) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 106x18
+                text run at (0,-14) width 106: "translate (50, 50)"
             KCanvasItem {rect} at (48,88) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M48.00,48.00L53.00,48.00L53.00,53.00L48.00,53.00"]
             KCanvasItem {rect} at (68,88) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M68.00,48.00L73.00,48.00L73.00,53.00L68.00,53.00"]
             KCanvasItem {rect} at (48,108) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M48.00,68.00L53.00,68.00L53.00,73.00L48.00,73.00"]
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 66x18
-                text run at (0,0) width 66: "rotate(-90)"
+            RenderSVGText {text} at (140,40) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 66x18
+                text run at (0,-14) width 66: "rotate(-90)"
             KCanvasItem {rect} at (148,108) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M148.00,68.00L153.00,68.00L153.00,73.00L148.00,73.00"]
             KCanvasItem {rect} at (148,88) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M148.00,48.00L153.00,48.00L153.00,53.00L148.00,53.00"]
             KCanvasItem {rect} at (168,108) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M168.00,68.00L173.00,68.00L173.00,73.00L168.00,73.00"]
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 75x18
-                text run at (0,0) width 75: "skew x (45)"
+            RenderSVGText {text} at (240,40) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 75x18
+                text run at (0,-14) width 75: "skew x (45)"
             KCanvasItem {rect} at (248,88) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M248.00,48.00L253.00,48.00L253.00,53.00L248.00,53.00"]
             KCanvasItem {rect} at (268,88) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M268.00,48.00L273.00,48.00L273.00,53.00L268.00,53.00"]
             KCanvasItem {rect} at (268,108) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M268.00,68.00L273.00,68.00L273.00,73.00L268.00,73.00"]
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 75x18
-                text run at (0,0) width 75: "skew y (45)"
+            RenderSVGText {text} at (340,40) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 75x18
+                text run at (0,-14) width 75: "skew y (45)"
             KCanvasItem {rect} at (348,88) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M348.00,48.00L353.00,48.00L353.00,53.00L348.00,53.00"]
             KCanvasItem {rect} at (368,108) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M368.00,68.00L373.00,68.00L373.00,73.00L368.00,73.00"]
             KCanvasItem {rect} at (348,108) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M348.00,68.00L353.00,68.00L353.00,73.00L348.00,73.00"]
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 53x18
-                text run at (0,0) width 53: "scale (2)"
+            RenderSVGText {text} at (200,110) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 53x18
+                text run at (0,-14) width 53: "scale (2)"
             KCanvasItem {rect} at (208,158) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M208.00,118.00L213.00,118.00L213.00,123.00L208.00,123.00"]
             KCanvasItem {rect} at (248,158) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M248.00,118.00L253.00,118.00L253.00,123.00L248.00,123.00"]
             KCanvasItem {rect} at (208,198) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M208.00,158.00L213.00,158.00L213.00,163.00L208.00,163.00"]
-        KCanvasContainer {g} at (48,238) size 265x45
+        KCanvasContainer {g} at (40,216) size 402x67
           KCanvasContainer {g} at (50,240) size 260x40
             KCanvasContainer {g} at (50,240) size 60x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(50.00,210.00)}]
               KCanvasItem {rect} at (50,240) size 60x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L20.00,0.00L20.00,1.00L0.00,1.00"]
@@ -134,20 +134,20 @@ layer at (0,0) size 480x360
                 KCanvasContainer {g} at (250,240) size 60x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(16.67,105.00)}]
                   KCanvasItem {rect} at (250,240) size 60x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L20.00,0.00L20.00,1.00L0.00,1.00"]
                   KCanvasItem {rect} at (250,240) size 2.01x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L0.67,0.00L0.67,20.00L0.00,20.00"]
-          KCanvasContainer {g} at (48,238) size 265x45
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 198x18
-                text run at (0,0) width 198: "scale(25, 95) and translate(2, 2)"
+          KCanvasContainer {g} at (40,216) size 402x67
+            RenderSVGText {text} at (40,200) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 198x18
+                text run at (0,-14) width 198: "scale(25, 95) and translate(2, 2)"
             KCanvasItem {rect} at (48,238) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M48.00,208.00L53.00,208.00L53.00,213.00L48.00,213.00"]
             KCanvasItem {rect} at (108,238) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M108.00,208.00L113.00,208.00L113.00,213.00L108.00,213.00"]
             KCanvasItem {rect} at (48,278) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M48.00,248.00L53.00,248.00L53.00,253.00L48.00,253.00"]
-            RenderSVGText {text} at (0,0) size 480x18
-              RenderText {#text} at (0,0) size 202x18
-                text run at (0,0) width 202: "scale(25, 95) then translate(2, 2)"
+            RenderSVGText {text} at (240,200) size 480x18
+              RenderSVGInlineText {#text} at (0,-14) size 202x18
+                text run at (0,-14) width 202: "scale(25, 95) then translate(2, 2)"
             KCanvasItem {rect} at (248,238) size 5x5 [fill={[type=SOLID] [color=#000000]}] [data="M248.00,208.00L253.00,208.00L253.00,213.00L248.00,213.00"]
             KCanvasItem {rect} at (308,238) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M308.00,208.00L313.00,208.00L313.00,213.00L308.00,213.00"]
             KCanvasItem {rect} at (248,278) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M248.00,248.00L253.00,248.00L253.00,253.00L248.00,253.00"]
-      RenderSVGText {text} at (0,0) size 480x46
-        RenderText {#text} at (0,0) size 264x46
-          text run at (0,0) width 264: "$Revision: 1.1 $"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

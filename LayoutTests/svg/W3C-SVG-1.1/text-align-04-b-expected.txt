@@ -1,39 +1,39 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (219.50,120) size 1x140
-        RenderSVGText {text} at (0,0) size 480x45
-          RenderText {#text} at (0,0) size 346x44
-            text run at (0,0) width 346: "Test of 'text-anchor'"
-        KCanvasContainer {defs} at (0,0) size 0x0
+    KCanvasContainer {svg} at (0,-14) size 479.50x373.50
+      KCanvasContainer {g} at (0,-14) size 468x274
+        RenderSVGText {text} at (5,40) size 480x44
+          RenderSVGInlineText {#text} at (0,-36) size 346x44
+            text run at (0,-36) width 346: "Test of 'text-anchor'"
+        KCanvasContainer {defs} at (0,-14) size 75x18
           RenderSVGText {text} at (0,0) size 480x18
-            RenderText {#text} at (0,0) size 75x18
-              text run at (0,0) width 75: "end text tref"
+            RenderSVGInlineText {#text} at (0,-14) size 75x18
+              text run at (0,-14) width 75: "end text tref"
           KCanvasItem {path} at (-5,260) size 225x0 [fill={[type=SOLID] [color=#000000]}] [data="M-5.00,260.00L220.00,260.00"]
-        RenderSVGText {text} at (0,0) size 480x34
-          RenderText {#text} at (0,0) size 218x33
-            text run at (0,0) width 218: "Tspan, tref, toap"
+        RenderSVGText {text} at (20,80) size 480x33
+          RenderSVGInlineText {#text} at (0,-27) size 218x33
+            text run at (0,-27) width 218: "Tspan, tref, toap"
         KCanvasItem {line} at (219.50,120) size 1x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00L220.00,260.00"]
-        KCanvasContainer {g} at (0,0) size 0x0
-          RenderSVGText {text} at (0,0) size 480x34
-            RenderText {#text} at (0,0) size 122x33
-              text run at (0,0) width 122: "start text "
-            RenderInline {tspan} at (0,0) size 126x33
-              RenderText {#text} at (122,0) size 126x33
-                text run at (122,0) width 126: "red tspan"
-          RenderSVGText {text} at (0,0) size 480x34
-            RenderText {#text} at (0,0) size 154x33
-              text run at (0,0) width 154: "middle text "
-            RenderInline {tspan} at (0,0) size 150x33
-              RenderText {#text} at (154,0) size 150x33
-                text run at (154,0) width 150: "bold tspan"
-          RenderSVGText {text} at (0,0) size 480x34
-            RenderInline {tref} at (0,0) size 158x33
-              RenderText {#text} at (0,0) size 158x33
-                text run at (0,0) width 158: "end text tref"
-            RenderText {#text} at (0,0) size 0x0
+        KCanvasContainer {g} at (62,113) size 406x113
+          RenderSVGText {text} at (220,140) size 480x33
+            RenderSVGInlineText {#text} at (0,-27) size 122x33
+              text run at (0,-27) width 122: "start text "
+            RenderSVGTSpan {tspan} at (0,0) size 126x33
+              RenderSVGInlineText {#text} at (122,-27) size 126x33
+                text run at (122,-27) width 126: "red tspan"
+          RenderSVGText {text} at (220,180) size 480x33
+            RenderSVGInlineText {#text} at (-152,-27) size 154x33
+              text run at (-152,-27) width 154: "middle text "
+            RenderSVGTSpan {tspan} at (0,0) size 150x33
+              RenderSVGInlineText {#text} at (2,-27) size 150x33
+                text run at (2,-27) width 150: "bold tspan"
+          RenderSVGText {text} at (220,220) size 480x33
+            RenderSVGInline {tref} at (0,0) size 158x33
+              RenderSVGInlineText {#text} at (-158,-27) size 158x33
+                text run at (-158,-27) width 158: "end text tref"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 480x0
-      RenderSVGText {text} at (0,0) size 480x46
-        RenderText {#text} at (0,0) size 264x46
-          text run at (0,0) width 264: "$Revision: 1.1 $"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

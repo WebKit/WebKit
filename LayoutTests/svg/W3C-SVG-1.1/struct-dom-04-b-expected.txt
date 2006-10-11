@@ -2,37 +2,37 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 198x36
-          text run at (0,0) width 198: "$Revision: 1.1 $"
+      RenderSVGText {text} at (10,340) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 198x36
+          text run at (0,-28) width 198: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 207x36
-          text run at (0,0) width 207: "org.w3c.svg.lang"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 258x36
-          text run at (0,0) width 258: "org.w3c.svg.dynamic"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 218x36
-          text run at (0,0) width 218: "org.w3c.svg.static"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 209x36
-          text run at (0,0) width 209: "org.w3c.dom.svg"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 148x36
-          text run at (0,0) width 148: "org.w3c.svg"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
+      RenderSVGText {text} at (5,45) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 207x36
+          text run at (0,-28) width 207: "org.w3c.svg.lang"
+      RenderSVGText {text} at (385,45) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
+      RenderSVGText {text} at (5,85) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 258x36
+          text run at (0,-28) width 258: "org.w3c.svg.dynamic"
+      RenderSVGText {text} at (385,85) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
+      RenderSVGText {text} at (5,125) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 218x36
+          text run at (0,-28) width 218: "org.w3c.svg.static"
+      RenderSVGText {text} at (385,125) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
+      RenderSVGText {text} at (5,165) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 209x36
+          text run at (0,-28) width 209: "org.w3c.dom.svg"
+      RenderSVGText {text} at (385,165) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
+      RenderSVGText {text} at (5,205) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 148x36
+          text run at (0,-28) width 148: "org.w3c.svg"
+      RenderSVGText {text} at (385,205) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"

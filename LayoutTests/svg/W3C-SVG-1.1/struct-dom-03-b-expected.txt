@@ -2,37 +2,37 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 198x36
-          text run at (0,0) width 198: "$Revision: 1.1 $"
+      RenderSVGText {text} at (10,340) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 198x36
+          text run at (0,-28) width 198: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 99x36
-          text run at (0,0) width 99: "uievents"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 154x36
-          text run at (0,0) width 154: "mouseevents"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 46x36
-          text run at (0,0) width 46: "true"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 181x36
-          text run at (0,0) width 181: "mutationevents"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 46x36
-          text run at (0,0) width 46: "true"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 102x36
-          text run at (0,0) width 102: "traversal"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 46x36
-          text run at (0,0) width 46: "true"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 148x36
-          text run at (0,0) width 148: "org.w3c.svg"
-      RenderSVGText {text} at (0,0) size 480x36
-        RenderText {#text} at (0,0) size 56x36
-          text run at (0,0) width 56: "false"
+      RenderSVGText {text} at (10,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 99x36
+          text run at (0,-28) width 99: "uievents"
+      RenderSVGText {text} at (370,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
+      RenderSVGText {text} at (10,100) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 154x36
+          text run at (0,-28) width 154: "mouseevents"
+      RenderSVGText {text} at (370,100) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 46x36
+          text run at (0,-28) width 46: "true"
+      RenderSVGText {text} at (10,150) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 181x36
+          text run at (0,-28) width 181: "mutationevents"
+      RenderSVGText {text} at (370,150) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 46x36
+          text run at (0,-28) width 46: "true"
+      RenderSVGText {text} at (10,200) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 102x36
+          text run at (0,-28) width 102: "traversal"
+      RenderSVGText {text} at (370,200) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 46x36
+          text run at (0,-28) width 46: "true"
+      RenderSVGText {text} at (10,250) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 148x36
+          text run at (0,-28) width 148: "org.w3c.svg"
+      RenderSVGText {text} at (370,250) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 56x36
+          text run at (0,-28) width 56: "false"
