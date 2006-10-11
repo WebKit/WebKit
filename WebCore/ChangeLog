@@ -1,3 +1,15 @@
+2006-10-11  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Anders.
+
+        Clean up FileChooser::create and Icon::newIconForFile.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::create):
+        * platform/mac/IconMac.mm:
+        (WebCore::Icon::newIconForFile):
+
 2006-10-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

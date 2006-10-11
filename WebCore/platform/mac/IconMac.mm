@@ -42,9 +42,9 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
 {
     NSImage* fileIcon = [[[NSWorkspace sharedWorkspace] iconForFile:filename] retain];
     if (!fileIcon)
-        return PassRefPtr<Icon>(0);
+        return 0;
     
-    PassRefPtr<Icon> icon(new Icon());
+    Icon* icon = new Icon();
 
     icon->m_nsImage = fileIcon;
     
