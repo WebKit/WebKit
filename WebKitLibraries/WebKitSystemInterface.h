@@ -8,6 +8,10 @@
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     WKCertificateParseResultSucceeded  = 0,
     WKCertificateParseResultFailed     = 1,
@@ -92,10 +96,6 @@ void WKDrawFocusRing(CGContextRef context, CGRect clipRect, CGColorRef color, in
     // A color of 0 means "use system focus ring color".
     // A radius of 0 means "use default focus ring radius".
 
-void WKSetFocusRingStyle(NSFocusRingPlacement placement, int radius, NSColor *color);
-    // Deprecated (even more than the rest of this file).
-    // Keeping this here until WebKit switches entirely to WKDrawFocusRing.
-
 void WKSetDragImage(NSImage *image, NSPoint offset);
 
 void WKDrawBezeledTextFieldCell(NSRect, BOOL enabled);
@@ -141,3 +141,7 @@ void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 NSString* WKPathFromFont(NSFont *font);
+
+#ifdef __cplusplus
+}
+#endif
