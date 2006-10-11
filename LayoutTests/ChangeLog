@@ -1,3 +1,13 @@
+2006-10-11  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Darin.
+
+        These test DST behavior on the cusp of a change (i.e. spring forward, fall back)
+
+        * fast/js/date-DST-time-cusps-expected.txt: Added.
+        * fast/js/date-DST-time-cusps.html: Added.
+        * fast/js/resources/date-DST-time-cusps.js: Added.
+
 2006-10-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.
