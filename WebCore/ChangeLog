@@ -1,3 +1,17 @@
+2006-10-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11221
+        REGRESSION: iExploder crash due to style="cursor: url()"
+
+        Take better care of empty cursor lists.
+
+        Test: fast/css/invalid-cursor-property-crash.html
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2006-10-11  Adam Roben  <aroben@apple.com>
 
         Fixing Windows for real this time.

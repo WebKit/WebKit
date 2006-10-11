@@ -1,3 +1,14 @@
+2006-10-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11221
+        REGRESSION: iExploder crash due to style="cursor: url()"
+
+        * fast/css/invalid-cursor-property-crash-expected.txt: Added.
+        * fast/css/invalid-cursor-property-crash.html: Added.
+
 2006-10-11  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt.

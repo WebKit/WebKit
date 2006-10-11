@@ -702,6 +702,8 @@ bool CSSParser::parseValue(int propId, bool important)
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help ] ] | inherit
         CSSValueList* list = 0;
         while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
+            if (!list)
+                list = new CSSValueList; 
             String uri = parseURL(domString(value->string));
             Vector<int> coords;
             value = valueList->next();
@@ -720,28 +722,28 @@ bool CSSParser::parseValue(int propId, bool important)
                 hotspot = IntPoint(coords[0], coords[1]);
             if (strict || coords.size() == 0) {
 #ifdef SVG_SUPPORT
-            if (uri.startsWith("#")) {
-                if (!list)
-                    list = new CSSValueList; 
-                list->append(new CSSPrimitiveValue(uri, CSSPrimitiveValue::CSS_URI));
-            } else
+                if (uri.startsWith("#"))
+                    list->append(new CSSPrimitiveValue(uri, CSSPrimitiveValue::CSS_URI));
+                else
 #endif
-            if (!uri.isEmpty()) {
-                if (!list)
-                    list = new CSSValueList; 
-                list->append(new CSSCursorImageValue(
-                             String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
-                             hotspot, styleElement));
+                if (!uri.isEmpty()) {
+                    list->append(new CSSCursorImageValue(
+                                 String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
+                                 hotspot, styleElement));
+                }
             }
-            }
-            if ((strict && !value) || (value && !(value->unit == Value::Operator && value->iValue == ',')))
+            if ((strict && !value) || (value && !(value->unit == Value::Operator && value->iValue == ','))) {
+                delete list;
                 return false;
+            }
             value = valueList->next(); // comma
         }
         if (list) {
             if (!value) { // no value after url list (MSIE 5 compatibility)
-                if (list->length() > 1)
+                if (list->length() != 1) {
+                    delete list;
                     return false;
+                }
             } else if (!strict && value->id == CSS_VAL_HAND) // MSIE 5 compatibility :/
                 list->append(new CSSPrimitiveValue(CSS_VAL_POINTER));
             else if (value && value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_HELP)
