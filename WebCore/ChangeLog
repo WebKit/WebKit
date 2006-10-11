@@ -1,3 +1,10 @@
+2006-10-11  Adam Roben  <aroben@apple.com>
+
+        Fix Windows build.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FileChooser::create):
+
 2006-10-11  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt.

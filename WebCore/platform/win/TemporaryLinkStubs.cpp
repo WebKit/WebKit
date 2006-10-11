@@ -131,6 +131,7 @@ bool ListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
 
 FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
+PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); }
 void FileChooser::openFileChooser() { notImplemented(); }
 String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
 void FileChooser::uploadControlDetaching() { notImplemented(); }
