@@ -2084,6 +2084,15 @@ void RenderObject::setStyle(RenderStyle *style)
                     m_style->visibility() != style->visibility())
                     layer()->dirtyZOrderLists();
             }
+            // keep layer hierarchy visibility bits up to date if visibility changes
+            if (m_style->visibility() != style->visibility()) {
+                RenderLayer* l = enclosingLayer(); 
+                if (style->visibility() == VISIBLE && l)
+                    l->setHasVisibleContent(true);
+                else if (l && l->hasVisibleContent() && 
+                    (this == l->renderer() || l->renderer()->style()->visibility() != VISIBLE))
+                    l->dirtyVisibleContentStatus();
+            }            
         }
 
         d = m_style->diff(style);

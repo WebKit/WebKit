@@ -1,3 +1,32 @@
+2006-10-11  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Hyatt.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=4377
+        
+        Respect css visibility semantics for layers too
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        (WebCore::RenderLayer::dirtyVisibleContentStatus):
+        (WebCore::RenderLayer::childVisibilityChanged):
+        (WebCore::RenderLayer::dirtyVisibleDescendantStatus):
+        (WebCore::RenderLayer::updateVisibilityStatus):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::updateZOrderLists):
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasVisibleContent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

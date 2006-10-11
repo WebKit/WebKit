@@ -141,8 +141,16 @@ m_usedTransparency(false),
 m_inOverflowRelayout(false),
 m_repaintOverflowOnResize(false),
 m_overflowStatusDirty(true),
+m_visibleContentStatusDirty( true ),
+m_hasVisibleContent( false ),
+m_visibleDescendantStatusDirty( false ),
+m_hasVisibleDescendant( false ),
 m_marquee(0)
 {
+    if (!object->firstChild() && object->style()) {
+        m_visibleContentStatusDirty = false;
+        m_hasVisibleContent = object->style()->visibility() == VISIBLE;
+    }
 }
 
 RenderLayer::~RenderLayer()
@@ -182,8 +190,9 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 
     positionOverflowControls();
 
-    // FIXME: Child object could override visibility.
-    if (m_object->style()->visibility() == VISIBLE) {
+    updateVisibilityStatus();
+        
+    if (m_hasVisibleContent) {
         int x, y;
         m_object->absolutePosition(x, y);
         IntRect newRect, newFullRect;
@@ -215,6 +224,91 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     // With all our children positioned, now update our marquee if we need to.
     if (m_marquee)
         m_marquee->updateMarqueePosition();
+}
+
+void RenderLayer::setHasVisibleContent(bool b) 
+{ 
+    if (m_hasVisibleContent == b && !m_visibleContentStatusDirty)
+        return;
+    m_visibleContentStatusDirty = false; 
+    m_hasVisibleContent = b;
+    if (parent())
+        parent()->childVisibilityChanged(m_hasVisibleContent);
+}
+
+void RenderLayer::dirtyVisibleContentStatus() 
+{ 
+    m_visibleContentStatusDirty = true; 
+    if (parent())
+        parent()->dirtyVisibleDescendantStatus();
+}
+
+void RenderLayer::childVisibilityChanged(bool newVisibility) 
+{ 
+    if (m_hasVisibleDescendant == newVisibility || m_visibleDescendantStatusDirty)
+        return;
+    if (newVisibility) {
+        RenderLayer* l = this;
+        while (l && !l->m_visibleDescendantStatusDirty && !l->m_hasVisibleDescendant) {
+            l->m_hasVisibleDescendant = true;
+            l = l->parent();
+        }
+    } else 
+        dirtyVisibleDescendantStatus();
+}
+
+void RenderLayer::dirtyVisibleDescendantStatus()
+{
+    RenderLayer* l = this;
+    while (l && !l->m_visibleDescendantStatusDirty) {
+        l->m_visibleDescendantStatusDirty = true;
+        l = l->parent();
+    }
+}
+
+void RenderLayer::updateVisibilityStatus()
+{
+    if (m_visibleDescendantStatusDirty) {
+        m_hasVisibleDescendant = false;
+        for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+            child->updateVisibilityStatus();        
+            if (child->m_hasVisibleContent || child->m_hasVisibleDescendant) {
+                m_hasVisibleDescendant = true;
+                break;
+            }
+        }
+        m_visibleDescendantStatusDirty = false;
+    }
+
+    if (m_visibleContentStatusDirty) {
+        if (m_object->style()->visibility() == VISIBLE)
+            m_hasVisibleContent = true;
+        else {
+            // layer may be hidden but still have some visible content, check for this
+            m_hasVisibleContent = false;
+            RenderObject* r = m_object->firstChild();
+            while (r) {
+                if (r->style()->visibility() == VISIBLE) {
+                    m_hasVisibleContent = true;
+                    break;
+                }
+                if (r->firstChild() && !r->firstChild()->layer())
+                    r = r->firstChild();
+                else if (r->nextSibling() && !r->nextSibling()->layer())
+                    r = r->nextSibling();
+                else {
+                    while (r && (!r->nextSibling() || r->nextSibling()->layer())) {
+                        r = r->parent();
+                        if (r==m_object)
+                            r = 0;
+                    }
+                    if (r)
+                        r = r->nextSibling();
+                }
+            }
+        }    
+        m_visibleContentStatusDirty = false; 
+    }
 }
 
 void RenderLayer::updateLayerPosition()
@@ -444,6 +538,10 @@ void RenderLayer::addChild(RenderLayer *child, RenderLayer* beforeChild)
         if (stackingContext)
             stackingContext->dirtyZOrderLists();
     }
+    
+    child->updateVisibilityStatus();
+    if (child->m_hasVisibleContent || child->m_hasVisibleDescendant)
+        childVisibilityChanged(true);
 }
 
 RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
@@ -473,6 +571,10 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
+    
+    oldChild->updateVisibilityStatus();
+    if (oldChild->m_hasVisibleContent || oldChild->m_hasVisibleDescendant)
+        childVisibilityChanged(false);
     
     return oldChild;
 }
@@ -1812,7 +1914,7 @@ void RenderLayer::updateZOrderLists()
 {
     if (!isStackingContext() || !m_zOrderListsDirty)
         return;
-    
+        
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->collectLayers(m_posZOrderList, m_negZOrderList);
 
@@ -1843,14 +1945,10 @@ void RenderLayer::updateOverflowList()
 
 void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
 {
-    // FIXME: A child render object or layer could override visibility.  Don't remove this
-    // optimization though until RenderObject's nodeAtPoint is patched to understand what to do
-    // when visibility is overridden by a child.
-    if (renderer()->style()->visibility() != VISIBLE)
-        return;
-
+    updateVisibilityStatus();
+        
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    if (!isOverflowOnly()) {
+    if (m_hasVisibleContent && !isOverflowOnly()) {
         // Determine which buffer the child should be in.
         Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 
@@ -1864,7 +1962,7 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context.
-    if (!isStackingContext())
+    if (m_hasVisibleDescendant && !isStackingContext())
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
             child->collectLayers(posBuffer, negBuffer);
 }

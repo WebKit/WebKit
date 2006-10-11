@@ -1,3 +1,14 @@
+2006-10-11  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Hyatt.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=4377
+
+        * fast/layers/layer-visibility-expected.checksum: Added.
+        * fast/layers/layer-visibility-expected.png: Added.
+        * fast/layers/layer-visibility-expected.txt: Added.
+        * fast/layers/layer-visibility.html: Added.
+
 2006-10-10  Oliver Hunt  <ohunt@apple.com>
 
         Rubber stamped by Anders.
