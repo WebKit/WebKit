@@ -49,3 +49,7 @@ svg, symbol, marker, pattern {
 text, foreignObject {
     display: block !important
 }
+
+text, tspan {
+   white-space: nowrap !important
+}

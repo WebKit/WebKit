@@ -24,7 +24,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGTSpanElement.h"
 #include "SVGNames.h"
-#include "RenderInline.h"
+#include "RenderSVGTSpan.h"
 
 using namespace WebCore;
 
@@ -47,7 +47,7 @@ bool SVGTSpanElement::childShouldCreateRenderer(Node *child) const
 
 RenderObject *SVGTSpanElement::createRenderer(RenderArena *arena, RenderStyle *)
 {
-    return new (arena) RenderInline(this);
+    return new (arena) RenderSVGTSpan(this);
 }
 
 // vim:ts=4:noet

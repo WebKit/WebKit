@@ -1,3 +1,66 @@
+2006-10-10  Oliver Hunt  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by hyatt.
+
+        Fixes bugs #6423, #6559, #10380 and #10839 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/svg.css:
+        * dom/Text.cpp:
+        (WebCore::Text::createRenderer):
+        * kcanvas/RenderSVGInline.cpp: Added.
+        (WebCore::RenderSVGInline::RenderSVGInline):
+        (WebCore::RenderSVGInline::createInlineBox):
+        * kcanvas/RenderSVGInline.h: Added.
+        (WebCore::RenderSVGInline::renderName):
+        (WebCore::RenderSVGInline::requiresLayer):
+        * kcanvas/RenderSVGInlineText.cpp: Added.
+        (WebCore::RenderSVGInlineText::RenderSVGInlineText):
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        (WebCore::RenderSVGInlineText::selectionRect):
+        * kcanvas/RenderSVGInlineText.h: Added.
+        (WebCore::RenderSVGInlineText::renderName):
+        (WebCore::RenderSVGInlineText::requiresLayer):
+        * kcanvas/RenderSVGTSpan.cpp: Added.
+        (WebCore::RenderSVGTSpan::RenderSVGTSpan):
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        * kcanvas/RenderSVGTSpan.h: Added.
+        (WebCore::RenderSVGTSpan::renderName):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText):
+        (WebCore::RenderSVGText::computeAbsoluteRepaintRect):
+        (WebCore::RenderSVGText::layout):
+        (WebCore::RenderSVGText::createInlineBox):
+        (WebCore::RenderSVGText::nodeAtPoint):
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::paint):
+        (WebCore::RenderSVGText::relativeBBox):
+        * kcanvas/RenderSVGText.h:
+        (WebCore::RenderSVGText::renderName):
+        * kcanvas/SVGInlineFlowBox.cpp: Added.
+        (WebCore::SVGInlineFlowBox::paint):
+        (WebCore::SVGInlineFlowBox::placeBoxesHorizontally):
+        (WebCore::SVGInlineFlowBox::verticallyAlignBoxes):
+        (WebCore::paintSVGInlineFlow):
+        (WebCore::translateBox):
+        (WebCore::placePositionedBoxesHorizontally):
+        (WebCore::placeSVGFlowHorizontally):
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+        (WebCore::placeSVGFlowVertically):
+        * kcanvas/SVGInlineFlowBox.h: Added.
+        (WebCore::SVGInlineFlowBox::SVGInlineFlowBox):
+        * kcanvas/SVGRootInlineBox.cpp: Added.
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::placeBoxesHorizontally):
+        (WebCore::SVGRootInlineBox::verticallyAlignBoxes):
+        * kcanvas/SVGRootInlineBox.h: Added.
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (SVGTRefElement::createRenderer):
+        * ksvg2/svg/SVGTSpanElement.cpp:
+        (SVGTSpanElement::createRenderer):
+        * rendering/InlineFlowBox.h:
+
 2006-10-10  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

@@ -27,7 +27,7 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include "SVGDocument.h"
-#include "RenderInline.h"
+#include "RenderSVGInline.h"
 
 using namespace WebCore;
 
@@ -79,7 +79,7 @@ bool SVGTRefElement::childShouldCreateRenderer(Node *child) const
 
 RenderObject *SVGTRefElement::createRenderer(RenderArena *arena, RenderStyle *)
 {
-    return new (arena) RenderInline(this);
+    return new (arena) RenderSVGInline(this);
 }
 
 // vim:ts=4:noet

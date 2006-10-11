@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  *               2006 Alexander Kellett <lypanov@kde.org>
+ *               2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,124 +27,26 @@
 #include "RenderSVGText.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasClipper.h"
-#include "KCanvasMasker.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "SVGLengthList.h"
 #include "SVGTextElement.h"
+#include "SVGRootInlineBox.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-RenderSVGText::RenderSVGText(SVGTextElement *node) 
+RenderSVGText::RenderSVGText(SVGTextElement* node) 
     : RenderBlock(node)
 {
 }
 
-AffineTransform RenderSVGText::translationTopToBaseline()
-{
-    int offset = baselinePosition(true, true);
-    return AffineTransform().translate(0, -offset);
-}
-
-AffineTransform RenderSVGText::translationForAttributes()
-{
-    SVGTextElement *text = static_cast<SVGTextElement*>(element());
-
-    SVGLength* xOffset = text->x()->getFirst().get();
-    SVGLength* yOffset = text->y()->getFirst().get();
-
-    return AffineTransform().translate(xOffset ? xOffset->value() : 0,
-                                       yOffset ? yOffset->value() : 0);
-}
-
-void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
-{
-    if (paintInfo.p->paintingDisabled())
-        return;
-
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* context = device->currentContext();
-    bool shouldPopContext = false;
-    if (context)
-        paintInfo.p->save();
-    else {
-        // Need to set up KCanvas rendering if it hasn't already been done.
-        context = paintInfo.p->createRenderingDeviceContext();
-        device->pushContext(context);
-        shouldPopContext = true;
-    }
-    
-    context->concatCTM(localTransform());
-    context->concatCTM(AffineTransform().translate(parentX, parentY));
-    context->concatCTM(translationForAttributes());
-    context->concatCTM(translationTopToBaseline());
-    
-    FloatRect boundingBox(0, 0, width(), height());
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
-            
-    if (KCanvasClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
-        clipper->applyClip(boundingBox);
-
-    if (KCanvasMasker* masker = getMaskerById(document(), svgStyle->maskElement().substring(1)))
-        masker->applyMask(boundingBox);
-
-    KCanvasFilter* filter = getFilterById(document(), svgStyle->filter().substring(1));
-    if (filter)
-        filter->prepareFilter(boundingBox);
-        
-    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    PaintInfo pi = paintInfo;
-    pi.p = c.get();
-    pi.r = (translationTopToBaseline() * translationForAttributes() * absoluteTransform()).invert().mapRect(paintInfo.r);
-
-    float opacity = style()->opacity();
-    if (opacity < 1.0f)
-        // FIXME: once RenderSVGText::relativeBBox() is fixed, clipping to the current bbox here will save time when rendering text w/ opacity
-        c->beginTransparencyLayer(opacity);
-
-    KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
-    if (fillPaintServer) {
-        fillPaintServer->setPaintingText(true);
-        if (fillPaintServer->setup(context, this, APPLY_TO_FILL)) {
-            RenderBlock::paint(pi, 0, 0);
-            fillPaintServer->teardown(context, this, APPLY_TO_FILL);
-        }
-        fillPaintServer->setPaintingText(false);
-    }
-    
-    KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
-    if (strokePaintServer) {
-        strokePaintServer->setPaintingText(true);
-        if (strokePaintServer->setup(context, this, APPLY_TO_STROKE)) {
-            RenderBlock::paint(pi, 0, 0);
-            strokePaintServer->teardown(context, this, APPLY_TO_STROKE);
-        }
-        strokePaintServer->setPaintingText(false);
-    }
-
-    if (filter)
-        filter->applyFilter(boundingBox);
-
-    if (opacity < 1.0f)
-        c->endTransparencyLayer();
-
-    // restore drawing state
-    if (!shouldPopContext)
-        paintInfo.p->restore();
-    else {
-        device->popContext();
-        delete context;
-    }
-}
-
 void RenderSVGText::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    AffineTransform transform = translationTopToBaseline() * translationForAttributes() * absoluteTransform();
+    AffineTransform transform = localTransform();
     r = transform.mapRect(r);
-    
     RenderContainer::computeAbsoluteRepaintRect(r, f);
+    r = transform.invert().mapRect(r);
 }
 
 bool RenderSVGText::requiresLayer()
@@ -160,9 +63,12 @@ void RenderSVGText::layout()
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = m_absoluteBounds;
-
+    SVGTextElement* text = static_cast<SVGTextElement*>(element());
+    int xOffset = text->x()->getFirst() ? text->x()->getFirst()->value() : 0;
+    int yOffset = text->y()->getFirst() ? text->y()->getFirst()->value() : 0;
+    this->setPos(xOffset, yOffset);
     RenderBlock::layout();
-
+    
     m_absoluteBounds = getAbsoluteRepaintRect();
 
     bool repainted = false;
@@ -172,11 +78,25 @@ void RenderSVGText::layout()
     setNeedsLayout(false);
 }
 
+InlineBox* RenderSVGText::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
+{
+    assert(!isInlineFlow());
+    InlineFlowBox* flowBox = new (renderArena()) SVGRootInlineBox(this);
+    
+    if (!m_firstLineBox)
+        m_firstLineBox = m_lastLineBox = flowBox;
+    else {
+        m_lastLineBox->setNextLineBox(flowBox);
+        flowBox->setPreviousLineBox(m_lastLineBox);
+        m_lastLineBox = flowBox;
+    }
+    
+    return flowBox;
+}
+
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    AffineTransform totalTransform = translationForAttributes();
-    totalTransform *= translationTopToBaseline();
-    totalTransform *= absoluteTransform();
+    AffineTransform totalTransform = absoluteTransform();
     double localX, localY;
     totalTransform.invert().map(_x, _y, &localX, &localY);
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
@@ -184,11 +104,33 @@ bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty
 
 void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    AffineTransform mat = translationForAttributes();
-    mat *= translationTopToBaseline();
-    mat *= absoluteTransform();
+    if (!m_firstLineBox)
+        return;
+    AffineTransform boxTransform = m_firstLineBox->object()->absoluteTransform();
+    FloatRect boxRect = FloatRect(xPos() + m_firstLineBox->xPos(), yPos() + m_firstLineBox->yPos(),
+                                  m_firstLineBox->width(), m_firstLineBox->height());
+    rects.append(enclosingIntRect(boxTransform.mapRect(boxRect)));
+}
 
-    rects.append(enclosingIntRect(mat.mapRect(FloatRect(0, 0, width(), height()))));
+void RenderSVGText::paint(PaintInfo& paintInfo, int _tx, int _ty)
+{    
+    KRenderingDevice* device = renderingDevice();
+    RenderObject::PaintInfo pi = paintInfo;
+    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
+    pi.p = c.get();
+    pi.r = (absoluteTransform()).invert().mapRect(paintInfo.r);
+    RenderBlock::paint(pi, _tx, _ty);
+}
+
+FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
+{
+    FloatRect boundsRect;
+    InlineBox* box = m_firstLineBox;
+    if (box) {
+        boundsRect = FloatRect(xPos() + box->xPos(), yPos() + box->yPos(), box->width(), box->height());
+        boundsRect = localTransform().mapRect(boundsRect);
+    }
+    return boundsRect;
 }
 
 }
