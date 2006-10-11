@@ -1,5 +1,12 @@
 2006-10-11  Adam Roben  <aroben@apple.com>
 
+        Fixing Windows for real this time.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FileChooser::create):
+
+2006-10-11  Adam Roben  <aroben@apple.com>
+
         Fix Windows build.
 
         * platform/win/TemporaryLinkStubs.cpp:
