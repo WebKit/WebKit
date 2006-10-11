@@ -96,12 +96,12 @@ static ListenerMap* listenerMap;
 
 namespace WebCore {
 
-typedef HashMap<const QualifiedName*, Class> ObjCClassMap;
+typedef HashMap<const QualifiedName::QualifiedNameImpl*, Class> ObjCClassMap;
 static ObjCClassMap* elementClassMap;
 
 static void addElementClass(const QualifiedName& tag, Class objCClass)
 {
-    elementClassMap->set(&tag, objCClass);
+    elementClassMap->set(tag.impl(), objCClass);
 }
 
 static void createElementClassMap()
@@ -242,7 +242,7 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
 {
     if (!elementClassMap)
         createElementClassMap();
-    Class objcClass = elementClassMap->get(&tag);
+    Class objcClass = elementClassMap->get(tag.impl());
     if (!objcClass)
         objcClass = defaultClass;
     return objcClass;

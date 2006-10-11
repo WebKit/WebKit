@@ -1,3 +1,26 @@
+2006-10-11  John Sullivan  <sullivan@apple.com>
+        
+        Darin wrote this code; we tested it; I give it the thumbs up.
+        
+        - fixed regression from svn revision 16982 that was generating the wrong Obj-C classes
+
+        The hash table to look up an element class given a QualifiedName was
+        not working at all.
+
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::impl):
+        Added. This new accessor method for impl is needed if we want to use
+        a QualifiedName as a hash table key without doing the kind of specialization
+        we do for String. Maybe later we can do the String thing.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::addElementClass):
+        Use QualifiedName.impl instead of the QualifiedName pointer itself.
+        The QualifiedName pointer is *not* unique so almost nothing would be found
+        in this hash table!
+        (WebCore::elementClass):
+        ditto
+        
 2006-10-11  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Anders.
