@@ -1,3 +1,12 @@
+2006-10-10  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Bug 11246: Minor Drosera code cleanup
+        http://bugs.webkit.org/show_bug.cgi?id=11246
+
+        * Drosera/debugger.js: Change [has, add, remove]StyleClass to be a function on Element rather than taking an Element as an argument.
+
 2006-10-10  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Tim H.

@@ -275,7 +275,7 @@ function pause() {
 function resume()
 {
     if (currentRow) {
-        removeStyleClass(currentRow, "current");
+        currentRow.removeStyleClass("current");
         currentRow = null;
     }
 
@@ -321,22 +321,19 @@ function stepOut()
     DebuggerDocument.resume();
 }
 
-function hasStyleClass(element, className)
-{
-    return ( element.className.indexOf(className) != -1 );
+Element.prototype.removeStyleClass = function(className) {
+    if(this.hasStyleClass(className))
+        this.className = this.className.replace(className, "");
 }
 
-function addStyleClass(element, className)
-{
-    if (!hasStyleClass(element, className))
-        element.className += (element.className.length ? " " + className : className);
+Element.prototype.addStyleClass = function(className) {
+    if (!this.hasStyleClass(className))
+        this.className += (this.className.length ? " " + className : className);
 }
 
-function removeStyleClass(element, className)
-{
-    if (hasStyleClass(element, className))
-        element.className = element.className.replace(className, "");
-}
+Element.prototype.hasStyleClass = function(className) {
+    return this.className.indexOf(className) != -1;
+};
 
 function addBreakPoint(event)
 {
@@ -344,7 +341,7 @@ function addBreakPoint(event)
     var file = files[currentFile];
     var lineNum = parseInt(event.target.title);
     
-    if (hasStyleClass(row, "breakpoint")) {
+    if (row.hasStyleClass("breakpoint")) {
         if(event.altKey && file.breakpoints[lineNum] != null)
             showBreakpointEditor(file, lineNum);
         else
@@ -355,8 +352,8 @@ function addBreakPoint(event)
 
 function createBreakpoint(row, file, lineNum)
 {
-    addStyleClass(row, "breakpoint");
-    removeStyleClass(row, "disabled");
+    row.addStyleClass("breakpoint");
+    row.removeStyleClass("disabled");
     file.breakpoints[lineNum] = enabledBreakpoint;
     file.disabledBreakpoints[lineNum] = null;
 }
@@ -375,10 +372,10 @@ function showBreakpointEditor(file, lineNum)
 
 function toggleBreakpoint(row, file, lineNum)
 {
-    if (hasStyleClass(row, "disabled"))
-        removeStyleClass(row, "disabled");    
+    if (row.hasStyleClass("disabled"))
+        row.removeStyleClass("disabled");    
     else
-        addStyleClass(row, "disabled");
+        row.addStyleClass("disabled");
     
     var temp = file.breakpoints[lineNum];
     file.breakpoints[lineNum] = file.disabledBreakpoints[lineNum];
@@ -393,7 +390,7 @@ function finishEditingBreakpoint(line, file, newFunction)
 
 function moveBreakPoint(event)
 {
-    if (hasStyleClass(event.target.parentNode, "breakpoint")) {
+    if (event.target.parentNode.hasStyleClass("breakpoint")) {
         draggingBreakpoint = event.target;
         draggingBreakpoint.started = false;
         draggingBreakpoint.dragLastY = event.clientY + window.scrollY;
@@ -422,9 +419,10 @@ function breakpointDrag(event)
     if (draggingBreakpoint.started || deltaX > 4 || deltaY > 4 || deltaX < -4 || deltaY < -4) {
     
         if (!draggingBreakpoint.started) {
-            draggingBreakpoint.isDisabled = hasStyleClass(draggingBreakpoint.parentNode, "disabled");
-            removeStyleClass(draggingBreakpoint.parentNode, "breakpoint");
-            removeStyleClass(draggingBreakpoint.parentNode, "disabled");
+            var node = draggingBreakpoint.parentNode;
+            draggingBreakpoint.isDisabled = node.hasStyleClass("disabled");
+            node.removeStyleClass("breakpoint");
+            node.removeStyleClass("disabled");
             draggingBreakpoint.started = true;
             
             var lineNum = parseInt(draggingBreakpoint.title);
@@ -500,7 +498,7 @@ function breakpointDragEnd(event)
         return;
         
     if(draggingBreakpoint.isDisabled) {
-        addStyleClass(tr, "disabled");
+        tr.addStyleClass("disabled");
         file.disabledBreakpoints[row] = draggingBreakpoint.breakFunction;
         file.breakpoints[row] = null;
     } else {
@@ -508,7 +506,7 @@ function breakpointDragEnd(event)
         file.breakpoints[row] = draggingBreakpoint.breakFunction;
     }
 
-    addStyleClass(tr, "breakpoint");
+    tr.addStyleClass("breakpoint");
     
     draggingBreakpoint = null;
 }
@@ -718,7 +716,7 @@ function updateFunctionStack()
         currentStack.push(frame);
 
         if (i == 0) {
-            addStyleClass(tr, "current");
+            tr.addStyleClass("current");
             frame.loadVariables();
             currentCallFrame = frame;
         }
@@ -730,8 +728,8 @@ function selectStackFrame(event)
     var stackframeTable = document.getElementById("stackframeTable");
     var rows = stackframeTable.childNodes;
     for (var i = 0; i < rows.length; i++)
-        removeStyleClass(rows[i], "current");
-    addStyleClass(this, "current");
+        rows[i].removeStyleClass("current");
+    this.addStyleClass("current");
     this.callFrame.loadVariables();
     currentCallFrame = this.callFrame;
 
@@ -746,8 +744,8 @@ function selectVariable(event)
     var variablesTable = document.getElementById("variablesTable");
     var rows = variablesTable.childNodes;
     for (var i = 0; i < rows.length; i++)
-        removeStyleClass(rows[i], "current");
-    addStyleClass(this, "current");
+        rows[i].removeStyleClass("current");
+    this.addStyleClass("current");
 }
 
 function loadFile(fileIndex, manageNavLists)
@@ -1017,7 +1015,7 @@ function jumpToLine(sourceId, line)
     if (currentFile != script.file)
         loadFile(script.file, true);
     if (currentRow)
-        removeStyleClass(currentRow, "current");
+        currentRow.removeStyleClass("current");
     if (!file.element)
         return;
     if (line > file.element.firstChild.childNodes.length)
@@ -1027,7 +1025,7 @@ function jumpToLine(sourceId, line)
     if (!currentRow)
         return;
 
-    addStyleClass(currentRow, "current");
+    currentRow.addStyleClass("current");
 
     var sourcesDiv = document.getElementById("sources");
     var sourcesDocument = document.getElementById("sources").contentDocument;
