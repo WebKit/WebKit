@@ -1,5 +1,14 @@
 2006-10-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Brady.
+
+        Fix svg text related layout tests
+
+        * svg/custom/getsvgdocument-expected.txt:
+        * svg/hixie/viewbox/003-expected.txt:
+
+2006-10-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff.
 
         Test case for http://bugs.webkit.org/show_bug.cgi?id=11251
