@@ -58,11 +58,20 @@ my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
-# FIXME: need to add the SVG base types to this hash.
-my %baseTypeHash = ("Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
+# FIXME: this should be replaced with a function that recurses up the tree
+# to find the actual base type.
+my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
-                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "SVGPathSeg" => 1);
+                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1,
+                    "SVGAngle" => 1, "SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1, "SVGAnimatedEnumeration" => 1,
+                    "SVGAnimatedInteger" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
+                    "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1, "SVGAnimatedPoints" => 1,
+                    "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
+                    "SVGAnimatedTransformList" => 1, "SVGLength" => 1, "SVGLengthList" => 1, "SVGMatrix" => 1,
+                    "SVGNumber" => 1, "SVGNumberList" => 1, "SVGPathSeg" => 1, "SVGPathSegList" => 1, "SVGPoint" => 1,
+                    "SVGPointList" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1, "SVGRenderingIntent" => 1,
+                    "SVGStringList" => 1, "SVGTransform" => 1, "SVGTransformList" => 1, "SVGUnitTypes" => 1);
 
 # Constants
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
@@ -1205,41 +1214,58 @@ sub GenerateImplementation
         push(@implContent, "\@end\n");
     }
 
-    unless ($dataNode->extendedAttributes->{ObjCNoInternal}) {
+
+    # Generate internal interfaces
+
+    # - Type-Getter
+    # - (WebCore::FooBar *)_fooBar for implementation class FooBar
+    my $typeGetterName = GetObjCTypeGetterName($interfaceName);
+    my $typeGetterSig = "- ($implClassNameWithNamespace *)$typeGetterName";
+
+    my @ivarsToRetain = ();
+    my $ivarsToInit = "";
+    my $typeMakerSigAddition = "";
+    if (@ivars > 0) {
+        my @ivarsInitSig = ();
+        my @ivarsInitCall = ();
+        foreach $attribute (@ivars) {
+            my $name = $attribute->signature->name;
+            my $memberName = "m_" . $name;
+            my $varName = "in" . $name;
+            my $type = GetObjCType($attribute->signature->type);
+            push(@ivarsInitSig, "$name:($type)$varName");
+            push(@ivarsInitCall, "$name:$varName");
+            push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
+        }
+        $ivarsToInit = " " . join(" ", @ivarsInitCall);
+        $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
+    }
+
+    # - Type-Maker
+    my $typeMakerName = GetObjCTypeMaker($interfaceName);
+    my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
+
+    # Generate interface definitions. 
+    @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
+    push(@intenalHeaderContent, "\n#import \"$className.h\"\n");
+    if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
+        push(@intenalHeaderContent, "#import \"SVGAnimatedTemplate.h\"\n\n");
+    } else {
+        push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
+    }
+    push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
+    push(@intenalHeaderContent, $typeGetterSig . ";\n");
+    push(@intenalHeaderContent, $typeMakerSig . ";\n");
+    push(@intenalHeaderContent, "\@end\n");
+
+    unless ($dataNode->extendedAttributes->{ObjCCustomInternalImpl}) {
         # - BEGIN WebCoreInternal category @implementation
         push(@implContent, "\n\@implementation $className (WebCoreInternal)\n\n");
 
-        # - Type-Getter
-        # - (WebCore::FooBar *)_fooBar for implementation class FooBar
-        my $typeGetterName = GetObjCTypeGetterName($interfaceName);
-        my $typeGetterSig = "- ($implClassNameWithNamespace *)$typeGetterName";
         push(@implContent, "$typeGetterSig\n");
         push(@implContent, "{\n");
         push(@implContent, "    return IMPL;\n");
         push(@implContent, "}\n\n");
-
-        my @ivarsToRetain = ();
-        my $ivarsToInit = "";
-        my $typeMakerSigAddition = "";
-        if (@ivars > 0) {
-            my @ivarsInitSig = ();
-            my @ivarsInitCall = ();
-            foreach $attribute (@ivars) {
-                my $name = $attribute->signature->name;
-                my $memberName = "m_" . $name;
-                my $varName = "in" . $name;
-                my $type = GetObjCType($attribute->signature->type);
-                push(@ivarsInitSig, "$name:($type)$varName");
-                push(@ivarsInitCall, "$name:$varName");
-                push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
-            }
-            $ivarsToInit = " " . join(" ", @ivarsInitCall);
-            $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
-        }
-
-        # - Type-Maker
-        my $typeMakerName = GetObjCTypeMaker($interfaceName);
-        my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
 
         if ($parentImplClassName eq "Object") {        
             # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
@@ -1280,19 +1306,6 @@ sub GenerateImplementation
 
         # END WebCoreInternal category
         push(@implContent, "\@end\n");
-
-        # Generate interface definitions. 
-        @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
-        push(@intenalHeaderContent, "\n#import \"$className.h\"\n");
-        if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-            push(@intenalHeaderContent, "#import \"SVGAnimatedTemplate.h\"\n\n");
-        } else {
-            push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
-        }
-        push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
-        push(@intenalHeaderContent, $typeGetterSig . ";\n");
-        push(@intenalHeaderContent, $typeMakerSig . ";\n");
-        push(@intenalHeaderContent, "\@end\n");
     }
 
     # - End the ifdef conditional if necessary

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,12 +26,12 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGCircleElement : SVGElement
-                                                 , SVGTests
-                                                 , SVGLangSpace
-                                                 , SVGExternalResourcesRequired
-                                                 , SVGStylable
-                                                 , SVGTransformable {
+    interface [Conditional=SVG] SVGCircleElement : SVGElement,
+                                                   SVGTests,
+                                                   SVGLangSpace,
+                                                   SVGExternalResourcesRequired,
+                                                   SVGStylable,
+                                                   SVGTransformable {
         readonly attribute SVGAnimatedLength cx;
         readonly attribute SVGAnimatedLength cy;
         readonly attribute SVGAnimatedLength r;

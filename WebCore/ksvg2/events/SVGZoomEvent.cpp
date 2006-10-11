@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
 
     This file is part of the KDE project
 
@@ -24,7 +25,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGZoomEvent.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGZoomEvent::SVGZoomEvent()
     : m_newScale(0.0)
@@ -71,6 +72,13 @@ FloatPoint SVGZoomEvent::newTranslate() const
     return m_newTranslate;
 }
 
-// vim:ts=4:noet
+bool SVGZoomEvent::isSVGZoomEvent() const
+{
+    return true;
+}
+
+} // namespace WebCore
+
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +26,13 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGClipPathElement : SVGElement
-                                                   , SVGTests
-                                                   , SVGLangSpace
-                                                   , SVGExternalResourcesRequired
-                                                   , SVGStylable
-                                                   , SVGTransformable
-                                                 /*, SVGUnitTypes*/ { 
+    interface [Conditional=SVG] SVGClipPathElement : SVGElement,
+                                                     SVGTests,
+                                                     SVGLangSpace,
+                                                     SVGExternalResourcesRequired,
+                                                     SVGStylable,
+                                                     SVGTransformable
+                                                  /* SVGUnitTypes */ { 
         readonly attribute SVGAnimatedEnumeration clipPathUnits;
     };
 

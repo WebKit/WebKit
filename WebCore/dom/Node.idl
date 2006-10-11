@@ -20,7 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode, GenerateConstructor, ObjCNoInternal] Node {        
+    interface [LegacyParent=KJS::DOMNode, GenerateConstructor, ObjCCustomInternalImpl] Node {        
         // NodeType
         const unsigned short      ELEMENT_NODE                   = 1;
         const unsigned short      ATTRIBUTE_NODE                 = 2;

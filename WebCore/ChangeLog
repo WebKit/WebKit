@@ -1,3 +1,59 @@
+2006-10-10  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11248
+        Even More auto-generated Objective-C DOM bindings changes
+
+        - Auto-generate DOMSVGPathElement.
+
+        - Auto-generate the internal interfaces even for classes that have
+          custom internal implementations.  Change IDL property from ObjCNoInternal
+          to ObjCCustomInternalImpl to indicate the change.
+
+        - Add SVG classes to DOMNode and DOMEvent internal interfaces.
+
+        - Add isSVGZoomEvent() method to Event class to match other Event subclasses
+          and make DOM binding possible.
+
+        - Assorted cleanups.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (WebCore::addElementClass):
+        (WebCore::createElementClassMap):
+        (WebCore::elementClass):
+        (-[DOMNode description]):
+        (+[DOMNode _nodeWith:WebCore::]):
+        (-[DOMNode addEventListener:listener:useCapture:]):
+        (-[DOMNode removeEventListener:listener:useCapture:]):
+        (-[DOMElement _NPObject]):
+        (WebCore::ObjCEventListener::handleEvent):
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _eventWith:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor WebCore::]):
+        * bindings/objc/DOMSVGPathSegInternal.h: Removed.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSRule.idl:
+        * css/CSSValue.idl:
+        * css/StyleSheet.idl:
+        * dom/Event.cpp:
+        (WebCore::Event::isSVGZoomEvent):
+        * dom/Event.h:
+        * dom/Event.idl:
+        * dom/Node.idl:
+        * ksvg2/events/SVGZoomEvent.cpp:
+        (WebCore::SVGZoomEvent::isSVGZoomEvent):
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/svg/SVGAnimatedAngle.idl:
+        * ksvg2/svg/SVGCircleElement.idl:
+        * ksvg2/svg/SVGClipPathElement.idl:
+        * ksvg2/svg/SVGPathElement.idl:
+        * ksvg2/svg/SVGPathSeg.idl:
+
 2006-10-10  Oliver Hunt  <oliver@apple.com>
 
         rubber stamped by Anders.

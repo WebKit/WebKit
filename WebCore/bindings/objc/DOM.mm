@@ -63,9 +63,15 @@
 #import <objc/objc-class.h>
 #import <wtf/HashMap.h>
 
-using namespace WebCore::HTMLNames;
+#ifdef SVG_SUPPORT
+#import "SVGDocument.h"
+#import "SVGElement.h"
+#import "SVGNames.h"
+#endif
 
-class ObjCEventListener : public WebCore::EventListener {
+namespace WebCore {
+
+class ObjCEventListener : public EventListener {
 public:
     static ObjCEventListener* find(id <DOMEventListener>);
     static ObjCEventListener* create(id <DOMEventListener>);
@@ -74,106 +80,175 @@ private:
     ObjCEventListener(id <DOMEventListener>);
     virtual ~ObjCEventListener();
 
-    virtual void handleEvent(WebCore::Event*, bool isWindowEvent);
+    virtual void handleEvent(Event*, bool isWindowEvent);
 
     id <DOMEventListener> m_listener;
 };
 
 typedef HashMap<id, ObjCEventListener*> ListenerMap;
-typedef HashMap<WebCore::AtomicStringImpl*, Class> ObjCClassMap;
-
-static ObjCClassMap* elementClassMap;
 static ListenerMap* listenerMap;
+
+} // namespace WebCore
 
 
 //------------------------------------------------------------------------------------------
 // DOMNode
 
-static void addElementClass(const WebCore::QualifiedName& tag, Class objCClass)
+namespace WebCore {
+
+typedef HashMap<const QualifiedName*, Class> ObjCClassMap;
+static ObjCClassMap* elementClassMap;
+
+static void addElementClass(const QualifiedName& tag, Class objCClass)
 {
-    elementClassMap->set(tag.localName().impl(), objCClass);
+    elementClassMap->set(&tag, objCClass);
 }
 
-static void createHTMLElementClassMap()
+static void createElementClassMap()
 {
     // Create the table.
     elementClassMap = new ObjCClassMap;
-    
-    // Populate it with HTML element classes.
-    addElementClass(aTag, [DOMHTMLAnchorElement class]);
-    addElementClass(appletTag, [DOMHTMLAppletElement class]);
-    addElementClass(areaTag, [DOMHTMLAreaElement class]);
-    addElementClass(baseTag, [DOMHTMLBaseElement class]);
-    addElementClass(basefontTag, [DOMHTMLBaseFontElement class]);
-    addElementClass(bodyTag, [DOMHTMLBodyElement class]);
-    addElementClass(brTag, [DOMHTMLBRElement class]);
-    addElementClass(buttonTag, [DOMHTMLButtonElement class]);
-    addElementClass(canvasTag, [DOMHTMLImageElement class]);
-    addElementClass(captionTag, [DOMHTMLTableCaptionElement class]);
-    addElementClass(colTag, [DOMHTMLTableColElement class]);
-    addElementClass(colgroupTag, [DOMHTMLTableColElement class]);
-    addElementClass(dirTag, [DOMHTMLDirectoryElement class]);
-    addElementClass(divTag, [DOMHTMLDivElement class]);
-    addElementClass(dlTag, [DOMHTMLDListElement class]);
-    addElementClass(fieldsetTag, [DOMHTMLFieldSetElement class]);
-    addElementClass(fontTag, [DOMHTMLFontElement class]);
-    addElementClass(formTag, [DOMHTMLFormElement class]);
-    addElementClass(frameTag, [DOMHTMLFrameElement class]);
-    addElementClass(framesetTag, [DOMHTMLFrameSetElement class]);
-    addElementClass(h1Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(h2Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(h3Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(h4Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(h5Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(h6Tag, [DOMHTMLHeadingElement class]);
-    addElementClass(headTag, [DOMHTMLHeadElement class]);
-    addElementClass(hrTag, [DOMHTMLHRElement class]);
-    addElementClass(htmlTag, [DOMHTMLHtmlElement class]);
-    addElementClass(iframeTag, [DOMHTMLIFrameElement class]);
-    addElementClass(imgTag, [DOMHTMLImageElement class]);
-    addElementClass(inputTag, [DOMHTMLInputElement class]);
-    addElementClass(isindexTag, [DOMHTMLIsIndexElement class]);
-    addElementClass(labelTag, [DOMHTMLLabelElement class]);
-    addElementClass(legendTag, [DOMHTMLLegendElement class]);
-    addElementClass(liTag, [DOMHTMLLIElement class]);
-    addElementClass(linkTag, [DOMHTMLLinkElement class]);
-    addElementClass(listingTag, [DOMHTMLPreElement class]);
-    addElementClass(mapTag, [DOMHTMLMapElement class]);
-    addElementClass(menuTag, [DOMHTMLMenuElement class]);
-    addElementClass(metaTag, [DOMHTMLMetaElement class]);
-    addElementClass(objectTag, [DOMHTMLObjectElement class]);
-    addElementClass(olTag, [DOMHTMLOListElement class]);
-    addElementClass(optgroupTag, [DOMHTMLOptGroupElement class]);
-    addElementClass(optionTag, [DOMHTMLOptionElement class]);
-    addElementClass(pTag, [DOMHTMLParagraphElement class]);
-    addElementClass(paramTag, [DOMHTMLParamElement class]);
-    addElementClass(preTag, [DOMHTMLPreElement class]);
-    addElementClass(qTag, [DOMHTMLQuoteElement class]);
-    addElementClass(scriptTag, [DOMHTMLScriptElement class]);
-    addElementClass(selectTag, [DOMHTMLSelectElement class]);
-    addElementClass(styleTag, [DOMHTMLStyleElement class]);
-    addElementClass(tableTag, [DOMHTMLTableElement class]);
-    addElementClass(tbodyTag, [DOMHTMLTableSectionElement class]);
-    addElementClass(tdTag, [DOMHTMLTableCellElement class]);
-    addElementClass(textareaTag, [DOMHTMLTextAreaElement class]);
-    addElementClass(tfootTag, [DOMHTMLTableSectionElement class]);
-    addElementClass(theadTag, [DOMHTMLTableSectionElement class]);
-    addElementClass(titleTag, [DOMHTMLTitleElement class]);
-    addElementClass(trTag, [DOMHTMLTableRowElement class]);
-    addElementClass(ulTag, [DOMHTMLUListElement class]);
 
     // FIXME: Reflect marquee once the API has been determined.
+
+    // Populate it with HTML and SVG element classes.
+    addElementClass(HTMLNames::aTag, [DOMHTMLAnchorElement class]);
+    addElementClass(HTMLNames::appletTag, [DOMHTMLAppletElement class]);
+    addElementClass(HTMLNames::areaTag, [DOMHTMLAreaElement class]);
+    addElementClass(HTMLNames::baseTag, [DOMHTMLBaseElement class]);
+    addElementClass(HTMLNames::basefontTag, [DOMHTMLBaseFontElement class]);
+    addElementClass(HTMLNames::bodyTag, [DOMHTMLBodyElement class]);
+    addElementClass(HTMLNames::brTag, [DOMHTMLBRElement class]);
+    addElementClass(HTMLNames::buttonTag, [DOMHTMLButtonElement class]);
+    addElementClass(HTMLNames::canvasTag, [DOMHTMLImageElement class]);
+    addElementClass(HTMLNames::captionTag, [DOMHTMLTableCaptionElement class]);
+    addElementClass(HTMLNames::colTag, [DOMHTMLTableColElement class]);
+    addElementClass(HTMLNames::colgroupTag, [DOMHTMLTableColElement class]);
+    addElementClass(HTMLNames::dirTag, [DOMHTMLDirectoryElement class]);
+    addElementClass(HTMLNames::divTag, [DOMHTMLDivElement class]);
+    addElementClass(HTMLNames::dlTag, [DOMHTMLDListElement class]);
+    addElementClass(HTMLNames::fieldsetTag, [DOMHTMLFieldSetElement class]);
+    addElementClass(HTMLNames::fontTag, [DOMHTMLFontElement class]);
+    addElementClass(HTMLNames::formTag, [DOMHTMLFormElement class]);
+    addElementClass(HTMLNames::frameTag, [DOMHTMLFrameElement class]);
+    addElementClass(HTMLNames::framesetTag, [DOMHTMLFrameSetElement class]);
+    addElementClass(HTMLNames::h1Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::h2Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::h3Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::h4Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::h5Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::h6Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(HTMLNames::headTag, [DOMHTMLHeadElement class]);
+    addElementClass(HTMLNames::hrTag, [DOMHTMLHRElement class]);
+    addElementClass(HTMLNames::htmlTag, [DOMHTMLHtmlElement class]);
+    addElementClass(HTMLNames::iframeTag, [DOMHTMLIFrameElement class]);
+    addElementClass(HTMLNames::imgTag, [DOMHTMLImageElement class]);
+    addElementClass(HTMLNames::inputTag, [DOMHTMLInputElement class]);
+    addElementClass(HTMLNames::isindexTag, [DOMHTMLIsIndexElement class]);
+    addElementClass(HTMLNames::labelTag, [DOMHTMLLabelElement class]);
+    addElementClass(HTMLNames::legendTag, [DOMHTMLLegendElement class]);
+    addElementClass(HTMLNames::liTag, [DOMHTMLLIElement class]);
+    addElementClass(HTMLNames::linkTag, [DOMHTMLLinkElement class]);
+    addElementClass(HTMLNames::listingTag, [DOMHTMLPreElement class]);
+    addElementClass(HTMLNames::mapTag, [DOMHTMLMapElement class]);
+    addElementClass(HTMLNames::menuTag, [DOMHTMLMenuElement class]);
+    addElementClass(HTMLNames::metaTag, [DOMHTMLMetaElement class]);
+    addElementClass(HTMLNames::objectTag, [DOMHTMLObjectElement class]);
+    addElementClass(HTMLNames::olTag, [DOMHTMLOListElement class]);
+    addElementClass(HTMLNames::optgroupTag, [DOMHTMLOptGroupElement class]);
+    addElementClass(HTMLNames::optionTag, [DOMHTMLOptionElement class]);
+    addElementClass(HTMLNames::pTag, [DOMHTMLParagraphElement class]);
+    addElementClass(HTMLNames::paramTag, [DOMHTMLParamElement class]);
+    addElementClass(HTMLNames::preTag, [DOMHTMLPreElement class]);
+    addElementClass(HTMLNames::qTag, [DOMHTMLQuoteElement class]);
+    addElementClass(HTMLNames::scriptTag, [DOMHTMLScriptElement class]);
+    addElementClass(HTMLNames::selectTag, [DOMHTMLSelectElement class]);
+    addElementClass(HTMLNames::styleTag, [DOMHTMLStyleElement class]);
+    addElementClass(HTMLNames::tableTag, [DOMHTMLTableElement class]);
+    addElementClass(HTMLNames::tbodyTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(HTMLNames::tdTag, [DOMHTMLTableCellElement class]);
+    addElementClass(HTMLNames::textareaTag, [DOMHTMLTextAreaElement class]);
+    addElementClass(HTMLNames::tfootTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(HTMLNames::theadTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(HTMLNames::titleTag, [DOMHTMLTitleElement class]);
+    addElementClass(HTMLNames::trTag, [DOMHTMLTableRowElement class]);
+    addElementClass(HTMLNames::ulTag, [DOMHTMLUListElement class]);
+
+#ifdef SVG_SUPPORT
+    addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
+    addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
+    addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
+    addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
+    addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
+    addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
+    addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
+    addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
+    addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
+    addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
+    addElementClass(SVGNames::feBlendTag, [DOMSVGFEBlendElement class]);
+    addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
+    addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);
+    addElementClass(SVGNames::feCompositeTag, [DOMSVGFECompositeElement class]);
+    addElementClass(SVGNames::feDiffuseLightingTag, [DOMSVGFEDiffuseLightingElement class]);
+    addElementClass(SVGNames::feDisplacementMapTag, [DOMSVGFEDisplacementMapElement class]);
+    addElementClass(SVGNames::feDistantLightTag, [DOMSVGFEDistantLightElement class]);
+    addElementClass(SVGNames::feFloodTag, [DOMSVGFEFloodElement class]);
+    addElementClass(SVGNames::feFuncATag, [DOMSVGFEFuncAElement class]);
+    addElementClass(SVGNames::feFuncBTag, [DOMSVGFEFuncBElement class]);
+    addElementClass(SVGNames::feFuncGTag, [DOMSVGFEFuncGElement class]);
+    addElementClass(SVGNames::feFuncRTag, [DOMSVGFEFuncRElement class]);
+    addElementClass(SVGNames::feGaussianBlurTag, [DOMSVGFEGaussianBlurElement class]);
+    addElementClass(SVGNames::feImageTag, [DOMSVGFEImageElement class]);
+    addElementClass(SVGNames::feMergeTag, [DOMSVGFEMergeElement class]);
+    addElementClass(SVGNames::feMergeNodeTag, [DOMSVGFEMergeNodeElement class]);
+    addElementClass(SVGNames::feOffsetTag, [DOMSVGFEOffsetElement class]);
+    addElementClass(SVGNames::fePointLightTag, [DOMSVGFEPointLightElement class]);
+    addElementClass(SVGNames::feSpecularLightingTag, [DOMSVGFESpecularLightingElement class]);
+    addElementClass(SVGNames::feSpotLightTag, [DOMSVGFESpotLightElement class]);
+    addElementClass(SVGNames::feTileTag, [DOMSVGFETileElement class]);
+    addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
+    addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
+    addElementClass(SVGNames::foreignObjectTag, [DOMSVGForeignObjectElement class]);
+    addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
+    addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
+    addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);
+    addElementClass(SVGNames::linearGradientTag, [DOMSVGLinearGradientElement class]);
+    addElementClass(SVGNames::markerTag, [DOMSVGMarkerElement class]);
+    addElementClass(SVGNames::maskTag, [DOMSVGMaskElement class]);
+    addElementClass(SVGNames::metadataTag, [DOMSVGMetadataElement class]);
+    addElementClass(SVGNames::pathTag, [DOMSVGPathElement class]);
+    addElementClass(SVGNames::patternTag, [DOMSVGPatternElement class]);
+    addElementClass(SVGNames::polygonTag, [DOMSVGPolygonElement class]);
+    addElementClass(SVGNames::polylineTag, [DOMSVGPolylineElement class]);
+    addElementClass(SVGNames::radialGradientTag, [DOMSVGRadialGradientElement class]);
+    addElementClass(SVGNames::rectTag, [DOMSVGRectElement class]);
+    addElementClass(SVGNames::scriptTag, [DOMSVGScriptElement class]);
+    addElementClass(SVGNames::setTag, [DOMSVGSetElement class]);
+    addElementClass(SVGNames::stopTag, [DOMSVGStopElement class]);
+    addElementClass(SVGNames::styleTag, [DOMSVGStyleElement class]);
+    addElementClass(SVGNames::svgTag, [DOMSVGSVGElement class]);
+    addElementClass(SVGNames::switchTag, [DOMSVGSwitchElement class]);
+    addElementClass(SVGNames::symbolTag, [DOMSVGSymbolElement class]);
+    addElementClass(SVGNames::textTag, [DOMSVGTextElement class]);
+    addElementClass(SVGNames::titleTag, [DOMSVGTitleElement class]);
+    addElementClass(SVGNames::trefTag, [DOMSVGTRefElement class]);
+    addElementClass(SVGNames::tspanTag, [DOMSVGTSpanElement class]);
+    addElementClass(SVGNames::useTag, [DOMSVGUseElement class]);
+    addElementClass(SVGNames::viewTag, [DOMSVGViewElement class]);
+#endif
 }
 
-static Class elementClass(const WebCore::AtomicString& tagName)
+static Class elementClass(const QualifiedName& tag, Class defaultClass)
 {
     if (!elementClassMap)
-        createHTMLElementClassMap();
-    Class objcClass = elementClassMap->get(tagName.impl());
+        createElementClassMap();
+    Class objcClass = elementClassMap->get(&tag);
     if (!objcClass)
-        objcClass = [DOMHTMLElement class];
+        objcClass = defaultClass;
     return objcClass;
 }
+
+} // namespace WebCore
 
 @implementation DOMNode (WebCoreInternal)
 
@@ -182,7 +257,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 {
     if (!_internal)
         return [NSString stringWithFormat:@"<%@: null>", [[self class] description], self];
-    
+
     NSString *value = [self nodeValue];
     if (value)
         return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>",
@@ -206,17 +281,21 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 {
     if (!impl)
         return nil;
-    
+
     id cachedInstance;
     cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
-    
+
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
         case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
-                wrapperClass = elementClass(static_cast<WebCore::HTMLElement*>(impl)->localName());
+                wrapperClass = WebCore::elementClass(static_cast<WebCore::HTMLElement*>(impl)->tagQName(), [DOMHTMLElement class]);
+#ifdef SVG_SUPPORT
+            else if (impl->isSVGElement())
+                wrapperClass = WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
+#endif
             else
                 wrapperClass = [DOMElement class];
             break;
@@ -244,6 +323,10 @@ static Class elementClass(const WebCore::AtomicString& tagName)
         case WebCore::Node::DOCUMENT_NODE:
             if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
                 wrapperClass = [DOMHTMLDocument class];
+#ifdef SVG_SUPPORT
+            else if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
+                wrapperClass = [DOMSVGDocument class];
+#endif
             else
                 wrapperClass = [DOMDocument class];
             break;
@@ -317,7 +400,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     if (![self _node]->isEventTargetNode())
         WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
     
-    WebCore::EventListener *wrapper = ObjCEventListener::create(listener);
+    WebCore::EventListener *wrapper = WebCore::ObjCEventListener::create(listener);
     WebCore::EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
     wrapper->deref();
 }
@@ -333,7 +416,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     if (![self _node]->isEventTargetNode())
         WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
-    if (WebCore::EventListener *wrapper = ObjCEventListener::find(listener))
+    if (WebCore::EventListener *wrapper = WebCore::ObjCEventListener::find(listener))
         WebCore::EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
 }
 
@@ -412,7 +495,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (void *)_NPObject
 {
     WebCore::Element* element = [self _element];
-    if (element->hasTagName(appletTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag))
+    if (element->hasTagName(WebCore::HTMLNames::appletTag) || element->hasTagName(WebCore::HTMLNames::embedTag) || element->hasTagName(WebCore::HTMLNames::objectTag))
         return static_cast<WebCore::HTMLPlugInElement*>(element)->getNPObject();
     return 0;
 }
@@ -590,8 +673,11 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // ObjCEventListener
+
+namespace WebCore {
 
 ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
 {
@@ -626,7 +712,9 @@ ObjCEventListener::~ObjCEventListener()
     [m_listener release];
 }
 
-void ObjCEventListener::handleEvent(WebCore::Event* event, bool)
+void ObjCEventListener::handleEvent(Event* event, bool)
 {
     [m_listener handleEvent:[DOMEvent _eventWith:event]];
 }
+
+} // namespace WebCore

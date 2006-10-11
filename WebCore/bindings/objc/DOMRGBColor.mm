@@ -127,6 +127,11 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 @implementation DOMRGBColor (WebCoreInternal)
 
+- (WebCore::RGBA32)_RGBColor
+{
+     return static_cast<WebCore::RGBA32>(reinterpret_cast<uintptr_t>(_internal));
+}
+
 - (id)_initWithRGB:(WebCore::RGBA32)value
 {
     [super _init];

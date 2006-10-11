@@ -116,6 +116,14 @@ bool Event::isOverflowEvent() const
     return false;
 }
 
+#ifdef SVG_SUPPORT
+bool Event::isSVGZoomEvent() const
+{
+    return false;
+}
+#endif
+
+
 bool Event::storesResultAsString() const
 {
     return false;

@@ -21,7 +21,7 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMEvent, GenerateConstructor, ObjCNoInternal] Event {
+    interface [LegacyParent=KJS::DOMEvent, GenerateConstructor, ObjCCustomInternalImpl] Event {
 
         // DOM PhaseType
         const unsigned short CAPTURING_PHASE     = 1;

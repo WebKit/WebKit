@@ -28,13 +28,8 @@
 #import "DOM.h"
 
 #import "Color.h"
-#import "DOMCSSRule.h"
-#import "DOMCSSValue.h"
-#import "DOMEvents.h"
-#import "DOMNode.h"
 #import "DOMObject.h"
 #import "DOMRGBColor.h"
-#import "DOMStyleSheet.h"
 
 #ifdef SVG_SUPPORT
 #import "DOMSVGNumber.h"
@@ -46,6 +41,7 @@
 #import "DOMXPathNSResolver.h"
 #endif // XPATH_SUPPORT
 
+
 // Auto-generated internal interfaces
 #import "DOMAbstractViewInternal.h"
 #import "DOMAttrInternal.h"
@@ -56,11 +52,13 @@
 #import "DOMCSSMediaRuleInternal.h"
 #import "DOMCSSPageRuleInternal.h"
 #import "DOMCSSPrimitiveValueInternal.h"
+#import "DOMCSSRuleInternal.h"
 #import "DOMCSSRuleListInternal.h"
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMCSSStyleRuleInternal.h"
 #import "DOMCSSStyleSheetInternal.h"
 #import "DOMCSSUnknownRuleInternal.h"
+#import "DOMCSSValueInternal.h"
 #import "DOMCSSValueListInternal.h"
 #import "DOMCharacterDataInternal.h"
 #import "DOMCommentInternal.h"
@@ -72,6 +70,7 @@
 #import "DOMElementInternal.h"
 #import "DOMEntityInternal.h"
 #import "DOMEntityReferenceInternal.h"
+#import "DOMEventInternal.h"
 #import "DOMHTMLAnchorElementInternal.h"
 #import "DOMHTMLAppletElementInternal.h"
 #import "DOMHTMLAreaElementInternal.h"
@@ -134,6 +133,7 @@
 #import "DOMMouseEventInternal.h"
 #import "DOMMutationEventInternal.h"
 #import "DOMNamedNodeMapInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMNodeIteratorInternal.h"
 #import "DOMNodeListInternal.h"
 #import "DOMNotationInternal.h"
@@ -141,6 +141,7 @@
 #import "DOMProcessingInstructionInternal.h"
 #import "DOMRangeInternal.h"
 #import "DOMRectInternal.h"
+#import "DOMStyleSheetInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
 #import "DOMTreeWalkerInternal.h"
@@ -198,21 +199,22 @@
 #import "DOMSVGFESpotLightElementInternal.h"
 #import "DOMSVGFETileElementInternal.h"
 #import "DOMSVGFETurbulenceElementInternal.h"
-#import "DOMSVGFilterElement.h"
-#import "DOMSVGForeignObjectElement.h"
-#import "DOMSVGGElement.h"
-#import "DOMSVGGradientElement.h"
-#import "DOMSVGImageElement.h"
+#import "DOMSVGFilterElementInternal.h"
+#import "DOMSVGForeignObjectElementInternal.h"
+#import "DOMSVGGElementInternal.h"
+#import "DOMSVGGradientElementInternal.h"
+#import "DOMSVGImageElementInternal.h"
 #import "DOMSVGLengthInternal.h"
 #import "DOMSVGLengthListInternal.h"
-#import "DOMSVGLineElement.h"
-#import "DOMSVGLinearGradientElement.h"
-#import "DOMSVGMarkerElement.h"
-#import "DOMSVGMaskElement.h"
+#import "DOMSVGLineElementInternal.h"
+#import "DOMSVGLinearGradientElementInternal.h"
+#import "DOMSVGMarkerElementInternal.h"
+#import "DOMSVGMaskElementInternal.h"
 #import "DOMSVGMatrixInternal.h"
 #import "DOMSVGMetadataElementInternal.h"
 #import "DOMSVGNumberListInternal.h"
-#import "DOMSVGPaint.h"
+#import "DOMSVGPaintInternal.h"
+#import "DOMSVGPathElementInternal.h"
 #import "DOMSVGPathSegArcAbsInternal.h"
 #import "DOMSVGPathSegArcRelInternal.h"
 #import "DOMSVGPathSegClosePathInternal.h"
@@ -270,12 +272,7 @@
 #endif // XPATH_SUPPORT
 
 namespace WebCore {
-    class CSSRule;
-    class CSSValue;
-    class Event;
-    class Node;
     class NodeFilter;
-    class StyleSheet;
 
 #ifdef SVG_SUPPORT
     class FloatPoint;
@@ -293,39 +290,11 @@ namespace WebCore {
 - (id)_init;
 @end
 
-@interface DOMNode (WebCoreInternal)
-+ (DOMNode *)_nodeWith:(WebCore::Node *)impl;
-- (WebCore::Node *)_node;
-@end
-
 // CSS Internal Interfaces
-
-@interface DOMCSSRule (WebCoreInternal)
-+ (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl;
-- (WebCore::CSSRule *)_CSSRule;
-@end
-
-@interface DOMCSSValue (WebCoreInternal)
-+ (DOMCSSValue *)_CSSValueWith:(WebCore::CSSValue *)impl;
-- (WebCore::CSSValue *)_CSSValue;
-@end
 
 @interface DOMRGBColor (WebCoreInternal)
 + (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value;
-@end
-
-// StyleSheets Internal Interfaces
-
-@interface DOMStyleSheet (WebCoreInternal)
-+ (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl;
-- (WebCore::StyleSheet *)_styleSheet;
-@end
-
-// Events Internal Interfaces
-
-@interface DOMEvent (WebCoreInternal)
-+ (DOMEvent *)_eventWith:(WebCore::Event *)impl;
-- (WebCore::Event *)_event;
+- (WebCore::RGBA32)_RGBColor;
 @end
 
 // Traversal Internal Interfaces

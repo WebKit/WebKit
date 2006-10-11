@@ -99,6 +99,9 @@ namespace WebCore {
         virtual bool isWheelEvent() const;
         virtual bool isBeforeTextInsertedEvent() const;
         virtual bool isOverflowEvent() const;
+#ifdef SVG_SUPPORT
+        virtual bool isSVGZoomEvent() const;
+#endif
         
         bool propagationStopped() const { return m_propagationStopped; }
         bool defaultPrevented() const { return m_defaultPrevented; }

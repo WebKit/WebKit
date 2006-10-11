@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
                   
     This file is part of the KDE project
 
@@ -46,6 +47,8 @@ namespace WebCore {
         void setNewScale(float);
 
         FloatPoint newTranslate() const;
+
+        virtual bool isSVGZoomEvent() const;
 
     private:
         float m_newScale;

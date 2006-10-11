@@ -32,11 +32,16 @@
 #import "DOMPrivate.h"
 #import "Document.h"
 #import "Event.h"
-#import "MouseEvent.h"
 #import "KeyboardEvent.h"
+#import "MouseEvent.h"
 #import "MutationEvent.h"
 #import "OverflowEvent.h"
 #import "UIEvent.h"
+
+#ifdef SVG_SUPPORT
+#import "DOMSVGZoomEvent.h"
+#import "SVGZoomEvent.h"
+#endif
 
 //------------------------------------------------------------------------------------------
 // DOMEvent
@@ -82,6 +87,10 @@
         wrapperClass = [DOMUIEvent class];
     else if (impl->isOverflowEvent())
         wrapperClass = [DOMOverflowEvent class];
+#ifdef SVG_SUPPORT
+    else if (impl->isSVGZoomEvent())
+        wrapperClass = [DOMSVGZoomEvent class];
+#endif
     else
         wrapperClass = [DOMEvent class];
 
