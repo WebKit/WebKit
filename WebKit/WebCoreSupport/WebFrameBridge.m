@@ -118,12 +118,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
 {
     self = [super initMainFrameWithPage:page];
-
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
+    
+    [self setFrameLoaderClient:_frame];
+    
     ++WebBridgeCount;
     
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    _frameLoader = [[WebFrameLoader alloc] initWithFrame:self client:_frame];
-
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];
     [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
@@ -134,12 +134,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
     self = [super initSubframeWithOwnerElement:ownerElement];
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
+    
+    [self setFrameLoaderClient:_frame];
 
     ++WebBridgeCount;
     
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    _frameLoader = [[WebFrameLoader alloc] initWithFrame:self client:_frame];
-
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];
     [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
@@ -167,7 +167,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     [lastDashboardRegions release];
     [_frame release];
-    [_frameLoader release];
     
     [self fini];
     [super dealloc];
@@ -226,11 +225,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (WebFrame *)webFrame
 {
     return _frame;
-}
-
-- (WebFrameLoader *)frameLoader
-{
-    return _frameLoader;
 }
 
 - (WebCoreFrameBridge *)mainFrame
@@ -487,7 +481,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)setTitle:(NSString *)title
 {
-    [[_frameLoader documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
+    [[[self frameLoader] documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
 }
 
 - (void)setStatusText:(NSString *)status
@@ -500,7 +494,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = [[_frameLoader documentLoader] overrideEncoding];
+    NSString *encoding = [[[self frameLoader] documentLoader] overrideEncoding];
     BOOL userChosen = encoding != nil;
     if (encoding == nil) {
         encoding = textEncodingName;
@@ -527,7 +521,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                   URL:URL
                                         customHeaders:customHeaders
                                              referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:_frameLoader];
+                                       forFrameLoader:[self frameLoader]];
 }
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
@@ -548,7 +542,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                         customHeaders:customHeaders
                                              postData:postData
                                              referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:_frameLoader];
+                                       forFrameLoader:[self frameLoader]];
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
@@ -557,8 +551,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSError *error;
     id identifier;
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [_frameLoader requestFromDelegateForRequest:request identifier:&identifier error:&error];    
-    [_frameLoader sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
+    [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];    
+    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
     [request release];
 }
 
@@ -598,7 +592,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     NSError *error = nil;
     id identifier = nil;    
-    NSURLRequest *newRequest = [_frameLoader requestFromDelegateForRequest:request identifier:&identifier error:&error];
+    NSURLRequest *newRequest = [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];
     
     NSURLResponse *response = nil;
     NSData *result = nil;
@@ -627,7 +621,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         }
     }
     
-    [_frameLoader sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
+    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
     [request release];
     
     return result;
@@ -657,12 +651,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    [_frameLoader clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
+    [[self frameLoader] clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
 }
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [_frameLoader clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
+    [[self frameLoader] clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
 }
 
 - (void)close
@@ -670,8 +664,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [super close];
     [_frame release];
     _frame = nil;
-    [_frameLoader release];
-    _frameLoader = nil;
 }
 
 - (void)activateWindow
@@ -721,7 +713,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         loadType = WebFrameLoadTypeInternal;
     else
         loadType = WebFrameLoadTypeStandard;
-    [_frameLoader loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
+    [[self frameLoader] loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
         [[targetFrame _bridge] activateWindow];
@@ -741,7 +733,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if (![self canTargetLoadInFrame:[targetFrame _bridge]])
         return;
 
-    [_frameLoader postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target
+    [[self frameLoader] postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target
         data:postData contentType:contentType
         triggeringEvent:event form:form formValues:values];
 
@@ -878,7 +870,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)tokenizerProcessedData
 {
-    [_frameLoader checkLoadComplete];
+    [[self frameLoader] checkLoadComplete];
 }
 
 - (NSString *)incomingReferrer
@@ -1330,7 +1322,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)frameDetached
 {
     [_frame stopLoading];
-    [_frameLoader detachFromParent];
+    [[self frameLoader] detachFromParent];
 }
 
 - (void)setHasBorder:(BOOL)hasBorder
@@ -1522,7 +1514,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)didFirstLayout
 {
-    [_frameLoader didFirstLayout];
+    [[self frameLoader] didFirstLayout];
 }
 
 - (BOOL)_compareDashboardRegions:(NSDictionary *)regions
@@ -1713,17 +1705,17 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)notifyIconChanged:(NSURL*)iconURL
 {
-    [_frameLoader _notifyIconChanged:iconURL];
+    [[self frameLoader] _notifyIconChanged:iconURL];
 }
 
 - (NSURL*)originalRequestURL
 {
-    return [[[_frameLoader activeDocumentLoader] initialRequest] URL];
+    return [[[[self frameLoader] activeDocumentLoader] initialRequest] URL];
 }
 
 - (BOOL)isLoadTypeReload
 {
-    return [_frameLoader loadType] == WebFrameLoadTypeReload;
+    return [[self frameLoader] loadType] == WebFrameLoadTypeReload;
 }
 
 @end

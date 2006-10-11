@@ -115,7 +115,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
     BOOL isStoppingLoad;    
 }
 
-- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(id<WebFrameLoaderClient>)client;
+- (id)initWithFrameBridge:(WebCoreFrameBridge *)bridge;
 - (void)addPlugInStreamLoader:(WebLoader *)loader;
 - (void)removePlugInStreamLoader:(WebLoader *)loader;
 - (void)setDefersCallbacks:(BOOL)defers;
@@ -249,6 +249,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
 - (NSDictionary *)actionInformationForLoadType:(FrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
+- (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)cli;
 - (id<WebFrameLoaderClient>)client;
    
 @end

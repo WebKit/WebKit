@@ -68,11 +68,10 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 @implementation WebFrameLoader
 
-- (id)initWithFrame:(WebCoreFrameBridge *)bridge client:(id<WebFrameLoaderClient>)c
+- (id)initWithFrameBridge:(WebCoreFrameBridge *)bridge
 {
     self = [super init];
     if (self) {
-        client = c;
         frameBridge = bridge;
         state = WebFrameStateCommittedPage;
     }
@@ -1856,6 +1855,11 @@ NSString *ActionOriginalURLKey = @"WebActionOriginalURLKey";
         parent = [frame parent];
         [frame release];
     }
+}
+
+- (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)cli
+{
+    client = cli;
 }
 
 - (id<WebFrameLoaderClient>)client

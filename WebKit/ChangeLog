@@ -1,3 +1,32 @@
+2006-10-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved WebFrameLoader into WebCoreFrameBridge
+
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        (-[WebFrameBridge dealloc]):
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge receivedData:textEncodingName:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrameBridge reportClientRedirectCancelled:]):
+        (-[WebFrameBridge close]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge tokenizerProcessedData]):
+        (-[WebFrameBridge frameDetached]):
+        (-[WebFrameBridge didFirstLayout]):
+        (-[WebFrameBridge notifyIconChanged:]):
+        (-[WebFrameBridge originalRequestURL]):
+        (-[WebFrameBridge isLoadTypeReload]):
+
 2006-10-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

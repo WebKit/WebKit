@@ -70,6 +70,7 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"
+#import "WebFrameLoader.h"
 #import "XMLTokenizer.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -484,6 +485,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         WebCore::Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = true;
     }
+
+    _frameLoader = [[WebFrameLoader alloc] initWithFrameBridge:self];
     
     return self;
 }
@@ -496,6 +499,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
+
+    _frameLoader = [[WebFrameLoader alloc] initWithFrameBridge:self];
+
     return self;
 }
 
@@ -512,6 +518,10 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)dealloc
 {
     ASSERT(_closed);
+    
+    [_frameLoader release];
+    _frameLoader = nil;
+    
     [super dealloc];
 }
 
@@ -525,6 +535,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     [self removeFromFrame];
     [self clearFrame];
+    [_frameLoader release];
+    _frameLoader = nil;
     _closed = YES;
 }
 
@@ -2586,6 +2598,16 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (BOOL)isMainFrame
 {
     return m_frame->page()->mainFrame() == m_frame;
+}
+
+- (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)client
+{
+    [_frameLoader setFrameLoaderClient:client];
+}
+
+- (WebFrameLoader *)frameLoader
+{
+    return _frameLoader;
 }
 
 @end
