@@ -32,6 +32,7 @@
 #import "GraphicsContext.h"
 #import "BlockExceptions.h"
 #import "FrameMac.h"
+#import "RetainPtr.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
@@ -47,7 +48,7 @@ class WidgetPrivate
 {
 public:
     Font font;
-    NSView* view;
+    RetainPtr<NSView> view;
     WidgetClient* client;
     bool visible;
     bool mustStayInWindow;
@@ -65,7 +66,7 @@ Widget::Widget() : data(new WidgetPrivate)
 
 Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
-    data->view = HardRetain(view);
+    data->view = view;
     data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
@@ -74,10 +75,6 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 
 Widget::~Widget() 
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    HardRelease(data->view);
-    END_BLOCK_OBJC_EXCEPTIONS;
-
     if (deferredFirstResponder == this)
         deferredFirstResponder = 0;
 
@@ -86,7 +83,7 @@ Widget::~Widget()
 
 void Widget::setEnabled(bool enabled)
 {
-    id view = data->view;
+    id view = data->view.get();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(setEnabled:)]) {
         [view setEnabled:enabled];
@@ -96,7 +93,7 @@ void Widget::setEnabled(bool enabled)
 
 bool Widget::isEnabled() const
 {
-    id view = data->view;
+    id view = data->view.get();
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(isEnabled)]) {
@@ -224,7 +221,7 @@ void Widget::setFont(const Font& font)
 void Widget::setCursor(const Cursor& cursor)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    for (id view = data->view; view; view = [view superview]) {
+    for (id view = data->view.get(); view; view = [view superview]) {
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
             if ([view respondsToSelector:@selector(documentCursor)] && cursor.impl() == [view documentCursor])
                 break;
@@ -273,14 +270,12 @@ void Widget::setFrameGeometry(const IntRect &rect)
 
 NSView* Widget::getView() const
 {
-    return data->view;
+    return data->view.get();
 }
 
 void Widget::setView(NSView* view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    HardRetain(view);
-    HardRelease(data->view);
     data->view = view;
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -289,7 +284,7 @@ NSView* Widget::getOuterView() const
 {
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.
 
-    NSView* view = data->view;
+    NSView* view = data->view.get();
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
         ASSERT(view);

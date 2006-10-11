@@ -1,3 +1,40 @@
+2006-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - added RetainPtr, smart pointer for refcounted ObjC objects and CFTypes
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/RetainPtr.h: Added.
+        (WTF::):
+        (WTF::RetainPtr::RetainPtr):
+        (WTF::RetainPtr::~RetainPtr):
+        (WTF::RetainPtr::get):
+        (WTF::RetainPtr::operator*):
+        (WTF::RetainPtr::operator->):
+        (WTF::RetainPtr::operator!):
+        (WTF::RetainPtr::operator UnspecifiedBoolType):
+        (WTF::::operator):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        
+        - use it in WidgetMac so it gets tested in at least one place
+        
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::getView):
+        (WebCore::Widget::setView):
+        (WebCore::Widget::getOuterView):
+
 2006-10-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej.
