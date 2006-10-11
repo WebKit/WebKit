@@ -1,3 +1,19 @@
+2006-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11251
+        Corrects canvas tag to not throw JS exception when drawing
+        zero sized rects, arcs, etc
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+        (WebCore::CanvasRenderingContext2D::rect):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+
 2006-10-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

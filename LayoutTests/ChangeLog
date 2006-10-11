@@ -1,3 +1,14 @@
+2006-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Test case for http://bugs.webkit.org/show_bug.cgi?id=11251
+
+        * fast/canvas/zero-size-fill-rect-expected.checksum: Added.
+        * fast/canvas/zero-size-fill-rect-expected.png: Added.
+        * fast/canvas/zero-size-fill-rect-expected.txt: Added.
+        * fast/canvas/zero-size-fill-rect.html: Added.
+
 2006-10-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
