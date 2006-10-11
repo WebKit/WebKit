@@ -64,9 +64,10 @@ void RenderSVGText::layout()
     if (checkForRepaint)
         oldBounds = m_absoluteBounds;
     SVGTextElement* text = static_cast<SVGTextElement*>(element());
-    int xOffset = text->x()->getFirst() ? text->x()->getFirst()->value() : 0;
-    int yOffset = text->y()->getFirst() ? text->y()->getFirst()->value() : 0;
-    this->setPos(xOffset, yOffset);
+    //FIXME:  need to allow floating point positions
+    int xOffset = (int)(text->x()->getFirst() ? text->x()->getFirst()->value() : 0);
+    int yOffset = (int)(text->y()->getFirst() ? text->y()->getFirst()->value() : 0);
+    setPos(xOffset, yOffset);
     RenderBlock::layout();
     
     m_absoluteBounds = getAbsoluteRepaintRect();

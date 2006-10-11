@@ -1,4 +1,17 @@
-2006-10-10  Oliver Hunt  <set EMAIL_ADDRESS environment variable>
+2006-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders 
+
+        Unbreak build bots
+
+        * dom/Text.cpp:
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * kcanvas/SVGInlineFlowBox.cpp:
+        (WebCore::placePositionedBoxesHorizontally):
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+
+2006-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by hyatt.
 

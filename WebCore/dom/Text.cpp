@@ -27,7 +27,10 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "RenderText.h"
+
+#ifdef SVG_SUPPORT
 #include "RenderSVGInlineText.h"
+#endif // SVG_SUPPORT
 
 namespace WebCore {
 
