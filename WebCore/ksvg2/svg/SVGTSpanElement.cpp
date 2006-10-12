@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,13 +23,15 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGTSpanElement.h"
-#include "SVGNames.h"
+
+#include "RenderInline.h"
 #include "RenderSVGTSpan.h"
+#include "SVGNames.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document *doc)
-: SVGTextPositioningElement(tagName, doc)
+SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* doc)
+    : SVGTextPositioningElement(tagName, doc)
 {
 }
 
@@ -37,7 +39,7 @@ SVGTSpanElement::~SVGTSpanElement()
 {
 }
 
-bool SVGTSpanElement::childShouldCreateRenderer(Node *child) const
+bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
         child->hasTagName(SVGNames::trefTag))
@@ -45,9 +47,11 @@ bool SVGTSpanElement::childShouldCreateRenderer(Node *child) const
     return false;
 }
 
-RenderObject *SVGTSpanElement::createRenderer(RenderArena *arena, RenderStyle *)
+RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGTSpan(this);
+}
+
 }
 
 // vim:ts=4:noet

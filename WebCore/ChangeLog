@@ -1,3 +1,49 @@
+2006-10-12  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg text classes.
+
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::parseMappedAttribute):
+        (WebCore::SVGTRefElement::childShouldCreateRenderer):
+        (WebCore::SVGTRefElement::createRenderer):
+        * ksvg2/svg/SVGTRefElement.h:
+        (WebCore::SVGTRefElement::rendererIsNeeded):
+        * ksvg2/svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::SVGTSpanElement):
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer):
+        (WebCore::SVGTSpanElement::createRenderer):
+        * ksvg2/svg/SVGTSpanElement.h:
+        (WebCore::SVGTSpanElement::rendererIsNeeded):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        (WebCore::SVGTextElement::localMatrix):
+        (WebCore::SVGTextElement::parseMappedAttribute):
+        (WebCore::SVGTextElement::updateLocalTransform):
+        (WebCore::SVGTextElement::nearestViewportElement):
+        (WebCore::SVGTextElement::farthestViewportElement):
+        (WebCore::SVGTextElement::getScreenCTM):
+        (WebCore::SVGTextElement::getCTM):
+        (WebCore::SVGTextElement::createRenderer):
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::getTransformToElement):
+        (WebCore::SVGTextElement::rendererIsNeeded):
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElement.h:
+
 2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.

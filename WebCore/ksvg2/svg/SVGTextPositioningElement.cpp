@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,17 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
 #include "SVGTextPositioningElement.h"
+
+#include "SVGHelper.h"
 #include "SVGLengthList.h"
+#include "SVGNames.h"
 #include "SVGNumberList.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document *doc)
+SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* doc)
     : SVGTextContentElement(tagName, doc)
     , m_x(new SVGLengthList)
     , m_y(new SVGLengthList)
@@ -52,7 +51,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthL
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Dy, dy, SVGNames::dyAttr.localName(), m_dy.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGNumberList*, NumberList, numberList, Rotate, rotate, SVGNames::rotateAttr.localName(), m_rotate.get())
 
-void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     
@@ -68,6 +67,8 @@ void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute *attr)
         rotateBaseValue()->parse(value.deprecatedString());
     else
         SVGTextContentElement::parseMappedAttribute(attr);
+}
+
 }
 
 // vim:ts=4:noet

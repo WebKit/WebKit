@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,30 +30,30 @@
 namespace WebCore
 {
     class SVGTextElement : public SVGTextPositioningElement,
-                               public SVGTransformable
+                           public SVGTransformable
     {
     public:
         SVGTextElement(const QualifiedName&, Document*);
         virtual ~SVGTextElement();
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
          // 'SVGTextElement' functions
-        virtual SVGElement *nearestViewportElement() const;
-        virtual SVGElement *farthestViewportElement() const;
+        virtual SVGElement* nearestViewportElement() const;
+        virtual SVGElement* farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual SVGMatrix *getCTM() const;
-        virtual SVGMatrix *getScreenCTM() const;
-        virtual SVGMatrix *getTransformToElement(SVGElement*, ExceptionCode&) const { return 0; }
+        virtual SVGMatrix* getCTM() const;
+        virtual SVGMatrix* getScreenCTM() const;
+        virtual SVGMatrix* getTransformToElement(SVGElement*, ExceptionCode&) const { return 0; }
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        virtual bool childShouldCreateRenderer(Node *) const;
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual bool childShouldCreateRenderer(Node*) const;
         virtual void attach();
-        virtual SVGMatrix *localMatrix() const;
+        virtual SVGMatrix* localMatrix() const;
         
-        virtual void updateLocalTransform(SVGTransformList *localTransforms);
+        virtual void updateLocalTransform(SVGTransformList*);
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }

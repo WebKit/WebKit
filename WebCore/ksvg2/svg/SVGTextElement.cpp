@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,18 +24,17 @@
 #ifdef SVG_SUPPORT
 #include "SVGTextElement.h"
 
+#include "FloatRect.h"
+#include "RenderSVGText.h"
 #include "SVGLengthList.h"
-#include "SVGTransformList.h"
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
-#include "RenderStyle.h"
-#include "RenderSVGText.h"
-#include "FloatRect.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
-SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document *doc)
+SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGTransformable()
     , m_transform(new SVGTransformList)
@@ -48,15 +47,15 @@ SVGTextElement::~SVGTextElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
-SVGMatrix *SVGTextElement::localMatrix() const
+SVGMatrix* SVGTextElement::localMatrix() const
 {
     return lazy_create<SVGMatrix>(m_localMatrix);
 }
 
-void SVGTextElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
-        SVGTransformList *localTransforms = transformBaseValue();
+        SVGTransformList* localTransforms = transformBaseValue();
 
         ExceptionCode ec = 0;
         localTransforms->clear(ec);
@@ -67,11 +66,11 @@ void SVGTextElement::parseMappedAttribute(MappedAttribute *attr)
         SVGTextPositioningElement::parseMappedAttribute(attr);
 }
 
-void SVGTextElement::updateLocalTransform(SVGTransformList *localTransforms)
+void SVGTextElement::updateLocalTransform(SVGTransformList* localTransforms)
 {
     // Update cached local matrix
     RefPtr<SVGTransform> localTransform = localTransforms->concatenate();
-    if(localTransform) {
+    if (localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {
             renderer()->setLocalTransform(m_localMatrix->matrix());
@@ -88,12 +87,12 @@ void SVGTextElement::attach()
         renderer()->setLocalTransform(m_localMatrix->matrix());
 }
 
-SVGElement *SVGTextElement::nearestViewportElement() const
+SVGElement* SVGTextElement::nearestViewportElement() const
 {
     return SVGTransformable::nearestViewportElement(this);
 }
 
-SVGElement *SVGTextElement::farthestViewportElement() const
+SVGElement* SVGTextElement::farthestViewportElement() const
 {
     return SVGTransformable::farthestViewportElement(this);
 }
@@ -103,22 +102,22 @@ FloatRect SVGTextElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-SVGMatrix *SVGTextElement::getScreenCTM() const
+SVGMatrix* SVGTextElement::getScreenCTM() const
 {
     return SVGLocatable::getScreenCTM(this);
 }
 
-SVGMatrix *SVGTextElement::getCTM() const
+SVGMatrix* SVGTextElement::getCTM() const
 {
     return SVGLocatable::getScreenCTM(this);
 }
 
-RenderObject *SVGTextElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderSVGText(this);
 }
 
-bool SVGTextElement::childShouldCreateRenderer(Node *child) const
+bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
         child->hasTagName(SVGNames::trefTag))

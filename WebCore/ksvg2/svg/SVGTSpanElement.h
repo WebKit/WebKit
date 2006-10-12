@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,9 +34,9 @@ namespace WebCore
         SVGTSpanElement(const QualifiedName&, Document*);
         virtual ~SVGTSpanElement();
                 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        bool childShouldCreateRenderer(Node *child) const;
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        bool childShouldCreateRenderer(Node*) const;
     
     protected:
         virtual const SVGElement* contextElement() const { return this; }

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,18 +24,18 @@
 #define KSVG_SVGTextContentElementImpl_H
 #ifdef SVG_SUPPORT
 
+#include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGExternalResourcesRequired.h"
 
 namespace WebCore {
     class SVGLength;
 
     class SVGTextContentElement : public SVGStyledElement,
-                                      public SVGTests,
-                                      public SVGLangSpace,
-                                      public SVGExternalResourcesRequired
+                                  public SVGTests,
+                                  public SVGLangSpace,
+                                  public SVGExternalResourcesRequired
     {
     public:
         enum SVGLengthAdjustType {

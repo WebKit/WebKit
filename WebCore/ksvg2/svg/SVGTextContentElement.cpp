@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,18 +22,17 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
 #include "SVGTextContentElement.h"
-#include "SVGLength.h"
+
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "SVGHelper.h"
+#include "SVGLength.h"
+#include "SVGNames.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document *doc)
+SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -94,7 +93,7 @@ void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long
 {
 }
 
-void SVGTextContentElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 {
     //if (attr->name() == SVGNames::lengthAdjustAttr)
     //    xBaseValue()->setValueAsString(value);
@@ -109,6 +108,8 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute *attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
 }
 
 // vim:ts=4:noet
