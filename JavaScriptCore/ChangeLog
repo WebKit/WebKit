@@ -1,3 +1,28 @@
+2006-10-11  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Geoff.
+
+        Added our own tm struct to have a consistent set of fields, which lets us display the DST offset and timezone strings correctly.  Also there is some code cleanup.
+
+        * kjs/DateMath.cpp:
+        (KJS::timeToMS):
+        (KJS::getUTCOffset):
+        (KJS::getDSTOffsetSimple):
+        (KJS::dateToMS):
+        (KJS::msToTM):
+        (KJS::tmToKJStm):
+        (KJS::KJStmToTm):
+        * kjs/DateMath.h:
+        * kjs/date_object.cpp: 
+        (KJS::gmtoffset): 
+        (KJS::formatTime): 
+        (KJS::DateProtoFunc::callAsFunction): 
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectImp::callAsFunction):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        (KJS::parseDate):
+        * kjs/date_object.h:
+
 2006-10-09  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Geoff.

@@ -270,7 +270,7 @@ static inline int monthToDayInYear(int month, bool isLeapYear)
     return firstDayOfMonth[isLeapYear][month];
 }
 
-static inline double timeToMseconds(double hour, double min, double sec, double ms)
+static inline double timeToMS(double hour, double min, double sec, double ms)
 {
     return (((hour * minutesPerHour + min) * secondsPerMinute + sec) * msPerSecond + ms);
 }
@@ -319,24 +319,13 @@ double getUTCOffset() {
     static double utcOffset;
     static bool utcOffsetInitialized = false;
     if (!utcOffsetInitialized) {
-        struct tm ltime;
+        struct ::tm ltime;
 
-        ltime.tm_sec = 0;
-        ltime.tm_min = 0;
-        ltime.tm_hour = 0;
-        ltime.tm_mon = 0;
-        ltime.tm_wday = 0;
-        ltime.tm_yday = 0;
-        ltime.tm_isdst = 0;
-
+        memset(&ltime, 0, sizeof(ltime));
+        
         // get the difference between this time zone and GMT 
         ltime.tm_mday = 2;
         ltime.tm_year = 70;
-
-#if !PLATFORM(WIN_OS)
-        ltime.tm_zone = 0;
-        ltime.tm_gmtoff = 0;
-#endif
 
         utcOffset = mktime(&ltime) - (hoursPerDay * secondsPerHour);
         utcOffset *= -msPerSecond;
@@ -358,23 +347,23 @@ static double getDSTOffsetSimple(double localTimeSeconds)
     else if(localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
         localTimeSeconds += secondsPerDay;
 
-    struct tm prtm;
     double offsetTime = (localTimeSeconds * usecPerMsec) + getUTCOffset() ;
 
-    prtm.tm_hour  =  msToHours(offsetTime);
-    prtm.tm_min   =  msToMinutes(offsetTime);
+    // Offset from UTC but doesn't include DST obviously
+    int offsetHour =  msToHours(offsetTime);
+    int offsetMinute =  msToMinutes(offsetTime);
 
     // FIXME: time_t has a potential problem in 2038
     time_t localTime = static_cast<time_t>(localTimeSeconds);
 
-    struct tm tm;
+    struct ::tm tm;
     #if PLATFORM(WIN_OS)
     localtime_s(&tm, &localTime);
     #else
     localtime_r(&localTime, &tm);
     #endif
-
-    double diff = ((tm.tm_hour - prtm.tm_hour) * secondsPerHour) + ((tm.tm_min - prtm.tm_min) * 60);
+    
+    double diff = ((tm.tm_hour - offsetHour) * secondsPerHour) + ((tm.tm_min - offsetMinute) * 60);
 
     if(diff < 0)
         diff += secondsPerDay;
@@ -382,7 +371,8 @@ static double getDSTOffsetSimple(double localTimeSeconds)
     return (diff * usecPerMsec);
 }
 
-// get the DST offset the time passed in
+// Get the DST offset the time passed in
+// ms is in UTC
 static double getDSTOffset(double ms)
 {
     /*
@@ -401,14 +391,15 @@ static double getDSTOffset(double ms)
     return getDSTOffsetSimple(ms / usecPerMsec);
 }
 
-double dateToMseconds(tm* t, double ms, bool inputIsUTC)
+double dateToMS(const tm& t, double milliSeconds, bool inputIsUTC)
 {
-    int day = dateToDayInYear(t->tm_year + 1900, t->tm_mon, t->tm_mday);
-    double msec_time = timeToMseconds(t->tm_hour, t->tm_min, t->tm_sec, ms);
-    double result = (day * msPerDay) + msec_time;
+
+    int day = dateToDayInYear(t.tm_year + 1900, t.tm_mon, t.tm_mday);
+    double ms = timeToMS(t.tm_hour, t.tm_min, t.tm_sec, milliSeconds);
+    double result = (day * msPerDay) + ms;
 
     if(!inputIsUTC) { // convert to UTC
-        result -= getUTCOffset();
+        result -= getUTCOffset();       
         result -= getDSTOffset(result);
     }
 
@@ -435,15 +426,55 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
     tm.tm_year  =  msToYear(ms) - 1900;
     tm.tm_isdst =  dstOff != 0.0;
 
-    // All other OS' seems to have these fields
+    tm.tm_gmtoff = (dstOff + getUTCOffset()) / usecPerMsec;
+    tm.tm_zone = 0;
+}
+
+// converting between the two tm structures
+tm tmToKJStm(const struct ::tm& inTm)
+{
+    struct tm ret;
+    memset(&ret, 0, sizeof(ret));
+
+    ret.tm_sec   =  inTm.tm_sec;
+    ret.tm_min   =  inTm.tm_min;
+    ret.tm_hour  =  inTm.tm_hour;
+    ret.tm_wday  =  inTm.tm_wday;
+    ret.tm_mday  =  inTm.tm_mday;
+    ret.tm_yday  =  inTm.tm_yday;
+    ret.tm_mon   =  inTm.tm_mon;
+    ret.tm_year  =  inTm.tm_year;
+    ret.tm_isdst =  inTm.tm_isdst;
+
 #if !PLATFORM(WIN_OS)
-    struct tm xtm;
-    // FIXME: time_t has a potential problem in 2038
-    time_t seconds = static_cast<time_t>(ms/usecPerMsec);
-    localtime_r(&seconds, &xtm);
-    tm.tm_gmtoff = xtm.tm_gmtoff;
-    tm.tm_zone = xtm.tm_zone;
+    ret.tm_gmtoff = inTm.tm_gmtoff;
+    ret.tm_zone = inTm.tm_zone;
 #endif
+
+    return ret;
+}
+
+::tm KJStmToTm(const struct tm& inTm)
+{
+    struct ::tm ret;
+    memset(&ret, 0, sizeof(ret));
+
+    ret.tm_sec   =  inTm.tm_sec;
+    ret.tm_min   =  inTm.tm_min;
+    ret.tm_hour  =  inTm.tm_hour;
+    ret.tm_wday  =  inTm.tm_wday;
+    ret.tm_mday  =  inTm.tm_mday;
+    ret.tm_yday  =  inTm.tm_yday;
+    ret.tm_mon   =  inTm.tm_mon;
+    ret.tm_year  =  inTm.tm_year;
+    ret.tm_isdst =  inTm.tm_isdst;
+
+#if !PLATFORM(WIN_OS)
+    ret.tm_gmtoff = inTm.tm_gmtoff;
+    ret.tm_zone = inTm.tm_zone;
+#endif
+
+    return ret;
 }
 
 }   // namespace KJS

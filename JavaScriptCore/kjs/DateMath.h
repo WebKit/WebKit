@@ -45,6 +45,22 @@
 
 namespace KJS {
 
+// Intentionally overridding the default tm of the system
+// Not all OS' have the same members of their tm's
+struct tm {
+    int tm_sec;
+    int tm_min;
+    int tm_hour;
+    int tm_wday;
+    int tm_mday;
+    int tm_yday;
+    int tm_mon;
+    int tm_year;
+    int tm_isdst;
+    long tm_gmtoff;
+    char* tm_zone;
+};
+
 // Constants //
 
 const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
@@ -60,8 +76,11 @@ const double msPerHour = 60.0 * 60.0 * 1000.0;
 
 // Exported Functions //
 void msToTM(double, bool outputIsUTC, struct tm& );
-double dateToMseconds(tm*, double, bool inputIsUTC);
+double dateToMS(const tm&, double, bool inputIsUTC);
 double getUTCOffset();
+
+tm tmToKJStm(const struct ::tm&);
+::tm KJStmToTm(const struct tm&);
 
 }   //namespace KJS
 
