@@ -1,3 +1,12 @@
+2006-10-12  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Hyatt.
+
+        Bandaid-ing a null-dereference crash until a real fix is made.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+
 2006-10-12  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
