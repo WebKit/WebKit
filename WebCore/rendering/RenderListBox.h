@@ -53,8 +53,11 @@ public:
     virtual void calcHeight();
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
     void valueChanged(unsigned listIndex);
-    virtual void valueChanged(Scrollbar*);
     
+    // ScrollbarClient interface.
+    virtual void valueChanged(Scrollbar*);
+    virtual IntRect windowClipRect() const;
+
     HTMLOptionElement* optionAtPoint(int x, int y);
     
     bool scrollToRevealElementAtListIndex(int index);

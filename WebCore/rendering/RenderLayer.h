@@ -297,10 +297,11 @@ public:
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
     void calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect);
+                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect) const;
     void calculateClipRects(const RenderLayer* rootLayer);
     ClipRects* clipRects() const { return m_clipRects; }
-    IntRect documentClipRect(); // Returns the foreground clip rect of the layer in the document's coordinate space.
+    IntRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
+    IntRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
 
     bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const;
 
@@ -341,6 +342,7 @@ private:
     bool shouldBeOverflowOnly() const;
 
     virtual void valueChanged(Scrollbar*);
+    virtual IntRect windowClipRect() const;
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
     

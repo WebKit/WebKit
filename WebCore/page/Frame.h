@@ -751,12 +751,10 @@ private:
   
   void replaceContentsWithScriptResult(const KURL& url);
 
-    void disconnectOwnerElement();
+  void disconnectOwnerElement();
 
-    void setNeedsReapplyStyles();
+  void setNeedsReapplyStyles();
 
-  virtual IntRect windowResizerRect() const { return IntRect(); }
-  
   void stopAutoscrollTimer();
   RenderObject* autoscrollRenderer() const;
 

@@ -1,3 +1,52 @@
+2006-10-12  Dave Hyatt  <hyatt@apple.com>
+
+        Patch to add more clipping retrieval functionality for widgets.
+       
+        Reviewed by mjs
+
+        * page/Frame.h:
+        Remove windowResizerRect.  This is in the wrong place.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::windowClipRectForLayer):
+        Break out windowClipRect into helper functions that can be called separately (to make
+        it easier for scrollbars in overflow sections and list boxes to get to an enclosing
+        layer and get the right clip.
+        
+        * page/FrameView.h:
+        Add the new windowClipRect helper methods.
+        
+        * platform/ScrollBar.h:
+        Add a new interface to ScrollbarClient so that scrollbars can hand back proper
+        clip rects for themselves depending on how they are used.
+        
+        * platform/ScrollView.h:
+        Stub out methods for talking to a double buffer backing store on Win32.
+        
+        * platform/Widget.h:
+        Add the ability to query for invalidation suppression.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::windowClipRect):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderLayer.h:
+        Enhance layers so that they can return either their foreground or background
+        document clip rects.  Make sure a layer scrollbar can return a proper clip.
+        
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::windowClipRect):
+        * rendering/RenderListBox.h:
+        Make sure a list box scrollbar can return a proper clip.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingLayer):
+        * rendering/RenderObject.h:
+        Make enclosingLayer const.
+        
 2006-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

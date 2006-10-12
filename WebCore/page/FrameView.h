@@ -61,6 +61,7 @@ class MouseEventWithHitTestResults;
 class Node;
 class RenderBox;
 class RenderView;
+class RenderLayer;
 class RenderLineEdit;
 class RenderObject;
 class RenderPart;
@@ -190,6 +191,8 @@ public:
 #endif
 
     virtual IntRect windowClipRect() const;
+    IntRect windowClipRect(bool clipToContents) const;
+    IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
     virtual void scrollPointRecursively(int x, int y);
     virtual void setContentsPos(int x, int y);

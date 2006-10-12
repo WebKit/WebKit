@@ -966,6 +966,11 @@ void RenderLayer::valueChanged(Scrollbar*)
         scrollToOffset(newX, newY, false);
 }
 
+IntRect RenderLayer::windowClipRect() const
+{
+    return renderer()->view()->frameView()->windowClipRectForLayer(this, false);
+}
+
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
@@ -1259,7 +1264,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
     // We fill our scroll corner with white if we have a resizer control and at least one scrollbar
     // or if we have two scrollbars.
     if ((m_hBar && m_vBar) || m_object->style()->resize() != RESIZE_NONE)  {
-        IntRect absBounds(tx, ty, m_object->width(), m_object->height());
+        IntRect absBounds(m_object->xPos() + tx, m_object->yPos() + ty, m_object->width(), m_object->height());
         IntRect scrollCorner = scrollCornerRect(m_object, absBounds);
         if (!scrollCorner.intersects(damageRect))
             return;
@@ -1655,7 +1660,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
 }
 
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect)
+                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect) const
 {
     if (parent()) {
         parent()->calculateClipRects(rootLayer);
@@ -1692,12 +1697,20 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     }
 }
 
-IntRect RenderLayer::documentClipRect()
+IntRect RenderLayer::childrenClipRect() const
 {
     RenderLayer* rootLayer = renderer()->document()->renderer()->layer();
-    IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
-    calculateRects(rootLayer, rootLayer->absoluteBoundingBox(), layerBounds, damageRect, clipRectToApply, outlineRect);
-    return clipRectToApply;
+    IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
+    calculateRects(rootLayer, rootLayer->absoluteBoundingBox(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    return foregroundRect;
+}
+
+IntRect RenderLayer::selfClipRect() const
+{
+    RenderLayer* rootLayer = renderer()->document()->renderer()->layer();
+    IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
+    calculateRects(rootLayer, rootLayer->absoluteBoundingBox(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    return backgroundRect;
 }
 
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const

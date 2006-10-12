@@ -61,6 +61,9 @@ class ScrollbarClient {
 public:
     virtual ~ScrollbarClient() {}
     virtual void valueChanged(Scrollbar*) = 0;
+
+    // Used to obtain a window clip rect.
+    virtual IntRect windowClipRect() const = 0;
 };
 
 class Scrollbar : public Shared<Scrollbar> {

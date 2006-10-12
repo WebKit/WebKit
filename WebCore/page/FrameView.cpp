@@ -1485,8 +1485,17 @@ void FrameView::dispatchScheduledEvents()
 
 IntRect FrameView::windowClipRect() const
 {
-    // Get our parent's clip rect.
-    IntRect clipRect(enclosingIntRect(visibleContentRect()));
+    return windowClipRect(true);
+}
+
+IntRect FrameView::windowClipRect(bool clipToContents) const
+{
+    // Set our clip rect to be our contents.
+    IntRect clipRect;
+    if (clipToContents)
+        clipRect = enclosingIntRect(visibleContentRect());
+    else
+        clipRect = IntRect(contentsX(), contentsY(), width(), height());
     clipRect.setLocation(contentsToWindow(clipRect.location()));
     if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
         return clipRect;
@@ -1494,15 +1503,26 @@ IntRect FrameView::windowClipRect() const
     // Take our owner element and get the clip rect from the enclosing layer.
     Element* elt = m_frame->document()->ownerElement();
     RenderLayer* layer = elt->renderer()->enclosingLayer();
-
-    // Apply the clip from the layer.
     FrameView* parentView = elt->document()->view();
-    IntRect layerClipRect = layer->documentClipRect();
-    layerClipRect.setLocation(parentView->contentsToWindow(layerClipRect.location()));
-    clipRect.intersect(layerClipRect);
+    clipRect.intersect(parentView->windowClipRectForLayer(layer, true));
+    return clipRect;
+}
 
-    // Now apply the clip from our ancestor.
-    clipRect.intersect(parentView->windowClipRect());
+IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
+{
+    // Apply the clip from the layer.
+    IntRect clipRect;
+    if (clipToLayerContents)
+        clipRect = layer->childrenClipRect();
+    else
+        clipRect = layer->selfClipRect();
+
+    clipRect.setLocation(contentsToWindow(clipRect.location()));
+ 
+    // Now apply the clip from our view.
+    clipRect.intersect(windowClipRect());
+
+    // Return the result.
     return clipRect;
 }
 

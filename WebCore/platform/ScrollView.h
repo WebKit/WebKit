@@ -36,6 +36,10 @@
 class QScrollArea;
 #endif
 
+#if PLATFORM(WIN)
+typedef struct HRGN__* HRGN;
+#endif
+
 namespace WebCore {
     class FloatRect;
     class PlatformWheelEvent;
@@ -113,6 +117,10 @@ namespace WebCore {
         
         IntRect windowResizerRect();
         bool resizerOverlapsContent() const;
+
+        void addToDirtyRegion(const IntRect&);
+        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+        void updateBackingStore();
 
     private:
         void updateScrollbars(const IntSize& desiredOffset);
