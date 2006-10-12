@@ -547,8 +547,6 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const Depre
     request.frameName = frameName;
     if (activePart)
         request.setReferrer(activePart->referrer());
-    // FIXME: is this needed?
-    request.m_responseMIMEType = "text/html";
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
     // know what URL we are going to open. Unfortunately, this code passes the empty string
@@ -1586,8 +1584,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
           }
           return Window::retrieve(frame);
       }
-      // FIXME: is this needed?
-      request.m_responseMIMEType = "text/html";
       
       // request window (new or existing if framename is set)
       Frame* newFrame = 0;

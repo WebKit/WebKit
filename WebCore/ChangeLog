@@ -1,6 +1,29 @@
 2006-10-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
+
+        - move m_responseMIMEType out of ResourceRequest, where it doesn't belong
+
+        * page/FramePrivate.h: Add m_responseMIMEType
+        * page/ResourceRequest.h: Remove m_responseMIMEType
+        * page/Frame.cpp:
+        (WebCore::Frame::setResponseMIMEType): added
+        (WebCore::Frame::responseMIMEType): added
+        (WebCore::Frame::begin): get MIME type from the right place
+        (WebCore::Frame::write): ditto
+        * page/Frame.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow): updated to use new Frame methods
+        (KJS::WindowFunc::callAsFunction): ditto
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge openURL:reload:contentType:refresh:lastModified:pageCache:]): ditto
+        (-[WebCoreFrameBridge canProvideDocumentSource]): ditto
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure): ditto
+
+2006-10-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
         
         <rdar://problem/4774321> REGRESSION: "Can't find the server" error page contains unstyled text and missing image
 

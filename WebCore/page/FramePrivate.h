@@ -163,6 +163,8 @@ namespace WebCore {
         KURL m_workingURL;
         ResourceRequest m_request;
 
+        String m_responseMIMEType;
+
         CachePolicy m_cachePolicy;
         Timer<Frame> m_redirectionTimer;
 

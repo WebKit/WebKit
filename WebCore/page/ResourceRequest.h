@@ -60,10 +60,6 @@ namespace WebCore {
         bool m_lockHistory;
 
     public:
-        // FIXME: the response MIME type shouldn't be in here, it
-        // should be in some kind of response object
-        String m_responseMIMEType;
-        
         FormData postData;
         bool reload;
     private:

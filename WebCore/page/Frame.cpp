@@ -604,6 +604,16 @@ const ResourceRequest& Frame::resourceRequest() const
     return d->m_request;
 }
 
+void Frame::setResponseMIMEType(const String& contentType)
+{
+    d->m_responseMIMEType = contentType;
+}
+
+const String& Frame::responseMIMEType() const
+{
+    return d->m_responseMIMEType;
+}
+
 void Frame::begin(const KURL& url)
 {
   if (d->m_workingURL.isEmpty())
@@ -630,19 +640,19 @@ void Frame::begin(const KURL& url)
     baseurl = d->m_url;
 
 #ifdef SVG_SUPPORT
-  if (d->m_request.m_responseMIMEType == "image/svg+xml")
+  if (d->m_responseMIMEType == "image/svg+xml")
     d->m_doc = DOMImplementation::instance()->createSVGDocument(d->m_view.get());
   else
 #endif
-  if (DOMImplementation::isXMLMIMEType(d->m_request.m_responseMIMEType))
+  if (DOMImplementation::isXMLMIMEType(d->m_responseMIMEType))
     d->m_doc = DOMImplementation::instance()->createDocument(d->m_view.get());
-  else if (DOMImplementation::isTextMIMEType(d->m_request.m_responseMIMEType))
+  else if (DOMImplementation::isTextMIMEType(d->m_responseMIMEType))
     d->m_doc = new TextDocument(DOMImplementation::instance(), d->m_view.get());
-  else if ((d->m_request.m_responseMIMEType == "application/pdf" || d->m_request.m_responseMIMEType == "text/pdf") && PlugInInfoStore::supportsMIMEType(d->m_request.m_responseMIMEType))
+  else if ((d->m_responseMIMEType == "application/pdf" || d->m_responseMIMEType == "text/pdf") && PlugInInfoStore::supportsMIMEType(d->m_responseMIMEType))
     d->m_doc = new PluginDocument(DOMImplementation::instance(), d->m_view.get());
-  else if (Image::supportsType(d->m_request.m_responseMIMEType))
+  else if (Image::supportsType(d->m_responseMIMEType))
     d->m_doc = new ImageDocument(DOMImplementation::instance(), d->m_view.get());
-  else if (PlugInInfoStore::supportsMIMEType(d->m_request.m_responseMIMEType))
+  else if (PlugInInfoStore::supportsMIMEType(d->m_responseMIMEType))
     d->m_doc = new PluginDocument(DOMImplementation::instance(), d->m_view.get());
   else if (inViewSourceMode())
     d->m_doc = new HTMLViewSourceDocument(DOMImplementation::instance(), d->m_view.get());
@@ -690,7 +700,7 @@ void Frame::write(const char* str, int len)
     }
     
     if (!d->m_decoder) {
-        d->m_decoder = new Decoder(d->m_request.m_responseMIMEType, settings()->encoding());
+        d->m_decoder = new Decoder(d->m_responseMIMEType, settings()->encoding());
         if (!d->m_encoding.isNull())
             d->m_decoder->setEncoding(d->m_encoding,
                 d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);

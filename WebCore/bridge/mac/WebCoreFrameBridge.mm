@@ -562,10 +562,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // arguments
     ResourceRequest request(m_frame->resourceRequest());
     request.reload = reload;
-    if (contentType)
-        request.m_responseMIMEType = contentType;
     m_frame->setResourceRequest(request);
-
+    m_frame->setResponseMIMEType(contentType);
+    
     // opening the URL
     if (m_frame->didOpenURL(URL)) {
         // things we have to set up after calling didOpenURL
@@ -2558,7 +2557,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)canProvideDocumentSource
 {
-    String mimeType = m_frame->resourceRequest().m_responseMIMEType;
+    String mimeType = m_frame->responseMIMEType();
     
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
         Image::supportsType(mimeType) ||
