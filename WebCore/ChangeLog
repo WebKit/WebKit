@@ -1,3 +1,13 @@
+2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * platform/qt/FileChooserQt.cpp:
+        (WebCore::FileChooser::create):
+
 2006-10-12  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.

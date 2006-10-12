@@ -656,6 +656,11 @@ set (SVG_SOURCES
     kcanvas/KCanvasMarker.cpp
     kcanvas/KCanvasMasker.cpp
     kcanvas/KCanvasResource.cpp
+    kcanvas/SVGRootInlineBox.cpp
+    kcanvas/SVGInlineFlowBox.cpp
+    kcanvas/RenderSVGInline.cpp
+    kcanvas/RenderSVGInlineText.cpp
+    kcanvas/RenderSVGTSpan.cpp
     kcanvas/RenderSVGText.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
