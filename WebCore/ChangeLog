@@ -1,3 +1,12 @@
+2006-10-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        - Fixed <rdar://problem/4650813> REGRESSION: typing in a textarea in Safari is extremely slow (sample shows focus ring drawing)
+
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::markContainingBlocksForLayout):
+        Make subtree layouts work for textareas as well as text fields.
+
 2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by MacDome.
