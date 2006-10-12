@@ -426,7 +426,7 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
     tm.tm_year  =  msToYear(ms) - 1900;
     tm.tm_isdst =  dstOff != 0.0;
 
-    tm.tm_gmtoff = (dstOff + getUTCOffset()) / usecPerMsec;
+    tm.tm_gmtoff = static_cast<long>((dstOff + getUTCOffset()) / usecPerMsec);
     tm.tm_zone = 0;
 }
 

@@ -67,7 +67,7 @@ static double timeClip(double);
 
 inline int gmtoffset(const tm& t)
 {
-    return t.tm_gmtoff;
+    return static_cast<int>(t.tm_gmtoff);
 }
 
 

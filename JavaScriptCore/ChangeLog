@@ -1,3 +1,14 @@
+2006-10-12  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam.
+
+        Build breakage fix
+
+        * kjs/DateMath.cpp:
+        (KJS::msToTM):
+        * kjs/date_object.cpp:
+        (KJS::gmtoffset):
+
 2006-10-11  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Geoff.
