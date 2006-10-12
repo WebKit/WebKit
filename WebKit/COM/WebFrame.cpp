@@ -506,10 +506,8 @@ void WebFrame::receivedResponse(ResourceLoader* job, PlatformResponse)
     KURL kurl(DeprecatedString((DeprecatedChar*)url, SysStringLen(url)));
     SysFreeString(url);
 
-    // Update MIME info
-    ResourceRequest r(d->frame->resourceRequest());    
-    r.m_responseMIMEType = "text/html";  // FIXME: get from PlatformResponse
-    d->frame->setResourceRequest(r);
+    // Update MIME info (FIXME: get from PlatformResponse)
+    d->frame->setResponseMIMEType(String(L"text/html"));
 
     d->frame->begin(kurl);
 

@@ -1,3 +1,13 @@
+2006-10-12  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed/landed by Adam.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11264
+        Windows build busted
+
+        * COM/WebFrame.cpp:
+        (WebFrame::receivedResponse):
+
 2006-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
