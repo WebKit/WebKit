@@ -32,6 +32,8 @@
 #include "ResourceLoader.h"
 #include "ResourceLoaderInternal.h"
 
+#include <QMessageBox>
+
 namespace WebCore {
 
 FrameQtClientDefault::FrameQtClientDefault()
@@ -67,6 +69,11 @@ void FrameQtClientDefault::submitForm(const String& method, const KURL& url, con
 
     RefPtr<ResourceLoader> loader = ResourceLoader::create(this, method, url, *postData);
     loader->start(0);
+}
+
+void FrameQtClientDefault::runJavaScriptAlert(String const& message)
+{
+    QMessageBox::information(m_frame->view()->qwidget(), "JavaScript", message);
 }
 
 void FrameQtClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)

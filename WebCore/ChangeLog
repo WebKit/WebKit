@@ -1,3 +1,15 @@
+2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Specialization of alert() for DumpRenderTree - just log the output, don't show any message box.
+
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::runJavaScriptAlert): Move runJavaScriptAlert functionality to FrameQtClientDefault.
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::runJavaScriptAlert):
+        * platform/qt/FrameQtClient.h:
+
 2006-10-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

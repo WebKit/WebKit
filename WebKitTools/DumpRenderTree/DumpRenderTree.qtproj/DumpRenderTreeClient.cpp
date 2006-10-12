@@ -30,6 +30,8 @@
 
 #include "DumpRenderTree.h"
 
+#include <QDebug>
+
 namespace WebCore {
 
 DumpRenderTreeClient::DumpRenderTreeClient()
@@ -39,6 +41,11 @@ DumpRenderTreeClient::DumpRenderTreeClient()
 
 DumpRenderTreeClient::~DumpRenderTreeClient()
 {
+}
+
+void DumpRenderTreeClient::runJavaScriptAlert(String const& message)
+{
+    qDebug() << "ALERT: " << message << "\n";
 }
 
 }

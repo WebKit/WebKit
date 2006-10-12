@@ -58,7 +58,6 @@
 #include "TypingCommand.h"
 
 #include <QScrollArea>
-#include <QMessageBox>
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
@@ -157,7 +156,7 @@ String FrameQt::userAgent() const
 
 void FrameQt::runJavaScriptAlert(String const& message)
 {
-    QMessageBox::information(view()->qwidget(), "JavaScript", message);
+    m_client->runJavaScriptAlert(message);
 }
 
 bool FrameQt::runJavaScriptConfirm(String const& message)
