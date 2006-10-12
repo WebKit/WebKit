@@ -1,3 +1,24 @@
+2006-10-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        Removed JSObjectMakeWithPrototype, clarified some comments. We really
+        don't want people to manage their own prototypes, so we don't want an
+        extra function in the API devoted to just that. People can still manage
+        their own prototypes if they really want by using JSObjectSetPrototype.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::createNoAutomaticPrototype):
+        (OpaqueJSClass::create):
+        * API/JSClassRef.h:
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        (JSObjectMake):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (main):
+        * JavaScriptCore.exp:
+
 2006-10-12  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adam.

@@ -44,8 +44,8 @@ using namespace KJS;
 
 JSClassRef JSClassCreate(JSClassDefinition* definition)
 {
-    JSClassRef jsClass = (definition->attributes & kJSClassAttributeNoPrototype)
-        ? OpaqueJSClass::createNoPrototype(definition)
+    JSClassRef jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
+        ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
     
     return JSClassRetain(jsClass);
@@ -68,26 +68,13 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     JSLock lock;
     ExecState* exec = toJS(ctx);
 
-    JSValue* jsPrototype = jsClass 
-        ? jsClass->prototype(ctx) 
-        : exec->lexicalInterpreter()->builtinObjectPrototype();
+    if (!jsClass)
+        return toRef(new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype())); // slightly more efficient
 
-    return JSObjectMakeWithPrototype(ctx, jsClass, data, toRef(jsPrototype));
-}
-
-JSObjectRef JSObjectMakeWithPrototype(JSContextRef ctx, JSClassRef jsClass, void* data, JSValueRef prototype)
-{
-    JSLock lock;
-
-    ExecState* exec = toJS(ctx);
-    JSValue* jsPrototype = toJS(prototype);
-
-    if (!prototype)
+    JSValue* jsPrototype = jsClass->prototype(ctx);
+    if (!jsPrototype)
         jsPrototype = exec->lexicalInterpreter()->builtinObjectPrototype();
 
-    if (!jsClass)
-        return toRef(new JSObject(jsPrototype)); // slightly more efficient
-    
     return toRef(new JSCallbackObject(exec, jsClass, jsPrototype, data));
 }
 

@@ -92,7 +92,7 @@ OpaqueJSClass::~OpaqueJSClass()
         JSClassRelease(prototypeClass);
 }
 
-JSClassRef OpaqueJSClass::createNoPrototype(const JSClassDefinition* definition)
+JSClassRef OpaqueJSClass::createNoAutomaticPrototype(const JSClassDefinition* definition)
 {
     return new OpaqueJSClass(definition, 0);
 }
@@ -113,7 +113,7 @@ JSClassRef OpaqueJSClass::create(const JSClassDefinition* definition)
         protoDefinition.finalize = clearReferenceToPrototype;
         OpaqueJSClass* protoClass = new OpaqueJSClass(&protoDefinition, 0);
 
-        // remove functions from the original definition
+        // remove functions from the original class
         JSClassDefinition objectDefinition = *definition;
         objectDefinition.staticFunctions = 0;
         return new OpaqueJSClass(&objectDefinition, protoClass);

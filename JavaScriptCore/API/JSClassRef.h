@@ -57,7 +57,7 @@ struct StaticFunctionEntry {
 
 struct OpaqueJSClass {
     static OpaqueJSClass* create(const JSClassDefinition*);
-    static OpaqueJSClass* createNoPrototype(const JSClassDefinition*);
+    static OpaqueJSClass* createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();
     
     KJS::JSObject* prototype(JSContextRef ctx);

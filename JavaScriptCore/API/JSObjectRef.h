@@ -60,11 +60,11 @@ typedef unsigned JSPropertyAttributes;
 /*!
 @enum JSClassAttribute
 @constant kJSClassAttributeNone Specifies that a class has no special attributes.
-@constant kJSClassAttributeNoPrototype Specifies that a class should not generate a prototype object. Use kJSClassAttributeNoPrototype in combination with JSObjectMakeWithPrototype to manage prototypes manually.
+@constant kJSClassAttributeNoAutomaticPrototype Specifies that a class should not automatically generate a shared prototype for its instance objects. Use kJSClassAttributeNoAutomaticPrototype in combination with JSObjectSetPrototype to manage prototypes manually.
 */
 enum { 
     kJSClassAttributeNone = 0,
-    kJSClassAttributeNoPrototype = 1 << 1
+    kJSClassAttributeNoAutomaticPrototype = 1 << 1
 };
 
 /*! 
@@ -329,7 +329,7 @@ JSStaticValue StaticValueArray[] = {
     { 0, 0, 0, 0 }
 };
 
-Standard JavaScript practice calls for storing functions in prototype objects, so derived objects can share them. Therefore, it is common for prototypes to have function properties but no value properties, and for objects to have value properties but no function properties. The default behavior of JSClassCreate is to follow this idiom, automatically generating a prototype in which to store the class's function properties. The kJSClassAttributeNoPrototype attribute overrides the idiom, specifying that all supplied function and value properties should be stored directly in the object.
+Standard JavaScript practice calls for storing function objects in prototypes, so they can be shared. The default JSClass created by JSClassCreate follows this idiom, instantiating objects with a shared, automatically generating prototype containing the class's function objects. The kJSClassAttributeNoAutomaticPrototype attribute specifies that a JSClass should not automatically generate such a prototype. The resulting JSClass instantiates objects with the default object prototype, and gives each instance object its own copy of the class's function objects.
 
 A NULL callback specifies that the default object callback should substitute, except in the case of hasProperty, where it specifies that getProperty should substitute.
 */
@@ -362,7 +362,6 @@ typedef struct {
 @discussion Use this constant as a convenience when creating class definitions. For example, to create a class definition with only a finalize method:
 
 JSClassDefinition definition = kJSClassDefinitionEmpty;
-
 definition.finalize = Finalize;
 */
 extern const JSClassDefinition kJSClassDefinitionEmpty;
@@ -397,29 +396,11 @@ void JSClassRelease(JSClassRef jsClass);
 @param jsClass The JSClass to assign to the object. Pass NULL to use the default object class.
 @param data A void* to set as the object's private data. Pass NULL to specify no private data.
 @result A JSObject with the given class and private data.
-@discussion JSObjectMake assigns jsClass's automatically generated prototype to the object it creates. If jsClass has no automatically generated prototype, JSObjectMake uses the default object prototype.
+@discussion The default object class does not allocate storage for private data, so you must provide a non-NULL jsClass to JSObjectMake if you want your object to be able to store private data.
 
 data is set on the created object before the intialize methods in its class chain are called. This enables the initialize methods to retrieve and manipulate data through JSObjectGetPrivate.
-
-The default object class does not allocate storage for private data, so you must provide a non-NULL jsClass if you want your object to be able to store private data.
 */
 JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data);
-
-/*!
-@function
-@abstract Creates a JavaScript object with a given prototype.
-@param ctx The execution context to use.
-@param jsClass The JSClass to assign to the object. Pass NULL to use the default object class.
-@param prototype The prototype to assign to the object. Pass NULL to use the default object prototype.
-@param data A void* to set as the object's private data. Pass NULL to specify no private data.
-@result A JSObject with the given class, private data, and prototype.
-@discussion Use JSObjectMakeWithPrototype in combination with kJSClassAttributeNoPrototype to manage prototypes manually.
- 
-data is set on the created object before the intialize methods in its class chain are called. This enables the initialize methods to retrieve and manipulate data through JSObjectGetPrivate.
-
-The default object class does not allocate storage for private data, so you must provide a non-NULL JSClass if you want your object to be able to store private data.
-*/
-JSObjectRef JSObjectMakeWithPrototype(JSContextRef ctx, JSClassRef jsClass, void* data, JSValueRef prototype);
 
 /*!
 @function
