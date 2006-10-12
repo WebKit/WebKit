@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,14 +92,14 @@
 
 @implementation WebDataSource (WebFileInternal)
 
-- (void)_setRepresentation: (id<WebDocumentRepresentation>)representation
+- (void)_setRepresentation:(id<WebDocumentRepresentation>)representation
 {
     [_private->representation release];
     _private->representation = [representation retain];
     _private->representationFinishedLoading = NO;
 }
 
-static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
+static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
 {
     NSEnumerator *enumerator = [supportTypes objectEnumerator];
     ASSERT(enumerator != nil);
@@ -107,7 +107,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     while ((mime = [enumerator nextObject]) != nil) {
         // Don't clobber previously-registered classes.
         if ([allTypes objectForKey:mime] == nil)
-            [allTypes setObject:class forKey:mime];
+            [allTypes setObject:objCClass forKey:mime];
     }
 }
 

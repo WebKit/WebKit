@@ -244,7 +244,7 @@ enum {
     return (height < overlap) ? height / 2 : height - overlap;
 }
 
-static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
+static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
 {
     NSEnumerator *enumerator = [supportTypes objectEnumerator];
     ASSERT(enumerator != nil);
@@ -252,7 +252,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     while ((mime = [enumerator nextObject]) != nil) {
         // Don't clobber previously-registered classes.
         if ([allTypes objectForKey:mime] == nil)
-            [allTypes setObject:class forKey:mime];
+            [allTypes setObject:objCClass forKey:mime];
     }
 }
 

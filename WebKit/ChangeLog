@@ -1,3 +1,27 @@
+2006-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - preparations for making more code C++
+
+        * WebKitPrefix.h: Fixed ifdef so that C++ files get all the precompiled stuff
+        that non-C++ files get.
+
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitSystemBits.h:
+        * Misc/WebLocalizableStrings.h:
+        * WebCoreSupport/WebSystemInterface.h:
+        Added extern "C".
+
+        * Misc/WebNSViewExtras.h:
+        * WebView/WebDataSource.m: (addTypesFromClass):
+        * WebView/WebFrameView.m: (addTypesFromClass):
+        Eliminated use of the identifier "class".
+
+        * WebView/WebView.m: (-[WebView _goToItem:withLoadType:]): Added a type cast.
+
+        * Plugins/WebBaseNetscapePluginView.m: Added lots of type casts.
+
 2006-10-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej.

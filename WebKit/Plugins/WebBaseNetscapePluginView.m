@@ -26,37 +26,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBaseNetscapePluginView.h>
+#import "WebBaseNetscapePluginView.h"
 
+#import "WebDataSourceInternal.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h" 
+#import "WebFrameView.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebNSDataExtras.h"
+#import "WebNSDictionaryExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebNetscapePluginStream.h"
+#import "WebNullPluginView.h"
+#import "WebPreferences.h"
+#import "WebViewInternal.h"
 #import <Accelerate/Accelerate.h>
+#import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/DOMPrivate.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebFrameInternal.h> 
+#import <JavaScriptCore/npruntime_impl.h>
 #import <WebCore/WebFrameLoader.h> 
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebNullPluginView.h>
-#import <WebKit/WebNSDataExtras.h>
-#import <WebKit/WebNSDictionaryExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebViewInternal.h>
-
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>
-#import <JavaScriptCore/npruntime_impl.h>
-
-#import <Carbon/Carbon.h>
-
 #import <objc/objc-runtime.h>
 
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
@@ -241,7 +238,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     CGrafPtr oldPort;
     GetPort(&oldPort);    
-    SetPort(GetWindowPort([currentWindow windowRef]));
+    SetPort(GetWindowPort((WindowRef)[currentWindow windowRef]));
     
     MovePortTo(contentRect.origin.x, /* Flip Y */ windowHeight - NSMaxY(contentRect));
     PortSize(contentRect.size.width, contentRect.size.height);
@@ -261,7 +258,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         [self fixWindowPort];
 #endif
     
-    WindowRef windowRef = [[self currentWindow] windowRef];
+    WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
     ASSERT(windowRef);
     
     // Use AppKit to convert view coordinates to NSWindow coordinates.
@@ -344,7 +341,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             nPort.qdPort.porty = (int32)-boundsInWindow.origin.y;
             window.window = &nPort;
 
-            PortState_QD *qdPortState = malloc(sizeof(PortState_QD));
+            PortState_QD *qdPortState = (PortState_QD*)malloc(sizeof(PortState_QD));
             portState = (PortState)qdPortState;
             
             GetPort(&qdPortState->oldPort);    
@@ -430,7 +427,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
             PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
             portState = (PortState)cgPortState;
-            cgPortState->context = [[NSGraphicsContext currentContext] graphicsPort];
+            cgPortState->context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             
             // Update the plugin's window/context
             nPort.cgPort.window = windowRef;
@@ -515,7 +512,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         case NPDrawingModelQuickDraw:
         {
             PortState_QD *qdPortState = (PortState_QD *)portState;
-            WindowRef windowRef = [[self currentWindow] windowRef];
+            WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
             CGrafPtr port = GetWindowPort(windowRef);
             if (qdPortState->forUpdate)
                 ValidWindowRgn(windowRef, qdPortState->clipRegion);
@@ -637,7 +634,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     [self getCarbonEvent:&event];
     event.what = activateEvt;
-    WindowRef windowRef = [[self window] windowRef];
+    WindowRef windowRef = (WindowRef)[[self window] windowRef];
     event.message = (unsigned long)windowRef;
     if (activate) {
         event.modifiers |= activeFlag;
@@ -655,7 +652,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     [self getCarbonEvent:&event];
     event.what = updateEvt;
-    WindowRef windowRef = [[self window] windowRef];
+    WindowRef windowRef = (WindowRef)[[self window] windowRef];
     event.message = (unsigned long)windowRef;
 
     BOOL acceptedEvent = [self sendEvent:&event];
@@ -727,7 +724,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     };
     
     if (!keyEventHandler) {
-        InstallEventHandler(GetWindowEventTarget([[self window] windowRef]),
+        InstallEventHandler(GetWindowEventTarget((WindowRef)[[self window] windowRef]),
                             NewEventHandlerUPP(TSMEventHandler),
                             GetEventTypeCount(sTSMEvents),
                             sTSMEvents,
@@ -903,7 +900,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         LOG_ERROR("GetEventParameter failed with error: %d", status);
         return noErr;
     }
-    char *buffer = malloc(numBytes);
+    char *buffer = (char *)malloc(numBytes);
     status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, numBytes, NULL, buffer);
     if (status != noErr) {
         LOG_ERROR("GetEventParameter failed with error: %d", status);
@@ -1205,7 +1202,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [plugin open];
     
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
-    drawingModel = -1;
+    drawingModel = (NPDrawingModel)-1;
     
     // Plug-ins are "windowed" by default.  On MacOS, windowed plug-ins share the same window and graphics port as the main
     // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
@@ -1294,7 +1291,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
-    lastSetWindow.type = 0;
+    lastSetWindow.type = (NPWindowType)0;
     
     NPError npErr;
     npErr = NPP_Destroy(instance, NULL);
@@ -1498,7 +1495,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if (printedPluginBitmap) {
             // Flip the bitmap before drawing because the QuickDraw port is flipped relative
             // to this view.
-            CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState(cgContext);
             NSRect bounds = [self bounds];
             CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));
@@ -1513,7 +1510,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         NSImage *aglOffscreenImage = [self _aglOffscreenImageForDrawingInRect:rect];
         if (aglOffscreenImage) {
             // Flip the context before drawing because the CGL context is flipped relative to this view.
-            CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState(cgContext);
             NSRect bounds = [self bounds];
             CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));
@@ -1550,7 +1547,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(drawingModel == NPDrawingModelQuickDraw);
     
     // Make a call to the secret QuickDraw API that makes QuickTime calm down.
-    WindowRef windowRef = [[self window] windowRef];
+    WindowRef windowRef = (WindowRef)[[self window] windowRef];
     if (!windowRef) {
         return;
     }
@@ -1664,7 +1661,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self sendActivateEvent:YES];
     [self setNeedsDisplay:YES];
     [self restartNullEvents];
-    SetUserFocusWindow([[self window] windowRef]);
+    SetUserFocusWindow((WindowRef)[[self window] windowRef]);
 }
 
 - (void)windowResignedKey:(NSNotification *)notification
@@ -1716,7 +1713,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!NPP_GetValue)
         return NULL;
         
-    void *value = NULL;
+    NPObject *value = NULL;
     [self willCallPlugInFunction];
     NPError error = NPP_GetValue(instance, NPPVpluginScriptableNPObject, &value);
     [self didCallPlugInFunction];
@@ -2129,7 +2126,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         case NPDrawingModelQuickDraw:
         {
             Rect qdRect;
-            GetRegionBounds(invalidRegion, &qdRect);
+            GetRegionBounds((NPQDRegion)invalidRegion, &qdRect);
             invalidRect = NSMakeRect(qdRect.left, qdRect.top, qdRect.right - qdRect.left, qdRect.bottom - qdRect.top);
         }
         break;
@@ -2180,7 +2177,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             if (!element)
                 return NPERR_GENERIC_ERROR;
             
-            NPObject *plugInScriptObject = [element _NPObject];
+            NPObject *plugInScriptObject = (NPObject *)[element _NPObject];
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (plugInScriptObject)
@@ -2259,7 +2256,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 return NPERR_GENERIC_ERROR;
             
             // Check for valid, supported drawing model
-            NPDrawingModel newDrawingModel = (NPDrawingModel)value;
+            NPDrawingModel newDrawingModel = (NPDrawingModel)(uintptr_t)value;
             switch (newDrawingModel) {
                 // Supported drawing models:
 #ifndef NP_NO_QUICKDRAW
@@ -2503,9 +2500,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // Attach the AGL context to its window
     GLboolean success;
 #ifdef AGL_VERSION_3_0
-    success = aglSetWindowRef(aglContext, [aglWindow windowRef]);
+    success = aglSetWindowRef(aglContext, (WindowRef)[aglWindow windowRef]);
 #else
-    success = aglSetDrawable(aglContext, (AGLDrawable)GetWindowPort([aglWindow windowRef]));
+    success = aglSetDrawable(aglContext, (AGLDrawable)GetWindowPort((WindowRef)[aglWindow windowRef]));
 #endif
     if (!success) {
         LOG_ERROR("Could not set AGL drawable: %s", aglErrorString(aglGetError()));

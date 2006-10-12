@@ -28,5 +28,13 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 vm_size_t WebSystemMainMemory(void);
 int WebNumberOfCPUs(void);
+
+#ifdef __cplusplus
+}
+#endif

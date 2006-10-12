@@ -799,7 +799,7 @@ static bool debugWidget = true;
 
     // abort any current load if we're going back/forward
     [[self mainFrame] stopLoading];
-    [[self mainFrame] _goToItem:item withLoadType:type];
+    [[self mainFrame] _goToItem:item withLoadType:(FrameLoadType)type];
 }
 
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView

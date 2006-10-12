@@ -51,7 +51,7 @@
 #include <cstddef>
 #include <new>
 
-#else
+#endif
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
@@ -61,5 +61,3 @@
 #endif
 
 #include <JavaScriptCore/Platform.h>
-
-#endif

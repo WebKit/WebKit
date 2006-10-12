@@ -32,6 +32,10 @@
 #define LOG_CHANNEL_PREFIX WebKitLog
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern WTFLogChannel WebKitLogTiming;
 extern WTFLogChannel WebKitLogLoading;
 extern WTFLogChannel WebKitLogFontCache;
@@ -57,3 +61,7 @@ extern WTFLogChannel WebKitLogPluginEvents;
 extern WTFLogChannel WebKitLogIconDatabase;
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
+
+#ifdef __cplusplus
+}
+#endif
