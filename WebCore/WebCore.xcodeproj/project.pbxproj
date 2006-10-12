@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0668E18A0ADD9624004128E0 /* PopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0668E1880ADD9624004128E0 /* PopupMenu.cpp */; };
+		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; };
+		0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */; };
 		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; };
 		066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 066C772C0AB603D200238CC4 /* FileChooserMac.mm */; };
 		066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */; };
@@ -2252,10 +2255,6 @@
 		ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB5419D0ACDDFE4002820EB /* RenderListBox.h */; };
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
-		ABDDFE7B0A5C6E7000A3E11D /* RenderPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE750A5C6E7000A3E11D /* RenderPopupMenu.cpp */; };
-		ABDDFE7C0A5C6E7000A3E11D /* RenderPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE760A5C6E7000A3E11D /* RenderPopupMenu.h */; };
-		ABDDFE7D0A5C6E7000A3E11D /* RenderPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE770A5C6E7000A3E11D /* RenderPopupMenuMac.h */; };
-		ABDDFE7E0A5C6E7000A3E11D /* RenderPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE780A5C6E7000A3E11D /* RenderPopupMenuMac.mm */; };
 		ABE7B5230A489F830031881C /* DeprecatedRenderSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABE7B5210A489F830031881C /* DeprecatedRenderSelect.cpp */; };
 		ABE7B5240A489F830031881C /* DeprecatedRenderSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = ABE7B5220A489F830031881C /* DeprecatedRenderSelect.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
@@ -2848,6 +2847,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0668E1880ADD9624004128E0 /* PopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PopupMenu.cpp; sourceTree = "<group>"; };
+		0668E1890ADD9624004128E0 /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
+		0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
 		066C772A0AB603B700238CC4 /* FileChooser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileChooser.h; sourceTree = "<group>"; };
 		066C772C0AB603D200238CC4 /* FileChooserMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FileChooserMac.mm; sourceTree = "<group>"; };
 		066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFileUploadControl.cpp; sourceTree = "<group>"; };
@@ -5063,10 +5065,6 @@
 		ABB5419D0ACDDFE4002820EB /* RenderListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderListBox.h; sourceTree = "<group>"; };
 		ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMenuList.cpp; sourceTree = "<group>"; };
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
-		ABDDFE750A5C6E7000A3E11D /* RenderPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPopupMenu.cpp; sourceTree = "<group>"; };
-		ABDDFE760A5C6E7000A3E11D /* RenderPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderPopupMenu.h; sourceTree = "<group>"; };
-		ABDDFE770A5C6E7000A3E11D /* RenderPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderPopupMenuMac.h; sourceTree = "<group>"; };
-		ABDDFE780A5C6E7000A3E11D /* RenderPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPopupMenuMac.mm; sourceTree = "<group>"; };
 		ABE7B5210A489F830031881C /* DeprecatedRenderSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedRenderSelect.cpp; sourceTree = "<group>"; };
 		ABE7B5220A489F830031881C /* DeprecatedRenderSelect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedRenderSelect.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
@@ -6339,6 +6337,7 @@
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */,
 				A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */,
+				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				6582A15409999D6D00BEEB6D /* ScreenMac.mm */,
 				BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
@@ -8489,6 +8488,8 @@
 				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				A82398A509B3ACDB00B60641 /* PlugInInfoStore.h */,
+				0668E1890ADD9624004128E0 /* PopupMenu.h */,
+				0668E1880ADD9624004128E0 /* PopupMenu.cpp */,
 				F587852B02DE375901EA4122 /* RegularExpression.cpp */,
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
 				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
@@ -8810,10 +8811,6 @@
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
 				A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */,
 				A871DECD0A1530C700B12A68 /* RenderPartObject.h */,
-				ABDDFE750A5C6E7000A3E11D /* RenderPopupMenu.cpp */,
-				ABDDFE760A5C6E7000A3E11D /* RenderPopupMenu.h */,
-				ABDDFE770A5C6E7000A3E11D /* RenderPopupMenuMac.h */,
-				ABDDFE780A5C6E7000A3E11D /* RenderPopupMenuMac.mm */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCEA4844097D93020094C9E4 /* RenderStyle.cpp */,
@@ -9722,8 +9719,6 @@
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
-				ABDDFE7C0A5C6E7000A3E11D /* RenderPopupMenu.h in Headers */,
-				ABDDFE7D0A5C6E7000A3E11D /* RenderPopupMenuMac.h in Headers */,
 				85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */,
 				E14842DE0A674934007E4D39 /* StreamingTextDecoderICU.h in Headers */,
 				E148432F0A674FC2007E4D39 /* StreamingTextDecoderMac.h in Headers */,
@@ -10398,6 +10393,7 @@
 				656D37460ADBA5DE00A4554D /* WebPolicyDecider.h in Headers */,
 				656D37480ADBA5DE00A4554D /* WebSubresourceLoader.h in Headers */,
 				65BAAABE0ADCA015005BB5A4 /* RetainPtr.h in Headers */,
+				0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10432,6 +10428,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10445,6 +10442,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11196,8 +11195,6 @@
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
-				ABDDFE7B0A5C6E7000A3E11D /* RenderPopupMenu.cpp in Sources */,
-				ABDDFE7E0A5C6E7000A3E11D /* RenderPopupMenuMac.mm in Sources */,
 				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
 				93CF35AA0A6169F700543E52 /* AffineTransformCG.cpp in Sources */,
 				E14842FF0A674A31007E4D39 /* StreamingTextDecoderICU.cpp in Sources */,
@@ -11626,6 +11623,8 @@
 				656D37440ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm in Sources */,
 				656D37470ADBA5DE00A4554D /* WebPolicyDecider.mm in Sources */,
 				656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */,
+				0668E18A0ADD9624004128E0 /* PopupMenu.cpp in Sources */,
+				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

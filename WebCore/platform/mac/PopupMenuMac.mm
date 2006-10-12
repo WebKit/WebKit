@@ -1,6 +1,4 @@
 /*
- * This file is part of the popup menu implementation for <select> elements in WebCore.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +18,7 @@
  */
 
 #import "config.h"
-#import "RenderPopupMenuMac.h"
+#import "PopupMenu.h"
 
 #import "FontData.h"
 #import "FrameMac.h"
@@ -35,13 +33,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderPopupMenuMac::RenderPopupMenuMac(Node* element, RenderMenuList* menuList)
-    : RenderPopupMenu(element, menuList)
+PopupMenu::PopupMenu(RenderMenuList* menuList)
+    : m_menuList(menuList)
     , popup(nil)
 {
 }
 
-RenderPopupMenuMac::~RenderPopupMenuMac()
+PopupMenu::~PopupMenu()
 {
     if (popup) {
         [popup setControlView:nil];
@@ -49,13 +47,13 @@ RenderPopupMenuMac::~RenderPopupMenuMac()
     }
 }
 
-void RenderPopupMenuMac::clear()
+void PopupMenu::clear()
 {
     if (popup)
         [popup removeAllItems];
 }
 
-void RenderPopupMenuMac::populate()
+void PopupMenu::populate()
 {
     if (popup)
         [popup removeAllItems];
@@ -66,11 +64,11 @@ void RenderPopupMenuMac::populate()
     }
     BOOL messagesEnabled = [[popup menu] menuChangedMessagesEnabled];
     [[popup menu] setMenuChangedMessagesEnabled:NO];
-    RenderPopupMenu::populate();
+    PopupMenu::addItems();
     [[popup menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
-void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
+void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate();
     if ([popup numberOfItems] <= 0)
@@ -82,7 +80,7 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
     [popup attachPopUpWithFrame:r inView:view];
     [popup selectItemAtIndex:index];
     
-    NSFont* font = style()->font().primaryFont()->getNSFont();
+    NSFont* font = menuList()->style()->font().primaryFont()->getNSFont();
 
     NSRect titleFrame = [popup titleRectForBounds:r];
     if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
@@ -116,23 +114,23 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
     [event release];
 }
 
-void RenderPopupMenuMac::hidePopup()
+void PopupMenu::hide()
 {
     [popup dismissPopUp];
 }
 
-void RenderPopupMenuMac::addSeparator()
+void PopupMenu::addSeparator()
 {
     [[popup menu] addItem:[NSMenuItem separatorItem]];
 }
 
-void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
+void PopupMenu::addGroupLabel(HTMLOptGroupElement* element)
 {
     String text = element->groupLabelText();
 
     RenderStyle* s = element->renderStyle();
     if (!s)
-        s = style();
+        s = menuList()->style();
 
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())
@@ -149,7 +147,7 @@ void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
     [string release];
 }
 
-void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
+void PopupMenu::addOption(HTMLOptionElement* element)
 {
     String text = element->optionText();
     
@@ -159,7 +157,7 @@ void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
 
     RenderStyle* s = element->renderStyle();
     if (!s)
-        s = style();
+        s = menuList()->style();
         
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())

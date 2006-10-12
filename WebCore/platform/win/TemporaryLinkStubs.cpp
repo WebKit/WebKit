@@ -61,7 +61,7 @@
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
-#include "RenderPopupMenuWin.h"
+#include "PopupMenu.h"
 #include "EditCommand.h"
 #include "Icon.h"
 #include "IconLoader.h"
@@ -365,14 +365,15 @@ void Frame::setNeedsReapplyStyles() { }
 
 void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { }
 
-RenderPopupMenuWin::~RenderPopupMenuWin() { notImplemented(); }
-void RenderPopupMenuWin::clear() { notImplemented(); }
-void RenderPopupMenuWin::populate() { notImplemented(); }
-void RenderPopupMenuWin::showPopup(const IntRect&, FrameView*, int index) { notImplemented(); }
-void RenderPopupMenuWin::hidePopup() { notImplemented(); }
-void RenderPopupMenuWin::addSeparator() { notImplemented(); }
-void RenderPopupMenuWin::addGroupLabel(HTMLOptGroupElement*) { notImplemented(); }
-void RenderPopupMenuWin::addOption(HTMLOptionElement*) { notImplemented(); }
+PopupMenu::PopupMenu(RenderMenuList*) { notImplemented(); }
+PopupMenu::~PopupMenu() { notImplemented(); }
+void PopupMenu::clear() { notImplemented(); }
+void PopupMenu::populate() { notImplemented(); }
+void PopupMenu::show(const IntRect&, FrameView*, int index) { notImplemented(); }
+void PopupMenu::hide() { notImplemented(); }
+void PopupMenu::addSeparator() { notImplemented(); }
+void PopupMenu::addGroupLabel(HTMLOptGroupElement*) { notImplemented(); }
+void PopupMenu::addOption(HTMLOptionElement*) { notImplemented(); }
 
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const {}
 bool RenderThemeWin::paintMenuList(RenderObject *, const RenderObject::PaintInfo&, const IntRect&) { return false; }

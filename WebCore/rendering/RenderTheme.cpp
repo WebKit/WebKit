@@ -27,7 +27,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "RenderStyle.h"
-#include "RenderPopupMenu.h"
 
 // The methods in this file are shared by all themes on every platform.
 

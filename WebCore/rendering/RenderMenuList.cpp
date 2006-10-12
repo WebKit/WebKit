@@ -29,7 +29,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
-#include "RenderPopupMenu.h"
+#include "PopupMenu.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "TextStyle.h"
@@ -54,8 +54,6 @@ RenderMenuList::RenderMenuList(HTMLSelectElement* element)
 
 RenderMenuList::~RenderMenuList()
 {
-    if (m_popup)
-        m_popup->destroy();
     m_popup = 0;
 }
 
@@ -227,20 +225,17 @@ void RenderMenuList::showPopup()
     // inside the showPopup call and it would fail.
     createInnerBlock();
     if (!m_popup)
-        m_popup = theme()->createPopupMenu(renderArena(), document(), this);
-    RenderStyle* newStyle = new (renderArena()) RenderStyle;
-    newStyle->inheritFrom(style());
-    m_popup->setStyle(newStyle);
+        m_popup = PopupMenu::create(this);
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     m_popupIsVisible = true;
-    m_popup->showPopup(absoluteBoundingBoxRect(), document()->view(),
+    m_popup->show(absoluteBoundingBoxRect(), document()->view(),
         select->optionToListIndex(select->selectedIndex()));
 }
 
 void RenderMenuList::hidePopup()
 {
     if (m_popup)
-        m_popup->hidePopup();
+        m_popup->hide();
     m_popupIsVisible = false;
 }
 

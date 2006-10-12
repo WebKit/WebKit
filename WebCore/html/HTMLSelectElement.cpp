@@ -42,7 +42,6 @@
 #include "MouseEvent.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
-#include "RenderPopupMenu.h"
 #include "cssstyleselector.h"
 #include <wtf/Vector.h>
 #include <math.h>

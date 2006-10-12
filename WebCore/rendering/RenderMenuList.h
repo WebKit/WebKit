@@ -24,11 +24,11 @@
 #define RenderMenuList_H
 
 #include "RenderFlexibleBox.h"
+#include "PopupMenu.h"
 
 namespace WebCore {
 
 class HTMLSelectElement;
-class RenderPopupMenu;
 
 class RenderMenuList : public RenderFlexibleBox {
 public:
@@ -51,7 +51,7 @@ public:
 
     virtual void calcMinMaxWidth();
 
-    RenderPopupMenu* popup() const { return m_popup; }
+    RefPtr<PopupMenu> popup() const { return m_popup; }
     bool popupIsVisible() const { return m_popupIsVisible; }
     void showPopup();
     void hidePopup();
@@ -75,7 +75,7 @@ private:
     bool m_optionsChanged;
     int m_optionsWidth;
 
-    RenderPopupMenu* m_popup;
+    RefPtr<PopupMenu> m_popup;
     bool m_popupIsVisible;
 };
 

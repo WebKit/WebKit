@@ -30,7 +30,6 @@
 #import "GraphicsContext.h"
 #import "Image.h"
 #import "LocalCurrentGraphicsContext.h"
-#import "RenderPopupMenuMac.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
 
@@ -891,11 +890,6 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     updateEnabledState(popupButton, o);
     updatePressedState(popupButton, o);
     updateFocusedState(popupButton, o);
-}
-
-RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* doc, RenderMenuList* menuList)
-{
-    return new (arena) RenderPopupMenuMac(doc, menuList);
 }
 
 int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const

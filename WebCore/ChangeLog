@@ -1,3 +1,72 @@
+2006-10-12  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Move popup menu code out of rendering/ and into platform/.
+        RenderPopupMenu becomes PopupMenu, the
+        RenderPopupMenuMac/RenderPopupMenuWin subclasses and all the associated
+        virtual methods go away, RenderTheme gets to stop worrying about popup
+        menus, PopupMenu becomes ref-counted, and everyone becomes happy.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Move files within project.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/HTMLSelectElement.cpp: Remove unnecessary #include.
+        * platform/PopupMenu.cpp: Moved from rendering/RenderPopupMenu.cpp.
+        Also renamed showPopup()/hidePopup() to show()/hide() to disambiguate
+        from RenderMenuList::showPopup/hidePopup.
+        (WebCore::PopupMenu::create): New static creation method to hand back a
+        PassRefPtr<PopupMenu>.
+        (WebCore::PopupMenu::addItems): This platform-independent method should
+        be called by PopupMenu::populate when the platform-specific
+        implementation is ready to receive the menu items. Fixed an ASSERT
+        while I was at it.
+        * platform/PopupMenu.h: Moved from rendering/RenderPopupMenu.h. No more
+        need for virtual methods.
+        (WebCore::PopupMenu::wasClicked):
+        (WebCore::PopupMenu::setWasClicked):
+        (WebCore::PopupMenu::popupHandle):
+        * platform/mac/PopupMenuMac.mm: Moved from
+        rendering/RenderPopupMenuMac.mm. Much renaming ensues.
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::clear):
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::addSeparator):
+        (WebCore::PopupMenu::addGroupLabel): Since we don't have our own
+        RenderStyle anymore, just pick up the style from our RenderMenuList.
+        (WebCore::PopupMenu::addOption): Ditto.
+        * platform/win/TemporaryLinkStubs.cpp: Rename-fest.
+        (PopupMenu::PopupMenu):
+        (PopupMenu::~PopupMenu):
+        (PopupMenu::clear):
+        (PopupMenu::populate):
+        (PopupMenu::show):
+        (PopupMenu::hide):
+        (PopupMenu::addSeparator):
+        (PopupMenu::addGroupLabel):
+        (PopupMenu::addOption):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::~RenderMenuList):
+        (WebCore::RenderMenuList::showPopup): Use nice new simple
+        PopupMenu::create to make the popup.
+        (WebCore::RenderMenuList::hidePopup):
+        * rendering/RenderMenuList.h: Hold a RefPtr<PopupMenu> instead of a
+        RenderPopupMenu*.
+        (WebCore::RenderMenuList::popup):
+        * rendering/RenderPopupMenu.cpp: Removed.
+        * rendering/RenderPopupMenu.h: Removed.
+        * rendering/RenderPopupMenuMac.h: Removed.
+        * rendering/RenderPopupMenuMac.mm: Removed.
+        * rendering/RenderPopupMenuWin.h: Removed.
+        * rendering/RenderTheme.cpp: Get rid of createPopupMenu() method.
+        * rendering/RenderTheme.h: Ditto.
+        * rendering/RenderThemeMac.h: Ditto.
+        * rendering/RenderThemeMac.mm: Ditto.
+        * rendering/RenderThemeWin.cpp: Ditto.
+        * rendering/RenderThemeWin.h: Ditto.
+
 2006-10-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrison.

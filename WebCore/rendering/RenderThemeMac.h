@@ -60,7 +60,6 @@ public:
     virtual void systemFont(int propId, FontDescription&) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;
-    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*);
 
 protected:
     // Methods for each appearance value.

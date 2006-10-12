@@ -20,24 +20,25 @@
  */
 
 #include "config.h"
-#include "RenderPopupMenu.h"
+#include "PopupMenu.h"
 
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
+#include "RenderMenuList.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-RenderPopupMenu::RenderPopupMenu(Node* element, RenderMenuList* menuList)
-    : RenderBlock(element)
-    , m_menuList(menuList)
+    
+PassRefPtr<PopupMenu> PopupMenu::create(RenderMenuList* menuList)
 {
+    return new PopupMenu(menuList);
 }
 
-void RenderPopupMenu::populate()
+void PopupMenu::addItems()
 {
     ASSERT(menuList());
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(menuList()->node());
@@ -54,7 +55,7 @@ void RenderPopupMenu::populate()
         else if (element->hasTagName(hrTag))
             addSeparator();
         else
-            ASSERT(0);
+            ASSERT_NOT_REACHED();
     }
 }
 
