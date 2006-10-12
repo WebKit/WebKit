@@ -47,7 +47,6 @@
 #include "KURL.h"
 #include "PlatformScrollBar.h"
 #include "ScrollBar.h"
-#include "JavaAppletWidget.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
@@ -87,8 +86,6 @@ void Widget::disableFlushDrawing() { notImplemented(); }
 GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
 void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
 void Widget::removeFromParent() { }
-
-JavaAppletWidget::JavaAppletWidget(IntSize const&, Element*, WTF::HashMap<String, String> const&) { notImplemented(); }
 
 void TextField::selectAll() { notImplemented(); }
 void TextField::addSearchResult() { notImplemented(); }
@@ -146,6 +143,7 @@ void FrameGdk::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameGdk::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameGdk::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::RootObject* FrameGdk::bindingRootObject() { notImplemented(); return 0; }
+Widget* FrameGdk::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&) { notImplemented(); return 0; }
 bool FrameGdk::canRedo() const { notImplemented(); return 0; }
 bool FrameGdk::canUndo() const { notImplemented(); return 0; }
 void FrameGdk::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
@@ -341,6 +339,7 @@ void ListBox::setFont(WebCore::Font const&) { }
 
 FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
+PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
 void FileChooser::openFileChooser() { notImplemented(); }
 String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
 void FileChooser::uploadControlDetaching() { notImplemented(); }

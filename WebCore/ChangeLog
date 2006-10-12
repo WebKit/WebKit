@@ -1,3 +1,27 @@
+2006-10-12  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Update Gdk\Linux build for recent changes, based on Qt code
+
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdkClientDefault::FrameGdkClientDefault):
+        (WebCore::FrameGdkClientDefault::~FrameGdkClientDefault):
+        (WebCore::FrameGdkClientDefault::setFrame):
+        (WebCore::FrameGdkClientDefault::openURL):
+        (WebCore::FrameGdkClientDefault::submitForm):
+        (WebCore::FrameGdkClientDefault::receivedResponse):
+        (WebCore::FrameGdkClientDefault::receivedData):
+        (WebCore::FrameGdkClientDefault::receivedAllData):
+        (WebCore::FrameGdk::FrameGdk):
+        (WebCore::FrameGdk::openURL):
+        (WebCore::FrameGdk::submitForm):
+        (WebCore::FrameGdk::urlSelected):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::createJavaAppletWidget):
+        (FileChooser::create):
+
 2006-10-12  Dave Hyatt  <hyatt@apple.com>
 
         Patch to add more clipping retrieval functionality for widgets.

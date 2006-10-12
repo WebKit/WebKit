@@ -35,13 +35,43 @@
 namespace WebCore {
 
 class Element;
+class FrameGdk;
 
 class FrameGdkClient {
 public:
-    virtual void openURL(const DeprecatedString&) = 0;
+    virtual ~FrameGdkClient() = 0;
+
+    virtual void setFrame(const FrameGdk*) = 0;
+
+    virtual void openURL(const KURL&) = 0;
+    virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
 };
 
-class FrameGdk : public Frame, ResourceLoaderClient {
+class FrameGdkClientDefault : public FrameGdkClient,
+                              public  ResourceLoaderClient 
+{
+public:
+
+    FrameGdkClientDefault();
+    virtual ~FrameGdkClientDefault();
+
+    // FrameGdkClient
+    virtual void setFrame(const FrameGdk*);
+    virtual void openURL(const KURL&);
+    virtual void submitForm(const String& method, const KURL&, const FormData*);
+
+    // ResourceLoaderClient
+    virtual void receivedResponse(ResourceLoader*, PlatformResponse);
+    virtual void receivedData(ResourceLoader*, const char*, int);
+    virtual void receivedAllData(ResourceLoader*, PlatformData);
+
+private:
+    FrameGdk* m_frame;
+    bool m_beginCalled : 1;
+
+};
+
+class FrameGdk : public Frame {
 public:
     FrameGdk(Page*, Element*);
     FrameGdk(GdkDrawable*);
@@ -129,12 +159,10 @@ public:
     bool keyPress(const PlatformKeyboardEvent&);
     virtual KURL originalRequestURL() const;
 
-    virtual void receivedData(ResourceLoader*, const char*, int);
-    virtual void receivedAllData(ResourceLoader*,PlatformData);
-
     IntRect frameGeometry() const;
     void setFrameGeometry(const IntRect&);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
+    Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&);
 
 private:
     virtual bool isLoadTypeReload();

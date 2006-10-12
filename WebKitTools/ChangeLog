@@ -1,3 +1,12 @@
+2006-10-12  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Also regenerate GdkLauncher makefiles, since not doing that might
+        lead to mismatch between WebCore and GdkLauncher compiler settings.
+
+        * Scripts/regenerate-makefiles:
+
 2006-10-10  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.

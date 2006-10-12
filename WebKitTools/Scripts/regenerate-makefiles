@@ -69,3 +69,5 @@ fi
 
 cd ../../Bakefiles
 bakefile_gen
+cd ../WebKitTools/GdkLauncher
+bakefile_gen
