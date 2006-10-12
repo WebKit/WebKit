@@ -766,7 +766,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
     if (sentRedirectNotification)
         [self clientRedirectCancelledOrFinished:NO];
     
-    NSURL *baseURL = [[provisionalDocumentLoader request] _webDataRequestBaseURL];        
+    NSURL *baseURL = [[pdl request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
     
     if (!URL || urlIsEmpty(URL))

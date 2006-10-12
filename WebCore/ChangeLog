@@ -1,3 +1,14 @@
+2006-10-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        <rdar://problem/4774321> REGRESSION: "Can't find the server" error page contains unstyled text and missing image
+
+        We really need some way to test loadHTMLString since it keeps breaking!
+        
+        * loader/mac/WebFrameLoader.mm:
+        (-[WebFrameLoader commitProvisionalLoad:]): Set stuff up on the proper data source.
+
 2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
