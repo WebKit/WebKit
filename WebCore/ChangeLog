@@ -1,3 +1,34 @@
+2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by MacDome.
+
+        Finally found a way to remove our begin() trickery in FrameQt.
+        The (probably misnamed) Frame::setEncoding() function automatically
+        calls Frame::receivedFirstData() which calls being on the working
+        url, which has been passed to didOpenUrl(). Took me some hours
+        to figure out that the missing charset logic, forced us to do hacks.
+
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::tokenizerProcessedData):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::FrameQtClientDefault):
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        (WebCore::FrameQtClientDefault::receivedData):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/FrameQtClient.h:
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::slotData):
+        (WebCore::ResourceLoaderManager::slotMimetype):
+        (WebCore::ResourceLoaderManager::slotResult):
+        (WebCore::ResourceLoaderManager::remove):
+        * platform/qt/ResourceLoaderQt.cpp:
+        (WebCore::ResourceLoader::retrieveCharset):
+        (WebCore::ResourceLoader::extractCharsetFromHeaders):
+
 2006-10-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by Hyatt.

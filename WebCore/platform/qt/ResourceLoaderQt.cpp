@@ -71,20 +71,7 @@ void ResourceLoader::retrieveCharset() const
 {
     if (!d->retrievedCharset) {
         d->retrievedCharset = true;
-
-        int pos = d->responseHeaders.find("content-type:", 0, false);
-
-        if (pos > -1) {
-            pos += 13;
-            int index = d->responseHeaders.find('\n', pos);
-            QString type = d->responseHeaders.mid(pos, (index - pos));
-            index = type.indexOf(';');
-
-            if (index > -1) {
-                QString encoding = type.mid(index + 1).remove(QRegExp("charset[ ]*=[ ]*", Qt::CaseInsensitive)).trimmed();
-                d->metaData.set("charset", encoding);
-            }
-        }
+        d->metaData.set("charset", extractCharsetFromHeaders(d->responseHeaders));
     }
 }
 
@@ -98,6 +85,24 @@ void ResourceLoader::receivedResponse(QString response)
 
     if (d->client)
         d->client->receivedResponse(const_cast<ResourceLoader*>(this), response);
+}
+
+QString ResourceLoader::extractCharsetFromHeaders(QString headers) const
+{
+    int pos = headers.find("content-type:", 0, false);
+
+    if (pos > -1) {
+        pos += 13;
+
+        int index = headers.find('\n', pos);
+        QString type = headers.mid(pos, index - pos);
+        index = type.indexOf(';');
+
+        if (index > -1)
+            return type.mid(index + 1).remove(QRegExp("charset[ ]*=[ ]*", Qt::CaseInsensitive)).trimmed();
+    }
+
+    return QString();
 }
 
 } // namespace WebCore

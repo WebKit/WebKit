@@ -71,7 +71,7 @@ public:
 
 private:
     FrameQt* m_frame;
-    bool m_beginCalled : 1;
+    bool m_assignedMimetype : 1;
 };
 
 }

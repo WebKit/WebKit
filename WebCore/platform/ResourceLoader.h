@@ -105,6 +105,11 @@ public:
     ResourceLoaderInternal* getInternal() { return d; }
 #endif
 
+#if PLATFORM(QT)
+    // Helper function
+    QString extractCharsetFromHeaders(QString headers) const;
+#endif
+
     void cancel();
     
     ResourceLoaderClient* client() const;

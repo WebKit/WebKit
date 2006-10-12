@@ -57,7 +57,6 @@ ResourceLoaderManager* ResourceLoaderManager::self()
 
 void ResourceLoaderManager::slotData(KIO::Job* kioJob, const QByteArray& data)
 {
-
     ResourceLoader* job = 0;
 
     // Check if we know about 'kioJob'...
@@ -77,7 +76,6 @@ void ResourceLoaderManager::slotData(KIO::Job* kioJob, const QByteArray& data)
 
 void ResourceLoaderManager::slotMimetype(KIO::Job* kioJob, const QString& type)
 {
-
     ResourceLoader* job = 0;
 
     // Check if we know about 'kioJob'...
@@ -97,7 +95,6 @@ void ResourceLoaderManager::slotMimetype(KIO::Job* kioJob, const QString& type)
 
 void ResourceLoaderManager::slotResult(KJob* kjob)
 {
-  
     KIO::Job* kioJob = qobject_cast<KIO::Job*>(kjob);
     if (!kioJob)
         return;
@@ -118,7 +115,6 @@ void ResourceLoaderManager::slotResult(KJob* kjob)
 
 void ResourceLoaderManager::remove(ResourceLoader* job)
 {
- 
     ResourceLoaderInternal* d = job->getInternal();
     if (!d || !d->client)
         return;
@@ -133,11 +129,14 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     if (!kioJob)
         return;
 
-    if (job->method() == "POST") {
+    QString headers = kioJob->queryMetaData("HTTP-Headers");
+    if (job->method() == "GET")
+        d->m_charset = job->extractCharsetFromHeaders(headers);
+    else if (job->method() == "POST") {
         // Will take care of informing our client...
         // This must be called before receivedAllData(),
         // otherwhise assembleResponseHeaders() is called too early...
-        job->receivedResponse(kioJob->queryMetaData("HTTP-Headers"));
+        job->receivedResponse(headers);
     }
 
     d->client->receivedAllData(job, 0);

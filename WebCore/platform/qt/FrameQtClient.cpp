@@ -40,7 +40,7 @@ FrameQtClientDefault::FrameQtClientDefault()
     : FrameQtClient()
     , ResourceLoaderClient()
     , m_frame(0)
-    , m_beginCalled(false)
+    , m_assignedMimetype(false)
 {
 }
 
@@ -57,7 +57,7 @@ void FrameQtClientDefault::setFrame(const FrameQt* frame)
 void FrameQtClientDefault::openURL(const KURL& url)
 {
     m_frame->didOpenURL(url);
-    m_beginCalled = false;
+    m_assignedMimetype = false;
 
     RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", url);
     loader->start(0);
@@ -65,7 +65,7 @@ void FrameQtClientDefault::openURL(const KURL& url)
 
 void FrameQtClientDefault::submitForm(const String& method, const KURL& url, const FormData* postData)
 {
-    m_beginCalled = false;
+    m_assignedMimetype = false;
 
     RefPtr<ResourceLoader> loader = ResourceLoader::create(this, method, url, *postData);
     loader->start(0);
@@ -83,27 +83,28 @@ void FrameQtClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)
 
 void FrameQtClientDefault::receivedData(ResourceLoader* job, const char* data, int length)
 {
-    if (!m_beginCalled) {
-        m_beginCalled = true;
+    ResourceLoaderInternal* d = job->getInternal();
+    ASSERT(d);
+
+    if (!m_assignedMimetype) {
+        m_assignedMimetype = true;
 
         // Assign correct mimetype _before_ calling begin()!
-        ResourceLoaderInternal* d = job->getInternal();
-        if (d) {
-            ResourceRequest request(m_frame->resourceRequest());
-            request.m_responseMIMEType = d->m_mimetype;
-            m_frame->setResourceRequest(request);
-        }
-
-        m_frame->begin(job->url());
+        m_frame->setResponseMIMEType(d->m_mimetype);
     }
 
-    m_frame->write(data, length);
+    // TODO: Allow user overrides of the encoding...
+    // This calls begin() for us, despite the misleading name
+    m_frame->setEncoding(d->m_charset, false);
+
+    // Feed with new data
+    m_frame->addData(data, length);
 }
 
 void FrameQtClientDefault::receivedAllData(ResourceLoader* job, PlatformData data)
 {
     m_frame->end();
-    m_beginCalled = false;
+    m_assignedMimetype = false;
 }
 
 }
