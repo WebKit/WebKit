@@ -25,6 +25,7 @@
 
 @class NSArray;
 @class NSDictionary;
+@class NSMenu;
 @class NSString;
 @class NSView;
 @class WebCoreFrameBridge;

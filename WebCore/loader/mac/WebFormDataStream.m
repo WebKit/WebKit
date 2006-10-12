@@ -28,6 +28,7 @@
 
 /* originally written by Becky Willrich, additional code by Darin Adler */
 
+#import "config.h"
 #import "WebFormDataStream.h"
 
 #import <sys/types.h>

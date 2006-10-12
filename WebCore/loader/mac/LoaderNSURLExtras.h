@@ -28,6 +28,10 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component);
 NSURL *urlByRemovingFragment(NSURL *url);
 NSString *urlOriginalDataAsString(NSURL *url);
@@ -40,3 +44,6 @@ BOOL stringIsFileURL(NSString *urlString);
 BOOL urlIsEmpty(NSURL *url);
 NSURL *canonicalURL(NSURL *url);
 
+#ifdef __cplusplus
+}
+#endif

@@ -29,4 +29,12 @@
 @class NSArray;
 @class NSMutableURLRequest;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData);
+
+#ifdef __cplusplus
+}
+#endif

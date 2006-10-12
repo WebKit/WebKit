@@ -1,3 +1,30 @@
+2006-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - some changes to prepare for converting more code to C++
+
+        * bridge/mac/WebCoreFrameBridge.h: Added import of <Cocoa/Cocoa.h> so this header is
+        self-sufficient.
+
+        * bridge/mac/WebCoreViewFactory.h: Added forward declaration of the NSMenu class.
+        Needed since the class is used in this header (for some work I have not landed yet).
+
+        * loader/mac/LoaderNSURLExtras.h:
+        * loader/mac/WebFormDataStream.h:
+        Added extern "C" so this code can be used from C++.
+
+        * loader/mac/LoaderNSURLExtras.m:
+        * loader/mac/WebDataProtocol.mm:
+        * loader/mac/WebDocumentLoader.mm:
+        * loader/mac/WebFormDataStream.m:
+        * loader/mac/WebLoader.mm:
+        * loader/mac/WebMainResourceLoader.mm:
+        * loader/mac/WebNetscapePlugInStreamLoader.mm:
+        * loader/mac/WebPolicyDecider.mm:
+        * loader/mac/WebSubresourceLoader.mm:
+        Added missing includes of config.h.
+
 2006-10-11  John Sullivan  <sullivan@apple.com>
         
         Darin wrote this code; we tested it; I give it the thumbs up.
