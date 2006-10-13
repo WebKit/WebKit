@@ -47,10 +47,10 @@ void SplitTextNodeCommand::doApply()
 
     ExceptionCode ec = 0;
 
-    // EDIT FIXME: This should use better smarts for figuring out which portion
-    // of the split to copy (based on their comparitive sizes). We should also
-    // just use the DOM's splitText function.
-    
+    // NOTE: Various callers rely on the fact that the original node becomes
+    // the second node (i.e. the new node is inserted before the existing one).
+    // That is not a fundamental dependency (i.e. it could be re-coded), but
+    // rather is based on how this code happens to work.
     if (!m_text1) {
         // create only if needed.
         // if reapplying, this object will already exist.

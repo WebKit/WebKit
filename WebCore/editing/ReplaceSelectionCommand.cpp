@@ -330,8 +330,14 @@ void ReplaceSelectionCommand::removeRedundantStyles()
             if (isStyleSpan(child.get())) {
                 HTMLElement* elem = static_cast<HTMLElement*>(child.get());
                 CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
-                inlineStyleDecl->merge(parentStyle.get(), false);
-                setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
+                // be defensive because we used to sometimes leave unstyled Apple style spans in the DOM,
+                // and we could be processing an old email with that flaw
+                if (!inlineStyleDecl)
+                    setNodeAttribute(elem, styleAttr, parentStyle->cssText());
+                else {
+                    inlineStyleDecl->merge(parentStyle.get(), false);
+                    setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
+                }
             } else if (node->isElementNode()) {
                 RefPtr<Node> clone = node->cloneNode(false);
                 int index = child->nodeIndex();
@@ -379,7 +385,7 @@ void ReplaceSelectionCommand::removeRedundantStyles()
         Node *node = it->first;
         
         // Remove empty style spans.
-        if (isStyleSpan(node) && !node->firstChild()) {
+        if (isStyleSpan(node) && !node->hasChildNodes()) {
             removeNodeAndPruneAncestors(node);
             continue;
         }

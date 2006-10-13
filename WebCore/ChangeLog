@@ -1,3 +1,61 @@
+2006-10-13  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4746860> Mail crash in WebCore::CSSMutableStyleDeclaration::merge(WebCore::CSSMutableStyleDeclaration*, bool)
+
+        Tests added or changed:
+        * editing/style/style-boundary-005.html: Added. Matches steps from bug.
+        * editing/execCommand/hilitecolor-expected.txt: Updated (no empty Apple style spans).
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Updated (no empty Apple style spans).
+        * editing/style/remove-underline-in-bold-expected.txt: Updated (no empty Apple style spans).
+        * editing/style/typing-style-003-expected.txt: Updated (no empty Apple style spans).
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        Comment changes.
+        
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isUnstyledStyleSpan):
+        Renamed from isEmptyStyleSpan.
+        
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        Rename emptySpans local to unstyledSpans.
+        
+        (WebCore::dummySpanAncestorForNode):
+        New. To locate Apple style span created when splitting a text node.
+        
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        Renamed from cleanUpEmptyStyleSpans. Algorithm changed to scan children
+        of dummy span's parents, rather than traversing up from start and
+        end locations. Old algorithm would miss empty spans in the bug case.
+        
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        Use dummySpanAncestorForNode() and cleanupUnstyledAppleStyleSpans().
+        
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        Renamed isEmptyStyleSpan() to isUnstyledStyleSpan().
+        
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        Comment changes.
+        
+        * editing/ApplyStyleCommand.h:
+        Renamed cleanUpEmptyStyleSpans() to cleanupUnstyledAppleStyleSpans().
+          
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
+        Allow for Apple style span to be unstyled, because old email may have this in the DOM.
+        Use !node->hasChildNodes() instead of !node->firstChild().
+        
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply):
+        Comment changes.
+        
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::isEmptyOrUnstyledAppleStyleSpan):
+        (WebCore::operator<<):
+        Flag empty or unstyled AppleStyleSpa nbecause we never want to leave them in the DOM
+
 2006-10-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

@@ -5,7 +5,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -15,12 +15,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderInline {SPAN} at (0,0) size 616x18
-          RenderText {#text} at (0,0) size 29x18
-            text run at (0,0) width 29: "The "
-          RenderInline {SPAN} at (0,0) size 44x18 [bgcolor=#FF0000]
-            RenderText {#text} at (29,0) size 44x18
-              text run at (29,0) width 44: "second"
-          RenderText {#text} at (73,0) size 543x18
-            text run at (73,0) width 543: " word, and only the second word of this sentence should have a red background color."
-caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (0,0) size 29x18
+          text run at (0,0) width 29: "The "
+        RenderInline {SPAN} at (0,0) size 44x18 [bgcolor=#FF0000]
+          RenderText {#text} at (29,0) size 44x18
+            text run at (29,0) width 44: "second"
+        RenderText {#text} at (73,0) size 543x18
+          text run at (73,0) width 543: " word, and only the second word of this sentence should have a red background color."
+caret: position 0 of child 0 {#text} of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document

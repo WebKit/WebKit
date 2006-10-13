@@ -28,6 +28,8 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "JSEditor.h"
 #include "RenderBR.h"
@@ -43,6 +45,8 @@
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
@@ -107,6 +111,22 @@ static DeprecatedString getTagName(Node *n)
     return n->nodeName().deprecatedString(); 
 }
 
+static bool isEmptyOrUnstyledAppleStyleSpan(const Node *node)
+{
+    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
+        return false;
+
+    const HTMLElement *elem = static_cast<const HTMLElement *>(node);
+    if (elem->getAttribute(classAttr) != "Apple-style-span")
+        return false;
+    
+    if (!node->hasChildNodes())
+        return true;
+    
+    CSSMutableStyleDeclaration *inlineStyleDecl = elem->inlineStyleDecl();
+    return (!inlineStyleDecl || inlineStyleDecl->length() == 0);
+}
+
 static TextStream &operator<<(TextStream &ts, const RenderObject &o)
 {
     ts << o.renderName();
@@ -119,6 +139,10 @@ static TextStream &operator<<(TextStream &ts, const RenderObject &o)
         DeprecatedString tagName = getTagName(o.element());
         if (!tagName.isEmpty()) {
             ts << " {" << tagName << "}";
+            // flag empty or unstyled AppleStyleSpan because we never
+            // want to leave them in the DOM
+            if (isEmptyOrUnstyledAppleStyleSpan(o.element()))
+                ts << " *empty or unstyled AppleStyleSpan*";
         }
     }
     

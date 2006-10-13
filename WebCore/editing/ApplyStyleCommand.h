@@ -73,7 +73,7 @@ private:
     bool splitTextElementAtEndIfNeeded(const Position& start, const Position& end);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
-    void cleanUpEmptyStyleSpans(const Position& start, const Position& end);
+    void cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor);
 
     void surroundNodeRangeWithElement(Node* start, Node* end, Element* element);
     float computedFontSize(const Node*);

@@ -56,6 +56,8 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
 {
     ec = 0;
 
+    // FIXME: This does not copy markers
+    
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than
     // the number of 16-bit units in data.
     if (offset > str->length()) {
