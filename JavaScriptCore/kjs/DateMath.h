@@ -42,6 +42,7 @@
 #define DateMath_h
 
 #include <time.h>
+#include <string.h>
 
 namespace KJS {
 

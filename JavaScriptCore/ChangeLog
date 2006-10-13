@@ -1,3 +1,15 @@
+2006-10-13  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Kevin McCullough.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11283
+        Fixes Qt/Linux and Windows build
+
+        * kjs/DateMath.cpp:
+        * kjs/DateMath.h:
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction):
+
 2006-10-13  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adam, Geoff, Darin.

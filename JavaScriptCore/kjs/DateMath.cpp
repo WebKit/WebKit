@@ -38,7 +38,8 @@
  *
  */
 
-#include <DateMath.h>
+#include "config.h"
+#include "DateMath.h"
 
 #include <math.h>
 #include <stdint.h>

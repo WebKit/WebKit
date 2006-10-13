@@ -51,7 +51,7 @@
 
 #include "error_object.h"
 #include "operations.h"
-#include <DateMath.h>
+#include "DateMath.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
@@ -480,19 +480,19 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     break;
 #else
   case ToLocaleString: {
-    struct ::tm gtm = KJStmToTm(t);
+    struct tm gtm = t.toTM();
     strftime(timebuffer, bufsize, "%c", &gtm);
     return jsString(timebuffer);
     break;
     }
   case ToLocaleDateString: {
-    struct ::tm gtm = KJStmToTm(t);
+    struct tm gtm = t.toTM();
     strftime(timebuffer, bufsize, "%x", &gtm);
     return jsString(timebuffer);
     break;
     }
   case ToLocaleTimeString: {
-    struct ::tm gtm = KJStmToTm(t);
+    struct tm gtm = t.toTM();
     strftime(timebuffer, bufsize, "%X", &gtm);
     return jsString(timebuffer);
     break;
