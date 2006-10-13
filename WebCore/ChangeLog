@@ -1,3 +1,26 @@
+2006-10-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fix Qt/Linux build after Adele's popup menu changes.
+
+        * CMakeLists.txt:
+        * platform/qt/FileChooserQt.cpp:
+        (WebCore::FileChooser::disconnectUploadControl):
+        * platform/qt/PopupMenuQt.cpp: Added.
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::clear):
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::addSeparator):
+        (WebCore::PopupMenu::addGroupLabel):
+        (WebCore::PopupMenu::addOption):
+        * platform/qt/RenderPopupMenuQt.cpp: Removed.
+        * platform/qt/RenderPopupMenuQt.h: Removed.
+        * platform/qt/RenderThemeQt.cpp:
+
 2006-10-13  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Darin.

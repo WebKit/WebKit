@@ -1037,7 +1037,7 @@ set(WebCore_SRCS
     platform/qt/RenderThemeQt.cpp
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
-    platform/qt/RenderPopupMenuQt.cpp
+    platform/qt/PopupMenuQt.cpp
     platform/qt/ResourceLoaderManager.cpp
     platform/qt/ResourceLoaderQt.cpp
     platform/qt/FloatPointQt.cpp
@@ -1076,6 +1076,7 @@ set(WebCore_SRCS
     platform/GlyphMap.cpp
     platform/Font.cpp
     platform/FontData.cpp
+    platform/PopupMenu.cpp
     rendering/RenderCounter.cpp
     rendering/CounterNode.cpp
     rendering/CounterResetNode.cpp
@@ -1084,7 +1085,6 @@ set(WebCore_SRCS
     rendering/RenderPartObject.cpp
     rendering/RenderView.cpp
     rendering/RenderMenuList.cpp
-    rendering/RenderPopupMenu.cpp
     rendering/InlineFlowBox.cpp
     rendering/RenderListMarker.cpp
     rendering/RenderImage.cpp
