@@ -1,3 +1,15 @@
+2006-10-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=11172
+          REGRESSION (NativeListBox): OPTION text paints over the edge of the select element at http://jobs.apple.com/
+        
+         Test: fast/forms/listbox-width-change.html
+
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::updateFromElement):
+          When the options change, call setNeedsLayoutAndMinMaxRecalc.
+
 2006-10-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

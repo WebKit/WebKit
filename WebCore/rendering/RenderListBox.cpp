@@ -104,6 +104,7 @@ void RenderListBox::updateFromElement()
         }
         m_optionsWidth = static_cast<int>(ceilf(width));
         m_optionsChanged = false;
+        setNeedsLayoutAndMinMaxRecalc();
     }
 }
 

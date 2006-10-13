@@ -1,3 +1,15 @@
+2006-10-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        - Test for http://bugs.webkit.org/show_bug.cgi?id=11172
+          REGRESSION (NativeListBox): OPTION text paints over the edge of the select element at http://jobs.apple.com/
+
+        * fast/forms/listbox-width-change-expected.txt: Added.
+        * fast/forms/listbox-width-change-expected.png: Added.
+        * fast/forms/listbox-width-change-expected.checksum: Added.
+        * fast/forms/listbox-width-change.html: Added.
+
 2006-10-11  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Darin.
