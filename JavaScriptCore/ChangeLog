@@ -1,3 +1,44 @@
+2006-10-13  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam, Geoff, Darin.
+
+       Fixed displaying the UTC offset and time zone string, as well as renamed the GregorianDateTime structure and clean up. 
+
+        * ChangeLog:
+        * kjs/DateMath.cpp:
+        (KJS::getUTCOffset):
+        (KJS::getDSTOffsetSimple):
+        (KJS::gregorianDateTimeToMS):
+        (KJS::msToGregorianDateTime):
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::GregorianDateTime):
+        (KJS::GregorianDateTime::~GregorianDateTime):
+        (KJS::GregorianDateTime::toTM):
+        * kjs/date_object.cpp:
+        (KJS::gmtoffset):
+        (KJS::formatDate):
+        (KJS::formatDateUTCVariant):
+        (KJS::formatTime):
+        (KJS::fillStructuresUsingTimeArgs):
+        (KJS::fillStructuresUsingDateArgs):
+        (KJS::DateInstance::getTime):
+        (KJS::DateInstance::getUTCTime):
+        (KJS::DateProtoFunc::callAsFunction):
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectImp::callAsFunction):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        (KJS::parseDate):
+        * kjs/date_object.h:
+
+2006-10-13  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam.
+
+        Gets JavaScripCore tests running on windows.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/webkitdirs.pm:
+
 2006-10-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

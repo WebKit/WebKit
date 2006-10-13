@@ -319,15 +319,15 @@ double getUTCOffset() {
     static double utcOffset;
     static bool utcOffsetInitialized = false;
     if (!utcOffsetInitialized) {
-        struct ::tm ltime;
+        tm localt;
 
-        memset(&ltime, 0, sizeof(ltime));
+        memset(&localt, 0, sizeof(localt));
         
         // get the difference between this time zone and GMT 
-        ltime.tm_mday = 2;
-        ltime.tm_year = 70;
+        localt.tm_mday = 2;
+        localt.tm_year = 70;
 
-        utcOffset = mktime(&ltime) - (hoursPerDay * secondsPerHour);
+        utcOffset = mktime(&localt) - (hoursPerDay * secondsPerHour);
         utcOffset *= -msPerSecond;
 
         utcOffsetInitialized = true;
@@ -356,14 +356,14 @@ static double getDSTOffsetSimple(double localTimeSeconds)
     // FIXME: time_t has a potential problem in 2038
     time_t localTime = static_cast<time_t>(localTimeSeconds);
 
-    struct ::tm tm;
+    tm localTM;
     #if PLATFORM(WIN_OS)
-    localtime_s(&tm, &localTime);
+    localtime_s(&localTM, &localTime);
     #else
-    localtime_r(&localTime, &tm);
+    localtime_r(&localTime, &localTM);
     #endif
     
-    double diff = ((tm.tm_hour - offsetHour) * secondsPerHour) + ((tm.tm_min - offsetMinute) * 60);
+    double diff = ((localTM.tm_hour - offsetHour) * secondsPerHour) + ((localTM.tm_min - offsetMinute) * 60);
 
     if(diff < 0)
         diff += secondsPerDay;
@@ -391,11 +391,11 @@ static double getDSTOffset(double ms)
     return getDSTOffsetSimple(ms / usecPerMsec);
 }
 
-double dateToMS(const tm& t, double milliSeconds, bool inputIsUTC)
+double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
 
-    int day = dateToDayInYear(t.tm_year + 1900, t.tm_mon, t.tm_mday);
-    double ms = timeToMS(t.tm_hour, t.tm_min, t.tm_sec, milliSeconds);
+    int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
+    double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
     double result = (day * msPerDay) + ms;
 
     if(!inputIsUTC) { // convert to UTC
@@ -406,7 +406,7 @@ double dateToMS(const tm& t, double milliSeconds, bool inputIsUTC)
     return result;
 }
 
-void msToTM(double ms, bool outputIsUTC, struct tm& tm)
+void msToGregorianDateTime(double ms, bool outputIsUTC, struct GregorianDateTime& tm)
 {
     // input is UTC
     double dstOff = 0.0;
@@ -416,65 +416,18 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
         ms += dstOff + getUTCOffset();
     }
 
-    tm.tm_sec   =  msToSeconds(ms);
-    tm.tm_min   =  msToMinutes(ms);
-    tm.tm_hour  =  msToHours(ms);
-    tm.tm_wday  =  msToWeekDay(ms);
-    tm.tm_mday  =  msToDayInMonth(ms);
-    tm.tm_yday  =  dayInYear(ms, msToYear(ms));
-    tm.tm_mon   =  msToMonth(ms);
-    tm.tm_year  =  msToYear(ms) - 1900;
-    tm.tm_isdst =  dstOff != 0.0;
+    tm.second   =  msToSeconds(ms);
+    tm.minute   =  msToMinutes(ms);
+    tm.hour     =  msToHours(ms);
+    tm.weekDay  =  msToWeekDay(ms);
+    tm.monthDay =  msToDayInMonth(ms);
+    tm.yearDay  =  dayInYear(ms, msToYear(ms));
+    tm.month    =  msToMonth(ms);
+    tm.year     =  msToYear(ms) - 1900;
+    tm.isDST =  dstOff != 0.0;
 
-    tm.tm_gmtoff = static_cast<long>((dstOff + getUTCOffset()) / usecPerMsec);
-    tm.tm_zone = 0;
-}
-
-// converting between the two tm structures
-tm tmToKJStm(const struct ::tm& inTm)
-{
-    struct tm ret;
-    memset(&ret, 0, sizeof(ret));
-
-    ret.tm_sec   =  inTm.tm_sec;
-    ret.tm_min   =  inTm.tm_min;
-    ret.tm_hour  =  inTm.tm_hour;
-    ret.tm_wday  =  inTm.tm_wday;
-    ret.tm_mday  =  inTm.tm_mday;
-    ret.tm_yday  =  inTm.tm_yday;
-    ret.tm_mon   =  inTm.tm_mon;
-    ret.tm_year  =  inTm.tm_year;
-    ret.tm_isdst =  inTm.tm_isdst;
-
-#if !PLATFORM(WIN_OS)
-    ret.tm_gmtoff = inTm.tm_gmtoff;
-    ret.tm_zone = inTm.tm_zone;
-#endif
-
-    return ret;
-}
-
-::tm KJStmToTm(const struct tm& inTm)
-{
-    struct ::tm ret;
-    memset(&ret, 0, sizeof(ret));
-
-    ret.tm_sec   =  inTm.tm_sec;
-    ret.tm_min   =  inTm.tm_min;
-    ret.tm_hour  =  inTm.tm_hour;
-    ret.tm_wday  =  inTm.tm_wday;
-    ret.tm_mday  =  inTm.tm_mday;
-    ret.tm_yday  =  inTm.tm_yday;
-    ret.tm_mon   =  inTm.tm_mon;
-    ret.tm_year  =  inTm.tm_year;
-    ret.tm_isdst =  inTm.tm_isdst;
-
-#if !PLATFORM(WIN_OS)
-    ret.tm_gmtoff = inTm.tm_gmtoff;
-    ret.tm_zone = inTm.tm_zone;
-#endif
-
-    return ret;
+    tm.utcOffset = static_cast<long>((dstOff + getUTCOffset()) / usecPerMsec);
+    tm.timeZone = NULL;
 }
 
 }   // namespace KJS

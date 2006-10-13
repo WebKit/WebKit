@@ -47,18 +47,85 @@ namespace KJS {
 
 // Intentionally overridding the default tm of the system
 // Not all OS' have the same members of their tm's
-struct tm {
-    int tm_sec;
-    int tm_min;
-    int tm_hour;
-    int tm_wday;
-    int tm_mday;
-    int tm_yday;
-    int tm_mon;
-    int tm_year;
-    int tm_isdst;
-    long tm_gmtoff;
-    char* tm_zone;
+struct GregorianDateTime {
+    GregorianDateTime()
+    {
+        second = 0;
+        minute = 0;
+        hour = 0;
+        weekDay = 0;
+        monthDay = 0;
+        yearDay = 0;
+        month = 0;
+        year = 0;
+        isDST = 0;
+        utcOffset = 0;
+        timeZone = NULL;
+    }
+
+    ~GregorianDateTime()
+    {
+        if (timeZone) 
+            delete timeZone;
+    }
+    
+    GregorianDateTime(const tm& inTm)
+        : second(inTm.tm_sec)
+        , minute(inTm.tm_min)
+        , hour(inTm.tm_hour)
+        , weekDay(inTm.tm_wday)
+        , monthDay(inTm.tm_mday)
+        , yearDay(inTm.tm_yday)
+        , month(inTm.tm_mon)
+        , year(inTm.tm_year)
+        , isDST(inTm.tm_isdst)
+    {
+#if !PLATFORM(WIN_OS)
+        utcOffset = static_cast<int>(inTm.tm_gmtoff);
+
+        int inZoneSize = strlen(inTm.tm_zone) + 1;
+        timeZone = new char[inZoneSize];
+        strncpy(timeZone, inTm.tm_zone, inZoneSize);
+#else
+        utcOffset = 0;
+        timeZone = NULL;
+#endif
+    }
+
+    tm toTM() const
+    {
+        tm ret;
+        memset(&ret, 0, sizeof(ret));
+
+        ret.tm_sec   =  second;
+        ret.tm_min   =  minute;
+        ret.tm_hour  =  hour;
+        ret.tm_wday  =  weekDay;
+        ret.tm_mday  =  monthDay;
+        ret.tm_yday  =  yearDay;
+        ret.tm_mon   =  month;
+        ret.tm_year  =  year;
+        ret.tm_isdst =  isDST;
+
+#if !PLATFORM(WIN_OS)
+        ret.tm_gmtoff = static_cast<long>(utcOffset);
+        ret.tm_zone = timeZone;
+#endif
+
+        return ret;
+    }
+
+    int second;
+    int minute;
+    int hour;
+    int weekDay;
+    int monthDay;
+    int yearDay;
+    int month;
+    int year;
+    int  isDST;
+    int utcOffset;
+    char* timeZone;
 };
 
 // Constants //
@@ -75,12 +142,9 @@ const double msPerMinute = 60.0 * 1000.0;
 const double msPerHour = 60.0 * 60.0 * 1000.0;
 
 // Exported Functions //
-void msToTM(double, bool outputIsUTC, struct tm& );
-double dateToMS(const tm&, double, bool inputIsUTC);
+void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
+double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset();
-
-tm tmToKJStm(const struct ::tm&);
-::tm KJStmToTm(const struct tm&);
 
 }   //namespace KJS
 
