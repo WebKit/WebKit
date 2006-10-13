@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2006       Alexander Kellett <lypanov@kde.org>
 
     This file is part of the KDE project
@@ -25,19 +25,17 @@
 #ifdef SVG_SUPPORT
 #include "SVGImageElement.h"
 
-#include "Attr.h"
 #include "CSSPropertyNames.h"
+#include "KCanvasImage.h"
+#include "RenderSVGContainer.h"
 #include "RenderSVGImage.h"
-#include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGDocument.h"
 #include "SVGHelper.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 #include "XLinkNames.h"
-#include "RenderSVGContainer.h"
-#include "KCanvasImage.h"
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -97,7 +95,7 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-RenderObject *SVGImageElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderSVGImage(this);
 }

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,18 +24,15 @@
 #ifdef SVG_SUPPORT
 #include "SVGUseElement.h"
 
-#include "Attr.h"
 #include "Document.h"
-#include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
+#include "RenderSVGContainer.h"
 #include "SVGGElement.h"
 #include "SVGHelper.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
-#include "ksvg.h"
-#include "RenderSVGContainer.h"
-#include "KRenderingDevice.h"
 
 namespace WebCore {
 
@@ -61,7 +58,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Y, y, S
 ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 
-void SVGUseElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGUseElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     
@@ -89,8 +86,8 @@ void SVGUseElement::parseMappedAttribute(MappedAttribute *attr)
 void SVGUseElement::closeRenderer()
 {
     String targetId = SVGURIReference::getTarget(href().deprecatedString());
-    Element *targetElement = ownerDocument()->getElementById(targetId);
-    SVGElement *target = svg_dynamic_cast(targetElement);
+    Element* targetElement = ownerDocument()->getElementById(targetId);
+    SVGElement* target = svg_dynamic_cast(targetElement);
     if (!target) {
         //document()->addForwardReference(this);
         return;
@@ -111,7 +108,7 @@ void SVGUseElement::closeRenderer()
         if (_h > 0)
             dummy->setAttribute(SVGNames::heightAttr, hString);
         
-        SVGSymbolElement *symbol = static_cast<SVGSymbolElement *>(target);
+        SVGSymbolElement* symbol = static_cast<SVGSymbolElement*>(target);
         if (symbol->hasAttribute(SVGNames::viewBoxAttr)) {
             const AtomicString& symbolViewBox = symbol->getAttribute(SVGNames::viewBoxAttr);
             dummy->setAttribute(SVGNames::viewBoxAttr, symbolViewBox);

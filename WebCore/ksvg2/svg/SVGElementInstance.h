@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,7 +24,7 @@
 #define KSVG_SVGElementInstanceImpl_H
 #ifdef SVG_SUPPORT
 
-#include <kdom/events/EventTarget.h>
+#include "EventTarget.h"
 
 namespace WebCore
 {
@@ -38,15 +38,15 @@ namespace WebCore
         virtual ~SVGElementInstance();
 
         // 'SVGElementInstance' functions
-        SVGElement *correspondingElement() const;
-        SVGUseElement *correspondingUseElement() const;
+        SVGElement* correspondingElement() const;
+        SVGUseElement* correspondingUseElement() const;
 
-        SVGElementInstance *parentNode() const;
-        SVGElementInstanceList *childNodes() const;
-        SVGElementInstance *previousSibling() const;
-        SVGElementInstance *nextSibling() const;
-        SVGElementInstance *firstChild() const;
-        SVGElementInstance *lastChild() const;
+        SVGElementInstance* parentNode() const;
+        SVGElementInstanceList* childNodes() const;
+        SVGElementInstance* previousSibling() const;
+        SVGElementInstance* nextSibling() const;
+        SVGElementInstance* firstChild() const;
+        SVGElementInstance* lastChild() const;
     };
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,17 +24,17 @@
 #define SVGDefsElementImpl_H
 #ifdef SVG_SUPPORT
 
+#include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGExternalResourcesRequired.h"
 
 namespace WebCore
 {
     class SVGDefsElement : public SVGStyledTransformableElement,
-                               public SVGTests,
-                               public SVGLangSpace,
-                               public SVGExternalResourcesRequired
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired
     {
     public:
         SVGDefsElement(const QualifiedName&, Document*);

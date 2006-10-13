@@ -1,3 +1,88 @@
+2006-10-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg structure classes.
+
+        * ksvg2/svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::SVGDescElement):
+        * ksvg2/svg/SVGDescElement.h:
+        * ksvg2/svg/SVGDocument.cpp:
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::correspondingElement):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::parentNode):
+        (WebCore::SVGElementInstance::childNodes):
+        (WebCore::SVGElementInstance::previousSibling):
+        (WebCore::SVGElementInstance::nextSibling):
+        (WebCore::SVGElementInstance::firstChild):
+        (WebCore::SVGElementInstance::lastChild):
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGElementInstanceList.cpp:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        (WebCore::SVGGElement::parseMappedAttribute):
+        (WebCore::SVGDummyElement::SVGDummyElement):
+        * ksvg2/svg/SVGGElement.h:
+        (WebCore::SVGGElement::rendererIsNeeded):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::createRenderer):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterX):
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterY):
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        (WebCore::SVGSVGElement::currentTranslate):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::suspendRedraw):
+        (WebCore::SVGSVGElement::unsuspendRedraw):
+        (WebCore::SVGSVGElement::unsuspendRedrawAll):
+        (WebCore::SVGSVGElement::forceRedraw):
+        (WebCore::SVGSVGElement::getIntersectionList):
+        (WebCore::SVGSVGElement::getEnclosureList):
+        (WebCore::SVGSVGElement::checkIntersection):
+        (WebCore::SVGSVGElement::checkEnclosure):
+        (WebCore::SVGSVGElement::deselectAll):
+        (WebCore::SVGSVGElement::createSVGLength):
+        (WebCore::SVGSVGElement::createSVGAngle):
+        (WebCore::SVGSVGElement::createSVGMatrix):
+        (WebCore::SVGSVGElement::createSVGTransform):
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        (WebCore::SVGSVGElement::setCurrentTime):
+        * ksvg2/svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::rendererIsNeeded):
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGSwitchElement.h:
+        (WebCore::SVGSwitchElement::rendererIsNeeded):
+        * ksvg2/svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        (WebCore::SVGSymbolElement::parseMappedAttribute):
+        * ksvg2/svg/SVGSymbolElement.h:
+        (WebCore::SVGSymbolElement::shouldAttachChild):
+        * ksvg2/svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::SVGTitleElement):
+        * ksvg2/svg/SVGTitleElement.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseMappedAttribute):
+        (WebCore::SVGUseElement::closeRenderer):
+        * ksvg2/svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::rendererIsNeeded):
+
 2006-10-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

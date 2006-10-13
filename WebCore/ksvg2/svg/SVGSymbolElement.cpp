@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,16 +22,19 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "PlatformString.h"
-
-#include "SVGHelper.h"
 #include "SVGSymbolElement.h"
+
+#include "PlatformString.h"
 #include "SVGFitToViewBox.h"
+#include "SVGHelper.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledElement(tagName, doc), SVGLangSpace(), SVGExternalResourcesRequired(), SVGFitToViewBox()
+SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* doc)
+    : SVGStyledElement(tagName, doc)
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGFitToViewBox()
 {
 }
 
@@ -39,13 +42,18 @@ SVGSymbolElement::~SVGSymbolElement()
 {
 }
 
-void SVGSymbolElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGSymbolElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if(SVGLangSpace::parseMappedAttribute(attr)) return;
-    if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
-    if(SVGFitToViewBox::parseMappedAttribute(attr)) return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+    if (SVGFitToViewBox::parseMappedAttribute(attr))
+        return;
 
     SVGStyledElement::parseMappedAttribute(attr);
+}
+
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,17 +24,17 @@
 #define KSVG_SVGGElementImpl_H
 #ifdef SVG_SUPPORT
 
+#include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGExternalResourcesRequired.h"
 
 namespace WebCore
 {
     class SVGGElement : public SVGStyledTransformableElement,
-                            public SVGTests,
-                            public SVGLangSpace,
-                            public SVGExternalResourcesRequired
+                        public SVGTests,
+                        public SVGLangSpace,
+                        public SVGExternalResourcesRequired
     {
     public:
         SVGGElement(const QualifiedName&, Document*);
@@ -42,10 +42,10 @@ namespace WebCore
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

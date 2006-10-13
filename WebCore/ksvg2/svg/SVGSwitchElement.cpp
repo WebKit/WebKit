@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,21 +22,18 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGTests.h"
 #include "SVGSwitchElement.h"
-#include "SVGLength.h"
+
+#include "RenderSVGContainer.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
-SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document* doc)
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
 {
 }
 
@@ -44,10 +41,10 @@ SVGSwitchElement::~SVGSwitchElement()
 {
 }
 
-bool SVGSwitchElement::childShouldCreateRenderer(Node *child) const
+bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
 {
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement *element = svg_dynamic_cast(n);
+    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
+        SVGElement* element = svg_dynamic_cast(n);
         if (element && element->isValid())
             return (n == child); // Only allow this child if it's the first valid child
     }

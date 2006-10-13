@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
     class SVGDocument : public Document {
     public:
-        SVGDocument(DOMImplementation *i, FrameView *view);
+        SVGDocument(DOMImplementation*, FrameView*);
         virtual ~SVGDocument();
         
         virtual bool isSVGDocument() const { return true; }

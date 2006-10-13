@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,24 +24,24 @@
 #define KSVG_SVGSymbolElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGLangSpace.h"
-#include "SVGFitToViewBox.h"
-#include "SVGStyledElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGFitToViewBox.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore
 {
     class SVGSymbolElement : public SVGStyledElement,
-                                 public SVGLangSpace,
-                                 public SVGExternalResourcesRequired,
-                                 public SVGFitToViewBox
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGFitToViewBox
     {
     public:
         SVGSymbolElement(const QualifiedName&, Document*);
         virtual ~SVGSymbolElement();
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-        virtual bool shouldAttachChild(Element *) const { return false; }
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual bool shouldAttachChild(Element*) const { return false; }
     
     protected:
         virtual const SVGElement* contextElement() const { return this; }

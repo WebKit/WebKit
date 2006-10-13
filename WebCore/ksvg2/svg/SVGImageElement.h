@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,12 +24,12 @@
 #define KSVG_SVGImageElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGImageLoader.h"
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGImageLoader.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTests.h"
+#include "SVGURIReference.h"
 
 namespace WebCore
 {
@@ -38,10 +38,10 @@ namespace WebCore
     class SVGDocument;
 
     class SVGImageElement : public SVGStyledTransformableElement,
-                                public SVGTests,
-                                public SVGLangSpace,
-                                public SVGExternalResourcesRequired,
-                                public SVGURIReference
+                            public SVGTests,
+                            public SVGLangSpace,
+                            public SVGExternalResourcesRequired,
+                            public SVGURIReference
     {
     public:
         SVGImageElement(const QualifiedName&, Document*);
@@ -50,11 +50,11 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGImageElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
         virtual void attach();
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         
     protected:
         virtual bool haveLoadedRequiredResources();

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,12 +24,11 @@
 #ifdef SVG_SUPPORT
 #include "SVGGElement.h"
 
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
+#include "RenderSVGContainer.h"
 
 namespace WebCore {
 
-SVGGElement::SVGGElement(const QualifiedName& tagName, Document *doc)
+SVGGElement::SVGGElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -41,7 +40,7 @@ SVGGElement::~SVGGElement()
 {
 }
 
-void SVGGElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (SVGTests::parseMappedAttribute(attr))
         return;
@@ -58,7 +57,7 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
 }
 
 // Helper class for <use> support
-SVGDummyElement::SVGDummyElement(const QualifiedName& tagName, Document *doc)
+SVGDummyElement::SVGDummyElement(const QualifiedName& tagName, Document* doc)
     : SVGGElement(tagName, doc)
     ,  m_localName("dummy")
 {

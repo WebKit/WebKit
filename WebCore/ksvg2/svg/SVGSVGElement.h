@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,16 +24,15 @@
 #define SVGSVGElement_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGFitToViewBox.h"
-#include "SVGZoomAndPan.h"
-#include "SVGStyledLocatableElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGFitToViewBox.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledLocatableElement.h"
+#include "SVGTests.h"
+#include "SVGZoomAndPan.h"
 
 namespace WebCore
 {
-    class DocumentPtr;
     class SVGAngle;
     class SVGLength;
     class SVGMatrix;
@@ -41,11 +40,11 @@ namespace WebCore
     class SVGLength;
     class TimeScheduler;
     class SVGSVGElement : public SVGStyledLocatableElement,
-                              public SVGTests,
-                              public SVGLangSpace,
-                              public SVGExternalResourcesRequired,
-                              public SVGFitToViewBox,
-                              public SVGZoomAndPan
+                          public SVGTests,
+                          public SVGLangSpace,
+                          public SVGExternalResourcesRequired,
+                          public SVGFitToViewBox,
+                          public SVGZoomAndPan
     {
     public:
         enum SVGZoomAndPanType {
@@ -78,7 +77,7 @@ namespace WebCore
         bool useCurrentView() const;
         void setUseCurrentView(bool currentView);
 
-        // SVGViewSpec *currentView() const;
+        // SVGViewSpec* currentView() const;
 
         float currentScale() const;
         void setCurrentScale(float scale);
@@ -99,8 +98,8 @@ namespace WebCore
         void unsuspendRedrawAll();
         void forceRedraw();
 
-        NodeList* getIntersectionList(const FloatRect&, SVGElement *referenceElement);
-        NodeList* getEnclosureList(const FloatRect&, SVGElement *referenceElement);
+        NodeList* getIntersectionList(const FloatRect&, SVGElement* referenceElement);
+        NodeList* getEnclosureList(const FloatRect&, SVGElement* referenceElement);
         bool checkIntersection(SVGElement*, const FloatRect&);
         bool checkEnclosure(SVGElement*, const FloatRect&);
         void deselectAll();
@@ -114,15 +113,15 @@ namespace WebCore
         static SVGTransform* createSVGTransform();
         static SVGTransform* createSVGTransformFromMatrix(SVGMatrix*);
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
         // 'virtual SVGLocatable' functions
-        virtual SVGMatrix *getCTM() const;
-        virtual SVGMatrix *getScreenCTM() const;
+        virtual SVGMatrix* getCTM() const;
+        virtual SVGMatrix* getScreenCTM() const;
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject* createRenderer(RenderArena *arena, RenderStyle *style);
-        
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
 

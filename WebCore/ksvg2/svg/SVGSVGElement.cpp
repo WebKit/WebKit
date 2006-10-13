@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,16 +30,13 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "KSVGTimeScheduler.h"
+#include "RenderSVGContainer.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGDocumentExtensions.h"
 #include "SVGMatrix.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGTransform.h"
 #include "SVGZoomEvent.h"
-#include "ksvg.h"
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
 #include "TextStream.h"
 
 namespace WebCore {
@@ -47,7 +44,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
-SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document *doc)
+SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -113,27 +110,13 @@ FloatRect SVGSVGElement::viewport() const
 
 float SVGSVGElement::pixelUnitToMillimeterX() const
 {
-#if 0
-    if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
-    {
-        Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
-        return float(metrics->widthMM()) / float(metrics->width());
-    }
-#endif
-
+    // FIXME: Implement me (see bug 11273)
     return .28;
 }
 
 float SVGSVGElement::pixelUnitToMillimeterY() const
 {
-#if 0
-    if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
-    {
-        Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
-        return float(metrics->heightMM()) / float(metrics->height());
-    }
-#endif
-
+    // FIXME: Implement me (see bug 11273)
     return .28;
 }
 
@@ -159,28 +142,19 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 
 float SVGSVGElement::currentScale() const
 {
-    //if(!canvasView())
-        return 1.;
-
-    //return canvasView()->zoom();
+    // FIXME: Return the current zoom/scale value (see bug 11272)
+    return 1.;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-//    if(canvasView())
-//    {
-//        float oldzoom = canvasView()->zoom();
-//        canvasView()->setZoom(scale);
-//        document()->dispatchZoomEvent(oldzoom, scale);
-//    }
+    // FIXME: Set the current zoom/scale value (see bug 11272)
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const
 {
-    //if(!view())
-        return FloatPoint();
-
-    //return createSVGPoint(canvasView()->pan());
+    // FIXME: Return the current pan/translate value (see bug 11272)
+    return FloatPoint();
 }
 
 void SVGSVGElement::addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr)
@@ -192,7 +166,7 @@ void SVGSVGElement::addSVGWindowEventListner(const AtomicString& eventType, cons
     document()->setHTMLWindowEventListener(eventType, listener.release());
 }
 
-void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (!nearestViewportElement()) {
@@ -238,36 +212,35 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
 
 unsigned long SVGSVGElement::suspendRedraw(unsigned long /* max_wait_milliseconds */)
 {
-    // TODO
+    // FIXME: Implement me (see bug 11275)
     return 0;
 }
 
 void SVGSVGElement::unsuspendRedraw(unsigned long /* suspend_handle_id */, ExceptionCode& ec)
 {
     // if suspend_handle_id is not found, throw exception
-    // TODO
+    // FIXME: Implement me (see bug 11275)
 }
 
 void SVGSVGElement::unsuspendRedrawAll()
 {
-    // TODO
+    // FIXME: Implement me (see bug 11275)
 }
 
 void SVGSVGElement::forceRedraw()
 {
-    // TODO
+    // FIXME: Implement me (see bug 11275)
 }
 
-NodeList *SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement*)
+NodeList* SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement*)
 {
-    //NodeList *list;
-    // TODO
+    // FIXME: Implement me (see bug 11274)
     return 0;
 }
 
-NodeList *SVGSVGElement::getEnclosureList(const FloatRect& rect, SVGElement*)
+NodeList* SVGSVGElement::getEnclosureList(const FloatRect& rect, SVGElement*)
 {
-    // TODO
+    // FIXME: Implement me (see bug 11274)
     return 0;
 }
 
@@ -275,6 +248,7 @@ bool SVGSVGElement::checkIntersection(SVGElement* element, const FloatRect& rect
 {
     // TODO : take into account pointer-events?
     // FIXME: Why is element ignored??
+    // FIXME: Implement me (see bug 11274)
     return rect.intersects(getBBox());
 }
 
@@ -282,12 +256,13 @@ bool SVGSVGElement::checkEnclosure(SVGElement* element, const FloatRect& rect)
 {
     // TODO : take into account pointer-events?
     // FIXME: Why is element ignored??
+    // FIXME: Implement me (see bug 11274)
     return rect.contains(getBBox());
 }
 
 void SVGSVGElement::deselectAll()
 {
-    // TODO
+    // FIXME: Implement me (see bug 11275)
 }
 
 float SVGSVGElement::createSVGNumber()
@@ -295,12 +270,12 @@ float SVGSVGElement::createSVGNumber()
     return 0;
 }
 
-SVGLength *SVGSVGElement::createSVGLength()
+SVGLength* SVGSVGElement::createSVGLength()
 {
     return new SVGLength(0);
 }
 
-SVGAngle *SVGSVGElement::createSVGAngle()
+SVGAngle* SVGSVGElement::createSVGAngle()
 {
     return new SVGAngle(0);
 }
@@ -310,7 +285,7 @@ FloatPoint SVGSVGElement::createSVGPoint(const IntPoint &p)
     return FloatPoint(p);
 }
 
-SVGMatrix *SVGSVGElement::createSVGMatrix()
+SVGMatrix* SVGSVGElement::createSVGMatrix()
 {
     return new SVGMatrix();
 }
@@ -320,27 +295,25 @@ FloatRect SVGSVGElement::createSVGRect()
     return FloatRect();
 }
 
-SVGTransform *SVGSVGElement::createSVGTransform()
+SVGTransform* SVGSVGElement::createSVGTransform()
 {
     return new SVGTransform();
 }
 
-SVGTransform *SVGSVGElement::createSVGTransformFromMatrix(SVGMatrix *matrix)
+SVGTransform* SVGSVGElement::createSVGTransformFromMatrix(SVGMatrix* matrix)
 {    
-    SVGTransform *obj = SVGSVGElement::createSVGTransform();
+    SVGTransform* obj = SVGSVGElement::createSVGTransform();
     obj->setMatrix(matrix);
     return obj;
 }
 
-SVGMatrix *SVGSVGElement::getCTM() const
+SVGMatrix* SVGSVGElement::getCTM() const
 {
-    SVGMatrix *mat = createSVGMatrix();
-    if(mat)
-    {
+    SVGMatrix* mat = createSVGMatrix();
+    if (mat) {
         mat->translate(x()->value(), y()->value());
 
-        if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
-        {
+        if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
             RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
             mat->multiply(viewBox.get());
         }
@@ -349,10 +322,10 @@ SVGMatrix *SVGSVGElement::getCTM() const
     return mat;
 }
 
-SVGMatrix *SVGSVGElement::getScreenCTM() const
+SVGMatrix* SVGSVGElement::getScreenCTM() const
 {
-    SVGMatrix *mat = SVGStyledLocatableElement::getScreenCTM();
-    if(mat) {
+    SVGMatrix* mat = SVGStyledLocatableElement::getScreenCTM();
+    if (mat) {
         mat->translate(x()->value(), y()->value());
 
         if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
@@ -368,7 +341,7 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     RenderSVGContainer* rootContainer = new (arena) RenderSVGContainer(this);
 
-    // FIXME: all this setup should be done after attributesChanged, not here.
+    // FIXME: All this setup should be done after attributesChanged, not here.
     rootContainer->setViewBox(viewBox());
     rootContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
     rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
@@ -418,7 +391,7 @@ float SVGSVGElement::getCurrentTime() const
 
 void SVGSVGElement::setCurrentTime(float /* seconds */)
 {
-    // TODO
+    // FIXME: Implement me
 }
 
 void SVGSVGElement::attributeChanged(Attribute* attr, bool preserveDecls)

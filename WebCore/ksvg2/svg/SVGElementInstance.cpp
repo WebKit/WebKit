@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,14 +22,15 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "SVGElement.h"
-#include "SVGUseElement.h"
 #include "SVGElementInstance.h"
+
 #include "SVGElementInstanceList.h"
+#include "SVGUseElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGElementInstance::SVGElementInstance() : EventTarget()
+SVGElementInstance::SVGElementInstance()
+    : EventTarget()
 {
 }
 
@@ -37,44 +38,46 @@ SVGElementInstance::~SVGElementInstance()
 {
 }
 
-SVGElement *SVGElementInstance::correspondingElement() const
+SVGElement* SVGElementInstance::correspondingElement() const
 {
     return 0;
 }
 
-SVGUseElement *SVGElementInstance::correspondingUseElement() const
+SVGUseElement* SVGElementInstance::correspondingUseElement() const
 {
     return 0;
 }
 
-SVGElementInstance *SVGElementInstance::parentNode() const
+SVGElementInstance* SVGElementInstance::parentNode() const
 {
     return 0;
 }
 
-SVGElementInstanceList *SVGElementInstance::childNodes() const
+SVGElementInstanceList* SVGElementInstance::childNodes() const
 {
     return 0;
 }
 
-SVGElementInstance *SVGElementInstance::previousSibling() const
+SVGElementInstance* SVGElementInstance::previousSibling() const
 {
     return 0;
 }
 
-SVGElementInstance *SVGElementInstance::nextSibling() const
+SVGElementInstance* SVGElementInstance::nextSibling() const
 {
     return 0;
 }
 
-SVGElementInstance *SVGElementInstance::firstChild() const
+SVGElementInstance* SVGElementInstance::firstChild() const
 {
     return 0;
 }
 
-SVGElementInstance *SVGElementInstance::lastChild() const
+SVGElementInstance* SVGElementInstance::lastChild() const
 {
     return 0;
+}
+
 }
 
 // vim:ts=4:noet
