@@ -29,6 +29,7 @@
 #ifndef DUMPRENDERTREE_H
 #define DUMPRENDERTREE_H
 
+#include <QList>
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
@@ -49,7 +50,7 @@ public:
 
     // Initialize in single-file mode.
     void open(const KURL& url);
-    
+   
 public Q_SLOTS:
     void readStdin(int);
     void checkLoaded();
@@ -60,11 +61,16 @@ private:
     FrameQt* frame() const;
 
 private:
+    void readSkipFile();
+ 
     FrameQt* m_frame;
     DumpRenderTreeClient* m_client;
 
     QTextStream* m_stdin;
     QSocketNotifier* m_notifier;
+
+    // To be skipped tests
+    QList<QString> m_skipped;
 };
 
 }

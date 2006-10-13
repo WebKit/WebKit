@@ -2,6 +2,22 @@
 
         Reviewed by Maciej.
 
+        Exclude some tests which crash or hang from Qt/Linux DRT.
+        These are known to fail, and will be fixed at some point :-)
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::readSkipFile):
+        (WebCore::DumpRenderTree::checkLoaded):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt: Added.
+
+2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
         Specialization of alert() for DumpRenderTree - just log the output, don't show any message box.
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.cpp:

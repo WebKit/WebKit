@@ -35,11 +35,12 @@
 #include "Document.h"
 #include "RenderTreeAsText.h"
 
+#include <QDir>
+#include <QFile>
 #include <QTimer>
 #include <QBoxLayout>
-#include <QApplication>
-#include <QDebug>
 #include <QScrollArea>
+#include <QApplication>
 
 #include <unistd.h>
 
@@ -74,6 +75,9 @@ DumpRenderTree::DumpRenderTree()
     unsigned int viewHeight = maxViewHeight + 2 * area->frameWidth();
 
     area->resize(viewWidth, viewHeight);
+
+    // Read file containing to be skipped tests...
+    readSkipFile();
 }
 
 DumpRenderTree::~DumpRenderTree()
@@ -98,6 +102,15 @@ void DumpRenderTree::open()
 
 void DumpRenderTree::open(const KURL& url)
 {
+    Q_ASSERT(url.isLocalFile());
+
+    // Ignore skipped tests
+    if (m_skipped.indexOf(url.path()) != -1) { 
+        fprintf(stdout, "#EOF\n");
+        fflush(stdout);
+        return;
+    }
+
     m_frame->openURL(url);
 
     // Simple poll mechanism, to find out when the page is loaded...
@@ -108,13 +121,43 @@ void DumpRenderTree::readStdin(int /* socket */)
 {
     // Read incoming data from stdin...
     QString line = m_stdin->readLine(); 
-    if (!line.isEmpty())
+    if (!line.isEmpty()) 
         open(KURL(line.toLatin1()));
+}
+
+void DumpRenderTree::readSkipFile()
+{
+    Q_ASSERT(m_skipped.isEmpty());
+
+    QFile file("WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt");
+    if (!file.exists()) {
+        qFatal("Run DumpRenderTree from the source root directory!\n");
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qFatal("Couldn't read skip file!\n");
+        return;
+    }
+
+    QString testsPath = QDir::currentPath() + "/LayoutTests/";
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+
+        // Remove trailing line feed
+        line.chop(1);
+
+        // Ignore comments
+        if (line.isEmpty() || line.startsWith('#'))
+            continue;
+
+        m_skipped.append(testsPath + line);
+    }
 }
 
 void DumpRenderTree::checkLoaded()
 {
-    if(m_frame->isComplete()) {
+    if (m_frame->isComplete()) {
         if (!m_notifier) {
             // Dump markup in single file mode...
             DeprecatedString markup = createMarkup(m_frame->document());
