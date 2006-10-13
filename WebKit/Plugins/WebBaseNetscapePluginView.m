@@ -149,8 +149,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     carbonEvent->message = 0;
     carbonEvent->when = TickCount();
     GetGlobalMouse(&carbonEvent->where);
-    carbonEvent->where.h *= HIGetScaleFactor();
-    carbonEvent->where.v *= HIGetScaleFactor();
+    carbonEvent->where.h = static_cast<short>(carbonEvent->where.h * HIGetScaleFactor());
+    carbonEvent->where.v = static_cast<short>(carbonEvent->where.v * HIGetScaleFactor());
     carbonEvent->modifiers = GetCurrentKeyModifiers();
     if (!Button())
         carbonEvent->modifiers |= btnState;
@@ -193,8 +193,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
     if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent)) {
-        carbonEvent->where.h *= HIGetScaleFactor();
-        carbonEvent->where.v *= HIGetScaleFactor();
+        carbonEvent->where.h = static_cast<short>(carbonEvent->where.h * HIGetScaleFactor());
+        carbonEvent->where.v = static_cast<short>(carbonEvent->where.v * HIGetScaleFactor());
         return;
     }
     
@@ -240,8 +240,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     GetPort(&oldPort);    
     SetPort(GetWindowPort((WindowRef)[currentWindow windowRef]));
     
-    MovePortTo(contentRect.origin.x, /* Flip Y */ windowHeight - NSMaxY(contentRect));
-    PortSize(contentRect.size.width, contentRect.size.height);
+    MovePortTo(static_cast<short>(contentRect.origin.x), /* Flip Y */ static_cast<short>(windowHeight - NSMaxY(contentRect)));
+    PortSize(static_cast<short>(contentRect.size.width), static_cast<short>(contentRect.size.height));
     
     SetPort(oldPort);
 }
@@ -287,8 +287,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
-    window.width = NSWidth(boundsInWindow);
-    window.height = NSHeight(boundsInWindow);
+    window.width = static_cast<uint32>(NSWidth(boundsInWindow));
+    window.height = static_cast<uint32>(NSHeight(boundsInWindow));
     
     // "Clip-out" the plug-in when:
     // 1) it's not really in a window or off-screen or has no height or width.
@@ -380,7 +380,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                     if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
                         // Create a region for this dirty rect
                         RgnHandle dirtyRectRegion = NewRgn();
-                        SetRectRgn(dirtyRectRegion, NSMinX(dirtyRect), NSMinY(dirtyRect), NSMaxX(dirtyRect), NSMaxY(dirtyRect));
+                        SetRectRgn(dirtyRectRegion, static_cast<short>(NSMinX(dirtyRect)), static_cast<short>(NSMinY(dirtyRect)), static_cast<short>(NSMaxX(dirtyRect)), static_cast<short>(NSMaxY(dirtyRect)));
                         
                         // Union this dirty rect with the rest of the dirty rects
                         UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
@@ -470,7 +470,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             // Adjust viewport according to clip
             switch (window.type) {
                 case NPWindowTypeWindow:
-                    glViewport(NSMinX(boundsInWindow) - NSMinX(visibleRectInWindow), NSMaxY(visibleRectInWindow) - NSMaxY(boundsInWindow), window.width, window.height);
+                    glViewport(static_cast<GLint>(NSMinX(boundsInWindow) - NSMinX(visibleRectInWindow)), static_cast<GLint>(NSMaxY(visibleRectInWindow) - NSMaxY(boundsInWindow)), window.width, window.height);
                 break;
                 
                 case NPWindowTypeDrawable:
@@ -2548,7 +2548,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     // Create offscreen buffer for AGL context
     NSSize boundsSize = [self bounds].size;
-    GLvoid *offscreenBuffer = (GLvoid *)malloc(boundsSize.width * boundsSize.height * 4);
+    GLvoid *offscreenBuffer = (GLvoid *)malloc(static_cast<size_t>(boundsSize.width * boundsSize.height * 4));
     if (!offscreenBuffer) {
         LOG_ERROR("Could not allocate offscreen buffer for AGL context");
         aglDestroyContext(aglContext);
@@ -2558,7 +2558,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     // Attach AGL context to offscreen buffer
     CGLContextObj cglContext = [self _cglContext];
-    CGLError error = CGLSetOffScreen(cglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer);
+    CGLError error = CGLSetOffScreen(cglContext, static_cast<long>(boundsSize.width), static_cast<long>(boundsSize.height), static_cast<long>(boundsSize.width * 4), offscreenBuffer);
     if (error) {
         LOG_ERROR("Could not set offscreen buffer for AGL context: %d", error);
         aglDestroyContext(aglContext);
@@ -2698,7 +2698,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 break;
             
             // Resize the offscreen buffer
-            offscreenBuffer = realloc(offscreenBuffer, boundsSize.width * boundsSize.height * 4);
+            offscreenBuffer = realloc(offscreenBuffer, static_cast<size_t>(boundsSize.width * boundsSize.height * 4));
             if (!offscreenBuffer) {
                 LOG_ERROR("Could not allocate offscreen buffer for AGL context");
                 break;
@@ -2706,7 +2706,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
             // Update the offscreen 
             CGLContextObj cglContext = [self _cglContext];
-            CGLError error = CGLSetOffScreen(cglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer);
+            CGLError error = CGLSetOffScreen(cglContext, static_cast<long>(boundsSize.width), static_cast<long>(boundsSize.height), static_cast<long>(boundsSize.width * 4), offscreenBuffer);
             if (error) {
                 LOG_ERROR("Could not set offscreen buffer for AGL context: %d", error);
                 break;
@@ -2773,8 +2773,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     GLvoid *swizzleImageBase = (unsigned char *)offscreenBuffer + (int)(NSMinY(drawingInRect) * rowBytes) + (int)(NSMinX(drawingInRect) * 4);
     vImage_Buffer vImage = {
         data: swizzleImageBase,
-        height: NSHeight(drawingInRect),
-        width: NSWidth(drawingInRect),
+        height: static_cast<vImagePixelCount>(NSHeight(drawingInRect)),
+        width: static_cast<vImagePixelCount>(NSWidth(drawingInRect)),
         rowBytes: rowBytes
     };
     uint8_t vImagePermuteMap[4] = { 3, 2, 1, 0 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map converts BGRA to ARGB
