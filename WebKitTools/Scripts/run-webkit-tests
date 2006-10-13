@@ -169,6 +169,9 @@ $pixelTests = 1 if $repaintTests;
 
 $verbose = 1 if $singly;
 
+# Force --no-http for Qt/Linux, for now.
+$testHTTP = 0 if isQt();
+
 my $productDir = productDir();
 $productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
 
