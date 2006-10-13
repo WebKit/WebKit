@@ -382,7 +382,13 @@ void ReplaceSelectionCommand::removeRedundantStyles()
     
     NodeStyleMap::const_iterator e = map.end();
     for (NodeStyleMap::const_iterator it = map.begin(); it != e; ++it) {
-        Node *node = it->first;
+        Node* node = it->first;
+        
+        // This node could have aleady been removed during pruning if one 
+        // of its descendants came off of the hash map iterator before it 
+        // and that descendant was a redundant style span or font tag.
+        if (!node->inDocument())
+            continue;
         
         // Remove empty style spans.
         if (isStyleSpan(node) && !node->hasChildNodes()) {

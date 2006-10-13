@@ -1,3 +1,22 @@
+2006-10-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren and harrison
+        
+        <rdar://problem/4744008>
+        9A270: Mail crashes when I try to paste large items from Safari
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
+        Even though we put nodes in the hash map in pre-order, they don't necessary
+        come out of the iterator that way.  If a node is a redundant style span
+        and one of its pruned ancestors comes off the hash map after it, and that
+        ancestor is a redundant style span or font tag, we will try to remove it
+        even though it has already been removed and we'll crash.
+        The test case added with the fix depends on our hash map implementation
+        because it requires that a particular redundant style span come out of 
+        the iterator before its parent. So, it may eventually not provide 
+        coverage for the fix.
+
 2006-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

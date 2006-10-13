@@ -1,3 +1,13 @@
+2006-10-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren and harrison
+        
+        <rdar://problem/4744008>
+        9A270: Mail crashes when I try to paste large items from Safari
+        
+        * editing/pasteboard/4744008-expected.txt: Added.
+        * editing/pasteboard/4744008.html: Added.
+
 2006-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         Tests for accessing renderer-dependent properties from a javascript: URL.
