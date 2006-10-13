@@ -985,8 +985,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)loadDocumentLoader:(WebDocumentLoader *)newDocumentLoader
 {
-    ASSERT(!policyDocumentLoader);
-    policyDocumentLoader = [newDocumentLoader retain];
+    if (policyDocumentLoader)
+        [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+    
+    [self setPolicyDocumentLoader:newDocumentLoader];
 
     NSMutableURLRequest *r = [policyDocumentLoader request];
     [self addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];

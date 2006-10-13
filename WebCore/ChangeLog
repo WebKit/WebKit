@@ -1,3 +1,12 @@
+2006-10-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej
+
+        * loader/mac/WebFrameLoader.mm:
+        (-[WebFrameLoader loadDocumentLoader:]):
+        Replace ASSERT(!policyDocumentLoader) with code that handles this case. This can
+        happen when loading a page during a decidePolicyForNavigationAction callback.
+
 2006-10-13  Dave Hyatt  <hyatt@apple.com>
 
         Transparency layer work.
