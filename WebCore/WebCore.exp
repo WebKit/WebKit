@@ -134,8 +134,9 @@ _WebCoreSetAlwaysUseATSU
 _WebCoreSetShouldUseFontSmoothing
 _WebCoreShouldUseFontSmoothing
 _WebCoreTextFloatWidth
+__Z21isBackForwardLoadType13FrameLoadType
+__ZN7WebCore10StringImplD1Ev
 _canonicalURL
-_isBackForwardLoadType
 _stringIsFileURL
 _urlByRemovingComponent
 _urlByRemovingFragment

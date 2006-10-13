@@ -1,3 +1,37 @@
+2006-10-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - converted WebFormState from Objective-C to C++
+
+        * ForwardingHeaders: Added an entire copy of WebCore's forwarding headers here.
+        We should eventually come up with a more-elegant solution.
+
+        * WebKit.xcodeproj/project.pbxproj: Added ForwardingHeaders to the include paths.
+        Converted many files from Objective-C to Objective-C++. In a later check-in, I'll
+        rename them to .mm instead of .m. Removed C-only warning options for now. In a
+        later check-in I will add these back in a way that omits them for C++.
+
+        * Plugins/WebPluginContainerCheck.m: Updated for header changes.
+
+        * WebView/WebFrameInternal.h: Updated for header changes. Removed WebFrameLoaderClient category
+        so this file can still be used by Objective-C code (not just Objective-C++).
+
+        * WebView/WebFrame.m: Put WebFrameLoaderClient category in here.
+        (-[WebFrame _loadItem:withLoadType:]): Changed to use 0 instead of nil for FormState and fixed
+        enum code for C++ compatibility.
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]): Added call to setFrameLoaderClient: here.
+        (-[WebFrame _updateHistoryForCommit]): Fixed enum code for C++ compatibility.
+        (-[WebFrame _updateHistoryForReload]): Ditto.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]): Removed call to setFrameLoaderClient:.
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]): Ditto.
+        (-[WebFrameBridge _retrieveKeyboardUIModeFromPreferences:]): Fixed enum code for C++ compatibility.
+        (-[WebFrameBridge runModal]): Changed code to not use "namespace" as a local variable name.
+
+        * WebView/WebPDFView.m: Added extern "C" so this can compile as Objective-C++.
+
 2006-10-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

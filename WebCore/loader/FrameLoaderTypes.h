@@ -26,49 +26,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebFormState.h"
+typedef enum {
+    WebFrameStateProvisional,
+    
+    // This state indicates we are ready to commit to a page,
+    // which means the view will transition to use the new data source.
+    WebFrameStateCommittedPage,
+    
+    WebFrameStateComplete
+} WebFrameState;
 
-#import "DOMElementInternal.h"
-#import "Element.h"
-#import "FrameMac.h"
-#import "WebCoreFrameBridge.h"
+typedef enum {
+    WebPolicyUse,
+    WebPolicyDownload,
+    WebPolicyIgnore,
+} WebPolicyAction;
 
-namespace WebCore {
+typedef enum {
+    FrameLoadTypeStandard,
+    FrameLoadTypeBack,
+    FrameLoadTypeForward,
+    FrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
+    FrameLoadTypeReload,
+    FrameLoadTypeReloadAllowingStaleData,
+    FrameLoadTypeSame,               // user loads same URL again (but not reload button)
+    FrameLoadTypeInternal,
+    FrameLoadTypeReplace
+} FrameLoadType;
 
-PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
-{
-    return new FormState(form, values, sourceFrame);
-}
-
-PassRefPtr<FormState> FormState::create(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
-{
-    return new FormState(form, values, sourceFrame);
-}
-
-FormState::FormState(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
-    : m_form(form)
-    , m_values(values)
-    , m_sourceFrame(sourceFrame)
-{
-}
-
-FormState::FormState(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
-    : m_form([form _element])
-    , m_sourceFrame([sourceFrame impl])
-{
-    NSEnumerator *keyEnumerator = [values keyEnumerator];
-    while (NSString *key = [keyEnumerator nextObject])
-        m_values.set(key, [values objectForKey:values]);
-}
-
-NSDictionary *FormState::valuesAsNSDictionary() const
-{
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:m_values.size()];
-    HashMap<String, String>::const_iterator end = m_values.end();
-    for (HashMap<String, String>::const_iterator it = m_values.begin(); it != end; ++it)
-        [dictionary setObject:it->second forKey:it->first];
-    return dictionary;
-}
-
-}
+typedef enum {
+    NavigationTypeLinkClicked,
+    NavigationTypeFormSubmitted,
+    NavigationTypeBackForward,
+    NavigationTypeReload,
+    NavigationTypeFormResubmitted,
+    NavigationTypeOther
+} NavigationType;

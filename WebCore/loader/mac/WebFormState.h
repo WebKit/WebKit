@@ -26,24 +26,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#include "Shared.h"
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 @class DOMElement;
+@class NSDictionary;
 @class WebCoreFrameBridge;
 
-// One day we might want to expand the use of this kind of class such that we'd receive one
-// over the bridge, and possibly hand it on through to the FormsDelegate.
-// Today it is just used internally to keep some state as we make our way through a bunch
-// layers while doing a load.
-@interface WebFormState : NSObject
-{
-    DOMElement *_form;
-    NSDictionary *_values;
-    WebCoreFrameBridge *_sourceFrame;
-}
-- (id)initWithForm:(DOMElement *)form values:(NSDictionary *)values sourceFrame:(WebCoreFrameBridge *)sourceFrame;
-- (DOMElement *)form;
-- (NSDictionary *)values;
-- (WebCoreFrameBridge *)sourceFrame;
-@end
+namespace WebCore {
 
+    class Element;
+    class Frame;
+
+    class FormState : public Shared<FormState> {
+    public:
+        static PassRefPtr<FormState> create(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+
+        Element* form() const { return m_form.get(); }
+        const HashMap<String, String>& values() const { return m_values; }
+        Frame* sourceFrame() const { return m_sourceFrame.get(); }
+
+        static PassRefPtr<FormState> create(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame);
+        NSDictionary *valuesAsNSDictionary() const;
+
+    private:
+        FormState(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+        FormState(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame);
+
+        RefPtr<Element> m_form;
+        HashMap<String, String> m_values;
+        RefPtr<Frame> m_sourceFrame;
+    };
+
+}

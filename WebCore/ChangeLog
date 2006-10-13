@@ -1,3 +1,35 @@
+2006-10-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - converted WebFormState from Objective-C to C++
+
+        * WebCore.exp: Added a new symbol, changed one symbol from C to C++.
+
+        * WebCore.xcodeproj/project.pbxproj: Made lots of headers "private" instead of "project".
+        Added UChar.h and FrameLoaderTypes.h.
+
+        * loader/FrameLoaderTypes.h: Added. Has enums from WebFrameLoader.h.
+
+        * loader/mac/WebFormState.h: Converted class to C++.
+        * loader/mac/WebFormState.mm: Ditto.
+
+        * loader/mac/WebFrameLoader.h:
+        * loader/mac/WebFrameLoader.mm:
+        (-[WebFrameLoader loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameLoader continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader invalidatePendingPolicyDecisionCallingDefaultAction:]):
+        (-[WebFrameLoader checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueAfterNewWindowPolicy:]):
+        (-[WebFrameLoader checkNavigationPolicyForRequest:documentLoader:formState:andCall:withSelector:]):
+        (-[WebFrameLoader continueAfterNavigationPolicy:]):
+        (-[WebFrameLoader continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrameLoader loadDocumentLoader:withLoadType:formState:]):
+        (-[WebFrameLoader continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrameLoader postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        Changed Objective-C WebFormState uses to C++ WebCore::FormState.
+
 2006-10-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

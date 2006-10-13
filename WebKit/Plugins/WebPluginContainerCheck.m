@@ -26,22 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPluginContainerCheck.h>
+#import "WebPluginContainerCheck.h"
 
+#import "WebFrame.h"
+#import "WebFrameBridge.h"
+#import "WebPluginContainer.h"
+#import "WebPluginContainerPrivate.h"
+#import "WebPluginController.h"
+#import "WebPolicyDelegate.h"
+#import "WebPolicyDelegatePrivate.h"
+#import "WebView.h"
+#import "WebViewInternal.h"
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebPluginContainer.h>
-#import <WebKit/WebPluginContainerPrivate.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebPolicyDelegate.h>
-#import <WebKit/WebPolicyDelegatePrivate.h>
-#import <WebKit/WebView.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebCore/WebFrameLoader.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <objc/objc-runtime.h>
 
 @implementation WebPluginContainerCheck

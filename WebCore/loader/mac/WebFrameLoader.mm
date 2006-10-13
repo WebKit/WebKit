@@ -26,10 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WebFrameLoader.h"
 
+#import "DOMElementInternal.h"
+#import "DOMHTMLObjectElement.h"
+#import "Element.h"
+#import "FrameMac.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "WebCoreFrameBridge.h"
+#import "WebCoreIconDatabaseBridge.h"
+#import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import "WebDocumentLoader.h"
 #import "WebFormDataStream.h"
@@ -38,10 +46,8 @@
 #import "WebMainResourceLoader.h"
 #import "WebPolicyDecider.h"
 #import <wtf/Assertions.h>
-#import <WebKit/DOMHTML.h>
-#import "WebCoreFrameBridge.h"
-#import "WebCoreIconDatabaseBridge.h"
-#import "WebCoreSystemInterface.h"
+
+using namespace WebCore;
 
 static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
@@ -89,6 +95,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     [provisionalDocumentLoader release];
  
     ASSERT(!policyDocumentLoader);
+    ASSERT(!policyFormState);
     
     [super dealloc];
 }
@@ -572,9 +579,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT(_loadType != FrameLoadTypeSame);
     
     NSDictionary *action = [self actionInformationForLoadType:_loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
-    WebFormState *formState = nil;
+    RefPtr<FormState> formState;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
+        formState = FormState::create(form, values, frameBridge);
     
     if (target != nil) {
         WebCoreFrameBridge *targetFrame = [frameBridge findFrameNamed:target];
@@ -584,12 +591,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self checkNewWindowPolicyForRequest:request
                                           action:action
                                        frameName:target
-                                       formState:formState
+                                       formState:formState.release()
                                          andCall:self
                                     withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
         }
         [request release];
-        [formState release];
         return;
     }
     
@@ -620,12 +626,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [oldDocumentLoader setTriggeringAction:action];
         [self invalidatePendingPolicyDecisionCallingDefaultAction:YES];
         [self checkNavigationPolicyForRequest:request
-                                   documentLoader:oldDocumentLoader formState:formState
+                                   documentLoader:oldDocumentLoader formState:formState.release()
                                       andCall:self withSelector:@selector(continueFragmentScrollAfterNavigationPolicy:formState:)];
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         BOOL isRedirect = quickRedirectComing;
-        [self _loadRequest:request triggeringAction:action loadType:_loadType formState:formState];
+        [self _loadRequest:request triggeringAction:action loadType:_loadType formState:formState.release()];
         if (isRedirect) {
             quickRedirectComing = NO;
             [provisionalDocumentLoader setIsClientRedirect:YES];
@@ -639,10 +645,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [request release];
     [oldDocumentLoader release];
-    [formState release];
 }
 
--(void)continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
+-(void)continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(FormState *)formState
 {
     if (!request)
         return;
@@ -1004,7 +1009,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self loadDocumentLoader:policyDocumentLoader withLoadType:type formState:nil];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)type formState:(WebFormState *)formState
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)type formState:(PassRefPtr<FormState>)formState
 {
     ASSERT(!policyDocumentLoader);
     policyDocumentLoader = [client _createDocumentLoaderWithRequest:request];
@@ -1174,13 +1179,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSString *frameName = policyFrameName;
     id target = policyTarget;
     SEL selector = policySelector;
-    WebFormState *formState = policyFormState;
+    RefPtr<FormState> formState = adoptRef(policyFormState);
 
     policyRequest = nil;
     policyFrameName = nil;
     policyTarget = nil;
     policySelector = nil;
-    policyFormState = nil;
+    policyFormState = 0;
 
     if (call) {
         if (frameName)
@@ -1192,10 +1197,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request release];
     [frameName release];
     [target release];
-    [formState release];
 }
 
-- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
+- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(PassRefPtr<FormState>)formState andCall:(id)target withSelector:(SEL)selector
 {
     WebPolicyDecider *decider = [client _createPolicyDeciderWithTarget:self action:@selector(continueAfterNewWindowPolicy:)];
 
@@ -1204,7 +1208,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     policyFrameName = [frameName retain];
     policySelector = selector;
     policyDecider = [decider retain];
-    policyFormState = [formState retain];
+    ASSERT(!policyFormState);
+    policyFormState = formState.release();
 
     [client _dispatchDecidePolicyForNewWindowAction:action request:request newFrameName:frameName decider:decider];
     
@@ -1217,7 +1222,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSString *frameName = [[policyFrameName retain] autorelease];
     id target = [[policyTarget retain] autorelease];
     SEL selector = policySelector;
-    WebFormState *formState = [[policyFormState retain] autorelease];
+    RefPtr<FormState> formState = policyFormState;
 
     // will release policy* objects, hence the above retains
     [self invalidatePendingPolicyDecisionCallingDefaultAction:NO];
@@ -1234,12 +1239,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             break;
     }
 
-    objc_msgSend(target, selector, request, frameName, formState);
+    objc_msgSend(target, selector, request, frameName, formState.get());
 }
 
 - (void)checkNavigationPolicyForRequest:(NSURLRequest *)request
                          documentLoader:(WebDocumentLoader *)loader
-                              formState:(WebFormState *)formState
+                              formState:(PassRefPtr<FormState>)formState
                                 andCall:(id)target
                            withSelector:(SEL)selector
 {
@@ -1277,8 +1282,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     policySelector = selector;
     ASSERT(policyDecider == nil);
     policyDecider = [decider retain];
-    ASSERT(policyFormState == nil);
-    policyFormState = [formState retain];
+    ASSERT(!policyFormState);
+    policyFormState = formState.release();
 
     delegateIsDecidingNavigationPolicy = YES;
     [client _dispatchDecidePolicyForNavigationAction:action request:request decider:decider];
@@ -1292,7 +1297,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSURLRequest *request = [[policyRequest retain] autorelease];
     id target = [[policyTarget retain] autorelease];
     SEL selector = policySelector;
-    WebFormState *formState = [[policyFormState retain] autorelease];
+    RefPtr<FormState> formState = policyFormState;
     
     // will release policy* objects, hence the above retains
     [self invalidatePendingPolicyDecisionCallingDefaultAction:NO];
@@ -1313,7 +1318,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             break;
     }
 
-    [target performSelector:selector withObject:request withObject:formState];
+    objc_msgSend(target, selector, request, formState.get());
 }
 
 // Called after the FormsDelegate is done processing willSubmitForm:
@@ -1327,7 +1332,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self startLoading];
 }
 
-- (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
+- (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(FormState *)formState
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
@@ -1378,12 +1383,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
         // mechanism across the willSubmitForm callout.
         policyDecider = [client _createPolicyDeciderWithTarget:self action:@selector(continueAfterWillSubmitForm:)];
-        [client _dispatchSourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionDecider:policyDecider];
+        [client _dispatchSourceFrame:Mac(formState->sourceFrame())->bridge()
+            willSubmitForm:[DOMElement _elementWith:formState->form()]
+            withValues:formState->valuesAsNSDictionary() submissionDecider:policyDecider];
     } else
         [self continueAfterWillSubmitForm:WebPolicyUse];
 }
 
-- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)type formState:(WebFormState *)formState
+- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)type formState:(PassRefPtr<FormState>)formState
 {
     ASSERT([client _hasWebView]);
 
@@ -1604,7 +1611,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT_NOT_REACHED();
 }
 
-- (void)continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
+- (void)continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(FormState *)formState
 {
     if (!request)
         return;
@@ -1708,22 +1715,21 @@ exit:
     [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
 
     NSDictionary *action = [self actionInformationForLoadType:FrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
-    WebFormState *formState = nil;
+    RefPtr<FormState> formState;
     if (form && values)
-        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:frameBridge];
+        formState = FormState::create(form, values, frameBridge);
 
     if (target != nil) {
         WebCoreFrameBridge *targetFrame = [frameBridge findFrameNamed:target];
         if (targetFrame != nil)
-            [[targetFrame frameLoader] _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
+            [[targetFrame frameLoader] _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState.release()];
         else
-            [self checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState
+            [self checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState.release()
                 andCall:self withSelector:@selector(continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
     } else
-        [self _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState];
+        [self _loadRequest:request triggeringAction:action loadType:FrameLoadTypeStandard formState:formState.release()];
 
     [request release];
-    [formState release];
 }
 
 - (void)detachChildren

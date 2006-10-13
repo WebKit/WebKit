@@ -28,25 +28,21 @@
 
 #import "WebFrameBridge.h"
 
-#import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
-#import <WebCore/WebDocumentLoader.h>
 #import "WebEditingDelegate.h"
 #import "WebFormDelegate.h"
-#import <WebCore/WebFormDataStream.h>
 #import "WebFrameInternal.h"
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebCore/WebFrameLoader.h>
+#import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebIconDatabase.h"
-#import <WebKit/WebIconDatabasePrivate.h>
+#import "WebIconDatabasePrivate.h"
 #import "WebJavaPlugIn.h"
 #import "WebJavaScriptTextInputPanel.h"
 #import "WebKitErrorsPrivate.h"
@@ -54,7 +50,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitSystemBits.h"
-#import <WebCore/WebLoader.h>
 #import "WebLocalizableStrings.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
@@ -72,14 +67,20 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
-#import <WebCore/WebSubresourceLoader.h>
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
+#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/WebFormDataStream.h>
+#import <WebCore/WebFrameLoader.h>
+#import <WebCore/WebFrameLoaderClient.h>
+#import <WebCore/WebLoader.h>
+#import <WebCore/WebSubresourceLoader.h>
 #import <WebKitSystemInterface.h>
 
 // For compatibility only with old SPI. 
@@ -119,11 +120,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     self = [super initMainFrameWithPage:page];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    
-    [self setFrameLoaderClient:_frame];
-    
+
     ++WebBridgeCount;
-    
+
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];
     [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
@@ -135,11 +134,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     self = [super initSubframeWithOwnerElement:ownerElement];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-    
-    [self setFrameLoaderClient:_frame];
 
     ++WebBridgeCount;
-    
+
     [self setName:name];
     [self initializeSettings:[[self webView] _settings]];
     [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
@@ -200,9 +197,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
     
     // check for tabbing to links
-    if ([[self _preferences] tabsToLinks]) {
-        _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
-    }
+    if ([[self _preferences] tabsToLinks])
+        _keyboardUIMode = (WebCoreKeyboardUIMode)(_keyboardUIMode | WebCoreKeyboardAccessTabsToLinks);
 }
 
 - (WebCoreKeyboardUIMode)keyboardUIMode
@@ -1430,9 +1426,9 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     // Defer callbacks in all the other views in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
     NSMutableArray *deferredWebViews = [NSMutableArray array];
-    NSString *namespace = [webView groupName];
-    if (namespace) {
-        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:namespace];
+    NSString *groupName = [webView groupName];
+    if (groupName) {
+        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:groupName];
         WebView *otherWebView;
         while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
             if (otherWebView != webView && ![otherWebView defersCallbacks]) {

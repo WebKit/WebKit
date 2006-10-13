@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDocumentPrivate.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebLocalizableStrings.h>
-#import <WebKit/WebNSAttributedStringExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPDFView.h>
-#import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebView.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebPDFRepresentation.h>
+#import "WebPDFView.h"
 
-#import <WebKitSystemInterface.h>
+#import "WebDataSourceInternal.h"
+#import "WebDocumentInternal.h"
+#import "WebFrame.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSAttributedStringExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebPDFRepresentation.h"
+#import "WebPreferencesPrivate.h"
+#import "WebUIDelegate.h"
+#import "WebView.h"
+#import "WebViewInternal.h"
+#import "WebDocumentPrivate.h"
+#import <JavaScriptCore/Assertions.h>
 #import <PDFKit/PDFKit.h>
+#import <WebCore/WebFrameLoader.h>
+#import <WebKitSystemInterface.h>
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
@@ -66,7 +67,7 @@
 - (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
 @end
 
-NSString *_NSPathForSystemFramework(NSString *framework);
+extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
 @implementation WebPDFView
 

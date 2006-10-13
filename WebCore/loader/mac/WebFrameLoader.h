@@ -26,54 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "FrameLoaderTypes.h"
 #import <Cocoa/Cocoa.h>
+#import <wtf/Forward.h>
+
+namespace WebCore {
+    class FormState;
+}
 
 @class DOMElement;
 @class WebDocumentLoader;
-@class WebFormState;
 @class WebCoreFrameBridge;
 @class WebLoader;
 @class WebMainResourceLoader;
 @class WebPolicyDecider;
 @protocol WebFrameLoaderClient;
-
-
-typedef enum {
-    WebFrameStateProvisional,
-    
-    // This state indicates we are ready to commit to a page,
-    // which means the view will transition to use the new data source.
-    WebFrameStateCommittedPage,
-    
-    WebFrameStateComplete
-} WebFrameState;
-
-typedef enum {
-    WebPolicyUse,
-    WebPolicyDownload,
-    WebPolicyIgnore,
-} WebPolicyAction;
-
-typedef enum {
-    FrameLoadTypeStandard,
-    FrameLoadTypeBack,
-    FrameLoadTypeForward,
-    FrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
-    FrameLoadTypeReload,
-    FrameLoadTypeReloadAllowingStaleData,
-    FrameLoadTypeSame,               // user loads same URL again (but not reload button)
-    FrameLoadTypeInternal,
-    FrameLoadTypeReplace
-} FrameLoadType;
-
-typedef enum {
-    NavigationTypeLinkClicked,
-    NavigationTypeFormSubmitted,
-    NavigationTypeBackForward,
-    NavigationTypeReload,
-    NavigationTypeFormResubmitted,
-    NavigationTypeOther
-} NavigationType;
 
 BOOL isBackForwardLoadType(FrameLoadType type);
 
@@ -102,7 +69,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
     NSString *policyFrameName;
     id policyTarget;
     SEL policySelector;
-    WebFormState *policyFormState;
+    WebCore::FormState *policyFormState;
     FrameLoadType policyLoadType;
 
     BOOL delegateIsHandlingProvisionalLoadError;
@@ -193,7 +160,7 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)cancelContentPolicy;
 - (void)reload;
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)loadType formState:(PassRefPtr<WebCore::FormState>)formState;
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame;
 - (WebCoreFrameBridge *)bridge;
@@ -214,12 +181,11 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 - (void)setLoadType:(FrameLoadType)type;
 
 - (void)invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
-- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
-- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request documentLoader:(WebDocumentLoader *)loader formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(PassRefPtr<WebCore::FormState>)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request documentLoader:(WebDocumentLoader *)loader formState:(PassRefPtr<WebCore::FormState>)formState andCall:(id)target withSelector:(SEL)selector;
 - (void)continueAfterWillSubmitForm:(WebPolicyAction)policy;
-- (void)continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState;
 - (void)loadDocumentLoader:(WebDocumentLoader *)loader;
-- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)loadType formState:(WebFormState *)formState;
+- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)loadType formState:(PassRefPtr<WebCore::FormState>)formState;
 
 - (void)didFirstLayout;
 - (BOOL)firstLayoutDone;
@@ -233,7 +199,6 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 
 - (void)transitionToCommitted:(NSDictionary *)pageCache;
 - (void)checkLoadCompleteForThisFrame;
-- (void)continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState;
 - (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
 - (NSURLRequest *)requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
 - (void)loadRequest:(NSURLRequest *)request;

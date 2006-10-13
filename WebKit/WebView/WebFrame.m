@@ -30,17 +30,14 @@
 
 #import "WebArchive.h"
 #import "WebBackForwardList.h"
-#import <WebCore/WebDataProtocol.h>
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
-#import <WebCore/WebFormDataStream.h>
 #import "WebFrameBridge.h"
 #import "WebFrameLoadDelegate.h"
-#import <WebCore/WebFrameLoader.h>
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -51,7 +48,6 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
-#import <WebCore/WebLoader.h>
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
@@ -68,6 +64,14 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Element.h>
+#import <WebCore/Frame.h>
+#import <WebCore/WebDataProtocol.h>
+#import <WebCore/WebFormDataStream.h>
+#import <WebCore/WebFormState.h>
+#import <WebCore/WebFrameLoader.h>
+#import <WebCore/WebFrameLoaderClient.h>
+#import <WebCore/WebLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
@@ -114,6 +118,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
+@end
+
+@interface WebFrame (WebFrameLoaderClient) <WebFrameLoaderClient>
 @end
 
 @interface NSView (WebFramePluginHosting)
@@ -502,7 +509,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
             if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]) {
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
-                [[self _frameLoader] loadDocumentLoader:[newDataSource _documentLoader] withLoadType:loadType formState:nil];   
+                [[self _frameLoader] loadDocumentLoader:[newDataSource _documentLoader] withLoadType:loadType formState:0];   
                 inPageCache = YES;
             } else {
                 LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
@@ -535,7 +542,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 if (synchResponse == nil) { 
                     // Not in WF cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-                    action = [[self _frameLoader] actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
+                    action = [[self _frameLoader] actionInformationForNavigationType:NavigationTypeFormResubmitted event:nil originalURL:itemURL];
                 } else {
                     // We can use the cache, don't use navType=resubmit
                     action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
@@ -565,7 +572,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
             }
 
-            [[self _frameLoader] _loadRequest:request triggeringAction:action loadType:loadType formState:nil];
+            [[self _frameLoader] _loadRequest:request triggeringAction:action loadType:loadType formState:0];
             [request release];
         }
     }
@@ -863,9 +870,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [_private setWebFrameView:fv];
         [fv _setWebFrame:self];
     }
-    
+
     ++WebFrameCount;
-    
+
+    [bridge setFrameLoaderClient:self];
+
     return self;
 }
 
@@ -1318,9 +1327,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_updateHistoryForCommit
 {
-    WebFrameLoadType type = [[self _frameLoader] loadType];
+    FrameLoadType type = [[self _frameLoader] loadType];
     if (isBackForwardLoadType(type) ||
-        (type == WebFrameLoadTypeReload && [[self provisionalDataSource] unreachableURL] != nil)) {
+        (type == FrameLoadTypeReload && [[self provisionalDataSource] unreachableURL] != nil)) {
         // Once committed, we want to use current item for saving DocState, and
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
@@ -1337,7 +1346,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     WebHistoryItem *currItem = _private->currentItem;
     LOG(PageCache, "Clearing back/forward cache, %@\n", [currItem URL]);
     [currItem setHasPageCache:NO];
-    if ([[self _frameLoader] loadType] == WebFrameLoadTypeReload)
+    if ([[self _frameLoader] loadType] == FrameLoadTypeReload)
         [self _saveScrollPositionAndViewStateToItem:currItem];
     WebDataSource *dataSource = [self dataSource];
     NSURLRequest *request = [dataSource request];
