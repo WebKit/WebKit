@@ -351,6 +351,7 @@
 		6582A16209999D6D00BEEB6D /* ScreenMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15409999D6D00BEEB6D /* ScreenMac.mm */; };
 		6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */; };
 		6582A17809999EA000BEEB6D /* DeprecatedStringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */; };
+		658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 658436850AE01B7400E53753 /* FrameLoadRequest.h */; };
 		65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = 65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */; };
 		6593923709AE4346002C531F /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6593923509AE4346002C531F /* KURL.cpp */; };
@@ -3248,6 +3249,7 @@
 		6582A15409999D6D00BEEB6D /* ScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenMac.mm; sourceTree = "<group>"; };
 		6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTimeMac.cpp; sourceTree = "<group>"; };
 		6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedStringMac.mm; sourceTree = "<group>"; };
+		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
 		65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreStringTruncator.h; sourceTree = "<group>"; };
 		65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreStringTruncator.mm; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
@@ -6389,6 +6391,7 @@
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
+				658436850AE01B7400E53753 /* FrameLoadRequest.h */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
 				65A21482097A3F5300B9050A /* FrameTree.cpp */,
 				65A21483097A3F5300B9050A /* FrameTree.h */,
@@ -10409,6 +10412,7 @@
 				93B77B1D0ADDA10700EA4B81 /* UChar.h in Headers */,
 				0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */,
 				6563A9A70ADF4094000ED2CD /* LoaderNSURLRequestExtras.h in Headers */,
+				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10456,7 +10460,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

@@ -43,6 +43,7 @@
 #import "FontData.h"
 #import "FoundationExtras.h"
 #import "FramePrivate.h"
+#import "FrameLoadRequest.h"
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
@@ -200,30 +201,6 @@ bool FrameMac::openURL(const KURL &url)
 
     return true;
 }
-
-void FrameMac::openURLRequest(const ResourceRequest& request)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSString *referrer;
-    String argsReferrer = request.referrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = [_bridge referrer];
-
-    [_bridge loadURL:request.url().getNSURL()
-            referrer:referrer
-              reload:request.reload
-         userGesture:userGestureHint()
-              target:request.frameName
-     triggeringEvent:nil
-                form:nil
-          formValues:nil];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 
 // Either get cached regexp or build one that matches any of the labels.
 // The regexp we build is of the form:  (STR1|STR2|STRN)
@@ -414,7 +391,7 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
-void FrameMac::submitForm(const ResourceRequest& request)
+void FrameMac::submitForm(const FrameLoadRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -428,7 +405,7 @@ void FrameMac::submitForm(const ResourceRequest& request)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    WebCoreFrameBridge *target = request.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.frameName];
+    WebCoreFrameBridge *target = request.m_frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.m_frameName];
     Frame *targetPart = [target impl];
     bool willReplaceThisFrame = false;
     for (Frame *p = this; p; p = p->tree()->parent()) {
@@ -438,30 +415,30 @@ void FrameMac::submitForm(const ResourceRequest& request)
         }
     }
     if (willReplaceThisFrame) {
-        if (d->m_submittedFormURL == request.url())
+        if (d->m_submittedFormURL == request.m_request.url())
             return;
-        d->m_submittedFormURL = request.url();
+        d->m_submittedFormURL = request.m_request.url();
     }
 
     ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
     NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
     
-    if (!request.doPost()) {
-        [_bridge loadURL:request.url().getNSURL()
+    if (!request.m_request.doPost()) {
+        [_bridge loadURL:request.m_request.url().getNSURL()
                 referrer:[_bridge referrer] 
-                  reload:request.reload
+                  reload:request.m_request.reload
              userGesture:true
-                  target:request.frameName
+                  target:request.m_frameName
          triggeringEvent:_currentEvent
                     form:submitForm
               formValues:formValues];
     } else {
-        ASSERT(request.contentType().startsWith("Content-Type: "));
-        [_bridge postWithURL:request.url().getNSURL()
+        ASSERT(request.m_request.contentType().startsWith("Content-Type: "));
+        [_bridge postWithURL:request.m_request.url().getNSURL()
                     referrer:[_bridge referrer] 
-                      target:request.frameName
-                        data:arrayFromFormData(request.postData)
-                 contentType:request.contentType().substring(14)
+                      target:request.m_frameName
+                        data:arrayFromFormData(request.m_request.postData)
+                 contentType:request.m_request.contentType().substring(14)
              triggeringEvent:_currentEvent
                         form:submitForm
                   formValues:formValues];
@@ -481,22 +458,46 @@ void FrameMac::frameDetached()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void FrameMac::urlSelected(const ResourceRequest& request)
+void FrameMac::openURLRequest(const FrameLoadRequest& request)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSString *referrer;
+    String argsReferrer = request.m_request.referrer();
+    if (!argsReferrer.isEmpty())
+        referrer = argsReferrer;
+    else
+        referrer = [_bridge referrer];
+    
+    [_bridge loadURL:request.m_request.url().getNSURL()
+            referrer:referrer
+              reload:request.m_request.reload
+         userGesture:userGestureHint()
+              target:request.m_frameName
+     triggeringEvent:nil
+                form:nil
+          formValues:nil];
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+
+void FrameMac::urlSelected(const FrameLoadRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSString* referrer;
-    String argsReferrer = request.referrer();
+    String argsReferrer = request.m_request.referrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
         referrer = [_bridge referrer];
 
-    [_bridge loadURL:request.url().getNSURL()
+    [_bridge loadURL:request.m_request.url().getNSURL()
             referrer:referrer
-              reload:request.reload
+              reload:request.m_request.reload
          userGesture:true
-              target:request.frameName
+              target:request.m_frameName
      triggeringEvent:_currentEvent
                 form:nil
           formValues:nil];

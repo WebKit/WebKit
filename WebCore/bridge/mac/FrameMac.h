@@ -126,15 +126,15 @@ public:
 
     virtual bool openURL(const KURL&);
     
-    virtual void openURLRequest(const ResourceRequest&);
-    virtual void submitForm(const ResourceRequest&);
 
     String advanceToNextMisspelling(bool startBeforeSelection = false);
     
     virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);
 
-    virtual void urlSelected(const ResourceRequest&);
+    virtual void submitForm(const FrameLoadRequest&);
+    virtual void openURLRequest(const FrameLoadRequest&);
+    virtual void urlSelected(const FrameLoadRequest&);
 
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
     virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);

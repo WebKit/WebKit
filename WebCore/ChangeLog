@@ -1,3 +1,36 @@
+2006-10-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - split FrameLoadRequest off from ResourceRequest - it's a ResourceRequest plus frame name plus lockHistory bool
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::urlSelected):
+        * bridge/win/BrowserExtensionWin.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::submitForm):
+        * page/Frame.h:
+        * page/FrameLoadRequest.h: Added.
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::lockHistory):
+        (WebCore::FrameLoadRequest::setLockHistory):
+        * page/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+
 2006-10-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej

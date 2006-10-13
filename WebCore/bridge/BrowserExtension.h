@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Frame;
+class FrameLoadRequest;
 
 struct WindowArgs {
     float x;
@@ -57,8 +58,8 @@ class BrowserExtension {
 public:
     virtual ~BrowserExtension() { }
 
-    virtual void createNewWindow(const ResourceRequest&) = 0;
-    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*&) = 0;
+    virtual void createNewWindow(const FrameLoadRequest&) = 0;
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*&) = 0;
 
     virtual int getHistoryLength() = 0;
     virtual void goBackOrForward(int distance) = 0;

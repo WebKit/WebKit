@@ -34,8 +34,8 @@ class BrowserExtensionWin : public BrowserExtension {
 public:
     BrowserExtensionWin(FrameWin*);
  
-    virtual void createNewWindow(const ResourceRequest&);
-    virtual void createNewWindow(const ResourceRequest&,
+    virtual void createNewWindow(const FrameLoadRequest&);
+    virtual void createNewWindow(const FrameLoadRequest&,
                                  const WindowArgs&, 
                                  Frame*& part);
 

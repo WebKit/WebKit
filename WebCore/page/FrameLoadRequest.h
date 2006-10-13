@@ -24,42 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceRequest_H_
-#define ResourceRequest_H_
+#ifndef FrameLoadRequest_H_
+#define FrameLoadRequest_H_
 
-#include "FormData.h"
-#include "PlatformString.h"
-#include "KURL.h"
+#include "ResourceRequest.h"
+
 
 namespace WebCore {
 
-    struct ResourceRequest {
-
-        ResourceRequest() : reload(false), m_doPost(false) { }
-        explicit ResourceRequest(const KURL& url) : reload(false), m_url(url), m_doPost(false) { }
-
-        const KURL& url() const { return m_url; }
-        void setURL(const KURL& url) { m_url = url; }
-
-        String contentType() const { return m_contentType; }
-        void setContentType(const String& t) { m_contentType = t; }
-        
-        bool doPost() const { return m_doPost; }
-        void setDoPost(bool post) { m_doPost = post; }
-        
-        const String& referrer() const { return m_referrer; }
-        void setReferrer(const String& referrer) { m_referrer = referrer; }
-
+    struct FrameLoadRequest {
     public:
-        FormData postData;
-        bool reload;
+        FrameLoadRequest() : m_lockHistory(false) { }
+        ResourceRequest m_request;
+        String m_frameName;
+        bool lockHistory() const { return m_lockHistory; }
+        void setLockHistory(bool lock) { m_lockHistory = lock; }
+
     private:
-        KURL m_url;
-        String m_referrer;
-        String m_contentType;
-        bool m_doPost;
+        bool m_lockHistory;
     };
 
 }
 
-#endif
+#endif // FrameLoadRequest_H_
+

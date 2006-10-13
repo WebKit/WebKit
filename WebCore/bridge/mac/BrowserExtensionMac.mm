@@ -29,6 +29,7 @@
 #import "BlockExceptions.h"
 #import "FloatRect.h"
 #import "FrameMac.h"
+#import "FrameLoadRequest.h"
 #import "FrameTree.h"
 #import "Page.h"
 #import "Screen.h"
@@ -42,37 +43,37 @@ BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
 {
 }
 
-void BrowserExtensionMac::createNewWindow(const ResourceRequest& request) 
+void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request) 
 {
     createNewWindow(request, WindowArgs(), NULL);
 }
 
-void BrowserExtensionMac::createNewWindow(const ResourceRequest& request, 
+void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request, 
                                           const WindowArgs& winArgs, 
                                           Frame*& part)
 {
     createNewWindow(request, winArgs, &part);
 }
 
-void BrowserExtensionMac::createNewWindow(const ResourceRequest& request, 
+void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request, 
                                           const WindowArgs& winArgs, 
                                           Frame** partResult)
 { 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    ASSERT(!winArgs.dialog || request.frameName.isEmpty());
+    ASSERT(!winArgs.dialog || request.m_frameName.isEmpty());
 
     if (partResult)
         *partResult = NULL;
     
-    const KURL& url = request.url();
+    const KURL& url = request.m_request.url();
 
-    NSString *frameName = request.frameName.isEmpty() ? nil : (NSString*)request.frameName;
+    NSString *frameName = request.m_frameName.isEmpty() ? nil : (NSString*)request.m_frameName;
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                String argsReferrer = request.referrer();
+                String argsReferrer = request.m_request.referrer();
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;
@@ -81,7 +82,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
 
                 [frameBridge loadURL:url.getNSURL() 
                        referrer:referrer 
-                         reload:request.reload 
+                         reload:request.m_request.reload 
                     userGesture:true 
                          target:nil 
                 triggeringEvent:nil 
@@ -108,7 +109,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     WebCoreFrameBridge *frameBridge = [pageBridge mainFrame];
     if ([frameBridge impl])
-        [frameBridge impl]->tree()->setName(AtomicString(request.frameName));
+        [frameBridge impl]->tree()->setName(AtomicString(request.m_frameName));
     
     if (partResult)
         *partResult = [frameBridge impl];
