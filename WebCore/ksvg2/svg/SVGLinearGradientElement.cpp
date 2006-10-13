@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,24 +22,21 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGUnitTypes.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGMatrix.h"
-#include "SVGTransform.h"
-#include "SVGTransformList.h"
-#include "SVGLength.h"
 #include "SVGLinearGradientElement.h"
-#include "SVGTransformList.h"
 
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerGradient.h"
+#include "SVGHelper.h"
+#include "SVGLength.h"
+#include "SVGMatrix.h"
+#include "SVGNames.h"
+#include "SVGTransform.h"
+#include "SVGTransformList.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document *doc)
+SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
     , m_x1(new SVGLength(this, LM_WIDTH, viewportElement()))
     , m_y1(new SVGLength(this, LM_HEIGHT, viewportElement()))
@@ -59,7 +56,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, leng
 ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2.get())
 
-void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
@@ -74,7 +71,7 @@ void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute *attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
-void SVGLinearGradientElement::buildGradient(KRenderingPaintServerGradient *_grad) const
+void SVGLinearGradientElement::buildGradient(KRenderingPaintServerGradient* _grad) const
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
@@ -88,25 +85,23 @@ void SVGLinearGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     float _x1 = x1()->value(), _y1 = y1()->value();
     float _x2 = x2()->value(), _y2 = y2()->value();
 
-    KRenderingPaintServerLinearGradient *grad = static_cast<KRenderingPaintServerLinearGradient *>(_grad);
+    KRenderingPaintServerLinearGradient* grad = static_cast<KRenderingPaintServerLinearGradient*>(_grad);
     AffineTransform mat;
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = href().deprecatedString();
-    KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));
+    KRenderingPaintServer* pserver = getPaintServerById(document(), ref.mid(1));
     
-    if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))
-    {
+    if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
         bool isLinear = pserver->type() == PS_LINEAR_GRADIENT;
-        KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
+        KRenderingPaintServerGradient* gradient = static_cast<KRenderingPaintServerGradient*>(pserver);
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
             
-        if (isLinear)
-        {
-            KRenderingPaintServerLinearGradient *linear = static_cast<KRenderingPaintServerLinearGradient *>(pserver);
+        if (isLinear) {
+            KRenderingPaintServerLinearGradient* linear = static_cast<KRenderingPaintServerLinearGradient*>(pserver);
             if (!hasAttribute(SVGNames::x1Attr))
                 _x1 = linear->gradientStart().x();
             else if (bbox)

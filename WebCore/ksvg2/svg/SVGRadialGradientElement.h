@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,10 +36,10 @@ namespace WebCore
         virtual ~SVGRadialGradientElement();
 
         // 'SVGRadialGradientElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
     protected:
-        virtual void buildGradient(KRenderingPaintServerGradient *grad) const;
+        virtual void buildGradient(KRenderingPaintServerGradient*) const;
         virtual KCPaintServerType gradientType() const { return PS_RADIAL_GRADIENT; }
 
     protected:

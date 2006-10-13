@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,19 +24,18 @@
 #define KSVG_SVGGradientElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGURIReference.h"
-#include "SVGStyledElement.h"
-#include "SVGExternalResourcesRequired.h"
-
 #include "KRenderingPaintServerGradient.h"
+#include "SVGExternalResourcesRequired.h"
+#include "SVGStyledElement.h"
+#include "SVGURIReference.h"
 
 namespace WebCore {
     class SVGGradientElement;
     class SVGTransformList;
     class SVGGradientElement : public SVGStyledElement,
-                                   public SVGURIReference,
-                                   public SVGExternalResourcesRequired,
-                                   public KCanvasResourceListener
+                               public SVGURIReference,
+                               public SVGExternalResourcesRequired,
+                               public KCanvasResourceListener
     {
     public:
         enum SVGGradientType {
@@ -50,14 +49,14 @@ namespace WebCore {
         virtual ~SVGGradientElement();
 
         // 'SVGGradientElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
         
-        virtual KRenderingPaintServerGradient *canvasResource();
+        virtual KRenderingPaintServerGradient* canvasResource();
         virtual void resourceNotification() const;
 
     protected:
-        virtual void buildGradient(KRenderingPaintServerGradient *grad) const = 0;
+        virtual void buildGradient(KRenderingPaintServerGradient*) const = 0;
         virtual KCPaintServerType gradientType() const = 0;
         void rebuildStops() const;
 
@@ -69,7 +68,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
 
-        mutable KRenderingPaintServerGradient *m_resource;
+        mutable KRenderingPaintServerGradient* m_resource;
     };
 
 } // namespace WebCore

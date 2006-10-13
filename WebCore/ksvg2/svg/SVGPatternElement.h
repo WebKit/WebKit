@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,14 +24,13 @@
 #define KSVG_SVGPatternElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGFitToViewBox.h"
-#include "SVGStyledLocatableElement.h"
+#include "KRenderingPaintServerPattern.h"
 #include "SVGExternalResourcesRequired.h"
-
-#include <kcanvas/device/KRenderingPaintServerPattern.h>
+#include "SVGFitToViewBox.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledLocatableElement.h"
+#include "SVGTests.h"
+#include "SVGURIReference.h"
 
 class KCanvasImage;
 
@@ -41,12 +40,12 @@ namespace WebCore
     class SVGPatternElement;
     class SVGTransformList;
     class SVGPatternElement : public SVGStyledLocatableElement,
-                                  public SVGURIReference,
-                                  public SVGTests,
-                                  public SVGLangSpace,
-                                  public SVGExternalResourcesRequired,
-                                  public SVGFitToViewBox,
-                                  public KCanvasResourceListener
+                              public SVGURIReference,
+                              public SVGTests,
+                              public SVGLangSpace,
+                              public SVGExternalResourcesRequired,
+                              public SVGFitToViewBox,
+                              public KCanvasResourceListener
     {
     public:
         SVGPatternElement(const QualifiedName&, Document*);
@@ -55,19 +54,19 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGPatternElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        const SVGStyledElement *pushAttributeContext(const SVGStyledElement *context);
+        const SVGStyledElement* pushAttributeContext(const SVGStyledElement*);
 
         virtual void resourceNotification() const;
         virtual void notifyAttributeChange() const;
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        virtual KRenderingPaintServerPattern *canvasResource();
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual KRenderingPaintServerPattern* canvasResource();
 
         // 'virtual SVGLocatable' functions
-        virtual SVGMatrix *getCTM() const;
+        virtual SVGMatrix* getCTM() const;
 
     protected:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
@@ -83,16 +82,16 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternContentUnits, patternContentUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
 
-        mutable KCanvasImage *m_tile;
+        mutable KCanvasImage* m_tile;
         mutable bool m_ignoreAttributeChanges;
-        mutable KRenderingPaintServerPattern *m_paintServer;
+        mutable KRenderingPaintServerPattern* m_paintServer;
         
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         // notifyAttributeChange helpers:
-        void fillAttributesFromReferencePattern(const SVGPatternElement *target, AffineTransform& patternTransformMatrix);
-        void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, AffineTransform patternTransformMatrix);
+        void fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix);
+        void drawPatternContentIntoTile(const SVGPatternElement* target, const IntSize& newSize, AffineTransform patternTransformMatrix);
         void notifyClientsToRepaint() const;
     };
 

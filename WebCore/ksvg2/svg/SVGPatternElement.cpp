@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,28 +24,26 @@
 #ifdef SVG_SUPPORT
 #include "SVGPatternElement.h"
 
-#include "Attr.h"
 #include "Document.h"
 #include "GraphicsContext.h"
-#include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerPattern.h"
-#include "SVGLength.h"
-#include "SVGTransformList.h"
+#include "RenderSVGContainer.h"
 #include "SVGHelper.h"
+#include "SVGLength.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "SVGUnitTypes.h"
-#include <wtf/OwnPtr.h>
 #include <math.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document *doc)
+SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGURIReference()
     , SVGTests()
@@ -79,9 +77,9 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, Wid
 ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr.localName(), m_patternTransform.get())
 
-void SVGPatternElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString &value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::patternUnitsAttr) {
         if (value == "userSpaceOnUse")
             setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
@@ -93,7 +91,7 @@ void SVGPatternElement::parseMappedAttribute(MappedAttribute *attr)
         else if (value == "objectBoundingBox")
             setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
-        SVGTransformList *patternTransforms = patternTransformBaseValue();
+        SVGTransformList* patternTransforms = patternTransformBaseValue();
         SVGTransformable::parseTransformAttribute(patternTransforms, value);
     } else if (attr->name() == SVGNames::xAttr)
         xBaseValue()->setValueAsString(value);
@@ -141,12 +139,12 @@ void SVGPatternElement::resourceNotification() const
 void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix)
 {
     DeprecatedString ref = href().deprecatedString();
-    KRenderingPaintServer *refServer = getPaintServerById(document(), ref.mid(1));
+    KRenderingPaintServer* refServer = getPaintServerById(document(), ref.mid(1));
 
     if (!refServer || refServer->type() != PS_PATTERN)
         return;
     
-    KRenderingPaintServerPattern *refPattern = static_cast<KRenderingPaintServerPattern *>(refServer);
+    KRenderingPaintServerPattern* refPattern = static_cast<KRenderingPaintServerPattern*>(refServer);
     
     if (!hasAttribute(SVGNames::patternUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternUnitsAttr);
@@ -183,7 +181,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         if (height()->unitType() != SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
             height()->newValueSpecifiedUnits(SVGLength::SVG_LENGTHTYPE_PERCENTAGE, height()->value() * 100.);
         if (activeElement)
-            savedContext = const_cast<SVGPatternElement* >(this)->pushAttributeContext(activeElement);
+            savedContext = const_cast<SVGPatternElement*>(this)->pushAttributeContext(activeElement);
     }
     
     delete m_tile;
@@ -199,13 +197,12 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
     OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
 
-    for(Node *n = target->firstChild(); n != 0; n = n->nextSibling())
-    {
+    for (Node* n = target->firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = svg_dynamic_cast(n);
         if (!elem || !elem->isStyled())
             continue;
-        SVGStyledElement* e = static_cast<SVGStyledElement* >(elem);
-        RenderObject *item = e->renderer();
+        SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
+        RenderObject* item = e->renderer();
         if (!item)
             continue;
 #if 0
@@ -227,7 +224,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         // Take into account viewportElement's viewBox, if existant...
         if (viewportElement() && viewportElement()->hasTagName(SVGNames::svgTag))
         {
-            SVGSVGElement* svgElement = static_cast<SVGSVGElement* >(viewportElement());
+            SVGSVGElement* svgElement = static_cast<SVGSVGElement*>(viewportElement());
 
             RefPtr<SVGMatrix> svgCTM = svgElement->getCTM();
             RefPtr<SVGMatrix> ctm = getCTM();
@@ -252,7 +249,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
     }
 
     if (savedContext)
-        const_cast<SVGPatternElement* >(this)->pushAttributeContext(savedContext);
+        const_cast<SVGPatternElement*>(this)->pushAttributeContext(savedContext);
 
     device->popContext();
     delete patternContext;
@@ -260,18 +257,16 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
 void SVGPatternElement::notifyClientsToRepaint() const
 {
-    const RenderPathList &clients = m_paintServer->clients();
+    const RenderPathList& clients = m_paintServer->clients();
 
     RenderPathList::ConstIterator it = clients.begin();
     RenderPathList::ConstIterator end = clients.end();
 
-    for(; it != end; ++it)
-    {
-        const RenderPath *current = (*it);
+    for (; it != end; ++it) {
+        const RenderPath* current = (*it);
 
-        SVGStyledElement* styled = (current ? static_cast<SVGStyledElement* >(current->element()) : 0);
-        if (styled)
-        {
+        SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
+        if (styled) {
             styled->setChanged(true);
 
             if (styled->renderer())
@@ -298,13 +293,12 @@ void SVGPatternElement::notifyAttributeChange() const
 
     // Find first pattern def that has children
     const SVGPatternElement* target = this;
-    const Node *test = this;
-    while(test && !test->hasChildNodes())
-    {
+    const Node* test = this;
+    while (test && !test->hasChildNodes()) {
         DeprecatedString ref = target->href().deprecatedString();
         test = ownerDocument()->getElementById(String(ref.mid(1)).impl());
         if (test && test->hasTagName(SVGNames::patternTag))
-            target = static_cast<const SVGPatternElement* >(test);
+            target = static_cast<const SVGPatternElement*>(test);
     }
 
     unsigned short savedPatternUnits = patternUnits();
@@ -315,7 +309,7 @@ void SVGPatternElement::notifyAttributeChange() const
         patternTransformMatrix = patternTransform()->consolidate()->matrix()->matrix();
 
 
-    SVGPatternElement *nonConstThis = const_cast<SVGPatternElement*>(this);
+    SVGPatternElement* nonConstThis = const_cast<SVGPatternElement*>(this);
 
     nonConstThis->fillAttributesFromReferencePattern(target, patternTransformMatrix);   
     nonConstThis->drawPatternContentIntoTile(target, newSize, patternTransformMatrix);
@@ -334,19 +328,19 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
     return patternContainer;
 }
 
-KRenderingPaintServerPattern *SVGPatternElement::canvasResource()
+KRenderingPaintServerPattern* SVGPatternElement::canvasResource()
 {
     if (!m_paintServer) {
-        KRenderingPaintServer *pserver = renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
-        m_paintServer = static_cast<KRenderingPaintServerPattern *>(pserver);
-        m_paintServer->setListener(const_cast<SVGPatternElement* >(this));
+        KRenderingPaintServer* pserver = renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
+        m_paintServer = static_cast<KRenderingPaintServerPattern*>(pserver);
+        m_paintServer->setListener(const_cast<SVGPatternElement*>(this));
     }
     return m_paintServer;
 }
 
-SVGMatrix *SVGPatternElement::getCTM() const
+SVGMatrix* SVGPatternElement::getCTM() const
 {
-    SVGMatrix *mat = SVGSVGElement::createSVGMatrix();
+    SVGMatrix* mat = SVGSVGElement::createSVGMatrix();
     if (mat) {
         RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
         mat->multiply(viewBox.get());

@@ -1,3 +1,45 @@
+2006-10-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg paint server classes.
+
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::parseMappedAttribute):
+        (WebCore::SVGGradientElement::notifyAttributeChange):
+        (WebCore::SVGGradientElement::canvasResource):
+        (WebCore::SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyClientsToRepaint):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::canvasResource):
+        (WebCore::SVGPatternElement::getCTM):
+        * ksvg2/svg/SVGPatternElement.h:
+        (WebCore::SVGPatternElement::rendererIsNeeded):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElement.h:
+
 2006-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, John.

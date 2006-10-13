@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,25 +22,21 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGUnitTypes.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGMatrix.h"
-#include "SVGTransform.h"
-#include "SVGStopElement.h"
-#include "SVGTransformList.h"
-#include "SVGLength.h"
 #include "SVGRadialGradientElement.h"
-#include "SVGTransformList.h"
 
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KRenderingPaintServerGradient.h"
+#include "SVGHelper.h"
+#include "SVGLength.h"
+#include "SVGMatrix.h"
+#include "SVGNames.h"
+#include "SVGStopElement.h"
+#include "SVGTransform.h"
+#include "SVGTransformList.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document *doc)
+SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
     , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
     , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
@@ -64,7 +60,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, leng
 ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Fy, fy, SVGNames::fyAttr.localName(), m_fy.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
 
-void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
@@ -81,7 +77,7 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute *attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
-void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_grad) const
+void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient* _grad) const
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
@@ -98,50 +94,46 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     float _fx = fxSet ? fx()->value() : _cx;
     float _fy = fySet ? fy()->value() : _cy;
 
-    KRenderingPaintServerRadialGradient *grad = static_cast<KRenderingPaintServerRadialGradient *>(_grad);
+    KRenderingPaintServerRadialGradient* grad = static_cast<KRenderingPaintServerRadialGradient*>(_grad);
     AffineTransform mat;
-    if(gradientTransform()->numberOfItems() > 0)
+    if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = href().deprecatedString();
-    KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));
+    KRenderingPaintServer* pserver = getPaintServerById(document(), ref.mid(1));
 
-    if(pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))
-    {
+    if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
         bool isRadial = pserver->type() == PS_RADIAL_GRADIENT;
-        KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
+        KRenderingPaintServerGradient* gradient = static_cast<KRenderingPaintServerGradient*>(pserver);
 
-        if(!hasAttribute(SVGNames::gradientUnitsAttr))
+        if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
 
-        if(isRadial)
-        {
-            KRenderingPaintServerRadialGradient *radial = static_cast<KRenderingPaintServerRadialGradient *>(pserver);
-            if(!hasAttribute(SVGNames::cxAttr))
+        if (isRadial) {
+            KRenderingPaintServerRadialGradient* radial = static_cast<KRenderingPaintServerRadialGradient*>(pserver);
+            if (!hasAttribute(SVGNames::cxAttr))
                 _cx = radial->gradientCenter().x();
-            else if(bbox)
+            else if (bbox)
                 _cx *= 100.;
-            if(!hasAttribute(SVGNames::cyAttr))
+            if (!hasAttribute(SVGNames::cyAttr))
                 _cy = radial->gradientCenter().y();
-            else if(bbox)
+            else if (bbox)
                 _cy *= 100.;
 
-            if(!fxSet)
+            if (!fxSet)
                 _fx = radial->gradientFocal().x();
-            else if(bbox)
+            else if (bbox)
                 _fx *= 100.;
-            if(!fySet)
+            if (!fySet)
                 _fy = radial->gradientFocal().y();
-            else if(bbox)
+            else if (bbox)
                 _fy *= 100.;
 
-            if(!hasAttribute(SVGNames::rAttr))
+            if (!hasAttribute(SVGNames::rAttr))
                 _r = radial->gradientRadius();
-            else if(bbox)
+            else if (bbox)
                 _r *= 100.;
-        }
-        else if(bbox)
-        {
+        } else if (bbox) {
             _cx *= 100.0;
             _cy *= 100.0;
             _fx *= 100.0;
@@ -158,18 +150,15 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
 
         if (!hasAttribute(SVGNames::spreadMethodAttr))
             grad->setGradientSpreadMethod(gradient->spreadMethod());
-    }
-    else
-    {
-        if(spreadMethod() == SVG_SPREADMETHOD_REFLECT)
+    } else {
+        if (spreadMethod() == SVG_SPREADMETHOD_REFLECT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REFLECT);
-        else if(spreadMethod() == SVG_SPREADMETHOD_REPEAT)
+        else if (spreadMethod() == SVG_SPREADMETHOD_REPEAT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REPEAT);
         else
             grad->setGradientSpreadMethod(SPREADMETHOD_PAD);
 
-        if(bbox)
-        {
+        if (bbox) {
             _cx *= 100.0;
             _cy *= 100.0;
             _fx *= 100.0;
