@@ -1,3 +1,15 @@
+2006-10-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Alice.
+
+        - Fix for <rdar://problem/4707372> 
+          After timers fix, crash in -[NSMenu performActionForItemAtIndex:] after moving/detroying active popup menu
+
+        * platform/PopupMenu.h: (WebCore::PopupMenu::menuListIsDetaching): Added. Zeros out the pointer to the menu list.
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::~RenderMenuList): Calls menuListIsDetaching.
+        * platform/mac/PopupMenuMac.mm: (WebCore::PopupMenu::show): Added a RefPtr to protect the PopupMenu while the NSMenu is up,
+          in case the RenderMenuList goes away.  Also, checks the pointer to the menu list immediately afterwards.
+
 2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.

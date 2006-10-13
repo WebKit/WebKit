@@ -99,17 +99,21 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     // state after the NSMenu goes away.
     RefPtr<FrameMac> frame = Mac(v->frame());
     NSEvent* event = [frame->currentEvent() retain];
-
+    
+    RefPtr<PopupMenu> protector(this);
     wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
-    int newIndex = [popup indexOfSelectedItem];
-    menuList()->hidePopup();
 
-    if (index != newIndex && newIndex >= 0)
-        menuList()->valueChanged(newIndex);
+    if (menuList()) {
+        int newIndex = [popup indexOfSelectedItem];
+        menuList()->hidePopup();
 
-    // Give the frame a chance to fix up its event state, since the popup eats all the
-    // events during tracking.
-    frame->sendFakeEventsAfterWidgetTracking(event);
+        if (index != newIndex && newIndex >= 0)
+            menuList()->valueChanged(newIndex);
+
+        // Give the frame a chance to fix up its event state, since the popup eats all the
+        // events during tracking.
+        frame->sendFakeEventsAfterWidgetTracking(event);
+    }
 
     [event release];
 }
