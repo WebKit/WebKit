@@ -1,5 +1,19 @@
 2006-10-12  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Maciej.
+
+        WebCore part of fix for <rdar://problem/4450613> need a means to attach user data to any menu that is popuped up in HTML
+
+        Added private delegate method for clients that want access to a PopupMenu's NSMenu.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::willPopupMenu):
+        * bridge/mac/WebCoreFrameBridge.h:
+
+        * platform/mac/PopupMenuMac.mm: (WebCore::PopupMenu::show): Calls willPopupMenu with the NSMenu about to be popped up.
+
+2006-10-12  Adele Peterson  <adele@apple.com>
+
         Reviewed by Alice.
 
         - Fix for <rdar://problem/4707372> 

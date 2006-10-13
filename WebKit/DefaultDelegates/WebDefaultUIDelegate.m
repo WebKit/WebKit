@@ -222,4 +222,8 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu
+{
+}
+
 @end

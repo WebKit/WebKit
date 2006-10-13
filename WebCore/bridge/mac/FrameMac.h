@@ -61,6 +61,7 @@ typedef DOMElement ObjCDOMElement;
 @class NSFileWrapper;
 @class NSFont;
 @class NSImage;
+@class NSMenu;
 @class NSMutableDictionary;
 @class NSResponder;
 @class NSString;
@@ -82,6 +83,7 @@ class NSEvent;
 class NSFileWrapper;
 class NSFont;
 class NSImage;
+class NSMenu;
 class NSMutableDictionary;
 class NSResponder;
 class NSString;
@@ -306,6 +308,8 @@ public:
     
     NSMutableDictionary* dashboardRegionsDictionary();
     void dashboardRegionsChanged();
+
+    void willPopupMenu(NSMenu *);
     
     virtual bool isCharacterSmartReplaceExempt(UChar, bool);
     

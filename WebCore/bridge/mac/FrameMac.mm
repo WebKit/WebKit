@@ -3459,6 +3459,11 @@ void FrameMac::dashboardRegionsChanged()
     [_bridge dashboardRegionsChanged:webRegions];
 }
 
+void FrameMac::willPopupMenu(NSMenu * menu)
+{
+    [_bridge willPopupMenu:menu];
+}
+
 bool FrameMac::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
 {
     return [_bridge isCharacterSmartReplaceExempt:c isPreviousCharacter:isPreviousChar];

@@ -101,6 +101,8 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     NSEvent* event = [frame->currentEvent() retain];
     
     RefPtr<PopupMenu> protector(this);
+    
+    frame->willPopupMenu(menu);
     wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
 
     if (menuList()) {

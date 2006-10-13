@@ -1538,6 +1538,15 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     }
 }
 
+- (void)willPopupMenu:(NSMenu *)menu
+{
+    WebView *wv = [self webView];
+    id wd = [wv UIDelegate];
+        
+    if ([wd respondsToSelector:@selector(webView:willPopupMenu:)])
+        [wd webView:wv willPopupMenu:menu];
+}
+
 - (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect
 {
     ASSERT(_frame != nil);

@@ -1,3 +1,15 @@
+2006-10-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        WebKit part of fix for <rdar://problem/4450613> need a means to attach user data to any menu that is popuped up in HTML
+
+        Added private delegate method for clients that want access to a PopupMenu's NSMenu.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m: (-[NSApplication webView:willPopupMenu:]):
+        * WebCoreSupport/WebFrameBridge.m: (-[WebFrameBridge willPopupMenu:]):
+        * WebView/WebUIDelegatePrivate.h:
+
 2006-10-12  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed/landed by Adam.

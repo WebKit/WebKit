@@ -40,6 +40,7 @@ typedef WebCore::Element WebCoreElement;
 
 #else
 
+@class NSMenu;
 @class WebCoreMacFrame;
 @class WebCoreElement;
 
@@ -54,6 +55,7 @@ typedef WebCore::Element WebCoreElement;
 @class DOMHTMLTextAreaElement;
 @class DOMNode;
 @class DOMRange;
+@class NSMenu;
 @class WebCorePageBridge;
 @class WebCoreSettings;
 @class WebFrame;
@@ -690,6 +692,7 @@ typedef enum {
 - (void)didFirstLayout;
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
+- (void)willPopupMenu:(NSMenu *)menu;
 
 - (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect;
 - (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;

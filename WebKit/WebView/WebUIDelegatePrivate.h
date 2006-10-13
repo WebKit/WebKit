@@ -41,5 +41,6 @@
 - (void)webView:(WebView *)sender didDrawRect:(NSRect)rect;
 - (void)webView:(WebView *)sender didScrollDocumentInFrameView:(WebFrameView *)frameView;
 - (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
+- (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 
 @end
