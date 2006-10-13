@@ -100,8 +100,6 @@ public:
 
     Frame* frame() const { return m_frame.get(); }
 
-    int frameWidth() const { return m_size.width(); }
-
     /**
      * Gets/Sets the margin width/height
      *

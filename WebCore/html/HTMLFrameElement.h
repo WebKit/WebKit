@@ -99,14 +99,16 @@ public:
     virtual String src() const;
     void setSrc(const String&);
 
-    int frameWidth() const;
-    int frameHeight() const;
+    int width() const;
+    int height() const;
 
     bool viewSourceMode() const { return m_viewSource; }
 
 protected:
     bool isURLAllowed(const AtomicString&) const;
-    virtual void openURL();
+    void openURL();
+
+    static void openURLCallback(Node*);
 
     AtomicString m_URL;
     AtomicString m_name;

@@ -1041,8 +1041,8 @@ JSValue *JSHTMLElement::frameGetter(ExecState* exec, int token) const
         case FrameMarginWidth:     return jsString(frameElement.marginWidth());
         case FrameName:            return jsString(frameElement.name());
         case FrameNoResize:        return jsBoolean(frameElement.noResize());
-        case FrameWidth:           return jsNumber(frameElement.frameWidth());
-        case FrameHeight:          return jsNumber(frameElement.frameHeight());
+        case FrameWidth:           return jsNumber(frameElement.width());
+        case FrameHeight:          return jsNumber(frameElement.height());
         case FrameScrolling:       return jsString(frameElement.scrolling());
         case FrameSrc:
         case FrameLocation:        return jsString(frameElement.src());

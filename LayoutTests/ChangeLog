@@ -1,3 +1,12 @@
+2006-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Tests for accessing renderer-dependent properties from a javascript: URL.
+        
+        * fast/frames/frame-js-url-clientWidth-expected.txt: Added.
+        * fast/frames/frame-js-url-clientWidth.html: Added.
+        * fast/frames/iframe-js-url-clientWidth-expected.txt: Added.
+        * fast/frames/iframe-js-url-clientWidth.html: Added.
+
 2006-10-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

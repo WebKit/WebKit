@@ -1,3 +1,46 @@
+2006-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, John.
+
+        - Merged more frame and iframe code
+        - Fixed a bug where iframes returned incorrect values for renderer-dependent 
+        properties during javascript: loads because they didn't have renderers at 
+        load time
+        
+        PLT insists this is a small performance win. Don't believe its lies.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::frameGetter): Renamed frameWidth and frameHeight to
+        width and height, for consistency with the rest of the DOM.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::queuePostAttachCallback): Added a post-attach callback
+        queue that gets drained after the render tree is fully constructed. Currently,
+        this is only used for frame loading.
+        (WebCore::ContainerNode::attach):
+        * dom/ContainerNode.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::insertedIntoDocument): Removed frame loading from
+        attach() because loading iframes during attach() causes a crash. 
+        Moved frame loading logic into insertedIntoDocument(). That's a more 
+        logical place for it because  document insertion is what 
+        triggers frame loading. Made frame loading a post-attach callback, instead
+        of an immediate action, to fix the incorrect values bug.
+        (WebCore::HTMLFrameElement::attach): Added setWidget call that used to be
+        in HTMLIFrameElement::attach. IFRAME requires this call. FRAME will soon 
+        require this call, once I remove the call from WebKit.
+        (WebCore::HTMLFrameElement::setLocation):
+        (WebCore::HTMLFrameElement::width):
+        (WebCore::HTMLFrameElement::height):
+        * html/HTMLFrameElement.h: Made openURL non-virtual to avoid the unnecessary
+        killing of puppies.
+        * html/HTMLIFrameElement.cpp: Merged code into HTMLFrameElement
+        (WebCore::HTMLIFrameElement::rendererIsNeeded):
+        (WebCore::HTMLIFrameElement::createRenderer):
+        (WebCore::HTMLIFrameElement::insertedIntoDocument):
+        (WebCore::HTMLIFrameElement::removedFromDocument):
+        (WebCore::HTMLIFrameElement::attach):
+        * page/FrameView.h: Removed unused method.
+
 2006-10-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

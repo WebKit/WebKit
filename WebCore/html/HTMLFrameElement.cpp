@@ -168,13 +168,18 @@ void HTMLFrameElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLFrameElement::rendererIsNeeded(RenderStyle *style)
 {
-    // Ignore display: none.
+    // For compatibility, frames render even when display: none is set.
     return isURLAllowed(m_URL);
 }
 
 RenderObject *HTMLFrameElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderFrame(this);
+}
+
+void HTMLFrameElement::openURLCallback(Node* n)
+{
+    static_cast<HTMLFrameElement*>(n)->openURL();
 }
 
 void HTMLFrameElement::insertedIntoDocument()
@@ -187,12 +192,20 @@ void HTMLFrameElement::insertedIntoDocument()
 
     if (Frame* parentFrame = document()->frame())
         m_name = parentFrame->tree()->uniqueChildName(m_name);
+
+    // We delay frame loading until after the render tree is fully constructed.
+    // Othewise, a synchronous load that executed JavaScript would see incorrect 
+    // (0) values for the frame's renderer-dependent properties, like width.
+    queuePostAttachCallback(&HTMLFrameElement::openURLCallback, this);
 }
 
 void HTMLFrameElement::attach()
 {
     HTMLElement::attach();
     
+    // FIXME: Violates the Liskov Substitution Principle. FRAME elements attach 
+    // differently than FRAME element subclasses, even though FRAME element 
+    // subclasses nominally "are" FRAME elements.
     if (hasTagName(frameTag)) {
         if (HTMLFrameSetElement* frameSetElement = containingFrameSetElement()) {
             if (!m_frameBorderSet)
@@ -201,9 +214,10 @@ void HTMLFrameElement::attach()
                 m_noResize = frameSetElement->noResize();
         }
     }
-        
-    if (!contentFrame())
-        openURL();
+
+    if (RenderPart* renderPart = static_cast<RenderPart*>(renderer()))
+        if (Frame* frame = contentFrame())
+            renderPart->setWidget(frame->view());
 }
 
 void HTMLFrameElement::willRemove()
@@ -220,7 +234,7 @@ void HTMLFrameElement::setLocation(const String& str)
 {
     m_URL = AtomicString(str);
 
-    if (attached())
+    if (inDocument())
         openURL();
 }
 
@@ -349,7 +363,7 @@ void HTMLFrameElement::setSrc(const String &value)
     setAttribute(srcAttr, value);
 }
 
-int HTMLFrameElement::frameWidth() const
+int HTMLFrameElement::width() const
 {
     if (!renderer())
         return 0;
@@ -358,7 +372,7 @@ int HTMLFrameElement::frameWidth() const
     return renderer()->width();
 }
 
-int HTMLFrameElement::frameHeight() const
+int HTMLFrameElement::height() const
 {
     if (!renderer())
         return 0;
@@ -367,4 +381,4 @@ int HTMLFrameElement::frameHeight() const
     return renderer()->height();
 }
 
-}
+} // namespace WebCore

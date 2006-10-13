@@ -106,7 +106,8 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLFrameSetElement::rendererIsNeeded(RenderStyle *style)
 {
-    // Ignore display: none but do pay attention if a stylesheet has caused us to delay our loading.
+    // For compatibility, frames render even when display: none is set.
+    // However, we delay creating a renderer until stylesheets have loaded. 
     return style->isStyleAvailable();
 }
 

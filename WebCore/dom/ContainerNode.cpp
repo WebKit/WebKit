@@ -34,6 +34,7 @@
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
 #include "SystemTime.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -41,6 +42,11 @@ using namespace EventNames;
 
 static void dispatchChildInsertionEvents(Node*, ExceptionCode&);
 static void dispatchChildRemovalEvents(Node*, ExceptionCode&);
+
+typedef Vector<std::pair<NodeCallback, Node*> > NodeCallbackQueue;
+static NodeCallbackQueue* s_postAttachCallbackQueue = 0;
+
+static size_t s_attachDepth = 0;
 
 ContainerNode::ContainerNode(Document* doc)
     : EventTargetNode(doc), m_firstChild(0), m_lastChild(0)
@@ -569,11 +575,40 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
     return this;
 }
 
+void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node)
+{
+    // To keep things simple, we forbid queueing post-attach callbacks from inside attach.
+    ASSERT(s_attachDepth == 0);
+    
+    if (!s_postAttachCallbackQueue)
+        s_postAttachCallbackQueue = new NodeCallbackQueue;
+    
+    s_postAttachCallbackQueue->append(std::pair<NodeCallback, Node*>(callback, node));
+}
+
 void ContainerNode::attach()
 {
+    ++s_attachDepth;
+
     for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->attach();
     EventTargetNode::attach();
+
+    if (s_attachDepth == 1) {
+        if (s_postAttachCallbackQueue) {
+            // We recalculate size() each time through the loop because a callback
+            // can add more callbacks to the end of the queue.
+            for (size_t i = 0; i < s_postAttachCallbackQueue->size(); ++i) {
+                std::pair<NodeCallback, Node*>& pair = (*s_postAttachCallbackQueue)[i];
+                NodeCallback callback = pair.first;
+                Node* node = pair.second;
+                
+                callback(node);
+            }
+            s_postAttachCallbackQueue->clear();
+        }
+    }    
+    --s_attachDepth;
 }
 
 void ContainerNode::detach()
