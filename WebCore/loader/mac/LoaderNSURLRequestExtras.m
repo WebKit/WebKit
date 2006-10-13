@@ -26,24 +26,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "config.h"
+#import "LoaderNSURLRequestExtras.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "LoaderNSURLExtras.h"
 
-NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component);
-NSURL *urlByRemovingFragment(NSURL *url);
-NSString *urlOriginalDataAsString(NSURL *url);
-NSData *urlOriginalData(NSURL *url);
-NSURL *urlWithData(NSData *data);
-NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL);
-NSURL *urlByRemovingResourceSpecifier(NSURL *url);
-BOOL urlIsFileURL(NSURL *url);
-BOOL stringIsFileURL(NSString *urlString);
-BOOL urlIsEmpty(NSURL *url);
-NSURL *canonicalURL(NSURL *url);
-
-#ifdef __cplusplus
+BOOL isConditionalRequest(NSURLRequest *request)
+{
+    if ([request valueForHTTPHeaderField:@"If-Match"] ||
+        [request valueForHTTPHeaderField:@"If-Modified-Since"] ||
+        [request valueForHTTPHeaderField:@"If-None-Match"] ||
+        [request valueForHTTPHeaderField:@"If-Range"] ||
+        [request valueForHTTPHeaderField:@"If-Unmodified-Since"])
+        return YES;
+    return NO;
 }
-#endif
+
+#define WebReferrer     (@"Referer")
+
+void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
+{
+    // Do not set the referrer to a string that refers to a file URL.
+    // That is a potential security hole.
+    if (stringIsFileURL(theReferrer))
+        return;
+    
+    // Don't allow empty Referer: headers; some servers refuse them
+    if([theReferrer length] == 0)
+        theReferrer = nil;
+    
+    [request setValue:theReferrer forHTTPHeaderField:WebReferrer];
+}
+

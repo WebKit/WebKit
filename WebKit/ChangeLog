@@ -1,3 +1,12 @@
+2006-10-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - liberate more WebKit code down to WebCore
+
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+
 2006-10-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

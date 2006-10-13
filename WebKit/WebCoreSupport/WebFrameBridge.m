@@ -479,157 +479,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return dataSource;
 }
 
-- (void)setTitle:(NSString *)title
-{
-    [[[self frameLoader] documentLoader] setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
-}
-
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(_frame != nil);
     WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
-}
-
-- (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
-{
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = [[[self frameLoader] documentLoader] overrideEncoding];
-    BOOL userChosen = encoding != nil;
-    if (encoding == nil) {
-        encoding = textEncodingName;
-    }
-    [self setEncoding:encoding userChosen:userChosen];
-
-    [self addData:data];
-}
-
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
-{
-    // If we are no longer attached to a WebView, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if ([[self webFrame] webView] == nil)
-        return nil;
-
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
-
-    return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                           withMethod:method
-                                                  URL:URL
-                                        customHeaders:customHeaders
-                                             referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:[self frameLoader]];
-}
-
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
-{
-    // If we are no longer attached to a WebView, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if ([[self webFrame] webView] == nil)
-        return nil;
-
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
-
-    return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                           withMethod:method 
-                                                  URL:URL
-                                        customHeaders:customHeaders
-                                             postData:postData
-                                             referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:[self frameLoader]];
-}
-
-- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
-{
-    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
-    NSError *error;
-    id identifier;
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];    
-    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
-    [request release];
-}
-
-- (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
-{
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
-
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request setTimeoutInterval:10];
-
-    // setHTTPMethod is not called for GET requests to work around <rdar://4464032>.
-    if (![method isEqualToString:@"GET"])
-        [request setHTTPMethod:method];
-
-    if (postData)        
-        webSetHTTPBody(request, postData);
-
-    NSEnumerator *e = [requestHeaders keyEnumerator];
-    NSString *key;
-    while ((key = (NSString *)[e nextObject]) != nil) {
-        [request addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
-    }
-    
-    if ([request _web_isConditionalRequest])
-        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-    else
-        [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
-    if (!hideReferrer)
-        [request _web_setHTTPReferrer:[self referrer]];
-    
-    WebView *webView = [self webView];
-    [request setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
-    [request _web_setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
-    
-    NSError *error = nil;
-    id identifier = nil;    
-    NSURLRequest *newRequest = [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];
-    
-    NSURLResponse *response = nil;
-    NSData *result = nil;
-    if (error == nil) {
-        ASSERT(newRequest != nil);
-        result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
-    }
-    
-    if (error == nil) {
-        *finalURL = [response URL];
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
-            *responseHeaderDict = [httpResponse allHeaderFields];
-            *statusCode = [httpResponse statusCode];
-        } else {
-            *responseHeaderDict = [NSDictionary dictionary];
-            *statusCode = 200;
-        }
-    } else {
-        *finalURL = URL;
-        *responseHeaderDict = [NSDictionary dictionary];
-        if ([error domain] == NSURLErrorDomain) {
-            *statusCode = [error code];
-        } else {
-            *statusCode = 404;
-        }
-    }
-    
-    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
-    [request release];
-    
-    return result;
-}
-
-- (BOOL)isReloading
-{
-    return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
 // We would like a better value for a maximum time_t,
@@ -647,16 +501,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     expiration += kCFAbsoluteTimeIntervalSince1970;
     
     return expiration > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration;
-}
-
-- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
-{
-    [[self frameLoader] clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
-}
-
-- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
-{
-    [[self frameLoader] clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
 }
 
 - (void)close
@@ -688,57 +532,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // When a form element resigns first responder, its enclosing WebHTMLView might need to
     // change its focus-displaying state, but isn't otherwise notified.
     [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsResigningFirstResponder:formControl];
-}
-
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
-{
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
-        return;
-
-    if ([target length] == 0) {
-        target = nil;
-    }
-
-    WebFrame *targetFrame = [_frame findFrameNamed:target];
-    if (![self canTargetLoadInFrame:[targetFrame _bridge]]) {
-        return;
-    }
-    
-    WebFrameLoadType loadType;
-    
-    if (reload)
-        loadType = WebFrameLoadTypeReload;
-    else if (!forUser)
-        loadType = WebFrameLoadTypeInternal;
-    else
-        loadType = WebFrameLoadTypeStandard;
-    [[self frameLoader] loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
-
-    if (targetFrame != nil && _frame != targetFrame) {
-        [[targetFrame _bridge] activateWindow];
-    }
-}
-
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
-{
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
-        return;
-
-    if ([target length] == 0)
-        target = nil;
-
-    WebFrame *targetFrame = [_frame findFrameNamed:target];
-    if (![self canTargetLoadInFrame:[targetFrame _bridge]])
-        return;
-
-    [[self frameLoader] postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target
-        data:postData contentType:contentType
-        triggeringEvent:event form:form formValues:values];
-
-    if (targetFrame != nil && _frame != targetFrame)
-        [[targetFrame _bridge] activateWindow];
 }
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
@@ -866,16 +659,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [view setNeedsLayout:YES];
         [view setNeedsDisplay:YES];
     }
-}
-
-- (void)tokenizerProcessedData
-{
-    [[self frameLoader] checkLoadComplete];
-}
-
-- (NSString *)incomingReferrer
-{
-    return [[[self dataSource] request] _web_HTTPReferrer];
 }
 
 - (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
@@ -1160,15 +943,6 @@ static BOOL loggedObjectCacheSize = NO;
     return ObjectElementNone;
 }
 
-- (void)loadEmptyDocumentSynchronously
-{
-    NSURL *url = [[NSURL alloc] initWithString:@""];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    [_frame loadRequest:request];
-    [request release];
-    [url release];
-}
-
 - (NSString *)MIMETypeForPath:(NSString *)path
 {
     ASSERT(path);
@@ -1317,12 +1091,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     FormDelegateLog(element);
     return [formDelegate(self) textField:element shouldHandleEvent:event inFrame:_frame];
-}
-
-- (void)frameDetached
-{
-    [_frame stopLoading];
-    [[self frameLoader] detachFromParent];
 }
 
 - (void)setHasBorder:(BOOL)hasBorder
@@ -1512,11 +1280,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[self webView] isContinuousSpellCheckingEnabled];
 }
 
-- (void)didFirstLayout
-{
-    [[self frameLoader] didFirstLayout];
-}
-
 - (BOOL)_compareDashboardRegions:(NSDictionary *)regions
 {
     return [lastDashboardRegions isEqualToDictionary:regions];
@@ -1691,40 +1454,15 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     }
 }
 
-- (void)handledOnloadEvents
-{
-    [_frame _dispatchDidHandleOnloadEventsForFrame];
-}
-
 - (void)closeURL
 {
     [_frame _willCloseURL];
     [super closeURL];
 }
 
-- (NSURLResponse*)mainResourceURLResponse
-{
-    return [[_frame dataSource] response];
-}
-
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
 {
     return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
-}
-
-- (void)notifyIconChanged:(NSURL*)iconURL
-{
-    [[self frameLoader] _notifyIconChanged:iconURL];
-}
-
-- (NSURL*)originalRequestURL
-{
-    return [[[[self frameLoader] activeDocumentLoader] initialRequest] URL];
-}
-
-- (BOOL)isLoadTypeReload
-{
-    return [[self frameLoader] loadType] == WebFrameLoadTypeReload;
 }
 
 @end

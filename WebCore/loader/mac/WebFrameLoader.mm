@@ -29,6 +29,7 @@
 #import "WebFrameLoader.h"
 
 #import "LoaderNSURLExtras.h"
+#import "LoaderNSURLRequestExtras.h"
 #import "WebDataProtocol.h"
 #import "WebDocumentLoader.h"
 #import "WebFormDataStream.h"
@@ -553,20 +554,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     return !(([currentURL fragment] || [destinationURL fragment]) &&
              [urlByRemovingFragment(currentURL) isEqual:urlByRemovingFragment(destinationURL)]);
-}
-
-static void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
-{
-    // Do not set the referrer to a string that refers to a file URL.
-    // That is a potential security hole.
-    if (stringIsFileURL(referrer))
-        return;
-
-    // Don't allow empty Referer: headers; some servers refuse them
-    if ([referrer length] == 0)
-        return;
-
-    [request setValue:referrer forHTTPHeaderField:@"Referer"];
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)

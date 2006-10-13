@@ -1,3 +1,42 @@
+2006-10-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - moved a bunch of WebFrameBridge code down to WebCoreFrameBridge, now that it no longer has any WebKit dependencies
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (stringByCollapsingNonPrintingCharacters):
+        (-[WebCoreFrameBridge setTitle:]):
+        (-[WebCoreFrameBridge didFirstLayout]):
+        (-[WebCoreFrameBridge notifyIconChanged:]):
+        (-[WebCoreFrameBridge originalRequestURL]):
+        (-[WebCoreFrameBridge isLoadTypeReload]):
+        (-[WebCoreFrameBridge frameDetached]):
+        (-[WebCoreFrameBridge tokenizerProcessedData]):
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebCoreFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebCoreFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebCoreFrameBridge reportClientRedirectCancelled:]):
+        (-[WebCoreFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebCoreFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebCoreFrameBridge incomingReferrer]):
+        (-[WebCoreFrameBridge isReloading]):
+        (-[WebCoreFrameBridge handledOnloadEvents]):
+        (-[WebCoreFrameBridge mainResourceURLResponse]):
+        (-[WebCoreFrameBridge loadEmptyDocumentSynchronously]):
+        * loader/mac/LoaderNSURLExtras.h:
+        * loader/mac/LoaderNSURLRequestExtras.h: Added.
+        * loader/mac/LoaderNSURLRequestExtras.m: Added.
+        (isConditionalRequest):
+        (setHTTPReferrer):
+        * loader/mac/WebFrameLoader.mm:
+        * loader/mac/WebSubresourceLoader.mm:
+
 2006-10-12  Adele Peterson  <adele@apple.com>
 
         RS by Geoff.

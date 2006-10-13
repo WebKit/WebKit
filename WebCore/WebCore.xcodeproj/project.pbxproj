@@ -286,6 +286,8 @@
 		6550B6A6099DF0270090D781 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* Text.h */; };
 		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */; };
+		6563A9A70ADF4094000ED2CD /* LoaderNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 6563A9A50ADF4094000ED2CD /* LoaderNSURLRequestExtras.h */; };
+		6563A9A80ADF4094000ED2CD /* LoaderNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 6563A9A60ADF4094000ED2CD /* LoaderNSURLRequestExtras.m */; };
 		656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
 		6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */; };
@@ -3157,6 +3159,8 @@
 		6550B69C099DF0270090D781 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
 		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameNamespaces.mm; sourceTree = "<group>"; };
+		6563A9A50ADF4094000ED2CD /* LoaderNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLRequestExtras.h; sourceTree = "<group>"; };
+		6563A9A60ADF4094000ED2CD /* LoaderNSURLRequestExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LoaderNSURLRequestExtras.m; sourceTree = "<group>"; };
 		656580ED09D12B20000E61D7 /* CSSPropertyNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSPropertyNames.c; sourceTree = "<group>"; };
 		656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.gperf; sourceTree = "<group>"; };
 		656580EF09D12B20000E61D7 /* CSSPropertyNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPropertyNames.h; sourceTree = "<group>"; };
@@ -7430,6 +7434,8 @@
 				51A1D2C50AB69120000D732C /* IconLoaderMac.mm */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */,
+				6563A9A50ADF4094000ED2CD /* LoaderNSURLRequestExtras.h */,
+				6563A9A60ADF4094000ED2CD /* LoaderNSURLRequestExtras.m */,
 				656D371C0ADBA5DE00A4554D /* WebDataProtocol.h */,
 				656D371D0ADBA5DE00A4554D /* WebDataProtocol.mm */,
 				656D371E0ADBA5DE00A4554D /* WebDocumentLoader.h */,
@@ -10394,6 +10400,7 @@
 				656D37480ADBA5DE00A4554D /* WebSubresourceLoader.h in Headers */,
 				65BAAABE0ADCA015005BB5A4 /* RetainPtr.h in Headers */,
 				0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */,
+				6563A9A70ADF4094000ED2CD /* LoaderNSURLRequestExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10428,7 +10435,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10442,8 +10448,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11625,6 +11629,7 @@
 				656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */,
 				0668E18A0ADD9624004128E0 /* PopupMenu.cpp in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
+				6563A9A80ADF4094000ED2CD /* LoaderNSURLRequestExtras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

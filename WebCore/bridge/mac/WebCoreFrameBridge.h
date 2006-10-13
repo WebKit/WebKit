@@ -514,6 +514,28 @@ typedef enum {
 - (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)client;
 - (WebFrameLoader *)frameLoader;
 
+- (void)setTitle:(NSString *)title;
+- (void)didFirstLayout;
+- (void)notifyIconChanged:(NSURL*)iconURL;
+- (NSURL*)originalRequestURL;
+- (BOOL)isLoadTypeReload;
+- (void)frameDetached;
+- (void)tokenizerProcessedData;
+- (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)data;
+- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data;
+- (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
+- (BOOL)isReloading;
+- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
+- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+- (NSString *)incomingReferrer;
+- (NSURLResponse*)mainResourceURLResponse;
+- (void)loadEmptyDocumentSynchronously;
+- (void)handledOnloadEvents;
+
 @end
 
 // The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -525,11 +547,7 @@ typedef enum {
 
 @protocol WebCoreFrameBridge
 
-- (void)frameDetached;
 - (NSView *)documentView;
-
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 
 - (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL;
 - (void)showWindow;
@@ -541,7 +559,6 @@ typedef enum {
 
 - (NSString *)userAgentForURL:(NSURL *)URL;
 
-- (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
@@ -577,17 +594,7 @@ typedef enum {
 - (void)addMessageToConsole:(NSDictionary *)message;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)data;
-- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data;
-
-- (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
-
-- (BOOL)isReloading;
 - (time_t)expiresTimeForResponse:(NSURLResponse *)response;
-
-- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
 
 - (void)activateWindow;
 - (void)deactivateWindow;
@@ -605,10 +612,6 @@ typedef enum {
 - (NSArray *)documentState;
 
 - (void)setNeedsReapplyStyles;
-
-- (void)tokenizerProcessedData;
-
-- (NSString *)incomingReferrer;
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
                   attributeNames:(NSArray *)attributeNames
@@ -628,8 +631,6 @@ typedef enum {
 - (int)getObjectCacheSize;
 
 - (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
-
-- (void)loadEmptyDocumentSynchronously;
 
 - (NSString *)MIMETypeForPath:(NSString *)path;
 
@@ -689,24 +690,17 @@ typedef enum {
 - (int)spellCheckerDocumentTag;
 - (BOOL)isContinuousSpellCheckingEnabled;
 
-- (void)didFirstLayout;
-
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 - (void)willPopupMenu:(NSMenu *)menu;
 
 - (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect;
 - (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;
 
-- (void)handledOnloadEvents;
-
 - (WebCoreKeyboardUIMode)keyboardUIMode;
 
-- (NSURLResponse*)mainResourceURLResponse;
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size;
 
-- (void)notifyIconChanged:(NSURL*)iconURL;
-- (NSURL*)originalRequestURL;
-- (BOOL)isLoadTypeReload;
+
 @end
 
 // This interface definition allows those who hold a WebCoreFrameBridge * to call all the methods

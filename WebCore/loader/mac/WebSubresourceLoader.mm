@@ -29,6 +29,8 @@
 #import "config.h"
 #import "WebSubresourceLoader.h"
 
+#import "LoaderNSURLExtras.h"
+#import "LoaderNSURLRequestExtras.h"
 #import "WebFormDataStream.h"
 #import "WebFrameLoader.h"
 #import <Foundation/NSURLResponse.h>
@@ -53,43 +55,6 @@
 {
     [coreLoader release];
     [super dealloc];
-}
-
-static BOOL isConditionalRequest(NSURLRequest *request)
-{
-    if ([request valueForHTTPHeaderField:@"If-Match"] ||
-        [request valueForHTTPHeaderField:@"If-Modified-Since"] ||
-        [request valueForHTTPHeaderField:@"If-None-Match"] ||
-        [request valueForHTTPHeaderField:@"If-Range"] ||
-        [request valueForHTTPHeaderField:@"If-Unmodified-Since"])
-        return YES;
-    return NO;
-}
-
-static BOOL hasCaseInsensitivePrefix(NSString *str, NSString *prefix)
-{
-    return str && ([str rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound);
-}
-
-static BOOL isFileURLString(NSString *URL)
-{
-    return hasCaseInsensitivePrefix(URL, @"file:");
-}
-
-#define WebReferrer     (@"Referer")
-
-static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
-{
-    // Do not set the referrer to a string that refers to a file URL.
-    // That is a potential security hole.
-    if (isFileURLString(theReferrer))
-        return;
-    
-    // Don't allow empty Referer: headers; some servers refuse them
-    if([theReferrer length] == 0)
-        theReferrer = nil;
-    
-    [request setValue:theReferrer forHTTPHeaderField:WebReferrer];
 }
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader

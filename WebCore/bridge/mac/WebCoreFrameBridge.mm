@@ -48,6 +48,8 @@
 #import "HTMLNames.h"
 #import "Image.h"
 #import "LoaderFunctions.h"
+#import "LoaderNSURLExtras.h"
+#import "LoaderNSURLRequestExtras.h"
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
@@ -70,7 +72,11 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"
+#import "WebDocumentLoader.h"
+#import "WebFormDataStream.h"
 #import "WebFrameLoader.h"
+#import "WebFrameLoaderClient.h"
+#import "WebSubresourceLoader.h"
 #import "XMLTokenizer.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -2607,6 +2613,313 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (WebFrameLoader *)frameLoader
 {
     return _frameLoader;
+}
+
+static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
+{
+    NSMutableString *result = [NSMutableString string];
+    static NSCharacterSet *charactersToTurnIntoSpaces = nil;
+    static NSCharacterSet *charactersToNotTurnIntoSpaces = nil;
+    
+    if (charactersToTurnIntoSpaces == nil) {
+        NSMutableCharacterSet *set = [[NSMutableCharacterSet alloc] init];
+        [set addCharactersInRange:NSMakeRange(0x00, 0x21)];
+        [set addCharactersInRange:NSMakeRange(0x7F, 0x01)];
+        charactersToTurnIntoSpaces = [set copy];
+        [set release];
+        charactersToNotTurnIntoSpaces = [[charactersToTurnIntoSpaces invertedSet] retain];
+    }
+    
+    unsigned length = [string length];
+    unsigned position = 0;
+    while (position != length) {
+        NSRange nonSpace = [string rangeOfCharacterFromSet:charactersToNotTurnIntoSpaces
+                                                 options:0 range:NSMakeRange(position, length - position)];
+        if (nonSpace.location == NSNotFound) {
+            break;
+        }
+        
+        NSRange space = [string rangeOfCharacterFromSet:charactersToTurnIntoSpaces
+                                              options:0 range:NSMakeRange(nonSpace.location, length - nonSpace.location)];
+        if (space.location == NSNotFound) {
+            space.location = length;
+        }
+        
+        if (space.location > nonSpace.location) {
+            if (position != 0) {
+                [result appendString:@" "];
+            }
+            [result appendString:[string substringWithRange:
+                NSMakeRange(nonSpace.location, space.location - nonSpace.location)]];
+        }
+        
+        position = space.location;
+    }
+    
+    return result;
+}
+
+- (void)setTitle:(NSString *)title
+{
+    [[[self frameLoader] documentLoader] setTitle:stringByCollapsingNonPrintingCharacters(title)];
+}
+
+- (void)didFirstLayout
+{
+    [[self frameLoader] didFirstLayout];
+}
+
+- (void)notifyIconChanged:(NSURL*)iconURL
+{
+    [[self frameLoader] _notifyIconChanged:iconURL];
+}
+
+- (NSURL*)originalRequestURL
+{
+    return [[[[self frameLoader] activeDocumentLoader] initialRequest] URL];
+}
+
+- (BOOL)isLoadTypeReload
+{
+    return [[self frameLoader] loadType] == FrameLoadTypeReload;
+}
+
+- (void)frameDetached
+{
+    [[self frameLoader] stopLoading];
+    [[self frameLoader] detachFromParent];
+}
+
+- (void)tokenizerProcessedData
+{
+    [[self frameLoader] checkLoadComplete];
+}
+
+- (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
+{
+    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
+    NSString *encoding = [[[self frameLoader] documentLoader] overrideEncoding];
+    BOOL userChosen = encoding != nil;
+    if (encoding == nil) {
+        encoding = textEncodingName;
+    }
+    [self setEncoding:encoding userChosen:userChosen];
+    
+    [self addData:data];
+}
+
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
+{
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if ([self page] == nil)
+        return nil;
+    
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    BOOL hideReferrer;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    
+    return [WebSubresourceLoader startLoadingResource:resourceLoader
+                                           withMethod:method
+                                                  URL:URL
+                                        customHeaders:customHeaders
+                                             referrer:(hideReferrer ? nil : [self referrer])
+                                       forFrameLoader:[self frameLoader]];
+}
+
+- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
+{
+    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
+    NSError *error;
+    id identifier;
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];    
+    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
+    [request release];
+}
+
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
+{
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if ([self page] == nil)
+        return nil;
+    
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    BOOL hideReferrer;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    
+    return [WebSubresourceLoader startLoadingResource:resourceLoader
+                                           withMethod:method 
+                                                  URL:URL
+                                        customHeaders:customHeaders
+                                             postData:postData
+                                             referrer:(hideReferrer ? nil : [self referrer])
+                                       forFrameLoader:[self frameLoader]];
+}
+
+- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
+{
+    [[self frameLoader] clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
+}
+
+- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
+{
+    [[self frameLoader] clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
+}
+
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+{
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
+        return;
+    
+    if ([target length] == 0) {
+        target = nil;
+    }
+    
+    WebCoreFrameBridge *targetFrame = [self findFrameNamed:target];
+    if (![self canTargetLoadInFrame:targetFrame]) {
+        return;
+    }
+    
+    FrameLoadType loadType;
+    
+    if (reload)
+        loadType = FrameLoadTypeReload;
+    else if (!forUser)
+        loadType = FrameLoadTypeInternal;
+    else
+        loadType = FrameLoadTypeStandard;
+    [[self frameLoader] loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
+    
+    if (targetFrame != nil && self != targetFrame) {
+        [targetFrame activateWindow];
+    }
+}
+
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+{
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
+        return;
+    
+    if ([target length] == 0)
+        target = nil;
+    
+    WebCoreFrameBridge *targetFrame = [self findFrameNamed:target];
+    if (![self canTargetLoadInFrame:targetFrame])
+        return;
+    
+    [[self frameLoader] postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target
+                               data:postData contentType:contentType
+                    triggeringEvent:event form:form formValues:values];
+    
+    if (targetFrame != nil && self != targetFrame)
+        [targetFrame activateWindow];
+}
+
+- (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
+{
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    BOOL hideReferrer;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [request setTimeoutInterval:10];
+    
+    // setHTTPMethod is not called for GET requests to work around <rdar://4464032>.
+    if (![method isEqualToString:@"GET"])
+        [request setHTTPMethod:method];
+    
+    if (postData)        
+        webSetHTTPBody(request, postData);
+    
+    NSEnumerator *e = [requestHeaders keyEnumerator];
+    NSString *key;
+    while ((key = (NSString *)[e nextObject]) != nil) {
+        [request addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
+    }
+    
+    if (isConditionalRequest(request))
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    else
+        [request setCachePolicy:[[[[self frameLoader] documentLoader] request] cachePolicy]];
+    if (!hideReferrer)
+        setHTTPReferrer(request, [self referrer]);
+    
+    WebCorePageBridge *page = [self page];
+    [request setMainDocumentURL:[[[[[page mainFrame] frameLoader] documentLoader] request] URL]];
+    [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
+    
+    NSError *error = nil;
+    id identifier = nil;    
+    NSURLRequest *newRequest = [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];
+    
+    NSURLResponse *response = nil;
+    NSData *result = nil;
+    if (error == nil) {
+        ASSERT(newRequest != nil);
+        result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
+    }
+    
+    if (error == nil) {
+        *finalURL = [response URL];
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
+            *responseHeaderDict = [httpResponse allHeaderFields];
+            *statusCode = [httpResponse statusCode];
+        } else {
+            *responseHeaderDict = [NSDictionary dictionary];
+            *statusCode = 200;
+        }
+    } else {
+        *finalURL = URL;
+        *responseHeaderDict = [NSDictionary dictionary];
+        if ([error domain] == NSURLErrorDomain) {
+            *statusCode = [error code];
+        } else {
+            *statusCode = 404;
+        }
+    }
+    
+    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
+    [request release];
+    
+    return result;
+}
+// -------------------
+
+- (NSString *)incomingReferrer
+{
+    return [[[[self frameLoader] documentLoader] request] valueForHTTPHeaderField:@"Referer"];
+}
+
+- (BOOL)isReloading
+{
+    return [[[[self frameLoader] documentLoader] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+}
+
+- (void)handledOnloadEvents
+{
+    [[[self frameLoader] client] _dispatchDidHandleOnloadEventsForFrame];
+}
+
+- (NSURLResponse*)mainResourceURLResponse
+{
+    return [[[self frameLoader] documentLoader] response];
+}
+
+- (void)loadEmptyDocumentSynchronously
+{
+    NSURL *url = [[NSURL alloc] initWithString:@""];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+    [[self frameLoader] loadRequest:request];
+    [request release];
+    [url release];
 }
 
 @end
