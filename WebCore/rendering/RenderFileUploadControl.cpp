@@ -73,7 +73,7 @@ RenderFileUploadControl::~RenderFileUploadControl()
     if (m_button)
         m_button->detach();
     if (m_fileChooser) {
-        m_fileChooser->uploadControlDetaching();
+        m_fileChooser->disconnectUploadControl();
     }
 }
 

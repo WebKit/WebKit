@@ -55,7 +55,7 @@ RenderMenuList::RenderMenuList(HTMLSelectElement* element)
 RenderMenuList::~RenderMenuList()
 {
     if (m_popup)
-        m_popup->menuListIsDetaching();
+        m_popup->disconnectMenuList();
     m_popup = 0;
 }
 

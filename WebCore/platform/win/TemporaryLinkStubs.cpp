@@ -134,7 +134,7 @@ FileChooser::~FileChooser() { notImplemented(); }
 PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
 void FileChooser::openFileChooser() { notImplemented(); }
 String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
-void FileChooser::uploadControlDetaching() { notImplemented(); }
+void FileChooser::disconnectUploadControl() { notImplemented(); }
 void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }

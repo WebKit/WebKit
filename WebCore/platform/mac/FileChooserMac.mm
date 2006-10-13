@@ -38,7 +38,7 @@ using namespace WebCore;
     WebCoreFrameBridge *_bridge;
 }
 - (id)initWithFileChooser:(FileChooser *)fileChooser;
-- (void)fileChooserDetachingSoon;
+- (void)disconnectFileChooser;
 - (void)beginSheet;
 @end
 
@@ -54,7 +54,7 @@ using namespace WebCore;
     return self;
 }
 
-- (void)fileChooserDetachingSoon
+- (void)disconnectFileChooser
 {
     _fileChooser = 0;
 }
@@ -123,10 +123,10 @@ String FileChooser::basenameForWidth(int width) const
             toWidth:width withFont:m_uploadControl->style()->font().primaryFont()->getNSFont()];
 }
 
-void FileChooser::uploadControlDetaching()
+void FileChooser::disconnectUploadControl()
 {
     if (m_controller)
-        [m_controller fileChooserDetachingSoon];
+        [m_controller disconnectFileChooser];
 }
 
 void FileChooser::chooseFile(const String& filename)

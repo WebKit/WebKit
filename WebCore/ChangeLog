@@ -1,5 +1,21 @@
 2006-10-12  Adele Peterson  <adele@apple.com>
 
+        RS by Geoff.
+
+        Renamed menuListIsDetaching to disconnectMenuList, 
+        uploadControlDetaching to disconnectUploadControl, and fileChooserDetachingSoon to disconnectFileChooser.  
+        These names match similar methods in WebCore a little better.
+
+        * platform/FileChooser.h:
+        * platform/PopupMenu.h: (WebCore::PopupMenu::disconnectMenuList):
+        * platform/mac/FileChooserMac.mm: (-[OpenPanelController disconnectFileChooser]):
+        (WebCore::FileChooser::disconnectUploadControl):
+        * platform/win/TemporaryLinkStubs.cpp: (FileChooser::disconnectUploadControl):
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::~RenderFileUploadControl):
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::~RenderMenuList):
+
+2006-10-12  Adele Peterson  <adele@apple.com>
+
         Reviewed by Maciej.
 
         WebCore part of fix for <rdar://problem/4450613> need a means to attach user data to any menu that is popuped up in HTML
