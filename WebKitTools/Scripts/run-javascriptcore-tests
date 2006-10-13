@@ -41,7 +41,22 @@ chdir "JavaScriptCore/tests/mozilla" or die;
 
 $productDir .= "/JavaScriptCore" if (isQt());
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/testkjs", "-f", "actual.html", @ARGV;
+
+my $testkjsName;
+my $configuration;
+sub determineTestkjsName
+{
+    return if $testkjsName;
+    $configuration = configuration();
+    if (isCygwin() && ($configuration eq "Debug")) {
+        $testkjsName = "testkjs_debug";
+    } else {
+        $testkjsName = "testkjs";
+    }
+}
+$testkjsName = determineTestkjsName();
+
+my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/$testkjsName", "-f", "actual.html", @ARGV;
 
 exit $result if $result;
 

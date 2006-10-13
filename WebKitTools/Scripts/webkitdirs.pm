@@ -49,7 +49,6 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 
-
 # Variables for Win32 support
 my $devenvPath;
 my $windowsTmpPath;
@@ -81,7 +80,7 @@ sub determineBaseProductDir
             chomp $baseProductDir;
         }
     } else {
-        $baseProductDir = $ENV{"WebKitOutputDir"};
+        $baseProductDir =  $ENV{"WEBKITOUTPUTDIR"};
         if (isCygwin() && $baseProductDir) {
             my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
             chomp $unixBuildPath;
@@ -104,7 +103,7 @@ sub determineBaseProductDir
         if (isCygwin()) {
             my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
             chomp $dosBuildPath;
-            $ENV{"WebKitOutputDir"} = $dosBuildPath;
+            $ENV{"WEBKITOUTPUTDIR"} = $dosBuildPath;
         }
     }
 }
@@ -131,8 +130,12 @@ sub determineConfigurationProductDir
 {
     return if defined $configurationProductDir;
     determineBaseProductDir();
-    determineConfiguration();
-    $configurationProductDir = "$baseProductDir/$configuration";
+    if(isCygwin()) {
+        $configurationProductDir = "$baseProductDir/bin";
+    } else {
+        determineConfiguration();
+        $configurationProductDir = "$baseProductDir/$configuration";
+    }
 }
 
 sub determineCurrentSVNRevision
@@ -371,7 +374,7 @@ sub setupCygwinEnv()
     $windowsTmpPath = `cygpath -w /tmp`;
     chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
-    print "WebKitOutputDir is set to: ", $ENV{"WebKitOutputDir"}, "\n";
+    print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
 }
 
 sub buildVisualStudioProject($)
