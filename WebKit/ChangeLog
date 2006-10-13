@@ -2,6 +2,12 @@
 
         Not reviewed, build fix.
         
+        * icu/unicode/putil.h: Added - needed for build if you don't have apple internal headers.
+
+2006-10-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+        
         * icu/unicode/ustring.h: Added - needed for build if you don't have apple internal headers.
 
 2006-10-13  Maciej Stachowiak  <mjs@apple.com>
