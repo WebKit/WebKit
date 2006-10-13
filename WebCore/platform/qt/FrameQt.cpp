@@ -446,7 +446,13 @@ bool FrameQt::canGoBackOrForward(int distance) const
 
 void FrameQt::handledOnloadEvents()
 {
-    // no-op
+    // TODO: FrameMac doesn't need that - it seems.
+    // It must be handled differently, can't figure it out.
+    // If we won't call this here doc->parsing() remains 'true'
+    // all the time. Calling document.open(); document.write(...)
+    // from JavaScript leaves the parsing state 'true', and DRT will
+    // hang on these tests (fast/dom/Document/document-reopen.html for instance)
+    endIfNotLoading();
 }
 
 bool FrameQt::canPaste() const

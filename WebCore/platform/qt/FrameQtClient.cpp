@@ -98,7 +98,7 @@ void FrameQtClientDefault::receivedData(ResourceLoader* job, const char* data, i
     m_frame->setEncoding(d->m_charset, false);
 
     // Feed with new data
-    m_frame->addData(data, length);
+    m_frame->write(data, length);
 }
 
 void FrameQtClientDefault::receivedAllData(ResourceLoader* job, PlatformData data)

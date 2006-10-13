@@ -1,3 +1,22 @@
+2006-10-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Trying to fix "DRT hangs on certain testcases" like fast/dom/Document/document-reopen.html
+        document.open(); document.write(..); and NO document.close(). On the Qt platform this
+        leaves a HTMLDocument which is still in parsing mode (parsing() always returns true).
+        DRT waits forever, but m_frame->isComplete() is never true due the parsing mode problem.
+
+        Hmpf, this took me nine hours to debug today.
+        Result: Couldn't find the real fix, going for a workaround for now.
+        
+        540 minutes, 1 line of code changed after all -> 0,0019 lines per minute.
+
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::handledOnloadEvents): Call endIfNotLoading() manually.
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::receivedData): Use write() again instead of addData().
+
 2006-10-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.
