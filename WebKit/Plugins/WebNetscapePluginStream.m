@@ -35,7 +35,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebCore/WebNetscapePluginStreamLoader.h>
+#import <WebCore/WebNetscapePlugInStreamLoader.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebCore/WebFrameLoader.h>
