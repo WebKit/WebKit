@@ -1,5 +1,11 @@
 2006-10-13  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+        
+        * icu/unicode/ustring.h: Added - needed for build if you don't have apple internal headers.
+
+2006-10-13  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - add a bunch of casts to get this compiling with older Xcode versions
