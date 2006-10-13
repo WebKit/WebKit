@@ -77,6 +77,12 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor() const
     return Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
+Color RenderThemeMac::activeListBoxSelectionBackgroundColor() const
+{
+    NSColor* color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    return Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
+}
+
 void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) const
 {
     static FontDescription systemFont;

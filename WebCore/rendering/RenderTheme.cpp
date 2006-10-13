@@ -206,21 +206,23 @@ Color RenderTheme::platformInactiveSelectionForegroundColor() const
 
 Color RenderTheme::activeListBoxSelectionBackgroundColor() const
 {
-    return Color(56, 117, 215);
+    return activeSelectionBackgroundColor();
 }
 
 Color RenderTheme::activeListBoxSelectionForegroundColor() const
 {
+    // Use a white color by default if the platform theme doesn't define anything.
     return Color(255, 255, 255);
 }
 
 Color RenderTheme::inactiveListBoxSelectionBackgroundColor() const
 {
-    return Color(212, 212, 212);
+    return inactiveSelectionBackgroundColor();
 }
 
 Color RenderTheme::inactiveListBoxSelectionForegroundColor() const
 {
+    // Use a black color by default if the platform theme doesn't define anything.
     return Color(0, 0, 0);
 }
 

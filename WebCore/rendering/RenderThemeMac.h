@@ -55,6 +55,7 @@ public:
 
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
+    virtual Color activeListBoxSelectionBackgroundColor() const;
     
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;

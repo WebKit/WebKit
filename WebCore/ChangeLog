@@ -1,3 +1,19 @@
+2006-10-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for <rdar://problem/4768591> REGRESSION: List box selection color should just be a darker version of regular selection color
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::activeListBoxSelectionBackgroundColor):
+
 2006-10-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
