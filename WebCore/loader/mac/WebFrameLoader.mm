@@ -45,6 +45,7 @@
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
 #import "WebPolicyDecider.h"
+#import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;

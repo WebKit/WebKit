@@ -1,3 +1,12 @@
+2006-10-13  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Darin.
+
+        fixed build failure 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/mac/WebFrameLoader.mm:
+
 2006-10-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
