@@ -49,6 +49,8 @@ public:
     void rotate(float) {}
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
+    void beginTransparencyLayer() {}
+    void endTransparencyLayer() {}
 
     CGContextRef m_cgContext;
     IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.

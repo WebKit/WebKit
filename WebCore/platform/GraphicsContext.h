@@ -170,8 +170,8 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
-        HDC getWindowsContext();
-        void releaseWindowsContext();
+        HDC getWindowsContext(bool supportAlphaBlend = false, const IntRect* = 0); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
+        void releaseWindowsContext(HDC, bool supportAlphaBlend = false, const IntRect* = 0);    // The passed in HDC should be the one handed back by getWindowsContext.
 #endif
 
     private:
