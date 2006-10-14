@@ -1,3 +1,24 @@
+2006-10-14  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Fix GDK build by defining FrameGdkClient() constructor as non-virtual.
+        Pure virtual classes require non-pure destructor, who knew.
+
+        Make CURL networking dependent on USE(CURL) instead of PLATFORM(GDK),
+        so that other platforms can also use CURL, if they wish.
+
+        Silence compiler warning about unused variable in SharedTimerLinux.cpp
+
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/gdk/FrameGdk.h:
+        (WebCore::FrameGdkClient::~FrameGdkClient):
+        * platform/gdk/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::downloadTimerCallback):
+        * platform/gdk/SharedTimerLinux.cpp:
+        (WebCore::stopSharedTimer):
+
 2006-10-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

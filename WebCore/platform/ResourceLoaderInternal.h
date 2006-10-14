@@ -41,7 +41,7 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(GDK)
+#if USE(CURL)
 typedef void CURL;
 #endif
 
@@ -87,7 +87,7 @@ namespace WebCore {
             , m_hasReceivedResponse(false)
             , m_resend(false)
 #endif
-#if PLATFORM(GDK)
+#if USE(CURL)
             , m_handle(0)
 #endif
         {
@@ -123,7 +123,7 @@ namespace WebCore {
             , m_hasReceivedResponse(false)
             , m_resend(false)
 #endif
-#if PLATFORM(GDK)
+#if USE(CURL)
             , m_handle(0)
 #endif
         {
@@ -167,7 +167,7 @@ namespace WebCore {
         bool m_hasReceivedResponse;
         bool m_resend;
 #endif
-#if PLATFORM(GDK)
+#if USE(CURL)
         CURL *m_handle;
 #endif
 #if PLATFORM(QT)

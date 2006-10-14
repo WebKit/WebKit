@@ -1,3 +1,12 @@
+2006-10-14  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Define KXMLCORE_USE_CURL for platforms that wish to use CURL as
+        networking, and set it for GDK build
+
+        * wtf/Platform.h:
+
 2006-10-13  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Kevin McCullough.

@@ -39,7 +39,7 @@ class FrameGdk;
 
 class FrameGdkClient {
 public:
-    virtual ~FrameGdkClient() = 0;
+    virtual ~FrameGdkClient() {};
 
     virtual void setFrame(const FrameGdk*) = 0;
 
