@@ -1,3 +1,24 @@
+2006-10-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4775213> REGRESSION: Can't from tab from last link on the page to URL address field
+        <rdar://problem/4783926> REGRESSION: Typing tab key enters no text
+
+        The problem is that EventTargetNode::defaultEventHandler() calls event->setDefaultHandled() regardless
+        of whether frame->view()->advanceFocus() actually changed the focus.
+
+        Trivial fix is to preventDefault() only if advanceFocus() returns true.
+
+        * No test is possible because DumpRenderTree sets the WebView preference to
+        tab to links, and that preference cannot be changed dynamically after
+        the webview is initialized. Also, the "tab from last link" is not testable
+        because DumpRenderTree uses the WebView for the whole window, so tabs can't
+        shift focus out of the WebView regardless.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler):
+
 2006-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mitz.
