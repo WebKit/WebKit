@@ -24,11 +24,11 @@
  */
 
 #include <wtf/Vector.h>
+#include "ResourceLoaderClient.h"  // Defines PlatformResponse
 
 #ifdef __OBJC__
 @class NSDictionary;
 @class NSString;
-@class NSURLResponse;
 
 @interface NSDictionary (WebCore_Extras)
 + (id)_webcore_dictionaryWithHeaderString:(NSString *)string;
@@ -37,7 +37,6 @@
 #else
 class NSDictionary;
 class NSString;
-class NSURLResponse;
 #endif
 
 namespace WebCore {
@@ -45,22 +44,20 @@ namespace WebCore {
 class CachedResource;
 class DeprecatedString;
 class DocLoader;
-class KURL;
 class Loader;
 class Request;
 class String;
-class ResourceLoader;
 
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL& finalURL, DeprecatedString& headers);
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*);
 bool CheckIfReloading(DocLoader*);
-bool IsResponseURLEqualToURL(NSURLResponse*, const String& URL);
-DeprecatedString ResponseURL(NSURLResponse*);
-DeprecatedString ResponseMIMEType(NSURLResponse*);
-bool ResponseIsMultipart(NSURLResponse*);
+bool IsResponseURLEqualToURL(PlatformResponse , const String& URL);
+DeprecatedString ResponseURL(PlatformResponse);
+DeprecatedString ResponseMIMEType(PlatformResponse);
+bool ResponseIsMultipart(PlatformResponse);
 int NumberOfPendingOrLoadingRequests(DocLoader*);
-time_t CacheObjectExpiresTime(DocLoader*, NSURLResponse*);
+time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse);
 NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
 
 }

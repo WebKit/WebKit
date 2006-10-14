@@ -115,11 +115,7 @@ inline void CachedImage::createImage()
 {
     // Create the image if it doesn't yet exist.
     if (!m_image)
-#if __APPLE__
         m_image = new Image(this, ResponseMIMEType(m_response) == "application/pdf");
-#else
-        m_image = new Image(this, false);
-#endif
 }
 
 Vector<char>& CachedImage::bufferData(const char* bytes, int addedSize, Request* request)

@@ -148,6 +148,13 @@ bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pag
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 bool CheckIfReloading(WebCore::DocLoader*) { return false; }
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
+time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse*) { return 0; }
+bool ResponseIsMultipart(PlatformResponse*) { return false; }
+DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
+bool IsResponseURLEqualToURL(PlatformResponse , const String& URL) { return false; }
+DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
+CachedResource::setResponse(PlatformResponse) { notImplemented(); }
+CachedResource::setAllData(PlatformData) { notImplemented(); }
 }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }

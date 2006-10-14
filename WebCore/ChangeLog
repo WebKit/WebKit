@@ -1,3 +1,44 @@
+2006-10-14  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Maciej.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=11257
+        Removed Mac platform dependance, changed WebCore functions to
+        use PlatformResponse/PlatformData rather than NSURLResponse/
+        NSData. 
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::response):
+        (WebCore::CachedResource::allData):
+        * loader/LoaderFunctions.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ResponseMIMEType):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::ResponseMIMEType):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::ResponseMIMEType):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+
 2006-10-14  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.

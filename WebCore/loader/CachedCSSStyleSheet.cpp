@@ -95,11 +95,9 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next()) {
-#if __APPLE__
         if (m_response && !IsResponseURLEqualToURL(m_response, m_url))
             c->setCSSStyleSheet(ResponseURL(m_response), m_decoder->encoding().name(), m_sheet);
         else
-#endif
             c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
     }
 }

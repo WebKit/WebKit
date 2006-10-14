@@ -216,7 +216,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
     }
 }
 
-bool IsResponseURLEqualToURL(NSURLResponse *response, const String& m_url)
+bool IsResponseURLEqualToURL(PlatformResponse response, const String& m_url)
 {
     NSURL *responseURL = [(NSURLResponse *)response URL];
     NSString *urlString = [responseURL absoluteString];
@@ -230,7 +230,7 @@ bool IsResponseURLEqualToURL(NSURLResponse *response, const String& m_url)
     return !memcmp(buffer.data(), m_url.characters(), length * sizeof(UChar));
 }
 
-DeprecatedString ResponseURL(NSURLResponse *response)
+DeprecatedString ResponseURL(PlatformResponse response)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -246,7 +246,7 @@ DeprecatedString ResponseURL(NSURLResponse *response)
     return NULL;
 }
 
-DeprecatedString ResponseMIMEType(NSURLResponse *response)
+DeprecatedString ResponseMIMEType(PlatformResponse response)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return DeprecatedString::fromNSString([(NSURLResponse *)response MIMEType]);
@@ -255,7 +255,7 @@ DeprecatedString ResponseMIMEType(NSURLResponse *response)
     return DeprecatedString();
 }
 
-bool ResponseIsMultipart(NSURLResponse *response)
+bool ResponseIsMultipart(PlatformResponse response)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[response MIMEType] isEqualToString:@"multipart/x-mixed-replace"];
@@ -264,7 +264,7 @@ bool ResponseIsMultipart(NSURLResponse *response)
     return false;
 }
 
-time_t CacheObjectExpiresTime(DocLoader *docLoader, NSURLResponse *response)
+time_t CacheObjectExpiresTime(DocLoader *docLoader, PlatformResponse response)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -279,7 +279,7 @@ time_t CacheObjectExpiresTime(DocLoader *docLoader, NSURLResponse *response)
     return 0;
 }
 
-void CachedResource::setResponse(NSURLResponse *response)
+void CachedResource::setResponse(PlatformResponse response)
 {
     HardRetain(response);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -289,7 +289,7 @@ void CachedResource::setResponse(NSURLResponse *response)
     m_response = response;
 }
 
-void CachedResource::setAllData(NSData *allData)
+void CachedResource::setAllData(PlatformData allData)
 {
     HardRetain(allData);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

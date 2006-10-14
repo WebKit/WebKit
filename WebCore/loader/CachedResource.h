@@ -30,17 +30,10 @@
 
 #include "CachePolicy.h"
 #include "PlatformString.h"
+#include "ResourceLoaderClient.h" // defines PlatformResponse and PlatformData
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <time.h>
-
-#ifdef __OBJC__
-@class NSData;
-@class NSURLResponse;
-#else
-class NSData;
-class NSURLResponse;
-#endif
 
 namespace WebCore {
     class CachedResourceClient;
@@ -86,10 +79,8 @@ namespace WebCore {
             m_free = false;
             m_cachePolicy = cachePolicy;
             m_request = 0;
-#if __APPLE__
             m_response = 0;
             m_allData = 0;
-#endif
             m_expireDate = expireDate;
             m_deleted = false;
             m_expireDateChanged = false;
@@ -143,12 +134,10 @@ namespace WebCore {
 
         void setRequest(Request*);
 
-#if __APPLE__
-        NSURLResponse* response() const { return m_response; }
-        void setResponse(NSURLResponse*);
-        NSData* allData() const { return m_allData; }
-        void setAllData(NSData*);
-#endif
+        PlatformResponse response() const { return m_response; }
+        void setResponse(PlatformResponse);
+        PlatformData allData() const { return m_allData; }
+        void setAllData(PlatformData);
 
         bool canDelete() const { return m_clients.isEmpty() && !m_request; }
 
@@ -172,10 +161,8 @@ namespace WebCore {
         String m_accept;
         Request* m_request;
 
-#if __APPLE__
-        NSURLResponse *m_response;
-        NSData *m_allData;
-#endif
+        PlatformResponse m_response;
+        PlatformData m_allData;
 
         Type m_type;
         Status m_status;

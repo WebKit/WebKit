@@ -42,10 +42,8 @@ CachedResource::~CachedResource()
         abort();
     Cache::removeFromLRUList(this);
     m_deleted = true;
-#if __APPLE__
     setResponse(0);
     setAllData(0);
-#endif
 }
 
 Vector<char>& CachedResource::bufferData(const char* bytes, int addedSize, Request* request)
