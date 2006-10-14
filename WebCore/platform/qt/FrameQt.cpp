@@ -40,6 +40,7 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "DOMWindow.h"
+#include "FrameLoadRequest.h"
 #include "DOMImplementation.h"
 #include "BrowserExtensionQt.h"
 #include "ResourceLoaderInternal.h"
@@ -127,8 +128,10 @@ bool FrameQt::openURL(const KURL& url)
     return true;
 }
 
-void FrameQt::submitForm(const ResourceRequest& request)
+void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
 {
+    ResourceRequest request = frameLoadRequest.m_request;
+
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     if (d->m_submittedFormURL == request.url())
         return;
@@ -141,8 +144,10 @@ void FrameQt::submitForm(const ResourceRequest& request)
     clearRecordedFormValues();
 }
 
-void FrameQt::urlSelected(const ResourceRequest& request)
+void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest)
 {
+    ResourceRequest request = frameLoadRequest.m_request;
+
     if (!m_client)
         return;
 
@@ -298,7 +303,7 @@ void FrameQt::restoreDocumentState()
     // FIXME: Implement this as soon a KPart is created...
 }
 
-void FrameQt::openURLRequest(const ResourceRequest&)
+void FrameQt::openURLRequest(const FrameLoadRequest&)
 {
     notImplemented();
 }

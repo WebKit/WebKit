@@ -777,6 +777,11 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->p().setMatrix(transform, true);
 }
 
+void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+{
+    notImplemented();
+}
+
 #ifdef SVG_SUPPORT
 KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 {

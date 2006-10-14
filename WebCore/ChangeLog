@@ -1,3 +1,37 @@
+2006-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mitz.
+
+        Fix Qt/Linux build & some little fixes:
+
+        - Adapt to Maciej's FrameLoadRequest changes.
+        - Fix response handling - don't try to compare with '0' - for us it's a non-ptr QString object.
+        - Actually call setAllData from loader/loader.cpp (David Carson forgot that in his last commit)
+        - Fix CacheObjectExpiresTime/ResponseIsMultipart signature.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::CachedResource):
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        * platform/qt/BrowserExtensionQt.cpp:
+        (WebCore::BrowserExtensionQt::createNewWindow):
+        * platform/qt/BrowserExtensionQt.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        (WebCore::FrameQt::openURLRequest):
+        * platform/qt/FrameQt.h:
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+
 2006-10-14  David Carson  <dacarson@gmail.com>
 
         Reviewed by Maciej.

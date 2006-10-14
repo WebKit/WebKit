@@ -45,11 +45,11 @@ bool BrowserExtensionQt::canRunModal()
     return false;
 }
 
-void BrowserExtensionQt::createNewWindow(const ResourceRequest& request)
+void BrowserExtensionQt::createNewWindow(const FrameLoadRequest& request)
 {
 }
 
-void BrowserExtensionQt::createNewWindow(const ResourceRequest& request, const WindowArgs& args, Frame*& frame)
+void BrowserExtensionQt::createNewWindow(const FrameLoadRequest& request, const WindowArgs& args, Frame*& frame)
 {
     notImplemented();
 }

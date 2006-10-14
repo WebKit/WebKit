@@ -95,7 +95,11 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next()) {
+#if !PLATFORM(QT)
         if (m_response && !IsResponseURLEqualToURL(m_response, m_url))
+#else 
+        if (!m_response.isEmpty() && !IsResponseURLEqualToURL(m_response, m_url))
+#endif
             c->setCSSStyleSheet(ResponseURL(m_response), m_decoder->encoding().name(), m_sheet);
         else
             c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
