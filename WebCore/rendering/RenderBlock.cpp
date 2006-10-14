@@ -1363,8 +1363,8 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
 
     // 5. paint outline.
     if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) 
-        && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(i.p, _tx, _ty, width(), height(), style());
+        && hasOutline() && style()->visibility() == VISIBLE)
+        RenderObject::paintOutline(i.p, _tx, _ty, width(), height(), style());
 
     // 6. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,

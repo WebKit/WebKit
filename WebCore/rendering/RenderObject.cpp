@@ -33,7 +33,6 @@
 #include "CounterNode.h"
 #include "CounterResetNode.h"
 #include "Decoder.h"
-#include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -41,6 +40,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "KURL.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
@@ -1639,6 +1639,28 @@ IntRect RenderObject::paintingRootRect(IntRect& topLevelRect)
     return result;
 }
 
+void RenderObject::addPDFURLRect(GraphicsContext* p, IntRect rect)
+{
+    Node* node = element();
+    if (node) {
+        if (p) {
+            if (rect.width() > 0 && rect.height() > 0) {
+                Element* element = static_cast<Element*>(node);
+                String href;
+                if (element->isLink())
+                    href = element->getAttribute(hrefAttr);
+                    
+                if (!href.isNull()) {
+                    KURL link = element->document()->completeURL(href.deprecatedString());
+                    if (link.isValid())
+                        p->setURLForRect(link, rect);
+                }
+            }
+        }
+    }
+}
+
+
 void RenderObject::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
@@ -1656,12 +1678,12 @@ void RenderObject::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
 
 void RenderObject::paintOutline(GraphicsContext* p, int _tx, int _ty, int w, int h, const RenderStyle* style)
 {
+    if (!hasOutline())
+        return;
+    
     int ow = style->outlineWidth();
-    if(!ow) return;
 
     EBorderStyle os = style->outlineStyle();
-    if (os <= BHIDDEN)
-        return;
     
     Color oc = style->outlineColor();
     if (!oc.isValid())
@@ -1669,16 +1691,21 @@ void RenderObject::paintOutline(GraphicsContext* p, int _tx, int _ty, int w, int
     
     int offset = style->outlineOffset();
     
-    if (style->outlineStyleIsAuto()) {
+    if (style->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(style)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
             p->initFocusRing(ow, offset);
-            addFocusRingRects(p, _tx, _ty);
+            if (style->outlineStyleIsAuto())
+                addFocusRingRects(p, _tx, _ty);
+            else
+                addPDFURLRect(p, p->focusRingBoundingRect());
             p->drawFocusRing(oc);
             p->clearFocusRing();
         }
-        return;
     }
+
+    if (style->outlineStyleIsAuto() || style->outlineStyle() <= BHIDDEN)
+        return;
 
     _tx -= offset;
     _ty -= offset;

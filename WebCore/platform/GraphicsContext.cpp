@@ -216,6 +216,18 @@ void GraphicsContext::clearFocusRing()
     m_common->m_focusRingRects.clear();
 }
 
+IntRect GraphicsContext::focusRingBoundingRect()
+{
+    IntRect result = IntRect(0, 0, 0, 0);
+    
+    const Vector<IntRect>& rects = focusRingRects();
+    unsigned rectCount = rects.size();
+    for (unsigned i = 0; i < rectCount; i++)
+        result.unite(rects[i]);
+        
+    return result;
+}
+
 void GraphicsContext::addFocusRingRect(const IntRect& rect)
 {
     if (paintingDisabled() || rect.isEmpty())

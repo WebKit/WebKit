@@ -60,6 +60,7 @@ namespace WebCore {
     class Font;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
+    class KURL;
     class Path;
     class TextRun;
     class TextStyle;
@@ -145,6 +146,7 @@ namespace WebCore {
         void addFocusRingRect(const IntRect&);
         void drawFocusRing(const Color&);
         void clearFocusRing();
+        IntRect focusRingBoundingRect();
 
         void setLineWidth(float);
         void setLineCap(LineCap);
@@ -161,6 +163,8 @@ namespace WebCore {
         void rotate(float angleInRadians);
         void translate(float x, float y);
         IntPoint origin();
+        
+        void setURLForRect(const KURL&, const IntRect&);
 
         void concatCTM(const AffineTransform&);
 

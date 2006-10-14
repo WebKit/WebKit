@@ -460,6 +460,10 @@ IntPoint GraphicsContext::origin()
     return IntPoint(matrix.x0, matrix.y0);
 }
 
+void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+{
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(CAIRO)

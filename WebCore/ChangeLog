@@ -1,3 +1,45 @@
+2006-10-13  Beth Dakin  <bdakin@apple.com>
+
+        Patch written mostly by Ken Kraisler, but also by me.
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=10216 and <rdar://
+        problem/3391162> PDF created by printing should have live 
+        hyperlinks
+
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::focusRingBoundingRect):
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setURLForRect): Implement method to add 
+        URL link to PDF document.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint): Ask hasOutline() instead of 
+        querying the outline width
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject): Same as above.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines): Call the new paintOutline()
+        (WebCore::RenderFlow::paintOutline): Take care of focus ring and 
+        pdf url rects, and outline painting.
+        * rendering/RenderFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect): Declaration to apply a PDF 
+        link to a rectanglular region.
+        (WebCore::RenderObject::paintOutline): Take care of pdf rects as 
+        well as focus ring painting.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasOutlineAnnotation): Returns true is the 
+        element is a link and we are printing.
+        (WebCore::RenderObject::hasOutline): Returns true is the style has 
+        an outline and hasOutlineAnnotation() is true.
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::hasOutline): Returns true if outlineWidth is 
+        greater than 0 and outlineStyle is greater than BHIDDEN.
+
 2006-10-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren and harrison

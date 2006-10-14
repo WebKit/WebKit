@@ -1249,6 +1249,7 @@ public:
             return 0;
         return background->m_outline.width;
     }
+    bool hasOutline() const { return outlineWidth() > 0 && outlineStyle() > BHIDDEN; }
     EBorderStyle   outlineStyle() const {  return background->m_outline.style(); }
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
     const Color &  outlineColor() const {  return background->m_outline.color; }

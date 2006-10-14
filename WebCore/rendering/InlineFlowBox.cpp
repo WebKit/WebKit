@@ -550,7 +550,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
-            if (object()->style()->visibility() == VISIBLE && object()->style()->outlineWidth() > 0 &&
+            if (object()->style()->visibility() == VISIBLE && object()->hasOutline() &&
                 !object()->isInlineContinuation() && !isRootInlineBox()) {
                 i.outlineObjects->add(flowObject());
             }

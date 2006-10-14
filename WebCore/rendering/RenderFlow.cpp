@@ -410,10 +410,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
         RenderFlowSequencedSet::iterator end = info.outlineObjects->end();
         for (RenderFlowSequencedSet::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderFlow* flow = *it;
-            if (flow->style()->outlineStyleIsAuto())
-                flow->paintFocusRing(info.p, _tx, _ty);
-            else
-                flow->paintOutlines(info.p, _tx, _ty);
+            flow->paintOutline(info.p, _tx, _ty);
         }
         info.outlineObjects->clear();
     }
@@ -687,33 +684,38 @@ void RenderFlow::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
                                           _ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
-void RenderFlow::paintFocusRing(GraphicsContext* p, int tx, int ty)
+void RenderFlow::paintOutline(GraphicsContext* p, int _tx, int _ty)
 {
-    int ow = style()->outlineWidth();
-    Color oc = style()->outlineColor();
-    if (!oc.isValid())
-        oc = style()->color();
-    
-    p->initFocusRing(ow, style()->outlineOffset());
-    addFocusRingRects(p, tx, ty);
-    p->drawFocusRing(oc);
-    p->clearFocusRing();
-}
-
-void RenderFlow::paintOutlines(GraphicsContext* p, int _tx, int _ty)
-{
-    if (style()->outlineStyle() <= BHIDDEN)
+    if (!hasOutline())
         return;
     
+    if (style()->outlineStyleIsAuto() || hasOutlineAnnotation()) {
+        int ow = style()->outlineWidth();
+        Color oc = style()->outlineColor();
+        if (!oc.isValid())
+            oc = style()->color();
+        
+        p->initFocusRing(ow, style()->outlineOffset());
+        addFocusRingRects(p, _tx, _ty);
+        if (style()->outlineStyleIsAuto())
+            p->drawFocusRing(oc);
+        else
+            addPDFURLRect(p, p->focusRingBoundingRect());
+        p->clearFocusRing();
+    }
+
+    if (style()->outlineStyleIsAuto() || style()->outlineStyle() <= BHIDDEN)
+        return;
+
     DeprecatedPtrList <IntRect> rects;
     rects.setAutoDelete(true);
-    
+
     rects.append(new IntRect);
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
         rects.append(new IntRect(curr->xPos(), curr->yPos(), curr->width(), curr->height()));
-    }
+
     rects.append(new IntRect);
-    
+
     for (unsigned int i = 1; i < rects.count() - 1; i++)
         paintOutlineForLine(p, _tx, _ty, *rects.at(i-1), *rects.at(i), *rects.at(i+1));
 }

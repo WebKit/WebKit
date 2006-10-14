@@ -29,6 +29,7 @@
 
 #include "CachedResourceClient.h"
 #include "DeprecatedValueList.h"
+#include "Document.h"
 #include "RenderStyle.h"
 #include "ScrollBar.h"
 #include "VisiblePosition.h"
@@ -346,6 +347,9 @@ public:
     void setNode(Node* node) { m_node = node; }
     Node* node() const { return m_node; }
     
+    bool hasOutlineAnnotation() { return element() && element()->isLink() && document()->printing(); }
+    bool hasOutline() { return style()->hasOutline() || hasOutlineAnnotation(); }
+   
    /**
      * returns the object containing this one. can be different from parent for
      * positioned elements
@@ -701,6 +705,8 @@ public:
     
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);
+
+    void addPDFURLRect(GraphicsContext* p, IntRect rect);
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 

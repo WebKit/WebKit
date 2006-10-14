@@ -30,6 +30,7 @@
 #if PLATFORM(CG)
 
 #include "AffineTransform.h"
+#include "KURL.h"
 #include "Path.h"
 #include <wtf/MathExtras.h>
 
@@ -775,6 +776,29 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
     CGContextStrokeLineSegments(platformContext(), linePoints, 2);
 
     CGContextRestoreGState(platformContext());
+}
+
+void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+{
+    if (paintingDisabled())
+        return;
+        
+    CFURLRef urlRef = link.createCFURL();
+    if (urlRef) {
+        CGContextRef context = platformContext();
+        
+        // Get the bounding box to handle clipping.
+        CGRect box = CGContextGetClipBoundingBox(context);
+
+        IntRect intBox((int)box.origin.x, (int)box.origin.y, (int)box.size.width, (int)box.size.height);
+        IntRect rect = destRect;
+        rect.intersect(intBox);
+
+        CGPDFContextSetURLForRect(context, urlRef,
+            CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
+
+        CFRelease(urlRef);
+    }
 }
 
 }
