@@ -1,0 +1,37 @@
+<?php
+    $title = "Debugging WebKit";
+    include("../header.inc");
+?>
+
+<h2>Debugging WebKit</h2>
+<ol>
+<li><p>Open a project</p>
+<p>Each WebKit component -- JavaScriptCore, WebCore, and WebKit -- contains its own Xcode project. Open the project belonging to the component you want to debug.</p>
+</li>
+<li><p>Set the project's build products location</p>
+<p>To find the WebKit you built, Xcode needs to know the build products location that <tt>build-webkit</tt> used. You can set the build products location from the project's Info window.</p>
+<img src="info-tab.png">
+</li>
+<li><p>Set the project's active build configuration</p>
+<p>Xcode also needs to know the build configuration you used. You can set the active build configuration from the project's Build window.</p>
+<img src="build-window.png">
+</li>
+<li><p>Add a custom executable to the project</p>
+<p>Choose any WebKit application you want to use for debugging. To use Safari, select /Applications/Safari.app.</p>
+<img src="custom-executable.png">
+</li>
+<li><p>Set the project's active executable</p>
+<p>You can set the active executable from the project's Build window. Choose the executable you just added.</p>
+</li>
+<li><p>Close and re-open the project</p>
+<p>This will force Xcode to discover generated source files, which output to your build products location, allowing you to set breakpoints in them.</p>
+</li>
+<li><p>Launch the debugger</p>
+<p>In the Debugger window, click the "Debug" button.</p>
+<img src="debug.png">
+</li>
+</ol>
+
+<?php
+    include("../footer.inc");
+?>

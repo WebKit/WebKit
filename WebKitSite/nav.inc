@@ -8,6 +8,8 @@
 
         <li><a href="/building/checkout.html">Getting the Code</a></li>
         <li><a href="/building/build.html">Building WebKit</a></li>
+        <li><a href="/building/run.html">Running WebKit</a></li>
+        <li><a href="/building/debug.html">Debugging WebKit</a></li>
         <li><a href="/coding/contributing.html">Contributing Code</a></li>
 
         <li class="subtitle">Documentation</li>

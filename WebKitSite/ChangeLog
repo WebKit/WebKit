@@ -1,3 +1,16 @@
+2006-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Split build, run, and debug steps into separate pages. Darin recommended
+        this a while back.
+
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html: Added.
+        * building/run.html: Added.
+        * nav.inc:
+
 2006-10-05  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.
