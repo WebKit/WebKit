@@ -1,5 +1,20 @@
 2006-10-13  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Geoff.
+
+        Build fix from my last check-in. Make hasOutlineAnnotation() non-
+        inline so that we don't have to include Document.h in 
+        RenderObject.h
+        Doing so causes a build failure in WebKit, and it probably isn't a 
+        good idea anyway.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hasOutlineAnnotation):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasOutline):
+
+2006-10-13  Beth Dakin  <bdakin@apple.com>
+
         Patch written mostly by Ken Kraisler, but also by me.
 
         Reviewed by Hyatt.

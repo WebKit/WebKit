@@ -29,7 +29,6 @@
 
 #include "CachedResourceClient.h"
 #include "DeprecatedValueList.h"
-#include "Document.h"
 #include "RenderStyle.h"
 #include "ScrollBar.h"
 #include "VisiblePosition.h"
@@ -347,8 +346,8 @@ public:
     void setNode(Node* node) { m_node = node; }
     Node* node() const { return m_node; }
     
-    bool hasOutlineAnnotation() { return element() && element()->isLink() && document()->printing(); }
-    bool hasOutline() { return style()->hasOutline() || hasOutlineAnnotation(); }
+    bool hasOutlineAnnotation() const;
+    bool hasOutline() const { return style()->hasOutline() || hasOutlineAnnotation(); }
    
    /**
      * returns the object containing this one. can be different from parent for

@@ -33,6 +33,7 @@
 #include "CounterNode.h"
 #include "CounterResetNode.h"
 #include "Decoder.h"
+#include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -2366,6 +2367,11 @@ int RenderObject::tabWidth() const
 RenderView* RenderObject::view() const
 {
     return static_cast<RenderView*>(document()->renderer());
+}
+
+bool RenderObject::hasOutlineAnnotation() const
+{
+    return element() && element()->isLink() && document()->printing();
 }
 
 RenderObject *RenderObject::container() const
