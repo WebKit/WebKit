@@ -809,11 +809,13 @@ sub openDumpRenderTreeIfNeeded()
 
     # Save some requires variables for the linux environment...
     my $homeDir = $ENV{'HOME'};
+    my $libraryPath = $ENV{'LD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
 
     local %ENV;
     $ENV{DISPLAY} = ":0" if isQt();
     $ENV{HOME} = $homeDir if isQt();
+    $ENV{LD_LIBRARY_PATH} = $libraryPath if isQt();
     $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress if isQt();
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
