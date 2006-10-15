@@ -38,7 +38,6 @@
 #include "XBMImageDecoder.h"
 
 #include <QImage>
-#include <QDebug>
 
 namespace WebCore {
 

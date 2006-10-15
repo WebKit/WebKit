@@ -154,8 +154,8 @@ bool ResponseIsMultipart(PlatformResponse) { return false; }
 DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
 bool IsResponseURLEqualToURL(PlatformResponse , const String& URL) { return false; }
 DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
-void CachedResource::setResponse(PlatformResponse) { notImplemented(); }
-void CachedResource::setAllData(PlatformData) { notImplemented(); }
+void CachedResource::setResponse(PlatformResponse) { }
+void CachedResource::setAllData(PlatformData) { }
 }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }

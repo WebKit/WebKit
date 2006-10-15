@@ -44,6 +44,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
+   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/bindings
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/
    ${CMAKE_CURRENT_SOURCE_DIR}/../
    )

@@ -1,3 +1,62 @@
+2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Implement some functions in FrameQt / ScrollViewQt.
+
+        Added comments what needs to be done in quite some places,
+        marked some functions as no-ops.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::runJavaScriptConfirm):
+        (WebCore::FrameQt::locationbarVisible):
+        (WebCore::FrameQt::createFrame):
+        (WebCore::FrameQt::passSubframeEventToSubframe):
+        (WebCore::FrameQt::menubarVisible):
+        (WebCore::FrameQt::personalbarVisible):
+        (WebCore::FrameQt::statusbarVisible):
+        (WebCore::FrameQt::toolbarVisible):
+        (WebCore::FrameQt::markedTextRange):
+        (WebCore::FrameQt::lastEventIsMouseUp):
+        (WebCore::FrameQt::openURLRequest):
+        (WebCore::FrameQt::scheduleClose):
+        (WebCore::FrameQt::unfocusWindow):
+        (WebCore::FrameQt::focusWindow):
+        (WebCore::FrameQt::overrideMediaType):
+        (WebCore::FrameQt::runJavaScriptPrompt):
+        (WebCore::FrameQt::bindingRootObject):
+        (WebCore::FrameQt::addPluginRootObject):
+        (WebCore::FrameQt::registerCommandForUndo):
+        (WebCore::FrameQt::registerCommandForRedo):
+        (WebCore::FrameQt::clearUndoRedoOperations):
+        (WebCore::FrameQt::respondToChangedSelection):
+        (WebCore::FrameQt::respondToChangedContents):
+        (WebCore::FrameQt::shouldChangeSelection):
+        (WebCore::FrameQt::canGoBackOrForward):
+        (WebCore::FrameQt::canPaste):
+        (WebCore::FrameQt::canRedo):
+        (WebCore::FrameQt::canUndo):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::runJavaScriptAlert):
+        (WebCore::FrameQtClientDefault::runJavaScriptConfirm):
+        (WebCore::FrameQtClientDefault::runJavaScriptPrompt):
+        (WebCore::FrameQtClientDefault::menubarVisible):
+        (WebCore::FrameQtClientDefault::toolbarVisible):
+        (WebCore::FrameQtClientDefault::statusbarVisible):
+        (WebCore::FrameQtClientDefault::personalbarVisible):
+        (WebCore::FrameQtClientDefault::locationbarVisible):
+        * platform/qt/FrameQtClient.h:
+        * platform/qt/ImageSourceQt.cpp:
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::scrollPointRecursively):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+
 2006-10-14  David Harrison  <harrison@apple.com>
 
         Reviewed by Geoff.

@@ -34,8 +34,6 @@
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
-
 namespace WebCore {
 
 class RenderThemeQt : public RenderTheme

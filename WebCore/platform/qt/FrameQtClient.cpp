@@ -32,7 +32,9 @@
 #include "ResourceLoader.h"
 #include "ResourceLoaderInternal.h"
 
-#include <QMessageBox>
+#include <kstdguiitem.h>
+#include <kmessagebox.h>
+#include <kinputdialog.h>
 
 namespace WebCore {
 
@@ -73,7 +75,47 @@ void FrameQtClientDefault::submitForm(const String& method, const KURL& url, con
 
 void FrameQtClientDefault::runJavaScriptAlert(String const& message)
 {
-    QMessageBox::information(m_frame->view()->qwidget(), "JavaScript", message);
+    KMessageBox::error(m_frame->view()->qwidget(), message, "JavaScript");
+}
+
+bool FrameQtClientDefault::runJavaScriptConfirm(const String& message)
+{
+    return KMessageBox::warningYesNo(m_frame->view()->qwidget(), message,
+                                     "JavaScript", KStdGuiItem::ok(), KStdGuiItem::cancel())
+                                     == KMessageBox::Yes;
+}
+
+bool FrameQtClientDefault::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
+{
+    bool ok;
+    result = KInputDialog::getText("JavaScript", message, defaultValue, &ok, m_frame->view()->qwidget());
+
+    return ok;
+}
+
+bool FrameQtClientDefault::menubarVisible() const
+{
+    return false;
+}
+
+bool FrameQtClientDefault::toolbarVisible() const
+{
+    return false;
+}
+
+bool FrameQtClientDefault::statusbarVisible() const
+{
+    return false;
+}
+
+bool FrameQtClientDefault::personalbarVisible() const
+{
+    return false;
+}
+
+bool FrameQtClientDefault::locationbarVisible() const
+{
+    return false;
 }
 
 void FrameQtClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)

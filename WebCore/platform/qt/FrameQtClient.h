@@ -46,7 +46,15 @@ public:
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
 
     // WebKitPart / DumpRenderTree want to handle this differently.
+    virtual bool menubarVisible() const = 0;
+    virtual bool toolbarVisible() const = 0;
+    virtual bool statusbarVisible() const = 0;
+    virtual bool personalbarVisible() const = 0;
+    virtual bool locationbarVisible() const = 0;
+
     virtual void runJavaScriptAlert(String const& message) = 0;
+    virtual bool runJavaScriptConfirm(const String& message) = 0;
+    virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;
 };
 
 class FrameQtClientDefault : public FrameQtClient,
@@ -63,6 +71,14 @@ public:
     virtual void submitForm(const String& method, const KURL&, const FormData*);
 
     virtual void runJavaScriptAlert(String const& message);
+    virtual bool runJavaScriptConfirm(const String& message);
+    virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
+
+    virtual bool menubarVisible() const;
+    virtual bool toolbarVisible() const;
+    virtual bool statusbarVisible() const;
+    virtual bool personalbarVisible() const;
+    virtual bool locationbarVisible() const;
 
     // ResourceLoaderClient
     virtual void receivedResponse(ResourceLoader*, PlatformResponse);

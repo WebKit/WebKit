@@ -244,8 +244,11 @@ void ScrollView::removeChild(Widget*)
 }
 
 void ScrollView::scrollPointRecursively(int x, int y)
-{ 
-    notImplemented();
+{
+    x = (x < 0) ? 0 : x;
+    y = (y < 0) ? 0 : y;
+
+    m_area->ensureVisible(x, y);
 }
 
 bool ScrollView::inWindow() const
