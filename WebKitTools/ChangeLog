@@ -1,3 +1,11 @@
+2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add another hanging test, to the "to be skipped" list.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+
 2006-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.
