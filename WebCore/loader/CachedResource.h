@@ -79,9 +79,7 @@ namespace WebCore {
             m_free = false;
             m_cachePolicy = cachePolicy;
             m_request = 0;
-#if !PLATFORM(QT)
             m_response = 0;
-#endif
             m_allData = 0;
             m_expireDate = expireDate;
             m_deleted = false;

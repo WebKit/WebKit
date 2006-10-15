@@ -29,6 +29,7 @@
 
 #include <kio/job.h>
 
+#include "FrameQt.h"
 #include "DocLoader.h"
 #include "ResourceLoader.h"
 #include "DeprecatedString.h"
@@ -44,11 +45,22 @@ ResourceLoaderInternal::~ResourceLoaderInternal()
 ResourceLoader::~ResourceLoader()
 {
     cancel();
+    delete d;
 }
 
-bool ResourceLoader::start(DocLoader*)
+bool ResourceLoader::start(DocLoader* docLoader)
 {
     ref();
+    d->m_loading = true;
+
+    if (docLoader) {
+        FrameQt* frame = QtFrame(docLoader->frame());
+        if (!frame ) {
+            kill();
+            return false;
+        }
+    }
+
     ResourceLoaderManager::self()->add(this);
     return true;
 }
@@ -61,9 +73,10 @@ void ResourceLoader::cancel()
 void ResourceLoader::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
-        d->responseHeaders = d->m_response;
+        ASSERT(d->m_response);
+
+        d->responseHeaders = d->m_response->data;
         d->assembledResponseHeaders = true;
-        d->m_response = QString(); // Reset
     }
 }
 
@@ -75,7 +88,7 @@ void ResourceLoader::retrieveCharset() const
     }
 }
 
-void ResourceLoader::receivedResponse(QString response)
+void ResourceLoader::receivedResponse(PlatformResponse response)
 {
     Q_ASSERT(method() == "POST");
 

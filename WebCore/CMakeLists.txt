@@ -1020,6 +1020,7 @@ set(WebCore_SRCS
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
     platform/Path.cpp
+    platform/qt/LoaderFunctionsQt.cpp
     platform/qt/FileChooserQt.cpp
     platform/qt/IconQt.cpp
     platform/qt/AffineTransformQt.cpp

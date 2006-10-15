@@ -117,10 +117,10 @@ FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
 
 FrameQt::~FrameQt()
 {
-    closeURL();
-
     setView(0);
     clearRecordedFormValues();
+
+    cancelAndClear();
 }
 
 bool FrameQt::openURL(const KURL& url)
@@ -248,11 +248,15 @@ bool FrameQt::toolbarVisible()
 
 void FrameQt::createEmptyDocument()
 {
-    // FIXME: Implement like described in this comment from FrameMac:
-    //
     // Although it's not completely clear from the name of this function,
     // it does nothing if we already have a document, and just creates an
     // empty one if we have no document at all.
+
+    // Force creation.
+    if (!d->m_doc) {
+        begin();
+        end();
+    }
 }
 
 Range* FrameQt::markedTextRange() const

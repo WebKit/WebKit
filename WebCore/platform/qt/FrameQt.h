@@ -150,6 +150,9 @@ private:
 
 };
 
+inline FrameQt* QtFrame(Frame* frame) { return static_cast<FrameQt*>(frame); }
+inline const FrameQt* QtFrame(const Frame* frame) { return static_cast<const FrameQt*>(frame); }
+
 }
 
 #endif 

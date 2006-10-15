@@ -1,3 +1,58 @@
+2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Changed PlatformResponse handling for Qt. Don't just store
+        a QString object containing the data but a new PlatformResponseQt struct
+        containing data and url, and store it as pointer. This is compatible
+        to the OS X handling and removes the Qt plaform specific hacks from
+        CachedCSSStyleSheet, CachedResource & loader.
+
+        Add new file LoaderFunctionsQt, similar to LoaderFunctionsMac, and move
+        all methods from TemporaryLinkStubs related to loading in there, and implement
+        some like ServeSynchronousRequest (yay for xslt handling!).
+
+        * CMakeLists.txt:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::CachedResource):
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse):
+        * platform/ResourceLoaderClient.h:
+        * platform/ResourceLoaderInternal.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::~FrameQt):
+        (WebCore::FrameQt::createEmptyDocument):
+        * platform/qt/FrameQt.h:
+        (WebCore::QtFrame):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::setFrame):
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::loadFinished):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/FrameQtClient.h:
+        * platform/qt/LoaderFunctionsQt.cpp: Added.
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::NumberOfPendingOrLoadingRequests):
+        (WebCore::CheckIfReloading):
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::IsResponseURLEqualToURL):
+        (WebCore::ResponseURL):
+        (WebCore::ResponseMIMEType):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::remove):
+        * platform/qt/ResourceLoaderQt.cpp:
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::receivedResponse):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2006-10-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

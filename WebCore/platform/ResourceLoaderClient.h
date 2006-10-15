@@ -43,6 +43,9 @@ class NSURLResponse;
 
 #if PLATFORM(QT)
 #include <QString>
+#include <wtf/RefPtr.h>
+
+#include "Shared.h"
 #endif
 
 namespace WebCore {
@@ -54,8 +57,14 @@ namespace WebCore {
     typedef NSData* PlatformData;
     typedef NSURLResponse* PlatformResponse;
 #elif PLATFORM(QT)
+    class PlatformResponseQt : public Shared<PlatformResponseQt> {
+    public:
+        QString data;
+        QString url;
+    };
+
     typedef void* PlatformData;
-    typedef QString PlatformResponse;
+    typedef RefPtr<PlatformResponseQt> PlatformResponse;
 #else
     // Not sure what the strategy for this will be on other platforms.
     typedef struct PlatformDataStruct* PlatformData;

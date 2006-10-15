@@ -136,7 +136,11 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
         // Will take care of informing our client...
         // This must be called before receivedAllData(),
         // otherwhise assembleResponseHeaders() is called too early...
-        job->receivedResponse(headers);
+        RefPtr<PlatformResponseQt> response(new PlatformResponseQt());
+        response->data = headers;    
+        response->url = job->url().url();
+
+        job->receivedResponse(response);
     }
 
     d->client->receivedAllData(job, 0);

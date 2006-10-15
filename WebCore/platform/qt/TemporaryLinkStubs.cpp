@@ -146,16 +146,6 @@ bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
 IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
 bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
 
-void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
-bool CheckIfReloading(WebCore::DocLoader*) { return false; }
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
-time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse) { return 0; }
-bool ResponseIsMultipart(PlatformResponse) { return false; }
-DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
-bool IsResponseURLEqualToURL(PlatformResponse , const String& URL) { return false; }
-DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
-void CachedResource::setResponse(PlatformResponse) { }
-void CachedResource::setAllData(PlatformData) { }
 }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
