@@ -1,3 +1,18 @@
+2006-10-15  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11294
+        Add getModifierState method to KeyboardEvent
+
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::getModifierState):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+
 2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.

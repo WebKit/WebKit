@@ -39,7 +39,7 @@ module events {
         readonly attribute boolean          metaKey;
         readonly attribute boolean          altGraphKey;
 
-#if !defined(LANGUAGE_JAVASCRIPT) && !defined(LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_JAVASCRIPT)
         boolean getModifierState(in DOMString keyIdentifierArg);
 #endif
 

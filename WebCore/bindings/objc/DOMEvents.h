@@ -40,9 +40,5 @@
 #import <WebCore/DOMUIEvent.h>
 #import <WebCore/DOMWheelEvent.h>
 
-@interface DOMKeyboardEvent (NonStandardAdditions)
-- (BOOL)getModifierState:(NSString *)keyIdentifierArg;
-@end
-
 @interface DOMNode (DOMEventTarget) <DOMEventTarget>
 @end

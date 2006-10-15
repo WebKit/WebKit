@@ -55,7 +55,9 @@ namespace WebCore {
     
         String keyIdentifier() const { return m_keyIdentifier; }
         unsigned keyLocation() const { return m_keyLocation; }
-    
+
+        bool getModifierState(const String& keyIdentifier) const;
+
         bool altGraphKey() const { return m_altGraphKey; }
     
         const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent; }

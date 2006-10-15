@@ -30,7 +30,6 @@
 
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "Document.h"
 #import "Event.h"
 #import "KeyboardEvent.h"
 #import "MouseEvent.h"
@@ -95,28 +94,6 @@
         wrapperClass = [DOMEvent class];
 
     return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMKeyboardEvent
-
-@implementation DOMKeyboardEvent (NonStandardAdditions)
-
-// FIXME: this should be implemented in the implementation
-- (BOOL)getModifierState:(NSString *)keyIdentifierArg
-{
-    if ([keyIdentifierArg isEqualToString:@"Control"] && [self ctrlKey])
-        return YES;
-    if ([keyIdentifierArg isEqualToString:@"Shift"] && [self shiftKey])
-        return YES;
-    if ([keyIdentifierArg isEqualToString:@"Alt"] && [self altKey])
-        return YES;
-    if ([keyIdentifierArg isEqualToString:@"Meta"] && [self metaKey])
-        return YES;
-    return NO;
 }
 
 @end
