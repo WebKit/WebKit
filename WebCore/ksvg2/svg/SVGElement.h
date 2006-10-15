@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,10 +27,9 @@
 #include "Document.h"
 #include "FloatRect.h"
 #include "StyledElement.h"
-
-#include "SVGNames.h"
 #include "SVGAnimatedTemplate.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGNames.h"
 
 #define ANIMATED_PROPERTY_EMPTY_DECLARATIONS(BareType, NullType, UpperProperty, LowerProperty) \
 public: \
@@ -205,7 +204,7 @@ namespace WebCore {
 
     static inline SVGElement* svg_dynamic_cast(Node* node)
     {
-        SVGElement* svgElement = NULL;
+        SVGElement* svgElement = 0;
         if (node && node->isSVGElement())
             svgElement = static_cast<SVGElement*>(node);
         return svgElement;

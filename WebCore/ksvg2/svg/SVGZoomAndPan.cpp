@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,14 +22,11 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-#include "MappedAttribute.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGSVGElement.h"
 #include "SVGZoomAndPan.h"
+
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGSVGElement.h"
 
 namespace WebCore {
 
@@ -52,13 +49,13 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
     m_zoomAndPan = zoomAndPan;
 }
 
-bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute *attr)
+bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::zoomAndPanAttr) {
-        if(value == "disable")
+        if (value == "disable")
             setZoomAndPan(SVGSVGElement::SVG_ZOOMANDPAN_DISABLE);
-        else if(value == "magnify")
+        else if (value == "magnify")
             setZoomAndPan(SVGSVGElement::SVG_ZOOMANDPAN_MAGNIFY);
         return true;
     }

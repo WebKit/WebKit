@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob, 2006 Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,13 +24,12 @@
 #ifdef SVG_SUPPORT
 #include "SVGTests.h"
 
+#include "DOMImplementation.h"
 #include "Language.h"
 #include "SVGElement.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
-#include "Attr.h"
-#include "DOMImplementation.h"
 
 namespace WebCore {
 
@@ -42,17 +41,17 @@ SVGTests::~SVGTests()
 {
 }
 
-SVGStringList *SVGTests::requiredFeatures() const
+SVGStringList* SVGTests::requiredFeatures() const
 {
     return lazy_create<SVGStringList>(m_features);
 }
 
-SVGStringList *SVGTests::requiredExtensions() const
+SVGStringList* SVGTests::requiredExtensions() const
 {
     return lazy_create<SVGStringList>(m_extensions);
 }
 
-SVGStringList *SVGTests::systemLanguage() const
+SVGStringList* SVGTests::systemLanguage() const
 {
     return lazy_create<SVGStringList>(m_systemLanguage);
 }
@@ -66,10 +65,10 @@ bool SVGTests::isValid() const
 {
     ExceptionCode ec = 0;
 
-    SVGStringList *list = requiredFeatures();
-    for (unsigned long i = 0;i < list->numberOfItems();i++) {
-        String value = String(list->getItem(i, ec));
-        if(value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
+    SVGStringList* list = requiredFeatures();
+    for (unsigned long i = 0; i < list->numberOfItems(); i++) {
+        String value = list->getItem(i, ec);
+        if (value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
             return false;
     }
 
@@ -79,13 +78,13 @@ bool SVGTests::isValid() const
             return false;
 
     list = requiredExtensions();
-    if(list->numberOfItems() > 0)
+    if (list->numberOfItems() > 0)
         return false;
 
     return true;
 }
 
-bool SVGTests::parseMappedAttribute(MappedAttribute *attr)
+bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::requiredFeaturesAttr) {

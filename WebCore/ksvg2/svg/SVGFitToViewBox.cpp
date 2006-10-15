@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,11 +22,9 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-
-#include "Attr.h"
-#include "FloatRect.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGFitToViewBox.h"
+
+#include "FloatRect.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
@@ -52,9 +50,9 @@ void SVGFitToViewBox::parseViewBox(const String& str)
 {
     double x = 0, y = 0, w = 0, h = 0;
     DeprecatedString viewbox = str.deprecatedString();
-    const char *p = viewbox.latin1();
-    const char *end = p + viewbox.length();
-    const char *c = p;
+    const char* p = viewbox.latin1();
+    const char* end = p + viewbox.length();
+    const char* c = p;
     p = parseCoord(c, x);
     if (p == c)
         goto bail_out;
@@ -66,7 +64,7 @@ void SVGFitToViewBox::parseViewBox(const String& str)
 
     c = p;
     p = parseCoord(c, w);
-    if(w < 0.0 || p == c) // check that width is positive
+    if (w < 0.0 || p == c) // check that width is positive
         goto bail_out;
 
     c = p;

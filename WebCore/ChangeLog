@@ -1,3 +1,76 @@
+2006-10-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg basic datastructure classes.
+
+        * ksvg2/svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::valueAsString):
+        (WebCore::SVGAngle::context):
+        (WebCore::SVGAngle::setContext):
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::ownerSVGElement):
+        (WebCore::SVGElement::viewportElement):
+        (WebCore::SVGElement::parseMappedAttribute):
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::svg_dynamic_cast):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::parseMappedAttribute):
+        * ksvg2/svg/SVGLangSpace.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::setValueAsString):
+        (WebCore::SVGLength::dpi):
+        (WebCore::SVGLength::updateValue):
+        (WebCore::SVGLength::updateValueInSpecifiedUnits):
+        (WebCore::SVGLength::context):
+        (WebCore::SVGLength::setContext):
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGLengthList.cpp:
+        * ksvg2/svg/SVGLengthList.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        (WebCore::SVGLocatable::getBBox):
+        (WebCore::SVGLocatable::getCTM):
+        (WebCore::SVGLocatable::getScreenCTM):
+        * ksvg2/svg/SVGNumberList.cpp:
+        * ksvg2/svg/SVGNumberList.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::reset):
+        * ksvg2/svg/SVGStringList.h:
+        * ksvg2/svg/SVGStylable.cpp:
+        * ksvg2/svg/SVGStylable.h:
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        (WebCore::SVGTests::isValid):
+        (WebCore::SVGTests::parseMappedAttribute):
+        * ksvg2/svg/SVGTests.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.h:
+
 2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

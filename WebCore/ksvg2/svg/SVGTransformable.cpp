@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,22 +22,16 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
+#include "SVGTransformable.h"
+
 #include "RegularExpression.h"
-#include <wtf/RefPtr.h>
-
-#include "Attr.h"
-
-#include <kcanvas/RenderPath.h>
-
-#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
-#include "SVGTransformable.h"
+#include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
-#include "ksvg.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGTransformable::SVGTransformable() : SVGLocatable()
 {
@@ -47,7 +41,7 @@ SVGTransformable::~SVGTransformable()
 {
 }
 
-void SVGTransformable::parseTransformAttribute(SVGTransformList *list, const AtomicString& transform)
+void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
     // Split string for handling 1 transform statement at a time
     Vector<String> subtransforms = transform.domString().simplifyWhiteSpace().split(')');
@@ -103,12 +97,12 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList *list, const Ato
         else if (subtransform[0] == "skewy" && (params.size() == 1))
             t->setSkewY(params[0].toDouble());
         else if (subtransform[0] == "matrix" && (params.size() == 6)) {
-            SVGMatrix *ret = new SVGMatrix(params[0].toDouble(),
-                                                   params[1].toDouble(),
-                                                   params[2].toDouble(),
-                                                   params[3].toDouble(),
-                                                   params[4].toDouble(),
-                                                   params[5].toDouble());
+            SVGMatrix* ret = new SVGMatrix(params[0].toDouble(),
+                                           params[1].toDouble(),
+                                           params[2].toDouble(),
+                                           params[3].toDouble(),
+                                           params[4].toDouble(),
+                                           params[5].toDouble());
             t->setMatrix(ret);
         }
         
@@ -120,6 +114,8 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList *list, const Ato
         ExceptionCode ec = 0;
         list->appendItem(t, ec);
     }
+}
+
 }
 
 // vim:ts=4:noet

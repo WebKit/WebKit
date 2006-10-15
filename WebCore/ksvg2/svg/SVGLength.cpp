@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,9 +29,7 @@
 #include "SVGElement.h"
 #include "SVGLength.h"
 #include "SVGSVGElement.h"
-#include "ksvg.h"
 #include "svgpathparser.h"
-
 #include <math.h>
 
 using namespace std;
@@ -49,7 +47,7 @@ static const char* UnitText[] =
 
 namespace WebCore {
 
-SVGLength::SVGLength(const SVGStyledElement *context, LengthMode mode, const SVGElement *viewport)
+SVGLength::SVGLength(const SVGStyledElement* context, LengthMode mode, const SVGElement* viewport)
     : Shared<SVGLength>()
     , m_value(0)
     , m_valueInSpecifiedUnits(0)
@@ -106,14 +104,14 @@ float SVGLength::valueInSpecifiedUnits() const
 
 void SVGLength::setValueAsString(const String& s)
 {
-    if(s.isEmpty())
+    if (s.isEmpty())
         return;
 
     DeprecatedString valueAsQString = s.deprecatedString();
 
     double convertedNumber = 0;
-    const char *start = valueAsQString.latin1();
-    const char *end = parseCoord(start, convertedNumber);
+    const char* start = valueAsQString.latin1();
+    const char* end = parseCoord(start, convertedNumber);
     m_valueInSpecifiedUnits = convertedNumber;
 
     unsigned int diff = end - start;
@@ -168,13 +166,12 @@ void SVGLength::convertToSpecifiedUnits(unsigned short unitType)
 double SVGLength::dpi() const
 {
     /* FIXME: DPI detection
-    if(context && context->ownerDoc())
-    {
-        if(mode == LM_WIDTH)
+    if (context && context->ownerDoc()) {
+        if (mode == LM_WIDTH)
             return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterX();
-        else if(mode == LM_HEIGHT)
+        else if (mode == LM_HEIGHT)
             return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterY();
-        else if(mode == LM_OTHER)
+        else if (mode == LM_OTHER)
             return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterX();
     }
     */
@@ -184,8 +181,7 @@ double SVGLength::dpi() const
 
 void SVGLength::updateValue(bool notify)
 {
-    switch(m_unitType)
-    {
+    switch (m_unitType) {
         case SVG_LENGTHTYPE_PX:
             m_value = m_valueInSpecifiedUnits;
             break;
@@ -205,9 +201,8 @@ void SVGLength::updateValue(bool notify)
             m_value = (m_valueInSpecifiedUnits / 6.0) * dpi();
             break;
         case SVG_LENGTHTYPE_EMS:
-        case SVG_LENGTHTYPE_EXS:
-        {
-            RenderStyle *style = 0;
+        case SVG_LENGTHTYPE_EXS: {
+            RenderStyle* style = 0;
             if (m_context && m_context->renderer())
                 style = m_context->renderer()->style();
             else if (m_viewportElement && m_viewportElement->renderer())
@@ -240,11 +235,10 @@ void SVGLength::updateValue(bool notify)
 
 bool SVGLength::updateValueInSpecifiedUnits(bool notify)
 {
-    if(m_unitType == SVG_LENGTHTYPE_UNKNOWN)
+    if (m_unitType == SVG_LENGTHTYPE_UNKNOWN)
         return false;
 
-    switch(m_unitType)
-    {
+    switch (m_unitType) {
         case SVG_LENGTHTYPE_PERCENTAGE:
             //kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_PERCENTAGE - UNSUPPORTED! Please report!" << endl;
             return false;
@@ -293,12 +287,12 @@ void SVGLength::setBboxRelative(bool relative)
     m_bboxRelative = relative;
 }
 
-const SVGStyledElement *SVGLength::context() const
+const SVGStyledElement* SVGLength::context() const
 {
     return m_context;
 }
 
-void SVGLength::setContext(const SVGStyledElement *context)
+void SVGLength::setContext(const SVGStyledElement* context)
 {
     m_context = context;
 }

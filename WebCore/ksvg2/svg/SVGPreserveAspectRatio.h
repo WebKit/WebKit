@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+    class String;
     class SVGMatrix;
     class SVGStyledElement;
 
@@ -54,7 +55,7 @@ namespace WebCore {
             SVG_MEETORSLICE_SLICE      = 2
         };
 
-        SVGPreserveAspectRatio(const SVGStyledElement *context);
+        SVGPreserveAspectRatio(const SVGStyledElement* context);
         virtual ~SVGPreserveAspectRatio();
 
         void setAlign(unsigned short);
@@ -63,10 +64,10 @@ namespace WebCore {
         void setMeetOrSlice(unsigned short);
         unsigned short meetOrSlice() const;
         
-        SVGMatrix *getCTM(float logicX, float logicY,
-                              float logicWidth, float logicHeight,
-                              float physX, float physY, float physWidth,
-                              float physHeight);
+        SVGMatrix* getCTM(float logicX, float logicY,
+                          float logicWidth, float logicHeight,
+                          float physX, float physY,
+                          float physWidth, float physHeight);
 
         // Helper
         void parsePreserveAspectRatio(const String&);
@@ -75,7 +76,7 @@ namespace WebCore {
         unsigned short m_align;
         unsigned short m_meetOrSlice;
 
-        const SVGStyledElement *m_context;
+        const SVGStyledElement* m_context;
     };
 
 } // namespace WebCore

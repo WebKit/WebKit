@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,14 +22,14 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "ksvg.h"
+#include "SVGPreserveAspectRatio.h"
+
 #include "SVGMatrix.h"
 #include "SVGSVGElement.h"
-#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
-SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement *context)
+SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement* context)
     : Shared<SVGPreserveAspectRatio>()
     , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
     , m_meetOrSlice(SVG_MEETORSLICE_MEET)
@@ -101,10 +101,12 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         m_context->notifyAttributeChange();
 }
 
-SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logicWidth, float logicHeight,
-                                                  float /*physX*/, float /*physY*/, float physWidth, float physHeight)
+SVGMatrix* SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
+                                          float logicWidth, float logicHeight,
+                                          float /*physX*/, float /*physY*/,
+                                          float physWidth, float physHeight)
 {
-    SVGMatrix *temp = SVGSVGElement::createSVGMatrix();
+    SVGMatrix* temp = SVGSVGElement::createSVGMatrix();
 
     if (align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return temp;

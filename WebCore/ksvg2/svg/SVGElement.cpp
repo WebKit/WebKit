@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,9 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "SVGElement.h"
 
-#include "Attr.h"
-#include "Document.h"
 #include "DOMImplementation.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -36,7 +35,6 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "XMLNames.h"
-#include "ksvg.h"
 
 namespace WebCore {
 
@@ -82,8 +80,8 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    Node *n = parentNode();
-    while(n) {
+    Node* n = parentNode();
+    while (n) {
         if (n->nodeType() == ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElement*>(n);
 
@@ -95,7 +93,7 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
 
 SVGElement* SVGElement::viewportElement() const
 {
-    Node *n = parentNode();
+    Node* n = parentNode();
     while (n) {
         if (n->isElementNode() &&
             (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
@@ -129,7 +127,7 @@ void SVGElement::addSVGEventListener(const AtomicString& eventType, const Attrib
         createSVGEventListener(attr->localName().domString(), attr->value(), this));
 }
 
-void SVGElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     // standard events
     if (attr->name() == onloadAttr)
@@ -189,7 +187,7 @@ void SVGElement::closeRenderer()
     sendSVGLoadEventIfPossible();
 }
 
-bool SVGElement::childShouldCreateRenderer(Node *child) const
+bool SVGElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isSVGElement())
         return static_cast<SVGElement*>(child)->isValid();

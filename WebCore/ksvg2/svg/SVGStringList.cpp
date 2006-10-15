@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -21,7 +21,6 @@
 */
 
 #include "config.h"
-
 #ifdef SVG_SUPPORT
 #include "SVGStringList.h"
 
@@ -45,7 +44,7 @@ void SVGStringList::reset(const String& str)
         appendItem(String(""), ec); // Create empty string...
     } else {
         Vector<String>::const_iterator end = vector.end();
-        for(Vector<String>::const_iterator it = vector.begin(); it != end; ++it)
+        for (Vector<String>::const_iterator it = vector.begin(); it != end; ++it)
             appendItem(*it, ec);
     }
 }

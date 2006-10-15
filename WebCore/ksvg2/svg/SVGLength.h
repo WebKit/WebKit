@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,7 +25,7 @@
 #ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
-#include <ksvg2/svg/SVGHelper.h>
+#include "SVGHelper.h"
 
 namespace WebCore {
 
@@ -72,7 +72,7 @@ namespace WebCore {
         void setBboxRelative(bool);
 
         const SVGStyledElement* context() const;
-        void setContext(const SVGStyledElement *context);
+        void setContext(const SVGStyledElement* context);
 
     private:
         bool updateValueInSpecifiedUnits(bool notify = true);
@@ -88,8 +88,8 @@ namespace WebCore {
         SVGLengthType m_unitType : 4;
         bool m_requiresLayout : 1;
 
-        const SVGStyledElement *m_context;
-        const SVGElement *m_viewportElement;
+        const SVGStyledElement* m_context;
+        const SVGElement* m_viewportElement;
     };
 
 } // namespace WebCore

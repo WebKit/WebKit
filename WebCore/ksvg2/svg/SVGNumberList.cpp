@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -23,11 +23,12 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#include "SVGMatrix.h"
-#include "SVGSVGElement.h"
 #include "SVGNumberList.h"
 
-using namespace WebCore;
+#include "SVGMatrix.h"
+#include "SVGSVGElement.h"
+
+namespace WebCore {
 
 SVGNumberList::SVGNumberList()
     : SVGList<double>()
@@ -45,6 +46,8 @@ void SVGNumberList::parse(const String& value)
     Vector<String> numbers = value.split(' ');
     for (unsigned int i = 0; i < numbers.size(); i++)
         appendItem(numbers[i].toDouble(), ec);
+}
+
 }
 
 // vim:ts=4:noet
