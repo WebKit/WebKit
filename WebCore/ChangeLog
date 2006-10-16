@@ -1,3 +1,24 @@
+2006-10-16  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 9347, positioned elements have the wrong containing block.  This is a change from CSS2 to
+        CSS2.1.  In the absence of any other enclosing positioned elements, the containing block for a positioned
+        element is the initial containing block (our RenderView).
+
+        Reviewed by mjs
+
+        Test cases added to fast/block/positioning for quirks and strict modes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::container):
+
 2006-10-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Anders.

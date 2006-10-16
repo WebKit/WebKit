@@ -1496,10 +1496,6 @@ int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingB
 
 int RenderBox::containingBlockHeightForPositioned(const RenderObject* containingBlock) const
 {
-    // Even in strict mode (where we don't grow the root to fill the viewport) other browsers
-    // position as though the root fills the viewport.
-    if (containingBlock->isRoot())
-        return containingBlock->availableHeight();
     return containingBlock->height() - containingBlock->borderTop() - containingBlock->borderBottom();
 }
 
@@ -1921,11 +1917,6 @@ void RenderBox::calcAbsoluteVertical()
     }
 
     height += bordersPlusPadding;
-
-    // If our natural/content height exceeds the new height once we've set it, then we
-    // need to make sure to update overflow to track the spillout.
-    if (m_height > height)
-        setOverflowHeight(m_height);
 
     // Set final height value.
     m_height = height;

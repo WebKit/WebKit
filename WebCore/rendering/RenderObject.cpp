@@ -778,8 +778,7 @@ RenderBlock* RenderObject::containingBlock() const
             o = o->parent();
     }
     else if (!isText() && m_style->position() == AbsolutePosition) {
-        while (o && (o->style()->position() == StaticPosition || (o->isInline() && !o->isReplaced()))
-               && !o->isRoot() && !o->isRenderView()) {
+        while (o && (o->style()->position() == StaticPosition || (o->isInline() && !o->isReplaced())) && !o->isRenderView()) {
             // For relpositioned inlines, we return the nearest enclosing block.  We don't try
             // to return the inline itself.  This allows us to avoid having a positioned objects
             // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
@@ -2402,7 +2401,7 @@ RenderObject *RenderObject::container() const
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
         o = parent();
-        while (o && o->style()->position() == StaticPosition && !o->isRoot() && !o->isRenderView())
+        while (o && o->style()->position() == StaticPosition && !o->isRenderView())
             o = o->parent();
     }
     else

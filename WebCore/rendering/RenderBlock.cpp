@@ -2149,14 +2149,16 @@ RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) cons
         }
     }
 
-    // Fixed positioned objects do not scroll and thus should not constitute
-    // part of the lowest position.
-    if (m_positionedObjects && !isRenderView()) {
+    if (m_positionedObjects) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int lp = r->yPos() + r->lowestPosition(false);
-            bottom = max(bottom, lp);
+            // Fixed positioned objects do not scroll and thus should not constitute
+            // part of the lowest position.
+            if (r->style()->position() != FixedPosition) {
+                int lp = r->yPos() + r->lowestPosition(false);
+                bottom = max(bottom, lp);
+            }
         }
     }
 
@@ -2187,12 +2189,16 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         }
     }
 
-    if (m_positionedObjects && !isRenderView()) {
+    if (m_positionedObjects) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int rp = r->xPos() + r->rightmostPosition(false);
-            right = max(right, rp);
+            // Fixed positioned objects do not scroll and thus should not constitute
+            // part of the rightmost position.
+            if (r->style()->position() != FixedPosition) {
+                int rp = r->xPos() + r->rightmostPosition(false);
+                right = max(right, rp);
+            }
         }
     }
 
@@ -2229,12 +2235,16 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         }
     }
     
-    if (m_positionedObjects && !isRenderView()) {
+    if (m_positionedObjects) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int lp = r->xPos() + r->leftmostPosition(false);
-            left = min(left, lp);
+            // Fixed positioned objects do not scroll and thus should not constitute
+            // part of the leftmost position.
+            if (r->style()->position() != FixedPosition) {
+                int lp = r->xPos() + r->leftmostPosition(false);
+                left = min(left, lp);
+            }
         }
     }
     
