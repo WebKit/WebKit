@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt34.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt34$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc34$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc34$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -67,7 +68,7 @@
 				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitOutputDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitSDKDir)\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
