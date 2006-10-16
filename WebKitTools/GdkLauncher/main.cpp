@@ -70,7 +70,6 @@ int main(int argc, char *argv[])
     win = gdk_window_new(NULL,&attr,0);
     frame = new LauncherFrameGdk(win);
     gdk_window_show(win);
-    char *pg = " <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ";
     url = "http://www.google.com";
     bool exitAfterLoading = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
@@ -84,12 +83,13 @@ int main(int argc, char *argv[])
         printf("OPENING URL == %s \n", url);
         frame->openURL(url);
     } else {
-/*
-  frame->createEmptyDocument();
-    frame->document()->open();
-    frame->write(pg,strlen(pg));
-    frame->document()->close();
-*/
+#if 0
+        char *pg = " <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ";
+        frame->createEmptyDocument();
+        frame->document()->open();
+        frame->write(pg,strlen(pg));
+        frame->document()->close();
+#endif
     }
     
     gtk_main();

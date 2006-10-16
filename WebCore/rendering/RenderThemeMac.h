@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class RenderStyle;
-class RenderPopupMenu;
 
 class RenderThemeMac : public RenderTheme {
 public:

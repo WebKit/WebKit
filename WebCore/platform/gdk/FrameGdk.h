@@ -79,9 +79,9 @@ public:
 
     void handleGdkEvent(GdkEvent*);
     virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const ResourceRequest&);
-    virtual void submitForm(const ResourceRequest&);
-    virtual void urlSelected(const ResourceRequest&);
+    virtual void openURLRequest(const FrameLoadRequest&);
+    virtual void submitForm(const FrameLoadRequest&);
+    virtual void urlSelected(const FrameLoadRequest&);
 
     virtual void setTitle(const String&);
 

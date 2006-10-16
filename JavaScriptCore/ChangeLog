@@ -1,3 +1,12 @@
+2006-10-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Anders.
+
+        Remove junk (as gcc calls it) after #else clause.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::do_free):
+
 2006-10-14  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.

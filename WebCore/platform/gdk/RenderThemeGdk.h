@@ -38,8 +38,7 @@ struct ThemeData {
 
 class RenderThemeGdk : public RenderTheme {
 public:
-    RenderThemeGdk();
-    ~RenderThemeGdk();
+    RenderThemeGdk() : RenderTheme() { }
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
@@ -60,8 +59,6 @@ public:
 
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
-
-    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*);
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;

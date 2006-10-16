@@ -39,8 +39,8 @@ class BrowserExtensionGdk : public BrowserExtension {
 public:
     BrowserExtensionGdk(Frame*);
 
-    virtual void createNewWindow(const ResourceRequest&);
-    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*&);
+    virtual void createNewWindow(const FrameLoadRequest&);
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*&);
 
     virtual void setIconURL(const KURL&);
     virtual void setTypedIconURL(const KURL&, const String& type);

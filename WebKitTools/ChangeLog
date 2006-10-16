@@ -1,3 +1,15 @@
+2006-10-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Anders.
+
+        Make compiler not complain about unused gk. SpinneretWebHost was not setting
+        initial refcount upon creation, so it is completely bogus.
+
+        * GdkLauncher/main.cpp:
+        (main):
+        * Spinneret/Spinneret/Spinneret.h:
+        (SpinneretWebHost::SpinneretWebHost):
+
 2006-10-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -22,45 +22,56 @@
  */
 
 #include "config.h"
-#include "RenderPopupMenuGdk.h"
+#include "PopupMenu.h"
+
+#include <stdio.h>
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
-RenderPopupMenuGdk::RenderPopupMenuGdk(Node* element,  RenderMenuList* list)
-    : RenderPopupMenu(element,list)
+PopupMenu::PopupMenu(RenderMenuList* menuList)
 {
 }
 
-RenderPopupMenuGdk::~RenderPopupMenuGdk()
+PopupMenu::~PopupMenu()
 {
 }
 
-void RenderPopupMenuGdk::clear()
+void PopupMenu::clear()
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::populate()
+void PopupMenu::populate()
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::showPopup(const IntRect&, FrameView*, int)
+void PopupMenu::show(const IntRect&, FrameView*, int)
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::hidePopup()
+void PopupMenu::hide()
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::addSeparator()
+void PopupMenu::addSeparator()
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::addGroupLabel(HTMLOptGroupElement*)
+void PopupMenu::addGroupLabel(HTMLOptGroupElement*)
 {
+    notImplemented();
 }
 
-void RenderPopupMenuGdk::addOption(HTMLOptionElement*)
+void PopupMenu::addOption(HTMLOptionElement*)
 {
+    notImplemented();
 }
 
 }
+

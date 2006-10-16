@@ -1,3 +1,46 @@
+2006-10-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Anders.
+
+        Misc Gdk/Linux build fixes.
+
+        * platform/gdk/BrowserExtensionGdk.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::submitForm):
+        (WebCore::FrameGdk::urlSelected):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/RenderPopupMenuGdk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::clear):
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::addSeparator):
+        (WebCore::PopupMenu::addGroupLabel):
+        (WebCore::PopupMenu::addOption):
+        * platform/gdk/RenderPopupMenuGdk.h:
+        * platform/gdk/RenderThemeGdk.cpp:
+        * platform/gdk/RenderThemeGdk.h:
+        (WebCore::RenderThemeGdk::RenderThemeGdk):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (BrowserExtensionGdk::createNewWindow):
+        (BrowserExtensionGdk::BrowserExtensionGdk):
+        (BrowserExtensionGdk::setTypedIconURL):
+        (BrowserExtensionGdk::setIconURL):
+        (BrowserExtensionGdk::getHistoryLength):
+        (WebCore::CheckIfReloading):
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::ResponseURL):
+        (WebCore::IsResponseURLEqualToURL):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::ResponseMIMEType):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::setAllData):
+        (FileChooser::disconnectUploadControl):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+
 2006-10-15  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Mitz.

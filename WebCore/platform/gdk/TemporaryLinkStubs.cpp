@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#define WIN32_COMPILE_HACK
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "CString.h"
@@ -58,19 +56,29 @@
 #include "RenderTheme.h"
 #include "FrameGdk.h"
 #include "BrowserExtensionGdk.h"
-#include "ResourceLoader.h"
+#include "FrameLoadRequest.h"
 #include "RenderThemeGdk.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
-#include "RenderPopupMenuGdk.h"
 #include "EditCommand.h"
 #include "Icon.h"
 #include "IconLoader.h"
 #include "IconDatabase.h"
+#include "CachedResource.h"
 
 using namespace WebCore;
 
-static void notImplemented() { puts("Not yet implemented"); }
+namespace WebCore {
+struct PlatformDataStruct
+{
+};
+
+struct PlatformResponseStruct
+{
+};
+}
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s in %s:%d\n", __FUNCTION__, __FILE__, __LINE__); } while(0)
 
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { return false; }
@@ -154,7 +162,7 @@ KJS::Bindings::Instance* FrameGdk::getAppletInstanceForWidget(Widget*) { notImpl
 bool FrameGdk::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameGdk::issueCutCommand() { notImplemented(); }
 void FrameGdk::issueCopyCommand() { notImplemented(); }
-void FrameGdk::openURLRequest(struct WebCore::ResourceRequest const&) { notImplemented(); }
+void FrameGdk::openURLRequest(struct WebCore::FrameLoadRequest const&) { notImplemented(); }
 void FrameGdk::issueUndoCommand() { notImplemented(); }
 String FrameGdk::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameGdk::issuePasteCommand() { notImplemented(); }
@@ -174,12 +182,16 @@ KURL FrameGdk::originalRequestURL() const { return KURL(); }
 Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionGdk::canRunModal() { notImplemented(); return 0; }
-void BrowserExtensionGdk::createNewWindow(struct WebCore::ResourceRequest const&, struct WebCore::WindowArgs const&, Frame*&) { notImplemented(); }
+void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&, struct WebCore::WindowArgs const&, Frame*&) { notImplemented(); }
+void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&) { notImplemented(); }
 bool BrowserExtensionGdk::canRunModalNow() { notImplemented(); return 0; }
 void BrowserExtensionGdk::runModal() { notImplemented(); }
 void BrowserExtensionGdk::goBackOrForward(int) { notImplemented(); }
 KURL BrowserExtensionGdk::historyURL(int distance) { notImplemented(); return KURL(); }
-void BrowserExtensionGdk::createNewWindow(struct WebCore::ResourceRequest const&) { notImplemented(); }
+BrowserExtensionGdk::BrowserExtensionGdk(WebCore::Frame*) { }
+void BrowserExtensionGdk::setTypedIconURL(KURL const&, const String&) { }
+void BrowserExtensionGdk::setIconURL(KURL const&) { }
+int BrowserExtensionGdk::getHistoryLength() { return 0; }
 
 int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
 bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
@@ -231,15 +243,17 @@ String FrameGdk::incomingReferrer() const { return String(); }
 void FrameGdk::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
 void FrameGdk::respondToChangedContents(const Selection&) { }
 
-BrowserExtensionGdk::BrowserExtensionGdk(WebCore::Frame*) { }
-void BrowserExtensionGdk::setTypedIconURL(KURL const&, const String&) { }
-void BrowserExtensionGdk::setIconURL(KURL const&) { }
-int BrowserExtensionGdk::getHistoryLength() { return 0; }
-
 namespace WebCore {
 
-bool CheckIfReloading(WebCore::DocLoader*) { return false; }
+bool CheckIfReloading(DocLoader*) { return false; }
+time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse) { return 0; }
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
+DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
+bool IsResponseURLEqualToURL(PlatformResponse , const String& URL) { return false; }
+bool ResponseIsMultipart(PlatformResponse) { return false; }
+DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
+void CachedResource::setResponse(PlatformResponse) { notImplemented(); }
+void CachedResource::setAllData(PlatformData) { notImplemented(); }
 
 }
 
@@ -326,12 +340,6 @@ void PlatformScrollbar::updateThumbPosition() { }
 void PlatformScrollbar::updateThumbProportion() { }
 void PlatformScrollbar::setRect(const IntRect&) { }
 
-Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize controlSize) { }
-void Scrollbar::setSteps(int, int) { }
-bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
-bool Scrollbar::setValue(int) { return false; }
-void Scrollbar::setProportion(int, int) { }
-
 ListBox::ListBox() { }
 ListBox::~ListBox() { }
 void ListBox::setSelectionMode(ListBox::SelectionMode) { }
@@ -342,7 +350,7 @@ FileChooser::~FileChooser() { notImplemented(); }
 PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
 void FileChooser::openFileChooser() { notImplemented(); }
 String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
-void FileChooser::uploadControlDetaching() { notImplemented(); }
+void FileChooser::disconnectUploadControl() { notImplemented(); }
 void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }

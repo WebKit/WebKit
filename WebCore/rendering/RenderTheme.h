@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class Element;
-class RenderPopupMenu;
+class PopupMenu;
 class RenderMenuList;
 
 enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState, ReadOnlyState };

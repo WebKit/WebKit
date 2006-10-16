@@ -32,6 +32,8 @@
 class SpinneretWebHost : public IWebFrameLoadDelegate
 {
 public:
+    SpinneretWebHost() : m_refCount(1) {}
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef(void);
