@@ -153,10 +153,10 @@ void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
     }
 }
 
-void HTMLSelectElement::setSelectedIndex(int index, bool deselect, bool fireOnChange)
+void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fireOnChange)
 {
     const Vector<HTMLElement*>& items = listItems();
-    int listIndex = optionToListIndex(index);
+    int listIndex = optionToListIndex(optionIndex);
     HTMLOptionElement* element = 0;
     if (listIndex >= 0) {
         element = static_cast<HTMLOptionElement*>(items[listIndex]);
@@ -165,7 +165,7 @@ void HTMLSelectElement::setSelectedIndex(int index, bool deselect, bool fireOnCh
     if (deselect)
         deselectItems(element);
     if (fireOnChange) {
-        m_lastOnChangeIndex = index;
+        m_lastOnChangeIndex = optionIndex;
         onChange();
     }
 }
@@ -560,17 +560,27 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             handled = true;
         }
 #else
-        int index = optionToListIndex(selectedIndex());
+        int listIndex = optionToListIndex(selectedIndex());
         if (keyIdentifier == "Down" || keyIdentifier == "Right") {
-            if (index < listItems().size() - 1)
-                setSelectedIndex(++index);
+            size_t size = listItems().size();
+            for (listIndex += 1;
+                 listIndex >= 0 && listIndex < size && (listItems()[listIndex]->disabled() || !listItems()[listIndex]->hasTagName(optionTag));
+                 ++listIndex);
+            
+            if (listIndex >= 0 && listIndex < size)
+                setSelectedIndex(listToOptionIndex(listIndex));
             handled = true;
         } else if (keyIdentifier == "Up" || keyIdentifier == "Left") {
-            if (index > 0)
-                setSelectedIndex(--index);
+            size_t size = listItems().size();
+            for (listIndex -= 1;
+                 listIndex >= 0 && listIndex < size && (listItems()[listIndex]->disabled() || !listItems()[listIndex]->hasTagName(optionTag));
+                 --listIndex);
+            
+            if (listIndex >= 0 && listIndex < size)
+                setSelectedIndex(listToOptionIndex(listIndex));
             handled = true;
-        } else if (keyIdentifier == "Enter" && index != m_lastOnChangeIndex) {
-            setSelectedIndex(index, true, true);
+        } else if (keyIdentifier == "Enter" && listIndex != m_lastOnChangeIndex) {
+            setSelectedIndex(listToOptionIndex(listIndex), true, true);
         }
 
 #endif

@@ -1,3 +1,22 @@
+2006-10-16  Adam Roben  <aroben@apple.com>
+
+        Reviewed by John.
+
+        More menulist cleanup/tweaking.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Renamed 'index'
+        parameter to 'optionIndex' for clarity.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Skip over
+        items that are not enabled <option> elements when using arrow keys, and
+        make sure we pass an option index to setSelectedIndex.
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::setWasClicked): Specify default argument.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setTextFromOption): Strip whitespace from
+        option text before setting the control text so that options within
+        <optgroup>s don't appear indented in the actual control.
+
 2006-10-16  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Adam.

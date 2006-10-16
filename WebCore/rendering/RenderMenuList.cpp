@@ -136,7 +136,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
         if (element->hasTagName(optionTag))
             text = static_cast<HTMLOptionElement*>(listItems[i])->optionText();
     }
-    setText(text);
+    setText(text.stripWhiteSpace());
 }
 
 void RenderMenuList::setText(const String& s)
