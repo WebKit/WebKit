@@ -121,8 +121,10 @@ void Loader::receivedResponse(ResourceLoader* job, PlatformResponse response)
 {
     Request* req = m_requestsLoading.get(job);
     ASSERT(req);
+#if !PLATFORM(WIN)
+    // FIXME: the win32 platform does not have PlatformResponse yet.
     ASSERT(response);
-
+#endif
     req->cachedObject()->setResponse(response);
     req->cachedObject()->setExpireDate(CacheObjectExpiresTime(req->docLoader(), response), false);
     

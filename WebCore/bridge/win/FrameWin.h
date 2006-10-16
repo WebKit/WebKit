@@ -30,8 +30,9 @@
 
 namespace WebCore {
 
-class FrameWinClient
-{
+class FrameLoadRequest;
+
+class FrameWinClient {
 public:
     virtual void createNewWindow(const ResourceRequest&) = 0;
     virtual void createNewWindow(const ResourceRequest&,
@@ -43,18 +44,17 @@ public:
     virtual void setStatusText(const String& statusText) = 0;
 };
 
-class FrameWin : public Frame
-{
+class FrameWin : public Frame {
 public:
     FrameWin(Page*, Element*, FrameWinClient*);
     ~FrameWin();
 
-    virtual void createNewWindow(const ResourceRequest&);
-    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*& part);
+    virtual void createNewWindow(const FrameLoadRequest&);
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*& part);
     virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const ResourceRequest&);
-    virtual void submitForm(const ResourceRequest&);
-    virtual void urlSelected(const ResourceRequest&);
+    virtual void openURLRequest(const FrameLoadRequest&);
+    virtual void submitForm(const FrameLoadRequest&);
+    virtual void urlSelected(const FrameLoadRequest&);
 
     virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);
@@ -146,6 +146,6 @@ private:
 inline FrameWin* Win(Frame* frame) { return static_cast<FrameWin*>(frame); }
 inline const FrameWin* Win(const Frame* frame) { return static_cast<const FrameWin*>(frame); }
 
-}
+} // namespace WebCore
 
 #endif

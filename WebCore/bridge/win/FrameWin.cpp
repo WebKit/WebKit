@@ -29,6 +29,7 @@
 #include "BrowserExtensionWin.h"
 #include "Decoder.h"
 #include "Document.h"
+#include "FrameLoadRequest.h"
 #include "FramePrivate.h"
 #include "Settings.h"
 #include "PlatformKeyboardEvent.h"
@@ -63,21 +64,22 @@ FrameWin::~FrameWin()
     clearRecordedFormValues();    
 }
 
-void FrameWin::urlSelected(const ResourceRequest& request)
+void FrameWin::urlSelected(const FrameLoadRequest& request)
 {
     if (m_client)
-        m_client->openURL(request.url().url(), request.lockHistory());
+        m_client->openURL(request.m_request.url().url(), request.lockHistory());
 }
 
-void FrameWin::submitForm(const ResourceRequest& request)
+void FrameWin::submitForm(const FrameLoadRequest& request)
 {
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    if (d->m_submittedFormURL == request.url())
+    const ResourceRequest& resourceRequest = request.m_request;
+    if (d->m_submittedFormURL == resourceRequest.url())
         return;
-    d->m_submittedFormURL = request.url();
+    d->m_submittedFormURL = resourceRequest.url();
 
     if (m_client)
-        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
+        m_client->submitForm(resourceRequest.doPost() ? "POST" : "GET", resourceRequest.url(), &resourceRequest.postData);
 
     clearRecordedFormValues();
 }
@@ -150,16 +152,16 @@ void FrameWin::setStatusBarText(const String& status)
     m_client->setStatusText(text);
 }
 
-void FrameWin::createNewWindow(const ResourceRequest& request)
+void FrameWin::createNewWindow(const FrameLoadRequest& request)
 {
-    m_client->createNewWindow(request);
+    m_client->createNewWindow(request.m_request);
 }
 
-void FrameWin::createNewWindow(const ResourceRequest& request,
+void FrameWin::createNewWindow(const FrameLoadRequest& request,
                                const WindowArgs& args,
                                Frame*& part)
 {
-    m_client->createNewWindow(request, args, part);
+    m_client->createNewWindow(request.m_request, args, part);
 }
 
 }

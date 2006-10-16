@@ -919,6 +919,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\FrameLoadRequest.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\FramePrivate.h"
 				>
 			</File>
@@ -956,6 +960,10 @@
 			</File>
 			<File
 				RelativePath="..\..\page\Plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\ResourceRequest.h"
 				>
 			</File>
 			<File

@@ -33,7 +33,7 @@
 namespace WebCore
 {
     
-HDC GraphicsContext::getWindowsContext()
+HDC GraphicsContext::getWindowsContext(bool /*supportAlphaBlend*/, const IntRect*)
 {
     cairo_surface_t* surface = cairo_get_target(platformContext());
     HDC hdc = cairo_win32_surface_get_dc(surface);    
@@ -56,7 +56,7 @@ HDC GraphicsContext::getWindowsContext()
     return hdc;
 }
 
-void GraphicsContext::releaseWindowsContext()
+void GraphicsContext::releaseWindowsContext(HDC, bool /*supportAlphaBlend*/, const IntRect*)
 {
     cairo_surface_t* surface = cairo_get_target(platformContext());
     HDC hdc = cairo_win32_surface_get_dc(surface);
