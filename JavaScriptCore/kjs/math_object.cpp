@@ -22,40 +22,11 @@
 #include "config.h"
 #include "math_object.h"
 #include "math_object.lut.h"
+#include "wtf/MathExtras.h"
 
 #include "operations.h"
 #include <math.h>
 #include <time.h>
-
-#if PLATFORM(WIN_OS)
-
-#include <float.h>
-static int signbit(double d)
-{
-    // FIXME: Not sure if this is exactly right.
-    switch (_fpclass(d)) {
-        case _FPCLASS_NINF:
-        case _FPCLASS_NN:
-        case _FPCLASS_ND:
-        case _FPCLASS_NZ:
-            // It's one of wacky negatives, report as negative.
-            return 1;
-        case _FPCLASS_PINF:
-        case _FPCLASS_PN:
-        case _FPCLASS_PD:
-        case _FPCLASS_PZ:
-            // It's one of wacky positives, report as positive.
-            return 0;
-        default:
-            return d < 0;
-    }
-}
-
-#endif
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif  /*  M_PI  */
 
 using namespace KJS;
 
@@ -226,10 +197,12 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
       result = NaN;
     else if (isNaN(arg) && arg2 != 0)
       result = NaN;
-    else if (fabs(arg) == 1 && KJS::isInf(arg2))
+    else if (fabs(arg) == 1 && isInf(arg2))
       result = NaN;
+    else if (arg2 == 0 && arg != 0)
+      result = 1;
     else
-      result = pow(arg, arg2);
+      result = ::pow(arg, arg2);
     break;
   case MathObjectImp::Random:
       if (!randomSeeded) {

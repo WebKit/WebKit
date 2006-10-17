@@ -1,3 +1,14 @@
+2006-10-17  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Brady.
+
+        Fixes a JavaScriptCore math issue on win.
+
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction):
+        * wtf/MathExtras.h:
+        (wtf_atan2):
+
 2006-10-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geof.
