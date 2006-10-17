@@ -1,5 +1,18 @@
 2006-10-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        <rdar://problem/4774354>
+        REGRESSION: In Gmail, caret reappears when dragging a selection over some text in the message body
+
+        * fast/repaint/4774354-expected.checksum: Added.
+        * fast/repaint/4774354-expected.png: Added.
+        * fast/repaint/4774354-expected.txt: Added.
+        * fast/repaint/4774354.html: Added.
+        * fast/repaint/resources/contenteditable-iframe-src.html: Added.
+
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by sullivan
         
         <rdar://problem/4776765>

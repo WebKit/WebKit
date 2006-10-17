@@ -791,10 +791,10 @@ IntRect SelectionController::caretRepaintRect() const
 
 bool SelectionController::recomputeCaretRect()
 {
-    if (!isCaret())
+    if (!m_frame || !m_frame->document())
         return false;
-
-    FrameView* v = m_sel.start().node()->document()->view();
+        
+    FrameView* v = m_frame->document()->view();
     if (!v)
         return false;
 

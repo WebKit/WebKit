@@ -1,3 +1,20 @@
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4774354>
+        REGRESSION: In Gmail, caret reappears when dragging a selection over some text in the message body
+
+        Functions call recomputCaretRect to see if the caret rect has changed, 
+        and, if it has, they invalidate (repaint) it.  recomputeCaretRect was 
+        returning false if the caret turned into a range selection or was blown 
+        away.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::recomputeCaretRect): Don't early return if
+        !isCaret().  Obtain the FrameView* using the m_frame pointer, because m_sel 
+        may now be null.
+
 2006-10-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady.
