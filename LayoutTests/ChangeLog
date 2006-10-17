@@ -1,3 +1,16 @@
+2006-10-17  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11214
+        http/tests/xmlhttprequest/exceptions.html needs new results
+
+        Updating results after r16794.
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html: Add comments about why we
+        don't follow the XHR spec.
+
 2006-10-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
