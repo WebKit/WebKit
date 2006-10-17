@@ -1,3 +1,12 @@
+2006-10-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof.
+
+        Removed unecessary global specifiers.
+
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction):
+
 2006-10-16  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by John.

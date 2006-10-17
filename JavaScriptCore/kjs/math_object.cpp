@@ -164,31 +164,31 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
     result = ( arg < 0 || arg == -0) ? (-arg) : arg;
     break;
   case MathObjectImp::ACos:
-    result = ::acos(arg);
+    result = acos(arg);
     break;
   case MathObjectImp::ASin:
-    result = ::asin(arg);
+    result = asin(arg);
     break;
   case MathObjectImp::ATan:
-    result = ::atan(arg);
+    result = atan(arg);
     break;
   case MathObjectImp::ATan2:
-    result = ::atan2(arg, arg2);
+    result = atan2(arg, arg2);
     break;
   case MathObjectImp::Ceil:
-    result = ::ceil(arg);
+    result = ceil(arg);
     break;
   case MathObjectImp::Cos:
-    result = ::cos(arg);
+    result = cos(arg);
     break;
   case MathObjectImp::Exp:
-    result = ::exp(arg);
+    result = exp(arg);
     break;
   case MathObjectImp::Floor:
-    result = ::floor(arg);
+    result = floor(arg);
     break;
   case MathObjectImp::Log:
-    result = ::log(arg);
+    result = log(arg);
     break;
   case MathObjectImp::Max: {
     unsigned int argsCount = args.size();
@@ -226,10 +226,10 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
       result = NaN;
     else if (isNaN(arg) && arg2 != 0)
       result = NaN;
-    else if (::fabs(arg) == 1 && KJS::isInf(arg2))
+    else if (fabs(arg) == 1 && KJS::isInf(arg2))
       result = NaN;
     else
-      result = ::pow(arg, arg2);
+      result = pow(arg, arg2);
     break;
   case MathObjectImp::Random:
       if (!randomSeeded) {
@@ -242,16 +242,16 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
     if (signbit(arg) && arg >= -0.5)
         result = -0.0;
     else
-        result = ::floor(arg + 0.5);
+        result = floor(arg + 0.5);
     break;
   case MathObjectImp::Sin:
-    result = ::sin(arg);
+    result = sin(arg);
     break;
   case MathObjectImp::Sqrt:
-    result = ::sqrt(arg);
+    result = sqrt(arg);
     break;
   case MathObjectImp::Tan:
-    result = ::tan(arg);
+    result = tan(arg);
     break;
 
   default:
