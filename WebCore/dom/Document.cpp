@@ -936,7 +936,7 @@ void Document::updateLayoutIgnorePendingStylesheets()
         // moment.  If it were more refined, we might be able to do something better.)
         // It's worth noting though that this entire method is a hack, since what we really want to do is
         // suspend JS instead of doing a layout with inaccurate information.
-        if (m_pendingSheetLayout == NoLayoutWithPendingSheets)
+        if (body() && !body()->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets)
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
         updateStyleSelector();    
     }
@@ -1254,6 +1254,7 @@ void Document::implicitClose()
         if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
             view()->layout();
     }
+
 #if __APPLE__
     if (renderer() && AXObjectCache::accessibilityEnabled())
         axObjectCache()->postNotificationToElement(renderer(), "AXLoadComplete");

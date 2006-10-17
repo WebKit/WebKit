@@ -1,5 +1,13 @@
 2006-10-17  David Hyatt  <hyatt@apple.com>
 
+        Fix "flash to white' problem on yahoo.com as it finishes loading.  Refine the FOUC suppression
+        code so that it will only run if the body still has no renderer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+
+2006-10-17  David Hyatt  <hyatt@apple.com>
+
         Fix a bug where the WebCore memory cache could grow without bound during extended browsing
         sessions.
 
