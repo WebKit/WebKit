@@ -2182,7 +2182,9 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(alignRight:)
             || action == @selector(changeAttributes:)
             || action == @selector(changeColor:)        
-            || action == @selector(changeFont:)) {
+            || action == @selector(changeFont:)
+            || action == @selector(indent:)
+            || action == @selector(outdent:)) {
         return [self _canEditRichly];
     } else if (action == @selector(capitalizeWord:)
                || action == @selector(lowercaseWord:)
@@ -4700,6 +4702,16 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
 }
 
+- (void)indent:(id)sender
+{
+    [[self _bridge] indent];
+}
+
+- (void)outdent:(id)sender
+{
+    [[self _bridge] outdent];
+}
+
 #if 0
 
 // CSS does not have a way to specify an outline font, which may make this difficult to implement.
@@ -4723,7 +4735,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 // These methods are not implemented in NSTextView yet, so perhaps there's no rush.
 - (void)changeCaseOfLetter:(id)sender;
-- (void)indent:(id)sender;
 - (void)transposeWords:(id)sender;
 
 #endif

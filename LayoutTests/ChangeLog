@@ -1,3 +1,19 @@
+2006-10-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/3655385>
+        Editing: -indent: method unimplemented
+
+        * editing/execCommand/nsresponder-indent-expected.checksum: Added.
+        * editing/execCommand/nsresponder-indent-expected.png: Added.
+        * editing/execCommand/nsresponder-indent-expected.txt: Added.
+        * editing/execCommand/nsresponder-indent.html: Added.
+        * editing/execCommand/nsresponder-outdent-expected.checksum: Added.
+        * editing/execCommand/nsresponder-outdent-expected.png: Added.
+        * editing/execCommand/nsresponder-outdent-expected.txt: Added.
+        * editing/execCommand/nsresponder-outdent.html: Added.
+
 2006-10-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren and harrison

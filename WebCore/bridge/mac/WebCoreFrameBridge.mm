@@ -2232,6 +2232,20 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->applyParagraphStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
 }
 
+- (void)indent
+{
+    if (!m_frame)
+        return;
+    m_frame->indent();
+}
+
+- (void)outdent
+{
+    if (!m_frame)
+        return;
+    m_frame->outdent();
+}
+
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
