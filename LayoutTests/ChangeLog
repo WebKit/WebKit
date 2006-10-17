@@ -1,8 +1,23 @@
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by sullivan
+        
+        <rdar://problem/4776765>
+        REGRESSION: Caret's ghost left behind after inserting a paragraph separator (11237)
+
+        * fast/repaint/4776765-expected.checksum: Added.
+        * fast/repaint/4776765-expected.png: Added.
+        * fast/repaint/4776765-expected.txt: Added.
+        * fast/repaint/4776765.html: Added.
+
 2006-10-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Hatcher.
 
-        When nodes are removed, selections are cleared, and when http://bugs.webkit.org/show_bug.cgi?id=6498 was fixed, we started sending didChangeSelection notifications.  Updating the test results fixes some of the tests mentioned in http://bugs.webkit.org/show_bug.cgi?id=10924
+        When nodes are removed, selections are cleared, and when 
+        http://bugs.webkit.org/show_bug.cgi?id=6498 was fixed, we started 
+        sending didChangeSelection notifications.  Updating the test results 
+        fixes some of the tests mentioned in http://bugs.webkit.org/show_bug.cgi?id=10924
 
         * fast/dynamic/move-node-with-selection-expected.txt:
         * fast/events/dblclick-addEventListener-expected.txt:

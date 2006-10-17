@@ -1,3 +1,25 @@
+2006-10-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by sullivan
+        
+        <rdar://problem/4776765>
+        REGRESSION: Caret's ghost left behind after inserting a paragraph separator (11237)
+
+        We set m_needsLayout to false and call caretRect() in the hopes that it will give us 
+        the old caret rect.  It in fact corrects the caret rect for an offset that it 
+        believes is due to scrolling but which is actually due to a change in selection
+        without an accompanying layout.  So it returns the new caret rect regardless of
+        what m_needsLayout is set to.
+        
+        * editing/SelectionController.cpp:
+        (WebCore::repaintRectForCaret): Moved the code from caretRepaintRect that
+        adds a one pixel slop to this new function.
+        (WebCore::SelectionController::caretRepaintRect): Moved this code to
+        repaintRectForCaret.
+        (WebCore::SelectionController::recomputeCaretRect): Compare the old
+        caret rect to the new one that's computed with a fresh layout.  If
+        they are different, invalidate both repaint rects.
+
 2006-10-17  David Harrison  <harrison@apple.com>
 
         Reviewed by Adele.

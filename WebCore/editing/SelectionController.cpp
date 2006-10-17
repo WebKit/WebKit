@@ -776,13 +776,17 @@ IntRect SelectionController::caretRect() const
     return caret;
 }
 
+static IntRect repaintRectForCaret(IntRect caret)
+{
+    if (caret.isEmpty())
+        return IntRect();
+    caret.inflate(1);
+    return caret;
+}
+
 IntRect SelectionController::caretRepaintRect() const
 {
-    // FIXME: Add one pixel of slop on each side to make sure we don't leave behind artifacts.
-    IntRect r = caretRect();
-    if (r.isEmpty())
-        return IntRect();
-    return IntRect(r.x() - 1, r.y() - 1, r.width() + 2, r.height() + 2);
+    return repaintRectForCaret(caretRect());
 }
 
 bool SelectionController::recomputeCaretRect()
@@ -797,20 +801,14 @@ bool SelectionController::recomputeCaretRect()
     if (!m_needsLayout)
         return false;
 
-    // Set m_needsLayout to false to get the "old" repaint rect,
-    // since caretRepaintRect currently recomputes the rect if
-    // m_needsLayout is true. It's a problem if that ever happens
-    // outside this function, so we need to change that design in
-    // the future.
-    m_needsLayout = false;
-    IntRect oldRect = caretRepaintRect();
+    IntRect oldRect = m_caretRect;
     m_needsLayout = true;
-    IntRect newRect = caretRepaintRect();
+    IntRect newRect = caretRect();
     if (oldRect == newRect)
         return false;
 
-    v->updateContents(oldRect, false);
-    v->updateContents(newRect, false);
+    v->updateContents(repaintRectForCaret(oldRect), false);
+    v->updateContents(repaintRectForCaret(newRect), false);
     return true;
 }
 
