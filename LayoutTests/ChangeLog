@@ -1,5 +1,15 @@
 2006-10-17  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        When nodes are removed, selections are cleared, and when http://bugs.webkit.org/show_bug.cgi?id=6498 was fixed, we started sending didChangeSelection notifications.  Updating the test results fixes some of the tests mentioned in http://bugs.webkit.org/show_bug.cgi?id=10924
+
+        * fast/dynamic/move-node-with-selection-expected.txt:
+        * fast/events/dblclick-addEventListener-expected.txt:
+        * fast/events/updateLayoutForHitTest-expected.txt:
+
+2006-10-17  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by aroben.
 
         updating test results after r17068 - http://bugs.webkit.org/show_bug.cgi?id=11320
