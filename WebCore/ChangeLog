@@ -1,3 +1,18 @@
+2006-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam.
+        
+        - Fixed "FIXME: Violates Liskov Substitution principle."
+        
+        IFRAME was never a true subclass of FRAME, since they disagreed on a
+        number of behaviors, which, confusingly, IFRAME just overrode and contradicted. 
+
+        The fix here is to factor out things common to IFRAME and FRAME into a
+        common base class, HTMLFrameElementBase.
+        
+        I also changed some " *" to "* " and added #includes in files that implicitly
+        assumed that HTMLIFrameElement.h #included HTMLFrameElement.h.
+
 2006-10-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by sullivan

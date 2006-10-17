@@ -23,18 +23,17 @@
  *
  */
 
-#ifndef HTMLIFrameElement_H
-#define HTMLIFrameElement_H
+#ifndef HTMLIFrameElement_h
+#define HTMLIFrameElement_h
 
-#include "HTMLFrameElement.h"
+#include "HTMLFrameElementBase.h"
 
 namespace WebCore {
 
-class HTMLIFrameElement : public HTMLFrameElement
+class HTMLIFrameElement : public HTMLFrameElementBase
 {
 public:
-    HTMLIFrameElement(Document *doc);
-    ~HTMLIFrameElement();
+    HTMLIFrameElement(Document* doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -48,7 +47,7 @@ public:
     virtual void attach();
 
     virtual bool rendererIsNeeded(RenderStyle*);
-    virtual RenderObject *createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     virtual bool isURLAttribute(Attribute*) const;
 
@@ -65,6 +64,6 @@ private:
     String oldNameAttr;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTMLIFrameElement_h

@@ -46,6 +46,7 @@
 #include "HTMLHeadingElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLIsIndexElement.h"

@@ -4551,6 +4551,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\html\HTMLFrameElementBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLFrameElementBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\html\HTMLFrameSetElement.cpp"
 				>
 			</File>

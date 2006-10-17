@@ -23,106 +23,32 @@
  *
  */
 
-#ifndef HTMLFrameElement_H
-#define HTMLFrameElement_H
+#ifndef HTMLFrameElement_h
+#define HTMLFrameElement_h
 
-#include "HTMLElement.h"
-#include "ScrollBarMode.h"
+#include "HTMLFrameElementBase.h"
 
 namespace WebCore {
 
-class Frame;
-class HTMLFrameSetElement;
+class Document;
+class RenderObject;
+class RenderArena;
+class RenderStyle;
 
-class HTMLFrameElement : public HTMLElement
+class HTMLFrameElement : public HTMLFrameElementBase
 {
-    friend class RenderFrame;
-    friend class RenderPartObject;
-
 public:
     HTMLFrameElement(Document*);
-    HTMLFrameElement(const QualifiedName&, Document*);
-    ~HTMLFrameElement();
-
-    void init();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
   
-    virtual void parseMappedAttribute(MappedAttribute*);
-
     virtual void attach();
 
     virtual bool rendererIsNeeded(RenderStyle*);
-    virtual RenderObject *createRenderer(RenderArena*, RenderStyle*);
-    
-    void insertedIntoDocument();
-    virtual void willRemove();
-
-    bool noResize() { return m_noResize; }
-
-    void setLocation(const String&);
-
-    virtual bool isFocusable() const;
-    virtual void setFocus(bool);
-
-    Frame* contentFrame() const;
-    Document* contentDocument() const;
-    HTMLFrameSetElement* containingFrameSetElement() const;
-    
-    virtual bool isURLAttribute(Attribute*) const;
-
-    ScrollbarMode scrollingMode() const { return m_scrolling; }
-    int getMarginWidth() const { return m_marginWidth; }
-    int getMarginHeight() const { return m_marginHeight; }
-
-    String frameBorder() const;
-    void setFrameBorder(const String&);
-
-    String longDesc() const;
-    void setLongDesc(const String&);
-
-    String marginHeight() const;
-    void setMarginHeight(const String&);
-
-    String marginWidth() const;
-    void setMarginWidth(const String&);
-
-    String name() const;
-    void setName(const String&);
-
-    void setNoResize(bool);
-
-    String scrolling() const;
-    void setScrolling(const String&);
-
-    virtual String src() const;
-    void setSrc(const String&);
-
-    int width() const;
-    int height() const;
-
-    bool viewSourceMode() const { return m_viewSource; }
-
-protected:
-    bool isURLAllowed(const AtomicString&) const;
-    void openURL();
-
-    static void openURLCallback(Node*);
-
-    AtomicString m_URL;
-    AtomicString m_name;
-
-    int m_marginWidth;
-    int m_marginHeight;
-    ScrollbarMode m_scrolling;
-
-    bool m_frameBorder : 1;
-    bool m_frameBorderSet : 1;
-    bool m_noResize : 1;
-    bool m_viewSource : 1;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTMLFrameElement_h

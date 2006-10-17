@@ -36,6 +36,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLHeadingElement.h"
