@@ -1,3 +1,12 @@
+2006-10-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by aroben.
+
+        updating test results after r17068 - http://bugs.webkit.org/show_bug.cgi?id=11320
+
+        * fast/block/float/013-expected.checksum:
+        * fast/block/float/013-expected.txt:
+
 2006-10-17  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.
