@@ -288,9 +288,19 @@ using namespace HTMLNames;
 {
     return m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink());
 } 
+
 -(BOOL)isTextControl
 {
     return m_renderer->isTextField() || m_renderer->isTextArea();
+}
+
+-(BOOL)isPasswordField
+{
+    if (!m_renderer->element() || !m_renderer->element()->hasTagName(inputTag))
+        return false;
+    
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+    return input->inputType() == HTMLInputElement::PASSWORD;
 }
 
 -(BOOL)isAttachment
@@ -413,6 +423,9 @@ static int headingLevel(RenderObject* renderer)
 
 -(NSString*)subrole
 {
+    if ([self isPasswordField])
+        return NSAccessibilitySecureTextFieldSubrole;
+
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
 
@@ -434,31 +447,31 @@ static int headingLevel(RenderObject* renderer)
     
     NSString* role = [self role];
     if ([role isEqualToString:NSAccessibilityButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, [self subrole]);
     
     if ([role isEqualToString:NSAccessibilityPopUpButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityPopUpButtonRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityPopUpButtonRole, [self subrole]);
    
     if ([role isEqualToString:NSAccessibilityStaticTextRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityStaticTextRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityStaticTextRole, [self subrole]);
 
     if ([role isEqualToString:NSAccessibilityImageRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityImageRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityImageRole, [self subrole]);
     
     if ([role isEqualToString:NSAccessibilityGroupRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
     
     if ([role isEqualToString:NSAccessibilityCheckBoxRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, [self subrole]);
         
     if ([role isEqualToString:NSAccessibilityRadioButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, [self subrole]);
         
     if ([role isEqualToString:NSAccessibilityTextFieldRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, [self subrole]);
 
     if ([role isEqualToString:NSAccessibilityTextAreaRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityTextAreaRole, nil);
+        return NSAccessibilityRoleDescription(NSAccessibilityTextAreaRole, [self subrole]);
 
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
@@ -530,7 +543,7 @@ static int headingLevel(RenderObject* renderer)
 
 -(id)value
 {
-    if (!m_renderer || m_areaElement)
+    if (!m_renderer || m_areaElement || [self isPasswordField])
         return nil;
 
     if (m_renderer->isText())
@@ -813,12 +826,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
         [tempArray release];
     }
     
-    if (!m_renderer)
+    if (!m_renderer || [self isPasswordField])
         return attributes;
 
     if ([self isWebArea])
         return webAreaAttrs;
-
+    
     if ([self isTextControl])
         return textAttrs;
 
@@ -1125,6 +1138,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
         textParamAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    
+    if ([self isPasswordField])
+        return [NSArray array];
     
     if (!m_renderer)
         return paramAttrs;
