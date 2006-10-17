@@ -60,6 +60,7 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "ReplaceSelectionCommand.h"
+#import "ResourceRequest.h"
 #import "Screen.h"
 #import "SelectionController.h"
 #import "TextEncoding.h"

@@ -32,6 +32,7 @@
 #import "DocLoader.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "FormData.h"
 #import "FormDataMac.h"
 #import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"

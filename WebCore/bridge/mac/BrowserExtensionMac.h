@@ -32,10 +32,9 @@ class FrameMac;
 
 class BrowserExtensionMac : public BrowserExtension {
 public:
-    BrowserExtensionMac(Frame *);
+    BrowserExtensionMac(Frame*);
  
-    virtual void createNewWindow(const FrameLoadRequest&);
-    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*& part);
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*& newFrame);
 
     virtual int getHistoryLength();
     virtual void goBackOrForward(int distance);
@@ -46,11 +45,7 @@ public:
     virtual void runModal();
     
 private:
-     void createNewWindow(const FrameLoadRequest&, 
-                          const WindowArgs&, 
-                          Frame** part);
-
-     FrameMac *m_frame;
+     FrameMac* m_frame;
 };
 
 }

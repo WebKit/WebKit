@@ -23,6 +23,7 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "BrowserExtension.h"
 #include "CString.h"
 #include "DOMWindow.h"
 #include "Element.h"

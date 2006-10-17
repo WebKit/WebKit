@@ -29,6 +29,7 @@
 
 #include "CString.h"
 #include "EventNames.h"
+#include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLDocument.h"

@@ -28,10 +28,10 @@
 #ifndef Frame_H
 #define Frame_H
 
-#include "BrowserExtension.h"
 #include "Color.h"
 #include "EditAction.h"
 #include "FrameView.h"
+#include "KURL.h"
 #include "Node.h"
 #include "RenderObject.h"
 #include "RenderLayer.h"
@@ -54,6 +54,7 @@ namespace KJS {
 
 namespace WebCore {
 
+class BrowserExtension;
 class CommandByName;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
@@ -61,6 +62,7 @@ class CSSStyleDeclaration;
 class DrawContentsEvent;
 class DOMWindow;
 class EditCommand;
+class FormData;
 class FramePrivate;
 class FrameLoadRequest;
 class FrameTree;
@@ -70,6 +72,7 @@ class Plugin;
 class MouseEventWithHitTestResults;
 class Range;
 class RenderLayer;
+class ResourceRequest;
 class Selection;
 class SelectionController;
 class Settings;

@@ -27,6 +27,7 @@
 #ifndef FramePrivate_h
 #define FramePrivate_h
 
+#include "BrowserExtension.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CachePolicy.h"
 #include "CommandByName.h"
@@ -35,7 +36,8 @@
 #include "EditCommand.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "loader/icon/IconLoader.h"
+#include "IconLoader.h"
+#include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Timer.h"

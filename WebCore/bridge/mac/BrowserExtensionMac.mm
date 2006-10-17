@@ -43,28 +43,15 @@ BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
 {
 }
 
-void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request) 
-{
-    createNewWindow(request, WindowArgs(), NULL);
-}
-
 void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request, 
                                           const WindowArgs& winArgs, 
-                                          Frame*& part)
-{
-    createNewWindow(request, winArgs, &part);
-}
-
-void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request, 
-                                          const WindowArgs& winArgs, 
-                                          Frame** partResult)
+                                          Frame*& newFrame)
 { 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     ASSERT(!winArgs.dialog || request.m_frameName.isEmpty());
 
-    if (partResult)
-        *partResult = NULL;
+    newFrame = NULL;
     
     const KURL& url = request.m_request.url();
 
@@ -92,8 +79,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
 
             [frameBridge activateWindow];
 
-            if (partResult)
-                *partResult = [frameBridge impl];
+            newFrame = [frameBridge impl];
 
             return;
         }
@@ -111,8 +97,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     if ([frameBridge impl])
         [frameBridge impl]->tree()->setName(AtomicString(request.m_frameName));
     
-    if (partResult)
-        *partResult = [frameBridge impl];
+    newFrame = [frameBridge impl];
     
     [frameBridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
     [frameBridge setStatusbarVisible:winArgs.statusBarVisible];
