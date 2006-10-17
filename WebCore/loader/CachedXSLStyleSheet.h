@@ -44,7 +44,6 @@ namespace WebCore {
         const String& sheet() const { return m_sheet; }
         
         virtual void ref(CachedResourceClient*);
-        virtual void deref(CachedResourceClient*);
         
         virtual void setCharset(const String&);
         virtual void data(Vector<char>&, bool allDataReceived);

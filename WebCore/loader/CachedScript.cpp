@@ -73,14 +73,6 @@ void CachedScript::ref(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
-void CachedScript::deref(CachedResourceClient* c)
-{
-    Cache::flush();
-    CachedResource::deref(c);
-    if (canDelete() && m_free)
-        delete this;
-}
-
 void CachedScript::setCharset(const String& chs)
 {
     TextEncoding encoding(chs);

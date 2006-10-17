@@ -47,7 +47,6 @@ namespace WebCore {
         XBL::XBLDocument* document() const { return m_document; }
         
         virtual void ref(CachedResourceClient*);
-        virtual void deref(CachedResourceClient*);
         
         virtual void setCharset(const String&);
         virtual void data(Vector<char>&, bool allDataReceived);
