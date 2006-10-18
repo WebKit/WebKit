@@ -46,6 +46,28 @@
 
 namespace KJS {
 
+// Constants //
+const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+const double hoursPerDay = 24.0;
+const double minutesPerHour = 60.0;
+const double secondsPerHour = 60.0 * 60.0;
+const double secondsPerMinute = 60.0;
+const double msPerSecond = 1000.0;
+const double msPerMinute = 60.0 * 1000.0;
+const double msPerHour = 60.0 * 60.0 * 1000.0;
+const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
+
+
+// Forward //
+struct GregorianDateTime;
+
+// Exported Functions //
+void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
+double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
+double getUTCOffset();
+
 // Intentionally overridding the default tm of the system
 // Not all OS' have the same members of their tm's
 struct GregorianDateTime {
@@ -88,7 +110,7 @@ struct GregorianDateTime {
         timeZone = new char[inZoneSize];
         strncpy(timeZone, inTm.tm_zone, inZoneSize);
 #else
-        utcOffset = 0;
+        utcOffset = (getUTCOffset() / msPerSecond) + (isDST ? secondsPerHour : 0);
         timeZone = NULL;
 #endif
     }
@@ -128,24 +150,6 @@ struct GregorianDateTime {
     int utcOffset;
     char* timeZone;
 };
-
-// Constants //
-
-const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-
-const double hoursPerDay = 24.0;
-const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
-const double minutesPerHour = 60.0;
-const double secondsPerMinute = 60.0;
-const double msPerSecond = 1000.0;
-const double msPerMinute = 60.0 * 1000.0;
-const double msPerHour = 60.0 * 60.0 * 1000.0;
-
-// Exported Functions //
-void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
-double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
-double getUTCOffset();
 
 }   //namespace KJS
 

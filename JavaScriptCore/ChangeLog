@@ -8,6 +8,20 @@
 
 2006-10-17  Kevin McCullough  <KMcCullough@apple.com>
 
+        Reviewed by Darin.
+
+        Fixed a date issue where the UTC offset was not set in win.
+
+        * kjs/DateMath.cpp:
+        (KJS::getDSTOffsetSimple):
+        (KJS::getDSTOffset):
+        (KJS::msToGregorianDateTime):
+        * kjs/DateMath.h:
+        (KJS::):
+        (KJS::GregorianDateTime::GregorianDateTime):
+
+2006-10-17  Kevin McCullough  <KMcCullough@apple.com>
+
         Reviewed by Brady.
 
         Fixes a JavaScriptCore math issue on win.
