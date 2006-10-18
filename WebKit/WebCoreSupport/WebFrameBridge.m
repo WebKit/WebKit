@@ -930,6 +930,9 @@ static BOOL loggedObjectCacheSize = NO;
     if ([MIMEType length] == 0)
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
 
+    if ([[WebCoreFrameBridge supportedImageMIMETypes] containsObject:MIMEType])
+        return ObjectElementFrame;
+
     if ([[self webView] _isMIMETypeRegisteredAsPlugin:MIMEType])
         return ObjectElementPlugin;
 

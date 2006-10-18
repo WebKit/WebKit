@@ -1,3 +1,14 @@
+2006-10-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11000
+        REGRESSION (r16101): css2.1/t0801-c412-hz-box-00-b-a is failing because the QuickTime plugin is taking over but not rendering the png
+        
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        Return ObjectElementFrame if the MIME type is one of the image ones we support.
+
 2006-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
