@@ -147,37 +147,11 @@ bool RenderView::absolutePosition(int &xPos, int &yPos, bool f)
 
 void RenderView::paint(PaintInfo& i, int _tx, int _ty)
 {
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderView) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
-#endif
-    
     // Cache the print rect because the dirty rect could get changed during painting.
     if (m_printingMode)
         setPrintRect(i.r);
     
-    // 1. paint background, borders etc
-    if (i.phase == PaintPhaseBlockBackground) {
-        paintBoxDecorations(i, _tx, _ty);
-        return;
-    }
-    
-    // 2. paint contents
-    for (RenderObject *child = firstChild(); child; child = child->nextSibling())
-        if (!child->layer() && !child->isFloating())
-            child->paint(i, _tx, _ty);
-
-    if (m_frameView) {
-        _tx += m_frameView->contentsX();
-        _ty += m_frameView->contentsY();
-    }
-    
-    // 3. paint floats.
-    if (i.phase == PaintPhaseFloat)
-        paintFloats(i, _tx, _ty);
-        
-#ifdef BOX_DEBUG
-    outlineBox(i.p, _tx, _ty);
-#endif
+    paintObject(i, _tx, _ty);
 }
 
 void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)

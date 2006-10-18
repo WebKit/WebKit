@@ -2558,20 +2558,23 @@ bool RenderObject::hitTest(NodeInfo& info, int x, int y, int tx, int ty, HitTest
 
 void RenderObject::setInnerNode(NodeInfo& info)
 {
-    if (!info.innerNode() && !isInline() && continuation()) {
+    if (info.innerNode())
+        return;
+
+    Node* node = element();
+    if (isRenderView())
+        node = document()->documentElement();
+    else if (!isInline() && continuation())
         // We are in the margins of block elements that are part of a continuation.  In
         // this case we're actually still inside the enclosing inline element that was
         // split.  Go ahead and set our inner node accordingly.
-        info.setInnerNode(continuation()->element());
+        node = continuation()->element();
+         
+    if (node) {
+        info.setInnerNode(node);
         if (!info.innerNonSharedNode())
-            info.setInnerNonSharedNode(continuation()->element());
+            info.setInnerNonSharedNode(node);
     }
-
-    if (!info.innerNode() && element())
-        info.setInnerNode(element());
-            
-    if(!info.innerNonSharedNode() && element())
-        info.setInnerNonSharedNode(element());
 }
 
 bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,

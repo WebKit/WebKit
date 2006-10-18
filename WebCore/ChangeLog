@@ -1,5 +1,29 @@
 2006-10-17  David Hyatt  <hyatt@apple.com>
 
+        Prepare for the elimination of the RenderLayer for <html> elements.  The layer is still present,
+        but this patch makes everything work without a root layer being around.
+
+        Reviewed by beth
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/KURL.cpp: Removed.
+        * platform/KURL.h: Removed.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::frameVisibleRect):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setInnerNode):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+
+2006-10-17  David Hyatt  <hyatt@apple.com>
+
         Back out my previous patch to the WebCore memory cache.
 
         * loader/Cache.cpp:
