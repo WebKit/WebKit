@@ -33,62 +33,60 @@
 #import "DOMInternal.h"
 #import "FloatRect.h"
 
+#define IMPL reinterpret_cast<WebCore::FloatRect*>(_internal)
+
 @implementation DOMSVGRect
 
 - (void)dealloc
 {
-    // FIXME: IMPLEMENT ME
+    delete IMPL;
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: IMPLEMENT ME
+    delete IMPL;
     [super finalize];
 }
 
 - (float)x
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->x();
 }
 
 - (void)setX:(float)newX
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setX(newX);
 }
 
 - (float)y
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->y();
 }
 
 - (void)setY:(float)newY
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setY(newY);
 }
 
 - (float)width
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->width();
 }
 
 - (void)setWidth:(float)newWidth
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setWidth(newWidth);
 }
 
 - (float)height
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->height();
 }
 
 - (void)setHeight:(float)newHeight
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setHeight(newHeight);
 }
 
 @end
@@ -97,21 +95,22 @@
 
 - (WebCore::FloatRect)_SVGRect
 {
-    // FIXME: IMPLEMENT ME
-    return WebCore::FloatRect();
+    return *(IMPL);
 }
 
-- (id)_initWithFloatRect:(WebCore::FloatRect)impl
+- (id)_initWithFloatRect:(WebCore::FloatRect)value
 {
-    // FIXME: IMPLEMENT ME
+    // FIXME: Implement Caching
     [super _init];
+    WebCore::FloatRect *impl = new WebCore::FloatRect(value);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     return self;
 }
 
-+ (DOMSVGRect *)_SVGRectWith:(WebCore::FloatRect)impl
++ (DOMSVGRect *)_SVGRectWith:(WebCore::FloatRect)value
 {
-    // FIXME: IMPLEMENT ME
-    return [[[self alloc] _initWithFloatRect:impl] autorelease];
+    // FIXME: Implement Caching
+    return [[[self alloc] _initWithFloatRect:value] autorelease];
 }
 
 @end

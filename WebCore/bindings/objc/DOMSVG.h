@@ -98,6 +98,7 @@
 #import <WebCore/DOMSVGNumber.h>
 #import <WebCore/DOMSVGNumberList.h>
 #import <WebCore/DOMSVGPaint.h>
+#import <WebCore/DOMSVGPathElement.h>
 #import <WebCore/DOMSVGPathSeg.h>
 #import <WebCore/DOMSVGPathSegArcAbs.h>
 #import <WebCore/DOMSVGPathSegArcRel.h>

@@ -914,7 +914,7 @@ sub GenerateImplementation
                 $attributeInterfaceName .= "Borders";
             } elsif ($attributeName eq "ownerDocument") {
                 # FIXME: for now special case attribute ownerDocument to call document, this is incorrect
-                # legacy behavior. (see http://bugzilla.opendarwin.org/show_bug.cgi?id=10889)
+                # legacy behavior. (see http://bugs.webkit.org/show_bug.cgi?id=10889)
                 $attributeName = "document";
             } elsif ($codeGenerator->IsSVGAnimatedType($idlType)) {
                 # Special case for animated types.

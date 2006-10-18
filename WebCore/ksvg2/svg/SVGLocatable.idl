@@ -30,9 +30,7 @@ module svg {
         readonly attribute SVGElement nearestViewportElement;
         readonly attribute SVGElement farthestViewportElement;
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
         SVGRect   getBBox();
-#endif
         SVGMatrix getCTM();
         SVGMatrix getScreenCTM();
         SVGMatrix getTransformToElement(in SVGElement element)

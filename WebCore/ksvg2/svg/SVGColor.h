@@ -61,6 +61,8 @@ namespace WebCore {
         // Helpers
         const Color& color() const;
 
+        virtual bool isSVGColor() const { return true; }
+
     private:
         Color m_color;
         unsigned short m_colorType;

@@ -46,7 +46,7 @@ module svg {
         readonly attribute SVGAnimatedLength      markerWidth;
         readonly attribute SVGAnimatedLength      markerHeight;
         readonly attribute SVGAnimatedEnumeration orientType;
-        readonly attribute SVGAnimatedAngle      orientAngle;
+        readonly attribute SVGAnimatedAngle       orientAngle;
 
         void setOrientToAuto();
         void setOrientToAngle(in SVGAngle angle);

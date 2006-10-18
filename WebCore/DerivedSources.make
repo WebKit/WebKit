@@ -35,7 +35,7 @@ VPATH = \
     $(WebCore)/page \
     $(WebCore)/xml \
     $(WebCore)/ksvg2/svg \
-    $(WebCore)/ksvg2/bindings/js \
+    $(WebCore)/ksvg2/events \
 #
 
 .PHONY : all
@@ -43,7 +43,6 @@ VPATH = \
 ifeq ($(OS),MACOS)
 all : \
     DOMAbstractView.h \
-    DOMSVGPathElement.h \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSSCharsetRule.h \
@@ -218,6 +217,7 @@ all : \
     DOMSVGNumber.h \
     DOMSVGNumberList.h \
     DOMSVGPaint.h \
+    DOMSVGPathElement.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegArcAbs.h \
     DOMSVGPathSegArcRel.h \
@@ -655,7 +655,7 @@ OBJC_BINDINGS_SCRIPTS = \
 #
 
 DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
-	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include xml --include /ksvg2/svg --outputdir . $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include css --include page --include xml --include /ksvg2/svg --include /ksvg2/events --outputdir . $<
 
 # new-style JavaScript bindings
 
@@ -668,4 +668,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir . $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include css --include page --include xml --include ksvg2/svg --include /ksvg2/events --outputdir . $<

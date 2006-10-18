@@ -2,7 +2,8 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
- *               1999 Waldo Bastian (bastian@kde.org)
+ * Copyright (C) 1999 Waldo Bastian (bastian@kde.org)
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
  * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -65,6 +66,10 @@ namespace WebCore {
         virtual bool isPrimitiveValue() const { return false; }
         virtual bool isValueList() { return false; }
         virtual bool isValueCustom() { return false; }
+#ifdef SVG_SUPPORT
+        virtual bool isSVGColor() const { return false; }
+        virtual bool isSVGPaint() const { return false; }
+#endif
 
         virtual bool parseString(const String&, bool /*strict*/ = false) { return false; }
         virtual void checkLoaded();

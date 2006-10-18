@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
 
     This file is part of the KDE project
 
@@ -62,6 +63,7 @@ namespace WebCore {
         static SVGPaint* defaultFill();
         static SVGPaint* defaultStroke();
 
+        virtual bool isSVGPaint() const { return true; }
     private:
         SVGPaintType m_paintType;
         String m_uri;

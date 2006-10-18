@@ -1,3 +1,87 @@
+2006-10-17  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11268
+        Implement the Objective-C DOM bindings for SVGNumber, SVGRect, and SVGPoint
+
+        - Adds implementation for DOMSVGNumber, DOMSVGRect, and DOMSVGPoint.
+
+        - Moves the contents of ksvg/bindings/js/ to bindings/js/.
+
+        - Moves SVGZoomEvent.idl from ksvg/svg/ to ksvg/events/.
+
+        - Adds isSVGColor() and isSVGPaint() methods to StyleBase, matching 
+          the other CSSValue classing, and allowing the bindings to allocate
+          appropriately.
+
+        - Removes #ifdefs around the getBBox() method in SVGLocatable.idl allowing
+          generation for Objective-C.
+
+        - Assorted style cleanups.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _eventWith:WebCore::]):
+        * bindings/objc/DOMSVG.h:
+        * bindings/objc/DOMSVGNumber.mm:
+        (-[DOMSVGNumber dealloc]):
+        (-[DOMSVGNumber finalize]):
+        (-[DOMSVGNumber value]):
+        (-[DOMSVGNumber setValue:]):
+        (-[DOMSVGNumber _SVGNumber]):
+        (-[DOMSVGNumber _initWithFloat:]):
+        (+[DOMSVGNumber _SVGNumberWith:]):
+        * bindings/objc/DOMSVGPoint.mm:
+        (-[DOMSVGPoint dealloc]):
+        (-[DOMSVGPoint finalize]):
+        (-[DOMSVGPoint x]):
+        (-[DOMSVGPoint setX:]):
+        (-[DOMSVGPoint y]):
+        (-[DOMSVGPoint setY:]):
+        (-[DOMSVGPoint WebCore::]):
+        (-[DOMSVGPoint _initWithFloatPoint:WebCore::]):
+        (+[DOMSVGPoint _SVGPointWith:WebCore::]):
+        * bindings/objc/DOMSVGRect.mm:
+        (-[DOMSVGRect dealloc]):
+        (-[DOMSVGRect finalize]):
+        (-[DOMSVGRect x]):
+        (-[DOMSVGRect setX:]):
+        (-[DOMSVGRect y]):
+        (-[DOMSVGRect setY:]):
+        (-[DOMSVGRect width]):
+        (-[DOMSVGRect setWidth:]):
+        (-[DOMSVGRect height]):
+        (-[DOMSVGRect setHeight:]):
+        (-[DOMSVGRect WebCore::]):
+        (-[DOMSVGRect _initWithFloatRect:WebCore::]):
+        (+[DOMSVGRect _SVGRectWith:WebCore::]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isSVGColor):
+        (WebCore::StyleBase::isSVGPaint):
+        * ksvg2/bindings/js/JSSVGElementWrapperFactory.cpp: Removed.
+        * ksvg2/bindings/js/JSSVGElementWrapperFactory.h: Removed.
+        * ksvg2/bindings/js/JSSVGNumber.cpp: Removed.
+        * ksvg2/bindings/js/JSSVGNumber.h: Removed.
+        * ksvg2/bindings/js/JSSVGPoint.cpp: Removed.
+        * ksvg2/bindings/js/JSSVGPoint.h: Removed.
+        * ksvg2/bindings/js/JSSVGRect.cpp: Removed.
+        * ksvg2/bindings/js/JSSVGRect.h: Removed.
+        * ksvg2/svg/SVGColor.h:
+        (WebCore::SVGColor::isSVGColor):
+        * ksvg2/svg/SVGFECompositeElement.idl:
+        * ksvg2/svg/SVGFEFloodElement.idl:
+        * ksvg2/svg/SVGLocatable.idl:
+        * ksvg2/svg/SVGMarkerElement.idl:
+        * ksvg2/svg/SVGPaint.h:
+        (WebCore::SVGPaint::isSVGPaint):
+        * ksvg2/svg/SVGRectElement.idl:
+        * ksvg2/svg/SVGZoomEvent.idl: Removed.
+
 2006-10-17  David Hyatt  <hyatt@apple.com>
 
         Prepare for the elimination of the RenderLayer for <html> elements.  The layer is still present,

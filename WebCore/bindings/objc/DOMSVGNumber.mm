@@ -32,29 +32,30 @@
 
 #import "DOMInternal.h"
 
+#define IMPL *(reinterpret_cast<float*>(_internal))
+
 @implementation DOMSVGNumber
 
 - (void)dealloc
 {
-    // FIXME: IMPLEMENT ME
+    delete reinterpret_cast<float*>(_internal);
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: IMPLEMENT ME
+    delete reinterpret_cast<float*>(_internal);
     [super finalize];
 }
 
 - (float)value
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL;
 }
 
 - (void)setValue:(float)newValue
 {
-    // FIXME: IMPLEMENT ME
+    IMPL = newValue;
 }
 
 @end
@@ -63,20 +64,22 @@
 
 - (float)_SVGNumber
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL;
 }
 
 - (id)_initWithFloat:(float)value
 {
-    // FIXME: IMPLEMENT ME
+    // FIXME: Implement Caching
     [super _init];
+    float *impl = new float;
+    *impl = value;
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     return self;
 }
 
 + (DOMSVGNumber *)_SVGNumberWith:(float)value
 {
-    // FIXME: IMPLEMENT ME
+    // FIXME: Implement Caching
     return [[[self alloc] _initWithFloat:value] autorelease];
 }
 

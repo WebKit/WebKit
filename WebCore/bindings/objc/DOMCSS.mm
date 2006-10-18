@@ -45,9 +45,13 @@
 #import "DOMWindow.h"
 #import "Document.h"
 #import "StyleSheet.h"
-
 #import <objc/objc-class.h>
 #import <wtf/GetPtr.h>
+
+#ifdef SVG_SUPPORT
+#import "DOMSVGColor.h"
+#import "DOMSVGPaint.h"
+#endif
 
 namespace WebCore {
     typedef DOMWindow AbstractView;
@@ -189,8 +193,17 @@ namespace WebCore {
             wrapperClass = [DOMCSSValueList class];
             break;
         case DOM_CSS_INHERIT:
-        case DOM_CSS_CUSTOM:
             wrapperClass = [DOMCSSValue class];
+            break;
+        case DOM_CSS_CUSTOM:
+#ifdef SVG_SUPPORT
+            if (impl->isSVGPaint())
+                wrapperClass = [DOMSVGPaint class];
+            else if (impl->isSVGColor())
+                wrapperClass = [DOMSVGColor class];
+            else
+#endif
+                wrapperClass = [DOMCSSValue class];
             break;
     }
     return [[[wrapperClass alloc] _initWithCSSValue:impl] autorelease];

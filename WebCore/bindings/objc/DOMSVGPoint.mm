@@ -33,40 +33,40 @@
 #import "DOMInternal.h"
 #import "FloatPoint.h"
 
+#define IMPL reinterpret_cast<WebCore::FloatPoint*>(_internal)
+
 @implementation DOMSVGPoint
 
 - (void)dealloc
 {
-    // FIXME: IMPLEMENT ME
+    delete IMPL;
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: IMPLEMENT ME
+    delete IMPL;
     [super finalize];
 }
 
 - (float)x
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->x();
 }
 
 - (void)setX:(float)newX
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setX(newX);
 }
 
 - (float)y
 {
-    // FIXME: IMPLEMENT ME
-    return 0.0;
+    return IMPL->y();
 }
 
 - (void)setY:(float)newY
 {
-    // FIXME: IMPLEMENT ME
+    IMPL->setY(newY);
 }
 
 - (DOMSVGPoint *)matrixTransform:(DOMSVGMatrix *)matrix
@@ -81,20 +81,21 @@
 
 - (WebCore::FloatPoint)_SVGPoint
 {
-    // FIXME: IMPLEMENT ME
-    return WebCore::FloatPoint();
+    return *(IMPL);
 }
 
-- (id)_initWithFloatPoint:(WebCore::FloatPoint)impl
+- (id)_initWithFloatPoint:(WebCore::FloatPoint)value
 {
-    // FIXME: IMPLEMENT ME
+    // FIXME: Implement Caching
     [super _init];
+    WebCore::FloatPoint *impl = new WebCore::FloatPoint(value);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     return self;
 }
 
 + (DOMSVGPoint *)_SVGPointWith:(WebCore::FloatPoint)impl
 {
-    // FIXME: IMPLEMENT ME
+    // FIXME: Implement Caching
     return [[[self alloc] _initWithFloatPoint:impl] autorelease];
 }
 
