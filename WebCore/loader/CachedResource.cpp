@@ -94,9 +94,7 @@ void CachedResource::setRequest(Request *_request)
     if ( _request && !m_request )
         m_status = Pending;
     m_request = _request;
-    if (canDelete() && status() == Uncacheable)
-        Cache::remove(this);
-    else if (canDelete() && m_free)
+    if (canDelete() && m_free)
         delete this;
     else if (allowInLRUList())
         Cache::insertInLRUList(this);
@@ -114,12 +112,6 @@ void CachedResource::deref(CachedResourceClient *c)
     m_clients.remove(c);
     if (allowInLRUList())
         Cache::insertInLRUList(this);
-    if (canDelete()) {
-        if (status() == Uncacheable)
-            Cache::remove(this);
-        else if (m_free)
-            delete this;
-    }
 }
 
 void CachedResource::setSize(int size)

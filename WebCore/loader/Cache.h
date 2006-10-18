@@ -95,7 +95,7 @@ namespace WebCore  {
         /**
          * clean up cache
          */
-        static void flush();
+        static void flush(bool force = false);
 
         /**
          * clears the cache
@@ -155,6 +155,10 @@ namespace WebCore  {
     
         static LRUList* m_LRULists;
         static int m_totalSizeOfLRULists;
+            
+        static CachedResource* m_headOfUncacheableList;
+            
+        static int m_countOfLRUAndUncacheableLists;
     };
 
 }

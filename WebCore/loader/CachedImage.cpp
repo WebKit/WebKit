@@ -68,6 +68,14 @@ void CachedImage::ref(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
+void CachedImage::deref(CachedResourceClient *c)
+{
+    Cache::flush();
+    CachedResource::deref(c);
+    if (canDelete() && m_free)
+        delete this;
+}
+
 Image* CachedImage::image() const
 {
     if (m_errorOccurred)

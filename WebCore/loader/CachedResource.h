@@ -180,7 +180,7 @@ namespace WebCore {
         bool m_expireDateChanged : 1;
 
     private:
-        bool allowInLRUList() const { return canDelete() && status() != Persistent && status() != Uncacheable; }
+        bool allowInLRUList() const { return canDelete() && status() != Persistent; }
 
         CachedResource* m_nextInLRUList;
         CachedResource* m_prevInLRUList;
