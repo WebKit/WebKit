@@ -1,3 +1,13 @@
+2006-10-18  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11304
+        Bug 11304: Drosera fails to link as universal binary on PowerPC machine
+
+        * Drosera/Drosera.xcodeproj/project.pbxproj: Use -weak_framework to link against JavaScriptCore and WebCore directly
+        when they are not part of the WebKit umbrella framework.
+
 2006-10-18  Adam Roben  <aroben@apple.com>
 
         fixo el buildo II: Release's Pride.

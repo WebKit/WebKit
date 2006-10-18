@@ -532,6 +532,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = Drosera.pch;
 				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					JavaScriptCore,
+					"-weak_framework",
+					WebCore,
+				);
 				PRODUCT_NAME = Drosera;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -547,6 +553,12 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PREFIX_HEADER = Drosera.pch;
 				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					JavaScriptCore,
+					"-weak_framework",
+					WebCore,
+				);
 				PRODUCT_NAME = Drosera;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
