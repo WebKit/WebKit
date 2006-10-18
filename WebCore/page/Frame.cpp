@@ -1962,6 +1962,11 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
     if (event.event().button() != 0 || !innerNode || !innerNode->renderer())
         return;
 
+    ASSERT(mouseDownMayStartSelect() || mouseDownMayStartAutoscroll());
+
+    setMouseDownMayStartDrag(false);
+    view()->invalidateClick();
+
      if (mouseDownMayStartAutoscroll()) {            
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
@@ -1970,9 +1975,6 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
             renderer = renderer->parent();
         if (renderer)
             handleAutoscroll(renderer);
-                
-        setMouseDownMayStartDrag(false);
-        view()->invalidateClick();
     }
     
     if (mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {

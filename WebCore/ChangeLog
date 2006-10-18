@@ -1,3 +1,16 @@
+2006-10-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=11343
+          REGRESSION (r16975): fast/events/objc-event-api is failing
+
+          When I moved the autoscroll code from FrameMac to Frame, I mistakingly changed the order of
+          a call to invalidateClick.  This change moves it back to the sequence that existed before.  This allows
+          the click count to get properly reset during a selection.
+
+        * page/Frame.cpp: (WebCore::Frame::handleMouseMoveEvent):
+
 2006-10-17  Geoffrey Garen  <ggaren@apple.com>
         
         Reviewed by Anders.
