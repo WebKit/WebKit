@@ -1,3 +1,11 @@
+2006-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        fixo el buildo.
+        
+        Work around #import of <PDFKit/PDFView.h>.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2006-10-18  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.
