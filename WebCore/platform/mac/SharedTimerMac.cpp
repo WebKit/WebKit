@@ -57,7 +57,7 @@ void setSharedTimerFireTime(double fireTime)
 
     CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopDefaultMode);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
 }
 
 void stopSharedTimer()

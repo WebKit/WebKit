@@ -1497,23 +1497,22 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
         }
     }
 
-    // We need to "defer loading" and defer timers while we are tracking the mouse.
-    // That's because we don't want the new page to load while the user is holding the mouse down.
+    // We need to "defer loading" while tracking the mouse, because tearing down the
+    // page while an AppKit control is tracking the mouse can cause a crash.
+    
+    // FIXME: In theory, WebCore now tolerates tear-down while tracking the
+    // mouse. We should confirm that, and then remove the deferrsLoading
+    // hack entirely.
     
     BOOL wasDeferringLoading = [_bridge defersLoading];
     if (!wasDeferringLoading)
         [_bridge setDefersLoading:YES];
-    BOOL wasDeferringTimers = isDeferringTimers();
-    if (!wasDeferringTimers)
-        setDeferringTimers(true);
 
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
     _sendingEventToSubview = false;
     
-    if (!wasDeferringTimers)
-        setDeferringTimers(false);
     if (!wasDeferringLoading)
         [_bridge setDefersLoading:NO];
 

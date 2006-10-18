@@ -1,3 +1,18 @@
+2006-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele.
+
+        Fixed <rdar://problem/3673233> JavaScript timers do not fire if controls
+        are tracking or menus are down (run loop modes)
+
+        I spent a few hours trying to write an automated test, but DRT doesn't
+        seem to support it. Manual tests attached to related bugs.
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::passMouseDownEventToWidget):
+        * platform/mac/SharedTimerMac.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2006-10-18  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej.
