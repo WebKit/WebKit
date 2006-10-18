@@ -4319,15 +4319,16 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return NO;
 
-    DOMRange *range;
+    DOMRange *range = [self _selectedRange];
     WebDeletionAction deletionAction = deleteSelectionAction;
 
+    BOOL smartDeleteOK = NO;
+    
     if ([self _hasSelection]) {
-        range = [self _selectedRange];
+        smartDeleteOK = YES;
         if (isTypingAction)
             deletionAction = deleteKeyAction;
     } else {
-        range = [self _selectedRange];
         switch (direction) {
             case WebBridgeSelectForward:
             case WebBridgeSelectRight:
@@ -4342,7 +4343,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     if (range == nil)
         return NO;
-    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:NO deletionAction:deletionAction granularity:granularity];
+    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:smartDeleteOK deletionAction:deletionAction granularity:granularity];
     return YES;
 }
 

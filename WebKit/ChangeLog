@@ -1,3 +1,18 @@
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4765600>
+        REGRESSION: Mail.app: smart deletion of words does not work
+        
+        Regressed when we pushed selecion expansion down into WebCore.  It's OK
+        to try a smart delete from _deleteWithDirection:, which is called by
+        deleteFoward: and deleteBackward: if the current selection is a 
+        range.
+    
+        * WebView/WebHTMLView.m:
+        (-[NSArray _deleteWithDirection:granularity:killRing:isTypingAction:]):
+
 2006-10-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

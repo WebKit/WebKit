@@ -1,3 +1,19 @@
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4765600>
+        REGRESSION: Mail.app: smart deletion of words does not work
+
+        * editing/deleting/smart-delete-003-expected.checksum: Added.
+        * editing/deleting/smart-delete-003-expected.png: Added.
+        * editing/deleting/smart-delete-003-expected.txt: Added.
+        * editing/deleting/smart-delete-003.html: Added.
+        * editing/deleting/smart-delete-004-expected.checksum: Added.
+        * editing/deleting/smart-delete-004-expected.png: Added.
+        * editing/deleting/smart-delete-004-expected.txt: Added.
+        * editing/deleting/smart-delete-004.html: Added.
+        
 2006-10-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.
