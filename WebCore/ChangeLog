@@ -1,3 +1,17 @@
+2006-10-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam, Brady.
+
+        Loader tweaks.
+
+        * platform/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::didReceiveChallenge):
+        (WebCore::runLoaderThread):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::cancel):
+
 2006-10-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
