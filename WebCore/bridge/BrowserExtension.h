@@ -23,42 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BROWSEREXTENSION_H_
-#define BROWSEREXTENSION_H_
-
-#include "ResourceRequest.h"
+#ifndef BrowserExtension_h
+#define BrowserExtension_h
 
 namespace WebCore {
 
 class Frame;
 class FrameLoadRequest;
-
-struct WindowArgs {
-    float x;
-    bool xSet;
-    float y;
-    bool ySet;
-    float width;
-    bool widthSet;
-    float height;
-    bool heightSet;
-
-    bool menuBarVisible;
-    bool statusBarVisible;
-    bool toolBarVisible;
-    bool locationBarVisible;
-    bool scrollbarsVisible;
-    bool resizable;
-
-    bool fullscreen;
-    bool dialog;
-};
+class KURL;
+struct WindowFeatures;
 
 class BrowserExtension {
 public:
     virtual ~BrowserExtension() { }
 
-    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*& newFrame) = 0;
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& newFrame) = 0;
 
     virtual int getHistoryLength() = 0;
     virtual void goBackOrForward(int distance) = 0;
@@ -72,6 +51,6 @@ protected:
     BrowserExtension() {}
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // BrowserExtension_h

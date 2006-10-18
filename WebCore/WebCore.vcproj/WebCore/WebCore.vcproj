@@ -3938,6 +3938,10 @@
 				RelativePath="..\..\bridge\JavaAppletWidget.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\bridge\WindowFeatures.h"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>

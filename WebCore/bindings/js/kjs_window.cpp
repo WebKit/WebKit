@@ -44,13 +44,14 @@
 #include "JSNodeFilter.h"
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
-#include "Settings.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PlugInInfoStore.h"
 #include "RenderView.h"
 #include "Screen.h"
 #include "SelectionController.h"
+#include "Settings.h"
+#include "WindowFeatures.h"
 #include "htmlediting.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
@@ -540,7 +541,7 @@ static float floatFeature(const HashMap<String, String> &features, const char *k
 }
 
 static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const DeprecatedString &URL,
-    const DeprecatedString &frameName, const WindowArgs &windowArgs, JSValue *dialogArgs)
+    const DeprecatedString &frameName, const WindowFeatures &windowFeatures, JSValue *dialogArgs)
 {
     Frame* openerPart = openerWindow->frame();
     Frame* activePart = Window::retrieveActive(exec)->frame();
@@ -559,7 +560,7 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const Depre
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     Frame* newFrame = 0;
-    openerPart->browserExtension()->createNewWindow(frameRequest, windowArgs, newFrame);
+    openerPart->browserExtension()->createNewWindow(frameRequest, windowFeatures, newFrame);
 
     if (!newFrame)
         return 0;
@@ -606,7 +607,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
 
     bool trusted = false;
 
-    WindowArgs wargs;
+    WindowFeatures wargs;
 
     // The following features from Microsoft's documentation are not implemented:
     // - default font settings
@@ -1349,7 +1350,7 @@ void Window::setCurrentEvent(Event *evt)
   m_evt = evt;
 }
 
-static void setWindowFeature(const String& keyString, const String& valueString, WindowArgs& windowArgs)
+static void setWindowFeature(const String& keyString, const String& valueString, WindowFeatures& windowFeatures)
 {
     int value;
     
@@ -1360,31 +1361,31 @@ static void setWindowFeature(const String& keyString, const String& valueString,
         value = valueString.toInt();
     
     if (keyString == "left" || keyString == "screenx") {
-        windowArgs.xSet = true;
-        windowArgs.x = value;
+        windowFeatures.xSet = true;
+        windowFeatures.x = value;
     } else if (keyString == "top" || keyString == "screeny") {
-        windowArgs.ySet = true;
-        windowArgs.y = value;
+        windowFeatures.ySet = true;
+        windowFeatures.y = value;
     } else if (keyString == "width" || keyString == "innerwidth") {
-        windowArgs.widthSet = true;
-        windowArgs.width = value;
+        windowFeatures.widthSet = true;
+        windowFeatures.width = value;
     } else if (keyString == "height" || keyString == "innerheight") {
-        windowArgs.heightSet = true;
-        windowArgs.height = value;
+        windowFeatures.heightSet = true;
+        windowFeatures.height = value;
     } else if (keyString == "menubar")
-        windowArgs.menuBarVisible = value;
+        windowFeatures.menuBarVisible = value;
     else if (keyString == "toolbar")
-        windowArgs.toolBarVisible = value;
+        windowFeatures.toolBarVisible = value;
     else if (keyString == "location")
-        windowArgs.locationBarVisible = value;
+        windowFeatures.locationBarVisible = value;
     else if (keyString == "status")
-        windowArgs.statusBarVisible = value;
+        windowFeatures.statusBarVisible = value;
     else if (keyString == "resizable")
-        windowArgs.resizable = value;
+        windowFeatures.resizable = value;
     else if (keyString == "fullscreen")
-        windowArgs.fullscreen = value;
+        windowFeatures.fullscreen = value;
     else if (keyString == "scrollbars")
-        windowArgs.scrollbarsVisible = value;
+        windowFeatures.scrollbarsVisible = value;
 }
 
 // Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
@@ -1393,7 +1394,7 @@ static bool isSeparator(::UChar c)
     return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '=' || c == ',' || c == '\0';
 }
 
-static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
+static void parseWindowFeatures(const String& features, WindowFeatures& windowFeatures)
 {
     /*
      The IE rule is: all features except for channelmode and fullscreen default to YES, but
@@ -1403,31 +1404,31 @@ static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
      <http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/open_0.asp>
      */
     
-    windowArgs.dialog = false;
-    windowArgs.fullscreen = false;
+    windowFeatures.dialog = false;
+    windowFeatures.fullscreen = false;
     
-    windowArgs.xSet = false;
-    windowArgs.ySet = false;
-    windowArgs.widthSet = false;
-    windowArgs.heightSet = false;
+    windowFeatures.xSet = false;
+    windowFeatures.ySet = false;
+    windowFeatures.widthSet = false;
+    windowFeatures.heightSet = false;
     
     if (features.length() == 0) {
-        windowArgs.menuBarVisible = true;
-        windowArgs.statusBarVisible = true;
-        windowArgs.toolBarVisible = true;
-        windowArgs.locationBarVisible = true;
-        windowArgs.scrollbarsVisible = true;
-        windowArgs.resizable = true;
+        windowFeatures.menuBarVisible = true;
+        windowFeatures.statusBarVisible = true;
+        windowFeatures.toolBarVisible = true;
+        windowFeatures.locationBarVisible = true;
+        windowFeatures.scrollbarsVisible = true;
+        windowFeatures.resizable = true;
         
         return;
     }
     
-    windowArgs.menuBarVisible = false;
-    windowArgs.statusBarVisible = false;
-    windowArgs.toolBarVisible = false;
-    windowArgs.locationBarVisible = false;
-    windowArgs.scrollbarsVisible = false;
-    windowArgs.resizable = false;
+    windowFeatures.menuBarVisible = false;
+    windowFeatures.statusBarVisible = false;
+    windowFeatures.toolBarVisible = false;
+    windowFeatures.locationBarVisible = false;
+    windowFeatures.scrollbarsVisible = false;
+    windowFeatures.resizable = false;
     
     // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
     int keyBegin, keyEnd;
@@ -1474,29 +1475,29 @@ static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
 
         String keyString(buffer.substring(keyBegin, keyEnd - keyBegin));
         String valueString(buffer.substring(valueBegin, valueEnd - valueBegin));
-        setWindowFeature(keyString, valueString, windowArgs);
+        setWindowFeature(keyString, valueString, windowFeatures);
     }
 }
 
-static void constrainToVisible(const FloatRect& screen, WindowArgs& windowArgs)
+static void constrainToVisible(const FloatRect& screen, WindowFeatures& windowFeatures)
 {
-    windowArgs.x += screen.x();
-    if (windowArgs.x < screen.x() || windowArgs.x >= screen.right())
-        windowArgs.x = screen.x(); // only safe choice until size is determined
+    windowFeatures.x += screen.x();
+    if (windowFeatures.x < screen.x() || windowFeatures.x >= screen.right())
+        windowFeatures.x = screen.x(); // only safe choice until size is determined
     
-    windowArgs.y += screen.y();
-    if (windowArgs.y < screen.y() || windowArgs.y >= screen.bottom())
-        windowArgs.y = screen.y(); // only safe choice until size is determined
+    windowFeatures.y += screen.y();
+    if (windowFeatures.y < screen.y() || windowFeatures.y >= screen.bottom())
+        windowFeatures.y = screen.y(); // only safe choice until size is determined
     
-    if (windowArgs.height > screen.height()) // should actually check workspace
-        windowArgs.height = screen.height();
-    if (windowArgs.height < 100)
-        windowArgs.height = 100;
+    if (windowFeatures.height > screen.height()) // should actually check workspace
+        windowFeatures.height = screen.height();
+    if (windowFeatures.height < 100)
+        windowFeatures.height = 100;
     
-    if (windowArgs.width > screen.width()) // should actually check workspace
-        windowArgs.width = screen.width();
-    if (windowArgs.width < 100)
-        windowArgs.width = 100;
+    if (windowFeatures.width > screen.width()) // should actually check workspace
+        windowFeatures.width = screen.width();
+    if (windowFeatures.width < 100)
+        windowFeatures.width = 100;
 }
 
 JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -1551,10 +1552,10 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       if (!allowPopUp(exec, window) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
           return jsUndefined();
       
-      WindowArgs windowArgs;
+      WindowFeatures windowFeatures;
       String features = args[2]->isUndefinedOrNull() ? UString() : args[2]->toString(exec);
-      parseWindowFeatures(features, windowArgs);
-      constrainToVisible(screenRect(page), windowArgs);
+      parseWindowFeatures(features, windowFeatures);
+      constrainToVisible(screenRect(page), windowFeatures);
       
       // prepare arguments
       KURL url;
@@ -1591,7 +1592,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       // request window (new or existing if framename is set)
       Frame* newFrame = 0;
       frameRequest.m_request.setReferrer(activePart->referrer());
-      frame->browserExtension()->createNewWindow(frameRequest, windowArgs, newFrame);
+      frame->browserExtension()->createNewWindow(frameRequest, windowFeatures, newFrame);
       if (!newFrame)
           return jsUndefined();
       newFrame->setOpener(frame);

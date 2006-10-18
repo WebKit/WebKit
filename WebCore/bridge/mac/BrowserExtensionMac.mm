@@ -31,10 +31,12 @@
 #import "FrameMac.h"
 #import "FrameLoadRequest.h"
 #import "FrameTree.h"
+#import "KURL.h"
 #import "Page.h"
 #import "Screen.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCorePageBridge.h"
+#import "WindowFeatures.h"
 
 namespace WebCore {
 
@@ -44,12 +46,12 @@ BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
 }
 
 void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request, 
-                                          const WindowArgs& winArgs, 
+                                          const WindowFeatures& windowFeatures, 
                                           Frame*& newFrame)
 { 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    ASSERT(!winArgs.dialog || request.m_frameName.isEmpty());
+    ASSERT(!windowFeatures.dialog || request.m_frameName.isEmpty());
 
     newFrame = NULL;
     
@@ -86,7 +88,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     }
     
     WebCorePageBridge *pageBridge;
-    if (winArgs.dialog)
+    if (windowFeatures.dialog)
         pageBridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
     else
         pageBridge = [m_frame->bridge() createWindowWithURL:url.getNSURL()];
@@ -99,24 +101,24 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     
     newFrame = [frameBridge impl];
     
-    [frameBridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
-    [frameBridge setStatusbarVisible:winArgs.statusBarVisible];
-    [frameBridge setScrollbarsVisible:winArgs.scrollbarsVisible];
-    [frameBridge setWindowIsResizable:winArgs.resizable];
+    [frameBridge setToolbarsVisible:windowFeatures.toolBarVisible || windowFeatures.locationBarVisible];
+    [frameBridge setStatusbarVisible:windowFeatures.statusBarVisible];
+    [frameBridge setScrollbarsVisible:windowFeatures.scrollbarsVisible];
+    [frameBridge setWindowIsResizable:windowFeatures.resizable];
     
     NSRect windowRect = [pageBridge impl]->windowRect();
-    if (winArgs.xSet)
-      windowRect.origin.x = winArgs.x;
-    if (winArgs.ySet)
-      windowRect.origin.y = winArgs.y;
+    if (windowFeatures.xSet)
+      windowRect.origin.x = windowFeatures.x;
+    if (windowFeatures.ySet)
+      windowRect.origin.y = windowFeatures.y;
     
     // 'width' and 'height' specify the dimensions of the WebView, but we can only resize the window, 
     // so we compute a WebView delta and apply it to the window.
     NSRect webViewRect = [[pageBridge outerView] frame];
-    if (winArgs.widthSet)
-      windowRect.size.width += winArgs.width - webViewRect.size.width;
-    if (winArgs.heightSet)
-      windowRect.size.height += winArgs.height - webViewRect.size.height;
+    if (windowFeatures.widthSet)
+      windowRect.size.width += windowFeatures.width - webViewRect.size.width;
+    if (windowFeatures.heightSet)
+      windowRect.size.height += windowFeatures.height - webViewRect.size.height;
     
     [pageBridge impl]->setWindowRect(windowRect);
     

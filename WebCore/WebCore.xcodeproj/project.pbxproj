@@ -52,6 +52,7 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
+		14FD6DFD0AE5EA1B00AD67AD /* WindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
 		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
@@ -2897,6 +2898,7 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
+		14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WindowFeatures.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
@@ -6420,6 +6422,7 @@
 				55998A5C052B59CC0017A6C1 /* AXObjectCache.h */,
 				BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */,
 				935C475C09AC4CA000A6AAB4 /* History.h */,
+				14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */,
 			);
 			path = bridge;
 			sourceTree = "<group>";
@@ -10401,6 +10404,7 @@
 				6563A9A70ADF4094000ED2CD /* LoaderNSURLRequestExtras.h in Headers */,
 				14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */,
 				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
+				14FD6DFD0AE5EA1B00AD67AD /* WindowFeatures.h in Headers */,
 				8542A7930AE5C93F00DF58DF /* JSSVGRect.h in Headers */,
 				8542A7950AE5C94100DF58DF /* JSSVGPoint.h in Headers */,
 				8542A7970AE5C94300DF58DF /* JSSVGNumber.h in Headers */,

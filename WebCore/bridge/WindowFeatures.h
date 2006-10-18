@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BrowserExtension.h"
+#ifndef WindowFeatures_h
+#define WindowFeatures_h
 
 namespace WebCore {
 
-class Frame;
-class FrameMac;
+struct WindowFeatures {
+    float x;
+    bool xSet;
+    float y;
+    bool ySet;
+    float width;
+    bool widthSet;
+    float height;
+    bool heightSet;
 
-class BrowserExtensionMac : public BrowserExtension {
-public:
-    BrowserExtensionMac(Frame*);
- 
-    virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& newFrame);
+    bool menuBarVisible;
+    bool statusBarVisible;
+    bool toolBarVisible;
+    bool locationBarVisible;
+    bool scrollbarsVisible;
+    bool resizable;
 
-    virtual int getHistoryLength();
-    virtual void goBackOrForward(int distance);
-    virtual KURL historyURL(int distance);
-
-    virtual bool canRunModal();
-    virtual bool canRunModalNow();
-    virtual void runModal();
-    
-private:
-     FrameMac* m_frame;
+    bool fullscreen;
+    bool dialog;
 };
 
-}
+} // namespace WebCore
+
+#endif // WindowFeatures_h

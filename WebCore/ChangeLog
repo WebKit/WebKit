@@ -1,3 +1,25 @@
+2006-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders.
+        
+        Renamed WindowArgs to WindowFeatures, and moved it into its own header.
+        ("Features" is the term of art in IE documentation. "Args" is pirate
+        talk.)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::showModalDialog):
+        (KJS::setWindowFeature):
+        (KJS::parseWindowFeatures):
+        (KJS::constrainToVisible):
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/BrowserExtension.h:
+        * bridge/WindowFeatures.h: Added.
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+
 2006-10-17  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
