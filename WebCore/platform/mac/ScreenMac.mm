@@ -40,6 +40,14 @@ static NSScreen* screen(const Page* page)
     return [NSScreen mainScreen];
 }
 
+static inline FloatRect scale(const FloatRect& rect, const NSSize& scaleSize)
+{
+    float scaleX = scaleSize.width;
+    float scaleY = scaleSize.height;
+    
+    return FloatRect(rect.x() * scaleX, rect.y() * scaleY, rect.width() * scaleX, rect.height() * scaleY);
+}
+
 NSRect flipScreenRect(NSRect rect)
 {
     rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
@@ -55,19 +63,13 @@ NSPoint flipScreenPoint(NSPoint point)
 FloatRect scaleScreenRectToPageCoordinates(const FloatRect& rect, const Page* page)
 {
     NSSize scaleSize = [[page->bridge() outerView] convertSize:NSMakeSize(1.0, 1.0) fromView:nil];
-    float scaleX = scaleSize.width;
-    float scaleY = scaleSize.height;
-
-    return FloatRect(rect.x() * scaleX, rect.y() * scaleY, rect.width() * scaleX, rect.height() * scaleY);
+    return scale(rect, scaleSize);
 }
 
 FloatRect scalePageRectToScreenCoordinates(const FloatRect& rect, const Page* page)
 {
     NSSize scaleSize = [[page->bridge() outerView] convertSize:NSMakeSize(1.0, 1.0) toView:nil];
-    float scaleX = scaleSize.width;
-    float scaleY = scaleSize.height;
-
-    return FloatRect(rect.x() * scaleX, rect.y() * scaleY, rect.width() * scaleX, rect.height() * scaleY);
+    return scale(rect, scaleSize);
 }
 
 int screenDepth(const Page* page)
