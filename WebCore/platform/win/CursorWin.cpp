@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,9 +26,9 @@
 
 #include "config.h"
 #include "Cursor.h"
+
 #include "Image.h"
 #include "IntPoint.h"
-
 #include <windows.h>
 
 #define ALPHA_CURSORS

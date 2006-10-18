@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -157,11 +158,9 @@ void FrameWin::createNewWindow(const FrameLoadRequest& request)
     m_client->createNewWindow(request.m_request);
 }
 
-void FrameWin::createNewWindow(const FrameLoadRequest& request,
-                               const WindowFeatures& args,
-                               Frame*& part)
+void FrameWin::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& features, Frame*& newFrame)
 {
-    m_client->createNewWindow(request.m_request, args, part);
+    m_client->createNewWindow(request.m_request, features, newFrame);
 }
 
-}
+} // namespace WebCore

@@ -40,18 +40,9 @@ namespace WebCore {
 } while (0)
 
 
-BrowserExtensionWin::BrowserExtensionWin(WebCore::FrameWin* frame) : m_frame(frame)
+BrowserExtensionWin::BrowserExtensionWin(FrameWin* frame)
+    : m_frame(frame)
 {
-
-}
-
-void BrowserExtensionWin::setTypedIconURL(KURL const&, const String&)
-{
-}
-
-void BrowserExtensionWin::setIconURL(KURL const&)
-{
-
 }
 
 int BrowserExtensionWin::getHistoryLength()
@@ -65,16 +56,9 @@ bool BrowserExtensionWin::canRunModal()
     return 0;
 }
 
-void BrowserExtensionWin::createNewWindow(const FrameLoadRequest& request)
+void BrowserExtensionWin::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& features, Frame*& newFrame)
 {
-    m_frame->createNewWindow(request);
-}
-
-void BrowserExtensionWin::createNewWindow(const FrameLoadRequest& request,
-                                          const WindowFeatures& args,
-                                          Frame*& frame)
-{
-    m_frame->createNewWindow(request, args, frame);
+    m_frame->createNewWindow(request, features, newFrame);
 }
 
 bool BrowserExtensionWin::canRunModalNow()

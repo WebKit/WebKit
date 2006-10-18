@@ -1,3 +1,20 @@
+2006-10-18  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz
+
+        Win32 build fix.
+
+        * bridge/win/BrowserExtensionWin.cpp:
+        (WebCore::BrowserExtensionWin::BrowserExtensionWin):
+        (WebCore::BrowserExtensionWin::createNewWindow):
+        * bridge/win/BrowserExtensionWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::createNewWindow):
+        * bridge/win/FrameWin.h:
+        * platform/win/CursorWin.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Image::getHBITMAP):
+
 2006-10-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

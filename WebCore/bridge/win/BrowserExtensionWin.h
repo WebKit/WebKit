@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,13 +35,7 @@ class BrowserExtensionWin : public BrowserExtension {
 public:
     BrowserExtensionWin(FrameWin*);
  
-    virtual void createNewWindow(const FrameLoadRequest&);
-    virtual void createNewWindow(const FrameLoadRequest&,
-                                 const WindowFeatures&, 
-                                 Frame*& part);
-
-    virtual void setIconURL(const KURL& url);
-    virtual void setTypedIconURL(const KURL& url, const String&  type);
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& newFrame);
 
     virtual int getHistoryLength();
     virtual void goBackOrForward(int distance);
@@ -51,7 +46,7 @@ public:
     virtual void runModal();
     
 private:
-     FrameWin *m_frame;
+     FrameWin* m_frame;
 };
 
-}
+} // namespace WebCore

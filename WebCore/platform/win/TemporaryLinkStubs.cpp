@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -143,8 +144,6 @@ void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
-
-Cursor::Cursor(Image*, const IntPoint&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
@@ -371,6 +370,7 @@ void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 void Frame::setNeedsReapplyStyles() { }
 
 void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { }
+bool Image::getHBITMAP(HBITMAP) { return false; }
 
 PopupMenu::PopupMenu(RenderMenuList*) { notImplemented(); }
 PopupMenu::~PopupMenu() { notImplemented(); }

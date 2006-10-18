@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +32,12 @@
 namespace WebCore {
 
 class FrameLoadRequest;
+struct WindowFeatures;
 
 class FrameWinClient {
 public:
     virtual void createNewWindow(const ResourceRequest&) = 0;
-    virtual void createNewWindow(const ResourceRequest&,
-                                 const WindowFeatures&,
-                                 Frame*& part) = 0;
+    virtual void createNewWindow(const ResourceRequest&, const WindowFeatures&, Frame*& newFrame) = 0;
     virtual void openURL(const DeprecatedString&, bool lockHistory) = 0;
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
     virtual void setTitle(const String& title) = 0;
