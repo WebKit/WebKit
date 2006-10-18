@@ -1,3 +1,15 @@
+2006-10-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4784823>
+        GMail Editor: Hang occurs when removing list styling on text in a rich text message
+
+        * editing/execCommand/remove-list-1-expected.checksum: Added.
+        * editing/execCommand/remove-list-1-expected.png: Added.
+        * editing/execCommand/remove-list-1-expected.txt: Added.
+        * editing/execCommand/remove-list-1.html: Added.
+
 2006-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

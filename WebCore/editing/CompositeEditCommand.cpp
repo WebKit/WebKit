@@ -661,14 +661,25 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     ASSERT(destination.deepEquivalent().node()->inDocument());
     
-    // There are bugs in deletion when it removes a fully selected table/list.  It expands and removes the entire table/list, but will let content
+    // There are bugs in deletion when it removes a fully selected table/list.  
+    // It expands and removes the entire table/list, but will let content
     // before and after the table/list collapse onto one line.
+    
+    // Deleting a paragraph will leave a placeholder.  Remove it (and prune
+    // empty or unrendered parents).
     VisiblePosition caretAfterDelete = endingSelection().visibleStart();
     if (isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
         Node* node = position.node();
+        // Normally deletion will leave a br as a placeholder.
         if (node->hasTagName(brTag))
+            removeNodeAndPruneAncestors(node);
+        // If the selection to move was empty and in an empty block that 
+        // doesn't require a placeholder to prop itself open (like a bordered 
+        // div or an li), remove it during the move (the list removal code 
+        // expects this behavior).
+        else if (isBlock(node))
             removeNodeAndPruneAncestors(node);
         else if (node->renderer() && node->renderer()->style()->preserveNewline() && caretAfterDelete.characterAfter() == '\n')
             deleteTextFromNode(static_cast<Text*>(node), position.offset(), 1);

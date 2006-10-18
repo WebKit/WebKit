@@ -1,3 +1,23 @@
+2006-10-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4784823>
+        GMail Editor: Hang occurs when removing list styling on text in a rich text message
+
+        List removal moves the contents of every list item out of the list it's 
+        in. When the code tried to move the contents of an empty list item (an li 
+        with no child nodes, not even a placeholder br), moveParagraph didn't prune 
+        the li, like it would if the li had a placeholder inside it.  So the list 
+        removal code went into an infinite loop, continually attempting to de-list 
+        an empty list item.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): If the selection
+        to move was empty and in an empty block that doesn't require a 
+        placeholder to prop itself open (like a bordered div or an li), 
+        remove it during the move.
+
 2006-10-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
