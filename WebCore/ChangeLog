@@ -1,3 +1,20 @@
+2006-10-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady
+
+        Various cursor fixes
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMouseMoveEvent):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::pointerCursor):
+        * platform/win/CursorWin.cpp:
+        (WebCore::supportsAlphaCursors):
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::pointerCursor):
+
 2006-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

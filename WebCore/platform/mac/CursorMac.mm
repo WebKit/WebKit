@@ -103,6 +103,12 @@ Cursor::Cursor(NSCursor* c)
 {
 }
 
+const Cursor& pointerCursor()
+{
+    static Cursor c = [NSCursor arrowCursor];
+    return c;
+}
+
 const Cursor& crossCursor()
 {
     static Cursor c = [NSCursor crosshairCursor];

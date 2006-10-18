@@ -843,9 +843,10 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         m_frame->handleMouseMoveEvent(mev);
     
     RefPtr<Frame> newSubframe = subframeForTargetNode(mev.targetNode());
-    if (newSubframe && d->oldSubframe != newSubframe)
-        passMouseMoveEventToSubframe(mev, newSubframe.get());
-    else {
+    if (newSubframe) {
+        if (d->oldSubframe != newSubframe)
+            passMouseMoveEventToSubframe(mev, newSubframe.get());
+    } else {
         if (scrollbar && !d->mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (!d->m_resizeLayer || !d->m_resizeLayer->inResizeMode())
