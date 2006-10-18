@@ -40,7 +40,7 @@ table { border-spacing: 0; padding: 0; margin: 0; width: 100%; }
 
 td.gutter:after { content: attr(title); -webkit-user-select: none; }
 
-.breakpoint td.gutter, .current td.gutter { padding-right: 1px; vertical-align: middle; }
+.breakpoint td.gutter, .current td.gutter { padding-right: 1px; vertical-align: top; }
 .breakpoint td.gutter:after { content: url(breakPoint.tif); -webkit-user-select: none; vertical-align: middle; }
 .breakpoint.disabled td.gutter:after { content: url(breakPointDisabled.tif); }
 
@@ -56,4 +56,72 @@ td.gutter:after { content: attr(title); -webkit-user-select: none; }
     z-index: 100;
     -webkit-user-select: none;
     cursor: default;
+}
+
+.editor {
+    top: -2px;
+    left: -2px;
+    margin-bottom: -2px;
+    position: relative;
+    min-width: 350px;
+    max-width: 500px;
+    border-width: 20px 12px 11px 36px;
+    border-color: transparent;
+    border-style: solid;
+    -webkit-border-image: url(breakpointeditor.png) 20 12 11 36;
+    font-size: 11px;
+    font-family: 'Lucida Grande', sans-serif;
+}
+
+.editor .top {
+    position: absolute;
+    height: 20px;
+    -webkit-border-top-right-radius: 6px;
+    background-color: rgb(0, 134, 226);
+    border-bottom: 2px solid rgb(0, 110, 208);
+    top: -4px;
+    right: -5px;
+    left: -5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.editor .bottom {
+    position: relative;
+    padding: 5px 0;
+    top: 20px;
+}
+
+.editor div.condition {
+    position: relative;
+    background-color: white;
+    -webkit-user-modify: read-write-plaintext-only;
+    -webkit-nbsp-mode: space;
+    -webkit-line-break: after-white-space;
+    word-wrap: break-word;
+    outline: none;
+    font-family: monospace;
+    font-size: 10px;
+    line-height: 10px;
+    padding: 3px;
+    border: 1px solid darkgray;
+    top: -15px;
+    left: 60px;
+    margin-right: 60px;
+}
+
+.editor button.save {
+    margin-right: 1px;
+    padding: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
+    float: right;
+    font-size: 10px;
+    background-color: rgb(34, 128, 186);
+    height: 18px;
+    border: 1px solid rgb(20, 114, 172);
+}
+
+.editor button.save:active {
+    background-color: rgb(14, 98, 166);
 }

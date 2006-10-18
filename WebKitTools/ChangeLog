@@ -1,3 +1,17 @@
+2006-10-18  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Add Xcode 3 style inline breakpoint editor. Credit to xenon for the CSS wizardry to get the appearance working properly.
+
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/Images/breakpointeditor.png: Added.
+        * Drosera/breakpointEditor.css: Removed.
+        * Drosera/breakpointEditor.html: Removed.
+        * Drosera/breakpointEditor.js: Removed.
+        * Drosera/debugger.js:
+        * Drosera/viewer.css:
+
 2006-10-18  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim H.

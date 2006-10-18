@@ -48,6 +48,7 @@ var pauseOnNextStatement = false;
 var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
 var enabledBreakpoint = "break";
+var breakpointEditorHTML = '<div class="top">Edit Breakpoint:<label><input type="checkbox" onclick="window.parent.toggleBreakpointForEditor(this.parentNode.parentNode.parentNode)"></input>Enable</label><button class="save" onclick="window.parent.saveBreakpointForEditor(this.parentNode.parentNode)">Save</button></div><div class="bottom"><label for="editorCondition">Condition:</label><div class="condition"></div></div>'
 
 ScriptCallFrame = function (functionName, index, row)
 {
@@ -322,7 +323,7 @@ function stepOut()
 }
 
 Element.prototype.removeStyleClass = function(className) {
-    if(this.hasStyleClass(className))
+    if (this.hasStyleClass(className))
         this.className = this.className.replace(className, "");
 }
 
@@ -333,20 +334,17 @@ Element.prototype.addStyleClass = function(className) {
 
 Element.prototype.hasStyleClass = function(className) {
     return this.className.indexOf(className) != -1;
-};
+}
 
-function addBreakPoint(event)
+function breakpointAction(event)
 {
     var row = event.target.parentNode;
     var file = files[currentFile];
     var lineNum = parseInt(event.target.title);
     
-    if (row.hasStyleClass("breakpoint")) {
-        if(event.altKey && file.breakpoints[lineNum] != null)
-            showBreakpointEditor(file, lineNum);
-        else
-            toggleBreakpoint(row, file, lineNum);    
-    } else
+    if (row.hasStyleClass("breakpoint"))
+        toggleBreakpoint(row, file, lineNum);    
+    else
         createBreakpoint(row, file, lineNum);
 }
 
@@ -358,16 +356,67 @@ function createBreakpoint(row, file, lineNum)
     file.disabledBreakpoints[lineNum] = null;
 }
 
-function showBreakpointEditor(file, lineNum)
+function toggleBreakpointEditor(event)
 {
-    var editors = file.breakpointEditorWindows;
+    var row = event.target.parentNode;
+    var file = files[currentFile];
+    var lineNum = parseInt(event.target.title);
+    if (row.hasStyleClass("breakpoint")) {
+        var editor = file.breakpointEditors[lineNum];
+        if (!editor) {
+            var sourcesDocument = document.getElementById("sources").contentDocument;
+            editor = sourcesDocument.createElement("div");
+            editor.className = "editor";
+            editor.id = lineNum;
+            editor.innerHTML = breakpointEditorHTML;
 
-    if (editors[lineNum] == null)
-        editors[lineNum] = window.open("breakpointEditor.html", ("Edit Breakpoint On Line " + lineNum), "top=200, left=200, width=400, height=200, toolbar=no, resizable=yes");
-    else
-        editors[lineNum].focus();
-        
-    event.preventDefault();
+            // set the enabled checkbox to the correct state
+            editor.getElementsByTagName("input")[0].checked = !row.hasStyleClass("disabled");
+            
+            // set the condition field to reflect the breakpoint
+            setConditionFieldText(editor, lineNum);
+            
+            row.childNodes[1].appendChild(editor);
+            file.breakpointEditors[lineNum] = editor; 
+        } else {
+            row.childNodes[1].removeChild(editor);
+            file.breakpointEditors[lineNum] = null;
+        }
+    }
+}
+
+function setConditionFieldText(editor, lineNum)
+{
+    var conditionField = editor.childNodes[1].childNodes[1];
+    var functionBody = files[currentFile].breakpoints[lineNum];
+    if (!functionBody)
+        functionBody = "return -1;";
+    else if (functionBody == "break")
+        functionBody = "return 1;";
+    else {
+        var startIndex = functionBody.indexOf("{") + 1;
+        var endIndex = functionBody.lastIndexOf("}");
+        functionBody = functionBody.substring(startIndex, endIndex);
+    }
+    conditionField.innerText = functionBody;
+}
+
+function toggleBreakpointForEditor(editor)
+{
+    var file = files[currentFile];
+    var lineNum = parseInt(editor.id);
+    row = file.element.firstChild.childNodes.item(lineNum - 1);
+    toggleBreakpoint(row, file, lineNum);
+}
+
+function saveBreakpointForEditor(editor)
+{
+    var file = files[currentFile];
+    var lineNum = parseInt(editor.id);
+    row = file.element.firstChild.childNodes.item(lineNum - 1);
+    file.breakpoints[lineNum] = "__drosera_breakpoint_conditional_func = function() { " + editor.childNodes[1].childNodes[1].innerText + " }; __drosera_breakpoint_conditional_func();";
+    row.childNodes[1].removeChild(editor);
+    file.breakpointEditors[lineNum] = null;
 }
 
 function toggleBreakpoint(row, file, lineNum)
@@ -380,12 +429,11 @@ function toggleBreakpoint(row, file, lineNum)
     var temp = file.breakpoints[lineNum];
     file.breakpoints[lineNum] = file.disabledBreakpoints[lineNum];
     file.disabledBreakpoints[lineNum] = temp;
-}
-
-function finishEditingBreakpoint(line, file, newFunction)
-{
-    files[file].breakpoints[line] = newFunction;
-    files[file].breakpointEditorWindows[line] = null;
+    var editor = file.breakpointEditors[lineNum];
+    if (editor) {
+        editor.childNodes[0].childNodes[1].childNodes[0].checked = !row.hasStyleClass("disabled");
+        setConditionFieldText(editor, lineNum);
+    }
 }
 
 function moveBreakPoint(event)
@@ -423,16 +471,24 @@ function breakpointDrag(event)
             draggingBreakpoint.isDisabled = node.hasStyleClass("disabled");
             node.removeStyleClass("breakpoint");
             node.removeStyleClass("disabled");
-            draggingBreakpoint.started = true;
             
             var lineNum = parseInt(draggingBreakpoint.title);
+            var file = files[currentFile];
             
-            if(draggingBreakpoint.isDisabled)
+            var editor = file.breakpointEditors[lineNum];
+            if (editor) {
+                node.childNodes[1].removeChild(editor);
+                file.breakpointEditors[lineNum] = null;
+            }
+            
+            draggingBreakpoint.started = true;
+                        
+            if (draggingBreakpoint.isDisabled)
                 draggingBreakpoint.breakFunction = files[currentFile].disabledBreakpoints[lineNum];
             else
                 draggingBreakpoint.breakFunction = files[currentFile].breakpoints[lineNum];
-            files[currentFile].breakpoints[lineNum] = null;
-            files[currentFile].disabledBreakpoints[lineNum] = null;
+            file.breakpoints[lineNum] = null;
+            file.disabledBreakpoints[lineNum] = null;
 
             var dragImage = sourcesDocument.createElement("img");
             if (draggingBreakpoint.isDisabled)
@@ -497,7 +553,7 @@ function breakpointDragEnd(event)
     if (!tr)
         return;
         
-    if(draggingBreakpoint.isDisabled) {
+    if (draggingBreakpoint.isDisabled) {
         tr.addStyleClass("disabled");
         file.disabledBreakpoints[row] = draggingBreakpoint.breakFunction;
         file.breakpoints[row] = null;
@@ -647,7 +703,7 @@ function syntaxHighlight(code)
             result += "</span>";
             echoChar(c);
             continue;
-        } else if(isLetter(c) && (i == 0 || !isLetter(cPrev))) {
+        } else if (isLetter(c) && (i == 0 || !isLetter(cPrev))) {
             var keyword = c;
             var cj = "";
             for (var j = i + 1; j < i + 12 && j < code.length; j++) {
@@ -775,7 +831,8 @@ function loadFile(fileIndex, manageNavLists)
             var td = sourcesDocument.createElement("td");
             td.className = "gutter";
             td.title = (i + 1);
-            td.addEventListener("click", addBreakPoint, true);
+            td.addEventListener("click", breakpointAction, true);
+            td.addEventListener("dblclick", toggleBreakpointEditor, true);
             td.addEventListener("mousedown", moveBreakPoint, true);
             tr.appendChild(td);
 
@@ -933,8 +990,8 @@ function fileClicked(fileId, shouldLoadFile)
 {
     if (shouldLoadFile === undefined) shouldLoadFile = true;
     
-    document.getElementById(currentFile).className  = "passive";
-    document.getElementById(fileId).className       = "active";
+    document.getElementById(currentFile).className = "passive";
+    document.getElementById(fileId).className = "active";
     if (shouldLoadFile) 
         loadFile(fileId, false);
 }
@@ -968,7 +1025,7 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         file.scripts = new Array();
         file.breakpoints = new Array();
         file.disabledBreakpoints = new Array();
-        file.breakpointEditorWindows = new Array();
+        file.breakpointEditors = new Array();
         file.source = (fileSource.length ? fileSource : source);
         file.url = (url.length ? url : null);
         file.loaded = false;
