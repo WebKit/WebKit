@@ -38,6 +38,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
@@ -261,6 +262,7 @@ int main(int argc, const char *argv[])
     [preferences setMinimumFontSize:9];
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptCanOpenWindowsAutomatically:NO];
+    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
 
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)

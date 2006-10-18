@@ -1,3 +1,16 @@
+2006-10-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim H.
+
+        Bug 11341: REGRESSION (r16760): editing/selection/editable-links is failing
+        http://bugs.webkit.org/show_bug.cgi?id=11341
+
+        Link editing behavior became a preference. DumpRenderTree needs to specify the
+        non-default behavior it wants (WebKitEditableLinkOnlyLiveWithShiftKey).
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+
 2006-10-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Anders.
