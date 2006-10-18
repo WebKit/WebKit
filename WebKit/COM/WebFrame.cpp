@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +35,7 @@
 #include "WebHistoryItem.h"
 
 #pragma warning( push, 0 )
+#include "BrowserExtension.h"
 #include "Cache.h"
 #include "Document.h"
 #include "FrameView.h"
@@ -568,19 +570,7 @@ void WebFrame::receivedAllData(ResourceLoader*, PlatformData data)
 
 // FrameWinClient
 
-void WebFrame::createNewWindow(const WebCore::ResourceRequest&)
-{
-    // FIXME: This seems to never get called. Is it necessary?
-    IWebUIDelegate* uiDelegate = NULL;
-    if (FAILED(d->webView->uiDelegate(&uiDelegate)) || !uiDelegate)
-        return;
-    IWebView* new_view = NULL;
-    uiDelegate->createWebViewWithRequest(d->webView, NULL, &new_view);
-}
-
-void WebFrame::createNewWindow(const WebCore::ResourceRequest&,
-                               const WebCore::WindowArgs&,
-                               WebCore::Frame*& part)
+void WebFrame::createNewWindow(const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebCore::Frame*& /*newFrame*/)
 {
     IWebUIDelegate* uiDelegate = NULL;
     if (FAILED(d->webView->uiDelegate(&uiDelegate)) || !uiDelegate)

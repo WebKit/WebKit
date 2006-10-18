@@ -1,5 +1,13 @@
 2006-10-18  Sam Weinig  <sam.weinig@gmail.com>
 
+        Reviewed by Maciej.
+
+        More Win32 buildfix.
+
+        * bridge/win/FrameWin.h:
+
+2006-10-18  Sam Weinig  <sam.weinig@gmail.com>
+
         Reviewed by Mitz
 
         Win32 build fix.
