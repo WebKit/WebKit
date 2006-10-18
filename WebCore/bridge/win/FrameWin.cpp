@@ -158,7 +158,7 @@ void FrameWin::createNewWindow(const FrameLoadRequest& request)
 }
 
 void FrameWin::createNewWindow(const FrameLoadRequest& request,
-                               const WindowArgs& args,
+                               const WindowFeatures& args,
                                Frame*& part)
 {
     m_client->createNewWindow(request.m_request, args, part);

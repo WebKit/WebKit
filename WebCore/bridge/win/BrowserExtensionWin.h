@@ -36,7 +36,7 @@ public:
  
     virtual void createNewWindow(const FrameLoadRequest&);
     virtual void createNewWindow(const FrameLoadRequest&,
-                                 const WindowArgs&, 
+                                 const WindowFeatures&, 
                                  Frame*& part);
 
     virtual void setIconURL(const KURL& url);

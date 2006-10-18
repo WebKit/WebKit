@@ -40,7 +40,7 @@ public:
     BrowserExtensionGdk(Frame*);
 
     virtual void createNewWindow(const FrameLoadRequest&);
-    virtual void createNewWindow(const FrameLoadRequest&, const WindowArgs&, Frame*&);
+    virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*&);
 
     virtual void setIconURL(const KURL&);
     virtual void setTypedIconURL(const KURL&, const String& type);

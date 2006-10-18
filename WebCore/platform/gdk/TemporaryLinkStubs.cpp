@@ -182,7 +182,7 @@ KURL FrameGdk::originalRequestURL() const { return KURL(); }
 Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionGdk::canRunModal() { notImplemented(); return 0; }
-void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&, struct WebCore::WindowArgs const&, Frame*&) { notImplemented(); }
+void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&, struct WebCore::WindowFeatures const&, Frame*&) { notImplemented(); }
 void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&) { notImplemented(); }
 bool BrowserExtensionGdk::canRunModalNow() { notImplemented(); return 0; }
 void BrowserExtensionGdk::runModal() { notImplemented(); }

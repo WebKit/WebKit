@@ -71,7 +71,7 @@ void BrowserExtensionWin::createNewWindow(const FrameLoadRequest& request)
 }
 
 void BrowserExtensionWin::createNewWindow(const FrameLoadRequest& request,
-                                          const WindowArgs& args,
+                                          const WindowFeatures& args,
                                           Frame*& frame)
 {
     m_frame->createNewWindow(request, args, frame);
