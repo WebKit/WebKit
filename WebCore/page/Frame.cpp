@@ -1410,7 +1410,7 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
 
 void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
 {
-    if (d->m_caretPaint)
+    if (d->m_caretPaint && d->m_caretVisible)
         selectionController()->paintCaret(p, rect);
 }
 

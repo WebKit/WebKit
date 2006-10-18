@@ -2,6 +2,19 @@
 
         Reviewed by harrison
         
+        <rdar://problem/4776665>
+        REGRESSION: In Mail, caret is visible when the message body isn't focused
+
+        * page/Frame.cpp:
+        (WebCore::Frame::paintCaret): If a caret blink timer is ever on in error
+        (like when the frame that contains the caret isn't focused) then we don't 
+        want to paint the caret.  We should eventually move to using a single bool
+        for caret painting.
+
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         <rdar://problem/4774354>
         REGRESSION: In Gmail, caret reappears when dragging a selection over some text in the message body
 

@@ -1,6 +1,18 @@
 2006-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
+
+        <rdar://problem/4776665>
+        REGRESSION: In Mail, caret is visible when the message body isn't focused
+
+        * editing/selection/4776665-expected.checksum: Added.
+        * editing/selection/4776665-expected.png: Added.
+        * editing/selection/4776665-expected.txt: Added.
+        * editing/selection/4776665.html: Added.
+
+2006-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
         
         <rdar://problem/4774354>
         REGRESSION: In Gmail, caret reappears when dragging a selection over some text in the message body
