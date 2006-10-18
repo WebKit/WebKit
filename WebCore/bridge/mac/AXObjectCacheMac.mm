@@ -27,6 +27,7 @@
 #import "AXObjectCache.h"
 
 #import "Document.h"
+#import "FoundationExtras.h"
 #import "RenderObject.h"
 #import "WebCoreAXObject.h"
 #import "WebCoreViewFactory.h"
@@ -50,7 +51,7 @@ AXObjectCache::~AXObjectCache()
     for (HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.begin(); it != end; ++it) {
         WebCoreAXObject* obj = (*it).second;
         [obj detach];
-        CFRelease(obj);
+        HardRelease(obj);
     }
 }
 
@@ -61,9 +62,8 @@ WebCoreAXObject* AXObjectCache::get(RenderObject* renderer)
         return obj;
 
     obj = [[WebCoreAXObject alloc] initWithRenderer:renderer];
-    CFRetain(obj);
+    HardRetainWithNSRelease(obj);
     m_objects.set(renderer, obj);
-    [obj release];
     return obj;
 }
 
@@ -74,7 +74,7 @@ void AXObjectCache::remove(RenderObject* renderer)
         return;
     WebCoreAXObject* obj = (*it).second;
     [obj detach];
-    CFRelease(obj);
+    HardRelease(obj);
     m_objects.remove(it);
 
     ASSERT(m_objects.size() >= m_idsInUse.size());

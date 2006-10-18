@@ -613,12 +613,12 @@ ObjCNodeFilterCondition::ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
     : m_filter(filter)
 {
     ASSERT(m_filter);
-    CFRetain(m_filter);
+    HardRetain(m_filter);
 }
 
 ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
 {
-    CFRelease(m_filter);
+    HardRelease(m_filter);
 }
 
 short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const

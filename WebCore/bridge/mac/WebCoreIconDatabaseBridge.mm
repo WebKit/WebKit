@@ -26,10 +26,11 @@
 #import "config.h"
 #import "WebCoreIconDatabaseBridge.h"
 
-#import "Logging.h"
 #import "IconDatabase.h"
 #import "Image.h"
+#import "Logging.h"
 #import "PlatformString.h"
+#import "RetainPtr.h"
 
 using namespace WebCore;
 
@@ -190,16 +191,10 @@ using namespace WebCore;
 
 + (WebCoreIconDatabaseBridge *)sharedInstance
 {
-    static WebCoreIconDatabaseBridge* bridge = nil;
-
-    if (bridge == nil) {
+    static RetainPtr<WebCoreIconDatabaseBridge> bridge;
+    if (!bridge)
         bridge = [self createInstance];
-        // Need to CFRetain something that's in a global variable, since we want it to
-        // hang around forever, even when running under GC.
-        CFRetain(bridge);
-        [bridge release];
-    }
-    return bridge;
+    return bridge.get();
 }
 
 @end

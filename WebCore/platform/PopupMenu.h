@@ -25,6 +25,7 @@
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
 #ifdef __OBJC__
 @class NSPopUpButtonCell;
 #else
@@ -85,7 +86,7 @@ protected:
     bool m_wasClicked;
     
 #if PLATFORM(MAC)
-    NSPopUpButtonCell* popup;
+    RetainPtr<NSPopUpButtonCell> m_popup;
 #elif PLATFORM(WIN)
     HWND m_popup;
     HWND m_container;

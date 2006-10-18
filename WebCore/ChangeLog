@@ -1,3 +1,39 @@
+2006-10-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4752138> Manipulating popup in HTML page crashed Xcode
+
+        - Store the Mac popup button cell as a RetainPtr to prevent GC collection.
+        - Convert more ObjC local statics and member variables to use RetainPtr.
+        - Convert more CFRetain/CFRelease to HardRetain/HardRelease.
+
+        * bindings/objc/DOM.mm:
+        (ObjCNodeFilterCondition::ObjCNodeFilterCondition): use HardRetain and not CFRetain
+        (ObjCNodeFilterCondition::~ObjCNodeFilterCondition): use HardRelease and not CFRelease
+        * bridge/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::~AXObjectCache): use HardRelease and not CFRelease
+        (WebCore::AXObjectCache::get): use HardRetain and not CFRetain
+        (WebCore::AXObjectCache::remove): use HardRelease and not CFRelease
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge supportedImageResourceMIMETypes]): use RetainPtr
+        (+[WebCoreFrameBridge supportedImageMIMETypes]): ditto
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (+[WebCoreIconDatabaseBridge sharedInstance]): use RetainPtr
+        * platform/PopupMenu.h: renamed popup to m_popup and switched to RetainPtr<NSPopUpButtonCell>
+        * platform/cf/RetainPtr.h:
+        (WTF::::operator): implement a missing operator= template function
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::PopupMenu): remove nil initialization
+        (WebCore::PopupMenu::~PopupMenu): use .get(), remove release message and rename to m_popup
+        (WebCore::PopupMenu::clear): use .get() when sending a message and rename to m_popup
+        (WebCore::PopupMenu::populate): ditto 
+        (WebCore::PopupMenu::show): ditto
+        (WebCore::PopupMenu::hide): ditto
+        (WebCore::PopupMenu::addSeparator): ditto
+        (WebCore::PopupMenu::addGroupLabel): ditto
+        (WebCore::PopupMenu::addOption): ditto
+
 2006-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adele.

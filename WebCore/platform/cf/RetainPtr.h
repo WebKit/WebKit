@@ -111,6 +111,17 @@ namespace WTF {
         return *this;
     }
 
+    template <typename T> template <typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(U* optr)
+    {
+        if (optr)
+            CFRetain(optr);
+        PtrType ptr = m_ptr;
+        m_ptr = optr;
+        if (ptr)
+            CFRelease(ptr);
+        return *this;
+    }
+
     template <class T> inline void RetainPtr<T>::swap(RetainPtr<T>& o)
     {
         std::swap(m_ptr, o.m_ptr);

@@ -35,54 +35,52 @@ using namespace HTMLNames;
 
 PopupMenu::PopupMenu(RenderMenuList* menuList)
     : m_menuList(menuList)
-    , popup(nil)
 {
 }
 
 PopupMenu::~PopupMenu()
 {
-    if (popup) {
-        [popup setControlView:nil];
-        [popup release];
-    }
+    if (m_popup)
+        [m_popup.get() setControlView:nil];
 }
 
 void PopupMenu::clear()
 {
-    if (popup)
-        [popup removeAllItems];
+    if (m_popup)
+        [m_popup.get() removeAllItems];
 }
 
 void PopupMenu::populate()
 {
-    if (popup)
-        [popup removeAllItems];
+    if (m_popup)
+        [m_popup.get() removeAllItems];
     else {
-        popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
-        [popup setUsesItemFromMenu:NO];
-        [popup setAutoenablesItems:NO];
+        m_popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
+        [m_popup.get() release]; // release here since the RetainPtr has retained the object already
+        [m_popup.get() setUsesItemFromMenu:NO];
+        [m_popup.get() setAutoenablesItems:NO];
     }
-    BOOL messagesEnabled = [[popup menu] menuChangedMessagesEnabled];
-    [[popup menu] setMenuChangedMessagesEnabled:NO];
+    BOOL messagesEnabled = [[m_popup.get() menu] menuChangedMessagesEnabled];
+    [[m_popup.get() menu] setMenuChangedMessagesEnabled:NO];
     PopupMenu::addItems();
-    [[popup menu] setMenuChangedMessagesEnabled:messagesEnabled];
+    [[m_popup.get() menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate();
-    if ([popup numberOfItems] <= 0)
+    if ([m_popup.get() numberOfItems] <= 0)
         return;
-    ASSERT([popup numberOfItems] > index);
+    ASSERT([m_popup.get() numberOfItems] > index);
 
     NSView* view = v->getDocumentView();
 
-    [popup attachPopUpWithFrame:r inView:view];
-    [popup selectItemAtIndex:index];
+    [m_popup.get() attachPopUpWithFrame:r inView:view];
+    [m_popup.get() selectItemAtIndex:index];
     
     NSFont* font = menuList()->style()->font().primaryFont()->getNSFont();
 
-    NSRect titleFrame = [popup titleRectForBounds:r];
+    NSRect titleFrame = [m_popup.get() titleRectForBounds:r];
     if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
         titleFrame = r;
     float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
@@ -91,7 +89,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     vertOffset += [font descender] - [defaultFont descender];
     vertOffset = fmin(NSHeight(r), vertOffset);
 
-    NSMenu* menu = [popup menu];
+    NSMenu* menu = [m_popup.get() menu];
     // FIXME: Need to document where this magic number 10 comes from.
     NSPoint location = NSMakePoint(NSMinX(r) - 10, NSMaxY(r) - vertOffset);
 
@@ -106,7 +104,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
 
     if (menuList()) {
-        int newIndex = [popup indexOfSelectedItem];
+        int newIndex = [m_popup.get() indexOfSelectedItem];
         menuList()->hidePopup();
 
         if (index != newIndex && newIndex >= 0)
@@ -122,12 +120,12 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
 void PopupMenu::hide()
 {
-    [popup dismissPopUp];
+    [m_popup.get() dismissPopUp];
 }
 
 void PopupMenu::addSeparator()
 {
-    [[popup menu] addItem:[NSMenuItem separatorItem]];
+    [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
 }
 
 void PopupMenu::addGroupLabel(HTMLOptGroupElement* element)
@@ -145,8 +143,8 @@ void PopupMenu::addGroupLabel(HTMLOptGroupElement* element)
     NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
     [attributes release];
 
-    [popup addItemWithTitle:@""];
-    NSMenuItem* menuItem = [popup lastItem];
+    [m_popup.get() addItemWithTitle:@""];
+    NSMenuItem* menuItem = [m_popup.get() lastItem];
     [menuItem setAttributedTitle:string];
     [menuItem setEnabled:NO];
 
@@ -173,8 +171,8 @@ void PopupMenu::addOption(HTMLOptionElement* element)
     NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
     [attributes release];
 
-    [popup addItemWithTitle:@""];
-    NSMenuItem* menuItem = [popup lastItem];
+    [m_popup.get() addItemWithTitle:@""];
+    NSMenuItem* menuItem = [m_popup.get() lastItem];
     [menuItem setAttributedTitle:string];
     [menuItem setEnabled:groupEnabled && element->isEnabled()];
 

@@ -59,6 +59,7 @@
 #import "RenderTreeAsText.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "RetainPtr.h"
 #import "ReplaceSelectionCommand.h"
 #import "ResourceRequest.h"
 #import "Screen.h"
@@ -418,7 +419,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 + (NSArray *)supportedImageResourceMIMETypes
 {
-    static NSArray* supportedTypes = nil;
+    static RetainPtr<NSArray> supportedTypes;
     if (!supportedTypes) {
         NSMutableSet* set = [[NSMutableSet alloc] init];
 
@@ -439,17 +440,16 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         [set removeObject:@"application/octet-stream"];
 
         supportedTypes = [set allObjects];
-        CFRetain(supportedTypes);
 
         [set release];
     }
 
-    return supportedTypes;
+    return supportedTypes.get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NSArray* supportedTypes = nil;
+    static RetainPtr<NSArray> supportedTypes;
     if (!supportedTypes) {
         NSMutableArray* types = [[self supportedImageResourceMIMETypes] mutableCopy];
         [types removeObject:@"application/pdf"];
@@ -458,11 +458,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         [types release];
 
         supportedTypes = copy;
-        CFRetain(supportedTypes);
 
         [copy release];
     }
-    return supportedTypes;
+
+    return supportedTypes.get();
 }
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
