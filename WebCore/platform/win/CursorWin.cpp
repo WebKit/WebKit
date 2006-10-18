@@ -184,13 +184,13 @@ const Cursor& helpCursor()
 
 const Cursor& eastResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_HELP);
+    static Cursor c = LoadCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_HELP);
+    static Cursor c = LoadCursor(0, IDC_SIZENS);
     return c;
 }
 

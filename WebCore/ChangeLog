@@ -1,5 +1,15 @@
 2006-10-17  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Anders.
+
+        Make north and east resize cursors use correct image
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+
+2006-10-17  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Brady
 
         Various cursor fixes
