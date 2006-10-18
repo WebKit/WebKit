@@ -1,3 +1,23 @@
+2006-10-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Brady.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=11344
+        REGRESSION (r16741): webViewDidChangeSelection delegate not firing in
+        2 layout tests
+
+        The behavior for display-none-in-onchange-keyboard is still correct
+        (we don't crash when the element about to receive focus gets
+        display:none set), so I've just generated new results for it.
+
+        The behavior of tabbing-input-iframe has changed a little. iframe
+        elements are now in the tab order, so I've changed the test to take
+        that into account and generated new results.
+
+        * fast/forms/display-none-in-onchange-keyboard-expected.txt:
+        * fast/forms/tabbing-input-iframe-expected.txt:
+        * fast/forms/tabbing-input-iframe.html:
+
 2006-10-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
