@@ -5,9 +5,6 @@
 
         Reviewed by beth
 
-        * WebCore.xcodeproj/project.pbxproj:
-        * platform/KURL.cpp: Removed.
-        * platform/KURL.h: Removed.
         * rendering/RenderBlock.cpp:
         (WebCore::RenderBlock::paint):
         (WebCore::RenderBlock::paintChildren):
