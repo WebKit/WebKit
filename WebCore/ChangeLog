@@ -1,3 +1,14 @@
+2006-10-19  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by ap.
+
+        Win32 build fix.
+
+        * bridge/win/FrameWin.cpp:
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ResourceLoader::retrieveResponseEncoding):
+
 2006-10-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Mitz.

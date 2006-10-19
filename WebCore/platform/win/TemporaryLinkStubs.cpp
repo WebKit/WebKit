@@ -223,7 +223,7 @@ bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return
 void WebCore::refreshPlugins(bool) { }
 
 void WebCore::ResourceLoader::assembleResponseHeaders() const { }
-void WebCore::ResourceLoader::retrieveCharset() const { }
+void WebCore::ResourceLoader::retrieveResponseEncoding() const {}
 bool WebCore::ResourceLoader::startHTTPRequest(const String& referrer) { return false; }
 
 void FrameWin::restoreDocumentState() { }

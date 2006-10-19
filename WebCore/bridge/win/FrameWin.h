@@ -48,7 +48,6 @@ public:
     FrameWin(Page*, Element*, FrameWinClient*);
     ~FrameWin();
 
-    virtual void createNewWindow(const FrameLoadRequest&);
     virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& part);
     virtual bool openURL(const KURL&);
     virtual void openURLRequest(const FrameLoadRequest&);

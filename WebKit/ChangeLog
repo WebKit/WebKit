@@ -1,3 +1,13 @@
+2006-10-19  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by ap.
+
+        Win32 build fix.
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+        (WebFrame::createNewWindow):
+
 2006-10-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed and landed by ap.

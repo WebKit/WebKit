@@ -142,7 +142,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
     // current WebView. That's a mismatch and not good!
     static bool initializedObjectCacheSize = false;
     if (!initializedObjectCacheSize) {
-        Cache::setSize(getObjectCacheSize());
+        cache()->setMaximumSize(getObjectCacheSize());
         initializedObjectCacheSize = true;
     }
 
@@ -570,7 +570,7 @@ void WebFrame::receivedAllData(ResourceLoader*, PlatformData data)
 
 // FrameWinClient
 
-void WebFrame::createNewWindow(const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebCore::Frame*& /*newFrame*/)
+void WebFrame::createNewWindow(const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebCore::Frame*& newFrame)
 {
     IWebUIDelegate* uiDelegate = NULL;
     if (FAILED(d->webView->uiDelegate(&uiDelegate)) || !uiDelegate)
@@ -584,7 +584,7 @@ void WebFrame::createNewWindow(const WebCore::ResourceRequest&, const WebCore::W
       return;
 
     WebFrame* new_frame = static_cast<WebFrame*>(new_iwebframe);
-    part = new_frame->d->frame.get();
+    newFrame = new_frame->d->frame.get();
 }
 
 void WebFrame::openURL(const DeprecatedString& url, bool lockHistory)
