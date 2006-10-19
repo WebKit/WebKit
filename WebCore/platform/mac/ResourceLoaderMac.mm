@@ -112,13 +112,13 @@ void ResourceLoader::assembleResponseHeaders() const
     }
 }
 
-void ResourceLoader::retrieveCharset() const
+void ResourceLoader::retrieveResponseEncoding() const
 {
-    if (!d->retrievedCharset) {
-        NSString *charset = [d->response textEncodingName];
-        if (charset)
-            d->metaData.set("charset", charset);
-        d->retrievedCharset = true;
+    if (!d->m_retrievedResponseEncoding) {
+        NSString *textEncodingName = [d->response textEncodingName];
+        if (textEncodingName)
+            d->m_responseEncoding = textEncodingName;
+        d->m_retrievedResponseEncoding = true;
     }
 }
 
@@ -132,7 +132,7 @@ void ResourceLoader::setLoader(WebCoreResourceLoaderImp *loader)
 void ResourceLoader::receivedResponse(NSURLResponse* response)
 {
     d->assembledResponseHeaders = false;
-    d->retrievedCharset = false;
+    d->m_retrievedResponseEncoding = false;
     d->response = response;
     HardRetain(d->response);
     if (d->client)

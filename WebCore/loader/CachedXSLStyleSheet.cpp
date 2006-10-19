@@ -61,7 +61,7 @@ void CachedXSLStyleSheet::ref(CachedResourceClient *c)
         c->setXSLStyleSheet(m_url, m_sheet);
 }
 
-void CachedXSLStyleSheet::setCharset(const String& chs)
+void CachedXSLStyleSheet::setEncoding(const String& chs)
 {
     m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
 }

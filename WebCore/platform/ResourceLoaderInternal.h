@@ -64,7 +64,7 @@ namespace WebCore {
             , URL(u)
             , method(method)
             , assembledResponseHeaders(true)
-            , retrievedCharset(true)
+            , m_retrievedResponseEncoding(true)
             , m_loading(false)
             , m_cancelled(false)
 #if USE(CFNETWORK)
@@ -100,7 +100,7 @@ namespace WebCore {
             , method(method)
             , postData(p)
             , assembledResponseHeaders(true)
-            , retrievedCharset(true)
+            , m_retrievedResponseEncoding(true)
             , m_loading(false)
             , m_cancelled(false)
 #if USE(CFNETWORK)
@@ -139,9 +139,11 @@ namespace WebCore {
         String method;
         FormData postData;
         
-        bool assembledResponseHeaders;
-        bool retrievedCharset;
+        String m_responseEncoding;
         DeprecatedString responseHeaders;
+
+        bool assembledResponseHeaders;
+        bool m_retrievedResponseEncoding;
     
         bool m_loading;
         bool m_cancelled;

@@ -128,9 +128,9 @@ void Loader::receivedResponse(ResourceLoader* job, PlatformResponse response)
     req->cachedObject()->setResponse(response);
     req->cachedObject()->setExpireDate(CacheObjectExpiresTime(req->docLoader(), response), false);
     
-    DeprecatedString chs = job->queryMetaData("charset").deprecatedString();
-    if (!chs.isNull())
-        req->cachedObject()->setCharset(chs);
+    String encoding = job->responseEncoding();
+    if (!encoding.isNull())
+        req->cachedObject()->setEncoding(encoding);
     
     if (req->isMultipart()) {
         ASSERT(req->cachedObject()->isImage());

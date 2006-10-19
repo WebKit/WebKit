@@ -44,7 +44,7 @@ namespace WebCore {
 
         virtual void ref(CachedResourceClient*);
 
-        virtual void setCharset(const String&);
+        virtual void setEncoding(const String&);
         virtual void data(Vector<char>&, bool allDataReceived);
         virtual void error();
 

@@ -564,7 +564,7 @@ void XMLHttpRequest::receivedData(ResourceLoader*, const char* data, int len)
         if (m_encoding.isEmpty())
             m_encoding = getCharset(getResponseHeader("Content-Type"));
         if (m_encoding.isEmpty() && m_loader)
-            m_encoding = m_loader->queryMetaData("charset");
+            m_encoding = m_loader->responseEncoding();
     
         if (!m_encoding.isEmpty())
             m_decoder = new Decoder("text/plain", m_encoding);

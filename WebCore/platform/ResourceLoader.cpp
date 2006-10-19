@@ -67,16 +67,19 @@ void ResourceLoader::setError(int e)
     d->status = e;
 }
 
+String ResourceLoader::responseEncoding() const
+{
+    retrieveResponseEncoding();
+    
+    return d->m_responseEncoding;
+}
+
 String ResourceLoader::queryMetaData(const String& key) const
 {
     if (key == "HTTP-Headers") {
         assembleResponseHeaders();
         return d->responseHeaders;
     } 
-
-    if (key == "charset")
-        // this will put it in the regular metadata dictionary
-        retrieveCharset();
 
     return d->metaData.get(key); 
 }

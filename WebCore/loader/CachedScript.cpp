@@ -64,7 +64,7 @@ void CachedScript::ref(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
-void CachedScript::setCharset(const String& chs)
+void CachedScript::setEncoding(const String& chs)
 {
     TextEncoding encoding(chs);
     if (encoding.isValid())

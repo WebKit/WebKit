@@ -63,7 +63,7 @@ void CachedCSSStyleSheet::ref(CachedResourceClient *c)
         c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
 }
 
-void CachedCSSStyleSheet::setCharset(const String& chs)
+void CachedCSSStyleSheet::setEncoding(const String& chs)
 {
     m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
 }

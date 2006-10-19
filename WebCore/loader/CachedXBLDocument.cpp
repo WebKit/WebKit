@@ -65,7 +65,7 @@ void CachedXBLDocument::ref(CachedResourceClient *c)
         c->setXBLDocument(m_url, m_document);
 }
 
-void CachedXBLDocument::setCharset(const String& chs)
+void CachedXBLDocument::setEncoding(const String& chs)
 {
     m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
 }

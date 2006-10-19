@@ -1,3 +1,38 @@
+2006-10-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej, Brady.
+
+        Remove "charset" from the ResourceLoader metadata map and use 
+        a getter function instead. Also, rename charset to encoding in a couple of places.
+        
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::setEncoding):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::setEncoding):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::setEncoding):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::setEncoding):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::setEncoding):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse):
+        * platform/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::responseEncoding):
+        (WebCore::ResourceLoader::queryMetaData):
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::retrieveResponseEncoding):
+        (WebCore::ResourceLoader::receivedResponse):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::receivedData):
+
 2006-10-19  David Hyatt  <hyatt@apple.com>
 
         Rewrite of the WebCore memory cache.  The following changes have been made (along with many more):
