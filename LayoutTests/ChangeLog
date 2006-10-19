@@ -2,6 +2,16 @@
 
         Reviewed by Brady.
 
+        New test to make sure we're generating the correct keycodes for Tab
+        and Shift-Tab keypresses.
+
+        * fast/events/js-keyboard-event-creation-expected.txt: Added.
+        * fast/events/js-keyboard-event-creation.html: Added.
+
+2006-10-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Brady.
+
         Fix: http://bugs.webkit.org/show_bug.cgi?id=11344
         REGRESSION (r16741): webViewDidChangeSelection delegate not firing in
         2 layout tests

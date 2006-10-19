@@ -299,6 +299,10 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
         // Standard says that DEL becomes U+00007F.
         case NSDeleteFunctionKey:
             return "U+00007F";
+            
+        // Always use 0x09 for tab instead of AppKit's backtab character.
+        case NSBackTabCharacter:
+            return "U+000009";
 
         case NSBeginFunctionKey:
         case NSBreakFunctionKey:

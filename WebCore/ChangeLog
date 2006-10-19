@@ -1,3 +1,14 @@
+2006-10-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Brady.
+
+        Change Shift-Tab to generate keyIdentifier U+000009 (Tab) instead of
+        U+000019 (Backtab). This matches our windowsKeyCode for this key
+        combination.
+
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+
 2006-10-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam, Brady.
