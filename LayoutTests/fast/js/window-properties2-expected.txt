@@ -1,0 +1,67 @@
+This test prints out the values of a few global objects that WebCore used to lack.
+
+
+
+===== window.location [object]: file:///Users/ggaren/Labyrinth/OpenSource/LayoutTests/fast/js/window-properties2.html=====
+toString: function
+assign: function
+host: string
+pathname: string
+port: string
+href: string
+search: string
+reload: function
+hash: string
+hostname: string
+protocol: string
+replace: function
+
+
+===== window.getSelection() [object]: =====
+setPosition: function
+modify: function
+setBaseAndExtent: function
+empty: function
+getRangeAt: function
+toString: function
+baseOffset: number
+collapseToEnd: function
+type: string
+focusNode: object
+focusOffset: number
+extentOffset: number
+anchorNode: object
+extentNode: object
+baseNode: object
+collapseToStart: function
+anchorOffset: number
+isCollapsed: boolean
+collapse: function
+
+
+===== window.history [object]: [object History]=====
+back: function
+forward: function
+length: number
+go: function
+
+
+===== window.locationbar [object]: [object BarInfo]=====
+visible: boolean
+
+
+===== window.menubar [object]: [object BarInfo]=====
+visible: boolean
+
+
+===== window.personalbar [object]: [object BarInfo]=====
+visible: boolean
+
+
+===== window.statusbar [object]: [object BarInfo]=====
+visible: boolean
+
+
+===== window.toolbar [object]: [object BarInfo]=====
+visible: boolean
+

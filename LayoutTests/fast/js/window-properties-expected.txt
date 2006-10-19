@@ -345,16 +345,16 @@ window.document.links : function
 window.document.location : object (Location)
 window.document.location.toString : function
 window.document.location.assign : function
+window.document.location.reload : function
+window.document.location.replace : function
 window.document.location.host : string
 window.document.location.pathname : string
 window.document.location.port : string
 window.document.location.href : string
 window.document.location.search : string
-window.document.location.reload : function
 window.document.location.hash : string
 window.document.location.hostname : string
 window.document.location.protocol : string
-window.document.location.replace : function
 window.document.cookie : string
 window.document.plugins : function
 window.document.forms : function
@@ -963,8 +963,8 @@ window.document.defaultView.onmousewheel : null
 window.document.defaultView.history : object (History)
 window.document.defaultView.history.back : function
 window.document.defaultView.history.forward : function
-window.document.defaultView.history.length : number
 window.document.defaultView.history.go : function
+window.document.defaultView.history.length : number
 window.document.defaultView.prompt : function
 window.document.defaultView.top : object (DOMWindow)
 window.document.defaultView.top *** children skipped, already printed above under 'window.document.defaultView'

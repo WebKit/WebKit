@@ -1,0 +1,32 @@
+<p>This test prints out the values of a few global objects that WebCore used to lack.</p>
+<hr>
+
+<pre id="pre"></pre>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
+function log(s)
+{
+    document.getElementById('pre').appendChild(document.createTextNode(s));
+}
+
+function logObject(objectGetter)
+{
+    var o = eval(objectGetter);
+    log("\n\n===== " + objectGetter + " [" + typeof(o) + "]: " + o + "=====\n");
+    for (var p in o) {
+        log(p + ": " + typeof o[p] + "\n");
+    }
+}
+
+logObject('window.location');
+logObject('window.getSelection()');
+logObject('window.history');
+logObject('window.locationbar');
+logObject('window.menubar');
+logObject('window.personalbar');
+logObject('window.statusbar');
+logObject('window.toolbar');
+</script>

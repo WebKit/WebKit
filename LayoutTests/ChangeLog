@@ -1,5 +1,12 @@
 2006-10-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Test for some window properties that WebCore previously didn't enumerate.
+
+        * fast/js/window-properties2-expected.txt: Added.
+        * fast/js/window-properties2.html: Added.
+
+2006-10-18  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Beth.
         
         Updated some results now that some global JS objects repeatably report their
