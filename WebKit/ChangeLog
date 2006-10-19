@@ -1,3 +1,11 @@
+2006-10-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed and landed by ap.
+
+        - fixed the inspector's tree popup
+
+        * WebInspector/webInspector/inspector.html:
+
 2006-10-18  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej.
