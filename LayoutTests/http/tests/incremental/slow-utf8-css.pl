@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# flush the buffers after each print
+# Flush STDOUT after each print.
 select (STDOUT);
 $| = 1;
 
@@ -11,7 +11,11 @@ print "Pragma: no-cache\n";
 print "\n";
 
 print "\xef\xbb\xbfTest for bug 10753: The beginning of a CSS file is missing.\n\n";
-for ($count=1; $count<4000; $count++) { # dump some BOMs to bypass CFNetwork buffering
+# Dump some BOMs to bypass CFNetwork buffering.
+for ($count = 1; $count < 4000; $count++) {
     print "\xef\xbb\xbf";
 }
-print "You should see a bug description one line above (i.e., this line shouldn't be the only one).";
+
+# Delay to force the second line of text to be decoded as a separate chunk.
+sleep 1;
+print "You should see a bug description on a separate line above this one.";
