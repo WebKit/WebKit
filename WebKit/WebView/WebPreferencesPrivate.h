@@ -72,6 +72,10 @@ typedef enum {
 - (WebKitEditableLinkBehavior)editableLinkBehavior;
 - (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
 
+// For debugging purposes, can be removed when no longer needed
+- (BOOL)_usePDFPreviewView;
+- (void)_setUsePDFPreviewView:(BOOL)newValue;
+
 // Other private methods
 - (size_t)_pageCacheSize;
 - (size_t)_objectCacheSize;

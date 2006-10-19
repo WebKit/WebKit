@@ -205,7 +205,7 @@ enum {
         if (dataSourceRepresentation && [dataSourceRepresentation class] == viewClass)
             documentView = (NSView <WebDocumentView> *)[dataSourceRepresentation retain];
         else
-            documentView = [[viewClass alloc] init];
+            documentView = [[viewClass alloc] initWithFrame:[self bounds]];
     } else
         documentView = nil;
     

@@ -35,6 +35,7 @@
 
 @interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentTextSizing>
 {
+    NSView *previewView;
     PDFView *PDFSubview;
     NSString *path;
     id trackedFirstResponder;

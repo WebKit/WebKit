@@ -48,6 +48,8 @@
 #import <WebCore/WebFrameLoader.h>
 #import <WebKitSystemInterface.h>
 
+#define PDFKitLaunchNotification @"PDFPreviewLaunchPreview"
+
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
 
@@ -100,6 +102,20 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
     return PDFViewClass;
 }
 
++ (Class)PDFPreviewViewClass
+{
+    static Class PDFPreviewViewClass = nil;
+    static BOOL checkedForPDFPreviewViewClass = NO;
+    
+    if (!checkedForPDFPreviewViewClass) {
+        checkedForPDFPreviewViewClass = YES;
+        PDFPreviewViewClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFPreviewView"];
+    }
+    
+    // This class might not be available; callers need to deal with a nil return here.
+    return PDFPreviewViewClass;
+}
+
 + (NSArray *)supportedMIMETypes
 {
     return [WebPDFRepresentation supportedMIMETypes];
@@ -109,10 +125,33 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-        PDFSubview = [[[[self class] PDFViewClass] alloc] initWithFrame:frame];
-        [PDFSubview setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-        [self addSubview:PDFSubview];
+        [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        
+        Class previewViewClass = nil;
+        if ([[WebPreferences standardPreferences] _usePDFPreviewView])
+            previewViewClass = [[self class] PDFPreviewViewClass];
+        
+        // We might not have found a previewViewClass even if we looked for one.
+        // But if we found the class we should be able to create an instance.
+        if (previewViewClass) {
+            previewView = [[previewViewClass alloc] initWithFrame:frame];
+            ASSERT(previewView);
+        }
+        
+        NSView *topLevelPDFKitView = nil;
+        if (previewView) {
+            PDFSubview = [previewView performSelector:@selector(pdfView)];
+            topLevelPDFKitView = previewView;
+        } else {
+            PDFSubview = [[[[self class] PDFViewClass] alloc] initWithFrame:frame];
+            topLevelPDFKitView = PDFSubview;
+        }
+        
+        ASSERT(PDFSubview);
+        
+        [topLevelPDFKitView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [self addSubview:topLevelPDFKitView];
+        
         [PDFSubview setDelegate:self];
         written = NO;
         // Messaging this proxy is the same as messaging PDFSubview, with the side effect that the
@@ -125,6 +164,7 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 - (void)dealloc
 {
     ASSERT(!trackedFirstResponder);
+    [previewView release];
     [PDFSubview release];
     [path release];
     [PDFSubviewProxy release];
@@ -394,7 +434,6 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     [self _applyPDFDefaults];
 }
 
-
 - (void)_trackFirstResponder
 {
     ASSERT([self window]);
@@ -422,9 +461,14 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     if (!oldWindow)
         return;
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSWindowDidUpdateNotification
-                                                  object:oldWindow];
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self
+                                  name:NSWindowDidUpdateNotification
+                                object:oldWindow];
+    if (previewView)
+        [notificationCenter removeObserver:self
+                                      name:PDFKitLaunchNotification
+                                    object:previewView];
     
     [trackedFirstResponder release];
     trackedFirstResponder = nil;
@@ -439,10 +483,17 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         return;
     
     [self _trackFirstResponder];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_trackFirstResponder) 
-                                                 name:NSWindowDidUpdateNotification
-                                               object:newWindow];
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self
+                           selector:@selector(_trackFirstResponder) 
+                               name:NSWindowDidUpdateNotification
+                             object:newWindow];
+    
+    if (previewView)
+        [notificationCenter addObserver:self
+                               selector:@selector(_receivedPDFKitLaunchNotification:)
+                                   name:PDFKitLaunchNotification
+                                 object:previewView];
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -468,6 +519,12 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
             // here?  We ignore the error elsewhere.
         }
     }
+}
+
+- (void)_receivedPDFKitLaunchNotification:(NSNotification *)notification
+{
+    ASSERT([notification object] == previewView);
+    [self openWithFinder:self];
 }
 
 // FIXME 4182876: We can eliminate this function in favor if -isEqual: if [PDFSelection isEqual:] is overridden

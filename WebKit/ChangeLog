@@ -1,3 +1,50 @@
+2006-10-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/4792761> Safari should use fancier embedded PDFKit stuff when it's available
+
+        * WebKit.xcodeproj/project.pbxproj:
+        version wars
+        
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+        initialize document view with frame view's rect instead of empty rect. This avoids some problems when 
+        constructing view hierarchies from nibs
+        
+        * WebView/WebPreferencesPrivate.h:
+        declare new _usePDFPreviewView and _setUsePDFPreviewView:, used for debugging
+        * WebView/WebPreferenceKeysPrivate.h:
+        declare new preference key string
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        initialize new preference to true (we will by default use the new view if it's available)
+        (-[WebPreferences _usePDFPreviewView]):
+        new accessor for new pref
+        (-[WebPreferences _setUsePDFPreviewView:]):
+        ditto
+
+        * WebView/WebPDFView.h:
+        new previewView ivar
+        
+        * WebView/WebPDFView.m:
+        (+[WebPDFView PDFPreviewViewClass]):
+        new method, returns class to use for fancier embedded PDFKit stuff, or nil if fancy stuff isn't available
+        (-[WebPDFView initWithFrame:]):
+        now tries to use fancier embedded PDFKit stuff if it's available and the pref is set to use it; falls back
+        to old behavior otherwise
+        (-[WebPDFView dealloc]):
+        release new previewView ivar (retained in initWithFrame:)
+        (-[WebPDFView viewWillMoveToWindow:]):
+        stop observing PDFKit notification when we're removed from window
+        (-[WebPDFView viewDidMoveToWindow]):
+        start observing PDFKit notification when we're added to window
+        (-[WebPDFView _receivedPDFKitLaunchNotification:]):
+        respond to this new PDFKit notification by opening the document via NSWorkspace
+        
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for lots of recent changes
+        
 2006-10-19  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by ap.
