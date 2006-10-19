@@ -1,5 +1,17 @@
 2006-10-18  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Maciej.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=11342
+        fast/repaint/4774354 is failing
+
+        It seems that this test got checked in with incorrect results, as it
+        has been failing since its introduction in r17093.
+
+        * fast/repaint/4774354-expected.txt:
+
+2006-10-18  Adam Roben  <aroben@apple.com>
+
         Reviewed by Brady.
 
         New test to make sure we're generating the correct keycodes for Tab
