@@ -48,7 +48,8 @@ var pauseOnNextStatement = false;
 var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
 var enabledBreakpoint = "break";
-var breakpointEditorHTML = '<div class="top">Edit Breakpoint:<label><input type="checkbox" onclick="window.parent.toggleBreakpointForEditor(this.parentNode.parentNode.parentNode)"></input>Enable</label><button class="save" onclick="window.parent.saveBreakpointForEditor(this.parentNode.parentNode)">Save</button></div><div class="bottom"><label for="editorCondition">Condition:</label><div class="condition"></div></div>'
+var breakpointEditorHTML = '<div class="top">Edit Breakpoint:<label><input type="checkbox" onclick="window.parent.toggleBreakpointForEditor(this.parentNode.parentNode.parentNode)"></input>Enable</label><button class="save" onclick="window.parent.saveBreakpointForEditor(this.parentNode.parentNode)">Save</button></div><div class="bottom"><label for="editorCondition">Condition:</label><div class="condition"></div></div>';
+var pendingAction = null;
 
 ScriptCallFrame = function (functionName, index, row)
 {
@@ -342,9 +343,10 @@ function breakpointAction(event)
     var file = files[currentFile];
     var lineNum = parseInt(event.target.title);
     
-    if (row.hasStyleClass("breakpoint"))
-        toggleBreakpoint(row, file, lineNum);    
-    else
+    if (row.hasStyleClass("breakpoint")) {
+        if (!pendingAction)
+            pendingAction = setTimeout(toggleBreakpoint, DebuggerDocument.doubleClickMilliseconds(), row, file, lineNum);  
+    } else
         createBreakpoint(row, file, lineNum);
 }
 
@@ -358,6 +360,10 @@ function createBreakpoint(row, file, lineNum)
 
 function toggleBreakpointEditor(event)
 {
+    if (pendingAction) {
+        clearTimeout(pendingAction);
+        pendingAction = null;
+    }
     var row = event.target.parentNode;
     var file = files[currentFile];
     var lineNum = parseInt(event.target.title);
@@ -389,10 +395,8 @@ function setConditionFieldText(editor, lineNum)
 {
     var conditionField = editor.childNodes[1].childNodes[1];
     var functionBody = files[currentFile].breakpoints[lineNum];
-    if (!functionBody)
-        functionBody = "return -1;";
-    else if (functionBody == "break")
-        functionBody = "return 1;";
+    if (!functionBody || functionBody == "break")
+        functionBody = "";
     else {
         var startIndex = functionBody.indexOf("{") + 1;
         var endIndex = functionBody.lastIndexOf("}");
@@ -421,10 +425,13 @@ function saveBreakpointForEditor(editor)
 
 function toggleBreakpoint(row, file, lineNum)
 {
+    pendingAction = null;
     if (row.hasStyleClass("disabled"))
         row.removeStyleClass("disabled");    
     else
         row.addStyleClass("disabled");
+    
+    var hack = row.offsetTop; // force a relayout if needed.
     
     var temp = file.breakpoints[lineNum];
     file.breakpoints[lineNum] = file.disabledBreakpoints[lineNum];

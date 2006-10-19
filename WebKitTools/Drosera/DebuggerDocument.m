@@ -28,6 +28,7 @@
 
 #import "DebuggerDocument.h"
 #import "DebuggerApplication.h"
+#import <Carbon/Carbon.h>
 
 static NSString *DebuggerConsoleToolbarItem = @"DebuggerConsoleToolbarItem";
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
@@ -164,6 +165,15 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     }
 
     return nil;
+}
+
+#pragma mark -
+#pragma mark System Information
+
+- (int)doubleClickMilliseconds
+{
+    // GetDblTime() returns values in 1/60ths of a second
+    return ((double)GetDblTime() / 60.0) * 1000;
 }
 
 #pragma mark -

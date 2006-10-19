@@ -59,6 +59,7 @@
 		1CD8D5A60A49102900E5677B /* Drosera.app in Resources */ = {isa = PBXBuildFile; fileRef = 8D15AC370486D014006FF6A4 /* Drosera.app */; };
 		5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1C3487970A81208400101C5C /* Drosera.icns */; };
 		63D54BD70AE600560064C440 /* breakpointeditor.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D54BD60AE600560064C440 /* breakpointeditor.png */; };
+		63D54CBD0AE72C990064C440 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D54CBC0AE72C990064C440 /* Carbon.framework */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */; };
 		8D15AC310486D014006FF6A4 /* DebuggerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */; settings = {ATTRIBUTES = (); }; };
@@ -141,6 +142,7 @@
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32DBCF750370BD2300C91783 /* Drosera.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Drosera.pch; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		63D54BD60AE600560064C440 /* breakpointeditor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = breakpointeditor.png; sourceTree = "<group>"; };
+		63D54CBC0AE72C990064C440 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -160,6 +162,7 @@
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				1C27ABC60A413B720016ECF4 /* WebKit.framework in Frameworks */,
+				63D54CBD0AE72C990064C440 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +172,7 @@
 		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63D54CBC0AE72C990064C440 /* Carbon.framework */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 				1C27ABC50A413B720016ECF4 /* WebKit.framework */,
 			);

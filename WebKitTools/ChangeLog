@@ -1,3 +1,14 @@
+2006-10-18  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Improve the doubleclick behavior of breakpoints, and make breakpoints with no custom condition set appear blank instead of return [-1, 1] depending on enabled state.
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject getDoubleClickMillis]): Add an ObjC wrapper for GetDblTime() so that JS can call it
+        * Drosera/Drosera.xcodeproj/project.pbxproj: link Carbon for GetDblTime()
+        * Drosera/debugger.js:
+
 2006-10-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.
