@@ -1,5 +1,11 @@
 2006-10-19  Anders Carlsson  <acarlsson@apple.com>
 
+        * loader/Cache.cpp:
+        Get rid of #include "loader.h", Cache.h already includes this and it breaks on operating systems
+        with case-sensitive file systems.
+
+2006-10-19  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej, Brady.
 
         Remove "charset" from the ResourceLoader metadata map and use 
