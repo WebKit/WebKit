@@ -23,7 +23,8 @@ function shouldSkipProperty(fullPropertyName, propertyValue) {
 
 function shouldSkipChildren(fullPropertyName, propertyValue) {
   if (propertyValue == logDiv
-    || fullPropertyName == 'window.document.body.lastChild')
+    || fullPropertyName == 'window.document.body.lastChild'
+    || fullPropertyName == 'window.history.length')
     return true;
 }
 

@@ -1,3 +1,21 @@
+2006-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=11222
+
+        Some global JS objects lacked references to their property hashtables,
+        so for-in enumeration didn't work. I added the references, and then removed
+        a few bogus properties from the tables. The bogus ones got in there through
+        bit rot.
+        
+        We should come up with some solution to these hand-written bindings bugs.
+        Maybe we could use a script to autogenerate them or something.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::):
+        (KJS::History::getValueProperty):
+
 2006-10-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Brady.

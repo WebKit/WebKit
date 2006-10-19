@@ -1,3 +1,13 @@
+2006-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Updated some results now that some global JS objects repeatably report their
+        statically declared properties.
+
+        * fast/js/window-properties-expected.txt:
+        * fast/js/window-properties.html:
+
 2006-10-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

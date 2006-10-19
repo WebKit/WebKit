@@ -229,7 +229,7 @@ namespace KJS {
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual JSValue *toPrimitive(ExecState *exec, JSType preferred) const;
     virtual UString toString(ExecState*) const;
-    enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, EqualEqual,
+    enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, 
            Replace, Reload, ToString, Assign };
     WebCore::Frame* frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -247,7 +247,7 @@ namespace KJS {
     virtual JSValue *toPrimitive(ExecState *exec, JSType preferred) const;
     virtual UString toString(ExecState*) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
-           IsCollapsed, _Type, EqualEqual, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
+           IsCollapsed, _Type, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
            SetBaseAndExtent, SetPosition, Modify, GetRangeAt };
     WebCore::Frame* frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }

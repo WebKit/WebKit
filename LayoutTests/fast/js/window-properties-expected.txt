@@ -345,6 +345,16 @@ window.document.links : function
 window.document.location : object (Location)
 window.document.location.toString : function
 window.document.location.assign : function
+window.document.location.host : string
+window.document.location.pathname : string
+window.document.location.port : string
+window.document.location.href : string
+window.document.location.search : string
+window.document.location.reload : function
+window.document.location.hash : string
+window.document.location.hostname : string
+window.document.location.protocol : string
+window.document.location.replace : function
 window.document.cookie : string
 window.document.plugins : function
 window.document.forms : function
@@ -906,6 +916,7 @@ window.document.defaultView.releaseEvents : function
 window.document.defaultView.offscreenBuffering : boolean
 window.document.defaultView.moveBy : function
 window.document.defaultView.personalbar : object (BarInfo)
+window.document.defaultView.personalbar.visible : boolean
 window.document.defaultView.DOMException : object (DOMExceptionConstructor)
 window.document.defaultView.scrollX : number
 window.document.defaultView.Image : object (Object)
@@ -931,6 +942,7 @@ window.document.defaultView.screen : object (Screen)
 window.document.defaultView.parent : object (DOMWindow)
 window.document.defaultView.parent *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.menubar : object (BarInfo)
+window.document.defaultView.menubar.visible : boolean
 window.document.defaultView.Option : object (Object)
 window.document.defaultView.onchange : null
 window.document.defaultView.innerWidth : number
@@ -941,7 +953,9 @@ window.document.defaultView.frames.location : object (Location)
 window.document.defaultView.frames.location *** children skipped, already printed above under 'window.document.location'
 window.document.defaultView.frames.length : number
 window.document.defaultView.locationbar : object (BarInfo)
+window.document.defaultView.locationbar.visible : boolean
 window.document.defaultView.toolbar : object (BarInfo)
+window.document.defaultView.toolbar.visible : boolean
 window.document.defaultView.length : number
 window.document.defaultView.onbeforeunload : null
 window.document.defaultView.outerHeight : number
@@ -949,12 +963,15 @@ window.document.defaultView.onmousewheel : null
 window.document.defaultView.history : object (History)
 window.document.defaultView.history.back : function
 window.document.defaultView.history.forward : function
+window.document.defaultView.history.length : number
+window.document.defaultView.history.go : function
 window.document.defaultView.prompt : function
 window.document.defaultView.top : object (DOMWindow)
 window.document.defaultView.top *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.onfocus : null
 window.document.defaultView.onmousedown : null
 window.document.defaultView.statusbar : object (BarInfo)
+window.document.defaultView.statusbar.visible : boolean
 window.document.defaultView.screenLeft : number
 window.document.defaultView.location : object (Location)
 window.document.defaultView.location *** children skipped, already printed above under 'window.document.location'
@@ -977,6 +994,7 @@ window.document.defaultView.onmouseout : null
 window.document.defaultView.onerror : null
 window.document.defaultView.onmousemove : null
 window.document.defaultView.scrollbars : object (BarInfo)
+window.document.defaultView.scrollbars.visible : boolean
 window.document.defaultView.onclick : null
 window.document.defaultView.event : undefined
 window.document.defaultView.confirm : function
