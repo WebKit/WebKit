@@ -756,7 +756,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout)
         }
 
         last = o;
-        if (scheduleRelayout && (last->isTextField() || last->isTextArea()))
+        if (scheduleRelayout && last->isTextField())
             break;
         o = o->container();
     }
