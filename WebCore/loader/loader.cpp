@@ -103,7 +103,7 @@ void Loader::receivedAllData(ResourceLoader* job, PlatformData allData)
         docLoader->setLoadInProgress(true);
         object->error();
         docLoader->setLoadInProgress(false);
-        Cache::remove(object);
+        cache()->remove(object);
     } else {
         docLoader->setLoadInProgress(true);
         object->data(req->buffer(), true);
@@ -195,7 +195,7 @@ void Loader::cancelRequests(DocLoader* dl)
     DeprecatedPtrListIterator<Request> pIt(m_requestsPending);
     while (pIt.current()) {
         if (pIt.current()->docLoader() == dl) {
-            Cache::remove(pIt.current()->cachedObject());
+            cache()->remove(pIt.current()->cachedObject());
             m_requestsPending.remove(pIt);
         } else
             ++pIt;
@@ -214,14 +214,14 @@ void Loader::cancelRequests(DocLoader* dl)
         ResourceLoader* job = jobsToCancel[i];
         Request* r = m_requestsLoading.get(job);
         m_requestsLoading.remove(job);
-        Cache::remove(r->cachedObject());
+        cache()->remove(r->cachedObject());
         job->kill();
     }
 
     DeprecatedPtrListIterator<Request> bdIt(m_requestsBackgroundDecoding);
     while (bdIt.current()) {
         if (bdIt.current()->docLoader() == dl) {
-            Cache::remove(bdIt.current()->cachedObject());
+            cache()->remove(bdIt.current()->cachedObject());
             m_requestsBackgroundDecoding.remove(bdIt);
         } else
             ++bdIt;

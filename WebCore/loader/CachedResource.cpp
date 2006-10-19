@@ -36,12 +36,35 @@
 
 namespace WebCore {
 
+CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePolicy, time_t expireDate, unsigned size)
+{
+    m_url = URL;
+    m_type = type;
+    m_status = Pending;
+    m_size = size;
+    m_inCache = false;
+    m_cachePolicy = cachePolicy;
+    m_request = 0;
+    m_response = 0;
+    m_allData = 0;
+    m_expireDate = expireDate;
+    m_expireDateChanged = false;
+    m_accessCount = 0;
+    m_nextInLRUList = 0;
+    m_prevInLRUList = 0;
+#ifndef NDEBUG
+    m_deleted = false;
+    m_lruIndex = 0;
+#endif
+}
+
 CachedResource::~CachedResource()
 {
-    if (m_deleted)
-        abort();
-    Cache::removeFromLRUList(this);
+    ASSERT(!inCache());
+    ASSERT(!m_deleted);
+#ifndef NDEBUG
     m_deleted = true;
+#endif
     setResponse(0);
     setAllData(0);
 }
@@ -60,10 +83,7 @@ Vector<char>& CachedResource::bufferData(const char* bytes, int addedSize, Reque
 
 void CachedResource::finish()
 {
-    if (m_size > Cache::maxCacheableObjectSize())
-        m_status = Uncacheable;
-    else
-        m_status = Cached;
+    m_status = Cached;
     KURL url(m_url.deprecatedString());
     if (m_expireDateChanged && url.protocol().startsWith("http"))
         m_expireDateChanged = false;
@@ -74,7 +94,7 @@ void CachedResource::setExpireDate(time_t expireDate, bool changeHttpCache)
     if (expireDate == m_expireDate)
         return;
 
-    if (m_status == Uncacheable || m_status == Cached)
+    if (m_status == Cached)
         finish();
 
     m_expireDate = expireDate;
@@ -84,48 +104,61 @@ void CachedResource::setExpireDate(time_t expireDate, bool changeHttpCache)
 
 bool CachedResource::isExpired() const
 {
-    if (!m_expireDate) return false;
+    if (!m_expireDate)
+        return false;
     time_t now = time(0);
     return (difftime(now, m_expireDate) >= 0);
 }
 
-void CachedResource::setRequest(Request *_request)
+void CachedResource::setRequest(Request* request)
 {
-    if ( _request && !m_request )
+    if (request && !m_request)
         m_status = Pending;
-    m_request = _request;
-    if (canDelete() && m_free)
+    m_request = request;
+    if (canDelete() && !inCache())
         delete this;
-    else if (allowInLRUList())
-        Cache::insertInLRUList(this);
 }
 
 void CachedResource::ref(CachedResourceClient *c)
 {
+    if (!referenced() && inCache())
+        cache()->addToLiveObjectSize(size());
     m_clients.add(c);
-    Cache::removeFromLRUList(this);
-    increaseAccessCount();
 }
 
 void CachedResource::deref(CachedResourceClient *c)
 {
     m_clients.remove(c);
-    if (allowInLRUList())
-        Cache::insertInLRUList(this);
+    if (canDelete() && !inCache())
+        delete this;
+    else if (!referenced() && inCache()) {
+        cache()->removeFromLiveObjectSize(size());
+        cache()->prune();
+    }
 }
 
-void CachedResource::setSize(int size)
+void CachedResource::setSize(unsigned size)
 {
-    bool sizeChanged = Cache::adjustSize(this, size - m_size);
+    if (size == m_size)
+        return;
+
+    unsigned oldSize = m_size;
 
     // The object must now be moved to a different queue, since its size has been changed.
-    if (sizeChanged && allowInLRUList())
-        Cache::removeFromLRUList(this);
-
-    m_size = size;
+    // We have to remove explicitly before updating m_size, so that we find the correct previous
+    // queue.
+    if (inCache())
+        cache()->removeFromLRUList(this);
     
-    if (sizeChanged && allowInLRUList())
-        Cache::insertInLRUList(this);
+    m_size = size;
+   
+    if (inCache()) { 
+        // Now insert into the new LRU list.
+        cache()->insertInLRUList(this);
+        
+        // Update the cache's size totals.
+        cache()->adjustSize(referenced(), oldSize, size);
+    }
 }
 
 }

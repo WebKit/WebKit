@@ -65,14 +65,6 @@ void CachedXBLDocument::ref(CachedResourceClient *c)
         c->setXBLDocument(m_url, m_document);
 }
 
-void CachedXBLDocument::deref(CachedResourceClient *c)
-{
-    Cache::flush();
-    CachedResource::deref(c);
-    if (canDelete() && m_free)
-        delete this;
-}
-
 void CachedXBLDocument::setCharset(const String& chs)
 {
     m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);

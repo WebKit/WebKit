@@ -41,21 +41,21 @@
 namespace WebCore {
 
 DocLoader::DocLoader(Frame *frame, Document* doc)
+: m_cache(cache())
 {
     m_cachePolicy = CachePolicyVerify;
     m_expireDate = 0;
-    m_bautoloadImages = true;
+    m_autoLoadImages = true;
     m_frame = frame;
     m_doc = doc;
     m_loadInProgress = false;
 
-    Cache::init();
-    Cache::docloaders->add(this);
+    m_cache->addDocLoader(this);
 }
 
 DocLoader::~DocLoader()
 {
-    Cache::docloaders->remove(this);
+    m_cache->removeDocLoader(this);
 }
 
 void DocLoader::setExpireDate(time_t _expireDate)
@@ -63,128 +63,97 @@ void DocLoader::setExpireDate(time_t _expireDate)
     m_expireDate = _expireDate;
 }
 
-bool DocLoader::needReload(const KURL& fullURL)
+void DocLoader::checkForReload(const KURL& fullURL)
 {
-    bool reload = false;
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.url())) {
-          CachedResource* existing = Cache::get(fullURL.url());
+          CachedResource* existing = cache()->resourceForURL(fullURL.url());
           if (existing && existing->isExpired()) {
-             Cache::remove(existing);
+             cache()->remove(existing);
              m_reloadedURLs.add(fullURL.url());
-             reload = true;
           }
        }
     } else if ((m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)) {
        if (!m_reloadedURLs.contains(fullURL.url())) {
-          CachedResource* existing = Cache::get(fullURL.url());
+          CachedResource* existing = cache()->resourceForURL(fullURL.url());
           if (existing)
-             Cache::remove(existing);
+             cache()->remove(existing);
           m_reloadedURLs.add(fullURL.url());
-          reload = true;
        }
     }
-    return reload;
 }
 
-CachedImage *DocLoader::requestImage(const String& url)
+CachedImage* DocLoader::requestImage(const String& url)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
-
-    if (CheckIfReloading(this))
-        setCachePolicy(CachePolicyReload);
-
-    bool reload = needReload(fullURL);
-
-    CachedImage *cachedObject = Cache::requestImage(this, fullURL, reload, m_expireDate);
-    CheckCacheObjectStatus(this, cachedObject);
-    return cachedObject;
+    CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url));
+    if (autoLoadImages() && resource && resource->stillNeedsLoad()) {
+        resource->setLoading(true);
+        cache()->loader()->load(this, resource, true);
+    }
+    return resource;
 }
 
-CachedCSSStyleSheet *DocLoader::requestCSSStyleSheet(const String& url, const String& charset)
+CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
-
-    if (CheckIfReloading(this))
-        setCachePolicy(CachePolicyReload);
-
-    bool reload = needReload(fullURL);
-
-    CachedCSSStyleSheet* cachedObject = Cache::requestCSSStyleSheet(this, url, reload, m_expireDate, charset);
-    CheckCacheObjectStatus(this, cachedObject);
-    return cachedObject;
+    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset));
 }
 
 CachedScript* DocLoader::requestScript(const String& url, const String& charset)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
-
-    if (CheckIfReloading(this))
-        setCachePolicy(CachePolicyReload);
-
-    bool reload = needReload(fullURL);
-
-    CachedScript *cachedObject = Cache::requestScript(this, url, reload, m_expireDate, charset);
-    CheckCacheObjectStatus(this, cachedObject);
-    return cachedObject;
+    return static_cast<CachedScript*>(requestResource(CachedResource::Script, url, &charset));
 }
 
 #ifdef XSLT_SUPPORT
 CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
-    
-    if (CheckIfReloading(this))
-        setCachePolicy(CachePolicyReload);
-    
-    bool reload = needReload(fullURL);
-    
-    CachedXSLStyleSheet *cachedObject = Cache::requestXSLStyleSheet(this, url, reload, m_expireDate);
-    CheckCacheObjectStatus(this, cachedObject);
-    return cachedObject;
+    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XSLStyleSheet, url));
 }
 #endif
 
 #ifdef XBL_SUPPORT
 CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
-    
-    // FIXME: Is this right for XBL?
-    if (m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
-    
-    if (CheckIfReloading(this))
-        setCachePolicy(CachePolicyReload);
-    
-    bool reload = needReload(fullURL);
-    
-    CachedXBLDocument *cachedObject = Cache::requestXBLDocument(this, url, reload, m_expireDate);
-    CheckCacheObjectStatus(this, cachedObject);
-    return cachedObject;
+    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XBL, url));
 }
 #endif
 
-void DocLoader::setAutoloadImages(bool enable)
+CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset)
 {
-    if (enable == m_bautoloadImages)
+    KURL fullURL = m_doc->completeURL(url.deprecatedString());
+
+    if (CheckIfReloading(this))
+        setCachePolicy(CachePolicyReload);
+
+    checkForReload(fullURL);
+
+    CachedResource* resource = cache()->requestResource(this, type, fullURL, m_expireDate, charset);
+    m_docResources.set(resource->url(), resource);
+    
+    CheckCacheObjectStatus(this, resource);
+    return resource;
+}
+
+void DocLoader::setAutoLoadImages(bool enable)
+{
+    if (enable == m_autoLoadImages)
         return;
 
-    m_bautoloadImages = enable;
+    m_autoLoadImages = enable;
 
-    if (!m_bautoloadImages)
+    if (!m_autoLoadImages)
         return;
 
-    HashMap<String, CachedResource*>::iterator end = m_docObjects.end();
-    for (HashMap<String, CachedResource*>::iterator it = m_docObjects.begin(); it != end; ++it) {
-        CachedResource* co = it->second;
-        if (co->type() == CachedResource::ImageResource) {
-            CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage *>(co));
+    HashMap<String, CachedResource*>::iterator end = m_docResources.end();
+    for (HashMap<String, CachedResource*>::iterator it = m_docResources.begin(); it != end; ++it) {
+        CachedResource* resource = it->second;
+        if (resource->type() == CachedResource::ImageResource) {
+            CachedImage* image = const_cast<CachedImage*>(static_cast<const CachedImage *>(resource));
 
-            CachedResource::Status status = img->status();
+            CachedResource::Status status = image->status();
             if (status != CachedResource::Unknown)
                 continue;
 
-            Cache::loader()->load(this, img, true);
+            cache()->loader()->load(this, image, true);
         }
     }
 }
@@ -194,9 +163,9 @@ void DocLoader::setCachePolicy(CachePolicy cachePolicy)
     m_cachePolicy = cachePolicy;
 }
 
-void DocLoader::removeCachedObject(CachedResource* o) const
+void DocLoader::removeCachedResource(CachedResource* resource) const
 {
-    m_docObjects.remove(o->url());
+    m_docResources.remove(resource->url());
 }
 
 void DocLoader::setLoadInProgress(bool load)

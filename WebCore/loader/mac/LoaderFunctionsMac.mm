@@ -169,7 +169,7 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
 
 int NumberOfPendingOrLoadingRequests(DocLoader *dl)
 {
-    return Cache::loader()->numRequests(dl);
+    return cache()->loader()->numRequests(dl);
 }
 
 bool CheckIfReloading(DocLoader *loader)
@@ -188,9 +188,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
     if (!cachedObject)
         return;
     switch (cachedObject->status()) {
-    case CachedResource::Persistent:
     case CachedResource::Cached:
-    case CachedResource::Uncacheable:
         break;
     case CachedResource::NotCached:
     case CachedResource::Unknown:

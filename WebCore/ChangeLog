@@ -1,3 +1,178 @@
+2006-10-19  David Hyatt  <hyatt@apple.com>
+
+        Rewrite of the WebCore memory cache.  The following changes have been made (along with many more):
+
+        (1) Referenced objects are now also cached.
+
+        (2) Pruning of the cache will occur once the cache is both full and in addition
+        more than half full with unreferenced objects.
+
+        (3) The prune is much more aggressive now, since referenced objects are counted when
+        pruning.  The cache will therefore often prune out every unreferenced object if lots of
+        windows/tabs are open.
+
+        (4) Consolidated the request methods for various types of resources to go through a single
+        requestResource bottleneck function.
+
+        (5) deref on CachedResource is no longer virtual, since the implementation in every subclass was
+        identical.
+
+        (6) Changed "object" to "resource" everywhere.
+
+        (7) The Cache is now an actual object, obtained via cache().
+
+        (8) Fixed bugs with the autoload images preference so that it would really work properly when disabled
+        and enabled.
+
+        (9) Tweaked ImageDocuments to set up the status properly for the CachedResource that they use.
+
+        (10) Fixed the LRU-SP algorithm so that the LRU aspect really kicks in (by leaving the live objects
+        in the LRU lists).  Also fixed a bug with the "-SP" part of the algorithm where the access count was
+        being incorrectly weighted too much due to a math error.
+
+        (11) Fixed a bug where the old cache could grow without bound because it didn't know anything about
+        the size of referenced resources.
+
+        Reviewed by Maciej, bradee-oh
+
+        * bridge/mac/WebCoreCache.mm:
+        (+[WebCoreCache statistics]):
+        (+[WebCoreCache empty]):
+        (+[WebCoreCache setDisabled:]):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initMainFrameWithPage:]):
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::image):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * loader/Cache.cpp:
+        (WebCore::cache):
+        (WebCore::Cache::Cache):
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::resourceForURL):
+        (WebCore::Cache::prune):
+        (WebCore::Cache::setMaximumSize):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::addDocLoader):
+        (WebCore::Cache::removeDocLoader):
+        (WebCore::fastLog2):
+        (WebCore::Cache::lruListFor):
+        (WebCore::Cache::removeFromLRUList):
+        (WebCore::Cache::insertInLRUList):
+        (WebCore::Cache::resourceAccessed):
+        (WebCore::Cache::adjustSize):
+        (WebCore::Cache::getStatistics):
+        (WebCore::Cache::setDisabled):
+        * loader/Cache.h:
+        (WebCore::LRUList::LRUList):
+        (WebCore::Cache::loader):
+        (WebCore::Cache::maximumSize):
+        (WebCore::Cache::disabled):
+        (WebCore::Cache::addToLiveObjectSize):
+        (WebCore::Cache::removeFromLiveObjectSize):
+        (WebCore::Cache::TypeStatistic::TypeStatistic):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::~CachedImage):
+        (WebCore::brokenImage):
+        (WebCore::nullImage):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::data):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::stillNeedsLoad):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::finish):
+        (WebCore::CachedResource::setExpireDate):
+        (WebCore::CachedResource::isExpired):
+        (WebCore::CachedResource::setRequest):
+        (WebCore::CachedResource::ref):
+        (WebCore::CachedResource::deref):
+        (WebCore::CachedResource::setSize):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        (WebCore::CachedResource::setCharset):
+        (WebCore::CachedResource::url):
+        (WebCore::CachedResource::type):
+        (WebCore::CachedResource::referenced):
+        (WebCore::CachedResource::count):
+        (WebCore::CachedResource::status):
+        (WebCore::CachedResource::size):
+        (WebCore::CachedResource::isLoaded):
+        (WebCore::CachedResource::setLoading):
+        (WebCore::CachedResource::isImage):
+        (WebCore::CachedResource::accessCount):
+        (WebCore::CachedResource::increaseAccessCount):
+        (WebCore::CachedResource::setInCache):
+        (WebCore::CachedResource::inCache):
+        (WebCore::CachedResource::cachePolicy):
+        (WebCore::CachedResource::response):
+        (WebCore::CachedResource::allData):
+        (WebCore::CachedResource::canDelete):
+        (WebCore::CachedResource::schedule):
+        (WebCore::CachedResource::accept):
+        (WebCore::CachedResource::setAccept):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::~DocLoader):
+        (WebCore::DocLoader::checkForReload):
+        (WebCore::DocLoader::requestImage):
+        (WebCore::DocLoader::requestCSSStyleSheet):
+        (WebCore::DocLoader::requestScript):
+        (WebCore::DocLoader::requestXSLStyleSheet):
+        (WebCore::DocLoader::requestXBLDocument):
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::setAutoLoadImages):
+        (WebCore::DocLoader::removeCachedResource):
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::cachedResource):
+        (WebCore::DocLoader::allCachedResources):
+        (WebCore::DocLoader::autoLoadImages):
+        (WebCore::DocLoader::cachePolicy):
+        (WebCore::DocLoader::expireDate):
+        (WebCore::DocLoader::frame):
+        (WebCore::DocLoader::doc):
+        (WebCore::DocLoader::loadInProgress):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::cancelRequests):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::NumberOfPendingOrLoadingRequests):
+        (WebCore::CheckCacheObjectStatus):
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader):
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::stopLoading):
+        (WebCore::Frame::setAutoLoadImages):
+        (WebCore::Frame::autoLoadImages):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::checkCompleted):
+        (WebCore::Frame::reparseConfiguration):
+        * page/Frame.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2006-10-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

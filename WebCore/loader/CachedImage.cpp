@@ -42,19 +42,23 @@ using std::max;
 
 namespace WebCore {
 
-CachedImage::CachedImage(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
+CachedImage::CachedImage(DocLoader* docLoader, const String& url, CachePolicy cachePolicy, time_t _expireDate)
     : CachedResource(url, ImageResource, cachePolicy, _expireDate)
     , m_dataSize(0)
 {
     m_image = 0;
     m_errorOccurred = false;
     m_status = Unknown;
-    m_loading = true;
+    if (!docLoader || docLoader->autoLoadImages())  {
+        m_loading = true;
+        cache()->loader()->load(docLoader, this, true);
+    } else
+        m_loading = false;
 }
 
 CachedImage::~CachedImage()
 {
-    clear();
+    delete m_image;
 }
 
 void CachedImage::ref(CachedResourceClient* c)
@@ -68,23 +72,29 @@ void CachedImage::ref(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
-void CachedImage::deref(CachedResourceClient *c)
+static Image* brokenImage()
 {
-    Cache::flush();
-    CachedResource::deref(c);
-    if (canDelete() && m_free)
-        delete this;
+    static Image* brokenImage;
+    if (!brokenImage)
+        brokenImage = Image::loadPlatformResource("missingImage");
+    return brokenImage;
+}
+
+static Image* nullImage()
+{
+    static Image nullImage;
+    return &nullImage;
 }
 
 Image* CachedImage::image() const
 {
     if (m_errorOccurred)
-        return Cache::brokenImage;
+        return brokenImage();
 
     if (m_image)
         return m_image;
 
-    return Cache::nullImage;
+    return nullImage();
 }
 
 IntSize CachedImage::imageSize() const
@@ -153,14 +163,15 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
         if (m_image->isNull()) {
             m_errorOccurred = true;
             notifyObservers();
-            Cache::remove(this);
+            if (inCache())
+                cache()->remove(this);
         } else
             notifyObservers();
 
         // FIXME: An animated GIF with a huge frame count can't have its size properly estimated.  The reason is that we don't
         // want to decode the image to determine the frame count, so what we do instead is max the projected size of a single
         // RGBA32 buffer (width*height*4) with the data size.  This will help ensure that large animated GIFs with thousands of
-        // frames are properly designated as uncacheable.
+        // frames are at least given a reasonably large size.
         IntSize s = imageSize();
         setSize(max(s.width() * s.height() * 4, m_dataSize));
     }

@@ -489,7 +489,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // FIXME: This is one-time initialization, but it gets the value of the setting from the
     // current WebView. That's a mismatch and not good!
     if (!initializedObjectCacheSize) {
-        WebCore::Cache::setSize([self getObjectCacheSize]);
+        WebCore::cache()->setMaximumSize([self getObjectCacheSize]);
         initializedObjectCacheSize = true;
     }
 
@@ -2542,12 +2542,12 @@ static NSCharacterSet *_getPostSmartSet(void)
     if (!doc)
         return NO;
 
-    CachedResource* o = doc->docLoader()->cachedObject([URL absoluteString]);
-    if (!o)
+    CachedResource* resource = doc->docLoader()->cachedResource([URL absoluteString]);
+    if (!resource)
         return NO;
 
-    *data = o->allData();
-    *response = o->response();
+    *data = resource->allData();
+    *response = resource->response();
     return YES;
 }
 
@@ -2561,7 +2561,7 @@ static NSCharacterSet *_getPostSmartSet(void)
         return;
     }
 
-    const HashMap<String, CachedResource*>& allResources = doc->docLoader()->allCachedObjects();
+    const HashMap<String, CachedResource*>& allResources = doc->docLoader()->allCachedResources();
 
     NSMutableArray *d = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
     NSMutableArray *r = [[NSMutableArray alloc] initWithCapacity:allResources.size()];

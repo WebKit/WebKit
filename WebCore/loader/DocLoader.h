@@ -27,6 +27,7 @@
 #ifndef DocLoader_h
 #define DocLoader_h
 
+#include "CachedResource.h"
 #include "CachePolicy.h"
 #include "Settings.h"
 #include "StringHash.h"
@@ -34,69 +35,72 @@
 #include <wtf/HashSet.h>
 
 namespace WebCore {
-    class CachedCSSStyleSheet;
-    class CachedImage;
-    class CachedResource;
-    class CachedScript;
-    class CachedXSLStyleSheet;
-    class Document;
-    class Frame;
-    class HTMLImageLoader;
-    class KURL;
-    
-    /**
-     * Manages the loading of scripts/images/stylesheets for a particular document
-     */
-    class DocLoader
-    {
-    public:
-        DocLoader(Frame*, Document*);
-        ~DocLoader();
 
-        CachedImage* requestImage(const String& url);
-        CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
-        CachedScript* requestScript(const String& url, const String& charset);
+class CachedCSSStyleSheet;
+class CachedImage;
+class CachedScript;
+class CachedXSLStyleSheet;
+class Document;
+class Frame;
+class HTMLImageLoader;
+class KURL;
+
+// The DocLoader manages the loading of scripts/images/stylesheets for a single document.
+class DocLoader
+{
+friend class Cache;
+friend class HTMLImageLoader;
+
+public:
+    DocLoader(Frame*, Document*);
+    ~DocLoader();
+
+    CachedImage* requestImage(const String& url);
+    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
+    CachedScript* requestScript(const String& url, const String& charset);
 
 #ifdef XSLT_SUPPORT
-        CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
+    CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
 #endif
 #ifdef XBL_SUPPORT
-        CachedXBLDocument* requestXBLDocument(const String &url);
+    CachedXBLDocument* requestXBLDocument(const String &url);
 #endif
 
-        CachedResource* cachedObject(const String& url) const { return m_docObjects.get(url); }
-        const HashMap<String, CachedResource*>& allCachedObjects() const { return m_docObjects; }
+    CachedResource* cachedResource(const String& url) const { return m_docResources.get(url); }
+    const HashMap<String, CachedResource*>& allCachedResources() const { return m_docResources; }
 
-        bool autoloadImages() const { return m_bautoloadImages; }
-        CachePolicy cachePolicy() const { return m_cachePolicy; }
-        time_t expireDate() const { return m_expireDate; }
-        Frame* frame() const { return m_frame; }
-        Document* doc() const { return m_doc; }
+    bool autoLoadImages() const { return m_autoLoadImages; }
+    void setAutoLoadImages(bool);
+    
+    CachePolicy cachePolicy() const { return m_cachePolicy; }
+    void setCachePolicy(CachePolicy);
+    
+    time_t expireDate() const { return m_expireDate; }
+    void setExpireDate(time_t);
+    
+    Frame* frame() const { return m_frame; }
+    Document* doc() const { return m_doc; }
 
-        void setExpireDate(time_t);
-        void setAutoloadImages(bool);
-        void setCachePolicy(CachePolicy);
-        void removeCachedObject(CachedResource*) const;
+    void removeCachedResource(CachedResource*) const;
 
-        void setLoadInProgress(bool);
-        bool loadInProgress() const { return m_loadInProgress; }
+    void setLoadInProgress(bool);
+    bool loadInProgress() const { return m_loadInProgress; }
 
-    private:
-        bool needReload(const KURL &fullUrl);
+private:
+    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0);
 
-        friend class Cache;
-        friend class Document;
-        friend class HTMLImageLoader;
+    void checkForReload(const KURL&);
 
-        HashSet<String> m_reloadedURLs;
-        mutable HashMap<String, CachedResource*> m_docObjects;
-        time_t m_expireDate;
-        CachePolicy m_cachePolicy;
-        bool m_bautoloadImages : 1;
-        Frame* m_frame;
-        Document *m_doc;
-        bool m_loadInProgress;
-    };
+    Cache* m_cache;
+    HashSet<String> m_reloadedURLs;
+    mutable HashMap<String, CachedResource*> m_docResources;
+    time_t m_expireDate;
+    CachePolicy m_cachePolicy;
+    bool m_autoLoadImages : 1;
+    Frame* m_frame;
+    Document *m_doc;
+    bool m_loadInProgress;
+};
 
 }
 

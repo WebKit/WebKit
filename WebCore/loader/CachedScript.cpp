@@ -47,19 +47,10 @@ CachedScript::CachedScript(DocLoader* dl, const String& url, CachePolicy cachePo
     setAccept("*/*");
     m_errorOccurred = false;
     // load the file
-    Cache::loader()->load(dl, this, false);
+    cache()->loader()->load(dl, this, false);
     m_loading = true;
     if (!m_encoding.isValid())
         m_encoding = Latin1Encoding();
-}
-
-CachedScript::CachedScript(const String& url, const String& scriptData)
-    : CachedResource(url, Script, CachePolicyVerify, 0, scriptData.length())
-{
-    m_errorOccurred = false;
-    m_loading = false;
-    m_status = Persistent;
-    m_script = scriptData;
 }
 
 CachedScript::~CachedScript()
@@ -71,14 +62,6 @@ void CachedScript::ref(CachedResourceClient* c)
     CachedResource::ref(c);
     if (!m_loading)
         c->notifyFinished(this);
-}
-
-void CachedScript::deref(CachedResourceClient* c)
-{
-    Cache::flush();
-    CachedResource::deref(c);
-    if (canDelete() && m_free)
-        delete this;
 }
 
 void CachedScript::setCharset(const String& chs)

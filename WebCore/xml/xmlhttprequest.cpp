@@ -333,7 +333,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
             KJS::JSLock::DropAllLocks dropLocks;
-            data = ServeSynchronousRequest(Cache::loader(), m_doc->docLoader(), m_loader.get(), finalURL, headers);
+            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), m_loader.get(), finalURL, headers);
         }
 
         m_loader = 0;

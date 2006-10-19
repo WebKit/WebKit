@@ -123,9 +123,9 @@ const double autoscrollInterval = 0.1;
 
 class UserStyleSheetLoader : public CachedResourceClient {
 public:
-    UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* dl)
+    UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* docLoader)
         : m_frame(frame)
-        , m_cachedSheet(Cache::requestCSSStyleSheet(dl, url, false, 0, ""))
+        , m_cachedSheet(docLoader->requestCSSStyleSheet(url, ""))
     {
         m_cachedSheet->ref(this);
     }
@@ -162,7 +162,6 @@ Frame::Frame(Page* page, Element* ownerElement)
     : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement))
 {
     AtomicString::init();
-    Cache::init();
     EventNames::init();
     HTMLNames::init();
     QualifiedName::init();
@@ -337,7 +336,7 @@ void Frame::stopLoading(bool sendUnload)
 
   if (Document *doc = d->m_doc.get()) {
     if (DocLoader *docLoader = doc->docLoader())
-      Cache::loader()->cancelRequests(docLoader);
+      cache()->loader()->cancelRequests(docLoader);
       XMLHttpRequest::cancelRequests(doc);
   }
 
@@ -442,19 +441,19 @@ bool Frame::pluginsEnabled() const
     return d->m_bPluginsEnabled;
 }
 
-void Frame::setAutoloadImages(bool enable)
+void Frame::setAutoLoadImages(bool enable)
 {
-  if (d->m_doc && d->m_doc->docLoader()->autoloadImages() == enable)
+  if (d->m_doc && d->m_doc->docLoader()->autoLoadImages() == enable)
     return;
 
   if (d->m_doc)
-    d->m_doc->docLoader()->setAutoloadImages(enable);
+    d->m_doc->docLoader()->setAutoLoadImages(enable);
 }
 
-bool Frame::autoloadImages() const
+bool Frame::autoLoadImages() const
 {
   if (d->m_doc)
-    return d->m_doc->docLoader()->autoloadImages();
+    return d->m_doc->docLoader()->autoLoadImages();
 
   return true;
 }
@@ -672,7 +671,7 @@ void Frame::begin(const KURL& url)
 
   updatePolicyBaseURL();
 
-  setAutoloadImages(d->m_settings->autoLoadImages());
+  setAutoLoadImages(d->m_settings->autoLoadImages());
   const KURL& userStyleSheet = d->m_settings->userStyleSheetLocation();
 
   if (!userStyleSheet.isEmpty())
@@ -900,7 +899,7 @@ void Frame::checkCompleted()
   // Still waiting for images/scripts from the loader ?
   int requests = 0;
   if (d->m_doc && d->m_doc->docLoader())
-      requests = Cache::loader()->numRequests(d->m_doc->docLoader());
+      requests = cache()->loader()->numRequests(d->m_doc->docLoader());
 
   if (requests > 0)
       return;
@@ -1754,7 +1753,7 @@ String Frame::lastModified() const
 
 void Frame::reparseConfiguration()
 {
-    setAutoloadImages(d->m_settings->autoLoadImages());
+    setAutoLoadImages(d->m_settings->autoLoadImages());
         
     d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
     d->m_bJavaEnabled = d->m_settings->isJavaEnabled();

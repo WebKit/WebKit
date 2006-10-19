@@ -42,402 +42,163 @@ using namespace std;
 
 namespace WebCore {
 
-const int defaultCacheSize = 8192 * 1024;
+const int cDefaultCacheSize = 8192 * 1024;
+const int cDefaultLargeResourceSize = 80 * 1024;
 
-// maxCacheableObjectSize is cache size divided by 128, but with this as a minimum
-const int minMaxCacheableObjectSize = 80 * 1024;
-
-const int maxLRULists = 20;
-    
-struct LRUList {
-    CachedResource* m_head;
-    CachedResource* m_tail;
-    LRUList() : m_head(0), m_tail(0) { }
-};
-
-static bool cacheDisabled;
-
-typedef HashMap<String, CachedResource*> CacheMap;
-
-static CacheMap* cache = 0;
-
-HashSet<DocLoader*>* Cache::docloaders = 0;
-Loader *Cache::m_loader = 0;
-
-int Cache::maxSize = defaultCacheSize;
-int Cache::maxCacheable = minMaxCacheableObjectSize;
-int Cache::flushCount = 0;
-
-Image *Cache::nullImage = 0;
-Image *Cache::brokenImage = 0;
-
-CachedResource *Cache::m_headOfUncacheableList = 0;
-int Cache::m_totalSizeOfLRULists = 0;
-int Cache::m_countOfLRUAndUncacheableLists;
-LRUList *Cache::m_LRULists = 0;
-
-void Cache::init()
+Cache* cache()
 {
-    if (!cache)
-        cache = new CacheMap;
-
-    if (!docloaders)
-        docloaders = new HashSet<DocLoader*>;
-
-    if (!nullImage)
-        nullImage = new Image;
-
-    if (!brokenImage)
-        brokenImage = Image::loadPlatformResource("missingImage");
-
-    if (!m_loader)
-        m_loader = new Loader();
+    static Cache cache;
+    return &cache;
 }
 
-void Cache::clear()
+Cache::Cache()
+: m_disabled(false)
+, m_maximumSize(cDefaultCacheSize)
+, m_currentSize(0)
+, m_liveResourcesSize(0)
 {
-    if (!cache)
+}
+
+static CachedResource* createResource(CachedResource::Type type, DocLoader* docLoader, const KURL& url, time_t expireDate, const String* charset)
+{
+    switch (type) {
+    case CachedResource::ImageResource:
+        // User agent images need to null check the docloader.  No other resources need to.
+        return new CachedImage(docLoader, url.url(), docLoader ? docLoader->cachePolicy() : CachePolicyCache, expireDate);
+    case CachedResource::CSSStyleSheet:
+        return new CachedCSSStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset);
+    case CachedResource::Script:
+        return new CachedScript(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset);
+#ifdef XSLT_SUPPORT
+    case CachedResource::XSLStyleSheet:
+        return new CachedXSLStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
+#endif
+#ifdef XBL_SUPPORT
+    case CachedResource::XBLStyleSheet:
+        return new CachedXBLDocument(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
+#endif
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, time_t expireDate, const String* charset)
+{
+    // Look up the resource in our map.
+    CachedResource* resource = m_resources.get(url.url());
+
+    if (!resource) {
+        // The resource does not exist.  Create it.
+        resource = createResource(type, docLoader, url.url(), expireDate, charset);
+        ASSERT(resource);
+        resource->setInCache(!disabled());
+        if (!disabled())
+            m_resources.set(url.url(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
+    }
+
+    // This will move the resource to the front of its LRU list and increase its access count.
+    resourceAccessed(resource);
+
+    if (resource->type() != type)
+        return 0;
+
+    return resource;
+}
+
+CachedResource* Cache::resourceForURL(const String& url)
+{
+    return m_resources.get(url);
+}
+
+void Cache::prune()
+{
+    // No need to prune if all of our objects fit.
+    if (m_currentSize <= m_maximumSize)
         return;
 
-    deleteAllValues(*cache);
+    // We allow the cache to get as big as the # of live objects + half the maximum cache size
+    // before we do a prune.  Once we do decide to prune though, we are aggressive about it.
+    // We will include the live objects as part of the overall cache size when pruneing, so will often
+    // kill every last object that isn't referenced by a Web page.
+    unsigned unreferencedResourcesSize = m_currentSize - m_liveResourcesSize;
+    if (unreferencedResourcesSize < m_maximumSize / 2U)
+        return;
 
-    delete cache; cache = 0;
-    delete nullImage; nullImage = 0;
-    delete brokenImage; brokenImage = 0;
-    delete m_loader; m_loader = 0;
-    ASSERT(docloaders->isEmpty());
-    delete docloaders; docloaders = 0;
-}
-
-void Cache::updateCacheStatus(DocLoader* dl, CachedResource* o)
-{
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        ASSERT(!o->url().isNull());
-        if (cacheDisabled)
-            dl->m_docObjects.remove(o->url());
-        else
-            dl->m_docObjects.set(o->url(), o);
-    }
-}
-
-CachedImage* Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
-{
-    // this brings the _url to a standard form...
-    KURL kurl;
-    if (dl)
-        kurl = dl->m_doc->completeURL(url.deprecatedString());
-    else
-        kurl = url.deprecatedString();
-    return requestImage(dl, kurl, reload, expireDate);
-}
-
-CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, time_t expireDate)
-{
-    CachePolicy cachePolicy;
-    if (dl)
-        cachePolicy = dl->cachePolicy();
-    else
-        cachePolicy = CachePolicyVerify;
-
-    // Checking if the URL is malformed is lots of extra work for little benefit.
-
-    if (!dl->doc()->shouldCreateRenderers())
-        return 0;
-
-    CachedResource *o = 0;
-    if (!reload)
-        o = cache->get(url.url());
-    if (!o) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache: new: " << url.url() << endl;
-#endif
-        CachedImage *im = new CachedImage(dl, url.url(), cachePolicy, expireDate);
-        if (dl && dl->autoloadImages()) Cache::loader()->load(dl, im, true);
-        if (cacheDisabled)
-            im->setFree(true);
-        else {
-            cache->set(url.url(), im);
-            moveToHeadOfLRUList(im);
+    bool canShrinkLRULists = true;
+    unsigned size = m_lruLists.size();
+    for (int i = size - 1; i >= 0; i--) {
+        // Remove from the tail, since this is the least frequently accessed of the objects.
+        CachedResource* current = m_lruLists[i].m_tail;
+        while (current) {
+            CachedResource* prev = current->m_prevInLRUList;
+            if (!current->referenced()) {
+                remove(current);
+                
+                // Stop pruneing if our total cache size is back under the maximum or if every
+                // remaining object in the cache is live (meaning there is nothing left we are able
+                // to prune).
+                if (m_currentSize <= m_maximumSize || m_currentSize == m_liveResourcesSize)
+                    return;
+            }
+            current = prev;
         }
-        o = im;
-    }
-
-    
-    if (o->type() != CachedResource::ImageResource)
-        return 0;
-
-#ifdef CACHE_DEBUG
-    if (o->status() == CachedResource::Pending)
-        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
-    else
-        kdDebug(6060) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
-#endif
-
-    updateCacheStatus(dl, o);
-    return static_cast<CachedImage *>(o);
-}
-
-CachedCSSStyleSheet* Cache::requestCSSStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
-{
-    // this brings the _url to a standard form...
-    KURL kurl;
-    CachePolicy cachePolicy;
-    if (dl) {
-        kurl = dl->m_doc->completeURL(url.deprecatedString());
-        cachePolicy = dl->cachePolicy();
-    } else {
-        kurl = url.deprecatedString();
-        cachePolicy = CachePolicyVerify;
-    }
-
-    // Checking if the URL is malformed is lots of extra work for little benefit.
-
-    CachedResource *o = cache->get(kurl.url());
-    if (!o) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
-#endif
-        CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), cachePolicy, expireDate, charset);
-        if (cacheDisabled)
-            sheet->setFree(true);
-        else {
-            cache->set(kurl.url(), sheet);
-            moveToHeadOfLRUList(sheet);
-        }
-        o = sheet;
-    }
-
-    
-    if (o->type() != CachedResource::CSSStyleSheet)
-    {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache::Internal Error in requestCSSStyleSheet url=" << kurl.url() << "!" << endl;
-#endif
-        return 0;
-    }
-
-#ifdef CACHE_DEBUG
-    if (o->status() == CachedResource::Pending)
-        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
-    else
-        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
-#endif
-
-    updateCacheStatus(dl, o);
-    return static_cast<CachedCSSStyleSheet *>(o);
-}
-
-CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
-{
-    // this brings the _url to a standard form...
-    KURL kurl;
-    CachePolicy cachePolicy;
-    if (dl) {
-        kurl = dl->m_doc->completeURL(url.deprecatedString());
-        cachePolicy = dl->cachePolicy();
-    } else {
-        kurl = url.deprecatedString();
-        cachePolicy = CachePolicyVerify;
-    }
-
-    // Checking if the URL is malformed is lots of extra work for little benefit.
-
-    CachedResource *o = cache->get(kurl.url());
-    if (!o)
-    {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
-#endif
-        CachedScript *script = new CachedScript(dl, kurl.url(), cachePolicy, expireDate, charset);
-        if (cacheDisabled)
-            script->setFree(true);
-        else {
-            cache->set(kurl.url(), script);
-            moveToHeadOfLRUList(script);
-        }
-        o = script;
-    }
-
-    
-    if (!(o->type() == CachedResource::Script)) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache::Internal Error in requestScript url=" << kurl.url() << "!" << endl;
-#endif
-        return 0;
-    }
-    
-    
-#ifdef CACHE_DEBUG
-    if (o->status() == CachedResource::Pending)
-        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
-    else
-        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
-#endif
-
-    updateCacheStatus(dl, o);
-    return static_cast<CachedScript *>(o);
-}
-
-#ifdef XSLT_SUPPORT
-CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate)
-{
-    // this brings the _url to a standard form...
-    KURL kurl;
-    CachePolicy cachePolicy;
-    if (dl) {
-        kurl = dl->m_doc->completeURL(url.deprecatedString());
-        cachePolicy = dl->cachePolicy();
-    }
-    else {
-        kurl = url.deprecatedString();
-        cachePolicy = CachePolicyVerify;
-    }
-    
-    // Checking if the URL is malformed is lots of extra work for little benefit.
-    
-    CachedResource *o = cache->get(kurl.url());
-    if (!o) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
-#endif
-        CachedXSLStyleSheet* doc = new CachedXSLStyleSheet(dl, kurl.url(), cachePolicy, expireDate);
-        if (cacheDisabled)
-            doc->setFree(true);
-        else {
-            cache->set(kurl.url(), doc);
-            moveToHeadOfLRUList(doc);
-        }
-        o = doc;
-    }
-    
-    
-    if (o->type() != CachedResource::XSLStyleSheet) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache::Internal Error in requestXSLStyleSheet url=" << kurl.url() << "!" << endl;
-#endif
-        return 0;
-    }
-    
-#ifdef CACHE_DEBUG
-    if (o->status() == CachedResource::Pending)
-        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
-    else
-        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
-#endif
-    
-    updateCacheStatus(dl, o);
-    return static_cast<CachedXSLStyleSheet*>(o);
-}
-#endif
-
-#ifdef XBL_SUPPORT
-CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, bool reload, 
-                                             time_t expireDate)
-{
-    // this brings the _url to a standard form...
-    KURL kurl;
-    CachePolicy cachePolicy;
-    if (dl) {
-        kurl = dl->m_doc->completeURL(url.deprecatedString());
-        cachePolicy = dl->cachePolicy();
-    } else {
-        kurl = url.deprecatedString();
-        cachePolicy = CachePolicyVerify;
-    }
-    
-    // Checking if the URL is malformed is lots of extra work for little benefit.
-    
-    CachedResource *o = cache->get(kurl.url());
-    if (!o) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
-#endif
-        CachedXBLDocument* doc = new CachedXBLDocument(dl, kurl.url(), cachePolicy, expireDate);
-        if (cacheDisabled)
-            doc->setFree(true);
-        else {
-            cache->set(kurl.url(), doc);
-            moveToHeadOfLRUList(doc);
-        }
-        o = doc;
-    }
-    
-    
-    if (o->type() != CachedResource::XBL) {
-#ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache::Internal Error in requestXBLDocument url=" << kurl.url() << "!" << endl;
-#endif
-        return 0;
-    }
-    
-#ifdef CACHE_DEBUG
-    if (o->status() == CachedResource::Pending)
-        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
-    else
-        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
-#endif
-    
-    updateCacheStatus(dl, o);
-    return static_cast<CachedXBLDocument*>(o);
-}
-#endif
-
-void Cache::flush(bool force)
-{
-    if (force)
-       flushCount = 0;
-    // Don't flush for every image.
-    if (m_countOfLRUAndUncacheableLists < flushCount)
-       return;
-
-    init();
-
-    while (m_headOfUncacheableList)
-        remove(m_headOfUncacheableList);
-
-    for (int i = maxLRULists-1; i>=0; i--) {
-        if (m_totalSizeOfLRULists <= maxSize)
-            break;
             
-        while (m_totalSizeOfLRULists > maxSize && m_LRULists[i].m_tail)
-            remove(m_LRULists[i].m_tail);
+        // Shrink the vector back down so we don't waste time inspecting
+        // empty LRU lists on future prunees.
+        if (m_lruLists[i].m_head)
+            canShrinkLRULists = false;
+        else if (canShrinkLRULists)
+            m_lruLists.resize(i);
     }
-
-    flushCount = m_countOfLRUAndUncacheableLists+10; // Flush again when the cache has grown.
 }
 
-
-void Cache::setSize(int bytes)
+void Cache::setMaximumSize(int bytes)
 {
-    maxSize = bytes;
-    maxCacheable = max(maxSize / 128, minMaxCacheableObjectSize);
-
-    // may be we need to clear parts of the cache
-    flushCount = 0;
-    flush(true);
+    m_maximumSize = bytes;
+    prune();
 }
 
-void Cache::remove(CachedResource *object)
+void Cache::remove(CachedResource* resource)
 {
-  // this indicates the deref() method of CachedResource to delete itself when the reference counter
-  // drops down to zero
-  object->setFree(true);
+    ASSERT(resource->inCache());
 
-  cache->remove(object->url());
-  removeFromLRUList(object);
+    // Remove from the resource map.
+    m_resources.remove(resource->url());
+    resource->setInCache(false);
 
-  HashSet<DocLoader*>::iterator end = docloaders->end();
-  for (HashSet<DocLoader*>::iterator itr = docloaders->begin(); itr != end; ++itr)
-      (*itr)->removeCachedObject(object);
+    // Remove from the appropriate LRU list.
+    removeFromLRUList(resource);
 
-  if (object->canDelete())
-     delete object;
+    // Notify all doc loaders that might be observing this object still that it has been
+    // extracted from the set of resources.
+    HashSet<DocLoader*>::iterator end = m_docLoaders.end();
+    for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
+        (*itr)->removeCachedResource(resource);
+
+    // Subtract from our size totals.
+    m_currentSize -= resource->size();
+    if (resource->referenced())
+        m_liveResourcesSize -= resource->size();
+
+    if (resource->canDelete())
+        delete resource;
 }
 
-static inline int FastLog2(uint32_t i)
+void Cache::addDocLoader(DocLoader* docLoader)
 {
-    int log2 = 0;
+    m_docLoaders.add(docLoader);
+}
+
+void Cache::removeDocLoader(DocLoader* docLoader)
+{
+    m_docLoaders.remove(docLoader);
+}
+
+static inline unsigned fastLog2(unsigned i)
+{
+    unsigned log2 = 0;
     if (i & (i - 1))
         log2 += 1;
     if (i >> 16)
@@ -453,110 +214,124 @@ static inline int FastLog2(uint32_t i)
     return log2;
 }
 
-LRUList* Cache::getLRUListFor(CachedResource* o)
+LRUList* Cache::lruListFor(CachedResource* resource)
 {
-    int accessCount = o->accessCount();
-    int queueIndex;
-    if (accessCount == 0) {
-        queueIndex = 0;
-    } else {
-        int sizeLog = FastLog2(o->size());
-        queueIndex = sizeLog / o->accessCount() - 1;
-        if (queueIndex < 0)
-            queueIndex = 0;
-        if (queueIndex >= maxLRULists)
-            queueIndex = maxLRULists-1;
-    }
-    if (!m_LRULists)
-        m_LRULists = new LRUList [maxLRULists];
-    return &m_LRULists[queueIndex];
+    unsigned accessCount = max(resource->accessCount(), 1U);
+    unsigned queueIndex = fastLog2(resource->size() / accessCount);
+#ifndef NDEBUG
+    resource->m_lruIndex = queueIndex;
+#endif
+    if (m_lruLists.size() <= queueIndex)
+        m_lruLists.resize(queueIndex + 1);
+    return &m_lruLists[queueIndex];
 }
 
-void Cache::removeFromLRUList(CachedResource *object)
+void Cache::removeFromLRUList(CachedResource* resource)
 {
-    CachedResource *next = object->m_nextInLRUList;
-    CachedResource *prev = object->m_prevInLRUList;
-    bool uncacheable = object->status() == CachedResource::Uncacheable;
-    
-    LRUList* list = uncacheable ? 0 : getLRUListFor(object);
-    CachedResource *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
-    
-    if (next == 0 && prev == 0 && head != object) {
+    // If we've never been accessed, then we're brand new and not in any list.
+    if (resource->accessCount() == 0)
         return;
+
+#ifndef NDEBUG
+    unsigned oldListIndex = resource->m_lruIndex;
+#endif
+
+    LRUList* list = lruListFor(resource);
+
+#ifndef NDEBUG
+    // Verify that the list we got is the list we want.
+    ASSERT(resource->m_lruIndex == oldListIndex);
+
+    // Verify that we are in fact in this list.
+    bool found = false;
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInLRUList) {
+        if (current == resource) {
+            found = true;
+            break;
+        }
     }
+    ASSERT(found);
+#endif
+
+    CachedResource* next = resource->m_nextInLRUList;
+    CachedResource* prev = resource->m_prevInLRUList;
     
-    object->m_nextInLRUList = 0;
-    object->m_prevInLRUList = 0;
+    if (next == 0 && prev == 0 && list->m_head != resource)
+        return;
+    
+    resource->m_nextInLRUList = 0;
+    resource->m_prevInLRUList = 0;
     
     if (next)
         next->m_prevInLRUList = prev;
-    else if (!uncacheable && list->m_tail == object)
+    else if (list->m_tail == resource)
         list->m_tail = prev;
 
     if (prev)
         prev->m_nextInLRUList = next;
-    else if (head == object)
-        head = next;
-    
-    --m_countOfLRUAndUncacheableLists;
-    
-    if (!uncacheable)
-        m_totalSizeOfLRULists -= object->size();
+    else if (list->m_head == resource)
+        list->m_head = next;
 }
 
-void Cache::moveToHeadOfLRUList(CachedResource *object)
+void Cache::insertInLRUList(CachedResource* resource)
 {
-    insertInLRUList(object);
+    // Make sure we aren't in some list already.
+    ASSERT(!resource->m_nextInLRUList && !resource->m_prevInLRUList);
+
+    LRUList* list = lruListFor(resource);
+
+    resource->m_nextInLRUList = list->m_head;
+    if (list->m_head)
+        list->m_head->m_prevInLRUList = resource;
+    list->m_head = resource;
+    
+    if (!resource->m_nextInLRUList)
+        list->m_tail = resource;
+        
+#ifndef NDEBUG
+    // Verify that we are in now in the list like we should be.
+    list = lruListFor(resource);
+    bool found = false;
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInLRUList) {
+        if (current == resource) {
+            found = true;
+            break;
+        }
+    }
+    ASSERT(found);
+#endif
+
 }
 
-void Cache::insertInLRUList(CachedResource *object)
+void Cache::resourceAccessed(CachedResource* resource)
 {
-    removeFromLRUList(object);
+    // Need to make sure to remove before we increase the access count, since
+    // the queue will possibly change.
+    removeFromLRUList(resource);
     
-    if (!object->allowInLRUList())
-        return;
+    // Add to our access count.
+    resource->increaseAccessCount();
     
-    LRUList* list = getLRUListFor(object);
-    
-    bool uncacheable = object->status() == CachedResource::Uncacheable;
-    CachedResource *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
-
-    object->m_nextInLRUList = head;
-    if (head)
-        head->m_prevInLRUList = object;
-    head = object;
-    
-    if (object->m_nextInLRUList == 0 && !uncacheable)
-        list->m_tail = object;
-    
-    ++m_countOfLRUAndUncacheableLists;
-    
-    if (!uncacheable)
-        m_totalSizeOfLRULists += object->size();
+    // Now insert into the new queue.
+    insertInLRUList(resource);
 }
 
-bool Cache::adjustSize(CachedResource *object, int delta)
+void Cache::adjustSize(bool live, unsigned oldResourceSize, unsigned newResourceSize)
 {
-    if (object->status() == CachedResource::Uncacheable)
-        return false;
-
-    if (object->m_nextInLRUList == 0 && object->m_prevInLRUList == 0 &&
-        getLRUListFor(object)->m_head != object)
-        return false;
-    
-    m_totalSizeOfLRULists += delta;
-    return delta != 0;
+    m_currentSize -= oldResourceSize;
+    if (live)
+        m_liveResourcesSize -= oldResourceSize;
+        
+    m_currentSize += newResourceSize;
+    if (live)
+        m_liveResourcesSize += newResourceSize;
 }
 
 Cache::Statistics Cache::getStatistics()
 {
     Statistics stats;
-
-    if (!cache)
-        return stats;
-
-    CacheMap::iterator e = cache->end();
-    for (CacheMap::iterator i = cache->begin(); i != e; ++i) {
+    CachedResourceMap::iterator e = m_resources.end();
+    for (CachedResourceMap::iterator i = m_resources.begin(); i != e; ++i) {
         CachedResource *o = i->second;
         switch (o->type()) {
             case CachedResource::ImageResource:
@@ -565,8 +340,8 @@ Cache::Statistics Cache::getStatistics()
                 break;
 
             case CachedResource::CSSStyleSheet:
-                stats.styleSheets.count++;
-                stats.styleSheets.size += o->size();
+                stats.cssStyleSheets.count++;
+                stats.cssStyleSheets.size += o->size();
                 break;
 
             case CachedResource::Script:
@@ -586,37 +361,25 @@ Cache::Statistics Cache::getStatistics()
                 break;
 #endif
             default:
-                stats.other.count++;
-                stats.other.size += o->size();
+                break;
         }
     }
     
     return stats;
 }
 
-void Cache::flushAll()
+void Cache::setDisabled(bool disabled)
 {
-    if (!cache)
+    m_disabled = disabled;
+    if (!m_disabled)
         return;
 
     for (;;) {
-        CacheMap::iterator i = cache->begin();
-        if (i == cache->end())
+        CachedResourceMap::iterator i = m_resources.begin();
+        if (i == m_resources.end())
             break;
         remove(i->second);
     }
-}
-
-void Cache::setCacheDisabled(bool disabled)
-{
-    cacheDisabled = disabled;
-    if (disabled)
-        flushAll();
-}
-
-CachedResource* Cache::get(const String& s)
-{
-    return (cache && s.impl()) ? cache->get(s) : 0;
 }
 
 }

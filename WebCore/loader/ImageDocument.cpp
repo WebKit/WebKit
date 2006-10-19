@@ -111,6 +111,7 @@ void ImageTokenizer::finish()
         CachedImage* cachedImage = m_imageElement->cachedImage();
         Vector<char>& buffer = cachedImage->bufferData(0, 0, 0);
         cachedImage->data(buffer, true);
+        cachedImage->finish();
 
         // FIXME: Need code to set the title for platforms other than Mac OS X.
 #if PLATFORM(MAC)

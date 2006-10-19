@@ -164,14 +164,14 @@ public:
    *
    * @note Request will be ignored if called before @ref begin().
    */
-  void setAutoloadImages(bool enable);
+  void setAutoLoadImages(bool enable);
   /**
    * Returns whether images contained in the document are loaded automatically
    * or not.
    * @note that the returned information is unreliable as long as no begin()
    * was called.
    */
-  bool autoloadImages() const;
+  bool autoLoadImages() const;
 
   KURL baseURL() const;
   String baseTarget() const;

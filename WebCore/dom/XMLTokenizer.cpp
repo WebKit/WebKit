@@ -460,7 +460,7 @@ static void* openFunc(const char* uri)
     KURL finalURL;
     RefPtr<ResourceLoader> loader = ResourceLoader::create(0, "GET", uri);
     DeprecatedString headers;
-    Vector<char> data = ServeSynchronousRequest(Cache::loader(), globalDocLoader, loader.get(), finalURL, headers);
+    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, loader.get(), finalURL, headers);
     
     return new OffsetBuffer(data);
 }

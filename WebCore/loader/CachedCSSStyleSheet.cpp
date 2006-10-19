@@ -47,7 +47,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String& url, Cache
     // It's css we want.
     setAccept("text/css");
     // load the file
-    Cache::loader()->load(dl, this, false);
+    cache()->loader()->load(dl, this, false);
     m_loading = true;
 }
 
@@ -61,14 +61,6 @@ void CachedCSSStyleSheet::ref(CachedResourceClient *c)
 
     if (!m_loading)
         c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
-}
-
-void CachedCSSStyleSheet::deref(CachedResourceClient *c)
-{
-    Cache::flush();
-    CachedResource::deref(c);
-    if (canDelete() && m_free)
-        delete this;
 }
 
 void CachedCSSStyleSheet::setCharset(const String& chs)

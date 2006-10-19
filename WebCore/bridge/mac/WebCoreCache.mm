@@ -32,34 +32,33 @@
 
 + (NSArray *)statistics
 {
-    WebCore::Cache::Statistics s = WebCore::Cache::getStatistics();
+    WebCore::Cache::Statistics s = WebCore::cache()->getStatistics();
 
     return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.count], @"images",
-            [NSNumber numberWithInt:s.movies.count], @"movies",
-            [NSNumber numberWithInt:s.styleSheets.count], @"style sheets",
+            [NSNumber numberWithInt:s.cssStyleSheets.count], @"style sheets",
             [NSNumber numberWithInt:s.scripts.count], @"scripts",
-            [NSNumber numberWithInt:s.other.count], @"other",
             nil],
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.size], @"images",
-            [NSNumber numberWithInt:s.movies.size], @"movies",
-            [NSNumber numberWithInt:s.styleSheets.size] ,@"style sheets",
+            [NSNumber numberWithInt:s.cssStyleSheets.size] ,@"style sheets",
             [NSNumber numberWithInt:s.scripts.size], @"scripts",
-            [NSNumber numberWithInt:s.other.size], @"other",
             nil],
         nil];
 }
 
 + (void)empty
 {
-    WebCore::Cache::flushAll();
+    if (WebCore::cache()->disabled())
+        return;
+    WebCore::cache()->setDisabled(YES);
+    WebCore::cache()->setDisabled(NO);
 }
 
 + (void)setDisabled:(BOOL)disabled
 {
-    WebCore::Cache::setCacheDisabled(disabled);
+    WebCore::cache()->setDisabled(disabled);
 }
 
 @end

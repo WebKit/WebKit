@@ -36,156 +36,132 @@
 #include <time.h>
 
 namespace WebCore {
-    class CachedResourceClient;
-    class Request;
-    
-    /**
-     *
-     * A cached object. Classes who want to use this object should derive
-     * from CachedResourceClient, to get the function calls in case the requested data has arrived.
-     *
-     * This class also does the actual communication with kio and loads the file.
-     */
-    class CachedResource {
-    public:
-        enum Type {
-            ImageResource,
-            CSSStyleSheet,
-            Script
+
+class Cache;
+class CachedResourceClient;
+class Request;
+
+// A resource that is held in the cache. Classes who want to use this object should derive
+// from CachedResourceClient, to get the function calls in case the requested data has arrived.
+// This class also does the actual communication with the loader to obtain the resource from the network.
+class CachedResource {
+public:
+    enum Type {
+        ImageResource,
+        CSSStyleSheet,
+        Script
 #ifdef XSLT_SUPPORT
-            , XSLStyleSheet
+        , XSLStyleSheet
 #endif
 #ifdef XBL_SUPPORT
-            , XBL
+        , XBL
 #endif
-        };
-
-        enum Status {
-            NotCached,    // this URL is not cached
-            Unknown,      // let cache decide what to do with it
-            New,          // inserting new item
-            Pending,      // only partially loaded
-            Persistent,   // never delete this
-            Cached,       // regular case
-            Uncacheable   // too big to be cached, will be destroyed as soon as possible
-        };
-
-        CachedResource(const String& URL, Type type, CachePolicy cachePolicy, time_t expireDate, int size = 0)
-        {
-            m_url = URL;
-            m_type = type;
-            m_status = Pending;
-            m_size = size;
-            m_free = false;
-            m_cachePolicy = cachePolicy;
-            m_request = 0;
-            m_response = 0;
-            m_allData = 0;
-            m_expireDate = expireDate;
-            m_deleted = false;
-            m_expireDateChanged = false;
-            
-            m_accessCount = 0;
-            
-            m_nextInLRUList = 0;
-            m_prevInLRUList = 0;
-        }
-        virtual ~CachedResource();
-
-        virtual void setCharset(const String&) { }
-        virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
-        virtual void data(Vector<char>&, bool allDataReceived) = 0;
-        virtual void error() = 0;
-
-        const String &url() const { return m_url; }
-        Type type() const { return m_type; }
-
-        virtual void ref(CachedResourceClient*);
-        virtual void deref(CachedResourceClient*);
-
-        int count() const { return m_clients.size(); }
-
-        Status status() const { return m_status; }
-
-        int size() const { return m_size; }
-
-        bool isLoaded() const { return !m_loading; }
-
-        virtual bool isImage() const { return false; }
-
-        int accessCount() const { return m_accessCount; }
-        void increaseAccessCount() { m_accessCount++; }
-    
-        /**
-         * computes the status of an object after loading.
-         * the result depends on the objects size and the size of the cache
-         * also updates the expire date on the cache entry file
-         */
-        void finish();
-
-        /**
-         * Called by the cache if the object has been removed from the cache dict
-         * while still being referenced. This means the object should kill itself
-         * if its reference counter drops down to zero.
-         */
-        void setFree(bool b) { m_free = b; }
-
-        CachePolicy cachePolicy() const { return m_cachePolicy; }
-
-        void setRequest(Request*);
-
-        PlatformResponse response() const { return m_response; }
-        void setResponse(PlatformResponse);
-        PlatformData allData() const { return m_allData; }
-        void setAllData(PlatformData);
-
-        bool canDelete() const { return m_clients.isEmpty() && !m_request; }
-
-        void setExpireDate(time_t expireDate, bool changeHttpCache);
-
-        bool isExpired() const;
-
-        virtual bool schedule() const { return false; }
-
-        // List of acceptable MIME types seperated by ",".
-        // A MIME type may contain a wildcard, e.g. "text/*".
-        String accept() const { return m_accept; }
-        void setAccept(const String& accept) { m_accept = accept; }
-
-    protected:
-        void setSize(int size);
-
-        HashSet<CachedResourceClient*> m_clients;
-
-        String m_url;
-        String m_accept;
-        Request* m_request;
-
-        PlatformResponse m_response;
-        PlatformData m_allData;
-
-        Type m_type;
-        Status m_status;
-
-    private:
-        int m_size;
-        int m_accessCount;
-    
-    protected:
-        time_t m_expireDate;
-        CachePolicy m_cachePolicy;
-        bool m_free : 1;
-        bool m_deleted : 1;
-        bool m_loading : 1;
-        bool m_expireDateChanged : 1;
-
-    private:
-        bool allowInLRUList() const { return canDelete() && status() != Persistent; }
-
-        CachedResource* m_nextInLRUList;
-        CachedResource* m_prevInLRUList;
-        friend class Cache;
     };
+
+    enum Status {
+        NotCached,    // this URL is not cached
+        Unknown,      // let cache decide what to do with it
+        New,          // inserting new item
+        Pending,      // only partially loaded
+        Cached       // regular case
+    };
+
+    CachedResource(const String& URL, Type type, CachePolicy cachePolicy, time_t expireDate, unsigned size = 0);
+    virtual ~CachedResource();
+
+    virtual void setCharset(const String&) { }
+    virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
+    virtual void data(Vector<char>&, bool allDataReceived) = 0;
+    virtual void error() = 0;
+
+    const String &url() const { return m_url; }
+    Type type() const { return m_type; }
+
+    virtual void ref(CachedResourceClient*);
+    void deref(CachedResourceClient*);
+    bool referenced() const { return !m_clients.isEmpty(); }
+
+    unsigned count() const { return m_clients.size(); }
+
+    Status status() const { return m_status; }
+
+    unsigned size() const { return m_size; }
+
+    bool isLoaded() const { return !m_loading; }
+    void setLoading(bool b) { m_loading = b; }
+
+    virtual bool isImage() const { return false; }
+
+    unsigned accessCount() const { return m_accessCount; }
+    void increaseAccessCount() { m_accessCount++; }
+
+    // Computes the status of an object after loading.  
+    // Updates the expire date on the cache entry file
+    void finish();
+
+    // Called by the cache if the object has been removed from the cache
+    // while still being referenced. This means the object should delete itself
+    // if the number of clients observing it ever drops to 0.
+    void setInCache(bool b) { m_inCache = b; }
+    bool inCache() const { return m_inCache; }
+    
+    CachePolicy cachePolicy() const { return m_cachePolicy; }
+
+    void setRequest(Request*);
+
+    PlatformResponse response() const { return m_response; }
+    void setResponse(PlatformResponse);
+    PlatformData allData() const { return m_allData; }
+    void setAllData(PlatformData);
+
+    bool canDelete() const { return !referenced() && !m_request; }
+
+    void setExpireDate(time_t expireDate, bool changeHttpCache);
+
+    bool isExpired() const;
+
+    virtual bool schedule() const { return false; }
+
+    // List of acceptable MIME types seperated by ",".
+    // A MIME type may contain a wildcard, e.g. "text/*".
+    String accept() const { return m_accept; }
+    void setAccept(const String& accept) { m_accept = accept; }
+
+protected:
+    void setSize(unsigned size);
+
+    HashSet<CachedResourceClient*> m_clients;
+
+    String m_url;
+    String m_accept;
+    Request* m_request;
+
+    PlatformResponse m_response;
+    PlatformData m_allData;
+
+    Type m_type;
+    Status m_status;
+
+private:
+    unsigned m_size;
+    unsigned m_accessCount;
+
+protected:
+    time_t m_expireDate;
+    CachePolicy m_cachePolicy;
+    bool m_inCache;
+    bool m_loading;
+    bool m_expireDateChanged;
+#ifndef NDEBUG
+    bool m_deleted;
+    unsigned m_lruIndex;
+#endif
+
+private:
+    CachedResource* m_nextInLRUList;
+    CachedResource* m_prevInLRUList;
+    friend class Cache;
+};
 
 }
 

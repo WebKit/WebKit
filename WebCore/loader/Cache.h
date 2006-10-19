@@ -28,138 +28,126 @@
 #define Cache_h
 
 #include "CachePolicy.h"
+#include "CachedResource.h"
+#include "Loader.h"
 #include "PlatformString.h"
+#include "StringHash.h"
+#include <wtf/Vector.h>
 #include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore  {
 
-    class CachedCSSStyleSheet;
-    class CachedImage;
-    class CachedResource;
-    class CachedScript;
-    class CachedXSLStyleSheet;
-    class DocLoader;
-    class Image;
-    class KURL;
-    class Loader;
-    struct LRUList;
+class CachedCSSStyleSheet;
+class CachedImage;
+class CachedResource;
+class CachedScript;
+class CachedXSLStyleSheet;
+class DocLoader;
+class Image;
+class KURL;
+
+struct LRUList {
+    CachedResource* m_head;
+    CachedResource* m_tail;
+    LRUList() : m_head(0), m_tail(0) { }
+};
+
+typedef HashMap<String, CachedResource*> CachedResourceMap;
+
+// This cache hold subresources used by Web pages.  These resources consist of images, scripts and stylesheets.
+class Cache {
+public:
+    Cache();
+       
+    // The loader that fetches resources.
+    Loader* loader() { return &m_loader; }
+
+    // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
+    // found in the cache.
+    CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, time_t expireDate = 0, const String* charset = 0);
+
+    // Set/retreive the size of the cache. This will only hold approximately, since the size some 
+    // cached objects (like stylesheets) take up in memory is not exactly known.
+    void setMaximumSize(int bytes);
+    int maximumSize() const { return m_maximumSize; };
+
+    // Turn the cache on and off.  Disabling the cache will remove all resources from the cache.  They may
+    // still live on if they are referenced by some Web page though.
+    void setDisabled(bool);
+    bool disabled() const { return m_disabled; }
     
-    /**
-     * Provides a cache/loader for objects needed for displaying the html page.
-     */
-    class Cache {
-        friend class DocLoader;
-    public:
-        /**
-         * Initialize the cache in case it's not already.
-         * This needs to get called once before using it.
-         */
-        static void init();
-        
-        /**
-         * Ask the cache for some URL.
-         * If the DocLoader is zero, the URL must be fully-qualified. Otherwise, it is automatically base-URL expanded
-         */
-        static CachedImage* requestImage(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
-        static CachedImage* requestImage(DocLoader*, const KURL& URL, bool reload, time_t expireDate);
-        static CachedCSSStyleSheet* requestCSSStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate, const String& charset);
-        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload, time_t expireDate, const String& charset);
+    // Remove an existing cache entry from both the resource map and from the LRU list.
+    void remove(CachedResource*);
 
-#ifdef XSLT_SUPPORT
-        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate);
-#endif
+    // Flush the cache.  Any resources still referenced by Web pages will not be removed by this call.
+    void prune();
 
-#ifdef XBL_SUPPORT
-        static CachedXBLDocument* requestXBLDocument(DocLoader*, const String& URL, bool reload, time_t expireDate);
-#endif
+    void addDocLoader(DocLoader*);
+    void removeDocLoader(DocLoader*);
 
-        /**
-         * Sets the size of the cache. This will only hold approximately, since the size some
-         * cached objects (like stylesheets) take up in memory is not exactly known.
-         */
-        static void setSize(int bytes);
+    CachedResource* resourceForURL(const String&);
 
-        /**
-         * returns the size of the cache
-         */
-        static int size() { return maxSize; };
+    // Calls to put the cached resource into and out of LRU lists.
+    void insertInLRUList(CachedResource*);
+    void removeFromLRUList(CachedResource*);
 
-        static int maxCacheableObjectSize() { return maxCacheable; }
+    // Called to adjust the cache totals when a resource changes size.
+    void adjustSize(bool live, unsigned oldResourceSize, unsigned newResourceSize);
 
-        // Get an existing cache entry by URL.
-        static CachedResource* get(const String& URL);
+    // Track the size of all resources that are in the cache and still referenced by a Web page. 
+    void addToLiveObjectSize(unsigned s) { m_liveResourcesSize += s; }
+    void removeFromLiveObjectSize(unsigned s) { m_liveResourcesSize -= s; }
 
-        // Remove an existing cache entry.
-        static void remove(CachedResource*);
-
-        /**
-         * clean up cache
-         */
-        static void flush(bool force = false);
-
-        /**
-         * clears the cache
-         * Warning: call this only at the end of your program, to clean up memory
-         * (useful for finding memory leaks).
-         */
-        static void clear();
-
-        static Loader* loader() { return m_loader; }
-
-        static Image* nullImage;
-        static Image* brokenImage;
-
-        struct TypeStatistic {
-            int count;
-            int size;
-            TypeStatistic() : count(0), size(0) { }
-        };
-        
-        struct Statistics {
-            TypeStatistic images;
-            TypeStatistic movies;
-            TypeStatistic styleSheets;
-            TypeStatistic scripts;
-#ifdef XSLT_SUPPORT
-            TypeStatistic xslStyleSheets;
-#endif
-#ifdef XBL_SUPPORT
-            TypeStatistic xblDocs;
-#endif
-            TypeStatistic other;
-        };
-
-        static Statistics getStatistics();
-        static void flushAll();
-        static void setCacheDisabled(bool);
-
-        static void insertInLRUList(CachedResource*);
-        static void removeFromLRUList(CachedResource*);
-        static bool adjustSize(CachedResource*, int sizeDelta);
-        
-        static LRUList* getLRUListFor(CachedResource*);
-        
-        static void checkLRUAndUncacheableListIntegrity();
-
-    private:
-        static HashSet<DocLoader*>* docloaders;
-    
-        static int maxSize;
-        static int maxCacheable;
-        static int flushCount;
-    
-        static Loader* m_loader;
-    
-        static void moveToHeadOfLRUList(CachedResource*);
-        static void updateCacheStatus(DocLoader*, CachedResource*);
-    
-        static LRUList* m_LRULists;
-        static int m_totalSizeOfLRULists;
-            
-        static CachedResource* m_headOfUncacheableList;
-            
-        static int m_countOfLRUAndUncacheableLists;
+    // Functions to collect cache statistics for the caches window in the Safari Debug menu.
+    struct TypeStatistic {
+        int count;
+        int size;
+        TypeStatistic() : count(0), size(0) { }
     };
+    
+    struct Statistics {
+        TypeStatistic images;
+        TypeStatistic cssStyleSheets;
+        TypeStatistic scripts;
+#ifdef XSLT_SUPPORT
+        TypeStatistic xslStyleSheets;
+#endif
+#ifdef XBL_SUPPORT
+        TypeStatistic xblDocs;
+#endif
+    };
+
+    Statistics getStatistics();
+
+private:
+    LRUList* lruListFor(CachedResource*);
+    
+    void resourceAccessed(CachedResource*);
+
+private:
+    // Member variables.
+    HashSet<DocLoader*> m_docLoaders;
+    Loader m_loader;
+
+    bool m_disabled;  // Whether or not the cache is enabled.
+
+    int m_maximumSize;  // The maximum size in bytes that the global cache can consume.
+    int m_currentSize;  // The current size of the global cache in bytes.
+    int m_liveResourcesSize; // The current size of "live" resources that cannot be flushed.
+
+    // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
+    // more resources than the cached resource map, since it can also hold "stale" muiltiple versions of objects that are
+    // waiting to die when the clients referencing them go away.
+    Vector<LRUList, 32> m_lruLists;
+    
+    // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
+    // referenced by a Web page).
+    HashMap<String, CachedResource*> m_resources;
+};
+
+// Function to obtain the global cache.
+Cache* cache();
 
 }
 
