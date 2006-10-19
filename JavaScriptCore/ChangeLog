@@ -1,3 +1,38 @@
+2006-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - remove vestiges of KXMLCore name (former name of WTF).
+
+        * wtf/Assertions.h:
+        * wtf/FastMalloc.h:
+        (operator new):
+        (operator delete):
+        (operator new[]):
+        (operator delete[]):
+        * wtf/FastMallocInternal.h:
+        * wtf/Forward.h:
+        * wtf/GetPtr.h:
+        * wtf/HashCountedSet.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/ListRefPtr.h:
+        * wtf/MathExtras.h:
+        * wtf/Noncopyable.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/PassRefPtr.h:
+        * wtf/Platform.h:
+        * wtf/RefPtr.h:
+        * wtf/StringExtras.h:
+        (snprintf):
+        * wtf/UnusedParam.h:
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+
 2006-10-17  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej.

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_HASH_COUNTED_SET_H
-#define KXMLCORE_HASH_COUNTED_SET_H
+#ifndef WTF_HashCountedSet_h
+#define WTF_HashCountedSet_h
 
 #include "Assertions.h"
 #include "HashMap.h"
@@ -175,4 +175,4 @@ namespace WTF {
 
 using WTF::HashCountedSet;
 
-#endif /* KXMLCORE_HASH_COUNTED_SET_H */
+#endif /* WTF_HashCountedSet_h */

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
-#define KXMLCORE_FAST_MALLOC_INTERNAL_H
+#ifndef WTF_FastMallocInternal_h
+#define WTF_FastMallocInternal_h
 
 #if !PLATFORM(WIN_OS)
 
@@ -33,4 +33,4 @@ namespace WTF {
 
 #endif
 
-#endif //  KXMLCORE_FAST_MALLOC_INTERNAL_H
+#endif //  WTF_FastMallocInternal_h

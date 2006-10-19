@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_HASH_FUNCTIONS_H
-#define KXMLCORE_HASH_FUNCTIONS_H
+#ifndef WTF_HashFunctions_h
+#define WTF_HashFunctions_h
 
 #include "RefPtr.h"
 #include <stdint.h>
@@ -102,4 +102,4 @@ using WTF::DefaultHash;
 using WTF::IntHash;
 using WTF::PtrHash;
 
-#endif // KXLMCORE_HASH_FUNCTIONS_H
+#endif // WTF_HashFunctions_h

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KXMLCORE_ASSERTIONS_H
-#define KXMLCORE_ASSERTIONS_H
+#ifndef WTF_Assertions_h
+#define WTF_Assertions_h
 
 /*
    no namespaces because this file has to be includable from C and Objective-C
@@ -70,9 +70,9 @@
 #endif
 
 #if COMPILER(GCC)
-#define KXMLCORE_PRETTY_FUNCTION __PRETTY_FUNCTION__
+#define WTF_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else
-#define KXMLCORE_PRETTY_FUNCTION __FUNCTION__
+#define WTF_PRETTY_FUNCTION __FUNCTION__
 #endif
 
 /* These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled. */
@@ -121,18 +121,18 @@ void WTFLog(const char *file, int line, const char *function, WTFLogChannel *cha
 
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion); \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_WITH_MESSAGE(assertion, ...) do \
     if (!(assertion)) { \
-        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_NOT_REACHED() do { \
-    WTFReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, 0); \
+    WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
     CRASH(); \
 } while (0)
 
@@ -148,7 +148,7 @@ while (0)
 
 #define ASSERT_ARG(argName, assertion) do \
     if (!(assertion)) { \
-        WTFReportArgumentAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #argName, #assertion); \
+        WTFReportArgumentAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #argName, #assertion); \
         CRASH(); \
     } \
 while (0)
@@ -161,7 +161,7 @@ while (0)
 #define FATAL(...) ((void)0)
 #else
 #define FATAL(...) do { \
-    WTFReportFatalError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__); \
+    WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__); \
     CRASH(); \
 } while (0)
 #endif
@@ -171,7 +171,7 @@ while (0)
 #if ERROR_DISABLED
 #define LOG_ERROR(...) ((void)0)
 #else
-#define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
+#define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__)
 #endif
 
 /* LOG */
@@ -179,9 +179,9 @@ while (0)
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, ...) WTFLog(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
+#define LOG(channel, ...) WTFLog(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
 #endif
 
-#endif
+#endif // WTF_Assertions_h

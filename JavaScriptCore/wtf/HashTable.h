@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_HASH_TABLE_H
-#define KXMLCORE_HASH_TABLE_H
+#ifndef WTF_HashTable_h
+#define WTF_HashTable_h
 
 #include "FastMalloc.h"
 #include "HashTraits.h"
@@ -932,4 +932,4 @@ namespace WTF {
 
 } // namespace WTF
 
-#endif // KXMLCORE_HASH_TABLE_H
+#endif // WTF_HashTable_h

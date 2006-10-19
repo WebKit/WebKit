@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_REF_PTR_H
-#define KXMLCORE_REF_PTR_H
+#ifndef WTF_RefPtr_h
+#define WTF_RefPtr_h
 
 #include <algorithm>
 
@@ -186,4 +186,4 @@ using WTF::RefPtr;
 using WTF::static_pointer_cast;
 using WTF::const_pointer_cast;
 
-#endif // KXMLCORE_REF_PTR_H
+#endif // WTF_RefPtr_h

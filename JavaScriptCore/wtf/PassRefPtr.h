@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_PASS_REF_PTR_H
-#define KXMLCORE_PASS_REF_PTR_H
+#ifndef WTF_PassRefPtr_h
+#define WTF_PassRefPtr_h
 
 namespace WTF {
 
@@ -190,4 +190,4 @@ using WTF::adoptRef;
 using WTF::static_pointer_cast;
 using WTF::const_pointer_cast;
 
-#endif // KXMLCORE_PASS_REF_PTR_H
+#endif // WTF_PassRefPtr_h

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KXMLCORE_HASH_TRAITS_H
-#define KXMLCORE_HASH_TRAITS_H
+#ifndef WTF_HashTraits_h
+#define WTF_HashTraits_h
 
 #include "HashFunctions.h"
 #include <utility>
@@ -192,4 +192,4 @@ namespace WTF {
 using WTF::HashTraits;
 using WTF::PairHashTraits;
 
-#endif // KXMLCORE_HASH_TRAITS_H
+#endif // WTF_HashTraits_h

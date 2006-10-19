@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef KXMLCORE_FORWARD_H
-#define KXMLCORE_FORWARD_H
+#ifndef WTF_Forward_h
+#define WTF_Forward_h
 
 #include <stddef.h>
 
@@ -37,4 +37,5 @@ using WTF::OwnPtr;
 using WTF::PassRefPtr;
 using WTF::RefPtr;
 
-#endif
+#endif // WTF_Forward_h
+

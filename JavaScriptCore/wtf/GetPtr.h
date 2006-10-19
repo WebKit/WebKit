@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef WTF_GET_PTR_H
-#define WTF_GET_PTR_H
+#ifndef WTF_GetPtr_h
+#define WTF_GetPtr_h
 
 namespace WTF {
 
@@ -30,4 +30,4 @@ namespace WTF {
 
 } // namespace WTF
 
-#endif // WTF_GET_PTR_H
+#endif // WTF_GetPtr_h
