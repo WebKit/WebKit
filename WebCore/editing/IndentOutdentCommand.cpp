@@ -40,22 +40,36 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static String indentBlockquoteString()
+{
+    static String string = "webkit-indent-blockquote";
+    return string;
+}
+
+static PassRefPtr<Element> createIndentBlockquoteElement(Document* document)
+{
+    RefPtr<Element> indentBlockquoteElement = createElement(document, "blockquote");
+    indentBlockquoteElement->setAttribute(classAttr, indentBlockquoteString());
+    return indentBlockquoteElement.release();
+}
+
+static bool isIndentBlockquote(Node* node)
+{
+    if (!node || !node->hasTagName(blockquoteTag) || !node->isElementNode())
+        return false;
+
+    Element* elem = static_cast<Element*>(node);
+    return elem->getAttribute(classAttr) == indentBlockquoteString();
+}
+
+static bool isListOrIndentBlockquote(Node* node)
+{
+    return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || isIndentBlockquote(node));
+}
+
 IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeOfAction, int marginInPixels)
     : CompositeEditCommand(document), m_typeOfAction(typeOfAction), m_marginInPixels(marginInPixels)
 {}
-
-static Node* enclosingListOrBlockquote(Node* node)
-{
-    if (!node)
-        return 0;
-    Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
-    ASSERT(root);
-    for (Node* n = node->parentNode(); n && (n == root || n->isDescendantOf(root)); n = n->parentNode())
-        if (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(blockquoteTag))
-            return n;
-            
-    return 0;
-}
 
 // This function is a workaround for moveParagraph's tendency to strip blockquotes. It updates lastBlockquote to point to the
 // correct level for the current paragraph, and returns a pointer to a placeholder br where the insertion should be performed.
@@ -64,27 +78,27 @@ Node* IndentOutdentCommand::prepareBlockquoteLevelForInsertion(VisiblePosition& 
     int currentBlockquoteLevel = 0;
     int lastBlockquoteLevel = 0;
     Node* node = currentParagraph.deepEquivalent().node();
-    while ((node = enclosingNodeWithTag(node, blockquoteTag)))
+    while ((node = enclosingNodeOfType(node, &isIndentBlockquote)))
         currentBlockquoteLevel++;
     node = *lastBlockquote;
-    while ((node = enclosingNodeWithTag(node, blockquoteTag)))
+    while ((node = enclosingNodeOfType(node, &isIndentBlockquote)))
         lastBlockquoteLevel++;
     while (currentBlockquoteLevel > lastBlockquoteLevel) {
-        RefPtr<Node> newBlockquote = createElement(document(), "blockquote");
+        RefPtr<Node> newBlockquote = createIndentBlockquoteElement(document());
         appendNode(newBlockquote.get(), *lastBlockquote);
         *lastBlockquote = newBlockquote.get();
         lastBlockquoteLevel++;
     }
     while (currentBlockquoteLevel < lastBlockquoteLevel) {
-        *lastBlockquote = enclosingNodeWithTag(*lastBlockquote, blockquoteTag);
+        *lastBlockquote = enclosingNodeOfType(*lastBlockquote, &isIndentBlockquote);
         lastBlockquoteLevel--;
     }
     RefPtr<Node> placeholder = createBreakElement(document());
-    if ((*lastBlockquote)->firstChild() && !(*lastBlockquote)->lastChild()->hasTagName(brTag)) {
-        RefPtr<Node> collapsedPlaceholder = createBreakElement(document());
-        appendNode(collapsedPlaceholder.get(), (*lastBlockquote));
-    }
     appendNode(placeholder.get(), *lastBlockquote);
+    // Add another br before the placeholder if it collapsed.
+    VisiblePosition visiblePos(Position(placeholder.get(), 0));
+    if (!isStartOfParagraph(visiblePos))
+        insertNodeBefore(createBreakElement(document()).get(), placeholder.get());
     return placeholder.get();
 }
 
@@ -116,7 +130,7 @@ void IndentOutdentCommand::indentRegion()
     // and there's nothing to move.
     Node* startNode = startOfSelection.deepEquivalent().downstream().node();
     if (startNode == startNode->rootEditableElement()) {
-        RefPtr<Node> blockquote = createElement(document(), "blockquote");
+        RefPtr<Node> blockquote = createIndentBlockquoteElement(document());
         insertNodeAt(blockquote.get(), startNode, 0);
         RefPtr<Node> placeholder = createBreakElement(document());
         appendNode(placeholder.get(), blockquote.get());
@@ -158,7 +172,7 @@ void IndentOutdentCommand::indentRegion()
         else {
             // Create a new blockquote and insert it as a child of the root editable element. We accomplish
             // this by splitting all parents of the current paragraph up to that point.
-            RefPtr<Node> blockquote = createElement(document(), "blockquote");
+            RefPtr<Node> blockquote = createIndentBlockquoteElement(document());
             Node* startNode = startOfParagraph(endOfCurrentParagraph).deepEquivalent().node();
             Node* startOfNewBlock = splitTreeToNode(startNode, startNode->rootEditableElement());
             insertNodeBefore(blockquote.get(), startOfNewBlock);
@@ -175,25 +189,19 @@ void IndentOutdentCommand::outdentParagraph()
     VisiblePosition visibleStartOfParagraph = startOfParagraph(endingSelection().visibleStart());
     VisiblePosition visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
 
-    Node* enclosingNode = enclosingListOrBlockquote(visibleStartOfParagraph.deepEquivalent().node());
+    Node* enclosingNode = enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent().node(), &isListOrIndentBlockquote);
     if (!enclosingNode)
         return;
 
-    // Handle the list case
-    bool inList = false;
-    InsertListCommand::Type typeOfList;
+    // Use InsertListCommand to remove the selection from the list
     if (enclosingNode->hasTagName(olTag)) {
-        inList = true;
-        typeOfList = InsertListCommand::OrderedList;
+        applyCommandToComposite(new InsertListCommand(document(), InsertListCommand::OrderedList, ""));
+        return;        
     } else if (enclosingNode->hasTagName(ulTag)) {
-        inList = true;
-        typeOfList = InsertListCommand::UnorderedList;
-    }
-    if (inList) {
-        // Use InsertListCommand to remove the selection from the list
-        applyCommandToComposite(new InsertListCommand(document(), typeOfList, ""));
+        applyCommandToComposite(new InsertListCommand(document(), InsertListCommand::UnorderedList, ""));
         return;
     }
+    
     // The selection is inside a blockquote
     VisiblePosition positionInEnclosingBlock = VisiblePosition(Position(enclosingNode, 0));
     VisiblePosition startOfEnclosingBlock = startOfBlock(positionInEnclosingBlock);

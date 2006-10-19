@@ -570,4 +570,9 @@ frameset, frame {
     display: block
 }
 
+blockquote.webkit-indent-blockquote {
+    margin: 0 0 0 40px;
+}
+
+
 /* noscript is handled internally, as it depends on settings */

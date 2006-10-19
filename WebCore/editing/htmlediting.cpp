@@ -549,6 +549,22 @@ Node* enclosingNodeWithTag(Node* node, const QualifiedName& tagName)
     return 0;
 }
 
+Node* enclosingNodeOfType(Node* node, bool (*nodeIsOfType)(Node*))
+{
+    if (!node)
+        return 0;
+        
+    Node* root = highestEditableRoot(Position(node, 0));
+    if (!root)
+        root = highestAncestor(node);
+        
+    for (Node* n = node->parentNode(); n && (n == root || n->isDescendantOf(root)); n = n->parentNode())
+        if ((*nodeIsOfType)(n))
+            return n;
+            
+    return 0;
+}
+
 Node* enclosingTableCell(Node* node)
 {
     if (!node)

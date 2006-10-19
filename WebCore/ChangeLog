@@ -1,3 +1,32 @@
+2006-10-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4447885>
+        API: WebView should have a method something like incrementLeftMarginBy: or indentBy:
+        
+        Fixed indent/outdent to only increment the left margin, to match other browsers.
+        Used blockquote class="webkit-indent-blockquote" to do this.  Mail can now
+        implement indent/outdent by customizing the appearance of these blockquotes,
+        instead of using a new API.
+        
+        * css/html4.css: Added margin: 0 0 0 40px for webkit-indent-blockquotes.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::indentBlockquoteString): Added.
+        (WebCore::createIndentBlockquoteElement): Added.
+        (WebCore::isIndentBlockquote): Added.
+        (WebCore::isListOrBlockquote): Added.
+        (WebCore::IndentOutdentCommand::IndentOutdentCommand):
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion): Fixed
+        a bug in the code that added an extra br if the placeholder collapsed upon insertion.
+        Used the new indentBlockquote checks and enclosing element getters.  
+        (WebCore::IndentOutdentCommand::indentRegion): Ditto.
+        (WebCore::IndentOutdentCommand::outdentParagraph): Ditto.  Cleaned up the
+        logic to pull the selection out of a list a bit.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingNodeOfType): Added this generic enclosing element getter.
+        * editing/htmlediting.h:
+
 2006-10-19  Timothy Hatcher  <timothy@apple.com>
 
         Rolling out the this change since it caused a bad regression:

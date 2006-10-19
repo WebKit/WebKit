@@ -10,52 +10,51 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 362x18
           text run at (0,0) width 362: "This test uses the execCommand to indent the text below."
       RenderBlock (anonymous) at (0,18) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,52) size 784x244
-        RenderBlock {BLOCKQUOTE} at (40,0) size 704x70
-          RenderBlock (anonymous) at (0,0) size 704x36
+      RenderBlock {DIV} at (0,36) size 784x194
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x54
+          RenderBlock (anonymous) at (0,0) size 744x36
             RenderInline {SPAN} at (0,0) size 42x18
               RenderText {#text} at (0,0) size 42x18
                 text run at (0,0) width 42: "Lorem"
             RenderBR {BR} at (42,14) size 0x0
             RenderText {#text} at (0,18) size 83x18
               text run at (0,18) width 83: "more Lorem!"
-          RenderBlock {BLOCKQUOTE} at (40,52) size 624x18
+          RenderBlock {BLOCKQUOTE} at (40,36) size 704x18
             RenderText {#text} at (0,0) size 38x18
               text run at (0,0) width 38: "ipsum"
-        RenderBlock (anonymous) at (0,86) size 784x0
-        RenderBlock {BLOCKQUOTE} at (40,86) size 704x54
-          RenderBlock {UL} at (0,0) size 704x54
-            RenderBlock {UL} at (40,0) size 664x54
-              RenderListItem {LI} at (40,0) size 624x18
+        RenderBlock (anonymous) at (0,54) size 784x0
+        RenderBlock {BLOCKQUOTE} at (40,70) size 744x54
+          RenderBlock {UL} at (0,0) size 744x54
+            RenderBlock {UL} at (40,0) size 704x54
+              RenderListItem {LI} at (40,0) size 664x18
                 RenderListMarker at (-17,0) size 7x18
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
-              RenderListItem {LI} at (40,18) size 624x18
+              RenderListItem {LI} at (40,18) size 664x18
                 RenderListMarker at (-17,0) size 7x18
                 RenderText {#text} at (0,0) size 23x18
                   text run at (0,0) width 23: "Bar"
-              RenderListItem {LI} at (40,36) size 624x18
+              RenderListItem {LI} at (40,36) size 664x18
                 RenderListMarker at (-17,0) size 7x18
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Baz"
-        RenderBlock {BLOCKQUOTE} at (40,156) size 704x88
-          RenderBlock {BLOCKQUOTE} at (40,0) size 624x18
+        RenderBlock {BLOCKQUOTE} at (40,140) size 744x54
+          RenderBlock {BLOCKQUOTE} at (40,0) size 704x18
             RenderText {#text} at (0,0) size 37x18
               text run at (0,0) width 37: "Dolor"
-          RenderBlock (anonymous) at (0,34) size 704x54
-            RenderBR {BR} at (0,0) size 0x18
-            RenderText {#text} at (0,18) size 34x18
-              text run at (0,18) width 34: "Sum!"
-            RenderBR {BR} at (34,32) size 0x0
+          RenderBlock (anonymous) at (0,18) size 744x36
+            RenderText {#text} at (0,0) size 34x18
+              text run at (0,0) width 34: "Sum!"
+            RenderBR {BR} at (34,14) size 0x0
             RenderInline {SPAN} at (0,0) size 38x18
-              RenderText {#text} at (0,36) size 38x18
-                text run at (0,36) width 38: "Thing"
-        RenderBlock (anonymous) at (0,260) size 784x0
-selection start: position 0 of child 0 {#text} of child 4 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 5 of child 0 {#text} of child 4 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+              RenderText {#text} at (0,18) size 38x18
+                text run at (0,18) width 38: "Thing"
+        RenderBlock (anonymous) at (0,194) size 784x0
+selection start: position 0 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 5 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

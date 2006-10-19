@@ -9,12 +9,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 374x18
-          text run at (0,0) width 374: "This test uses the execCommand to Outdent the text below."
-      RenderBlock (anonymous) at (0,18) size 784x18
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 378x18
+          text run at (0,0) width 378: "This test uses the execCommand to Outdent the text below. "
+        RenderInline {B} at (0,0) size 749x36
+          RenderText {#text} at (378,0) size 749x36
+            text run at (378,0) width 371: "This demonstrates a bug: the content in the blockquote"
+            text run at (0,18) width 279: "that's not in a list is pulled out of position."
+      RenderBlock (anonymous) at (0,36) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,36) size 784x210
+      RenderBlock {DIV} at (0,54) size 784x194
         RenderBlock (anonymous) at (0,0) size 784x54
           RenderInline {SPAN} at (0,0) size 42x18
             RenderText {#text} at (0,0) size 42x18
@@ -28,8 +32,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,36) size 37x18
             text run at (0,36) width 37: "Dolor"
           RenderBR {BR} at (37,50) size 0x0
-        RenderBlock {BLOCKQUOTE} at (40,70) size 704x54
-          RenderBlock (anonymous) at (0,0) size 704x54
+        RenderBlock {BLOCKQUOTE} at (40,54) size 744x54
+          RenderBlock (anonymous) at (0,0) size 744x54
             RenderText {#text} at (0,0) size 25x18
               text run at (0,0) width 25: "Foo"
             RenderBR {BR} at (25,14) size 0x0
@@ -39,14 +43,14 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,36) size 25x18
               text run at (0,36) width 25: "Baz"
             RenderBR {BR} at (25,50) size 0x0
-          RenderBlock {UL} at (0,70) size 704x0
-          RenderBlock (anonymous) at (0,70) size 704x0
-        RenderBlock (anonymous) at (0,140) size 784x18
+          RenderBlock {UL} at (0,70) size 744x0
+          RenderBlock (anonymous) at (0,70) size 744x0
+        RenderBlock (anonymous) at (0,124) size 784x18
           RenderText {#text} at (0,0) size 82x18
             text run at (0,0) width 82: "Dinner time?"
           RenderBR {BR} at (82,14) size 0x0
-        RenderBlock {UL} at (0,174) size 784x0
-        RenderBlock (anonymous) at (0,174) size 784x36
+        RenderBlock {UL} at (0,158) size 784x0
+        RenderBlock (anonymous) at (0,158) size 784x36
           RenderText {#text} at (0,0) size 34x18
             text run at (0,0) width 34: "Sum!"
           RenderBR {BR} at (34,14) size 0x0

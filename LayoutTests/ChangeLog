@@ -1,3 +1,25 @@
+2006-10-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4447885>
+        API: WebView should have a method something like incrementLeftMarginBy: or indentBy:
+
+        Changed blockquotes in these tests to blockquote class="webkit-indent-blockquote".
+        * editing/execCommand/indent-empty-root-expected.txt:
+        * editing/execCommand/indent-selection-expected.checksum:
+        * editing/execCommand/indent-selection-expected.png:
+        * editing/execCommand/indent-selection-expected.txt:
+        * editing/execCommand/indent-selection.html:
+        * editing/execCommand/nsresponder-indent-expected.txt:
+        * editing/execCommand/nsresponder-outdent.html:
+        * editing/execCommand/outdent-selection-expected.checksum:
+        * editing/execCommand/outdent-selection-expected.png:
+        * editing/execCommand/outdent-selection-expected.txt:
+        
+        Ditto.  Added a FIXME:
+        * editing/execCommand/outdent-selection.html:
+
 2006-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by ap.
