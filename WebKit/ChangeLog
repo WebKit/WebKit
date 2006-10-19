@@ -1,5 +1,70 @@
 2006-10-19  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Kevin D and Geoff
+
+        * WebKit.xcodeproj/project.pbxproj:
+        version wars
+        
+        Cleaned up this file, as follows:
+        - renamed all file-internal methods to start with underscores
+        - moved all file-internal methods into a FileInternal category block, and alphabetized them
+        - grouped all other methods by where/how they were defined (delegate methods, protocol methods, overrides, etc.)
+        - removed unstylish braces around one-line clauses
+        
+        * WebView/WebPDFView.m:
+        (_applicationInfoForMIMEType):
+        (_PDFSelectionsAreEqual):
+        (+[WebPDFView supportedMIMETypes]):
+        (-[WebPDFView setPDFDocument:]):
+        (-[WebPDFView dealloc]):
+        (-[WebPDFView centerSelectionInVisibleArea:]):
+        (-[WebPDFView scrollPageDown:]):
+        (-[WebPDFView scrollPageUp:]):
+        (-[WebPDFView scrollLineDown:]):
+        (-[WebPDFView scrollLineUp:]):
+        (-[WebPDFView scrollToBeginningOfDocument:]):
+        (-[WebPDFView scrollToEndOfDocument:]):
+        (-[WebPDFView jumpToSelection:]):
+        (-[WebPDFView acceptsFirstResponder]):
+        (-[WebPDFView becomeFirstResponder]):
+        (-[WebPDFView hitTest:]):
+        (-[WebPDFView initWithFrame:]):
+        (-[WebPDFView menuForEvent:]):
+        (-[WebPDFView setNextKeyView:]):
+        (-[WebPDFView viewDidMoveToWindow]):
+        (-[WebPDFView viewWillMoveToWindow:]):
+        (-[WebPDFView validateUserInterfaceItem:]):
+        (-[WebPDFView copy:]):
+        (-[WebPDFView takeFindStringFromSelection:]):
+        (-[WebPDFView canPrintHeadersAndFooters]):
+        (-[WebPDFView printOperationWithPrintInfo:]):
+        (-[WebPDFView viewWillMoveToHostWindow:]):
+        (-[WebPDFView viewDidMoveToHostWindow]):
+        (-[WebPDFView elementAtPoint:]):
+        (-[WebPDFView elementAtPoint:allowShadowContent:]):
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:]):
+        (-[WebPDFView viewState]):
+        (-[WebPDFView setViewState:]):
+        (-[WebPDFView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        (+[WebPDFView _PDFPreviewViewClass]):
+        (+[WebPDFView _PDFViewClass]):
+        (-[WebPDFView _anyPDFTagsFoundInMenu:]):
+        (-[WebPDFView _applyPDFDefaults]):
+        (-[WebPDFView _fakeKeyEventWithFunctionKey:]):
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        (-[WebPDFView _openWithFinder:]):
+        (-[WebPDFView _path]):
+        (-[WebPDFView _PDFSubview]):
+        (-[WebPDFView _pointIsInSelection:]):
+        (-[WebPDFView _receivedPDFKitLaunchNotification:]):
+        (-[WebPDFView _scaledAttributedString:]):
+        (-[WebPDFView _trackFirstResponder]):
+        (-[PDFPrefUpdatingProxy forwardInvocation:]):
+        (-[PDFPrefUpdatingProxy methodSignatureForSelector:]):
+
+2006-10-19  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Kevin Decker
         
         - fixed <rdar://problem/4792761> Safari should use fancier embedded PDFKit stuff when it's available
