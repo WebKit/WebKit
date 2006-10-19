@@ -15,9 +15,9 @@ function log(s)
 function logObject(objectGetter)
 {
     var o = eval(objectGetter);
-    log("\n\n===== " + objectGetter + " [" + typeof(o) + "]: " + o + "=====\n");
+    log("\n\n===== " + objectGetter + " [" + typeof(o) + "] =====\n");
     for (var p in o) {
-        log(p + ": " + typeof o[p] + "\n");
+        log("    " + p + ": " + typeof o[p] + "\n");
     }
 }
 
