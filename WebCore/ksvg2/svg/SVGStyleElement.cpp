@@ -105,7 +105,7 @@ void SVGStyleElement::childrenChanged()
 
         m_loading = true;
  
-        m_sheet = new CSSStyleSheet(this, document()->URL(), document()->inputEncoding());
+        m_sheet = new CSSStyleSheet(this, String(), document()->inputEncoding());
         m_sheet->parseString(textContent()); // SVG css is always parsed in strict mode
         
         m_sheet->setMedia(mediaList.get());

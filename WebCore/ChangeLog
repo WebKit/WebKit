@@ -1,3 +1,22 @@
+2006-10-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11141
+        REGRESSION(r16681-r16691): CSS '@import' doesn't respect HTML Base element
+
+        Undo one misguided change made in bug 11011 - stop setting inline stylesheet's href
+        to document URL. This matches WinIE and partially matches Firefox - although the latter
+        reports the href as if it were inherited, it still doesn't use it when resolving URIs in
+        @import rules.
+
+        Test: http/tests/uri/css-href.php
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::childrenChanged):
+
 2006-10-19  Anders Carlsson  <acarlsson@apple.com>
 
         * loader/Cache.cpp:

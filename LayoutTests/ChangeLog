@@ -1,3 +1,20 @@
+2006-10-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11141
+        REGRESSION(r16681-r16691): CSS '@import' doesn't respect HTML Base element
+
+        * http/tests/uri/css-href-2.css: Added.
+        * http/tests/uri/css-href-expected.checksum: Added.
+        * http/tests/uri/css-href-expected.png: Added.
+        * http/tests/uri/css-href-expected.txt: Added.
+        * http/tests/uri/css-href-fwd.css: Added.
+        * http/tests/uri/css-href.css: Added.
+        * http/tests/uri/css-href.php: Added.
+        * http/tests/uri/resources/css-href-2.css: Added.
+        * http/tests/uri/resources/css-href.css: Added.
+
 2006-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Updated this test to avoid machine-specific results.
