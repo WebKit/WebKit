@@ -1,3 +1,21 @@
+2006-10-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Bug 10851: Crash with Drosera
+        http://bugs.webkit.org/show_bug.cgi?id=10851
+
+        This crash results in an assert in debug builds.
+
+        assert(implementsCall());
+
+        The __drosera_introspection propery was not callable. Now we just assign
+        this.__drosera_introspection in the evaluateWebScript call.
+        This change also removes one DO message.
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject webScriptAttributeKeysForScriptObject:]):
+
 2006-10-18  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Tim H.

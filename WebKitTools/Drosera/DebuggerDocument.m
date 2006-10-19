@@ -112,8 +112,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
 {
-    WebScriptObject *func = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
-    [object setValue:func forKey:@"__drosera_introspection"];
+    [object evaluateWebScript:@"this.__drosera_introspection = function () { var result = new Array(); for (var x in this) { result.push(x); } return result; }"];
 
     NSMutableArray *result = [[NSMutableArray alloc] init];
     WebScriptObject *variables = [object callWebScriptMethod:@"__drosera_introspection" withArguments:nil];
