@@ -1,3 +1,22 @@
+2006-10-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * loader/Cache.h:
+        * platform/qt/BrowserExtensionQt.cpp:
+        * platform/qt/BrowserExtensionQt.h:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::pointerCursor):
+        * platform/qt/LoaderFunctionsQt.cpp:
+        (WebCore::NumberOfPendingOrLoadingRequests):
+        (WebCore::CheckCacheObjectStatus):
+        * platform/qt/ResourceLoaderQt.cpp:
+        (WebCore::ResourceLoader::retrieveResponseEncoding):
+        (WebCore::ResourceLoader::receivedResponse):
+
 2006-10-19  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by ap.

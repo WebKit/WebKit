@@ -29,7 +29,7 @@
 
 #include "CachePolicy.h"
 #include "CachedResource.h"
-#include "Loader.h"
+#include "loader.h"
 #include "PlatformString.h"
 #include "StringHash.h"
 #include <wtf/Vector.h>

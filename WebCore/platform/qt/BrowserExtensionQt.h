@@ -38,11 +38,7 @@ class BrowserExtensionQt : public BrowserExtension {
 public:
     BrowserExtensionQt(Frame*);
 
-    virtual void createNewWindow(const FrameLoadRequest&);
     virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*&);
-
-    virtual void setIconURL(const KURL&);
-    virtual void setTypedIconURL(const KURL&, const String& type);
 
     virtual int getHistoryLength();
     virtual void goBackOrForward(int distance);

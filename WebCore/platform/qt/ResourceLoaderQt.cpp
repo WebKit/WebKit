@@ -80,11 +80,11 @@ void ResourceLoader::assembleResponseHeaders() const
     }
 }
 
-void ResourceLoader::retrieveCharset() const
+void ResourceLoader::retrieveResponseEncoding() const
 {
-    if (!d->retrievedCharset) {
-        d->retrievedCharset = true;
-        d->metaData.set("charset", extractCharsetFromHeaders(d->responseHeaders));
+    if (!d->m_retrievedResponseEncoding) {
+        d->m_responseEncoding = extractCharsetFromHeaders(d->responseHeaders);
+        d->m_retrievedResponseEncoding = true;
     }
 }
 
@@ -93,7 +93,7 @@ void ResourceLoader::receivedResponse(PlatformResponse response)
     Q_ASSERT(method() == "POST");
 
     d->assembledResponseHeaders = false;
-    d->retrievedCharset = false;
+    d->m_retrievedResponseEncoding = false;
     d->m_response = response;
 
     if (d->client)

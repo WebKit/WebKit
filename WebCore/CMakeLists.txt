@@ -32,7 +32,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/misc 
    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/events
-   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/bindings/js
    ${CMAKE_CURRENT_BINARY_DIR}/platform
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/gif
@@ -210,7 +209,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGUnitTypes.idl
   ksvg2/svg/SVGUseElement.idl
   ksvg2/svg/SVGViewElement.idl
-  ksvg2/svg/SVGZoomEvent.idl
+  ksvg2/events/SVGZoomEvent.idl
 )
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
@@ -377,13 +376,11 @@ create_generated_cpp_helper(JSHTMLInputElementBaseTable.inl)
 
 
 IF (WEBKIT_USE_SVG_SUPPORT)
-
-    create_cpp_lut(ksvg2/bindings/js/JSSVGNumber.cpp JSSVGNumberTable.inl ksvg2/bindings/js/JSSVGNumber.cpp)
-    create_cpp_lut(ksvg2/bindings/js/JSSVGPoint.cpp JSSVGPointTable.inl ksvg2/bindings/js/JSSVGPoint.cpp)
+    create_cpp_lut(bindings/js/JSSVGNumber.cpp JSSVGNumberTable.inl bindings/js/JSSVGNumber.cpp)
+    create_cpp_lut(bindings/js/JSSVGPoint.cpp JSSVGPointTable.inl bindings/js/JSSVGPoint.cpp)
     create_generated_cpp_helper(JSSVGPointTable.inl)
-    create_cpp_lut(ksvg2/bindings/js/JSSVGRect.cpp JSSVGRectTable.inl ksvg2/bindings/js/JSSVGRect.cpp)
+    create_cpp_lut(bindings/js/JSSVGRect.cpp JSSVGRectTable.inl bindings/js/JSSVGRect.cpp)
     create_generated_cpp_helper(JSSVGRectTable.inl)
-
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.inl
@@ -520,10 +517,10 @@ set (SVG_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc/XLinkNames.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/xml/XMLNames.cpp
 
-    ksvg2/bindings/js/JSSVGPoint.cpp
-    ksvg2/bindings/js/JSSVGRect.cpp
-    ksvg2/bindings/js/JSSVGNumber.cpp
-    ksvg2/bindings/js/JSSVGElementWrapperFactory.cpp 
+    bindings/js/JSSVGPoint.cpp
+    bindings/js/JSSVGRect.cpp
+    bindings/js/JSSVGNumber.cpp
+    bindings/js/JSSVGElementWrapperFactory.cpp 
 
     ksvg2/css/SVGCSSParser.cpp
     ksvg2/css/SVGRenderStyleDefs.cpp
@@ -929,6 +926,7 @@ set(WebCore_SRCS
     html/CanvasGradient.cpp
     html/HTMLViewSourceDocument.cpp
     html/HTMLFrameElement.cpp
+    html/HTMLFrameElementBase.cpp
     html/HTMLAnchorElement.cpp
     html/HTMLTableCellElement.cpp
     html/CanvasPattern.cpp
