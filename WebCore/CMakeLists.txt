@@ -91,10 +91,6 @@ IF (WEBKIT_USE_SVG_SUPPORT)
 SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} SVG_SUPPORT)
 
 set(IDL_BINDINGS_SVG
-
-# TODO: Fix generation
-# ksvg2/svg/SVGFilterPrimitiveStandardAttributes.idl
-
   ksvg2/svg/SVGAElement.idl
   ksvg2/svg/SVGAngle.idl
   ksvg2/svg/SVGAnimateColorElement.idl
@@ -312,7 +308,7 @@ foreach (idl ${IDL_BINDINGS})
    get_filename_component(_basename ${idl} NAME_WE)
    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h
       COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include ${CMAKE_SOURCE_DIR}/WebCore/dom --include ${CMAKE_SOURCE_DIR}/WebCore/html --include ${CMAKE_SOURCE_DIR}/WebCore/xml --include ${CMAKE_SOURCE_DIR}/WebCore/ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${idl} )
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${idl} ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/CodeGenerator.pm ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/CodeGeneratorJS.pm)
    set(WebCore-unity-IDLGeneratedSources ${WebCore-unity-IDLGeneratedSources} ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h )
 endforeach (idl)
 

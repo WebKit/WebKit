@@ -490,6 +490,7 @@ sub GenerateImplementation
   
   push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n") if($className =~ /SVG/);
   push(@implContentHeader, "#include \"$className.h\"\n\n");
+  push(@implContentHeader, "#include <wtf/GetPtr.h>\n\n");
  
   AddIncludesForType($interfaceName);
 
@@ -874,16 +875,6 @@ sub GenerateImplementation
       my $numParameters = @{$function->parameters};
       my $hasOptionalArguments = 0;
 
-      # Special case for SVGLengthList / SVGTransformList / SVGPathSegList.
-      # These lists still use RefPtr objects, which will be changed in future.
-      # For now they need special treatment in the generation.
-      my $isRefPtr = 0;
-      if ($interfaceName eq "SVGLengthList" or
-          $interfaceName eq "SVGTransformList" or
-          $interfaceName eq "SVGPathSegList") {
-        $isRefPtr = 1;
-      }
-
       foreach my $parameter (@{$function->parameters}) {
         if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
           push(@implContent, "\n        int argsCount = args.size();\n");
@@ -892,7 +883,7 @@ sub GenerateImplementation
 
         if ($hasOptionalArguments) {
           push(@implContent, "        if (argsCount < " . ($paramIndex + 1) . ") {\n");
-          GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3, $isRefPtr);
+          GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3);
           push(@implContent, "        }\n\n");
         }
 
@@ -921,7 +912,7 @@ sub GenerateImplementation
       }
 
       push(@implContent, "\n");
-      GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $isRefPtr);
+      GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2);
 
       push(@implContent, "    }\n"); # end case
     }
@@ -976,7 +967,6 @@ sub GenerateImplementationFunctionCall()
     my $functionString = shift;
     my $paramIndex = shift;
     my $indent = shift;
-    my $isRefPtr = shift;
 
     if (@{$function->raisesExceptions}) {
         $functionString .= ", " if $paramIndex;
@@ -989,7 +979,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
-        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString, $isRefPtr) . ";\n");
+        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString) . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "return result;\n");
     }
@@ -1162,7 +1152,6 @@ sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
-    my $isRefPtr = shift;
  
     my $type = $codeGenerator->StripModule($signature->type);
 
@@ -1258,12 +1247,12 @@ sub NativeToJSValue
     } elsif ($type eq "HTMLCollection") {
         $implIncludes{"kjs_html.h"} = 1;
         $implIncludes{"HTMLCollection.h"} = 1;
-        return "getHTMLCollection(exec, $value.get())";
+        return "getHTMLCollection(exec, WTF::getPtr($value))";
     } elsif (($type eq "SVGLength" or
-              $type eq "SVGTransform") and $isRefPtr eq 1) {
+              $type eq "SVGTransform")) {
        $implIncludes{"JS$type.h"} = 1;
        $implIncludes{"$type.h"} = 1;
-       return "toJS(exec, $value.get())";
+       return "toJS(exec, WTF::getPtr($value))";
     } elsif ($type eq "SVGRect" or
              $type eq "SVGPoint" or
              $type eq "SVGNumber") {
@@ -1275,11 +1264,7 @@ sub NativeToJSValue
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
 
-        if ($isRefPtr eq 1) {
-            return "toJS(exec, $value.get())";
-        } else {
-            return "toJS(exec, $value)";
-        }
+        return "toJS(exec, WTF::getPtr($value))";
     } elsif ($codeGenerator->IsSVGAnimatedType($type)) {
         $implIncludes{"JS$type.h"} = 1;
         $implIncludes{"$type.h"} = 1;

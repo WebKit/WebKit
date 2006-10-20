@@ -1,3 +1,14 @@
+2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and by Anders.
+
+        Fix warnings in JS generation by killing the whole isRefPtr logic,
+        and just using WTF::getPtr as Sam Weinig suggested. Also kill some
+        places using get() where getPtr() is cleaner - not for m_impl.get().
+
+        * CMakeLists.txt: Tiny cleanup + add deps for CodeGenerator(JS).pm on all IDLs.
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2006-10-20  Darin Adler  <darin@apple.com>
 
         - rolled out my loader change; caused world leak and possibly a plug-in crash
