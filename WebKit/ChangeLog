@@ -1,5 +1,14 @@
 2006-10-19  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Hyatt.
+
+        Death to 16777216.  Long live 33554432.
+        (Cache size changed needs to be reflected in localization file)
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+
+2006-10-19  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Hyatt
 
         Added an larger in-memory level of cache for machines with 2+gb ram
