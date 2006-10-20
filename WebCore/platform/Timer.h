@@ -51,7 +51,6 @@ public:
     double nextFireInterval() const;
     double repeatInterval() const { return m_repeatInterval; }
 
-protected:
     void augmentRepeatInterval(double delta) { setNextFireTime(m_nextFireTime + delta); m_repeatInterval += delta; }
      
 private:

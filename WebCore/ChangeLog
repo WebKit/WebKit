@@ -1,5 +1,18 @@
 2006-10-20  David Hyatt  <hyatt@apple.com>
 
+        Make sure to do the code that checks the repeatInterval before the timer has been
+        deleted. (Duh.)
+
+        Reviewed by andersca
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::DOMWindowTimer::setNestingLevel):
+        (KJS::Window::timerFired):
+        (KJS::DOMWindowTimer::fired):
+        * platform/Timer.h:
+
+2006-10-20  David Hyatt  <hyatt@apple.com>
+
         Honor tiny timer intervals for JS timeouts as they are nested until a cutoff point is reached.
         At that point clamp to 10ms to prevent excessive CPU usage.
 

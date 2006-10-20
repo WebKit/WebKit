@@ -82,7 +82,10 @@ public:
     virtual ~DOMWindowTimer() { delete m_action; }
 
     int timeoutId() const { return m_timeoutId; }
+    
     int nestingLevel() const { return m_nestingLevel; }
+    void setNestingLevel(int n) { m_nestingLevel = n; }
+    
     ScheduledAction* action() const { return m_action; }
     ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
 
@@ -1942,6 +1945,11 @@ void Window::timerFired(DOMWindowTimer* timer)
     // Simple case for non-one-shot timers.
     if (timer->isActive()) {
         timer->action()->execute(this);
+        if (timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
+            timer->setNestingLevel(timer->nestingLevel() + 1);
+            if (timer->nestingLevel() >= cMaxTimerNestingLevel)
+                timer->augmentRepeatInterval(cMinimumTimerInterval - timer->repeatInterval());
+        }
         return;
     }
 
@@ -2500,11 +2508,6 @@ void DOMWindowTimer::fired()
     timerNestingLevel = m_nestingLevel;
     m_object->timerFired(this);
     timerNestingLevel = 0;
-    if (isActive() && repeatInterval() && repeatInterval() < cMinimumTimerInterval) {
-        m_nestingLevel++;
-        if (m_nestingLevel >= cMaxTimerNestingLevel)
-            augmentRepeatInterval(cMinimumTimerInterval - repeatInterval());
-    }
 }
 
 } // namespace KJS
