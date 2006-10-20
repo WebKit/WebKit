@@ -1,3 +1,18 @@
+2006-10-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4792755> REGRESSON: Drag selecting is erratic
+
+        No test because it would require autoscrolling, which is not available to layout tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        Use hitTest() to find the correct node.
+        
+        (WebCore::RenderLayer::hitTest):
+        Trivial source formatting.
+
 2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Anders.

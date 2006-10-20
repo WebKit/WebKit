@@ -864,8 +864,11 @@ void RenderLayer::autoscroll()
     IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->view()->currentMousePosition());
     
     if (currentFrame->mouseDownMayStartSelect()) {
-        VisiblePosition pos(renderer()->positionForPoint(currentPos));
-        currentFrame->updateSelectionForMouseDragOverPosition(pos);
+        RenderObject::NodeInfo renderInfo(true, false, true);
+        if (hitTest(renderInfo, currentPos)) {
+            VisiblePosition pos(renderInfo.innerNode()->renderer()->positionForPoint(currentPos));
+            currentFrame->updateSelectionForMouseDragOverPosition(pos);
+        }
     }
 
     scrollRectToVisible(IntRect(currentPos, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
@@ -1467,8 +1470,7 @@ static inline IntRect frameVisibleRect(RenderObject* renderer)
     return enclosingIntRect(renderer->document()->frame()->view()->visibleContentRect());
 }
 
-bool
-RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
+bool RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
 {
     renderer()->document()->updateLayout();
     
