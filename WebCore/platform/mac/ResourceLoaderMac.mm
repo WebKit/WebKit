@@ -79,10 +79,9 @@ bool ResourceLoader::start(DocLoader* docLoader)
     id <WebCoreResourceHandle> handle;
 
     NSDictionary* headerDict = nil;
-    String headerString = queryMetaData("customHTTPHeader");
-
-    if (!headerString.isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString];
+    
+    if (!d->m_requestHeaders.isEmpty())
+        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderMap:d->m_requestHeaders] retain];
 
     if (!postData().elements().isEmpty())
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict postData:arrayFromFormData(postData())];

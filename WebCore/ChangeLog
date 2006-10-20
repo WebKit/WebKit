@@ -1,3 +1,26 @@
+2006-10-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Daddy Hyatt.
+
+        Use a real hash map for the headers.
+
+        * loader/LoaderFunctions.h:
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * platform/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::setRequestHeaders):
+        (WebCore::ResourceLoader::requestHeaders):
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        * platform/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getRequestHeader):
+        * xml/xmlhttprequest.h:
+
 2006-10-19  Adam Roben  <aroben@apple.com>
 
         Reviewed by Ada.

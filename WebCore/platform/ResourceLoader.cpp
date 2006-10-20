@@ -74,6 +74,16 @@ String ResourceLoader::responseEncoding() const
     return d->m_responseEncoding;
 }
 
+void ResourceLoader::setRequestHeaders(const HashMap<String, String>& requestHeaders)
+{
+    d->m_requestHeaders = requestHeaders;
+}
+
+const HashMap<String, String>& ResourceLoader::requestHeaders() const
+{
+    return d->m_requestHeaders;
+}
+
 String ResourceLoader::queryMetaData(const String& key) const
 {
     if (key == "HTTP-Headers") {

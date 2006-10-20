@@ -24,6 +24,8 @@
  */
 
 #include <wtf/Vector.h>
+#include <wtf/HashMap.h>
+#include "PlatformString.h"
 #include "ResourceLoaderClient.h"  // Defines PlatformResponse
 
 #ifdef __OBJC__
@@ -31,7 +33,7 @@
 @class NSString;
 
 @interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderString:(NSString *)string;
++ (id)_webcore_dictionaryWithHeaderMap:(const HashMap<WebCore::String, WebCore::String>&)headerMap;
 @end
 
 #else
@@ -46,7 +48,7 @@ class DeprecatedString;
 class DocLoader;
 class Loader;
 class Request;
-class String;
+
 
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL& finalURL, DeprecatedString& headers);
 

@@ -139,6 +139,8 @@ namespace WebCore {
         String method;
         FormData postData;
         
+        HashMap<String, String> m_requestHeaders;
+        
         String m_responseEncoding;
         DeprecatedString responseHeaders;
 

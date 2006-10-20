@@ -245,7 +245,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     m_aborted = false;
 
     // clear stuff from possible previous load
-    m_requestHeaders = DeprecatedString();
+    m_requestHeaders.clear();
     m_responseHeaders = String();
     m_response = "";
     m_createdDocument = false;
@@ -322,8 +322,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         m_loader = ResourceLoader::create(m_async ? this : 0, m_method, m_url);
     }
 
-    if (m_requestHeaders.length())
-        m_loader->addMetaData("customHTTPHeader", m_requestHeaders);
+    if (m_requestHeaders.size() > 0)
+        m_loader->setRequestHeaders(m_requestHeaders);
 
     if (!m_async) {
         Vector<char> data;
@@ -388,16 +388,18 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
         // rdar 4758577: XHR spec says an exception should be thrown here.  However, doing so breaks the Business and People widgets.
         return;
 
-    if (m_requestHeaders.length() > 0)
-        m_requestHeaders += "\r\n";
-    m_requestHeaders += name.deprecatedString();
-    m_requestHeaders += ": ";
-    m_requestHeaders += value.deprecatedString();
+    if (!m_requestHeaders.contains(name)) {
+        m_requestHeaders.set(name, value);
+        return;
+    }
+    
+    String oldValue = m_requestHeaders.get(name);
+    m_requestHeaders.set(name, oldValue + ", " + value);
 }
 
-DeprecatedString XMLHttpRequest::getRequestHeader(const DeprecatedString& name) const
+String XMLHttpRequest::getRequestHeader(const String& name) const
 {
-    return getSpecificHeader(m_requestHeaders, name);
+    return m_requestHeaders.get(name);
 }
 
 String XMLHttpRequest::getAllResponseHeaders() const

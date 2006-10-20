@@ -47,51 +47,15 @@ using namespace WebCore;
 
 @implementation NSDictionary (WebCore_Extras)
 
-+ (id)_webcore_dictionaryWithHeaderString:(NSString *)string
++ (id)_webcore_dictionaryWithHeaderMap:(const HashMap<String, String>&)headerMap
 {
     NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
-
-    NSArray *lines = [string componentsSeparatedByString:@"\r\n"];
-    NSEnumerator *e = [lines objectEnumerator];
-    NSString *lastHeaderName = nil;
-
-    while (NSString *line = (NSString *)[e nextObject]) {
-        if ([line length]) {
-            unichar firstChar = [line characterAtIndex:0];
-            if ((firstChar == ' ' || firstChar == '\t') && lastHeaderName != nil) {
-                // lines that start with space or tab continue the previous header value
-                NSString *oldVal = [headers objectForKey:lastHeaderName];
-                ASSERT(oldVal);
-                NSString *newVal = [line stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
-                [headers setObject:[NSString stringWithFormat:@"%@ %@", oldVal, newVal]
-                            forKey:lastHeaderName];
-                continue;
-            }
-        }
-
-        NSRange colonRange = [line rangeOfString:@":"];
-        if (colonRange.location != NSNotFound) {
-            // don't worry about case, assume lower levels will take care of it
-
-            NSString *headerName = [[line substringToIndex:colonRange.location] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
-            NSString *headerValue = [[line substringFromIndex:colonRange.location + 1] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
-            
-            NSString *oldVal = [headers objectForKey:headerName];
-            if (oldVal) {
-                headerValue = [NSString stringWithFormat:@"%@, %@", oldVal, headerValue];
-            }
-
-            [headers setObject:headerValue forKey:headerName];
-            
-            lastHeaderName = headerName;
-        }
-    }
-
-    NSDictionary *dictionary = [NSDictionary dictionaryWithDictionary:headers];
     
-    [headers release];
+    HashMap<String, String>::const_iterator end = headerMap.end();
+    for (HashMap<String, String>::const_iterator it = headerMap.begin(); it != end; ++it)
+        [headers setValue:it->second forKey:it->first];
     
-    return dictionary;
+    return headers;
 }
 
 @end
@@ -136,11 +100,11 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSDictionary *headerDict = nil;
-    String headerString = job->queryMetaData("customHTTPHeader");
+    const HashMap<String, String>& requestHeaders = job->requestHeaders();
 
-    if (!headerString.isEmpty())
-        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString] retain];
-
+    if (!requestHeaders.isEmpty())
+        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders] retain];
+    
     NSArray *postData = nil;
     if (!job->postData().elements().isEmpty())
         postData = arrayFromFormData(job->postData());
