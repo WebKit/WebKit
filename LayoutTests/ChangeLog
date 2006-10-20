@@ -1,3 +1,33 @@
+2006-10-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth, approved in principle by Adele, who couldn't be troubled
+        for an actual review.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=11345
+        1 fewer shouldChangeSelection delegate call for fast/forms/focus-control-to-page
+        
+        I updated this test to use <input type="search"> because that's the only
+        remaining AppKit control, and the test's intention is verify tabbing
+        between AppKit and non-AppKit controls.
+        
+        I updated the results because the behavior change is good.
+        
+        Here's why the test regressed:
+        
+        Our editing code is cra-zay. When AppKit calls nextKeyView, we not only
+        calculate the next key element in the page, we also focus it as a side-effect. 
+        As a result, we used to fire a focus delegate twice, because AppKit happened
+        to call nextKeyView twice.
+        
+        This test first regressed when Adele changed listboxes to be non-AppKit
+        controls (r16718). That change took AppKit out of test.
+        
+        The regression redoubled itself when Adam moved TAB handling into the DOM
+        (r16741), taking AppKit out of TABing completely.
+
+        * fast/forms/focus-control-to-page-expected.txt:
+        * fast/forms/focus-control-to-page.html:
+
 2006-10-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
