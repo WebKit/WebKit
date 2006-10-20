@@ -900,7 +900,7 @@ static BOOL loggedObjectCacheSize = NO;
     int cacheSize = [[self _preferences] _objectCacheSize];
     int multiplier = 1;
     
-    if (memSize >= 2048 * 1024 * 1024) 
+    if (memSize >= (unsigned)(2048 * 1024 * 1024)) 
         multiplier = 8;
     else if (memSize >= 1024 * 1024 * 1024)
         multiplier = 4;
