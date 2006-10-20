@@ -1935,13 +1935,20 @@ NS_ENDHANDLER
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    // Don't do anything if we aren't initialized.  This happens
-    // when decoding a WebView.
-    if (_private) {
-        if ([self window])
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[self window]];
-        if (window)
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
+    // Don't do anything if we aren't initialized.  This happens when decoding a WebView.
+    if (!_private)
+        return;
+    
+    if ([self window])
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[self window]];
+
+    if (window) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
+
+        // Ensure that we will receive the events that WebHTMLView (at least) needs. It's expensive enough
+        // that we don't want to call it over and over.
+        [window setAcceptsMouseMovedEvents:YES];
+        WKSetNSWindowShouldPostEventNotifications(window, YES);
     }
 }
 

@@ -2510,10 +2510,6 @@ static WebHTMLView *lastHitView = nil;
 {
     [self reapplyStyles];
     
-    // Ensure that we will receive mouse move events.  Is this the best place to put this?
-    [[self window] setAcceptsMouseMovedEvents: YES];
-    WKSetNSWindowShouldPostEventNotifications([self window], YES);
-
     if (!_private->needsLayout) {
         return;
     }
