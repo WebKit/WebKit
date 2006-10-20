@@ -28,6 +28,7 @@
 
 #include <wtf/Platform.h>
 #if USE(CFNETWORK)
+#include <ConditionalMacros.h>
 #include <CFNetwork/CFURLResponsePriv.h>
 #endif
 
