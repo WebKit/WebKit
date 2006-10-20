@@ -33,16 +33,19 @@
 namespace WebCore {
     class FrameMac;
     class Element;
+    class EditorClient;
 }
 
 typedef WebCore::FrameMac WebCoreMacFrame;
 typedef WebCore::Element WebCoreElement;
+typedef WebCore::EditorClient WebCoreEditorClient;
 
 #else
 
 @class NSMenu;
 @class WebCoreMacFrame;
 @class WebCoreElement;
+@class WebCoreEditorClient;
 
 #endif
 
@@ -192,8 +195,8 @@ typedef enum {
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
-- (id)initMainFrameWithPage:(WebCorePageBridge *)page;
-- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement;
+- (id)initMainFrameWithPage:(WebCorePageBridge *)page withEditorClient:(WebCoreEditorClient *)client;
+- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement withEditorClient:(WebCoreEditorClient *)client;
 
 - (void)close;
 

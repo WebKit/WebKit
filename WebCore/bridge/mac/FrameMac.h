@@ -98,6 +98,7 @@ typedef int NSWritingDirection;
 namespace WebCore {
 
 class DocumentFragment;
+class EditorClient;
 class FramePrivate;
 class HTMLTableCellElement;
 class RenderObject;
@@ -114,7 +115,7 @@ enum SelectionDirection {
 class FrameMac : public Frame
 {
 public:
-    FrameMac(Page*, Element*);
+    FrameMac(Page*, Element*, EditorClient*);
     ~FrameMac();
     
     void clear();

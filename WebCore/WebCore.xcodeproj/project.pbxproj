@@ -237,6 +237,11 @@
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
+		4B3043B60AE0363200A82647 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043B50AE0363200A82647 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B3043C70AE0370300A82647 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043C60AE0370300A82647 /* Sound.h */; };
+		4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043C80AE0371D00A82647 /* SoundMac.mm */; };
+		4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043CA0AE0373B00A82647 /* Editor.cpp */; };
+		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; };
 		4BBDBF7D0ACC9290005F6E97 /* CommandByName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */; };
 		4BBDBF7E0ACC9290005F6E97 /* CommandByName.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */; };
 		4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */; };
@@ -639,7 +644,7 @@
 		8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8538F0160AD718D8006A81D1 /* DOMAbstractView.h */; };
 		8538F05B0AD722F1006A81D1 /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F0580AD722F1006A81D1 /* DOMRange.h */; };
 		8538F05C0AD722F1006A81D1 /* DOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8538F0590AD722F1006A81D1 /* DOMRange.mm */; };
-		8538F05D0AD722F1006A81D1 /* DOMRangeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
+		8538F05D0AD722F1006A81D1 /* DOMRangeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8538F0850AD72CB6006A81D1 /* DOMRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F0840AD72CB6006A81D1 /* DOMRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8538F08C0AD72E0A006A81D1 /* DOMRange.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8538F0580AD722F1006A81D1 /* DOMRange.h */; };
 		853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
@@ -3107,6 +3112,11 @@
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
+		4B3043B50AE0363200A82647 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
+		4B3043C60AE0370300A82647 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
+		4B3043C80AE0371D00A82647 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundMac.mm; sourceTree = "<group>"; };
+		4B3043CA0AE0373B00A82647 /* Editor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Editor.cpp; sourceTree = "<group>"; };
+		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
 		4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommandByName.cpp; sourceTree = "<group>"; };
 		4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommandByName.h; sourceTree = "<group>"; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
@@ -6358,6 +6368,7 @@
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				BC86FB8E061F5C23006BB822 /* SliderMac.mm */,
+				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
 				93B0FD880A759BED0080AD44 /* StringImplMac.mm */,
 				93B0FD890A759BED0080AD44 /* StringMac.mm */,
@@ -6418,6 +6429,7 @@
 				65BF02350974819000C43196 /* mac */,
 				55998A5C052B59CC0017A6C1 /* AXObjectCache.h */,
 				BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */,
+				4B3043B50AE0363200A82647 /* EditorClient.h */,
 				935C475C09AC4CA000A6AAB4 /* History.h */,
 				14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */,
 			);
@@ -7367,6 +7379,8 @@
 				93309D93099E64910056E581 /* EditAction.h */,
 				93309D94099E64910056E581 /* EditCommand.cpp */,
 				93309D95099E64910056E581 /* EditCommand.h */,
+				4B3043CA0AE0373B00A82647 /* Editor.cpp */,
+				4B3043CB0AE0373B00A82647 /* Editor.h */,
 				93309D98099E64910056E581 /* htmlediting.cpp */,
 				93309D99099E64910056E581 /* htmlediting.h */,
 				93309D96099E64910056E581 /* HTMLInterchange.cpp */,
@@ -8509,6 +8523,7 @@
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				BC86FB8D061F5C23006BB822 /* Slider.h */,
+				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				9352071709BD3BA500F2038D /* StaticConstructors.h */,
 				657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */,
@@ -10398,6 +10413,9 @@
 				93B77B1D0ADDA10700EA4B81 /* UChar.h in Headers */,
 				0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */,
 				6563A9A70ADF4094000ED2CD /* LoaderNSURLRequestExtras.h in Headers */,
+				4B3043B60AE0363200A82647 /* EditorClient.h in Headers */,
+				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
+				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
 				14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */,
 				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
 				14FD6DFD0AE5EA1B00AD67AD /* WindowFeatures.h in Headers */,
@@ -11630,6 +11648,8 @@
 				656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
 				6563A9A80ADF4094000ED2CD /* LoaderNSURLRequestExtras.m in Sources */,
+				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,
+				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */,
 				8542A7940AE5C94000DF58DF /* JSSVGRect.cpp in Sources */,
 				8542A7960AE5C94200DF58DF /* JSSVGPoint.cpp in Sources */,

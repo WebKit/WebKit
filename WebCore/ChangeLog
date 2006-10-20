@@ -1,3 +1,96 @@
+2006-10-20  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        This is the initial foundation for the EditingController class and
+        everything else it needs to work.  The idea is that the Frame has an
+        EditingController object that it calls to handle editing commands, the
+        most simple examples being copy/paste.  This controller will handle
+        these editing commands in WebCore, and only hand off to WebKit to call
+        editing delegates (to the let the app intercept editing actions if it
+        wants to).  Thus we need a platform-specific client to which the
+        EditingController hands off the delegate calls, 
+        WebCoreEditingControllerClient.  On the WebCore side this is an 
+        abstract base class, and on the WebKit(Mac) side this is an ObjC++
+        subclass, WebEditingControllerClient.  How does the EditingController
+        get a handle to its platform-specific client?  In WebKit, the creator
+        of a platform-specific Frame creates the client (which is ref-counted)
+        and passes it down the chain of constructors until it gets back to the
+        EditingController, which then refs it in its constructor and derefs in
+        its destructor.
+        
+        No Layout tests needed.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Added files and made DomRangeInternal.h and EditingClient.h private headers, necessary for WebKit to compile
+
+        * bridge/EditorClient.h: Added.
+        (WebCore::EditorClient::~EditorClient):
+
+        * bridge/mac/FrameMac.h:
+        Added an EditingClient to the constructor, to pass down to Frame constructor
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac):
+        Passed client down to Frame constructor
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        Added an EditingClient to the constructor, to pass down to FrameMac constructor
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initMainFrameWithPage:withEditorClient:]):
+        (-[WebCoreFrameBridge initSubframeWithOwnerElement:withEditorClient:]):
+        Passed client down to FrameMac constructor
+        
+        * editing/Editor.cpp: Added.
+        Mostly stuf implementations of the following functions, except for a couple.  These are all needed by cut, copy, paste, delete.
+        (WebCore::generalPasteboard):
+        (WebCore::Editor::canCopy):
+        (WebCore::Editor::canCut):
+        (WebCore::Editor::canDelete):
+        (WebCore::Editor::canDeleteRange):
+        (WebCore::Editor::canPaste):
+        (WebCore::Editor::canSmartCopyOrDelete):
+        (WebCore::Editor::deleteSelection):
+        (WebCore::Editor::deleteSelectionWithSmartDelete):
+        (WebCore::Editor::isSelectionRichlyEditable):
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::selectedRange):
+        (WebCore::Editor::shouldDeleteRange):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::tryDHTMLPaste):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::~Editor):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::performDelete):
+        
+        * editing/Editor.h: Added.
+        
+        * page/Frame.h:
+        Added an EditingClient to the constructor, to pass down to Editor constructor
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        Passed down to Editor constructor
+        (WebCore::Frame::editor):
+        Accessfor for Editor stored in FramePrivate
+        
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        Added an Editor object to the FramePrivate data
+        
+        * platform/Sound.h: Added.
+        Made a platform-independent accessor to a beep function
+        
+        * platform/mac/SoundMac.mm: Added.
+        (WebCore::systemBeep):
+        calls mac system beep
+        
 2006-10-20  David Hyatt  <hyatt@apple.com>
 
         Make sure to support the "encoding" property on form elements for

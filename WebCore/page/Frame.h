@@ -62,6 +62,8 @@ class CSSStyleDeclaration;
 class DrawContentsEvent;
 class DOMWindow;
 class EditCommand;
+class Editor;
+class EditorClient;
 class FormData;
 class FramePrivate;
 class FrameLoadRequest;
@@ -102,7 +104,7 @@ class Frame : public Shared<Frame> {
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
-  Frame(Page*, Element*);
+  Frame(Page*, Element*, EditorClient*);
   virtual ~Frame();
 
   virtual bool openURL(const KURL&);
@@ -833,7 +835,7 @@ public:
   SelectionController* selectionController() const;
   SelectionController* dragCaretController() const;
   DOMWindow* domWindow() const;
-
+  Editor* editor() const;
   CommandByName* command() const;
  private:
   friend class FramePrivate;

@@ -34,6 +34,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebEditingDelegate.h"
+#import "WebEditorClient.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -118,7 +119,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initMainFrameWithPage:page];
+    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([view _webView])];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
 
     ++WebBridgeCount;
@@ -132,7 +133,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initSubframeWithOwnerElement:ownerElement];
+    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:new WebEditorClient([view _webView])];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
 
     ++WebBridgeCount;

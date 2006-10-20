@@ -34,6 +34,8 @@
 		22E42A4F0A5B9F620003275B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A4E0A5B9F620003275B /* OpenGL.framework */; };
 		22E42A9A0A5BA4D00003275B /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A990A5BA4D00003275B /* AGL.framework */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; };
+		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51E4D3990A886B5E00ECEE2C /* WebIconDatabaseBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4D3970A886B5E00ECEE2C /* WebIconDatabaseBridge.h */; };
 		51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E4D3980A886B5E00ECEE2C /* WebIconDatabaseBridge.m */; };
@@ -323,6 +325,8 @@
 		3944607E020F50ED0ECA1767 /* WebBackForwardList.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebBackForwardList.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944607F020F50ED0ECA1767 /* WebHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		39446080020F50ED0ECA1767 /* WebHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebHistoryItem.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
+		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9B0429392B00CA2D3A /* WebPolicyDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; indentWidth = 4; path = WebPolicyDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -918,6 +922,8 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
+				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
 				51E4D3970A886B5E00ECEE2C /* WebIconDatabaseBridge.h */,
 				51E4D3980A886B5E00ECEE2C /* WebIconDatabaseBridge.m */,
 				65C7F42A0979DE640022E453 /* WebPageBridge.h */,
@@ -1164,6 +1170,7 @@
 				65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */,
 				658BA6FC0ADB39DE00AEB387 /* WebPolicyDeciderMac.h in Headers */,
 				51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */,
+				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1385,6 +1392,7 @@
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
 				65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.m in Sources */,
 				658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */,
+				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

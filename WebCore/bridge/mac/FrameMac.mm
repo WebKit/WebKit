@@ -148,8 +148,8 @@ static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
     return selector;
 }
 
-FrameMac::FrameMac(Page* page, Element* ownerElement)
-    : Frame(page, ownerElement)
+FrameMac::FrameMac(Page* page, Element* ownerElement, EditorClient* client)
+    : Frame(page, ownerElement, client)
     , _bridge(nil)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)

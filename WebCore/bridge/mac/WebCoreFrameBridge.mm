@@ -37,6 +37,7 @@
 #import "DocLoader.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
+#import "EditorClient.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
@@ -470,7 +471,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge([document _document]->frame());
 }
 
-- (id)initMainFrameWithPage:(WebCorePageBridge *)page
+- (id)initMainFrameWithPage:(WebCorePageBridge *)page withEditorClient:(WebCoreEditorClient *)client
 {
     if (!initializedKJS) {
         mainThread = pthread_self();
@@ -482,7 +483,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
 
-    m_frame = new FrameMac([page impl], 0);
+    m_frame = new FrameMac([page impl], 0, client);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -498,12 +499,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return self;
 }
 
-- (id)initSubframeWithOwnerElement:(Element *)ownerElement
+- (id)initSubframeWithOwnerElement:(Element *)ownerElement withEditorClient:(WebCoreEditorClient *)client
 {
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement);
+    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement, client);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 

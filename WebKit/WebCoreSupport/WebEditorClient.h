@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __cplusplus
-#define NULL __null
-#else
-#define NULL ((void *)0)
-#endif
+#import <WebCore/EditorClient.h>
 
-#import <stddef.h>
-#import <stdio.h>
-#import <fcntl.h>
-#import <errno.h>
-#import <unistd.h>
-#import <signal.h>
-#import <sys/types.h>
-#import <sys/time.h>
-#import <sys/resource.h>
+@class WebView;
 
-#import <pthread.h>
+class WebEditorClient : public WebCore::EditorClient
+{
+public:
+    WebEditorClient(WebView* webView);
+    ~WebEditorClient();
 
-#import <CoreGraphics/CoreGraphics.h>
+    bool shouldDeleteRange(WebCore::Range *range);    
+//    bool shouldBeginEditingInRange(Range *range);
+//    bool shouldEndEditingInRange(Range *range);
+//    bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction);
+//    bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction);
+//    bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting);
+//    bool shouldApplyStyle(CSSStyleDeclaration *style, Range *toElementsInDOMRange);
+//    bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle);
+//    bool doCommandBySelector(SEL selector);
 
-#ifdef __cplusplus
+//    void webViewDidBeginEditing:(NSNotification *)notification;
+//    void webViewDidChange:(NSNotification *)notification;
+//    void webViewDidEndEditing:(NSNotification *)notification;
+//    void webViewDidChangeTypingStyle:(NSNotification *)notification;
+//    void webViewDidChangeSelection:(NSNotification *)notification;
+//    NSUndoManager* undoManagerForWebView:(WebView *)webView;
 
-#include <cstddef>
-#include <new>
-
-#endif
-
-#import <ApplicationServices/ApplicationServices.h>
-#import <Carbon/Carbon.h>
-
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define BUILDING_ON_TIGER 1
-#endif
-#endif
-
-#include <JavaScriptCore/Platform.h>
+private:
+    WebView *m_webView;
+};
