@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,20 +24,18 @@
 #ifdef SVG_SUPPORT
 #include "SVGClipPathElement.h"
 
-#include "Attr.h"
 #include "Document.h"
+#include "KRenderingDevice.h"
 #include "RenderView.h"
 #include "SVGHelper.h"
-#include "SVGNames.h"
 #include "SVGMatrix.h"
-#include "SVGRenderStyle.h"
-#include "cssstyleselector.h"
+#include "SVGNames.h"
 #include "SVGUnitTypes.h"
-#include <kcanvas/device/KRenderingDevice.h>
+#include "cssstyleselector.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document *doc)
+SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -54,7 +52,7 @@ SVGClipPathElement::~SVGClipPathElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGClipPathElement, int, Enumeration, enumeration, ClipPathUnits, clipPathUnits, SVGNames::clipPathUnitsAttr.localName(), m_clipPathUnits)
 
-void SVGClipPathElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::clipPathUnitsAttr) {
@@ -73,26 +71,26 @@ void SVGClipPathElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-KCanvasClipper *SVGClipPathElement::canvasResource()
+KCanvasClipper* SVGClipPathElement::canvasResource()
 {
     if (!view())
         return 0;
     if (!m_clipper)
-        m_clipper = static_cast<KCanvasClipper *>(renderingDevice()->createResource(RS_CLIPPER));
+        m_clipper = static_cast<KCanvasClipper*>(renderingDevice()->createResource(RS_CLIPPER));
     else
         m_clipper->resetClipData();
 
     bool bbox = clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement *e = svg_dynamic_cast(n);
+    RenderStyle* clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
+    for (Node* n = firstChild(); n; n = n->nextSibling()) {
+        SVGElement* e = svg_dynamic_cast(n);
         if (e && e->isStyled()) {
-            SVGStyledElement *styled = static_cast<SVGStyledElement *>(e);
-            RenderStyle *pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
+            SVGStyledElement* styled = static_cast<SVGStyledElement*>(e);
+            RenderStyle* pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
             Path pathData = styled->toPathData();
             if (e->isStyledTransformable())
-                pathData.transform(static_cast<SVGStyledTransformableElement *>(e)->localMatrix()->matrix());
+                pathData.transform(static_cast<SVGStyledTransformableElement*>(e)->localMatrix()->matrix());
             if (!pathData.isEmpty())
                 m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
             pathStyle->deref(view()->renderArena());
@@ -100,6 +98,8 @@ KCanvasClipper *SVGClipPathElement::canvasResource()
     }
     clipPathStyle->deref(view()->renderArena());
     return m_clipper;
+}
+
 }
 
 // vim:ts=4:noet

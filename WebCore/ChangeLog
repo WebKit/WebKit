@@ -1,3 +1,35 @@
+2006-10-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11217
+        Cleanup svg coding style
+
+        Cleanup coding style in svg clipping and painting classes.
+
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::parseMappedAttribute):
+        (WebCore::SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * ksvg2/svg/SVGMarkerElement.h:
+        (WebCore::SVGMarkerElement::rendererIsNeeded):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        (WebCore::SVGMaskElement::canvasResource):
+        * ksvg2/svg/SVGMaskElement.h:
+        (WebCore::SVGMaskElement::rendererIsNeeded):
+        * ksvg2/svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::setPaint):
+        (WebCore::SVGPaint::cssText):
+        * ksvg2/svg/SVGPaint.h:
+
 2006-10-20  David Hyatt  <hyatt@apple.com>
 
         Make sure to do the code that checks the repeatInterval before the timer has been

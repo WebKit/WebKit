@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,19 +24,18 @@
 #define KSVG_SVGClipPathElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
+#include "KCanvasClipper.h"
+#include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
-#include "SVGExternalResourcesRequired.h"
-
-#include "KCanvasClipper.h"
+#include "SVGTests.h"
 
 namespace WebCore
 {
     class SVGClipPathElement : public SVGStyledTransformableElement,
-                                   public SVGTests,
-                                   public SVGLangSpace,
-                                   public SVGExternalResourcesRequired
+                               public SVGTests,
+                               public SVGLangSpace,
+                               public SVGExternalResourcesRequired
     {
     public:
         SVGClipPathElement(const QualifiedName&, Document*);
@@ -44,10 +43,10 @@ namespace WebCore
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual KCanvasClipper *canvasResource();
+        virtual KCanvasClipper* canvasResource();
 
         // 'SVGClipPathElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -57,7 +56,7 @@ namespace WebCore
 
         ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, int, int, ClipPathUnits, clipPathUnits)
 
-        KCanvasClipper *m_clipper;
+        KCanvasClipper* m_clipper;
     };
 
 } // namespace WebCore

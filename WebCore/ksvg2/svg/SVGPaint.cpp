@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -22,7 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "ksvg.h"
 #include "SVGPaint.h"
 
 namespace WebCore {
@@ -83,19 +82,19 @@ void SVGPaint::setPaint(SVGPaintType paintType, const String& uri, const String&
 {
     m_paintType = paintType;
 
-    if(m_paintType == SVG_PAINTTYPE_URI)
+    if (m_paintType == SVG_PAINTTYPE_URI)
         setUri(uri);
-    else if(m_paintType == SVG_PAINTTYPE_RGBCOLOR)
+    else if (m_paintType == SVG_PAINTTYPE_RGBCOLOR)
         setRGBColor(rgbPaint);
 }
 
 String SVGPaint::cssText() const
 {
-    if(m_paintType == SVG_PAINTTYPE_NONE)
+    if (m_paintType == SVG_PAINTTYPE_NONE)
         return "none";
-    else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
+    else if (m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
         return "currentColor";
-    else if(m_paintType == SVG_PAINTTYPE_URI)
+    else if (m_paintType == SVG_PAINTTYPE_URI)
         return "url(" + m_uri + ")";
 
     return SVGColor::cssText();

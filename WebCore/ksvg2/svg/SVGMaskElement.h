@@ -23,23 +23,22 @@
 #define SVGMaskElement_H
 #ifdef SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGStyledLocatableElement.h"
-#include "SVGExternalResourcesRequired.h"
-
 #include "KCanvasMasker.h"
+#include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledLocatableElement.h"
+#include "SVGTests.h"
+#include "SVGURIReference.h"
 
 namespace WebCore
 {
     class Attribute;
     class SVGLength;
     class SVGMaskElement : public SVGStyledLocatableElement,
-                                  public SVGURIReference,
-                                  public SVGTests,
-                                  public SVGLangSpace,
-                                  public SVGExternalResourcesRequired
+                           public SVGURIReference,
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired
     {
     public:
         SVGMaskElement(const QualifiedName&, Document*);
@@ -48,15 +47,15 @@ namespace WebCore
 
         // 'SVGMaskElement' functions
         virtual void childrenChanged();
-        virtual void attributeChanged(Attribute* attr, bool preserveDecls);
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void attributeChanged(Attribute*, bool preserveDecls);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        virtual KCanvasMasker *canvasResource();
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual KCanvasMasker* canvasResource();
 
     protected:
-        KCanvasImage *drawMaskerContent();
+        KCanvasImage* drawMaskerContent();
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
@@ -69,7 +68,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        KCanvasMasker *m_masker;
+        KCanvasMasker* m_masker;
         bool m_dirty;
     };
 

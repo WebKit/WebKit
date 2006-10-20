@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,9 +37,9 @@ namespace WebCore
     class SVGAngle;
     class SVGLength;
     class SVGMarkerElement : public SVGStyledElement,
-                                 public SVGLangSpace,
-                                 public SVGExternalResourcesRequired,
-                                 public SVGFitToViewBox
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGFitToViewBox
     {
     public:
         enum SVGMarkerUnitsType {
@@ -59,13 +59,13 @@ namespace WebCore
 
         // 'SVGMarkerElement' functions
         void setOrientToAuto();
-        void setOrientToAngle(SVGAngle *angle);
+        void setOrientToAngle(SVGAngle*);
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
     
-        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        virtual KCanvasMarker *canvasResource();
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual KCanvasMarker* canvasResource();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -83,7 +83,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, OrientType, orientType)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
 
-        KCanvasMarker *m_marker;
+        KCanvasMarker* m_marker;
     };
 
 } // namespace WebCore

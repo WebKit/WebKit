@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
 
     This file is part of the KDE project
@@ -25,8 +25,7 @@
 #define KSVG_SVGPaintImpl_H
 #ifdef SVG_SUPPORT
 
-#include "ksvg.h"
-#include <SVGColor.h>
+#include "SVGColor.h"
 
 namespace WebCore {
 

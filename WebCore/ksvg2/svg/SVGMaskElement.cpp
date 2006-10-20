@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2005 Alexander Kellett <lypanov@kde.org>
 
     This file is part of the KDE project
@@ -26,22 +26,19 @@
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
-#include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
 #include "KRenderingDevice.h"
-#include "SVGLength.h"
+#include "RenderSVGContainer.h"
 #include "SVGHelper.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
-#include "SVGRenderStyle.h"
 #include "cssstyleselector.h"
-#include "ksvg.h"
-#include "Attr.h"
 #include <wtf/OwnPtr.h>
 #include <math.h>
 
 namespace WebCore {
 
-SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document *doc)
+SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGURIReference()
     , SVGTests()
@@ -80,7 +77,7 @@ void SVGMaskElement::childrenChanged()
     SVGStyledLocatableElement::childrenChanged();
 }
 
-void SVGMaskElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
@@ -104,24 +101,24 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-KCanvasImage *SVGMaskElement::drawMaskerContent()
+KCanvasImage* SVGMaskElement::drawMaskerContent()
 {
-    KRenderingDevice *device = renderingDevice();
+    KRenderingDevice* device = renderingDevice();
     if (!device->currentContext()) // FIXME: hack for now until Image::lockFocus exists
         return 0;
     if (!renderer())
         return 0;
-    KCanvasImage *maskImage = static_cast<KCanvasImage *>(device->createResource(RS_IMAGE));
+    KCanvasImage* maskImage = static_cast<KCanvasImage*>(device->createResource(RS_IMAGE));
 
     IntSize size = IntSize(lroundf(width()->value()), lroundf(height()->value()));
     maskImage->init(size);
 
-    KRenderingDeviceContext *patternContext = device->contextForImage(maskImage);
+    KRenderingDeviceContext* patternContext = device->contextForImage(maskImage);
     device->pushContext(patternContext);
 
     OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
 
-    RenderSVGContainer *maskContainer = static_cast<RenderSVGContainer *>(renderer());
+    RenderSVGContainer* maskContainer = static_cast<RenderSVGContainer*>(renderer());
     RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
@@ -140,14 +137,14 @@ RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
     return maskContainer;
 }
 
-KCanvasMasker *SVGMaskElement::canvasResource()
+KCanvasMasker* SVGMaskElement::canvasResource()
 {
     if (!m_masker) {
-        m_masker = static_cast<KCanvasMasker *>(renderingDevice()->createResource(RS_MASKER));
+        m_masker = static_cast<KCanvasMasker*>(renderingDevice()->createResource(RS_MASKER));
         m_dirty = true;
     }
     if (m_dirty) {
-        KCanvasImage *newMaskImage = drawMaskerContent();
+        KCanvasImage* newMaskImage = drawMaskerContent();
         m_masker->setMask(newMaskImage);
         m_dirty = (newMaskImage != 0);
     }

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGMarkerElement.h"
 
-#include "Attr.h"
 #include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderSVGContainer.h"
@@ -36,11 +35,10 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
-#include "ksvg.h"
 
 namespace WebCore {
 
-SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document *doc)
+SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
@@ -61,7 +59,7 @@ SVGMarkerElement::~SVGMarkerElement()
     delete m_marker;
 }
 
-void SVGMarkerElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::markerUnitsAttr) {
@@ -108,15 +106,15 @@ void SVGMarkerElement::setOrientToAuto()
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
 }
 
-void SVGMarkerElement::setOrientToAngle(SVGAngle *angle)
+void SVGMarkerElement::setOrientToAngle(SVGAngle* angle)
 {
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
     setOrientAngleBaseValue(angle);
 }
 
-KCanvasMarker *SVGMarkerElement::canvasResource()
+KCanvasMarker* SVGMarkerElement::canvasResource()
 {
-    if(!m_marker)
+    if (!m_marker)
         m_marker = static_cast<KCanvasMarker*>(renderingDevice()->createResource(RS_MARKER));
     
     m_marker->setMarker(static_cast<RenderSVGContainer*>(renderer()));
