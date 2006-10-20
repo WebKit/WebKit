@@ -1,5 +1,19 @@
 2006-10-20  Rob Buis  <buis@kde.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11303
+        Path::transform() should be implemented on Qt build
+
+        Use QPainterPath API to implement Path::transform.
+        This fixes svg/custom/clip-path-with-transform.svg on
+        the qt build.
+
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::transform):
+
+2006-10-20  Rob Buis  <buis@kde.org>
+
         Reviewed by Mitz.
 
         http://bugs.webkit.org/show_bug.cgi?id=11217

@@ -264,7 +264,12 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& transform)
 {
-    // FIXME: Implement me!
+    if (m_path) {
+        QMatrix mat = transform;
+        QPainterPath temp = mat.map(*m_path);
+        delete m_path;
+        m_path = new QPainterPath(temp);
+    }
 }
 
 }
