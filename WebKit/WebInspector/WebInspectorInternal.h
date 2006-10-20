@@ -55,6 +55,7 @@
     NSImage *rightArrowImage;
     NSImage *downArrowImage;
     BOOL ignoreWhitespace;
+    BOOL showUserAgentStyles;
     BOOL webViewLoaded;
     BOOL searchResultsVisible;
     BOOL preventHighlight;

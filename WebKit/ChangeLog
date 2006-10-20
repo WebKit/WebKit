@@ -1,3 +1,17 @@
+2006-10-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Bug 11366: Web Inspector should show user agent style rules
+        http://bugs.webkit.org/show_bug.cgi?id=11366
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector init]):
+        (-[WebInspector showOptionsMenu]):
+        (-[WebInspector _toggleShowUserAgentStyles:]):
+        * WebInspector/WebInspectorInternal.h:
+        * WebInspector/webInspector/inspector.js:
+
 2006-10-19  Brady Eidson <beidson@apple.com>
 
         Build fix - 2gig is on that pesky signed/unsigned limit...

@@ -27,6 +27,7 @@
  */
 
 var Inspector = null;
+var showUserAgentStyles = true;
 
 // Property values to omit in the computed style list.
 // If a property has this value, it will be omitted.
@@ -520,7 +521,7 @@ function updateStylePane()
             }
         }
 
-        var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "");
+        var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "", !showUserAgentStyles);
         if (matchedStyleRules) {
             for (var i = 0; i < matchedStyleRules.length; i++) {
                 styleRules.push(matchedStyleRules[i]);
@@ -564,6 +565,8 @@ function updateStylePane()
                 sheet = styleRules[i].subtitle;
             else if (styleRules[i].parentStyleSheet && styleRules[i].parentStyleSheet.href)
                 sheet = styleRules[i].parentStyleSheet.href;
+            else if (styleRules[i].parentStyleSheet && !styleRules[i].parentStyleSheet.ownerNode)
+                sheet = "user agent stylesheet";
             else
                 sheet = "inline stylesheet";
             cell.textContent = sheet;
@@ -794,6 +797,12 @@ function toggleStyleShorthand(event)
     }
 
     stylePropertiesScrollArea.refresh();
+}
+
+function toggleShowUserAgentStyles()
+{
+    showUserAgentStyles = !showUserAgentStyles;
+    updateStylePane();
 }
 
 function selectMappedStyleRule(attrName)

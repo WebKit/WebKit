@@ -82,6 +82,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     _private = [[WebInspectorPrivate alloc] init];
     _private->ignoreWhitespace = YES;
+    _private->showUserAgentStyles = YES;
 
     return self;
 }
@@ -326,6 +327,13 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     [item setState:_private->ignoreWhitespace];
     [menu addItem:item];
 
+    item = [[[NSMenuItem alloc] init] autorelease];
+    [item setTitle:@"Show User Agent Styles"];
+    [item setTarget:self];
+    [item setAction:@selector(_toggleShowUserAgentStyles:)];
+    [item setState:_private->showUserAgentStyles];
+    [menu addItem:item];
+
     [NSMenu popUpContextMenu:menu withEvent:[[self window] currentEvent] forView:_private->webView];
     [menu release];
 
@@ -528,6 +536,13 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     _private->ignoreWhitespace = !_private->ignoreWhitespace;
     [_private->treeOutlineView reloadData];
     [self _updateTreeScrollbar];
+}
+
+- (IBAction)_toggleShowUserAgentStyles:(id)sender
+{
+    _private->showUserAgentStyles = !_private->showUserAgentStyles;
+    if (_private->webViewLoaded)
+        [[_private->webView windowScriptObject] evaluateWebScript:@"toggleShowUserAgentStyles()"];
 }
 
 - (void)_highlightNode:(DOMNode *)node
