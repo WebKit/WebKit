@@ -1,3 +1,66 @@
+2006-10-20  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Win32 build fix and cleanup.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        (WebCore::FrameWin::submitForm):
+        * page/ResourceRequest.h:
+        (WebCore::ResourceRequest::addHTTPHeaderField):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::Slider::~Slider):
+        (WebCore::Slider::setMinValue):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::findNextSentenceFromIndex):
+        (WebCore::findSentenceBoundary):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::FrameWin::getObjectInstanceForWidget):
+        (WebCore::FrameWin::getEmbedInstanceForWidget):
+        (WebCore::FrameWin::runJavaScriptPrompt):
+        (WebCore::FrameWin::restoreDocumentState):
+        (WebCore::FrameWin::partClearedInBegin):
+        (WebCore::FrameWin::createEmptyDocument):
+        (WebCore::FrameWin::overrideMediaType):
+        (WebCore::FrameWin::markedTextRange):
+        (WebCore::FrameWin::passSubframeEventToSubframe):
+        (WebCore::FrameWin::lastEventIsMouseUp):
+        (WebCore::FrameWin::addMessageToConsole):
+        (WebCore::FrameWin::shouldChangeSelection):
+        (WebCore::FrameWin::respondToChangedSelection):
+        (WebCore::FrameWin::createFrame):
+        (WebCore::FrameWin::saveDocumentState):
+        (WebCore::FrameWin::clearUndoRedoOperations):
+        (WebCore::FrameWin::incomingReferrer):
+        (WebCore::FrameWin::markMisspellingsInAdjacentWords):
+        (WebCore::FrameWin::respondToChangedContents):
+        (WebCore::FrameWin::handledOnloadEvents):
+        (WebCore::FrameWin::createPlugin):
+        (WebCore::FrameWin::objectContentType):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::historyContains):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::defaultLanguage):
+        (WebCore::findWordBoundary):
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        (WebCore::refreshPlugins):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveResponseEncoding):
+        (WebCore::ResourceLoader::startHTTPRequest):
+        (WebCore::TextField::TextField):
+        (WebCore::focusRingColor):
+        (WebCore::setFocusRingColorChangeFunction):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::hide):
+
 2006-10-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

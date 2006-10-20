@@ -43,6 +43,7 @@ namespace WebCore {
 
 FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
     : Frame(page, ownerElement)
+    , m_client(client)
 {
     d->m_extension = new BrowserExtensionWin(this);
     Settings* settings = new Settings();
@@ -54,9 +55,7 @@ FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
     settings->setSansSerifFontName("Arial");
     settings->setStdFontName("Times New Roman");
     settings->setIsJavaScriptEnabled(true);
-
     setSettings(settings);
-    m_client = client;
 }
 
 FrameWin::~FrameWin()
@@ -80,7 +79,7 @@ void FrameWin::submitForm(const FrameLoadRequest& request)
     d->m_submittedFormURL = resourceRequest.url();
 
     if (m_client)
-        m_client->submitForm(resourceRequest.doPost() ? "POST" : "GET", resourceRequest.url(), &resourceRequest.postData);
+        m_client->submitForm(resourceRequest.httpMethod(), resourceRequest.url(), &resourceRequest.httpBody());
 
     clearRecordedFormValues();
 }

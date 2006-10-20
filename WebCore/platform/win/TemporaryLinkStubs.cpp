@@ -71,13 +71,13 @@
 #include "IconDatabase.h"
 #include "CachedResource.h"
 
-using namespace WebCore;
-
 #define notImplemented() do { \
     char buf[256] = {0}; \
     _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
     OutputDebugStringA(buf); \
 } while (0)
+
+namespace WebCore {
 
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
@@ -115,11 +115,11 @@ void TextField::setMaxResults(int) { notImplemented(); }
 bool TextField::edited() const { notImplemented(); return 0; }
 
 Slider::Slider() { notImplemented(); }
+Slider::~Slider() { notImplemented(); }
 IntSize Slider::sizeHint() const { notImplemented(); return IntSize(); }
 void Slider::setValue(double) { notImplemented(); }
 void Slider::setMaxValue(double) { notImplemented(); }
 void Slider::setMinValue(double) { notImplemented(); }
-Slider::~Slider() { notImplemented(); }
 void Slider::setFont(WebCore::Font const&) { notImplemented(); }
 double Slider::value() const { notImplemented(); return 0; }
 
@@ -146,25 +146,25 @@ Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFo
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
-String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
+String searchableIndexIntroduction() { notImplemented(); return String(); }
 
-int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
-void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
-int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
+int findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
+void findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplemented(); }
+int findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 
 void FrameWin::focusWindow() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }
-KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
-KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
+KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget*) { notImplemented(); return 0; }
+KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget*) { notImplemented(); return 0; }
 KJS::Bindings::RootObject* FrameWin::bindingRootObject() { notImplemented(); return 0; }
 Widget* FrameWin::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
 void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
 void FrameWin::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
-bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
+bool FrameWin::runJavaScriptPrompt(String const&, String const&, String &) { notImplemented(); return 0; }
 bool FrameWin::shouldInterruptJavaScript() { notImplemented(); return false; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::print() { notImplemented(); }
@@ -190,13 +190,33 @@ void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 KURL FrameWin::originalRequestURL() const { return KURL(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
 IntRect FrameWin::windowResizerRect() const { return IntRect(); }
+void FrameWin::restoreDocumentState() { }
+void FrameWin::partClearedInBegin() { }
+void FrameWin::createEmptyDocument() { }
+String FrameWin::overrideMediaType() const { return String(); }
+Range* FrameWin::markedTextRange() const { return 0; }
+bool FrameWin::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return false; }
+bool FrameWin::lastEventIsMouseUp() const { return false; }
+void FrameWin::addMessageToConsole(String const&, unsigned int ,String const&) { }
+bool FrameWin::shouldChangeSelection(const Selection&, const Selection&, EAffinity, bool) const { return true; }
+void FrameWin::respondToChangedSelection(const Selection&, bool) { }
+static int frameNumber = 0;
+Frame* FrameWin::createFrame(KURL const&, String const&, Element*, String const&) { return 0; }
+void FrameWin::saveDocumentState() { }
+void FrameWin::clearUndoRedoOperations(void) { }
+String FrameWin::incomingReferrer() const { return String(); }
+void FrameWin::markMisspellingsInAdjacentWords(VisiblePosition const&) { }
+void FrameWin::respondToChangedContents(const Selection&) { }
+void FrameWin::handledOnloadEvents() { }
+Plugin* FrameWin::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { return 0; }
+ObjectContentType FrameWin::objectContentType(const KURL&, const String&) { return ObjectContentNone; }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
     const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
 
-int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 8; }
-bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
+int screenDepthPerComponent(const Page*) { notImplemented(); return 8; }
+bool screenIsMonochrome(const Page*) { notImplemented(); return false; }
 
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
@@ -206,48 +226,26 @@ const Cursor& WebCore::moveCursor() { return localCursor; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-bool WebCore::historyContains(DeprecatedString const&) { return false; }
-String WebCore::submitButtonDefaultLabel() { return "Submit"; }
-String WebCore::inputElementAltText() { return DeprecatedString(); }
-String WebCore::resetButtonDefaultLabel() { return "Reset"; }
-String WebCore::fileButtonChooseFileLabel() { return "Browse..."; }
-String WebCore::fileButtonNoFileSelectedLabel() { return String(); }
+bool historyContains(DeprecatedString const&) { return false; }
+String submitButtonDefaultLabel() { return "Submit"; }
+String inputElementAltText() { return DeprecatedString(); }
+String resetButtonDefaultLabel() { return "Reset"; }
+String fileButtonChooseFileLabel() { return "Browse..."; }
+String fileButtonNoFileSelectedLabel() { return String(); }
 
-String WebCore::defaultLanguage() { return "en"; }
+String defaultLanguage() { return "en"; }
 
-void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) {*start=position; *end=position; }
+void findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }
 
-PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
+PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
 unsigned PlugInInfoStore::pluginCount() const { return 0; }
-bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
-void WebCore::refreshPlugins(bool) { }
+bool PlugInInfoStore::supportsMIMEType(const String&) { return false; }
+void refreshPlugins(bool) { }
 
-void WebCore::ResourceLoader::assembleResponseHeaders() const { }
-void WebCore::ResourceLoader::retrieveResponseEncoding() const {}
-bool WebCore::ResourceLoader::startHTTPRequest(const String& referrer) { return false; }
+void ResourceLoader::assembleResponseHeaders() const { }
+void ResourceLoader::retrieveResponseEncoding() const {}
+bool ResourceLoader::startHTTPRequest(const String& referrer) { return false; }
 
-void FrameWin::restoreDocumentState() { }
-void FrameWin::partClearedInBegin() { }
-void FrameWin::createEmptyDocument() { }
-String FrameWin::overrideMediaType() const { return String(); }
-Range* FrameWin::markedTextRange() const { return 0; }
-bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&, Frame*) { return false; }
-bool FrameWin::lastEventIsMouseUp() const { return false; }
-void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
-bool FrameWin::shouldChangeSelection(const WebCore::Selection&,const WebCore::Selection&,WebCore::EAffinity,bool) const { return true; }
-void FrameWin::respondToChangedSelection(const WebCore::Selection&,bool) { }
-static int frameNumber = 0;
-Frame* FrameWin::createFrame(KURL const&,String const&,Element*,String const&) { return 0; }
-void FrameWin::saveDocumentState() { }
-void FrameWin::clearUndoRedoOperations(void) { }
-String FrameWin::incomingReferrer() const { return String(); }
-void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
-void FrameWin::respondToChangedContents(const Selection&) { }
-void FrameWin::handledOnloadEvents() { }
-Plugin* FrameWin::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { return 0; }
-ObjectContentType FrameWin::objectContentType(const KURL&, const String&) { return ObjectContentNone; }
-
-namespace WebCore {
 
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
 
@@ -258,8 +256,6 @@ DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
 DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
 bool ResponseIsMultipart(PlatformResponse) { return false; }
 time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse) { return 0; }
-
-}
 
 void CachedResource::setResponse(PlatformResponse) { notImplemented(); }
 void CachedResource::setAllData(PlatformData) { notImplemented(); }
@@ -320,11 +316,7 @@ void Path::addArc(const FloatPoint&, float, float, float, bool) { }
 void Path::addRect(const FloatRect&) { }
 void Path::addEllipse(const FloatRect&) { }
 
-TextField::TextField(TextField::Type type) 
-{ 
-    m_type = type;
-}
-
+TextField::TextField(TextField::Type type) { m_type = type; }
 TextField::~TextField() { }
 void TextField::setFont(WebCore::Font const&) { }
 void TextField::setAlignment(HorizontalAlignment) { }
@@ -364,8 +356,8 @@ ListBox::~ListBox() { }
 void ListBox::setSelectionMode(ListBox::SelectionMode) { }
 void ListBox::setFont(WebCore::Font const&) { }
 
-Color WebCore::focusRingColor() { return 0xFF0000FF; }
-void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
+Color focusRingColor() { return 0xFF0000FF; }
+void setFocusRingColorChangeFunction(void (*)()) { }
 
 void Frame::setNeedsReapplyStyles() { }
 
@@ -374,13 +366,8 @@ bool Image::getHBITMAP(HBITMAP) { return false; }
 
 PopupMenu::PopupMenu(RenderMenuList*) { notImplemented(); }
 PopupMenu::~PopupMenu() { notImplemented(); }
-void PopupMenu::clear() { notImplemented(); }
-void PopupMenu::populate() { notImplemented(); }
 void PopupMenu::show(const IntRect&, FrameView*, int index) { notImplemented(); }
 void PopupMenu::hide() { notImplemented(); }
-void PopupMenu::addSeparator() { notImplemented(); }
-void PopupMenu::addGroupLabel(HTMLOptGroupElement*) { notImplemented(); }
-void PopupMenu::addOption(HTMLOptionElement*) { notImplemented(); }
 
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const {}
 bool RenderThemeWin::paintMenuList(RenderObject *, const RenderObject::PaintInfo&, const IntRect&) { return false; }
@@ -400,3 +387,4 @@ bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
 IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
 bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
 
+} // namespace WebCore
