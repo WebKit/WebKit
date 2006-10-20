@@ -1,3 +1,26 @@
+2006-10-20  David Hyatt  <hyatt@apple.com>
+
+        Honor tiny timer intervals for JS timeouts as they are nested until a cutoff point is reached.
+        At that point clamp to 10ms to prevent excessive CPU usage.
+
+        Reviewed by anders
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::DOMWindowTimer::DOMWindowTimer):
+        (KJS::DOMWindowTimer::nestingLevel):
+        (KJS::Window::installTimeout):
+        (KJS::Window::pauseTimeouts):
+        (KJS::Window::resumeTimeouts):
+        (KJS::DOMWindowTimer::fired):
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::repeatInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+        (WebCore::TimerBase::inHeap):
+        (WebCore::Timer::Timer):
+        (WebCore::Timer::fired):
+
 2006-10-20  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix

@@ -71,13 +71,18 @@ namespace KJS {
 
 static int lastUsedTimeoutId;
 
+static int timerNestingLevel = 0;
+const int cMaxTimerNestingLevel = 5;
+const double cMinimumTimerInterval = 0.010;
+
 class DOMWindowTimer : public TimerBase {
 public:
-    DOMWindowTimer(int timeoutId, Window* o, ScheduledAction* a)
-        : m_timeoutId(timeoutId), m_object(o), m_action(a) { }
+    DOMWindowTimer(int timeoutId, int nestingLevel, Window* o, ScheduledAction* a)
+        : m_timeoutId(timeoutId), m_nestingLevel(nestingLevel), m_object(o), m_action(a) { }
     virtual ~DOMWindowTimer() { delete m_action; }
 
     int timeoutId() const { return m_timeoutId; }
+    int nestingLevel() const { return m_nestingLevel; }
     ScheduledAction* action() const { return m_action; }
     ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
 
@@ -85,6 +90,7 @@ private:
     virtual void fired();
 
     int m_timeoutId;
+    int m_nestingLevel;
     Window* m_object;
     ScheduledAction* m_action;
 };
@@ -92,6 +98,7 @@ private:
 class PausedTimeout {
 public:
     int timeoutId;
+    int nestingLevel;
     double nextFireInterval;
     double repeatInterval;
     ScheduledAction *action;
@@ -1851,12 +1858,16 @@ void Window::clearAllTimeouts()
 int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {
     int timeoutId = ++lastUsedTimeoutId;
-    DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, a);
+    int nestLevel = timerNestingLevel + 1;
+    DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, nestLevel, this, a);
     ASSERT(!m_timeouts.get(timeoutId));
     m_timeouts.set(timeoutId, timer);
-    // Use a minimum interval of 10 ms to match other browsers.
+    // Use a minimum interval of 10 ms to match other browsers, but only once we've
+    // nested enough to notice that we're repeating.
     // Faster timers might be "better", but they're incompatible.
-    double interval = t <= 10 ? 0.010 : t * 0.001;
+    double interval = max(0.001, t * 0.001);
+    if (interval < cMinimumTimerInterval && nestLevel >= cMaxTimerNestingLevel)
+        interval = cMinimumTimerInterval;
     if (singleShot)
         timer->startOneShot(interval);
     else
@@ -1888,6 +1899,7 @@ PausedTimeouts* Window::pauseTimeouts()
         int timeoutId = it->first;
         DOMWindowTimer* timer = it->second;
         t[i].timeoutId = timeoutId;
+        t[i].nestingLevel = timer->nestingLevel();
         t[i].nextFireInterval = timer->nextFireInterval();
         t[i].repeatInterval = timer->repeatInterval();
         t[i].action = timer->takeAction();
@@ -1908,7 +1920,7 @@ void Window::resumeTimeouts(PausedTimeouts* timeouts)
     PausedTimeout* array = timeouts->takeTimeouts();
     for (size_t i = 0; i != count; ++i) {
         int timeoutId = array[i].timeoutId;
-        DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, array[i].action);
+        DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, array[i].nestingLevel, this, array[i].action);
         m_timeouts.set(timeoutId, timer);
         timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
@@ -2485,7 +2497,14 @@ PausedTimeouts::~PausedTimeouts()
 
 void DOMWindowTimer::fired()
 {
+    timerNestingLevel = m_nestingLevel;
     m_object->timerFired(this);
+    timerNestingLevel = 0;
+    if (isActive() && repeatInterval() && repeatInterval() < cMinimumTimerInterval) {
+        m_nestingLevel++;
+        if (m_nestingLevel >= cMaxTimerNestingLevel)
+            augmentRepeatInterval(cMinimumTimerInterval - repeatInterval());
+    }
 }
 
 } // namespace KJS
