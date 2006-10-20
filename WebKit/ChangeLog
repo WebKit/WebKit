@@ -1,5 +1,9 @@
 2006-10-20  Darin Adler  <darin@apple.com>
 
+        - rolled out my loader change; caused world leak and possibly a plug-in crash
+
+2006-10-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - convert WebLoader and its 3 subclasses to C++

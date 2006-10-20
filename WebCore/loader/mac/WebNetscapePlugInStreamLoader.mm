@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,100 +30,98 @@
 #import "WebNetscapePlugInStreamLoader.h"
 
 #import "WebFrameLoader.h"
-#import <wtf/PassRefPtr.h>
 
-namespace WebCore {
+@implementation WebNetscapePlugInStreamLoader
 
-NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(WebFrameLoader *fl, id <WebPlugInStreamLoaderDelegate> stream)
-    : WebResourceLoader(fl)
-    , m_stream(stream)
+- (id)initWithDelegate:(NSObject<WebPlugInStreamLoaderDelegate> *)theStream frameLoader:(WebFrameLoader *)fl;
 {
+    [super init];
+    stream = [theStream retain];
+    [self setFrameLoader:fl];
+    return self;
 }
 
-NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
+- (BOOL)isDone
 {
+    return stream == nil;
 }
 
-PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(WebFrameLoader* fl, id <WebPlugInStreamLoaderDelegate> d)
+- (void)releaseResources
 {
-    return new NetscapePlugInStreamLoader(fl, d);
+    [stream release];
+    stream = nil;
+    [super releaseResources];
 }
 
-bool NetscapePlugInStreamLoader::isDone() const
+- (void)didReceiveResponse:(NSURLResponse *)theResponse
 {
-    return !m_stream;
-}
-
-void NetscapePlugInStreamLoader::releaseResources()
-{
-    m_stream = nil;
-    WebResourceLoader::releaseResources();
-}
-
-void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
-{
-    // Protect self in this delegate method since the additional processing can do
-    // anything including possibly getting rid of the last reference to this object.
-    // One example of this is Radar 3266216.
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
-
-    [m_stream.get() startStreamWithResponse:theResponse];
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
+    [stream startStreamWithResponse:theResponse];
     
     // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
-    if (!m_stream)
-        return;
-    WebResourceLoader::didReceiveResponse(theResponse);
-    if (!m_stream)
-        return;
-    if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
-        ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
-        NSError *error = [frameLoader() fileDoesNotExistErrorWithResponse:theResponse];
-        [m_stream.get() cancelLoadAndDestroyStreamWithError:error];
+    if (stream) {
+        [super didReceiveResponse:theResponse];
+        if (stream) {
+            if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
+                ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
+                NSError *error = [frameLoader fileDoesNotExistErrorWithResponse:theResponse];
+                [stream cancelLoadAndDestroyStreamWithError:error];
+            }
+        }
     }
+    [self release];
 }
 
-void NetscapePlugInStreamLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
 {
-    // Protect self in this delegate method since the additional processing can do
-    // anything including possibly getting rid of the last reference to this object.
-    // One example of this is Radar 3266216.
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
-
-    [m_stream.get() receivedData:data];
-    WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
+    [stream receivedData:data];
+    [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:(BOOL)allAtOnce];
+    [self release];
 }
 
-void NetscapePlugInStreamLoader::didFinishLoading()
+- (void)didFinishLoading
 {
-    // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
+    [self retain];
 
-    [frameLoader() removePlugInStreamLoader:this];
-    [frameLoader() _finishedLoadingResource];
-    [m_stream.get() finishedLoadingWithData:resourceData()];
-    WebResourceLoader::didFinishLoading();
+    [frameLoader removePlugInStreamLoader:self];
+    [frameLoader _finishedLoadingResource];
+    [stream finishedLoadingWithData:[self resourceData]];
+    [super didFinishLoading];
+
+    [self release];
 }
 
-void NetscapePlugInStreamLoader::didFail(NSError *error)
+- (void)didFailWithError:(NSError *)error
 {
-    // Protect self in this delegate method since the additional processing can do
-    // anything including possibly getting rid of the last reference to this object.
-    // One example of this is Radar 3266216.
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
+    // The other additional processing can do anything including possibly releasing self;
+    // one example of this is 3266216
+    [self retain];
 
-    [frameLoader() removePlugInStreamLoader:this];
-    [frameLoader() _receivedError:error];
-    [m_stream.get() destroyStreamWithError:error];
-    WebResourceLoader::didFail(error);
+    [[self frameLoader] removePlugInStreamLoader:self];
+    [[self frameLoader] _receivedError:error];
+    [stream destroyStreamWithError:error];
+    [super didFailWithError:error];
+
+    [self release];
 }
 
-void NetscapePlugInStreamLoader::cancel(NSError *error)
+- (void)cancelWithError:(NSError *)error
 {
-    // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
+    [self retain];
 
-    [frameLoader() removePlugInStreamLoader:this];
-    [m_stream.get() destroyStreamWithError:error];
-    WebResourceLoader::cancel(error);
+    [[self frameLoader] removePlugInStreamLoader:self];
+    [stream destroyStreamWithError:error];
+    [super cancelWithError:error];
+
+    [self release];
 }
 
-}
+@end

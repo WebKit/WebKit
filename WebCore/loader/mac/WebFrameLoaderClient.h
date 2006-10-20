@@ -28,15 +28,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-namespace WebCore {
-    class WebResourceLoader;
-}
-
 typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 @class DOMElement;
 @class WebCoreFrameBridge;
 @class WebDocumentLoader;
+@class WebLoader;
 @class WebPolicyDecider;
 @class WebResource;
 
@@ -157,9 +154,9 @@ typedef struct LoadErrorResetToken LoadErrorResetToken;
 
 - (void)_setDefersCallbacks:(BOOL)defers;
 
-- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebCore::WebResourceLoader *)loader;
-- (BOOL)_archiveLoadPendingForLoader:(WebCore::WebResourceLoader *)loader;
-- (void)_cancelPendingArchiveLoadForLoader:(WebCore::WebResourceLoader *)loader;
+- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
+- (BOOL)_archiveLoadPendingForLoader:(WebLoader *)loader;
+- (void)_cancelPendingArchiveLoadForLoader:(WebLoader *)loader;
 - (void)_clearArchivedResources;
 
 - (BOOL)_canHandleRequest:(NSURLRequest *)request;

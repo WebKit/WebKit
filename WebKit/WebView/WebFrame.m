@@ -75,7 +75,6 @@
 #import <WebKit/DOM.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
-#import <wtf/HashMap.h>
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -108,10 +107,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
  WF Cache policy: NSURLRequestReloadIgnoringCacheData
  Add to back/forward list: NO
 */
-
-using namespace WebCore;
-
-typedef HashMap<RefPtr<WebResourceLoader>, RetainPtr<WebResource> > ResourceMap;
 
 NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
@@ -149,7 +144,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSMutableSet *plugInViews;
     NSMutableSet *inspectors;
 
-    ResourceMap* pendingArchivedResources;
+    NSMutableDictionary *pendingArchivedResources;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -175,16 +170,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(plugInViews == nil);
     [inspectors release];
 
-    delete pendingArchivedResources;
+    [pendingArchivedResources release];
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    delete pendingArchivedResources;
-
-    [super finalize];
 }
 
 - (void)setWebFrameView:(WebFrameView *)v 
@@ -217,7 +205,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
-static inline WebFrame *frame(WebCoreFrameBridge *bridge)
+static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
     return [(WebFrameBridge *)bridge webFrame];
 }
@@ -226,12 +214,12 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 - (WebFrame *)_firstChildFrame
 {
-    return frame([[self _bridge] firstChild]);
+    return Frame([[self _bridge] firstChild]);
 }
 
 - (WebFrame *)_lastChildFrame
 {
-    return frame([[self _bridge] lastChild]);
+    return Frame([[self _bridge] lastChild]);
 }
 
 - (unsigned)_childFrameCount
@@ -241,17 +229,17 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 - (WebFrame *)_previousSiblingFrame;
 {
-    return frame([[self _bridge] previousSibling]);
+    return Frame([[self _bridge] previousSibling]);
 }
 
 - (WebFrame *)_nextSiblingFrame;
 {
-    return frame([[self _bridge] nextSibling]);
+    return Frame([[self _bridge] nextSibling]);
 }
 
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin
 {
-    return frame([[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]]);
+    return Frame([[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]]);
 }
 
 @end
@@ -355,7 +343,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 - (WebFrame *)_immediateChildFrameNamed:(NSString *)name
 {
-    return frame([[self _bridge] childFrameNamed:name]);
+    return Frame([[self _bridge] childFrameNamed:name]);
 }
 
 - (BOOL)_canCachePage
@@ -805,13 +793,13 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 // Return next frame to be traversed, visiting children after parent
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
 {
-    return frame([[self _bridge] nextFrameWithWrap:wrapFlag]);
+    return Frame([[self _bridge] nextFrameWithWrap:wrapFlag]);
 }
 
 // Return previous frame to be traversed, exact reverse order of _nextFrame
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
 {
-    return frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
+    return Frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
 }
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
@@ -1241,12 +1229,12 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (WebFrame *)findFrameNamed:(NSString *)name
 {
-    return frame([[self _bridge] findFrameNamed:name]);
+    return Frame([[self _bridge] findFrameNamed:name]);
 }
 
 - (WebFrame *)parentFrame
 {
-    return [[frame([[self _bridge] parent]) retain] autorelease];
+    return [[Frame([[self _bridge] parent]) retain] autorelease];
 }
 
 - (NSArray *)childFrames
@@ -1696,7 +1684,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
 
 - (void)_dispatchSourceFrame:(WebCoreFrameBridge *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider
 {
-    [[self _formDelegate] frame:self sourceFrame:frame(sourceFrame) willSubmitForm:form withValues:values submissionListener:decisionListener(decider)];
+    [[self _formDelegate] frame:self sourceFrame:Frame(sourceFrame) willSubmitForm:form withValues:values submissionListener:decisionListener(decider)];
 }
 
 - (void)_detachedFromParent1
@@ -1962,18 +1950,14 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
 
 - (void)_deliverArchivedResourcesAfterDelay
 {
-    if (!_private->pendingArchivedResources)
-        return;
-    if (_private->pendingArchivedResources->isEmpty())
-        return;
-    if ([[self _frameLoader] defersCallbacks])
+    if (![_private->pendingArchivedResources count] || [[self _frameLoader] defersCallbacks])
         return;
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
     [self performSelector:@selector(_deliverArchivedResources) withObject:nil afterDelay:0];
 }
 
-- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebResourceLoader*)loader
+- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
 {
     if (![[r URL] isEqual:originalURL])
         return NO;
@@ -1985,60 +1969,48 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     if (![self _canUseResourceWithResponse:[resource _response]])
         return NO;
     if (!_private->pendingArchivedResources)
-        _private->pendingArchivedResources = new ResourceMap;
-    _private->pendingArchivedResources->set(loader, resource);
+        _private->pendingArchivedResources = [[NSMutableDictionary alloc] init];
+    [_private->pendingArchivedResources _webkit_setObject:resource forUncopiedKey:loader];
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
     [self _deliverArchivedResourcesAfterDelay];
     return YES;
 }
 
-- (BOOL)_archiveLoadPendingForLoader:(WebResourceLoader*)loader
+- (BOOL)_archiveLoadPendingForLoader:(WebLoader *)loader
 {
-    if (!_private->pendingArchivedResources)
-        return false;
-    return _private->pendingArchivedResources->contains(loader);
+    return [_private->pendingArchivedResources objectForKey:loader] != nil;
 }
 
-- (void)_cancelPendingArchiveLoadForLoader:(WebResourceLoader*)loader
+- (void)_cancelPendingArchiveLoadForLoader:(WebLoader *)loader
 {
-    if (!_private->pendingArchivedResources)
-        return;
-    if (_private->pendingArchivedResources->isEmpty())
-        return;
-    _private->pendingArchivedResources->remove(loader);
-    if (_private->pendingArchivedResources->isEmpty())
+    [_private->pendingArchivedResources removeObjectForKey:loader];
+    
+    if (![_private->pendingArchivedResources count])
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
 }
 
 - (void)_clearArchivedResources
 {
-    if (_private->pendingArchivedResources)
-        _private->pendingArchivedResources->clear();
+    [_private->pendingArchivedResources removeAllObjects];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
 }
 
 - (void)_deliverArchivedResources
 {
-    if (!_private->pendingArchivedResources)
+    if (![_private->pendingArchivedResources count] || [[self _frameLoader] defersCallbacks])
         return;
-    if (_private->pendingArchivedResources->isEmpty())
-        return;
-    if ([[self _frameLoader] defersCallbacks])
-        return;
-
-    const ResourceMap copy = *_private->pendingArchivedResources;
-    _private->pendingArchivedResources->clear();
-
-    ResourceMap::const_iterator end = copy.end();
-    for (ResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<WebResourceLoader> loader = it->first;
-        WebResource *resource = it->second.get();
-        NSData *data = [[resource data] retain];
-        loader->didReceiveResponse([resource _response]);
-        loader->didReceiveData(data, [data length], true);
-        [data release];
-        loader->didFinishLoading();
+        
+    NSEnumerator *keyEnum = [_private->pendingArchivedResources keyEnumerator];
+    WebLoader *loader;
+    while ((loader = [keyEnum nextObject])) {
+        WebResource *resource = [_private->pendingArchivedResources objectForKey:loader];
+        [loader didReceiveResponse:[resource _response]];
+        NSData *data = [resource data];
+        [loader didReceiveData:data lengthReceived:[data length] allAtOnce:YES];
+        [loader didFinishLoading];
     }
+    
+    [_private->pendingArchivedResources removeAllObjects];
 }
 
 - (void)_setDefersCallbacks:(BOOL)defers

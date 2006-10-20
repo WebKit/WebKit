@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
 
-namespace WebCore {
+namespace WTF {
 
     template <typename T> struct RemovePointer {
         typedef T type;
@@ -177,6 +177,10 @@ namespace WebCore {
         return p.get();
     }
 
-}
+} // namespace WTF
+
+using WTF::RetainPtr;
+using WTF::static_pointer_cast;
+using WTF::const_pointer_cast;
 
 #endif // RETAINPTR_H_

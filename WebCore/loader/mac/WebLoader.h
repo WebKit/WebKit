@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,93 +26,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "RetainPtr.h"
-#include "Shared.h"
+#import <Foundation/Foundation.h>
 
 @class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
+@class NSURLConnectionAuthenticationChallenge;
+@class NSURLCredential;
 @class NSURLRequest;
 @class NSURLResponse;
 @class WebFrameLoader;
-@class WebCoreResourceLoaderDelegate;
 
-namespace WebCore {
-
-    // FIXME: Rename to ResourceLoader after resolving conflict with existing class of that name.
-    class WebResourceLoader : public Shared<WebResourceLoader> {
-    public:
-        virtual ~WebResourceLoader();
-
-        virtual bool load(NSURLRequest *);
-
-        virtual void signalFinish();
-
-        void setFrameLoader(WebFrameLoader *);
-        WebFrameLoader *frameLoader() const;
-
-        virtual void cancel();
-        virtual void cancel(NSError *);
-        NSError *cancelledError();
-
-        virtual void setDefersCallbacks(bool);
-        bool defersCallbacks() const;
-
-        void setIdentifier(id);
-
-        virtual void releaseResources();
-        NSURLResponse *response() const;
-
-        virtual void addData(NSData *, bool allAtOnce);
-        NSData *resourceData();
-        void clearResourceData();
-
-        virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
-        void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
-        void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
-        virtual void didReceiveResponse(NSURLResponse *);
-        virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
-        void willStopBufferingData(NSData *data);
-        virtual void didFinishLoading();
-        virtual void didFail(NSError *);
-        NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
-
-        void receivedCredential(NSURLAuthenticationChallenge *, NSURLCredential *);
-        void receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *);
-        void receivedCancellation(NSURLAuthenticationChallenge *);
-
-        // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the first one.
-        static bool inConnectionCallback();
-
-    protected:
-        WebResourceLoader(WebFrameLoader *);
-        WebCoreResourceLoaderDelegate *delegate();
-        virtual void releaseDelegate();
-
-        NSURLConnection *connection() const { return m_connection.get(); }
-        NSURLRequest *request() const { return m_request.get(); }
-        bool reachedTerminalState() const { return m_reachedTerminalState; }
-        bool signalledFinish() const { return m_signalledFinish; }
-        bool cancelled() const { return m_cancelled; }
-        id identifier() const { return m_identifier.get(); }
-
-        RetainPtr<NSURLConnection> m_connection;
-
-    private:
-        RetainPtr<NSURLRequest> m_request;
-        bool m_reachedTerminalState;
-        bool m_signalledFinish;
-        bool m_cancelled;
-
-        RetainPtr<WebFrameLoader> m_frameLoader;
-        RetainPtr<id> m_identifier;
-        RetainPtr<NSURLResponse> m_response;
-        NSURLAuthenticationChallenge *m_currentConnectionChallenge;
-        RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
-        bool m_defersCallbacks;
-        RetainPtr<NSURL> m_originalURL;
-        RetainPtr<NSMutableData> m_resourceData;
-        RetainPtr<WebCoreResourceLoaderDelegate> m_delegate;
-    };
-
+@interface WebLoader : NSObject
+{
+@protected
+    WebFrameLoader *frameLoader;
+    NSURLConnection *connection;
+    NSURLRequest *request;
+    BOOL reachedTerminalState;
+    BOOL loadingMultipartContent;
+    BOOL signalledFinish;
+    BOOL cancelledFlag;
+    id identifier;
+@private
+    NSURLResponse *response;
+    NSURLAuthenticationChallenge *currentConnectionChallenge;
+    NSURLAuthenticationChallenge *currentWebChallenge;
+    BOOL defersCallbacks;
+    NSURL *originalURL;
+    NSMutableData *resourceData;
+#ifndef NDEBUG
+    BOOL isInitializingConnection;
+#endif
 }
+- (void)signalFinish;
+
+- (BOOL)loadWithRequest:(NSURLRequest *)request;
+
+- (void)setFrameLoader:(WebFrameLoader *)fl;
+- (WebFrameLoader *)frameLoader;
+
+- (void)cancel;
+- (void)cancelWithError:(NSError *)error;
+- (NSError *)cancelledError;
+
+- (void)setDefersCallbacks:(BOOL)defers;
+- (BOOL)defersCallbacks;
+
+- (void)setIdentifier:(id)ident;
+
+- (void)releaseResources;
+- (NSURLResponse *)response;
+
+- (void)addData:(NSData *)data allAtOnce:(BOOL)allAtOnce;
+- (NSData *)resourceData;
+- (void)clearResourceData;
+
+// Connection-less callbacks allow us to send callbacks using data attained from a WebResource instead of an NSURLConnection.
+- (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
+- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)didReceiveResponse:(NSURLResponse *)r;
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce;
+- (void)willStopBufferingData:(NSData *)data;
+- (void)didFinishLoading;
+- (void)didFailWithError:(NSError *)error;
+- (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse;
+
+
+// Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the first one.
++ (BOOL)inConnectionCallback;
+
+@end
+
+// Note: This interface can be removed once this method is declared
+// in Foundation (probably will be in Foundation-485).
+@interface NSObject (WebLoaderExtras)
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived;
+@end

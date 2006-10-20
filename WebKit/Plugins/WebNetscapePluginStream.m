@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,21 +28,19 @@
 
 #import <WebKit/WebNetscapePluginStream.h>
 
-#import <Foundation/NSURLConnection.h>
-#import <WebCore/WebFrameLoader.h>
-#import <WebCore/WebNetscapePlugInStreamLoader.h>
-#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebCore/WebNetscapePlugInStreamLoader.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewInternal.h>
-#import <wtf/PassRefPtr.h>
+#import <WebCore/WebFrameLoader.h>
 
-using namespace WebCore;
+#import <Foundation/NSURLConnection.h>
 
 @implementation WebNetscapePluginStream
 
@@ -69,10 +67,11 @@ using namespace WebCore;
     isTerminated = YES;
     
     request = [theRequest mutableCopy];
-    if (hideReferrer)
+    if (hideReferrer) {
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
+    }
 
-    _loader = NetscapePlugInStreamLoader::create([[view webFrame] _frameLoader], self).release();
+    _loader = [[WebNetscapePlugInStreamLoader alloc] initWithDelegate:self frameLoader:[[view webFrame] _frameLoader]]; 
     
     isTerminated = NO;
 
@@ -81,38 +80,33 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    if (_loader)
-        _loader->deref();
+    [_loader release];
     [request release];
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_loader)
-        _loader->deref();
-    [super finalize];
 }
 
 - (void)start
 {
     ASSERT(request);
 
-    [_loader->frameLoader() addPlugInStreamLoader:_loader];
+    [[_loader frameLoader] addPlugInStreamLoader:_loader];
 
-    if (!_loader->load(request))
-        [_loader->frameLoader() removePlugInStreamLoader:_loader];
+    BOOL succeeded = [_loader loadWithRequest:request];
+    if (!succeeded) {
+        [[_loader frameLoader] removePlugInStreamLoader:_loader];
+    }
 }
 
 - (void)cancelLoadWithError:(NSError *)error
 {
-    if (!_loader->isDone())
-        _loader->cancel(error);
+    if (![_loader isDone]) {
+        [_loader cancelWithError:error];
+    }
 }
 
 - (void)stop
 {
-    [self cancelLoadAndDestroyStreamWithError:_loader->cancelledError()];
+    [self cancelLoadAndDestroyStreamWithError:[_loader cancelledError]];
 }
 
 @end
