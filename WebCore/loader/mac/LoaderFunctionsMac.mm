@@ -55,7 +55,7 @@ using namespace WebCore;
     for (HashMap<String, String>::const_iterator it = headerMap.begin(); it != end; ++it)
         [headers setValue:it->second forKey:it->first];
     
-    return headers;
+    return [headers autorelease];
 }
 
 @end

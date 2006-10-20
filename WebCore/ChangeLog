@@ -1,5 +1,12 @@
 2006-10-20  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Tim H
+
+        * loader/mac/LoaderFunctionsMac.mm:
+        Autorelease the header NSDictionary.
+        
+2006-10-20  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         * bindings/js/kjs_window.cpp:
