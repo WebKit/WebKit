@@ -1,3 +1,18 @@
+2006-10-20  David Hyatt  <hyatt@apple.com>
+
+        Make sure to support the "encoding" property on form elements for
+        legacy compatibility.
+
+        Reviewed by darin/john
+
+        No test cases added.  Not sure how to do a form submission of
+        various encodings as a layout test.
+
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::encoding):
+        (WebCore::HTMLFormElement::setEncoding):
+        * html/HTMLFormElement.idl:
+
 2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and by Anders.

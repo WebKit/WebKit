@@ -26,6 +26,7 @@ module html {
                  attribute DOMString       name;
                  attribute DOMString       acceptCharset;
                  attribute DOMString       action;
+                 attribute DOMString       encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
                  attribute DOMString       enctype;
                  attribute DOMString       method;
                  attribute DOMString       target;

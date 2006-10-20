@@ -55,6 +55,9 @@ public:
     String enctype() const { return m_enctype; }
     void setEnctype(const String&);
 
+    String encoding() const { return m_enctype; }
+    void setEncoding(const String& enctype) { setEnctype(enctype); }
+
     String boundary() const { return m_boundary; }
     void setBoundary(const String&);
 
