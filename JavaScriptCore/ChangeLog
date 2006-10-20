@@ -1,3 +1,12 @@
+2006-10-19  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Geof.
+
+        Changed test to make us pass Georgian case changing for Unicode 4.0 and 5.0.  This incorporates changes from the 1.4 revision of the same mozilla test.
+        On Tiger we are still using Unicode 4.0 but on win and Leopard we are using Unicode 5.0, so this test currently allows for either answer.
+
+        * tests/mozilla/ecma/String/15.5.4.11-2.js:
+
 2006-10-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
