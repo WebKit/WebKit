@@ -49,7 +49,7 @@ public:
     virtual bool openURL(const KURL&);
     virtual void openURLRequest(const FrameLoadRequest&);
     virtual void submitForm(const FrameLoadRequest&);
-    virtual void urlSelected(const FrameLoadRequest&);
+    virtual void urlSelected(const FrameLoadRequest&, const Event*);
 
     virtual void setTitle(const String&);
 
@@ -133,6 +133,8 @@ public:
     void setFrameGeometry(const IntRect&);
 
     virtual void tokenizerProcessedData();
+
+    FrameQtClient* client() const;
 
 private:
     void init();

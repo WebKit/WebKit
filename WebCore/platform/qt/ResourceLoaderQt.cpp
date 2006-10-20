@@ -53,15 +53,13 @@ bool ResourceLoader::start(DocLoader* docLoader)
     ref();
     d->m_loading = true;
 
+    FrameQt* frame = 0;
     if (docLoader) {
-        FrameQt* frame = QtFrame(docLoader->frame());
-        if (!frame ) {
-            kill();
-            return false;
-        }
+        frame = QtFrame(docLoader->frame());
+        ASSERT(frame);
     }
 
-    ResourceLoaderManager::self()->add(this);
+    ResourceLoaderManager::self()->add(this, frame ? frame->client() : 0);
     return true;
 }
 

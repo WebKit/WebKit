@@ -31,18 +31,18 @@
 #include <QMap>
 #include <QObject>
 
-#include "Frame.h"
-#include "Timer.h"
 #include "ResourceLoader.h"
 
 namespace WebCore {
+
+class FrameQtClient;
 
 class ResourceLoaderManager : public QObject {
 Q_OBJECT
 public:
     static ResourceLoaderManager* self();
 
-    void add(ResourceLoader*);
+    void add(ResourceLoader*, FrameQtClient*);
     void cancel(ResourceLoader*);
 
 public Q_SLOTS:
@@ -59,6 +59,8 @@ private:
     // KIO Job <-> WebKit Job mapping
     QMap<ResourceLoader*, KIO::Job*> m_jobToKioMap;
     QMap<KIO::Job*, ResourceLoader*> m_kioToJobMap;
+
+    FrameQtClient* m_frameClient;
 };
 
 }

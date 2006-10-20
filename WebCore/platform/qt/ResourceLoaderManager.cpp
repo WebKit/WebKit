@@ -40,6 +40,7 @@ static ResourceLoaderManager* s_self = 0;
 ResourceLoaderManager::ResourceLoaderManager()
     : m_jobToKioMap()
     , m_kioToJobMap()
+    , m_frameClient(0)
 {
 }
 
@@ -111,6 +112,9 @@ void ResourceLoaderManager::slotResult(KJob* kjob)
 
     job->setError(kjob->error());
     remove(job);
+
+    ASSERT(m_frameClient);
+    m_frameClient->checkLoaded();
 }
 
 void ResourceLoaderManager::remove(ResourceLoader* job)
@@ -150,7 +154,7 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     m_kioToJobMap.remove(kioJob);
 }
 
-void ResourceLoaderManager::add(ResourceLoader* job)
+void ResourceLoaderManager::add(ResourceLoader* job, FrameQtClient* frameClient)
 {
     ResourceLoaderInternal* d = job->getInternal();
     DeprecatedString url = d->URL.url();
@@ -176,6 +180,11 @@ void ResourceLoaderManager::add(ResourceLoader* job)
 
     m_jobToKioMap.insert(job, kioJob);
     m_kioToJobMap.insert(kioJob, job);
+
+    if (!m_frameClient)
+        m_frameClient = frameClient;
+    else
+        ASSERT(m_frameClient == frameClient);
 }
 
 void ResourceLoaderManager::cancel(ResourceLoader* job)

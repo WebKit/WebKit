@@ -45,6 +45,10 @@ public:
     virtual void openURL(const KURL&) = 0;
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
 
+    // This is invoked after any ResourceLoader is done,
+    // to check wheter all items to be loaded are finished.
+    virtual void checkLoaded() = 0;
+
     // WebKitPart / DumpRenderTree want to handle this differently.
     virtual bool menubarVisible() const = 0;
     virtual bool toolbarVisible() const = 0;
@@ -72,6 +76,8 @@ public:
     virtual void openURL(const KURL&);
     virtual void submitForm(const String& method, const KURL&, const FormData*);
 
+    virtual void checkLoaded();
+
     virtual void runJavaScriptAlert(String const& message);
     virtual bool runJavaScriptConfirm(const String& message);
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
@@ -90,6 +96,10 @@ public:
     virtual void receivedAllData(ResourceLoader*, PlatformData);
 
 private:
+    // Internal helpers
+    FrameQt* traverseNextFrameStayWithin(FrameQt*) const;
+    int numPendingOrLoadingRequests(bool recurse) const;
+
     FrameQt* m_frame;
     bool m_assignedMimetype : 1;
 };

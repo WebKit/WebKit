@@ -143,12 +143,12 @@ void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
     d->m_submittedFormURL = request.url();
 
     if (m_client)
-        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
+        m_client->submitForm(request.httpMethod(), request.url(), &request.httpBody());
 
     clearRecordedFormValues();
 }
 
-void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest)
+void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest, const Event*)
 {
     ResourceRequest request = frameLoadRequest.m_request;
 
@@ -305,7 +305,7 @@ void FrameQt::restoreDocumentState()
 
 void FrameQt::openURLRequest(const FrameLoadRequest& request)
 {
-    urlSelected(request);
+    urlSelected(request, 0);
 }
 
 void FrameQt::scheduleClose()
@@ -562,6 +562,11 @@ void FrameQt::tokenizerProcessedData()
 {
     if (d->m_doc)
         checkCompleted();
+}
+
+FrameQtClient* FrameQt::client() const
+{
+    return m_client;
 }
 
 }

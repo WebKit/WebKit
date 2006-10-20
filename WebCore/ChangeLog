@@ -1,3 +1,38 @@
+2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Offer a way for WebKitPart to be able to detect when
+        the webpage has been completly loaded (including subresources).
+
+        Also fix Qt/Linux build by removing PopupMenu.cpp from CMakeLists.txt
+        and removing some functions from PopupMenuQt.cpp, and alter FrameQt.cpp.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::client):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::setFrame):
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        (WebCore::FrameQtClientDefault::checkLoaded):
+        (WebCore::FrameQtClientDefault::traverseNextFrameStayWithin):
+        (WebCore::FrameQtClientDefault::numPendingOrLoadingRequests):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/FrameQtClient.h:
+        * platform/qt/LoaderFunctionsQt.cpp:
+        (WebCore::CheckCacheObjectStatus):
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::ResourceLoaderManager):
+        (WebCore::ResourceLoaderManager::slotResult):
+        (WebCore::ResourceLoaderManager::add):
+        * platform/qt/ResourceLoaderManager.h:
+        * platform/qt/ResourceLoaderQt.cpp:
+        (WebCore::ResourceLoader::start):
+
 2006-10-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Geoff.

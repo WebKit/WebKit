@@ -39,37 +39,12 @@ PopupMenu::~PopupMenu()
 {
 }
 
-void PopupMenu::clear()
-{
-    notImplemented();
-}
-
-void PopupMenu::populate()
-{
-    notImplemented();
-}
-
 void PopupMenu::show(const IntRect&, FrameView*, int)
 {
     notImplemented();
 }
 
 void PopupMenu::hide()
-{
-    notImplemented();
-}
-
-void PopupMenu::addSeparator()
-{
-    notImplemented();
-}
-
-void PopupMenu::addGroupLabel(HTMLOptGroupElement*)
-{
-    notImplemented();
-}
-
-void PopupMenu::addOption(HTMLOptionElement*)
 {
     notImplemented();
 }
