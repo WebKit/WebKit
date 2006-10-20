@@ -1108,7 +1108,7 @@ void Frame::changeLocation(const DeprecatedString& URL, const String& referrer, 
     ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
     ResourceRequest request(completeURL(URL), referrer, policy);
     
-    urlSelected(request, "_self", lockHistory);
+    urlSelected(request, "_self", 0, lockHistory);
 }
 
 void Frame::redirectionTimerFired(Timer<Frame>*)
@@ -1408,12 +1408,12 @@ void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
         dragCaretController->paintCaret(p, rect);
 }
 
-void Frame::urlSelected(const DeprecatedString& url, const String& target)
+void Frame::urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent)
 {
-    urlSelected(ResourceRequest(completeURL(url)), target);
+    urlSelected(ResourceRequest(completeURL(url)), target, triggeringEvent);
 }
 
-void Frame::urlSelected(const ResourceRequest& request, const String& _target, bool lockHistory)
+void Frame::urlSelected(const ResourceRequest& request, const String& _target, const Event* triggeringEvent, bool lockHistory)
 {
   String target = _target;
   if (target.isEmpty() && d->m_doc)
@@ -1440,7 +1440,7 @@ void Frame::urlSelected(const ResourceRequest& request, const String& _target, b
   if (frameRequest.m_request.httpReferrer().isEmpty())
       frameRequest.m_request.setHTTPReferrer(d->m_referrer);
 
-  urlSelected(frameRequest);
+  urlSelected(frameRequest, triggeringEvent);
 }
 
 bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)

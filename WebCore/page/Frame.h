@@ -534,8 +534,8 @@ public:
 
   void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
 
-  virtual void urlSelected(const DeprecatedString& url, const String& target);
-  virtual void urlSelected(const ResourceRequest&, const String& target, bool lockHistory = false);
+  virtual void urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent);
+  virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
 
   // Methods with platform-specific overrides (and no base class implementation).
   virtual void setTitle(const String&) = 0;
@@ -585,7 +585,7 @@ public:
   virtual bool canGoBackOrForward(int distance) const = 0;
   virtual void openURLRequest(const FrameLoadRequest&) = 0;
   virtual void submitForm(const FrameLoadRequest&) = 0;
-  virtual void urlSelected(const FrameLoadRequest&) = 0;
+  virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
   virtual void redirectDataToPlugin(Widget* pluginWidget) { }

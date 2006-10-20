@@ -205,7 +205,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
         }
 
         if (!evt->defaultPrevented() && document()->frame())
-            document()->frame()->urlSelected(url, utarget);
+            document()->frame()->urlSelected(url, utarget, evt);
 
         evt->setDefaultHandled();
     } else if (m_isLink && isContentEditable()) {

@@ -481,7 +481,7 @@ void FrameMac::openURLRequest(const FrameLoadRequest& request)
 }
 
 
-void FrameMac::urlSelected(const FrameLoadRequest& request)
+void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

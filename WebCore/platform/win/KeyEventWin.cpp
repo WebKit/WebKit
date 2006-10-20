@@ -144,8 +144,8 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lP
     , m_autoRepeat(lParam & REPEAT_COUNT_MASK)
     , m_WindowsKeyCode(wParam)
     , m_isKeypad(false) // FIXME
-    , m_shiftKey(GetAsyncKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
-    , m_ctrlKey(GetAsyncKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
+    , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
+    , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
     , m_altKey(lParam & ALT_KEY_DOWN_MASK)
     , m_metaKey(lParam & ALT_KEY_DOWN_MASK) // FIXME: Is this right?
 {

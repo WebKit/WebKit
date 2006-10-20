@@ -56,7 +56,7 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_shiftKey(wParam & MK_SHIFT)
     , m_ctrlKey(wParam & MK_CONTROL)
-    , m_altKey(GetAsyncKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+    , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
 {
     switch (message) {
