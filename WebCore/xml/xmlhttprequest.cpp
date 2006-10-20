@@ -351,10 +351,11 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
     }
   
-    if (!m_loader->start(m_doc->docLoader())) {
-        LOG_ERROR("Failed to send an XMLHttpRequest for %s", m_url.url().ascii());
+    // start can return false here, for example if we're no longer attached to a page.
+    // this is true while running onunload handlers
+    // FIXME: Maybe start can return false for other reasons too?
+    if (!m_loader->start(m_doc->docLoader()))
         m_loader = 0;
-    }
 }
 
 void XMLHttpRequest::abort()
