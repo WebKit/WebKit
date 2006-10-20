@@ -50,12 +50,38 @@
 
 using namespace WebCore;
 
-static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
+namespace WebCore {
+
+typedef HashSet<RefPtr<WebCore::WebResourceLoader> > ResourceLoaderSet;
+
+static void setDefersCallbacks(const ResourceLoaderSet* set, bool defers)
+{
+    if (!set)
+        return;
+    const ResourceLoaderSet copy = *set;
+    ResourceLoaderSet::const_iterator end = copy.end();
+    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->setDefersCallbacks(defers);
+}
+
+static void cancelAll(const ResourceLoaderSet* set)
+{
+    if (!set)
+        return;
+    const ResourceLoaderSet copy = *set;
+    ResourceLoaderSet::const_iterator end = copy.end();
+    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->cancel();
+}
+
+}
+
+static bool isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
 
-BOOL isBackForwardLoadType(FrameLoadType type)
+bool isBackForwardLoadType(FrameLoadType type)
 {
     switch (type) {
         case FrameLoadTypeStandard:
@@ -88,10 +114,11 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)dealloc
 {
-    // FIXME: should these even exist?
-    [mainResourceLoader release];
-    [subresourceLoaders release];
-    [plugInStreamLoaders release];
+    // FIXME: Is there really a possiblity that any of these could be non-null?
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->deref();
+    delete m_subresourceLoaders;
+    delete m_plugInStreamLoaders;
     [documentLoader release];
     [provisionalDocumentLoader release];
  
@@ -99,6 +126,13 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     ASSERT(!policyFormState);
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->deref();
+    [super finalize];
 }
 
 - (WebDocumentLoader *)activeDocumentLoader
@@ -109,17 +143,18 @@ BOOL isBackForwardLoadType(FrameLoadType type)
     return documentLoader;    
 }
 
-- (void)addPlugInStreamLoader:(WebLoader *)loader
+- (void)addPlugInStreamLoader:(WebResourceLoader *)loader
 {
-    if (!plugInStreamLoaders)
-        plugInStreamLoaders = [[NSMutableArray alloc] init];
-    [plugInStreamLoaders addObject:loader];
+    if (!m_plugInStreamLoaders)
+        m_plugInStreamLoaders = new ResourceLoaderSet;
+    m_plugInStreamLoaders->add(loader);
     [[self activeDocumentLoader] setLoading:YES];
 }
 
-- (void)removePlugInStreamLoader:(WebLoader *)loader
+- (void)removePlugInStreamLoader:(WebResourceLoader *)loader
 {
-    [plugInStreamLoaders removeObject:loader];
+    ASSERT(m_plugInStreamLoaders);
+    m_plugInStreamLoaders->remove(loader);
     [[self activeDocumentLoader] updateLoading];
 }
 
@@ -137,39 +172,31 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)setDefersCallbacks:(BOOL)defers
 {
-    [mainResourceLoader setDefersCallbacks:defers];
-    
-    NSEnumerator *e = [subresourceLoaders objectEnumerator];
-    WebLoader *loader;
-    while ((loader = [e nextObject]))
-        [loader setDefersCallbacks:defers];
-    
-    e = [plugInStreamLoaders objectEnumerator];
-    while ((loader = [e nextObject]))
-        [loader setDefersCallbacks:defers];
-
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->setDefersCallbacks(defers);
+    setDefersCallbacks(m_subresourceLoaders, defers);
+    setDefersCallbacks(m_plugInStreamLoaders, defers);
     [client _setDefersCallbacks:defers];
 }
 
 - (void)stopLoadingPlugIns
 {
-    [plugInStreamLoaders makeObjectsPerformSelector:@selector(cancel)];
-    [plugInStreamLoaders removeAllObjects];   
+    cancelAll(m_plugInStreamLoaders);
 }
 
 - (BOOL)isLoadingMainResource
 {
-    return mainResourceLoader != nil;
+    return m_mainResourceLoader != 0;
 }
 
 - (BOOL)isLoadingSubresources
 {
-    return [subresourceLoaders count];
+    return m_subresourceLoaders && !m_subresourceLoaders->isEmpty();
 }
 
 - (BOOL)isLoadingPlugIns
 {
-    return [plugInStreamLoaders count];
+    return m_plugInStreamLoaders && !m_plugInStreamLoaders->isEmpty();
 }
 
 - (BOOL)isLoading
@@ -179,55 +206,59 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)stopLoadingSubresources
 {
-    NSArray *loaders = [subresourceLoaders copy];
-    [loaders makeObjectsPerformSelector:@selector(cancel)];
-    [loaders release];
-    [subresourceLoaders removeAllObjects];
+    cancelAll(m_subresourceLoaders);
 }
 
-- (void)addSubresourceLoader:(WebLoader *)loader
+- (void)addSubresourceLoader:(WebResourceLoader *)loader
 {
     ASSERT(!provisionalDocumentLoader);
-    if (subresourceLoaders == nil)
-        subresourceLoaders = [[NSMutableArray alloc] init];
-    [subresourceLoaders addObject:loader];
+    if (!m_subresourceLoaders)
+        m_subresourceLoaders = new ResourceLoaderSet;
+    m_subresourceLoaders->add(loader);
     [[self activeDocumentLoader] setLoading:YES];
 }
 
-- (void)removeSubresourceLoader:(WebLoader *)loader
+- (void)removeSubresourceLoader:(WebResourceLoader *)loader
 {
-    [subresourceLoaders removeObject:loader];
+    ASSERT(m_subresourceLoaders);
+    m_subresourceLoaders->remove(loader);
     [[self activeDocumentLoader] updateLoading];
 }
 
 - (NSData *)mainResourceData
 {
-    return [mainResourceLoader resourceData];
+    if (!m_mainResourceLoader)
+        return nil;
+    return m_mainResourceLoader->resourceData();
 }
 
 - (void)releaseMainResourceLoader
 {
-    [mainResourceLoader release];
-    mainResourceLoader = nil;
+    if (!m_mainResourceLoader)
+        return;
+    m_mainResourceLoader->deref();
+    m_mainResourceLoader = 0;
 }
 
 - (void)cancelMainResourceLoad
 {
-    [mainResourceLoader cancel];
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->cancel();
 }
 
 - (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier
 {
-    mainResourceLoader = [[WebMainResourceLoader alloc] initWithFrameLoader:self];
+    ASSERT(!m_mainResourceLoader);
+    m_mainResourceLoader = MainResourceLoader::create(self).release();
     
-    [mainResourceLoader setIdentifier:identifier];
+    m_mainResourceLoader->setIdentifier(identifier);
     [self addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
-    if (![mainResourceLoader loadWithRequest:request]) {
+    if (!m_mainResourceLoader->load(request)) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
         LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [request URL]);
-        [mainResourceLoader release];
-        mainResourceLoader = nil;
+        m_mainResourceLoader->deref();
+        m_mainResourceLoader = 0;
         return NO;
     }
     
@@ -236,7 +267,7 @@ BOOL isBackForwardLoadType(FrameLoadType type)
 
 - (void)stopLoadingWithError:(NSError *)error
 {
-    [mainResourceLoader cancelWithError:error];
+    m_mainResourceLoader->cancel(error);
 }
 
 - (void)setDocumentLoader:(WebDocumentLoader *)loader
@@ -873,17 +904,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [client _fileDoesNotExistErrorWithResponse:response];    
 }
 
-- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebResourceLoader *)loader
 {
     return [client _willUseArchiveForRequest:request originalURL:originalURL loader:loader];
 }
 
-- (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader
+- (BOOL)archiveLoadPendingForLoader:(WebResourceLoader *)loader
 {
     return [client _archiveLoadPendingForLoader:loader];
 }
 
-- (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader
+- (void)cancelPendingArchiveLoadForLoader:(WebResourceLoader *)loader
 {
     [client _cancelPendingArchiveLoadForLoader:loader];
 }

@@ -2731,12 +2731,8 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
     
-    return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                           withMethod:method
-                                                  URL:URL
-                                        customHeaders:customHeaders
-                                             referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:[self frameLoader]];
+    return SubresourceLoader::create([self frameLoader], resourceLoader,
+        method, URL, customHeaders, hideReferrer ? nil : [self referrer]);
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
@@ -2750,7 +2746,8 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     [request release];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL
+    customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
 {
     // If we are no longer attached to a Page, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -2762,13 +2759,8 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
     
-    return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                           withMethod:method 
-                                                  URL:URL
-                                        customHeaders:customHeaders
-                                             postData:postData
-                                             referrer:(hideReferrer ? nil : [self referrer])
-                                       forFrameLoader:[self frameLoader]];
+    return SubresourceLoader::create([self frameLoader], resourceLoader,
+        method, URL, customHeaders, postData, hideReferrer ? nil : [self referrer]);
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction

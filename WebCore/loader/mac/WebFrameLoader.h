@@ -29,31 +29,34 @@
 #import "FrameLoaderTypes.h"
 #import <Cocoa/Cocoa.h>
 #import <wtf/Forward.h>
+#import <wtf/HashSet.h>
+#import <wtf/RefPtr.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
     class FormState;
+    class MainResourceLoader;
+    class WebResourceLoader;
 }
 
 @class DOMElement;
 @class WebDocumentLoader;
 @class WebCoreFrameBridge;
-@class WebLoader;
-@class WebMainResourceLoader;
 @class WebPolicyDecider;
 @protocol WebFrameLoaderClient;
 
-BOOL isBackForwardLoadType(FrameLoadType type);
+bool isBackForwardLoadType(FrameLoadType);
 
 @interface WebFrameLoader : NSObject 
 {
     WebCoreFrameBridge *frameBridge;
     
-    WebMainResourceLoader *mainResourceLoader;
+    WebCore::MainResourceLoader *m_mainResourceLoader;
     
-    NSMutableArray *subresourceLoaders;
-    NSMutableArray *plugInStreamLoaders;
+    HashSet<RefPtr<WebCore::WebResourceLoader> >* m_subresourceLoaders;
+    HashSet<RefPtr<WebCore::WebResourceLoader> >* m_plugInStreamLoaders;
     
-    id<WebFrameLoaderClient> client;
+    id <WebFrameLoaderClient> client;
     WebDocumentLoader *documentLoader;
     WebDocumentLoader *provisionalDocumentLoader;
     WebDocumentLoader *policyDocumentLoader;
@@ -83,16 +86,16 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 }
 
 - (id)initWithFrameBridge:(WebCoreFrameBridge *)bridge;
-- (void)addPlugInStreamLoader:(WebLoader *)loader;
-- (void)removePlugInStreamLoader:(WebLoader *)loader;
+- (void)addPlugInStreamLoader:(WebCore::WebResourceLoader *)loader;
+- (void)removePlugInStreamLoader:(WebCore::WebResourceLoader *)loader;
 - (void)setDefersCallbacks:(BOOL)defers;
 - (void)stopLoadingPlugIns;
 - (BOOL)isLoadingMainResource;
 - (BOOL)isLoadingSubresources;
 - (BOOL)isLoading;
 - (void)stopLoadingSubresources;
-- (void)addSubresourceLoader:(WebLoader *)loader;
-- (void)removeSubresourceLoader:(WebLoader *)loader;
+- (void)addSubresourceLoader:(WebCore::WebResourceLoader *)loader;
+- (void)removeSubresourceLoader:(WebCore::WebResourceLoader *)loader;
 - (NSData *)mainResourceData;
 - (void)releaseMainResourceLoader;
 - (void)cancelMainResourceLoad;
@@ -144,9 +147,9 @@ BOOL isBackForwardLoadType(FrameLoadType type);
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
 - (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
-- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
-- (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader;
-- (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader;
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebCore::WebResourceLoader *)loader;
+- (BOOL)archiveLoadPendingForLoader:(WebCore::WebResourceLoader *)loader;
+- (void)cancelPendingArchiveLoadForLoader:(WebCore::WebResourceLoader *)loader;
 - (void)cannotShowMIMETypeWithResponse:(NSURLResponse *)response;
 - (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request;
 - (BOOL)isHostedByObjectElement;

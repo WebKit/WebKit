@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "config.h"
 #import "WebLoader.h"
 
+#import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import "WebFrameLoader.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -36,236 +37,201 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
-#import "WebCoreSystemInterface.h"
+#import <wtf/RefPtr.h>
 
-static unsigned inNSURLConnectionCallback;
-static BOOL NSURLConnectionSupportsBufferedData;
+using namespace WebCore;
+
+@interface WebCoreResourceLoaderDelegate : NSObject <NSURLAuthenticationChallengeSender>
+{
+    WebResourceLoader* m_loader;
+}
+- (id)initWithLoader:(WebResourceLoader*)loader;
+- (void)detachLoader;
+@end
 
 @interface NSURLConnection (NSURLConnectionTigerPrivate)
 - (NSData *)_bufferedData;
 @end
 
-@interface WebLoader (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
-@end
-
-@implementation WebLoader (WebNSURLAuthenticationChallengeSender) 
-
-- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (challenge == nil || challenge != currentWebChallenge) {
-        return;
-    }
-
-    [[currentConnectionChallenge sender] useCredential:credential forAuthenticationChallenge:currentConnectionChallenge];
-
-    [currentConnectionChallenge release];
-    currentConnectionChallenge = nil;
-    
-    [currentWebChallenge release];
-    currentWebChallenge = nil;
-}
-
-- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (challenge == nil || challenge != currentWebChallenge) {
-        return;
-    }
-
-    [[currentConnectionChallenge sender] continueWithoutCredentialForAuthenticationChallenge:currentConnectionChallenge];
-
-    [currentConnectionChallenge release];
-    currentConnectionChallenge = nil;
-    
-    [currentWebChallenge release];
-    currentWebChallenge = nil;
-}
-
-- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (challenge == nil || challenge != currentWebChallenge) {
-        return;
-    }
-
-    [self cancel];
-}
-
-@end
-
-// This declaration is only needed to ease the transition to a new SPI.  It can be removed
-// moving forward beyond Tiger 8A416.
 @interface NSURLProtocol (WebFoundationSecret) 
 + (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
 @end
 
-@implementation WebLoader
+namespace WebCore {
 
-+ (void)initialize
+static unsigned inNSURLConnectionCallback;
+static bool NSURLConnectionSupportsBufferedData;
+
+#ifndef NDEBUG
+static bool isInitializingConnection;
+#endif
+
+WebResourceLoader::WebResourceLoader(WebFrameLoader *frameLoader)
+    : m_reachedTerminalState(false)
+    , m_signalledFinish(false)
+    , m_cancelled(false)
+    , m_frameLoader(frameLoader)
+    , m_currentConnectionChallenge(nil)
+    , m_defersCallbacks([frameLoader defersCallbacks])
 {
-    NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
+    static bool initialized = false;
+    if (!initialized) {
+        NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
+        initialized = true;
+    }
 }
 
-- (void)releaseResources
+WebResourceLoader::~WebResourceLoader()
 {
-    ASSERT(!reachedTerminalState);
+    ASSERT(m_reachedTerminalState);
+    releaseDelegate();
+}
+
+void WebResourceLoader::releaseResources()
+{
+    ASSERT(!m_reachedTerminalState);
     
     // It's possible that when we release the handle, it will be
     // deallocated and release the last reference to this object.
     // We need to retain to avoid accessing the object after it
     // has been deallocated and also to avoid reentering this method.
-    
-    [self retain];
+    RefPtr<WebResourceLoader> protector(this);
 
-    // We need to set reachedTerminalState to YES before we release
+    // We need to set reachedTerminalState to true before we release
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
+    m_reachedTerminalState = true;
 
-    reachedTerminalState = YES;
+    m_identifier = nil;
+    m_connection = nil;
+    m_frameLoader = nil;
+    m_resourceData = nil;
 
-    [identifier release];
-    identifier = nil;
-
-    [connection release];
-    connection = nil;
-
-    [frameLoader release];
-    frameLoader = nil;
-    
-    [resourceData release];
-    resourceData = nil;
-
-    [self release];
+    releaseDelegate();
 }
 
-- (void)dealloc
+bool WebResourceLoader::load(NSURLRequest *r)
 {
-    ASSERT(reachedTerminalState);
-    [request release];
-    [response release];
-    [originalURL release];
-    [super dealloc];
-}
-
-- (BOOL)loadWithRequest:(NSURLRequest *)r
-{
-    ASSERT(connection == nil);
-    ASSERT(![frameLoader archiveLoadPendingForLoader:self]);
+    ASSERT(m_connection == nil);
+    ASSERT(![m_frameLoader.get() archiveLoadPendingForLoader:this]);
     
-    NSURL *URL = [[r URL] retain];
-    [originalURL release];
-    originalURL = URL;
+    m_originalURL = [r URL];
     
-    NSURLRequest *clientRequest = [self willSendRequest:r redirectResponse:nil];
+    NSURLRequest *clientRequest = willSendRequest(r, nil);
     if (clientRequest == nil) {
-        NSError *cancelledError = [frameLoader cancelledErrorWithRequest:r];
-        [self didFailWithError:cancelledError];
-        return NO;
+        didFail([m_frameLoader.get() cancelledErrorWithRequest:r]);
+        return false;
     }
     r = clientRequest;
     
-    if ([frameLoader willUseArchiveForRequest:r originalURL:originalURL loader:self])
-        return YES;
+    if ([m_frameLoader.get() willUseArchiveForRequest:r originalURL:m_originalURL.get() loader:this])
+        return true;
     
 #ifndef NDEBUG
     isInitializingConnection = YES;
 #endif
-    connection = [[NSURLConnection alloc] initWithRequest:r delegate:self];
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:r delegate:delegate()];
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
-    if (defersCallbacks)
-        wkSetNSURLConnectionDefersCallbacks(connection, YES);
+    m_connection = connection;
+    [connection release];
+    if (defersCallbacks())
+        wkSetNSURLConnectionDefersCallbacks(m_connection.get(), YES);
 
-    return YES;
+    return true;
 }
 
-- (void)setDefersCallbacks:(BOOL)defers
+void WebResourceLoader::setDefersCallbacks(bool defers)
 {
-    defersCallbacks = defers;
-    wkSetNSURLConnectionDefersCallbacks(connection, defers);
-    // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+    m_defersCallbacks = defers;
+    wkSetNSURLConnectionDefersCallbacks(m_connection.get(), defers);
 }
 
-- (BOOL)defersCallbacks
+bool WebResourceLoader::defersCallbacks() const
 {
-    return defersCallbacks;
+    return m_defersCallbacks;
 }
 
-- (void)setFrameLoader:(WebFrameLoader *)fl
+void WebResourceLoader::setFrameLoader(WebFrameLoader *fl)
 {
     ASSERT(fl);
-    
-    [fl retain];
-    [frameLoader release];
-    frameLoader = fl;
-
-    [self setDefersCallbacks:[frameLoader defersCallbacks]];
+    m_frameLoader = fl;
+    setDefersCallbacks([fl defersCallbacks]);
 }
 
-- (WebFrameLoader *)frameLoader
+WebFrameLoader *WebResourceLoader::frameLoader() const
 {
-    return frameLoader;
+    return m_frameLoader.get();
 }
 
-- (void)addData:(NSData *)data allAtOnce:(BOOL)allAtOnce
+void WebResourceLoader::addData(NSData *data, bool allAtOnce)
 {
     if (allAtOnce) {
-        resourceData = [data copy];
+        NSMutableData *dataCopy = [data mutableCopy];
+        m_resourceData = dataCopy;
+        [dataCopy release];
         return;
     }
         
     if (NSURLConnectionSupportsBufferedData) {
         // Buffer data only if the connection has handed us the data because is has stopped buffering it.
-        if (resourceData != nil)
-            [resourceData appendData:data];
+        if (m_resourceData)
+            [m_resourceData.get() appendData:data];
     } else {
-        if (resourceData == nil)
-            resourceData = [[NSMutableData alloc] init];
-        [resourceData appendData:data];
+        if (!m_resourceData) {
+            NSMutableData *newData = [[NSMutableData alloc] init];
+            m_resourceData = newData;
+            [newData release];
+        }
+        [m_resourceData.get() appendData:data];
     }
 }
 
-- (NSData *)resourceData
+NSData *WebResourceLoader::resourceData()
 {
-    if (resourceData)
+    if (m_resourceData)
         // Retain and autorelease resourceData since releaseResources (which releases resourceData) may be called 
-        // before the caller of this method has an opporuntity to retain the returned data (4070729).
-        return [[resourceData retain] autorelease];
+        // before the caller of this method has an opportunity to retain the returned data (4070729).
+        return [[m_resourceData.get() retain] autorelease];
 
     if (NSURLConnectionSupportsBufferedData)
-        return [connection _bufferedData];
+        return [m_connection.get() _bufferedData];
 
     return nil;
 }
 
-- (void)clearResourceData
+void WebResourceLoader::clearResourceData()
 {
-    [resourceData setLength:0];
+    [m_resourceData.get() setLength:0];
 }
 
-- (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+NSURLRequest *WebResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
-    ASSERT(!reachedTerminalState);
-    NSMutableURLRequest *mutableRequest = [[newRequest mutableCopy] autorelease];
-    NSMutableURLRequest *clientRequest;
-    NSURLRequest *updatedRequest;
-    BOOL haveDataSchemeRequest = NO;
-    
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
 
+    ASSERT(!m_reachedTerminalState);
+    NSMutableURLRequest *mutableRequest = [[newRequest mutableCopy] autorelease];
+    
     newRequest = mutableRequest;
 
     // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
-    clientRequest = [mutableRequest _webDataRequestExternalRequest];
+    bool haveDataSchemeRequest = false;
+    NSMutableURLRequest *clientRequest = [mutableRequest _webDataRequestExternalRequest];
     if (!clientRequest)
         clientRequest = mutableRequest;
     else
-        haveDataSchemeRequest = YES;
+        haveDataSchemeRequest = true;
     
-    if (identifier == nil)
-        identifier = [frameLoader _identifierForInitialRequest:clientRequest];
+    if (!m_identifier) {
+        id identifier = [m_frameLoader.get() _identifierForInitialRequest:clientRequest];
+        m_identifier = identifier;
+        [identifier release];
+    }
 
-    updatedRequest = [frameLoader _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
+    NSURLRequest *updatedRequest = [m_frameLoader.get() _willSendRequest:clientRequest
+        forResource:m_identifier.get() redirectResponse:redirectResponse];
 
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
@@ -286,136 +252,137 @@ static BOOL NSURLConnectionSupportsBufferedData;
         }
     }
 
+    // Old code used to autorelease rather than release, so do an autorelease here for now.
+    // Eventually we should remove this.
+    [[m_request.get() retain] autorelease];
+
     // Store a copy of the request.
-    [request autorelease];
+    NSURLRequest *copy = [newRequest copy];
+    m_request = copy;
+    [copy release];
 
-    request = [newRequest copy];
-
-    [self release];
-    return request;
+    return copy;
 }
 
-- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+void WebResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
 {
-    ASSERT(!reachedTerminalState);
-    ASSERT(!currentConnectionChallenge);
-    ASSERT(!currentWebChallenge);
+    ASSERT(!m_reachedTerminalState);
+    ASSERT(!m_currentConnectionChallenge);
+    ASSERT(!m_currentWebChallenge);
 
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
-    currentConnectionChallenge = [challenge retain];;
-    currentWebChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:self];
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
 
-    [frameLoader _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    m_currentConnectionChallenge = challenge;
+    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:delegate()];
+    m_currentWebChallenge = webChallenge;
 
-    [self release];
+    [m_frameLoader.get() _didReceiveAuthenticationChallenge:webChallenge forResource:m_identifier.get()];
+
+    [webChallenge release];
 }
 
-- (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+void WebResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
 {
-    ASSERT(!reachedTerminalState);
-    ASSERT(currentConnectionChallenge);
-    ASSERT(currentWebChallenge);
-    ASSERT(currentConnectionChallenge = challenge);
+    ASSERT(!m_reachedTerminalState);
+    ASSERT(m_currentConnectionChallenge);
+    ASSERT(m_currentWebChallenge);
+    ASSERT(m_currentConnectionChallenge == challenge);
 
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
-    [frameLoader _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
-    [self release];
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
+
+    [m_frameLoader.get() _didCancelAuthenticationChallenge:m_currentWebChallenge.get()
+        forResource:m_identifier.get()];
 }
 
-- (void)didReceiveResponse:(NSURLResponse *)r
+void WebResourceLoader::didReceiveResponse(NSURLResponse *r)
 {
-    ASSERT(!reachedTerminalState);
+    ASSERT(!m_reachedTerminalState);
 
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain]; 
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
 
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
-    if([WebDataProtocol _webIsDataProtocolURL:[r URL]])
-        r = [[[NSURLResponse alloc] initWithURL:[request _webDataRequestExternalURL] MIMEType:[r MIMEType] expectedContentLength:(int)[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
+    if ([WebDataProtocol _webIsDataProtocolURL:[r URL]])
+        r = [[[NSURLResponse alloc] initWithURL:[m_request.get() _webDataRequestExternalURL] MIMEType:[r MIMEType]
+                expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
 
-    [r retain];
-    [response release];
-    response = r;
+    m_response = r;
 
-    [frameLoader _didReceiveResponse:r forResource:identifier];
-
-    [self release];
+    [m_frameLoader.get() _didReceiveResponse:r forResource:m_identifier.get()];
 }
 
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
+void WebResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
     // happens with the steps listed in 3266216
     // ASSERT(con == connection);
-    // ASSERT(!reachedTerminalState);
+    // ASSERT(!m_reachedTerminalState);
 
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
     
-    [self addData:data allAtOnce:allAtOnce];
+    addData(data, allAtOnce);
     
-    [frameLoader _didReceiveData:data contentLength:(int)lengthReceived forResource:identifier];
-
-    [self release];
+    [m_frameLoader.get() _didReceiveData:data contentLength:(int)lengthReceived forResource:m_identifier.get()];
 }
 
-- (void)willStopBufferingData:(NSData *)data
+void WebResourceLoader::willStopBufferingData(NSData *data)
 {
-    ASSERT(resourceData == nil);
-    resourceData = [data mutableCopy];
+    ASSERT(!m_resourceData);
+    NSMutableData *copy = [data mutableCopy];
+    m_resourceData = copy;
+    [copy release];
 }
 
-- (void)signalFinish
+void WebResourceLoader::signalFinish()
 {
-    signalledFinish = YES;
-    [frameLoader _didFinishLoadingForResource:identifier];
+    m_signalledFinish = true;
+    [m_frameLoader.get() _didFinishLoadingForResource:m_identifier.get()];
 }
 
-- (void)didFinishLoading
+void WebResourceLoader::didFinishLoading()
 {
     // If load has been cancelled after finishing (which could happen with a 
     // javascript that changes the window location), do nothing.
-    if (cancelledFlag)
+    if (m_cancelled)
         return;
     
-    ASSERT(!reachedTerminalState);
+    ASSERT(!m_reachedTerminalState);
 
-    if (!signalledFinish)
-        [self signalFinish];
+    if (!m_signalledFinish)
+        signalFinish();
 
-    [self releaseResources];
+    releaseResources();
 }
 
-- (void)didFailWithError:(NSError *)error
+void WebResourceLoader::didFail(NSError *error)
 {
-    if (cancelledFlag) {
+    if (m_cancelled)
         return;
-    }
     
-    ASSERT(!reachedTerminalState);
+    ASSERT(!m_reachedTerminalState);
 
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<WebResourceLoader> protector(this);
 
-    [frameLoader _didFailLoadingWithError:error forResource:identifier];
+    [m_frameLoader.get() _didFailLoadingWithError:error forResource:m_identifier.get()];
 
-    [self releaseResources];
-    [self release];
+    releaseResources();
 }
 
-- (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
+NSCachedURLResponse *WebResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
 {
     // When in private browsing mode, prevent caching to disk
-    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [frameLoader _privateBrowsingEnabled]) {
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [m_frameLoader.get() _privateBrowsingEnabled]) {
         cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
                                                                    data:[cachedResponse data]
                                                                userInfo:[cachedResponse userInfo]
@@ -424,139 +391,228 @@ static BOOL NSURLConnectionSupportsBufferedData;
     return cachedResponse;
 }
 
+void WebResourceLoader::cancel(NSError *error)
+{
+    ASSERT(!m_reachedTerminalState);
+
+    // This flag prevents bad behavior when loads that finish cause the
+    // load itself to be cancelled (which could happen with a javascript that 
+    // changes the window location). This is used to prevent both the body
+    // of this method and the body of connectionDidFinishLoading: running
+    // for a single delegate. Cancelling wins.
+    m_cancelled = true;
+    
+    m_currentConnectionChallenge = nil;
+    m_currentWebChallenge = nil;
+
+    [m_frameLoader.get() cancelPendingArchiveLoadForLoader:this];
+    [m_connection.get() cancel];
+
+    [m_frameLoader.get() _didFailLoadingWithError:error forResource:m_identifier.get()];
+
+    releaseResources();
+}
+
+void WebResourceLoader::cancel()
+{
+    if (!m_reachedTerminalState)
+        cancel(cancelledError());
+}
+
+void WebResourceLoader::setIdentifier(id identifier)
+{
+    m_identifier = identifier;
+}
+
+NSURLResponse *WebResourceLoader::response() const
+{
+    return m_response.get();
+}
+
+bool WebResourceLoader::inConnectionCallback()
+{
+    return inNSURLConnectionCallback != 0;
+}
+
+NSError *WebResourceLoader::cancelledError()
+{
+    return [m_frameLoader.get() cancelledErrorWithRequest:m_request.get()];
+}
+
+void WebResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
+{
+    ASSERT(challenge);
+    if (challenge != m_currentWebChallenge)
+        return;
+
+    [[m_currentConnectionChallenge sender] useCredential:credential forAuthenticationChallenge:m_currentConnectionChallenge];
+
+    m_currentConnectionChallenge = nil;
+    m_currentWebChallenge = nil;
+}
+
+void WebResourceLoader::receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *challenge)
+{
+    ASSERT(challenge);
+    if (challenge != m_currentWebChallenge)
+        return;
+
+    [[m_currentConnectionChallenge sender] continueWithoutCredentialForAuthenticationChallenge:m_currentConnectionChallenge];
+
+    m_currentConnectionChallenge = nil;
+    m_currentWebChallenge = nil;
+}
+
+void WebResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challenge)
+{
+    if (challenge != m_currentWebChallenge)
+        return;
+
+    cancel();
+}
+
+WebCoreResourceLoaderDelegate *WebResourceLoader::delegate()
+{
+    if (!m_delegate) {
+        WebCoreResourceLoaderDelegate *d = [[WebCoreResourceLoaderDelegate alloc] initWithLoader:this];
+        m_delegate = d;
+        [d release];
+    }
+    return m_delegate.get();
+}
+
+void WebResourceLoader::releaseDelegate()
+{
+    if (!m_delegate)
+        return;
+    [m_delegate.get() detachLoader];
+    m_delegate = nil;
+}
+
+}
+
+@implementation WebCoreResourceLoaderDelegate
+
+- (id)initWithLoader:(WebResourceLoader*)loader
+{
+    self = [self init];
+    if (!self)
+        return nil;
+    m_loader = loader;
+    return self;
+}
+
+- (void)detachLoader
+{
+    m_loader = nil;
+}
+
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return nil;
     ++inNSURLConnectionCallback;
-    NSURLRequest *result = [self willSendRequest:newRequest redirectResponse:redirectResponse];
+    NSURLRequest *result = m_loader->willSendRequest(newRequest, redirectResponse);
     --inNSURLConnectionCallback;
     return result;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didReceiveAuthenticationChallenge:challenge];
+    m_loader->didReceiveAuthenticationChallenge(challenge);
     --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didCancelAuthenticationChallenge:challenge];
+    m_loader->didCancelAuthenticationChallenge(challenge);
     --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didReceiveResponse:r];
+    m_loader->didReceiveResponse(r);
     --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didReceiveData:data lengthReceived:lengthReceived allAtOnce:NO];
+    m_loader->didReceiveData(data, lengthReceived, false);
     --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self willStopBufferingData:data];
+    m_loader->willStopBufferingData(data);
     --inNSURLConnectionCallback;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    // don't worry about checking connection consistency if this load
-    // got cancelled while finishing.
-    ASSERT(cancelledFlag || con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didFinishLoading];
+    m_loader->didFinishLoading();
     --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
-    ASSERT(con == connection);
+    if (!m_loader)
+        return;
     ++inNSURLConnectionCallback;
-    [self didFailWithError:error];
+    m_loader->didFail(error);
     --inNSURLConnectionCallback;
 }
 
-- (NSCachedURLResponse *)connection:(NSURLConnection *)con willCacheResponse:(NSCachedURLResponse *)cachedResponse
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
 #ifndef NDEBUG
-    if (connection == nil && isInitializingConnection) {
+    if (isInitializingConnection)
         LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
-    }
 #endif
+    if (!m_loader)
+        return nil;
     ++inNSURLConnectionCallback;
-    NSCachedURLResponse *result = [self willCacheResponse:cachedResponse];
+    NSCachedURLResponse *result = m_loader->willCacheResponse(cachedResponse);
     --inNSURLConnectionCallback;
     return result;
 }
 
-- (void)cancelWithError:(NSError *)error
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    ASSERT(!reachedTerminalState);
-
-    // This flag prevents bad behvior when loads that finish cause the
-    // load itself to be cancelled (which could happen with a javascript that 
-    // changes the window location). This is used to prevent both the body
-    // of this method and the body of connectionDidFinishLoading: running
-    // for a single delegate. Cancelling wins.
-    cancelledFlag = YES;
-    
-    [currentConnectionChallenge release];
-    currentConnectionChallenge = nil;
-    
-    [currentWebChallenge release];
-    currentWebChallenge = nil;
-
-    [frameLoader cancelPendingArchiveLoadForLoader:self];
-    [connection cancel];
-
-    [frameLoader _didFailLoadingWithError:error forResource:identifier];
-
-    [self releaseResources];
+    if (!m_loader)
+        return;
+    m_loader->receivedCredential(challenge, credential);
 }
 
-- (void)cancel
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (!reachedTerminalState) {
-        [self cancelWithError:[self cancelledError]];
-    }
+    if (!m_loader)
+        return;
+    m_loader->receivedRequestToContinueWithoutCredential(challenge);
 }
 
-- (void)setIdentifier: ident
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    if (identifier != ident){
-        [identifier release];
-        identifier = [ident retain];
-    }
-}
-
-- (NSURLResponse *)response
-{
-    return response;
-}
-
-+ (BOOL)inConnectionCallback
-{
-    return inNSURLConnectionCallback != 0;
-}
-
-- (NSError *)cancelledError
-{
-    return [frameLoader cancelledErrorWithRequest:request];
+    if (!m_loader)
+        return;
+    m_loader->receivedCancellation(challenge);
 }
 
 @end

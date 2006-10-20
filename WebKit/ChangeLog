@@ -1,3 +1,41 @@
+2006-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - convert WebLoader and its 3 subclasses to C++
+
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream finalize]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream cancelLoadWithError:]):
+        (-[WebNetscapePluginStream stop]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge canRunModalNow]):
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFramePrivate finalize]):
+        (frame): Changed from uppercase to lowercase so that it won't conflict
+        with the WebCore class named Frame.
+        (-[WebFrame _firstChildFrame]):
+        (-[WebFrame _lastChildFrame]):
+        (-[WebFrame _previousSiblingFrame]):
+        (-[WebFrame _nextSiblingFrame]):
+        (-[WebFrame _traverseNextFrameStayWithin:]):
+        (-[WebFrame _immediateChildFrameNamed:]):
+        (-[WebFrame _nextFrameWithWrap:]):
+        (-[WebFrame _previousFrameWithWrap:]):
+        (-[WebFrame findFrameNamed:]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame _dispatchSourceFrame:willSubmitForm:withValues:submissionDecider:]):
+        (-[WebFrame _deliverArchivedResourcesAfterDelay]):
+        (-[WebFrame _willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrame _archiveLoadPendingForLoader:]):
+        (-[WebFrame _cancelPendingArchiveLoadForLoader:]):
+        (-[WebFrame _clearArchivedResources]):
+        (-[WebFrame _deliverArchivedResources]):
+
 2006-10-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

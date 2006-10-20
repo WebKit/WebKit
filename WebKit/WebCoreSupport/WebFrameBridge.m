@@ -104,6 +104,8 @@
 - (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
 
+using namespace WebCore;
+
 NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
@@ -1415,7 +1417,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (BOOL)canRunModalNow
 {
-    return [self canRunModal] && ![WebLoader inConnectionCallback];
+    return [self canRunModal] && !WebResourceLoader::inConnectionCallback();
 }
 
 - (void)runModal

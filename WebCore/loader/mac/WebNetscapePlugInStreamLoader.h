@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,29 @@
 
 #import "WebLoader.h"
 #import "WebPlugInStreamLoaderDelegate.h"
+#import <wtf/Forward.h>
 
-@class WebNetscapePluginStream;
+namespace WebCore {
 
-@interface WebNetscapePlugInStreamLoader : WebLoader
-{
-    NSObject<WebPlugInStreamLoaderDelegate> *stream;
+    class NetscapePlugInStreamLoader : public WebResourceLoader {
+    public:
+        static PassRefPtr<NetscapePlugInStreamLoader> create(WebFrameLoader*, id <WebPlugInStreamLoaderDelegate>);
+        virtual ~NetscapePlugInStreamLoader();
+
+        bool isDone() const;
+
+        virtual void didReceiveResponse(NSURLResponse *);
+        virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
+        virtual void didFinishLoading();
+        virtual void didFail(NSError *);
+        virtual void cancel(NSError *);
+
+        virtual void releaseResources();
+
+    private:
+        NetscapePlugInStreamLoader(WebFrameLoader*, id <WebPlugInStreamLoaderDelegate>);
+
+        RetainPtr<id <WebPlugInStreamLoaderDelegate> > m_stream;
+    };
+
 }
-- (id)initWithDelegate:(NSObject <WebPlugInStreamLoaderDelegate> *)theStream frameLoader:(WebFrameLoader *)fl;
-- (BOOL)isDone;
-@end
