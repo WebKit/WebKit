@@ -33,6 +33,7 @@
 class KUrl;
 class WebKitPart;
 
+// Exposed to DBUS.
 class WebKitPartInterface : public QObject
 {
 Q_OBJECT

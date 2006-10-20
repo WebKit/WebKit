@@ -28,10 +28,13 @@
 #include "config.h"
 #include "WebKitPart.h"
 
+#include <QDebug>
+
 #include "Page.h"
 #include "FrameQt.h"
 #include "WebKitFactory.h"
 #include "WebKitPartClient.h"
+#include "WebKitPartBrowserExtension.h"
 
 using namespace WebCore;
 
@@ -42,8 +45,9 @@ WebKitPart::WebKitPart(QWidget* parentWidget, QObject* parentObject, GUIProfile 
     , m_client(0)
 {
     setInstance(WebKitFactory::instance(), prof == BrowserViewGUI && !parentPart());
-
     initView(parentWidget, prof);
+
+    m_extension = new WebKitPartBrowserExtension(this);
 }
 
 WebKitPart::~WebKitPart()
@@ -52,6 +56,7 @@ WebKitPart::~WebKitPart()
         delete m_frame->page();
 
     delete m_client;
+    delete m_extension;
 }
 
 bool WebKitPart::openFile()
@@ -61,6 +66,7 @@ bool WebKitPart::openFile()
 
 bool WebKitPart::openUrl(const KUrl& url)
 {
+    emit started(0);
     return m_frame->openURL(KURL(url.toEncoded()));
 }
 
@@ -86,7 +92,7 @@ void WebKitPart::initView(QWidget* parentWidget, GUIProfile prof)
     else if (prof == BrowserViewGUI)
         setXMLFile("WebKitPartBrowser.rc");
 
-    m_client = new WebKitPartClient();
+    m_client = new WebKitPartClient(this);
  
     // Initialize WebCore in Qt platform mode...
     Page* page = new Page();

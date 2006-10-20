@@ -1,3 +1,27 @@
+2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Adapt to FrameQtClient changes, and provide some kind of status
+        information to the KPart wheter we're loading or not (started/completed signaling).
+
+        * WebKitPart/CMakeLists.txt:
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::WebKitPart):
+        (WebKitPart::~WebKitPart):
+        (WebKitPart::openUrl):
+        (WebKitPart::initView):
+        * WebKitPart/WebKitPart.h:
+        * WebKitPart/WebKitPartBrowserExtension.cpp: Added.
+        (WebKitPartBrowserExtension::WebKitPartBrowserExtension):
+        (WebKitPartBrowserExtension::~WebKitPartBrowserExtension):
+        * WebKitPart/WebKitPartBrowserExtension.h: Added.
+        * WebKitPart/WebKitPartClient.cpp:
+        (WebKitPartClient::WebKitPartClient):
+        (WebKitPartClient::loadFinished):
+        * WebKitPart/WebKitPartClient.h:
+        * WebKitPart/WebKitPartInterface.h:
+
 2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

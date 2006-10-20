@@ -32,13 +32,19 @@
 
 using namespace WebCore;
 
-WebKitPartClient::WebKitPartClient()
+WebKitPartClient::WebKitPartClient(WebKitPart* part)
     : FrameQtClientDefault()
+    , m_part(part)
 {
 }
 
 WebKitPartClient::~WebKitPartClient()
 {
+}
+
+void WebKitPartClient::loadFinished() const
+{
+    emit m_part->completed();
 }
 
 // vim: ts=4 sw=4 et

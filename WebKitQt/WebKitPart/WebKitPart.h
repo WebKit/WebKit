@@ -39,6 +39,7 @@ namespace WebCore {
 }
 
 class WebKitPartClient;
+class WebKitPartBrowserExtension;
 
 class WebKitPart : public KParts::ReadOnlyPart
 {
@@ -99,6 +100,7 @@ private:
     WTF::RefPtr<WebCore::FrameView> m_frameView;
 
     WebKitPartClient* m_client;
+    WebKitPartBrowserExtension* m_extension;
 };
 
 #endif

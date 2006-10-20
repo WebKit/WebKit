@@ -20,7 +20,7 @@ include_directories (
 
 add_definitions (-Wno-undef -Wno-unused-parameter)
 
-set (WebKitPart_SRCS WebKitFactory.cpp WebKitPart.cpp WebKitPartInterface.cpp WebKitPartClient.cpp)
+set (WebKitPart_SRCS WebKitFactory.cpp WebKitPart.cpp WebKitPartBrowserExtension.cpp WebKitPartInterface.cpp WebKitPartClient.cpp)
 
 qt4_add_dbus_adaptor (WebKitPart_SRCS org.kde.WebKitPart.xml WebKitPartInterface.h WebKitPartInterface)
 
