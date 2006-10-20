@@ -1,3 +1,19 @@
+2006-10-19  David Hyatt  <hyatt@apple.com>
+
+        Correct typos from changing "flush" to "prune" using automated search/replace.
+
+        Change the cache heuristic for flushing to allow a higher watermark before initiating an
+        aggressive prune.  This ensures that small cache sizes are no worse in terms of performance
+        than the old buggy cache.
+
+        Make sizes unsigned instead of ints in the cache's APIs and member variables.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::prune):
+        (WebCore::Cache::setMaximumSize):
+        * loader/Cache.h:
+        (WebCore::Cache::maximumSize):
+
 2006-10-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Daddy Hyatt.

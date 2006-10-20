@@ -42,7 +42,6 @@ using namespace std;
 namespace WebCore {
 
 const int cDefaultCacheSize = 8192 * 1024;
-const int cDefaultLargeResourceSize = 80 * 1024;
 
 Cache* cache()
 {
@@ -117,12 +116,12 @@ void Cache::prune()
     if (m_currentSize <= m_maximumSize)
         return;
 
-    // We allow the cache to get as big as the # of live objects + half the maximum cache size
+    // We allow the cache to get as big as the # of live objects + the maximum cache size
     // before we do a prune.  Once we do decide to prune though, we are aggressive about it.
-    // We will include the live objects as part of the overall cache size when pruneing, so will often
+    // We will include the live objects as part of the overall cache size when pruning, so will often
     // kill every last object that isn't referenced by a Web page.
     unsigned unreferencedResourcesSize = m_currentSize - m_liveResourcesSize;
-    if (unreferencedResourcesSize < m_maximumSize / 2U)
+    if (unreferencedResourcesSize < m_maximumSize)
         return;
 
     bool canShrinkLRULists = true;
@@ -135,7 +134,7 @@ void Cache::prune()
             if (!current->referenced()) {
                 remove(current);
                 
-                // Stop pruneing if our total cache size is back under the maximum or if every
+                // Stop pruning if our total cache size is back under the maximum or if every
                 // remaining object in the cache is live (meaning there is nothing left we are able
                 // to prune).
                 if (m_currentSize <= m_maximumSize || m_currentSize == m_liveResourcesSize)
@@ -145,7 +144,7 @@ void Cache::prune()
         }
             
         // Shrink the vector back down so we don't waste time inspecting
-        // empty LRU lists on future prunees.
+        // empty LRU lists on future prunes.
         if (m_lruLists[i].m_head)
             canShrinkLRULists = false;
         else if (canShrinkLRULists)
@@ -153,7 +152,7 @@ void Cache::prune()
     }
 }
 
-void Cache::setMaximumSize(int bytes)
+void Cache::setMaximumSize(unsigned bytes)
 {
     m_maximumSize = bytes;
     prune();

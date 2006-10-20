@@ -69,8 +69,8 @@ public:
 
     // Set/retreive the size of the cache. This will only hold approximately, since the size some 
     // cached objects (like stylesheets) take up in memory is not exactly known.
-    void setMaximumSize(int bytes);
-    int maximumSize() const { return m_maximumSize; };
+    void setMaximumSize(unsigned bytes);
+    unsigned maximumSize() const { return m_maximumSize; };
 
     // Turn the cache on and off.  Disabling the cache will remove all resources from the cache.  They may
     // still live on if they are referenced by some Web page though.
@@ -132,9 +132,9 @@ private:
 
     bool m_disabled;  // Whether or not the cache is enabled.
 
-    int m_maximumSize;  // The maximum size in bytes that the global cache can consume.
-    int m_currentSize;  // The current size of the global cache in bytes.
-    int m_liveResourcesSize; // The current size of "live" resources that cannot be flushed.
+    unsigned m_maximumSize;  // The maximum size in bytes that the global cache can consume.
+    unsigned m_currentSize;  // The current size of the global cache in bytes.
+    unsigned m_liveResourcesSize; // The current size of "live" resources that cannot be flushed.
 
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
     // more resources than the cached resource map, since it can also hold "stale" muiltiple versions of objects that are
