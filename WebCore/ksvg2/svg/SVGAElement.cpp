@@ -100,7 +100,7 @@ void SVGAElement::defaultEventHandler(Event *evt)
         if (!evt->defaultPrevented()) {
             if (ownerDocument() && ownerDocument()->view() && ownerDocument()->frame()) {
                 //document()->view()->resetCursor();
-                document()->frame()->urlSelected(url, utarget);
+                document()->frame()->urlSelected(url, utarget, evt);
             }
         }
 

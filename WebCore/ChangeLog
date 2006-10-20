@@ -1,3 +1,10 @@
+2006-10-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2006-10-19  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
