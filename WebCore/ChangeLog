@@ -1,3 +1,12 @@
+2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Fix regression introduced during the ResourceLoader transition (Maciej's rewrite).
+
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::add):
+
 2006-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
