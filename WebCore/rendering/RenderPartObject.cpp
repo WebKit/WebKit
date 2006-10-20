@@ -144,7 +144,7 @@ void RenderPartObject::updateWidget()
       if (serviceType.isEmpty())
           serviceType = o->m_serviceType;
       
-      HashSet<StringImpl*, CaseInsensitiveHash> uniqueParamNames;
+      HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> > uniqueParamNames;
       
       // Scan the PARAM children.
       // Get the URL and type from the params if we don't already have them.

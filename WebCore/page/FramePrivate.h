@@ -34,10 +34,10 @@
 #include "DOMWindow.h"
 #include "Decoder.h"
 #include "EditCommand.h"
+#include "FormData.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "IconLoader.h"
-#include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Timer.h"
@@ -163,7 +163,6 @@ namespace WebCore {
 
         KURL m_url;
         KURL m_workingURL;
-        ResourceRequest m_request;
 
         String m_responseMIMEType;
 

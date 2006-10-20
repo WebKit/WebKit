@@ -28,38 +28,103 @@
 #define ResourceRequest_H_
 
 #include "FormData.h"
-#include "PlatformString.h"
 #include "KURL.h"
+#include "PlatformString.h"
+#include "StringHash.h"
 
 namespace WebCore {
 
+    enum ResourceRequestCachePolicy {
+        UseProtocolCachePolicy, // normal load
+        ReloadIgnoringCacheData, // reload
+        ReturnCacheDataElseLoad, // back/forward or encoding change - allow stale data
+        ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
+    };
+
     struct ResourceRequest {
 
-        ResourceRequest() : reload(false), m_doPost(false) { }
-        explicit ResourceRequest(const KURL& url) : reload(false), m_url(url), m_doPost(false) { }
+        explicit ResourceRequest(const KURL& url) 
+            : m_url(url)
+            , m_cachePolicy(UseProtocolCachePolicy)
+            , m_timeoutInterval(defaultTimeoutInterval)
+            , m_allowHTTPCookies(true)
+        {
+        }
+
+        ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
+            : m_url(url)
+            , m_cachePolicy(policy)
+            , m_timeoutInterval(defaultTimeoutInterval)
+            , m_allowHTTPCookies(true)
+        {
+            setHTTPReferrer(referrer);
+        }
+        
+        ResourceRequest()
+            : m_cachePolicy(UseProtocolCachePolicy)
+            , m_timeoutInterval(defaultTimeoutInterval)
+            , m_allowHTTPCookies(true)
+        {
+        }
 
         const KURL& url() const { return m_url; }
         void setURL(const KURL& url) { m_url = url; }
 
-        String contentType() const { return m_contentType; }
-        void setContentType(const String& t) { m_contentType = t; }
+        const ResourceRequestCachePolicy cachePolicy() const { return m_cachePolicy; }
+        void setCachePolicy(ResourceRequestCachePolicy cachePolicy) { m_cachePolicy = cachePolicy; }
         
-        bool doPost() const { return m_doPost; }
-        void setDoPost(bool post) { m_doPost = post; }
+        double timeoutInterval() const { return m_timeoutInterval; }
+        void setTimeoutInterval(double timeoutInterval) { m_timeoutInterval = timeoutInterval; }
         
-        const String& referrer() const { return m_referrer; }
-        void setReferrer(const String& referrer) { m_referrer = referrer; }
+        const KURL& mainDocumentURL() const { return m_mainDocumentURL; }
+        void setMainDocumentURL(const KURL& mainDocumentURL) { m_mainDocumentURL = mainDocumentURL; }
+        
+        const String& httpMethod() const { return m_httpMethod; }
+        void setHTTPMethod(const String& httpMethod) { m_httpMethod = httpMethod; }
+        
+        typedef HashMap<String, String, CaseInsensitiveHash<String> > HTTPHeaderMap;
 
-    public:
-        FormData postData;
-        bool reload;
+        const HTTPHeaderMap& httpHeaderFields() const { return m_httpHeaderFields; }
+        String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
+        void setHTTPHeaderField(const String& name, const String& value) { m_httpHeaderFields.set(name, value); }
+        void addHTTPHeaderField(const String& name, const String& value);
+        
+        String httpContentType() const { return httpHeaderField("Content-Type");  }
+        void setHTTPContentType(const String& httpContentType) { setHTTPHeaderField("Content-Type", httpContentType); }
+        
+        String httpReferrer() const { return httpHeaderField("Referer"); }
+        void setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
+        
+        String httpUserAgent() const { return httpHeaderField("User-Agent"); }
+        void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }
+        
+        const FormData& httpBody() const { return m_httpBody; }
+        FormData& httpBody() { return m_httpBody; }
+        void setHTTPBody(const FormData& httpBody) { m_httpBody = httpBody; } 
+        
+        bool allowHTTPCookies() const;
+        void setAllowHTTPCookies(bool);
+
     private:
+        static const int defaultTimeoutInterval = 60;
+
         KURL m_url;
-        String m_referrer;
-        String m_contentType;
-        bool m_doPost;
+        
+        ResourceRequestCachePolicy m_cachePolicy;
+        double m_timeoutInterval;
+        KURL m_mainDocumentURL;
+        String m_httpMethod;
+        HTTPHeaderMap m_httpHeaderFields;
+        FormData m_httpBody;
+        bool m_allowHTTPCookies;
     };
 
+    inline void ResourceRequest::addHTTPHeaderField(const String& name, const String& value) 
+    {
+        pair<HTTPHeaderMap::iterator, bool> result = m_httpHeaderFields.add(name, value); 
+        if (!result.second)
+            result.first->second += "," + value;
+    }
 }
 
 #endif

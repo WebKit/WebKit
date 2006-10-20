@@ -1,3 +1,65 @@
+2006-10-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - implement new ResourceRequest API and fix up code as appropriate
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::urlSelected):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+        * dom/DOMImplementation.cpp:
+        (WebCore::addString):
+        (WebCore::isSVG10Feature):
+        (WebCore::isSVG11Feature):
+        * dom/Document.h:
+        * editing/CommandByName.cpp:
+        * editing/JSEditor.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::submitForm):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/ResourceRequest.h:
+        (WebCore::):
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::cachePolicy):
+        (WebCore::ResourceRequest::setCachePolicy):
+        (WebCore::ResourceRequest::timeoutInterval):
+        (WebCore::ResourceRequest::setTimeoutInterval):
+        (WebCore::ResourceRequest::mainDocumentURL):
+        (WebCore::ResourceRequest::setMainDocumentURL):
+        (WebCore::ResourceRequest::httpMethod):
+        (WebCore::ResourceRequest::setHTTPMethod):
+        (WebCore::ResourceRequest::httpHeaderField):
+        (WebCore::ResourceRequest::setHTTPHeaderField):
+        (WebCore::ResourceRequest::httpContentType):
+        (WebCore::ResourceRequest::setHTTPContentType):
+        (WebCore::ResourceRequest::httpReferrer):
+        (WebCore::ResourceRequest::setHTTPReferrer):
+        (WebCore::ResourceRequest::httpUserAgent):
+        (WebCore::ResourceRequest::setHTTPUserAgent):
+        (WebCore::ResourceRequest::httpBody):
+        (WebCore::ResourceRequest::setHTTPBody):
+        (WebCore::ResourceRequest::addHTTPHeaderField):
+        * platform/FontCache.cpp:
+        (WebCore::computeHash):
+        * platform/StringHash.h:
+        (WTF::):
+        * platform/StringImpl.cpp:
+        (WebCore::equalIgnoringCase):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2006-10-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

@@ -566,10 +566,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return;
     }
         
-    // arguments
-    ResourceRequest request(m_frame->resourceRequest());
-    request.reload = reload;
-    m_frame->setResourceRequest(request);
     m_frame->setResponseMIMEType(contentType);
     
     // opening the URL

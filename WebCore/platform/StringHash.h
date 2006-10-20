@@ -60,7 +60,27 @@ namespace WTF {
         }
     };
     
-    class CaseInsensitiveHash {
+    template<> struct StrHash<WebCore::AtomicStringImpl*> : public StrHash<WebCore::StringImpl*> { };
+
+    template<> struct StrHash<RefPtr<WebCore::StringImpl> > {
+        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) { return key->hash(); }
+        static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
+        {
+            return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
+        }
+    };
+
+    template<> struct StrHash<WebCore::String> {
+        static unsigned hash(const WebCore::String& key) { return key.impl()->hash(); }
+        static bool equal(const WebCore::String& a, const WebCore::String& b)
+        {
+            return StrHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
+        }
+    };
+
+    template<typename T> struct CaseInsensitiveHash;
+
+    template<> class CaseInsensitiveHash<WebCore::StringImpl*> {
     private:
         // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
         static const unsigned PHI = 0x9e3779b9U;
@@ -168,21 +188,28 @@ namespace WTF {
         }
     };
 
-    template<> struct StrHash<WebCore::AtomicStringImpl*> : public StrHash<WebCore::StringImpl*> { };
+    template<> struct CaseInsensitiveHash<WebCore::AtomicStringImpl*> : public CaseInsensitiveHash<WebCore::StringImpl*> { };
 
-    template<> struct StrHash<RefPtr<WebCore::StringImpl> > {
-        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) { return key->hash(); }
+    template<> struct CaseInsensitiveHash<RefPtr<WebCore::StringImpl> > {
+        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) 
+        {
+            return CaseInsensitiveHash<WebCore::StringImpl*>::hash(key.get());
+        }
+
         static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
         {
-            return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
+            return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.get(), b.get());
         }
     };
 
-    template<> struct StrHash<WebCore::String> {
-        static unsigned hash(const WebCore::String& key) { return key.impl()->hash(); }
+    template<> struct CaseInsensitiveHash<WebCore::String> {
+        static unsigned hash(const WebCore::String& key)
+        {
+            return CaseInsensitiveHash<WebCore::StringImpl*>::hash(key.impl());
+        }
         static bool equal(const WebCore::String& a, const WebCore::String& b)
         {
-            return StrHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
+            return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
         }
     };
 
@@ -204,6 +231,15 @@ namespace WTF {
     };
     template<> struct HashKeyStorageTraits<StrHash<WebCore::String>, HashTraits<WebCore::String> > {
         typedef StrHash<WebCore::StringImpl*> Hash;
+        typedef HashTraits<WebCore::StringImpl*> Traits;
+    };
+
+    template<> struct HashKeyStorageTraits<CaseInsensitiveHash<RefPtr<WebCore::StringImpl> >, HashTraits<RefPtr<WebCore::StringImpl> > > {
+        typedef CaseInsensitiveHash<WebCore::StringImpl*> Hash;
+        typedef HashTraits<WebCore::StringImpl*> Traits;
+    };
+    template<> struct HashKeyStorageTraits<CaseInsensitiveHash<WebCore::String>, HashTraits<WebCore::String> > {
+        typedef CaseInsensitiveHash<WebCore::StringImpl*> Hash;
         typedef HashTraits<WebCore::StringImpl*> Traits;
     };
 

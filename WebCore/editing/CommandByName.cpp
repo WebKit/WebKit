@@ -47,7 +47,7 @@ struct CommandImp {
     bool (*enabledFn)(Frame* frame);
 };
 
-typedef HashMap<StringImpl*, const CommandImp*, CaseInsensitiveHash> CommandMap;
+typedef HashMap<StringImpl*, const CommandImp*, CaseInsensitiveHash<StringImpl*> > CommandMap;
 
 CommandMap* createCommandDictionary();
 

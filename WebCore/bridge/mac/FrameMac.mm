@@ -423,22 +423,21 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
     NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
     
-    if (!request.m_request.doPost()) {
+    if (request.m_request.httpMethod() != "POST") {
         [_bridge loadURL:request.m_request.url().getNSURL()
-                referrer:[_bridge referrer] 
-                  reload:request.m_request.reload
+                referrer:[_bridge referrer]
+                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
              userGesture:true
                   target:request.m_frameName
          triggeringEvent:_currentEvent
                     form:submitForm
               formValues:formValues];
     } else {
-        ASSERT(request.m_request.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:request.m_request.url().getNSURL()
                     referrer:[_bridge referrer] 
                       target:request.m_frameName
-                        data:arrayFromFormData(request.m_request.postData)
-                 contentType:request.m_request.contentType().substring(14)
+                        data:arrayFromFormData(request.m_request.httpBody())
+                 contentType:request.m_request.httpContentType()
              triggeringEvent:_currentEvent
                         form:submitForm
                   formValues:formValues];
@@ -463,7 +462,7 @@ void FrameMac::openURLRequest(const FrameLoadRequest& request)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     NSString *referrer;
-    String argsReferrer = request.m_request.referrer();
+    String argsReferrer = request.m_request.httpReferrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
@@ -471,7 +470,7 @@ void FrameMac::openURLRequest(const FrameLoadRequest& request)
     
     [_bridge loadURL:request.m_request.url().getNSURL()
             referrer:referrer
-              reload:request.m_request.reload
+              reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
          userGesture:userGestureHint()
               target:request.m_frameName
      triggeringEvent:nil
@@ -487,7 +486,7 @@ void FrameMac::urlSelected(const FrameLoadRequest& request)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSString* referrer;
-    String argsReferrer = request.m_request.referrer();
+    String argsReferrer = request.m_request.httpReferrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
@@ -495,7 +494,7 @@ void FrameMac::urlSelected(const FrameLoadRequest& request)
 
     [_bridge loadURL:request.m_request.url().getNSURL()
             referrer:referrer
-              reload:request.m_request.reload
+              reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
          userGesture:true
               target:request.m_frameName
      triggeringEvent:_currentEvent

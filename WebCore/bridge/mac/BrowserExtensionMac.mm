@@ -62,7 +62,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                String argsReferrer = request.m_request.referrer();
+                String argsReferrer = request.m_request.httpReferrer();
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;
@@ -71,7 +71,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
 
                 [frameBridge loadURL:url.getNSURL() 
                        referrer:referrer 
-                         reload:request.m_request.reload 
+                         reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData 
                     userGesture:true 
                          target:nil 
                 triggeringEvent:nil 

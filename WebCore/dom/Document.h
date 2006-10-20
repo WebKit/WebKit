@@ -782,7 +782,7 @@ private:
     mutable HashMap<AtomicStringImpl*, Element*> m_elementsById;
     mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
     
-    mutable HashMap<StringImpl*, Element*, CaseInsensitiveHash> m_elementsByAccessKey;
+    mutable HashMap<StringImpl*, Element*, CaseInsensitiveHash<StringImpl*> > m_elementsByAccessKey;
     
     InheritedBool m_designMode;
     

@@ -820,9 +820,6 @@ public:
 
   KURL url() const;
   
-  void setResourceRequest(const ResourceRequest&);
-  const ResourceRequest& resourceRequest() const;
-
   void setResponseMIMEType(const String&);
   const String& responseMIMEType() const;
   

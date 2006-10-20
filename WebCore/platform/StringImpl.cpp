@@ -915,7 +915,7 @@ bool equal(const StringImpl* a, const char* b)
 
 bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)
 {
-    return CaseInsensitiveHash::equal(a, b);
+    return CaseInsensitiveHash<StringImpl*>::equal(a, b);
 }
 
 bool equalIgnoringCase(const StringImpl* a, const char* b)

@@ -60,7 +60,7 @@ struct FontPlatformDataCacheKey {
 inline unsigned computeHash(const FontPlatformDataCacheKey& fontKey)
 {
     unsigned hashCodes[3] = {
-        CaseInsensitiveHash::hash(fontKey.m_family.impl()),
+        CaseInsensitiveHash<String>::hash(fontKey.m_family),
         fontKey.m_size,
         static_cast<unsigned>(fontKey.m_bold) << 1 | static_cast<unsigned>(fontKey.m_italic)
     };

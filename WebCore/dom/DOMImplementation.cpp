@@ -53,7 +53,7 @@ static bool qualifiedNameIsMalformed(const String&)
 
 #ifdef SVG_SUPPORT
 
-static void addString(HashSet<StringImpl*, CaseInsensitiveHash>& set, const
+static void addString(HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> >& set, const
 char* string)
 {
     StringImpl* s = new StringImpl(string);
@@ -64,7 +64,7 @@ char* string)
 static bool isSVG10Feature(const String &feature)
 {
     static bool initialized = false;
-    static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
+    static HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> > svgFeatures;
     if (!initialized) {
         // TODO: features need to be uncommented when we implement them
         // 1.0 features
@@ -87,7 +87,7 @@ static bool isSVG10Feature(const String &feature)
 static bool isSVG11Feature(const String &feature)
 {
     static bool initialized = false;
-    static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
+    static HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> > svgFeatures;
     if (!initialized) {
         // TODO: features need to be uncommented when we implement them
         // 1.1 features
