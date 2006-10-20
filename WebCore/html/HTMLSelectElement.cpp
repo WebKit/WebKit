@@ -164,7 +164,7 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     }
     if (deselect)
         deselectItems(element);
-    if (fireOnChange) {
+    if (fireOnChange && m_lastOnChangeIndex != optionIndex) {
         m_lastOnChangeIndex = optionIndex;
         onChange();
     }

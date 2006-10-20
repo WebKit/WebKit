@@ -1,5 +1,40 @@
 2006-10-19  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Ada.
+
+        Pippity-poppity popup tweaks.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed PopupMenu.cpp from project.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Only fire onChange if
+        requested and the new index is actually different than the old one.
+        * platform/IntPoint.h: Added another casting operator.
+        * platform/PopupMenu.cpp: Removed. The code in here, while
+        platform-independent, was only useful for the NSPopUpButtonCell
+        implementation of popup menus, so I've moved it to PopupMenuMac.mm.
+        * platform/PopupMenu.h: Moved the definition of PopupMenu::create into
+        the header since it's fairly simple. Made some more methods private now
+        that we don't have subclasses and virtual methods anymore.
+        (WebCore::PopupMenu::create):
+        (WebCore::PopupMenu::menuList):
+        (WebCore::PopupMenu::itemHeight):
+        (WebCore::PopupMenu::windowRect):
+        (WebCore::PopupMenu::listIndexAtPoint):
+        (WebCore::PopupMenu::focusedIndex):
+        (WebCore::PopupMenu::setWasClicked):
+        (WebCore::PopupMenu::wasClicked):
+        (WebCore::PopupMenu::setScrollOffset):
+        (WebCore::PopupMenu::scrollOffset):
+        (WebCore::PopupMenu::wheelDelta):
+        * platform/mac/PopupMenuMac.mm: Added the code from PopupMenu.cpp.
+        (WebCore::PopupMenu::populate): Call our own clear() method to clear
+        the menu.
+        * platform/win/IntPointWin.cpp: New casting operator.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator POINTS):
+
+2006-10-19  Adam Roben  <aroben@apple.com>
+
         Reviewed by Darin.
 
         Cleaning up Document::nextFocusNode and Document::previousFocusNode.

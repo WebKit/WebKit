@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0668E18A0ADD9624004128E0 /* PopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0668E1880ADD9624004128E0 /* PopupMenu.cpp */; };
 		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; };
 		0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */; };
 		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; };
@@ -2855,7 +2854,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0668E1880ADD9624004128E0 /* PopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PopupMenu.cpp; sourceTree = "<group>"; };
 		0668E1890ADD9624004128E0 /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
 		0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
 		066C772A0AB603B700238CC4 /* FileChooser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileChooser.h; sourceTree = "<group>"; };
@@ -8496,7 +8494,6 @@
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				A82398A509B3ACDB00B60641 /* PlugInInfoStore.h */,
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
-				0668E1880ADD9624004128E0 /* PopupMenu.cpp */,
 				F587852B02DE375901EA4122 /* RegularExpression.cpp */,
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
 				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
@@ -11631,7 +11628,6 @@
 				656D37440ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm in Sources */,
 				656D37470ADBA5DE00A4554D /* WebPolicyDecider.mm in Sources */,
 				656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */,
-				0668E18A0ADD9624004128E0 /* PopupMenu.cpp in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
 				6563A9A80ADF4094000ED2CD /* LoaderNSURLRequestExtras.m in Sources */,
 				14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */,

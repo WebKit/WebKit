@@ -43,6 +43,7 @@ typedef struct _NSPoint NSPoint;
 
 #if PLATFORM(WIN)
 typedef struct tagPOINT POINT;
+typedef struct tagPOINTS POINTS;
 #elif PLATFORM(QT)
 class QPoint;
 #endif
@@ -75,6 +76,8 @@ public:
 #if PLATFORM(WIN)
     IntPoint(const POINT&);
     operator POINT() const;
+    IntPoint(const POINTS&);
+    operator POINTS() const;
 #elif PLATFORM(QT)
     IntPoint(const QPoint&);
     operator QPoint() const;

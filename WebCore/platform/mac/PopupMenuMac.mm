@@ -26,6 +26,7 @@
 #import "HTMLNames.h"
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
+#import "HTMLSelectElement.h"
 #import "RenderMenuList.h"
 #import "WebCoreSystemInterface.h"
 
@@ -53,7 +54,7 @@ void PopupMenu::clear()
 void PopupMenu::populate()
 {
     if (m_popup)
-        [m_popup.get() removeAllItems];
+        clear();
     else {
         m_popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
         [m_popup.get() release]; // release here since the RetainPtr has retained the object already
@@ -62,7 +63,25 @@ void PopupMenu::populate()
     }
     BOOL messagesEnabled = [[m_popup.get() menu] menuChangedMessagesEnabled];
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:NO];
-    PopupMenu::addItems();
+    
+    ASSERT(menuList());
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(menuList()->node());
+    if (!select)
+        return;
+    const Vector<HTMLElement*>& items = select->listItems();
+    size_t size = items.size();
+    for (size_t i = 0; i < size; ++i) {
+        HTMLElement* element = items[i];
+        if (element->hasTagName(optionTag))
+            addOption(static_cast<HTMLOptionElement*>(element));
+        else if (element->hasTagName(optgroupTag))
+            addGroupLabel(static_cast<HTMLOptGroupElement*>(element));
+        else if (element->hasTagName(hrTag))
+            addSeparator();
+        else
+            ASSERT_NOT_REACHED();
+    }
+    
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 

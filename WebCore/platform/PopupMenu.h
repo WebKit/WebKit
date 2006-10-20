@@ -22,6 +22,8 @@
 #define POPUPMENU_H
 
 #include "Shared.h"
+
+#include "IntRect.h"
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
@@ -33,64 +35,83 @@ class NSPopUpButtonCell;
 #endif
 #elif PLATFORM(WIN)
 typedef struct HWND__* HWND;
-typedef struct tagDRAWITEMSTRUCT* LPDRAWITEMSTRUCT;
+typedef struct HDC__* HDC;
+typedef struct HBITMAP__* HBITMAP;
 #endif
 
 namespace WebCore {
 
 class FrameView;
-class IntRect;
 class HTMLOptionElement;
 class HTMLOptGroupElement;
 class RenderMenuList;
 
 class PopupMenu : public Shared<PopupMenu> {
 public:
-    static PassRefPtr<PopupMenu> create(RenderMenuList* menuList);
+    static PassRefPtr<PopupMenu> create(RenderMenuList* menuList) { return new PopupMenu(menuList); }
     ~PopupMenu();
     
     void disconnectMenuList() { m_menuList = 0; }
 
-    void clear();
-    void populate();
     void show(const IntRect&, FrameView*, int index);
     void hide();
     
-    bool up();
-    bool down();
-    
-    bool wasClicked() const { return m_wasClicked; }
-    void setWasClicked(bool b = true) { m_wasClicked = b; }
-
-    int focusedIndex() const;
-    
-    RenderMenuList* menuList() { return m_menuList; }
+    RenderMenuList* menuList() const { return m_menuList; }
 
 #if PLATFORM(WIN)
+    bool up();
+    bool down();
+
+    int itemHeight() const { return m_itemHeight; }
+    const IntRect& windowRect() const { return m_windowRect; }
+    IntRect clientRect() const;
+
+    int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
+    bool setFocusedIndex(int index, bool fireOnChange = false);
+    int focusedIndex() const { return m_focusedIndex; }
+
+    void paint(const IntRect& damageRect, HDC hdc = 0);
+
     HWND popupHandle() const { return m_popup; }
-    void drawItem(LPDRAWITEMSTRUCT);
+
+    void setWasClicked(bool b = true) { m_wasClicked = b; }
+    bool wasClicked() const { return m_wasClicked; }
+
+    void setScrollOffset(int offset) { m_scrollOffset = offset; }
+    int scrollOffset() const { return m_scrollOffset; }
+
+    void incrementWheelDelta(int delta);
+    void reduceWheelDelta(int delta);
+    int wheelDelta() const { return m_wheelDelta; }
 #endif
 
-protected:
-    void addItems();
+private:
+    RenderMenuList* m_menuList;
+    
+#if PLATFORM(MAC)
+    void clear();
+    void populate();
     void addSeparator();
     void addGroupLabel(HTMLOptGroupElement*);
     void addOption(HTMLOptionElement*);
 
-    void setPositionAndSize(const IntRect&, FrameView*);
-    
- private:
-    PopupMenu(RenderMenuList* menuList);
-    
-    RenderMenuList* m_menuList;
-    bool m_wasClicked;
-    
-#if PLATFORM(MAC)
     RetainPtr<NSPopUpButtonCell> m_popup;
 #elif PLATFORM(WIN)
+    void calculatePositionAndSize(const IntRect&, FrameView*);
+    void invalidateItem(int index);
+
     HWND m_popup;
-    HWND m_container;
+    HDC m_DC;
+    HBITMAP m_bmp;
+    bool m_wasClicked;
+    IntRect m_windowRect;
+    int m_itemHeight;
+    int m_focusedIndex;
+    int m_scrollOffset;
+    int m_wheelDelta;
 #endif
+
+    PopupMenu(RenderMenuList* menuList);
 };
 
 }
