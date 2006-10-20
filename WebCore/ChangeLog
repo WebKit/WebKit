@@ -1,5 +1,14 @@
 2006-10-20  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Geoff.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::timerFired):
+        Check if the timeout id is still in the table before trying to access it. If it isn't in the table
+        it has been deleted inside of the execute method.
+
+2006-10-20  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin and Geoff.
 
         Remove debugging output.

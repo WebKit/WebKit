@@ -1944,8 +1944,10 @@ void Window::timerFired(DOMWindowTimer* timer)
 {
     // Simple case for non-one-shot timers.
     if (timer->isActive()) {
+        int timeoutId = timer->timeoutId();
+
         timer->action()->execute(this);
-        if (timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
+        if (m_timeouts.contains(timeoutId) && timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
             timer->setNestingLevel(timer->nestingLevel() + 1);
             if (timer->nestingLevel() >= cMaxTimerNestingLevel)
                 timer->augmentRepeatInterval(cMinimumTimerInterval - timer->repeatInterval());
