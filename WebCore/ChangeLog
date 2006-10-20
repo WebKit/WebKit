@@ -1,3 +1,13 @@
+2006-10-19  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Cleaning up Document::nextFocusNode and Document::previousFocusNode.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nextFocusNode):
+        (WebCore::Document::previousFocusNode):
+
 2006-10-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
@@ -94,7 +104,7 @@
         Rolling out the this change since it caused a bad regression:
         <rdar://problem/4788524> REGRESSION: Incomplete repaint of text area when deleting (11277)
 
-    2006-10-12  Adele Peterson  <adele@apple.com>
+2006-10-12  Adele Peterson  <adele@apple.com>
           
         Reviewed by Dave Harrison.
           
