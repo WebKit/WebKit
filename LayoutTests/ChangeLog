@@ -1,3 +1,38 @@
+2006-10-20  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Beth "pants on fire" Dakin.
+        
+        Put some layout tests in their place.
+
+        * fast/dom/Window/window-object-cross-frame-calls-expected.txt: Added.
+        * fast/dom/Window/window-object-cross-frame-calls.html: Added.
+        * fast/dom/Window/window-onFocus-expected.checksum: Added.
+        * fast/dom/Window/window-onFocus-expected.png: Added.
+        * fast/dom/Window/window-onFocus-expected.txt: Added.
+        * fast/dom/Window/window-onFocus.html: Added.
+        * fast/dom/Window/window-xy-properties-expected.txt: Added.
+        * fast/dom/Window/window-xy-properties.html: Added.
+        * fast/dom/window-object-cross-frame-calls-expected.txt: Removed.
+        * fast/dom/window-object-cross-frame-calls.html: Removed.
+        * fast/dom/window-onFocus-expected.checksum: Removed.
+        * fast/dom/window-onFocus-expected.png: Removed.
+        * fast/dom/window-onFocus-expected.txt: Removed.
+        * fast/dom/window-onFocus.html: Removed.
+        * fast/dom/window-xy-properties-expected.txt: Removed.
+        * fast/dom/window-xy-properties.html: Removed.
+        * fast/html/xhtml-serialize-expected.txt: Added.
+        * fast/html/xhtml-serialize.html: Added.
+        * fast/js/resources/xhtml-serialize.js: Removed.
+        * fast/js/resources/xslt-fragment-in-empty-doc.js: Removed.
+        * fast/js/xhtml-serialize-expected.txt: Removed.
+        * fast/js/xhtml-serialize.html: Removed.
+        * fast/js/xslt-fragment-in-empty-doc-expected.txt: Removed.
+        * fast/js/xslt-fragment-in-empty-doc.html: Removed.
+        * fast/xsl/xslt-fragment-in-empty-doc-expected.txt: Added.
+        * fast/xsl/xslt-fragment-in-empty-doc.html: Added.
+        * fast/dom/resources/child.html: Removed.
+        * fast/dom/Window/resources/child.html: Added.
+
 2006-10-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

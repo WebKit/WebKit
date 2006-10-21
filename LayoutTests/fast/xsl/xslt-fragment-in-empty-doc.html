@@ -1,7 +1,14 @@
-description(
-"This test checks whether XSLTProcessor.transformToFragment() does not crash when the target document does not have a root node."
-);
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<p>This test checks whether XSLTProcessor.transformToFragment() does not crash
+when the target document does not have a root node.</p>
 
+<div id="console"></div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
 var xml = (new DOMParser()).parseFromString('<doc/>', 'application/xml');
 var xsl = (new DOMParser()).parseFromString(
     '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">' +
@@ -19,5 +26,7 @@ var f = p.transformToFragment(xml, ownerDocument);
 // "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces."
 ownerDocument = document.implementation.createDocument("", null, null);
 f = p.transformToFragment(xml, ownerDocument);
-
-var successfullyParsed = true;
+</script>
+<p>PASS: You didn't crash.</p>
+</body>
+</html>
