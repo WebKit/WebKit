@@ -1096,7 +1096,10 @@ sub GenerateImplementation
                 $parameterIndex++;
             }
 
+            push(@parameterNames, "ec") if $raisesExceptions;
+
             my @functionContent = ();
+            my $caller = "IMPL";
 
             # special case the XPathNSResolver
             if (defined $needsCustom{"XPathNSResolver"}) {
@@ -1116,9 +1119,16 @@ sub GenerateImplementation
                 $implIncludes{"Node.h"} = 1;
             }
 
-            push(@parameterNames, "ec") if $raisesExceptions;
+            if ($function->signature->extendedAttributes->{"UsesView"}) {
+                push(@functionContent, "    WebCore::DOMWindow* dv = $caller->defaultView();\n");
+                push(@functionContent, "    if (!dv)\n");
+                push(@functionContent, "        return nil;\n");
+                $implIncludes{"DOMWindow.h"} = 1;
+                $caller = "dv";
+            }
 
-            my $content = "IMPL->" . $functionName . "(" . join(", ", @parameterNames) . ")";
+
+            my $content = $caller . "->" . $functionName . "(" . join(", ", @parameterNames) . ")";
 
             if ($returnType eq "void") {
                 # Special case 'void' return type.

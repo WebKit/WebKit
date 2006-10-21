@@ -23,11 +23,11 @@ module core {
     interface [LegacyParent=KJS::DOMEventTargetNode, GenerateConstructor] Document : EventTargetNode {
 
         // DOM Level 1 Core
-        
+
         readonly attribute DocumentType doctype;
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
-        
+
         Element            createElement(in DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
@@ -151,6 +151,20 @@ module core {
 
 #if !defined(LANGUAGE_JAVASCRIPT)
         CSSStyleDeclaration createCSSStyleDeclaration();
+#endif
+
+#if defined(LANGUAGE_OBJECTIVE_C)
+        // DOM Level 2 Style Interface
+        [OldStyleObjC, UsesView] CSSStyleDeclaration getComputedStyle(in Element element,
+                                                                      in DOMString pseudoElement);
+
+        // WebKit extension
+        // FIXME: remove the first version once [Optional] is implemented for Objective-C.
+        [UsesView] CSSRuleList getMatchedCSSRules(in Element element,
+                                                  in DOMString pseudoElement);
+        [UsesView] CSSRuleList getMatchedCSSRules(in Element element,
+                                                  in DOMString pseudoElement,
+                                                  in [Optional] boolean authorOnly);
 #endif
 
     };

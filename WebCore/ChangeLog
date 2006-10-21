@@ -1,3 +1,20 @@
+2006-10-21  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11372
+        Auto-generate a few more Objective-C DOM methods.
+
+        - Auto-generate getMatchedCSSRules and getComputedStyle methods.
+
+        * bindings/objc/DOMCSS.h:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Document.idl:
+        * page/DOMWindow.idl:
+
 2006-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by aliu, landed by aliu.

@@ -42,20 +42,13 @@
 #import "CSSValueList.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DOMWindow.h"
-#import "Document.h"
 #import "StyleSheet.h"
 #import <objc/objc-class.h>
-#import <wtf/GetPtr.h>
 
 #ifdef SVG_SUPPORT
 #import "DOMSVGColor.h"
 #import "DOMSVGPaint.h"
 #endif
-
-namespace WebCore {
-    typedef DOMWindow AbstractView;
-}
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
@@ -1445,48 +1438,6 @@ namespace WebCore {
 - (void)setZIndex:(NSString *)zIndex
 {
     [self setProperty:@"z-index" value:zIndex priority:@""];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMDocument CSS Extensions
-
-@implementation DOMDocument (DOMViewCSS)
-
-- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
-{
-    WebCore::AbstractView* dv = [self _document]->defaultView();
-
-    if (!dv)
-        return nil;
-    
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:WTF::getPtr(dv->getComputedStyle([element _element], pseudoElement))];
-}
-
-@end
-
-@implementation DOMDocument (DOMViewCSSDeprecated)
-
-- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
-{
-    return [self getComputedStyle:elt pseudoElement:pseudoElt];
-}
-
-@end
-
-@implementation DOMDocument (DOMDocumentCSSExtensions)
-
-- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
-{
-    WebCore::AbstractView* dv = [self _document]->defaultView();
-
-    if (!dv)
-        return nil;
-    
-    // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _CSSRuleListWith:WTF::getPtr(dv->getMatchedCSSRules([element _element], pseudoElement, false))];
 }
 
 @end
