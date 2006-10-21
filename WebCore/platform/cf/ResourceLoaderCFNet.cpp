@@ -32,6 +32,8 @@
 #include "DocLoader.h"
 #include "Frame.h"
 
+#include <WTF/HashMap.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <process.h> // for _beginthread()
@@ -148,33 +150,20 @@ void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challeng
     // Do nothing right now
 }
 
-const unsigned BUF_LENGTH = 500;
-const char* dummyBytes = "GET / HTTP/1.1\r\n";
-void addHeadersFromString(CFHTTPMessageRef request, CFStringRef headerString) 
+void addHeadersFromHashMap(CFHTTPMessageRef request, const HashMap<String, String>& requestHeaders) 
 {
-    CFIndex headerLength = CFStringGetLength(headerString);
-    if (headerLength == 0) 
+    if (!requestHeaders.size())
         return;
 
-    CFHTTPMessageRef dummy = CFHTTPMessageCreateEmpty(0, TRUE);
-    CFHTTPMessageAppendBytes(dummy, (const UInt8*)dummyBytes, strlen(dummyBytes));
-    
-    UInt8 buffer[BUF_LENGTH];
-    UInt8* bytes = buffer;
-    CFIndex numBytes;
-    if (headerLength != CFStringGetBytes(headerString, CFRangeMake(0, headerLength), kCFStringEncodingUTF8, 0, FALSE, bytes, BUF_LENGTH, &numBytes)) {
-        CFStringGetBytes(headerString, CFRangeMake(0, headerLength), kCFStringEncodingUTF8, 0, FALSE, 0, 0, &numBytes);
-        bytes = (UInt8 *)malloc(numBytes);
-        CFStringGetBytes(headerString, CFRangeMake(0, headerLength), kCFStringEncodingUTF8, 0, FALSE, bytes, numBytes, &numBytes);
+    CFMutableDictionaryRef allHeaders = CFDictionaryCreateMutable(0, requestHeaders.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    HashMap<String, String>::const_iterator end = requestHeaders.end();
+    for (HashMap<String, String>::const_iterator it = requestHeaders.begin(); it != end; ++it) {
+        CFStringRef key = it->first.createCFString();
+        CFStringRef value = it->second.createCFString();
+        CFDictionaryAddValue(allHeaders, key, value);
+        CFRelease(key);
+        CFRelease(value);
     }
-    
-    CFHTTPMessageAppendBytes(dummy, bytes, numBytes);
-    if (bytes != buffer) 
-        free(bytes);
-    
-    CFDictionaryRef allHeaders = CFHTTPMessageCopyAllHeaderFields(dummy);
-    CFRelease(dummy);
-    
     _CFHTTPMessageSetMultipleHeaderFields(request, allHeaders);
     CFRelease(allHeaders);
 }
@@ -244,20 +233,17 @@ void runLoaderThread(void *unused)
 bool ResourceLoader::start(DocLoader* docLoader)
 {
     CFURLRef url = d->URL.createCFURL();
-    String str = d->method;
-    CFStringRef requestMethod = CFStringCreateWithCharacters(0, (const UniChar *)str.characters(), str.length());
+    CFStringRef requestMethod = d->method.createCFString();
     Boolean isPost = CFStringCompare(requestMethod, CFSTR("POST"), kCFCompareCaseInsensitive);
     CFHTTPMessageRef httpRequest = CFHTTPMessageCreateRequest(0, requestMethod, url, kCFHTTPVersion1_1);
+    CFStringRef userAgentString = docLoader->frame()->userAgent().createCFString();
+    CFHTTPMessageSetHeaderFieldValue(httpRequest, CFSTR("User-Agent"), userAgentString);
     CFRelease(requestMethod);
-    
+    CFRelease(userAgentString);
+
     ref();
     d->m_loading = true;
-    str = queryMetaData("customHTTPHeader");
-    CFStringRef headerString = CFStringCreateWithCharacters(0, (const UniChar *)str.characters(), str.length());
-    if (headerString) {
-        addHeadersFromString(httpRequest, headerString);
-        CFRelease(headerString);
-    }
+    addHeadersFromHashMap(httpRequest, d->m_requestHeaders);
 
     String referrer = docLoader->frame()->referrer();
     if (!referrer.isEmpty()) {

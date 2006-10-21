@@ -1,3 +1,14 @@
+2006-10-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Anders.
+
+        Send User-Agent on requests.
+        Send custom request headers properly.
+
+        * platform/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::addHeadersFromHashMap): Switch over to HashMap iteration from string parsing
+        (WebCore::ResourceLoader::start): Send proper User-Agent, change call to add headers
+
 2006-10-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Hyatt.
