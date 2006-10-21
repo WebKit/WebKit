@@ -901,11 +901,11 @@ static BOOL loggedObjectCacheSize = NO;
     int cacheSize = [[self _preferences] _objectCacheSize];
     int multiplier = 1;
     
+    // 2GB and greater will be 128mb.  1gb and greater will be 64mb.
+    // Otherwise just use 32mb.
     if (memSize >= (unsigned)(2048 * 1024 * 1024)) 
-        multiplier = 8;
-    else if (memSize >= 1024 * 1024 * 1024)
         multiplier = 4;
-    else if (memSize >= 512 * 1024 * 1024)
+    else if (memSize >= 1024 * 1024 * 1024)
         multiplier = 2;
 
 #ifndef NDEBUG

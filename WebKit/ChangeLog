@@ -1,3 +1,13 @@
+2006-10-20  David Hyatt  <hyatt@apple.com>
+
+        Tweak cache sizes so that they are back to the way they were,
+        except for < 512, which will stay doubled.
+
+        Reviewed by Tim H.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge getObjectCacheSize]):
+
 2006-10-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.
