@@ -1,3 +1,11 @@
+2006-10-21  Alice Liu  <alice.liu@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setWebView):
+
 2006-10-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Hatcher.
