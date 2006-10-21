@@ -119,7 +119,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([view _webView])];
+    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([page webView])];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
 
     ++WebBridgeCount;
@@ -133,9 +133,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:new WebEditorClient([view _webView])];
+    WebEditorClient* editorClient = new WebEditorClient();
+    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:new WebEditorClient()];
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
-
+    editorClient->setWebView([self webView]);
+    editorClient->deref();
     ++WebBridgeCount;
 
     [self setName:name];

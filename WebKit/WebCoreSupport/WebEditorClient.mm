@@ -35,6 +35,10 @@
 
 using namespace WebCore;
 
+WebEditorClient::WebEditorClient()
+    : m_webView(NULL) 
+{ }
+
 WebEditorClient::WebEditorClient(WebView* webView)
     : m_webView(webView) 
 {

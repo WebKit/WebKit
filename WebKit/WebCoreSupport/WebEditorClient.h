@@ -33,9 +33,11 @@
 class WebEditorClient : public WebCore::EditorClient
 {
 public:
+    WebEditorClient();
     WebEditorClient(WebView* webView);
     ~WebEditorClient();
 
+    void setWebView(WebView* webView) { m_webView = webView; }
     bool shouldDeleteRange(WebCore::Range *range);    
 //    bool shouldBeginEditingInRange(Range *range);
 //    bool shouldEndEditingInRange(Range *range);

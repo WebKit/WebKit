@@ -1,3 +1,23 @@
+2006-10-20  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed a problem where the webview passed to the EditorClient wasn't valid yet.  
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::setWebView):
+        added webview setter
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        add default constructor
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]):
+        use [page webView] since _webview isn't valid yet
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        use webview setter on editorclient
+
 2006-10-20  David Hyatt  <hyatt@apple.com>
 
         Tweak cache sizes so that they are back to the way they were,
