@@ -1,5 +1,17 @@
 2006-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by aliu, landed by aliu.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        * platform/qt/SoundQt.cpp: Added.
+        (WebCore::systemBeep):
+
+2006-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Mitz, landed by ap.
 
         Fix obscure crashes in RenderTableSection on Rob's musicdb file.

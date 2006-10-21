@@ -91,7 +91,7 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 }
 
 FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
-    : Frame(page, ownerElement)
+    : Frame(page, ownerElement, 0 /* editingClient */)
     , m_bindingRoot(0)
 {
     d->m_extension = new BrowserExtensionQt(this);

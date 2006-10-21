@@ -807,6 +807,7 @@ set(WebCore_SRCS
     ${SVG_SOURCES}
     ${XPATH_SOURCES}
 
+    editing/Editor.cpp
     editing/CommandByName.cpp
     editing/InsertIntoTextNodeCommand.cpp
     editing/WrapContentsInDummySpanCommand.cpp
@@ -1014,6 +1015,7 @@ set(WebCore_SRCS
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
     platform/Path.cpp
+    platform/qt/SoundQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/FileChooserQt.cpp
     platform/qt/IconQt.cpp
