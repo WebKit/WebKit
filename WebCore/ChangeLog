@@ -1,3 +1,14 @@
+2006-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mitz, landed by ap.
+
+        Fix obscure crashes in RenderTableSection on Rob's musicdb file.
+        The problem was a missing layout() call on the frame view.
+        Thanks go to Mitz Pettel for the initial hint!
+
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::paintEvent):
+
 2006-10-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Anders.
