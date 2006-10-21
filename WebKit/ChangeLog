@@ -1,5 +1,20 @@
 2006-10-21  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Maciej.
+
+        fix leaks.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setWebView):
+        only change webview if its different
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        actually use the client allocated in the line above instead of
+        allocation again, duh. 
+
+2006-10-21  Alice Liu  <alice.liu@apple.com>
+
         Build fix.
 
         * WebCoreSupport/WebEditorClient.h:

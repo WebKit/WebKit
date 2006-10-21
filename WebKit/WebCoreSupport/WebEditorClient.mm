@@ -52,9 +52,11 @@ WebEditorClient::~WebEditorClient()
 
 void WebEditorClient::setWebView(WebView* webView)
 { 
-    [m_webView release];
-    m_webView = webView; 
-    [m_webView retain];
+    if (m_webView != webView) {
+        [m_webView release];
+        m_webView = webView; 
+        [m_webView retain];
+    }
 }
 
 bool WebEditorClient::shouldDeleteRange(Range *range)
