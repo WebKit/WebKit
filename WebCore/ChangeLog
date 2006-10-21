@@ -1,3 +1,12 @@
+2006-10-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix some bad formatting.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2006-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

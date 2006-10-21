@@ -1530,10 +1530,10 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 if (strictParsing || isSubSelector || sel->relation() == CSSSelector::SubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByHoverRules(true);
-                        if (element != e && e->renderStyle())
-                            e->renderStyle()->setAffectedByHoverRules(true);
-                        if (e->hovered())
-                            return true;
+                    if (element != e && e->renderStyle())
+                        e->renderStyle()->setAffectedByHoverRules(true);
+                    if (e->hovered())
+                        return true;
                 }
                 break;
             }
@@ -1617,13 +1617,13 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
             // Pseudo-elements:
             case CSSSelector::PseudoFirstLine:
                 if (subject) {
-                    dynamicPseudo=RenderStyle::FIRST_LINE;
+                    dynamicPseudo = RenderStyle::FIRST_LINE;
                     return true;
                 }
                 break;
             case CSSSelector::PseudoFirstLetter:
                 if (subject) {
-                    dynamicPseudo=RenderStyle::FIRST_LETTER;
+                    dynamicPseudo = RenderStyle::FIRST_LETTER;
                     return true;
                 }
                 break;
