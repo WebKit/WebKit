@@ -40,6 +40,7 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "DOMWindow.h"
+#include "EditorClientQt.h"
 #include "FrameLoadRequest.h"
 #include "DOMImplementation.h"
 #include "BrowserExtensionQt.h"
@@ -90,8 +91,8 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
     r->layer()->scrollToOffset(x, y, true, true);
 }
 
-FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
-    : Frame(page, ownerElement, 0 /* editingClient */)
+FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* frameClient, EditorClient* editorClient)
+    : Frame(page, ownerElement, (editorClient ? editorClient : new EditorClientQt()))
     , m_bindingRoot(0)
 {
     d->m_extension = new BrowserExtensionQt(this);
@@ -111,7 +112,7 @@ FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
 
     setSettings(settings);
 
-    m_client = client;
+    m_client = frameClient;
     m_client->setFrame(this);
 }
 

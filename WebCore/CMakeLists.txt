@@ -1015,6 +1015,7 @@ set(WebCore_SRCS
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
     platform/Path.cpp
+    platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/FileChooserQt.cpp

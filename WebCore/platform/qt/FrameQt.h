@@ -43,7 +43,8 @@ namespace WebCore {
 
 class FrameQt : public Frame {
 public:
-    FrameQt(Page*, Element*, FrameQtClient*);
+    // If 'client' remains nil, a default editor client will be constructed.
+    FrameQt(Page*, Element*, FrameQtClient*, EditorClient* client = 0);
     virtual ~FrameQt();
 
     virtual bool openURL(const KURL&);
