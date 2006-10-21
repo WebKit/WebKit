@@ -59,7 +59,7 @@ FormState::FormState(DOMElement *form, NSDictionary *values, WebCoreFrameBridge 
 {
     NSEnumerator *keyEnumerator = [values keyEnumerator];
     while (NSString *key = [keyEnumerator nextObject])
-        m_values.set(key, [values objectForKey:values]);
+        m_values.set(key, [values objectForKey:key]);
 }
 
 NSDictionary *FormState::valuesAsNSDictionary() const

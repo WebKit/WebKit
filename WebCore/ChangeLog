@@ -1,3 +1,12 @@
+2006-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4795716> REGRESSION: User names and passwords aren't being saved (.Mac, etc.) -- WebKit formState passing empty strings
+
+        * loader/mac/WebFormState.mm: (WebCore::FormState::FormState): Fix typo -- need to pass "key"
+        as the key, not the dictionary itself.
+
 2006-10-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.
