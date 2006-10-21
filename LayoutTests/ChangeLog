@@ -1,3 +1,22 @@
+2006-10-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Changing these counters tests because they fail on some people's 
+        machines. They fail for people who have the Armenian glyphs the 
+        tests were looking for in the "expected" line. There is no point in 
+        testing that anyway, since we do not currently support Armenian in 
+        counters or in list markers.
+
+        * fast/css/counters/counter10-expected.checksum:
+        * fast/css/counters/counter10-expected.png:
+        * fast/css/counters/counter10-expected.txt:
+        * fast/css/counters/counter10.html:
+        * fast/css/counters/counters10-expected.checksum:
+        * fast/css/counters/counters10-expected.png:
+        * fast/css/counters/counters10-expected.txt:
+        * fast/css/counters/counters10.html:
+
 2006-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders.
