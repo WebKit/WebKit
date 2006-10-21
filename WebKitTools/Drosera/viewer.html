@@ -29,6 +29,17 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/javascript">
+        Element.prototype.firstParentWithClass = function(className) {
+            var node = this.parentNode;
+            while(node.className.indexOf(className) == -1) {
+                if(node == document) 
+                    return null;
+                node = node.parentNode;
+            }
+            return node;
+        }
+    </script>
     <style type="text/css">
         @import "viewer.css";
     </style>

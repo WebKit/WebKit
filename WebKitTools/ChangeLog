@@ -1,3 +1,31 @@
+2006-10-20  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Bug 11367: Inline Breakpoint Editor Improvements: Act III
+        http://bugs.webkit.org/show_bug.cgi?id=11367
+
+        Major breakpoint editor changes:
+        * Breakpoints can now either pause or log to console
+        * Code cleanup through use of XPath and converting breakpoints to objects
+        * Breakpoints now track how many times they've been reached
+        * UI tweaks
+        * The breakpoint editor now saves changes as they're entered
+        * Because changes are auto-saved now, the save button has been converted to a close button (images from PSMTabBarControl, BSD licensed)
+        * If an expression with no return is entered as a condition, it will be wrapped transparently with a return statement.
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject breakpointEditorHTML]): A way of loading this from an external file, as it was getting too complex to include inline.
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/Images/close.tif: Added.
+        * Drosera/Images/close_active.tif: Added.
+        * Drosera/Images/close_hover.tif: Added.
+        * Drosera/breakpointEditor.html: Added.
+        * Drosera/console.js: Added a way to append messages from outside the console window.
+        * Drosera/debugger.js:
+        * Drosera/viewer.css:
+        * Drosera/viewer.html:
+
 2006-10-18  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.

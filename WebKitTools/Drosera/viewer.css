@@ -92,6 +92,21 @@ td.gutter:after { content: attr(title); -webkit-user-select: none; }
     top: 20px;
 }
 
+.editor .top label {
+    margin-left: 15px;
+}
+
+.editor span.hitCounter {
+    margin-right: 4px;
+    margin-top: 1px;
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.editor select.editorDropdown {
+    margin-top: -1px;
+}
+
 .editor div.condition {
     position: relative;
     background-color: white;
@@ -106,22 +121,26 @@ td.gutter:after { content: attr(title); -webkit-user-select: none; }
     padding: 3px;
     border: 1px solid darkgray;
     top: -15px;
-    left: 60px;
-    margin-right: 60px;
+    left: 65px;
+    margin-right: 65px;
 }
 
-.editor button.save {
-    margin-right: 1px;
-    padding: 1px;
-    padding-right: 5px;
-    padding-left: 5px;
+.editor input.close {
+    margin:0px;
+    margin-right: -4px;
     float: right;
-    font-size: 10px;
-    background-color: rgb(34, 128, 186);
-    height: 18px;
-    border: 1px solid rgb(20, 114, 172);
+    background-color: transparent;
+    background-image:url("close.tif");
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 12px;
+    border: none;
 }
 
-.editor button.save:active {
-    background-color: rgb(14, 98, 166);
+.editor input.close:active {
+    background-image:url("close_active.tif");
+}
+
+.editor input.close:hover {
+    background-image:url("close_hover.tif");
 }

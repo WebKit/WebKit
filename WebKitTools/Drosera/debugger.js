@@ -47,8 +47,7 @@ var steppingStack = 0;
 var pauseOnNextStatement = false;
 var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
-var enabledBreakpoint = "break";
-var breakpointEditorHTML = '<div class="top">Edit Breakpoint:<label><input type="checkbox" onclick="window.parent.toggleBreakpointForEditor(this.parentNode.parentNode.parentNode)"></input>Enable</label><button class="save" onclick="window.parent.saveBreakpointForEditor(this.parentNode.parentNode)">Save</button></div><div class="bottom"><label for="editorCondition">Condition:</label><div class="condition"></div></div>';
+var breakpointEditorHTML = DebuggerDocument.breakpointEditorHTML();
 var pendingAction = null;
 
 ScriptCallFrame = function (functionName, index, row)
@@ -88,7 +87,8 @@ ScriptCallFrame.prototype.loadVariables = function ()
     }
 }
 
-function sleep(numberMillis) {
+function sleep(numberMillis) 
+{
     var now = new Date();
     var exitTime = now.getTime() + numberMillis;
     while (true) {
@@ -98,16 +98,19 @@ function sleep(numberMillis) {
     }
 }
 
-function headerMouseDown(element) {
+function headerMouseDown(element) 
+{
     if (!isResizingColumn) 
         element.style.background = "url(glossyHeaderPressed.png) repeat-x";
 }
 
-function headerMouseUp(element) {
+function headerMouseUp(element) 
+{
     element.style.background = "url(glossyHeader.png) repeat-x";
 }
 
-function headerMouseOut(element) {
+function headerMouseOut(element) 
+{
     element.style.background = "url(glossyHeader.png) repeat-x";
 }
 
@@ -139,7 +142,8 @@ function filesDividerDrag(event)
     }
 }
 
-function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) {
+function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) 
+{
     element.dragging = true;
     element.dragLastY = event.clientY + window.scrollY;
     element.dragLastX = event.clientX + window.scrollX;
@@ -149,14 +153,16 @@ function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) {
     event.preventDefault();
 }
 
-function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
+function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) 
+{
     element.dragging = false;
     document.removeEventListener("mousemove", dividerDrag, true);
     document.removeEventListener("mouseup", dividerDragEnd, true);
     document.body.style.cursor = null;
 }
 
-function dividerDrag(event) {
+function dividerDrag(event) 
+{
     var element = document.getElementById("divider");
     if (document.getElementById("divider").dragging == true) {
         var main = document.getElementById("main");
@@ -173,23 +179,28 @@ function dividerDrag(event) {
     }
 }
 
-function sourceDividerDragStart(event) {
+function sourceDividerDragStart(event) 
+{
     dividerDragStart(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event, "row-resize");
 }
 
-function sourceDividerDragEnd(event) {
+function sourceDividerDragEnd(event) 
+{
     dividerDragEnd(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event);
 }
 
-function infoDividerDragStart(event) {
+function infoDividerDragStart(event) 
+{
     dividerDragStart(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event, "col-resize");
 }
 
-function infoDividerDragEnd(event) {
+function infoDividerDragEnd(event) 
+{
     dividerDragEnd(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event);
 }
 
-function infoDividerDrag(event) {
+function infoDividerDrag(event) 
+{
     var element = document.getElementById("infoDivider");
     if (document.getElementById("infoDivider").dragging == true) {
         var main = document.getElementById("main");
@@ -206,17 +217,20 @@ function infoDividerDrag(event) {
     }
 }
 
-function columnResizerDragStart(event) {
+function columnResizerDragStart(event) 
+{
     isResizingColumn = true;
     dividerDragStart(document.getElementById("variableColumnResizer"), columnResizerDrag, columnResizerDragEnd, event, "col-resize");
 }
 
-function columnResizerDragEnd(event) {
+function columnResizerDragEnd(event) 
+{
     isResizingColumn = false;
     dividerDragEnd(document.getElementById("variableColumnResizer"), columnResizerDrag, columnResizerDragEnd, event);
 }
 
-function columnResizerDrag(event) {
+function columnResizerDrag(event) 
+{
     var element = document.getElementById("variableColumnResizer");
     if (element.dragging == true) {
         var main = document.getElementById("rightPane");
@@ -240,7 +254,8 @@ function columnResizerDrag(event) {
     }
 }
 
-function constrainedWidthFromElement(width, element, constrainLeft, constrainRight) {
+function constrainedWidthFromElement(width, element, constrainLeft, constrainRight) 
+{
     if (constrainLeft === undefined) constrainLeft = 0.25;
     if (constrainRight === undefined) constrainRight = 0.75;
     
@@ -251,7 +266,8 @@ function constrainedWidthFromElement(width, element, constrainLeft, constrainRig
     return width;
 }
 
-function constrainedHeightFromElement(height, element) {
+function constrainedHeightFromElement(height, element) 
+{
     if (height < element.clientHeight * 0.25)
         height = element.clientHeight * 0.25;
     else if (height > element.clientHeight * 0.75)
@@ -259,18 +275,21 @@ function constrainedHeightFromElement(height, element) {
     return height;
 }
 
-function loaded() {
+function loaded() 
+{
     document.getElementById("divider").addEventListener("mousedown", sourceDividerDragStart, false);
     document.getElementById("infoDivider").addEventListener("mousedown", infoDividerDragStart, false);
     document.getElementById("filesDivider").addEventListener("mousedown", filesDividerDragStart, false);
     document.getElementById("variableColumnResizer").addEventListener("mousedown", columnResizerDragStart, false);
 }
 
-function isPaused() {
+function isPaused() 
+{
     return DebuggerDocument.isPaused();
 }
 
-function pause() {
+function pause() 
+{
     DebuggerDocument.pause();
 }
 
@@ -323,122 +342,174 @@ function stepOut()
     DebuggerDocument.resume();
 }
 
-Element.prototype.removeStyleClass = function(className) {
+Element.prototype.removeStyleClass = function(className) 
+{
     if (this.hasStyleClass(className))
         this.className = this.className.replace(className, "");
 }
 
-Element.prototype.addStyleClass = function(className) {
+Element.prototype.addStyleClass = function(className) 
+{
     if (!this.hasStyleClass(className))
         this.className += (this.className.length ? " " + className : className);
 }
 
-Element.prototype.hasStyleClass = function(className) {
+Element.prototype.hasStyleClass = function(className) 
+{
     return this.className.indexOf(className) != -1;
+}
+
+Element.prototype.firstParentWithClass = function(className) 
+{
+    var node = this.parentNode;
+    while(!node.hasStyleClass(className)) {
+        if (node == document) 
+            return null;
+        node = node.parentNode;
+    }
+    return node;
+}
+
+Element.prototype.query = function(query) 
+{
+    return document.evaluate(query, this, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
 function breakpointAction(event)
 {
-    var row = event.target.parentNode;
     var file = files[currentFile];
-    var lineNum = parseInt(event.target.title);
+    var lineNum = event.target.title;
     
-    if (row.hasStyleClass("breakpoint")) {
+    if (file.breakpoints[lineNum]) {
         if (!pendingAction)
-            pendingAction = setTimeout(toggleBreakpoint, DebuggerDocument.doubleClickMilliseconds(), row, file, lineNum);  
+            pendingAction = setTimeout(toggleBreakpointOnLine, DebuggerDocument.doubleClickMilliseconds(), lineNum);  
     } else
-        createBreakpoint(row, file, lineNum);
+        file.breakpoints[lineNum] = new BreakPoint(event.target.parentNode, file, lineNum);
 }
 
-function createBreakpoint(row, file, lineNum)
+BreakPoint = function(row, file, line) 
 {
+    this.row = row;
+    this.file = file;
+    this.line = line;
     row.addStyleClass("breakpoint");
     row.removeStyleClass("disabled");
-    file.breakpoints[lineNum] = enabledBreakpoint;
-    file.disabledBreakpoints[lineNum] = null;
+    this.value = "break";
+    this.enabled = true;
+    this.editor = null;
+    this.type = 0;
+    this.hitcount = 0;
 }
 
-function toggleBreakpointEditor(event)
+function toggleBreakpointEditorOnLine(lineNum)
 {
     if (pendingAction) {
         clearTimeout(pendingAction);
         pendingAction = null;
     }
-    var row = event.target.parentNode;
     var file = files[currentFile];
-    var lineNum = parseInt(event.target.title);
-    if (row.hasStyleClass("breakpoint")) {
-        var editor = file.breakpointEditors[lineNum];
+    bp = file.breakpoints[lineNum];
+    if (bp) {
+        var editor = bp.editor;
         if (!editor) {
             var sourcesDocument = document.getElementById("sources").contentDocument;
             editor = sourcesDocument.createElement("div");
             editor.className = "editor";
             editor.id = lineNum;
             editor.innerHTML = breakpointEditorHTML;
+            
+            bp.row.childNodes[1].appendChild(editor);
+            
+            bp.editor = editor;
+            file.breakpoints[lineNum] = bp;
 
-            // set the enabled checkbox to the correct state
-            editor.getElementsByTagName("input")[0].checked = !row.hasStyleClass("disabled");
-            
-            // set the condition field to reflect the breakpoint
-            setConditionFieldText(editor, lineNum);
-            
-            row.childNodes[1].appendChild(editor);
-            file.breakpointEditors[lineNum] = editor; 
+            editor.query('//input[@class="enable"]').checked = bp.enabled;
+
+            editor.query('//select[@class="editorDropdown"]').selectedIndex = bp.type;
+            updateBreakpointTypeOnLine(lineNum);
+
+            editor.query('//span[@class="hitCounter"]').innerText = bp.hitcount;
+                
+            setConditionFieldText(bp);
         } else {
-            row.childNodes[1].removeChild(editor);
-            file.breakpointEditors[lineNum] = null;
+            saveBreakpointOnLine(lineNum);
+            bp.row.childNodes[1].removeChild(editor);
+            bp.editor = null;
         }
     }
 }
 
-function setConditionFieldText(editor, lineNum)
+function updateBreakpointTypeOnLine(line)
 {
-    var conditionField = editor.childNodes[1].childNodes[1];
-    var functionBody = files[currentFile].breakpoints[lineNum];
+    var breakpoint = files[currentFile].breakpoints[line];
+    var editor = breakpoint.editor;
+    var label = editor.query('//label[@class="conditionLabel"]');
+    var dropdown = editor.query('//select[@class="editorDropdown"]');
+    breakpoint.type = dropdown.selectedIndex;
+    switch(breakpoint.type) {
+        case 0:
+            label.innerText = "Condition:";
+            break;
+        case 1:
+            label.innerText = "Expression:";
+            break;
+    }
+}
+
+function setConditionFieldText(breakpoint)
+{
+    var conditionField = breakpoint.editor.query('//div[@class="condition"]');
+    
+    var functionBody = breakpoint.value;
     if (!functionBody || functionBody == "break")
         functionBody = "";
     else {
-        var startIndex = functionBody.indexOf("{") + 1;
-        var endIndex = functionBody.lastIndexOf("}");
+        var startIndex = functionBody.indexOf("return((") + 8;
+        var endIndex = null;
+        if (startIndex != 7) //-1 + 8, yes, that's lame
+            endIndex = functionBody.lastIndexOf("))");
+        else {
+            startIndex = functionBody.indexOf("{") + 1;
+            endIndex = functionBody.lastIndexOf("}"); 
+        }
         functionBody = functionBody.substring(startIndex, endIndex);
     }
     conditionField.innerText = functionBody;
+    conditionField.addEventListener("keyup", new Function("saveBreakpointOnLine(" + breakpoint.line + ");"), false);
+    conditionField.focus();
 }
 
-function toggleBreakpointForEditor(editor)
+function saveBreakpointOnLine(lineNum)
 {
     var file = files[currentFile];
-    var lineNum = parseInt(editor.id);
+    var breakpoint = file.breakpoints[lineNum];
     row = file.element.firstChild.childNodes.item(lineNum - 1);
-    toggleBreakpoint(row, file, lineNum);
-}
-
-function saveBreakpointForEditor(editor)
-{
-    var file = files[currentFile];
-    var lineNum = parseInt(editor.id);
-    row = file.element.firstChild.childNodes.item(lineNum - 1);
-    file.breakpoints[lineNum] = "__drosera_breakpoint_conditional_func = function() { " + editor.childNodes[1].childNodes[1].innerText + " }; __drosera_breakpoint_conditional_func();";
-    row.childNodes[1].removeChild(editor);
-    file.breakpointEditors[lineNum] = null;
-}
-
-function toggleBreakpoint(row, file, lineNum)
-{
-    pendingAction = null;
-    if (row.hasStyleClass("disabled"))
-        row.removeStyleClass("disabled");    
+    var editor = breakpoint.editor;
+    var body = editor.query('//div[@class="condition"]').innerText;
+    var actionIndex = editor.query('//select[@class="editorDropdown"]').selectedIndex;
+    if (body.length == 0)
+        breakpoint.value = "break";
+    else if (body.indexOf("return") != -1)
+        breakpoint.value = "__drosera_breakpoint_conditional_func = function() {" + body + "}; __drosera_breakpoint_conditional_func();";
     else
-        row.addStyleClass("disabled");
+        breakpoint.value = "__drosera_breakpoint_conditional_func = function() { return((" + body + ")); }; __drosera_breakpoint_conditional_func();";
+}
+
+function toggleBreakpointOnLine(lineNum)
+{
+    var breakpoint = files[currentFile].breakpoints[lineNum];
+    pendingAction = null;
+    if (breakpoint.enabled)
+        breakpoint.row.addStyleClass("disabled");    
+    else
+        breakpoint.row.removeStyleClass("disabled");
     
-    var hack = row.offsetTop; // force a relayout if needed.
+    var hack = breakpoint.row.offsetTop; // force a relayout if needed.
     
-    var temp = file.breakpoints[lineNum];
-    file.breakpoints[lineNum] = file.disabledBreakpoints[lineNum];
-    file.disabledBreakpoints[lineNum] = temp;
-    var editor = file.breakpointEditors[lineNum];
+    breakpoint.enabled = !breakpoint.enabled;
+    var editor = breakpoint.editor;
     if (editor) {
-        editor.childNodes[0].childNodes[1].childNodes[0].checked = !row.hasStyleClass("disabled");
+        editor.query('//input[@class="enable"]').checked = breakpoint.enabled;
         setConditionFieldText(editor, lineNum);
     }
 }
@@ -474,34 +545,27 @@ function breakpointDrag(event)
     if (draggingBreakpoint.started || deltaX > 4 || deltaY > 4 || deltaX < -4 || deltaY < -4) {
     
         if (!draggingBreakpoint.started) {
-            var node = draggingBreakpoint.parentNode;
-            draggingBreakpoint.isDisabled = node.hasStyleClass("disabled");
-            node.removeStyleClass("breakpoint");
-            node.removeStyleClass("disabled");
-            
-            var lineNum = parseInt(draggingBreakpoint.title);
+            var lineNum = draggingBreakpoint.title;
             var file = files[currentFile];
-            
-            var editor = file.breakpointEditors[lineNum];
-            if (editor) {
-                node.childNodes[1].removeChild(editor);
-                file.breakpointEditors[lineNum] = null;
-            }
+            var breakpoint = file.breakpoints[lineNum];
+            draggingBreakpoint.breakpoint = breakpoint;
+            breakpoint.row.removeStyleClass("breakpoint");
+            breakpoint.row.removeStyleClass("disabled");
+
+            var editor = breakpoint.editor;
+            if (editor)
+                toggleBreakpointEditorOnLine(lineNum);
             
             draggingBreakpoint.started = true;
                         
-            if (draggingBreakpoint.isDisabled)
-                draggingBreakpoint.breakFunction = files[currentFile].disabledBreakpoints[lineNum];
-            else
-                draggingBreakpoint.breakFunction = files[currentFile].breakpoints[lineNum];
             file.breakpoints[lineNum] = null;
-            file.disabledBreakpoints[lineNum] = null;
 
             var dragImage = sourcesDocument.createElement("img");
-            if (draggingBreakpoint.isDisabled)
-                dragImage.src = "breakPointDisabled.tif";
-            else
+            if (draggingBreakpoint.breakpoint.enabled)
                 dragImage.src = "breakPoint.tif";
+            else
+                dragImage.src = "breakPointDisabled.tif";
+
             dragImage.id = "breakpointDrag";
             dragImage.style.top = y - 8 + "px";
             dragImage.style.left = x - 12 + "px";
@@ -560,14 +624,12 @@ function breakpointDragEnd(event)
     if (!tr)
         return;
         
-    if (draggingBreakpoint.isDisabled) {
+    var breakpoint = draggingBreakpoint.breakpoint;
+    breakpoint.row = tr;
+    file.breakpoints[row] = breakpoint;
+    
+    if (!breakpoint.enabled)
         tr.addStyleClass("disabled");
-        file.disabledBreakpoints[row] = draggingBreakpoint.breakFunction;
-        file.breakpoints[row] = null;
-    } else {
-        file.disabledBreakpoints[row] = null;
-        file.breakpoints[row] = draggingBreakpoint.breakFunction;
-    }
 
     tr.addStyleClass("breakpoint");
     
@@ -839,7 +901,7 @@ function loadFile(fileIndex, manageNavLists)
             td.className = "gutter";
             td.title = (i + 1);
             td.addEventListener("click", breakpointAction, true);
-            td.addEventListener("dblclick", toggleBreakpointEditor, true);
+            td.addEventListener("dblclick", function() { toggleBreakpointEditorOnLine(event.target.title); }, true);
             td.addEventListener("mousedown", moveBreakPoint, true);
             tr.appendChild(td);
 
@@ -1031,8 +1093,6 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         file = new Object();
         file.scripts = new Array();
         file.breakpoints = new Array();
-        file.disabledBreakpoints = new Array();
-        file.breakpointEditors = new Array();
         file.source = (fileSource.length ? fileSource : source);
         file.url = (url.length ? url : null);
         file.loaded = false;
@@ -1112,7 +1172,32 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
     lastStatement = [sourceId, line];
     
     var breakpoint = file.breakpoints[line];
-    var shouldBreak = breakpoint && (breakpoint == "break" || DebuggerDocument.evaluateScript_inCallFrame_(breakpoint, 0) == 1);
+
+    var shouldBreak = false;
+
+    if (breakpoint && breakpoint.enabled) {
+        switch(breakpoint.type) {
+            case 0:
+                shouldBreak = (breakpoint.value == "break" || DebuggerDocument.evaluateScript_inCallFrame_(breakpoint.value, 0) == 1);
+                if (shouldBreak)
+                    breakpoint.hitcount++;
+                break;
+            case 1:
+                var message = "Hit breakpoint on line " + line;
+                if (breakpoint.value != "break")
+                    message = DebuggerDocument.evaluateScript_inCallFrame_(breakpoint.value, 0);
+                if (consoleWindow)
+                    consoleWindow.appendMessage("", message);
+                breakpoint.hitcount++;
+                break;
+        }
+        var editor = breakpoint.editor;
+        var counter = null;
+        if (editor)
+            counter = breakpoint.editor.query('//span[@class="hitCounter"]');
+        if (counter)
+            counter.innerText = breakpoint.hitcount;
+    }
     
     if (pauseOnNextStatement || shouldBreak || (steppingOver && !steppingStack)) {
         pause();

@@ -60,6 +60,10 @@
 		5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1C3487970A81208400101C5C /* Drosera.icns */; };
 		63D54BD70AE600560064C440 /* breakpointeditor.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D54BD60AE600560064C440 /* breakpointeditor.png */; };
 		63D54CBD0AE72C990064C440 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D54CBC0AE72C990064C440 /* Carbon.framework */; };
+		63D54D7E0AE75CF10064C440 /* close_active.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63D54D7B0AE75CF10064C440 /* close_active.tif */; };
+		63D54D7F0AE75CF10064C440 /* close_hover.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63D54D7C0AE75CF10064C440 /* close_hover.tif */; };
+		63D54D800AE75CF10064C440 /* close.tif in Resources */ = {isa = PBXBuildFile; fileRef = 63D54D7D0AE75CF10064C440 /* close.tif */; };
+		63D54F780AE8280F0064C440 /* breakpointEditor.html in Resources */ = {isa = PBXBuildFile; fileRef = 63D54F770AE8280F0064C440 /* breakpointEditor.html */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */; };
 		8D15AC310486D014006FF6A4 /* DebuggerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */; settings = {ATTRIBUTES = (); }; };
@@ -143,6 +147,10 @@
 		32DBCF750370BD2300C91783 /* Drosera.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Drosera.pch; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		63D54BD60AE600560064C440 /* breakpointeditor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = breakpointeditor.png; sourceTree = "<group>"; };
 		63D54CBC0AE72C990064C440 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		63D54D7B0AE75CF10064C440 /* close_active.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = close_active.tif; sourceTree = "<group>"; };
+		63D54D7C0AE75CF10064C440 /* close_hover.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = close_hover.tif; sourceTree = "<group>"; };
+		63D54D7D0AE75CF10064C440 /* close.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = close.tif; sourceTree = "<group>"; };
+		63D54F770AE8280F0064C440 /* breakpointEditor.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = breakpointEditor.html; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -201,6 +209,9 @@
 		1CC058B70A44A210006FE533 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				63D54D7B0AE75CF10064C440 /* close_active.tif */,
+				63D54D7C0AE75CF10064C440 /* close_hover.tif */,
+				63D54D7D0AE75CF10064C440 /* close.tif */,
 				63D54BD60AE600560064C440 /* breakpointeditor.png */,
 				15CE854F0ADBEA610078A734 /* fileIcon.jpg */,
 				15CE85500ADBEA610078A734 /* siteCollapsed.tif */,
@@ -281,6 +292,7 @@
 				1C6F861F0A599F65004FCD89 /* console.js */,
 				1C6F84540A58EE06004FCD89 /* console.html */,
 				1C6F84530A58EE06004FCD89 /* console.css */,
+				63D54F770AE8280F0064C440 /* breakpointEditor.html */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -441,6 +453,10 @@
 				15CE85570ADBEA620078A734 /* siteIcon.tif in Resources */,
 				15CE85580ADBEA620078A734 /* SourceArrowOpen.png in Resources */,
 				63D54BD70AE600560064C440 /* breakpointeditor.png in Resources */,
+				63D54D7E0AE75CF10064C440 /* close_active.tif in Resources */,
+				63D54D7F0AE75CF10064C440 /* close_hover.tif in Resources */,
+				63D54D800AE75CF10064C440 /* close.tif in Resources */,
+				63D54F780AE8280F0064C440 /* breakpointEditor.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

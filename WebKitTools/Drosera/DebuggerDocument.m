@@ -177,6 +177,14 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 }
 
 #pragma mark -
+#pragma mark File Loading
+
+- (NSString *)breakpointEditorHTML
+{
+    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"breakpointEditor" ofType:@"html"]];
+}
+
+#pragma mark -
 #pragma mark Pause & Step
 
 - (BOOL)isPaused
