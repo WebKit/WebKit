@@ -30,14 +30,17 @@
 
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <WebCore/DOMHTMLElementInternal.h>
 #import <WebCore/DOMRangeInternal.h>
 #import "WebEditingDelegate.h"
+#import "WebEditingDelegatePrivate.h"
 
 using namespace WebCore;
 
 WebEditorClient::WebEditorClient()
     : m_webView(NULL) 
-{ }
+{
+}
 
 WebEditorClient::WebEditorClient(WebView* webView)
     : m_webView(webView) 
@@ -59,9 +62,14 @@ void WebEditorClient::setWebView(WebView* webView)
     }
 }
 
-bool WebEditorClient::shouldDeleteRange(Range *range)
+bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldDeleteDOMRange:[DOMRange _rangeWith:range]];
+}
+
+bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
+{
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldShowDeleteInterfaceForElement:[DOMHTMLElement _HTMLElementWith:element]];
 }
 
 /*

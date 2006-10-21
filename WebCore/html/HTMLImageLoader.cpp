@@ -55,6 +55,23 @@ HTMLImageLoader::~HTMLImageLoader()
     m_element->document()->removeImage(this);
 }
 
+void HTMLImageLoader::setImage(CachedImage *newImage)
+{
+    CachedImage *oldImage = m_image;
+    if (newImage != oldImage) {
+        setLoadingImage(newImage);
+        m_firedLoad = true;
+        m_imageComplete = true;
+        if (newImage)
+            newImage->ref(this);
+        if (oldImage)
+            oldImage->deref(this);
+    }
+
+    if (RenderImage* renderer = static_cast<RenderImage*>(element()->renderer()))
+        renderer->resetAnimation();
+}
+
 void HTMLImageLoader::setLoadingImage(CachedImage *loadingImage)
 {
     m_firedLoad = false;

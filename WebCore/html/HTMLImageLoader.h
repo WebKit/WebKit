@@ -42,7 +42,9 @@ public:
 
     Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }
+
     CachedImage* image() const { return m_image; }
+    void setImage(CachedImage*);
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 

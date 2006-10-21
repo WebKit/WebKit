@@ -32,6 +32,7 @@
 
 #import <WebKit/DOM.h>
 #import <WebKit/WebEditingDelegate.h>
+#import <WebKit/WebEditingDelegatePrivate.h>
 #import <WebKit/WebView.h>
 
 @implementation WebDefaultEditingDelegate
@@ -44,6 +45,11 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
         sharedDelegate = [[WebDefaultEditingDelegate alloc] init];
     }
     return sharedDelegate;
+}
+
+- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element
+{
+    return NO;
 }
 
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range

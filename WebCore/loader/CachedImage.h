@@ -42,6 +42,7 @@ class Image;
 class CachedImage : public CachedResource, public ImageAnimationObserver {
 public:
     CachedImage(DocLoader*, const String& url, CachePolicy, time_t expireDate);
+    CachedImage(Image*);
     virtual ~CachedImage();
 
     Image* image() const;

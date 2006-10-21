@@ -29,6 +29,7 @@
 #include "RenderTable.h"
 
 #include "AutoTableLayout.h"
+#include "DeleteButtonController.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
 #include "HTMLNames.h"
@@ -154,6 +155,10 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         case TABLE:
             // Allow a form to just sit at the top level.
             wrapInAnonymousSection = !isTableElement || !child->element() || !(child->element()->hasTagName(formTag) && document()->isHTMLDocument());
+
+            // FIXME: Allow the delete button container element to sit at the top level. This is needed until http://bugs.webkit.org/show_bug.cgi?id=11363 is fixed.
+            if (wrapInAnonymousSection && child->element() && child->element()->isHTMLElement() && static_cast<HTMLElement*>(child->element())->id() == DeleteButtonController::containerElementIdentifier)
+                wrapInAnonymousSection = false;
             break;
         }
 

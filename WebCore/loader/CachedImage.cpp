@@ -56,6 +56,16 @@ CachedImage::CachedImage(DocLoader* docLoader, const String& url, CachePolicy ca
         m_loading = false;
 }
 
+CachedImage::CachedImage(Image* image)
+    : CachedResource(String(), ImageResource, CachePolicyCache, 0)
+    , m_dataSize(0)
+{
+    m_image = image;
+    m_errorOccurred = false;
+    m_status = Cached;
+    m_loading = false;
+}
+
 CachedImage::~CachedImage()
 {
     delete m_image;

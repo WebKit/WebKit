@@ -26,37 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/EditorClient.h>
+#import <Cocoa/Cocoa.h>
 
 @class WebView;
+@class DOMHTMLElement;
 
-class WebEditorClient : public WebCore::EditorClient {
-public:
-    WebEditorClient();
-    WebEditorClient(WebView* webView);
-    ~WebEditorClient();
-
-    void setWebView(WebView* webView);
-
-    bool shouldDeleteRange(WebCore::Range*);    
-    bool shouldShowDeleteInterface(WebCore::HTMLElement*);
-
-//    bool shouldBeginEditingInRange(Range *range);
-//    bool shouldEndEditingInRange(Range *range);
-//    bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction);
-//    bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction);
-//    bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting);
-//    bool shouldApplyStyle(CSSStyleDeclaration *style, Range *toElementsInDOMRange);
-//    bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle);
-//    bool doCommandBySelector(SEL selector);
-
-//    void webViewDidBeginEditing:(NSNotification *)notification;
-//    void webViewDidChange:(NSNotification *)notification;
-//    void webViewDidEndEditing:(NSNotification *)notification;
-//    void webViewDidChangeTypingStyle:(NSNotification *)notification;
-//    void webViewDidChangeSelection:(NSNotification *)notification;
-//    NSUndoManager* undoManagerForWebView:(WebView *)webView;
-
-private:
-    WebView *m_webView;
-};
+@interface NSObject (WebViewEditingDelegatePrivate)
+- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element;
+@end

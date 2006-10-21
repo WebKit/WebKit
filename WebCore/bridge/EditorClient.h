@@ -31,12 +31,15 @@
 namespace WebCore {
 
 class Range;
+class HTMLElement;
 
 class EditorClient : public Shared<EditorClient>{
 public:
     virtual ~EditorClient() { }
 
     virtual bool shouldDeleteRange(Range *range) = 0;
+    virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
+
 //    virtual bool shouldBeginEditingInRange(Range *range) = 0;
 //    virtual bool shouldEndEditingInRange(Range *range) = 0;
 //    virtual bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) = 0;

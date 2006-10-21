@@ -23,60 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EDITOR_H
-#define EDITOR_H
+#ifndef DELETE_BUTTON_CONTROLLER_H
+#define DELETE_BUTTON_CONTROLLER_H
 
-#include "DeleteButtonController.h"
+#include "DeleteButton.h"
 
 namespace WebCore {
 
-class EditorClient;
-class Frame;
-class Range;
+class DeleteButton;
+class Editor;
+class HTMLElement;
+class RenderObject;
+class Selection;
 
-// make platform-specific and implement - this is temporary placeholder
-typedef int Pasteboard;
-
-class Editor {
+class DeleteButtonController {
 public:
-    Editor(Frame*, EditorClient*);
-    ~Editor();
+    DeleteButtonController(Editor*);
 
-    void cut();
-    void copy();
-    void paste();
-    void performDelete();
+    static const char* const containerElementIdentifier;
+    static const char* const buttonElementIdentifier;
+    static const char* const outlineElementIdentifier;
 
-    bool shouldShowDeleteInterface(HTMLElement*);
+    HTMLElement* target() const { return m_element.get(); };
 
-    Frame* frame() const { return m_frame; }
-    DeleteButtonController* deleteButtonController() { return &m_deleteButtonController; }
+    void respondToChangedSelection(const Selection& oldSelection);
+    void respondToChangedContents(const Selection& endingSelection);
+
+    void show(HTMLElement*);
+    void hide();
+
+    void deleteTarget();
 
 private:
-    Frame* m_frame;
-    RefPtr<EditorClient> m_client;
-    DeleteButtonController m_deleteButtonController;
+    void updateOutlineStyle();
 
-    bool canCopy();
-    bool canCut();
-    bool canDelete();
-    bool canDeleteRange(Range*);
-    bool canPaste();
-    bool canSmartCopyOrDelete();
-    bool isSelectionRichlyEditable();
-    Range* selectedRange();
-    bool shouldDeleteRange(Range*);
-    bool tryDHTMLCopy();
-    bool tryDHTMLCut();
-    bool tryDHTMLPaste();
-    void deleteSelection();
-    void deleteSelectionWithSmartDelete(bool enabled);
-    void pasteAsPlainTextWithPasteboard(Pasteboard);
-    void pasteWithPasteboard(Pasteboard, bool allowPlainText);
-    void writeSelectionToPasteboard(Pasteboard);
-
+    Editor* m_editor;
+    RefPtr<HTMLElement> m_element;
+    RefPtr<HTMLElement> m_containerElement;
+    RefPtr<HTMLElement> m_outlineElement;
+    RefPtr<DeleteButton> m_buttonElement;
+    bool m_wasStaticPositioned;
+    bool m_wasAutoZIndex;
 };
 
 } // namespace WebCore
 
-#endif // EDITOR_H
+#endif

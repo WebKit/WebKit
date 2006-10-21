@@ -1,3 +1,65 @@
+2006-10-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4478625> HTML Editing: Basic table editing and culling
+
+        Initial implementaltion of table deletion user interface:
+        * Interface shows up on the nearest table containing the entire selection.
+        * Shows a Dashboard style close button in the top left corner.
+        * Shows a 60% opaque black outline around the table.
+        * Adds a new EditorClient function shouldShowDeleteInterface.
+
+        Also adds a new constructor CachedImage and setter functions on
+        HTMLImageElement and HTMLImageLoader allowing an Image object to be set
+        and image element in the page. This change also paves the way to allow an
+        NSImage setter on DOMHTMLImageElement. 
+
+        * Resources/deleteButton.tiff: Added.
+        * Resources/deleteButtonPressed.tiff: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/EditorClient.h:
+        * editing/DeleteButton.cpp: Added.
+        (WebCore::DeleteButton::DeleteButton):
+        (WebCore::DeleteButton::defaultEventHandler): notify the controller to delete on click
+        * editing/DeleteButton.h: Added.
+        * editing/DeleteButtonController.cpp: Added.
+        (WebCore::DeleteButtonController::DeleteButtonController):
+        (WebCore::DeleteButtonController::respondToChangedSelection): move the interface to the new element, or hide
+        (WebCore::DeleteButtonController::respondToChangedContents): call updateOutlineStyle
+        (WebCore::DeleteButtonController::updateOutlineStyle): resize the outline if the table changed size
+        (WebCore::DeleteButtonController::show): shows the interface on a new element
+        (WebCore::DeleteButtonController::hide): hides the existing interface
+        (WebCore::DeleteButtonController::deleteTarget): deletes the targeted element
+        * editing/DeleteButtonController.h: Added.
+        (WebCore::DeleteButtonController::target): getter for the current target
+        * editing/Editor.cpp:
+        (WebCore::Editor::shouldShowDeleteInterface): call the new shouldShowDeleteInterface client function
+        (WebCore::Editor::Editor): remove the manual ref now that we use RefPtr for m_client
+        (WebCore::Editor::~Editor): remove the manual deref now that we use RefPtr for m_client
+        * editing/Editor.h:
+        (WebCore::Editor::frame): new getter
+        (WebCore::Editor::deleteButtonController): ditto
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): notify the DeleteButtonController about the new selection
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::setCachedImage): new setter that replaces the CachedImage
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::setImage): ditto
+        * html/HTMLImageLoader.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage): new constructor that takes an Image
+        * loader/CachedImage.h: ditto
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionController): cleanup coding style
+        (WebCore::Frame::editor): ditto
+        (WebCore::Frame::command): ditto
+        (WebCore::Frame::appliedEditing): tell the delete button outline to update
+        (WebCore::Frame::unappliedEditing): ditto
+        (WebCore::Frame::reappliedEditing): ditto
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): workaround until bug 11363 is fixed
+
 2006-10-21  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

@@ -1,3 +1,23 @@
+2006-10-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4478625> HTML Editing: Basic table editing and culling
+
+        Initial implementaltion of table deletion user interface:
+        * Adds a new editing delegate method, webView:shouldShowDeleteInterfaceForElement:.
+        * The new delegate method is called from the new shouldShowDeleteInterface EditorClient function.
+
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldShowDeleteInterfaceForElement:]):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::shouldDeleteRange):
+        (WebEditorClient::shouldShowDeleteInterface):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebEditingDelegatePrivate.h: Added.
+
 2006-10-21  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

@@ -23,60 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EDITOR_H
-#define EDITOR_H
+#include "config.h"
+#include "DeleteButton.h"
 
 #include "DeleteButtonController.h"
+#include "Document.h"
+#include "Editor.h"
+#include "Event.h"
+#include "EventNames.h"
+#include "Frame.h"
 
 namespace WebCore {
 
-class EditorClient;
-class Frame;
-class Range;
+using namespace EventNames;
 
-// make platform-specific and implement - this is temporary placeholder
-typedef int Pasteboard;
+DeleteButton::DeleteButton(Document* document)
+    : HTMLImageElement(document)
+{
+}
 
-class Editor {
-public:
-    Editor(Frame*, EditorClient*);
-    ~Editor();
+void DeleteButton::defaultEventHandler(Event* event)
+{
+    if (event->isMouseEvent()) {
+        if (event->type() == clickEvent) {
+            document()->frame()->editor()->deleteButtonController()->deleteTarget();
+            event->setDefaultHandled();
+        }
+    }
 
-    void cut();
-    void copy();
-    void paste();
-    void performDelete();
+    HTMLImageElement::defaultEventHandler(event);
+}
 
-    bool shouldShowDeleteInterface(HTMLElement*);
-
-    Frame* frame() const { return m_frame; }
-    DeleteButtonController* deleteButtonController() { return &m_deleteButtonController; }
-
-private:
-    Frame* m_frame;
-    RefPtr<EditorClient> m_client;
-    DeleteButtonController m_deleteButtonController;
-
-    bool canCopy();
-    bool canCut();
-    bool canDelete();
-    bool canDeleteRange(Range*);
-    bool canPaste();
-    bool canSmartCopyOrDelete();
-    bool isSelectionRichlyEditable();
-    Range* selectedRange();
-    bool shouldDeleteRange(Range*);
-    bool tryDHTMLCopy();
-    bool tryDHTMLCut();
-    bool tryDHTMLPaste();
-    void deleteSelection();
-    void deleteSelectionWithSmartDelete(bool enabled);
-    void pasteAsPlainTextWithPasteboard(Pasteboard);
-    void pasteWithPasteboard(Pasteboard, bool allowPlainText);
-    void writeSelectionToPasteboard(Pasteboard);
-
-};
-
-} // namespace WebCore
-
-#endif // EDITOR_H
+} // namespace

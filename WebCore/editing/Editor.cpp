@@ -26,10 +26,11 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "EditorClient.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "Range.h"
 #include "Sound.h"
-#include "EditorClient.h"
 
 namespace WebCore {
 
@@ -126,6 +127,11 @@ bool Editor::tryDHTMLPaste()
 void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
 {}
 
+bool Editor::shouldShowDeleteInterface(HTMLElement* element)
+{
+    return m_client->shouldShowDeleteInterface(element);
+}
+
 // =============================================================================
 //
 // public editing commands
@@ -135,13 +141,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
 Editor::Editor(Frame* frame, EditorClient* client)
     : m_frame(frame)
     , m_client(client)
+    , m_deleteButtonController(this)
 { 
-    m_client->ref();
 }
 
 Editor::~Editor()
 {
-    m_client->deref();
 }
 
 void Editor::cut()

@@ -210,6 +210,10 @@
 		1C11CCC60AA6093700DADB20 /* DOMDocumentFragment.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CD30A98C42800A275AA /* DOMDocumentFragment.h */; };
 		1C11CCC70AA6093700DADB20 /* DOMCDATASection.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; };
 		1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; };
+		1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */; };
+		1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */; };
+		1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F000AD85D87009475CE /* DeleteButtonController.h */; };
+		1C4C8F660AD8655D009475CE /* DeleteButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F640AD8655D009475CE /* DeleteButton.h */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
 		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; };
@@ -217,6 +221,8 @@
 		1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */; };
 		1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */; };
 		1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */; };
+		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
+		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
 		1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */; };
 		1CFCEE970AACC40100348750 /* DOMHTMLButtonElementPrivate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1CFCEE8E0AACC3CD00348750 /* DOMHTMLButtonElementPrivate.h */; };
@@ -1154,7 +1160,7 @@
 		85E711A40AC5D5350053270F /* DOMHTMLDivElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711550AC5D5340053270F /* DOMHTMLDivElementInternal.h */; };
 		85E711A50AC5D5350053270F /* DOMHTMLDListElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711560AC5D5340053270F /* DOMHTMLDListElementInternal.h */; };
 		85E711A60AC5D5350053270F /* DOMHTMLDocumentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711570AC5D5340053270F /* DOMHTMLDocumentInternal.h */; };
-		85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
+		85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85E711A80AC5D5350053270F /* DOMHTMLFieldSetElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711590AC5D5340053270F /* DOMHTMLFieldSetElementInternal.h */; };
 		85E711A90AC5D5350053270F /* DOMHTMLFontElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E7115A0AC5D5340053270F /* DOMHTMLFontElementInternal.h */; };
 		85E711AA0AC5D5350053270F /* DOMHTMLFormElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E7115B0AC5D5340053270F /* DOMHTMLFormElementInternal.h */; };
@@ -3082,6 +3088,12 @@
 		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
 		1AE42F680AA4B8CB00C8612D /* StringCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringCF.cpp; sourceTree = "<group>"; };
 		1AE42F690AA4B8CB00C8612D /* StringImplCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringImplCF.cpp; sourceTree = "<group>"; };
+		1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButtonPressed.tiff; sourceTree = "<group>"; };
+		1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButton.tiff; sourceTree = "<group>"; };
+		1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButtonController.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1C4C8F000AD85D87009475CE /* DeleteButtonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButtonController.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1C4C8F630AD8655D009475CE /* DeleteButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButton.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1C4C8F640AD8655D009475CE /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
 		1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptObject.mm; sourceTree = "<group>"; };
 		1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPrivate.h; sourceTree = "<group>"; };
@@ -5802,6 +5814,8 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */,
+				1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */,
 				5115095B0A9CE04600901013 /* urlIcon.tiff */,
 				AB4261D70A2F6C9700BDD17D /* missingImage.tiff */,
 				84C0FA24052B966D000440A1 /* eastResizeCursor.tiff */,
@@ -7374,6 +7388,10 @@
 				D0B0556609C6700100307E43 /* CreateLinkCommand.h */,
 				93309D8F099E64910056E581 /* DeleteFromTextNodeCommand.cpp */,
 				93309D90099E64910056E581 /* DeleteFromTextNodeCommand.h */,
+				1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */,
+				1C4C8F000AD85D87009475CE /* DeleteButtonController.h */,
+				1C4C8F630AD8655D009475CE /* DeleteButton.cpp */,
+				1C4C8F640AD8655D009475CE /* DeleteButton.h */,
 				93309D91099E64910056E581 /* DeleteSelectionCommand.cpp */,
 				93309D92099E64910056E581 /* DeleteSelectionCommand.h */,
 				93309D93099E64910056E581 /* EditAction.h */,
@@ -8853,8 +8871,8 @@
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
-				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
+				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
@@ -10279,6 +10297,8 @@
 				8538F05D0AD722F1006A81D1 /* DOMRangeInternal.h in Headers */,
 				8538F0850AD72CB6006A81D1 /* DOMRanges.h in Headers */,
 				85C320790AD7401500BC15C4 /* DOMRangePrivate.h in Headers */,
+				1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */,
+				1C4C8F660AD8655D009475CE /* DeleteButton.h in Headers */,
 				85C9A2F00AD7E90300FBFF1E /* DOMSVGFilterElement.h in Headers */,
 				85C9A2F20AD7E90300FBFF1E /* DOMSVGFitToViewBox.h in Headers */,
 				85C9A2F30AD7E90300FBFF1E /* DOMSVGForeignObjectElement.h in Headers */,
@@ -10457,6 +10477,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10470,6 +10491,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -10514,6 +10537,8 @@
 				1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */,
 				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
+				1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */,
+				1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11612,6 +11637,8 @@
 				859D62C10AD888EF00012995 /* DOMSVGUseElement.mm in Sources */,
 				859D62C30AD888EF00012995 /* DOMSVGViewElement.mm in Sources */,
 				859D62C60AD888EF00012995 /* DOMSVGZoomEvent.mm in Sources */,
+				1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */,
+				1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */,
 				850120520ADABC9200267125 /* DOMSVGPathSegArcAbs.mm in Sources */,
 				850120540ADABC9200267125 /* DOMSVGPathSegArcRel.mm in Sources */,
 				85CE1A3E0ADAC473003BBDEA /* DOMSVGPathSegCurvetoCubicAbs.mm in Sources */,
