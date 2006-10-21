@@ -39,6 +39,10 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1,
                          "unsigned long" => 1, "float" => 1,
                          "double" => 1, "boolean" => 1, "void" => 1);
 
+my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+
+my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
+
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
                            "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
@@ -172,13 +176,31 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
     }
 }
 
-# Helper for all CodeGenerator***.pm modules
+# Helpers for all CodeGenerator***.pm modules
 sub IsPrimitiveType
 {
     my $object = shift;
     my $type = shift;
 
-    return 1 if ($primitiveTypeHash{$type});
+    return 1 if $primitiveTypeHash{$type};
+    return 0;
+}
+
+sub IsStringType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $stringTypeHash{$type};
+    return 0;
+}
+
+sub IsNonPointerType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $nonPointerTypeHash{$type} or $primitiveTypeHash{$type};
     return 0;
 }
 
@@ -187,7 +209,7 @@ sub IsSVGAnimatedType
     my $object = shift;
     my $type = shift;
 
-    return 1 if ($svgAnimatedTypeHash{$type});
+    return 1 if $svgAnimatedTypeHash{$type};
     return 0; 
 }
 

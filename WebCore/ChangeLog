@@ -1,3 +1,14 @@
+2006-10-21  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Cleanup bindings generation a little through re-factoring 
+        and general style cleanup.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mitz.

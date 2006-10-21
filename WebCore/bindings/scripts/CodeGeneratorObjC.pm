@@ -54,9 +54,7 @@ my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarg
                         "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGStylable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
                         "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
                         "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "SVGAnimatedPoints" => 1);
-my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);
-my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
 # FIXME: this should be replaced with a function that recurses up the tree
 # to find the actual base type.
@@ -234,7 +232,7 @@ sub GetClassName
     my $name = $codeGenerator->StripModule(shift);
 
     # special cases
-    return "NSString" if IsStringType($name);
+    return "NSString" if $codeGenerator->IsStringType($name);
     return "NS$name" if IsNativeObjCType($name);
     return "BOOL" if $name eq "boolean";
     return "unsigned" if $name eq "unsigned long";
@@ -344,7 +342,7 @@ sub GetBaseClass
 
 sub IsBaseType
 {
-    $type = shift;
+    my $type = shift;
 
     return 1 if $baseTypeHash{$type};
     return 0;
@@ -352,33 +350,17 @@ sub IsBaseType
 
 sub IsProtocolType
 {
-    $type = shift;
+    my $type = shift;
 
     return 1 if $protocolTypeHash{$type};
     return 0;
 }
 
-sub IsStringType
-{
-    $type = shift;
-
-    return 1 if $stringTypeHash{$type};
-    return 0;
-}
-
 sub IsNativeObjCType
 {
-    $type = shift;
+    my $type = shift;
 
     return 1 if $nativeObjCTypeHash{$type};
-    return 0;
-}
-
-sub IsNonPointerType
-{
-    $type = shift;
-
-    return 1 if $nonPointerTypeHash{$type} or $codeGenerator->IsPrimitiveType($type);
     return 0;
 }
 
@@ -397,7 +379,7 @@ sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return "" if IsNonPointerType($type) or IsStringType($type) or IsNativeObjCType($type);
+    return "" if $codeGenerator->IsNonPointerType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
     return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
@@ -442,7 +424,7 @@ sub GetObjCTypeGetter
     my $argName = shift;
     my $type = $codeGenerator->StripModule(shift);
 
-    return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or IsNativeObjCType($type);
+    return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
     return $argName . "EventTarget" if $type eq "EventTarget";
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
     return "static_cast<WebCore::SVGPaint::SVGPaintType>($argName)" if $type eq "SVGPaintType";
@@ -458,7 +440,7 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if IsNonPointerType($type) ;
+    return if $codeGenerator->IsNonPointerType($type) ;
 
     my $class = GetClassName($type);
 
@@ -479,9 +461,9 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if IsNonPointerType($type) or IsNativeObjCType($type);
+    return if $codeGenerator->IsNonPointerType($type) or IsNativeObjCType($type);
 
-    if (IsStringType($type)) {
+    if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
         return;
     }
@@ -1029,7 +1011,7 @@ sub GenerateImplementation
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
 
-                unless ($codeGenerator->IsPrimitiveType($idlType) or IsStringType($idlType)) {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
                     push(@implContent, "    ASSERT($argName);\n\n");
                 }
 
@@ -1081,7 +1063,7 @@ sub GenerateImplementation
                 $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
                 $needsCustom{"NodeToReturn"} = $paramName if $param->extendedAttributes->{"Return"};
 
-                unless ($codeGenerator->IsPrimitiveType($idlType) or IsStringType($idlType)) {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
                     push(@needsAssert, "    ASSERT($paramName);\n");
                 }
 

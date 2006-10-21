@@ -192,12 +192,10 @@ sub AddIncludesForSVGAnimatedType
     my $type = shift;
     $type =~ s/SVGAnimated//; 
 
-    if ($type eq "SVGRect" or
-        $type eq "SVGPoint" or
-        $type eq "SVGNumber") {
-      $implIncludes{"JSSVG$type.h"} = 1;
-    } else {
-      push(@implContentHeader, "#include \"PlatformString.h\"\n") if($type eq "String");
+    if ($type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber") {
+        $implIncludes{"JSSVG$type.h"} = 1;
+    } elsif ($type eq "String") {
+        push(@implContentHeader, "#include \"PlatformString.h\"\n");
     }
 }
 
@@ -479,8 +477,7 @@ sub GenerateImplementation
   
   # - Add default header template
   @implContentHeader = split("\r", $headerTemplate);
-  push(@implContentHeader, "\n");
-  push(@implContentHeader,, "#include \"config.h\"\n\n");
+  push(@implContentHeader, "\n#include \"config.h\"\n\n");
   
   push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
 
@@ -1152,37 +1149,54 @@ sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
- 
+
     my $type = $codeGenerator->StripModule($signature->type);
 
-    if ($type eq "boolean") {
-        return "jsBoolean($value)";
-    } elsif ($type eq "long" or
-             $type eq "unsigned long" or 
-             $type eq "short" or 
-             $type eq "unsigned short" or
-             $type eq "float" or 
-             $type eq "double") {
-        return "jsNumber($value)";
-    } elsif ($type eq "DOMString" or $type eq "AtomicString") {
+    return "jsBoolean($value)" if $type eq "boolean";
+    return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+
+    if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
-            if ($conv eq "Null") {
-                return "jsStringOrNull($value)";
-            } elsif ($conv eq "Undefined") {
-                return "jsStringOrUndefined($value)";
-            } elsif ($conv eq "False") {
-                return "jsStringOrFalse($value)";
-            } else {
-                die "Unknown value for ConvertNullStringTo extended attribute";
-            }
-        } else {
-            return "jsString($value)";
+            return "jsStringOrNull($value)" if $conv eq "Null";
+            return "jsStringOrUndefined($value)" if $conv eq "Undefined";
+            return "jsStringOrFalse($value)" if $conv eq "False";
+
+            die "Unknown value for ConvertNullStringTo extended attribute";
         }
-    } elsif ($type eq "DOMImplementation") {
+        return "jsString($value)";
+    }
+
+    if ($type eq "RGBColor") {
+        $implIncludes{"kjs_css.h"} = 1;
+        return "getDOMRGBColor(exec, $value)";
+    }
+
+    if ($type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber") {
+        $implIncludes{"JS$type.h"} = 1;
+        return "getJS$type(exec, $value)";
+    }
+
+    if ($type eq "HTMLCollection") {
+        $implIncludes{"kjs_html.h"} = 1;
+        $implIncludes{"HTMLCollection.h"} = 1;
+        return "getHTMLCollection(exec, WTF::getPtr($value))";
+    }
+
+    if ($type eq "StyleSheetList") {
+        $implIncludes{"StyleSheetList.h"} = 1;
+        $implIncludes{"kjs_css.h"} = 1;
+        return "toJS(exec, WTF::getPtr($value), imp)";
+    }
+
+    if ($codeGenerator->IsSVGAnimatedType($type)) {
+        $value =~ s/\(\)//;
+        $value .= "Animated()";
+    }
+
+    if ($type eq "DOMImplementation") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"JSDOMImplementation.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "Attr" or
              $type eq "CDATASection" or
              $type eq "Comment" or
@@ -1201,85 +1215,44 @@ sub NativeToJSValue
         $implIncludes{"Node.h"} = 1;
         $implIncludes{"Element.h"} = 1;
         $implIncludes{"DocumentType.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "EventTarget") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"EventTargetNode.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "Event") {
         $implIncludes{"kjs_events.h"} = 1;
         $implIncludes{"Event.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
         $implIncludes{"kjs_dom.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
         $implIncludes{"CSSStyleSheet.h"} = 1;
         $implIncludes{"MediaList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
-        return "toJS(exec, $value)";
-    } elsif ($type eq "StyleSheetList") {
-        $implIncludes{"StyleSheetList.h"} = 1;
-        $implIncludes{"kjs_css.h"} = 1;
-        return "toJS(exec, $value, imp)";
     } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
         $implIncludes{"CSSStyleDeclaration.h"} = 1;
         $implIncludes{"RectImpl.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
-        return "toJS(exec, $value)";
-    } elsif ($type eq "RGBColor") {
-        $implIncludes{"kjs_css.h"} = 1;
-        return "getDOMRGBColor(exec, $value)";
     } elsif ($type eq "HTMLCanvasElement") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"HTMLCanvasElement.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "DOMWindow") {
         $implIncludes{"kjs_window.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
-        return "toJS(exec, $value)";
     } elsif ($type eq "HTMLFormElement") {
         $implIncludes{"kjs_html.h"} = 1;
         $implIncludes{"HTMLFormElement.h"} = 1;
-        return "toJS(exec, $value)";
-    } elsif ($type eq "HTMLCollection") {
-        $implIncludes{"kjs_html.h"} = 1;
-        $implIncludes{"HTMLCollection.h"} = 1;
-        return "getHTMLCollection(exec, WTF::getPtr($value))";
-    } elsif (($type eq "SVGLength" or
-              $type eq "SVGTransform")) {
-       $implIncludes{"JS$type.h"} = 1;
-       $implIncludes{"$type.h"} = 1;
-       return "toJS(exec, WTF::getPtr($value))";
-    } elsif ($type eq "SVGRect" or
-             $type eq "SVGPoint" or
-             $type eq "SVGNumber") {
-        $implIncludes{"JS$type.h"} = 1;
-        return "getJS$type(exec, $value)";
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
-
-        return "toJS(exec, WTF::getPtr($value))";
-    } elsif ($codeGenerator->IsSVGAnimatedType($type)) {
+    } else {
+        # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;
         $implIncludes{"$type.h"} = 1;
-        $tempValue = $value;
-        $tempValue =~ s/\(\)//;
-        $tempValue .= "Animated()";
-        return "toJS(exec, $tempValue)";
-    } elsif ($type eq "SVGPaintType") {
-        return "jsNumber($value)";
     }
 
-    # Default, include header with same name.
-    $implIncludes{"JS$type.h"} = 1;
-    $implIncludes{"$type.h"} = 1;
-    return "toJS(exec, $value)";
+    return "toJS(exec, WTF::getPtr($value))";
 }
 
 # Internal Helper
