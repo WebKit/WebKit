@@ -80,12 +80,14 @@ static HTMLElement* enclosingDeletableTable(const Selection& selection)
         return 0;
 
     Node* table = enclosingNodeWithTag(container, tableTag);
-    ASSERT(!table || table->isHTMLElement());
+    if (!table)
+        return 0;
 
     // The table must be editable too.
     if (!table->isContentEditable())
         return 0;
 
+    ASSERT(table->isHTMLElement());
     return static_cast<HTMLElement*>(table);
 }
 

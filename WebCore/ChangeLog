@@ -1,5 +1,10 @@
 2006-10-21  Darin Adler  <darin@apple.com>
 
+        * editing/DeleteButtonController.cpp: (WebCore::enclosingDeletableTable):
+        Oops, edited this before landing it and introduced a null-deref! This fixes it.
+
+2006-10-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11379
