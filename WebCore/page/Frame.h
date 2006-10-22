@@ -104,7 +104,7 @@ class Frame : public Shared<Frame> {
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
-  Frame(Page*, Element*, EditorClient*);
+  Frame(Page*, Element*, PassRefPtr<EditorClient>);
   virtual ~Frame();
 
   virtual bool openURL(const KURL&);

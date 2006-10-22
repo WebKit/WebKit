@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "DeleteButtonController.h"
 #include "EditorClient.h"
 #include "Frame.h"
 #include "HTMLElement.h"
@@ -35,25 +36,31 @@
 namespace WebCore {
 
 // implement as platform-specific
-Pasteboard generalPasteboard()
+static Pasteboard generalPasteboard()
 {
     return 0;
 }
 
 bool Editor::canCopy()
-{ return false; }
+{
+    return false;
+}
 
 bool Editor::canCut()
-{ return false; }
+{
+    return false;
+}
 
 bool Editor::canDelete()
-{ return false; }
+{
+    return false;
+}
 
 bool Editor::canDeleteRange(Range* range)
 {
     ExceptionCode ec = 0;
-    Node *startContainer = range->startContainer(ec);
-    Node *endContainer = range->endContainer(ec);
+    Node* startContainer = range->startContainer(ec);
+    Node* endContainer = range->endContainer(ec);
     if (!startContainer || !endContainer)
         return false;
     
@@ -71,28 +78,40 @@ bool Editor::canDeleteRange(Range* range)
 }
 
 bool Editor::canPaste()
-{ return false; }
+{
+    return false;
+}
 
 bool Editor::canSmartCopyOrDelete()
-{ return false; }
+{
+    return false;
+}
 
 void Editor::deleteSelection()
-{}
+{
+}
 
 void Editor::deleteSelectionWithSmartDelete(bool enabled)
-{}
+{
+}
 
 bool Editor::isSelectionRichlyEditable()
-{ return false; }
+{
+    return false;
+}
 
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard pasteboard)
-{}
+{
+}
 
 void Editor::pasteWithPasteboard(Pasteboard pasteboard, bool allowPlainText)
-{}
+{
+}
 
 Range* Editor::selectedRange()
-{ return NULL; }
+{
+    return 0;
+}
 
 bool Editor::shouldDeleteRange(Range* range)
 {
@@ -125,11 +144,22 @@ bool Editor::tryDHTMLPaste()
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
-{}
+{
+}
 
 bool Editor::shouldShowDeleteInterface(HTMLElement* element)
 {
     return m_client->shouldShowDeleteInterface(element);
+}
+
+void Editor::respondToChangedSelection(const Selection& oldSelection)
+{
+    m_deleteButtonController->respondToChangedSelection(oldSelection);
+}
+
+void Editor::respondToChangedContents()
+{
+    m_deleteButtonController->respondToChangedContents();
 }
 
 // =============================================================================
@@ -138,10 +168,10 @@ bool Editor::shouldShowDeleteInterface(HTMLElement* element)
 //
 // =============================================================================
 
-Editor::Editor(Frame* frame, EditorClient* client)
+Editor::Editor(Frame* frame, PassRefPtr<EditorClient> client)
     : m_frame(frame)
     , m_client(client)
-    , m_deleteButtonController(this)
+    , m_deleteButtonController(new DeleteButtonController(frame))
 { 
 }
 
@@ -166,7 +196,6 @@ void Editor::cut()
 
 void Editor::copy()
 {
-
     if (tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (!canCopy()) {

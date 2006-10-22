@@ -35,6 +35,7 @@
 #include "Decoder.h"
 #include "EditCommand.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -61,7 +62,7 @@ namespace WebCore {
     
     class FramePrivate {
     public:
-        FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element* ownerElement, EditorClient* client)
+        FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element* ownerElement, PassRefPtr<EditorClient> client)
             : m_page(page)
             , m_treeNode(thisFrame, parent)
             , m_ownerElement(ownerElement)

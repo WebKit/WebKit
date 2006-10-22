@@ -1,3 +1,53 @@
+2006-10-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11379
+          assertion failure seen in editing tests (in new DeleteButtonController)
+
+        I cleaned up the relationship between the Frame, Editor, EditorClient, and
+        DeleteButtonController a bit while also making the simple change to fix the
+        assertion failure.
+
+        * bridge/mac/FrameMac.h: Change EditorClient parameter to a PassRefPtr since we take ownership.
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::FrameMac):
+
+        * page/Frame.h: Change EditorClient parameter to a PassRefPtr since we take ownership.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Ditto.
+        (WebCore::Frame::appliedEditing): Removed unneeded parameter to the respondToChangedContents
+        function, and moved it to Editor rather than right on the DeleteButtonController.
+        (WebCore::Frame::unappliedEditing): Ditto.
+        (WebCore::Frame::reappliedEditing): Ditto.
+        * page/FramePrivate.h: (WebCore::FramePrivate::FramePrivate): More of the same.
+
+        * editing/DeleteButtonController.h:
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::DeleteButtonController): Replaced Editor* with a Frame*.
+        The general pattern is that we always use the Frame* as the frame identifier. See FrameTree,
+        for example.
+        (WebCore::enclosingDeletableTable): Added. Helper function used by the respondToChangedSelection
+        function. Includes an additional check for whether the container is contentEditable, which
+        was missing from the old version. This prevents the assertion failure. Also added a check that
+        the table itself is editable.
+        (WebCore::DeleteButtonController::respondToChangedSelection): Rewrote to use the helper.
+        (WebCore::DeleteButtonController::respondToChangedContents): Removed the unnecessary
+        selection parameter. No need to pass in the state of the frame since we can get it if we need it.
+        (WebCore::DeleteButtonController::show): Updated to use frame pointer rather than editor pointer.
+
+        * editing/Editor.cpp: Fixed formatting. Even the temporary placeholder functions should be
+        formatted on multiple lines as usual.
+        (WebCore::Editor::respondToChangedSelection): Added. Forwards to the delete button controller.
+        (WebCore::Editor::respondToChangedContents): Ditto.
+        (WebCore::Editor::Editor): Changed EditorClient parameter to a PassRefPtr since we take ownership.
+
+        * editing/Editor.h: Changed the DeleteButtonController to use an OwnPtr instead of being
+        defined inline to decouple so that we don't have to include DeleteButtonController.h. That way
+        changes to DeleteButtonController.h cause very little to recompile.
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::setSelection):
+        Updated to call the editor instead of the delete button controller for the selection change.
+
 2006-10-21  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

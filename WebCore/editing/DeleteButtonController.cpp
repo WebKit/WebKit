@@ -53,39 +53,57 @@ const char* const DeleteButtonController::containerElementIdentifier = "WebKit-E
 const char* const DeleteButtonController::buttonElementIdentifier = "WebKit-Editing-Delete-Button";
 const char* const DeleteButtonController::outlineElementIdentifier = "WebKit-Editing-Delete-Outline";
 
-DeleteButtonController::DeleteButtonController(Editor* editor)
-    : m_editor(editor)
+DeleteButtonController::DeleteButtonController(Frame* frame)
+    : m_frame(frame)
     , m_wasStaticPositioned(false)
     , m_wasAutoZIndex(false)
 {
 }
 
+static HTMLElement* enclosingDeletableTable(const Selection& selection)
+{
+    if (!selection.isContentEditable())
+        return 0;
+
+    RefPtr<Range> range = selection.toRange();
+    if (!range)
+        return 0;
+
+    ExceptionCode ec = 0;
+    Node* container = range->commonAncestorContainer(ec);
+    ASSERT(container);
+    ASSERT(ec == 0);
+
+    // The enclosingNodeWithTag function only works on nodes that are editable
+    // (which is strange, given its name).
+    if (!container->isContentEditable())
+        return 0;
+
+    Node* table = enclosingNodeWithTag(container, tableTag);
+    ASSERT(!table || table->isHTMLElement());
+
+    // The table must be editable too.
+    if (!table->isContentEditable())
+        return 0;
+
+    return static_cast<HTMLElement*>(table);
+}
+
 void DeleteButtonController::respondToChangedSelection(const Selection& oldSelection)
 {
-    ExceptionCode ec = 0;
-    Node* oldTableNode = 0;
-    Node* newTableNode = 0;
+    HTMLElement* oldTable = enclosingDeletableTable(oldSelection);
+    HTMLElement* newTable = enclosingDeletableTable(m_frame->selectionController()->selection());
+    if (oldTable == newTable)
+        return;
 
-    RefPtr<Range> range = oldSelection.toRange();
-    if (oldSelection.isContentEditable() && range.get())
-        oldTableNode = enclosingNodeWithTag(range->commonAncestorContainer(ec), tableTag);
-    ASSERT(ec == 0);
-
-    range = m_editor->frame()->selectionController()->toRange();
-    if (m_editor->frame()->selectionController()->isContentEditable() && range.get())
-        newTableNode = enclosingNodeWithTag(range->commonAncestorContainer(ec), tableTag);
-    ASSERT(ec == 0);
-
-    if (oldTableNode != newTableNode) {
-        // If the base is inside an editable table, give the table a close widget.
-        if (newTableNode)
-            show(static_cast<HTMLElement*>(newTableNode));
-        else if (oldTableNode)
-            hide();
-    }
+    // If the base is inside an editable table, give the table a close widget.
+    if (newTable)
+        show(newTable);
+    else
+        hide();
 }
-    
-void DeleteButtonController::respondToChangedContents(const Selection& endingSelection)
+
+void DeleteButtonController::respondToChangedContents()
 {
     updateOutlineStyle();
 }
@@ -107,7 +125,7 @@ void DeleteButtonController::show(HTMLElement* element)
     if (!(element->renderer() && element->renderer()->isRenderBlock()))
         return;
 
-    if (!m_editor->shouldShowDeleteInterface(static_cast<HTMLElement*>(element)))
+    if (!m_frame->editor()->shouldShowDeleteInterface(static_cast<HTMLElement*>(element)))
         return;
 
     m_element = element;

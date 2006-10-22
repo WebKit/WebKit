@@ -31,14 +31,14 @@
 namespace WebCore {
 
 class DeleteButton;
-class Editor;
+class Frame;
 class HTMLElement;
 class RenderObject;
 class Selection;
 
 class DeleteButtonController {
 public:
-    DeleteButtonController(Editor*);
+    DeleteButtonController(Frame*);
 
     static const char* const containerElementIdentifier;
     static const char* const buttonElementIdentifier;
@@ -47,7 +47,7 @@ public:
     HTMLElement* target() const { return m_element.get(); };
 
     void respondToChangedSelection(const Selection& oldSelection);
-    void respondToChangedContents(const Selection& endingSelection);
+    void respondToChangedContents();
 
     void show(HTMLElement*);
     void hide();
@@ -57,7 +57,7 @@ public:
 private:
     void updateOutlineStyle();
 
-    Editor* m_editor;
+    Frame* m_frame;
     RefPtr<HTMLElement> m_element;
     RefPtr<HTMLElement> m_containerElement;
     RefPtr<HTMLElement> m_outlineElement;

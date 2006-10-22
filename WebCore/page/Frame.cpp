@@ -158,7 +158,7 @@ static inline Frame* parentFromOwnerElement(Element* ownerElement)
     return ownerElement->document()->frame();
 }
 
-Frame::Frame(Page* page, Element* ownerElement, EditorClient* client) 
+Frame::Frame(Page* page, Element* ownerElement, PassRefPtr<EditorClient> client) 
     : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement, client))
 {
     AtomicString::init();
@@ -2156,7 +2156,7 @@ void Frame::appliedEditing(PassRefPtr<EditCommand> cmd)
         registerCommandForUndo(cmd);
     }
     respondToChangedContents(newSelection);
-    editor()->deleteButtonController()->respondToChangedContents(newSelection);
+    editor()->respondToChangedContents();
 }
 
 void Frame::unappliedEditing(PassRefPtr<EditCommand> cmd)
@@ -2170,7 +2170,7 @@ void Frame::unappliedEditing(PassRefPtr<EditCommand> cmd)
     d->m_lastEditCommand = 0;
     registerCommandForRedo(cmd);
     respondToChangedContents(newSelection);
-    editor()->deleteButtonController()->respondToChangedContents(newSelection);
+    editor()->respondToChangedContents();
 }
 
 void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
@@ -2184,7 +2184,7 @@ void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
     d->m_lastEditCommand = 0;
     registerCommandForUndo(cmd);
     respondToChangedContents(newSelection);
-    editor()->deleteButtonController()->respondToChangedContents(newSelection);
+    editor()->respondToChangedContents();
 }
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const

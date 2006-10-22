@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SelectionController.h"
 
-#include "DeleteButtonController.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
@@ -121,7 +120,7 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     m_frame->selectFrameElementInParentIfFullySelected();
     m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
-    m_frame->editor()->deleteButtonController()->respondToChangedSelection(oldSelection);
+    m_frame->editor()->respondToChangedSelection(oldSelection);
     if (userTriggered)
         m_frame->revealCaret(RenderLayer::gAlignToEdgeIfNeeded);
 }

@@ -26,20 +26,25 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "DeleteButtonController.h"
+#include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class DeleteButtonController;
 class EditorClient;
 class Frame;
+class HTMLElement;
 class Range;
+class Selection;
 
 // make platform-specific and implement - this is temporary placeholder
 typedef int Pasteboard;
 
 class Editor {
 public:
-    Editor(Frame*, EditorClient*);
+    Editor(Frame*, PassRefPtr<EditorClient>);
     ~Editor();
 
     void cut();
@@ -49,13 +54,16 @@ public:
 
     bool shouldShowDeleteInterface(HTMLElement*);
 
+    void respondToChangedSelection(const Selection& oldSelection);
+    void respondToChangedContents();
+
     Frame* frame() const { return m_frame; }
-    DeleteButtonController* deleteButtonController() { return &m_deleteButtonController; }
+    DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
 
 private:
     Frame* m_frame;
     RefPtr<EditorClient> m_client;
-    DeleteButtonController m_deleteButtonController;
+    OwnPtr<DeleteButtonController> m_deleteButtonController;
 
     bool canCopy();
     bool canCut();

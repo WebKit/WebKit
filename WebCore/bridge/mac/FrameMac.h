@@ -115,7 +115,7 @@ enum SelectionDirection {
 class FrameMac : public Frame
 {
 public:
-    FrameMac(Page*, Element*, EditorClient*);
+    FrameMac(Page*, Element*, PassRefPtr<EditorClient>);
     ~FrameMac();
     
     void clear();
