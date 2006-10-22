@@ -1,4 +1,4 @@
-MODULES = Drosera
+MODULES = Drosera DumpRenderTree
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; if [ $$? -ne 0 ]; then break; fi; done

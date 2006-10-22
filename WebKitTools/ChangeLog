@@ -1,3 +1,8 @@
+2006-10-21  Darin Adler  <darin@apple.com>
+
+        * Makefile: Build DumpRenderTree too.
+        * Scripts/do-webcore-rename: Removed bogus comment.
+
 2006-10-20  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.
@@ -202,7 +207,6 @@
 
         Bug 9778: http://bugs.webkit.org/show_bug.cgi?id=9778 
 
-        * ChangeLog:
         * Drosera/Drosera.xcodeproj/project.pbxproj: Added files
         * Drosera/English.lproj/Debugger.nib/info.nib: Resized the main window and WebView
         * Drosera/English.lproj/Debugger.nib/keyedobjects.nib: Resized the main window and WebView
@@ -312,7 +316,6 @@
 
         Using min-height instead of height to avoid overlapping text.
 
-        * ChangeLog:
         * Drosera/console.css:
 
 2006-10-04  David Smith  <catfish.man@gmail.com>
