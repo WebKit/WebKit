@@ -921,6 +921,8 @@
 		85B4996B0ADB3FF500925CBB /* DOMSVGPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85B499690ADB3FF500925CBB /* DOMSVGPathElement.h */; };
 		85B4996C0ADB3FF500925CBB /* DOMSVGPathElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85B4996A0ADB3FF500925CBB /* DOMSVGPathElement.mm */; };
 		85B499780ADB425E00925CBB /* DOMSVGPathElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85B499770ADB425E00925CBB /* DOMSVGPathElementInternal.h */; };
+		85B916840AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 85B916830AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h */; };
+		85B916870AEBDBC4008DD727 /* DOMHTMLFormElementPrivate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85B916830AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h */; };
 		85BA4CDD0AA6861B0088052D /* DOMHTMLButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85BA4CD50AA6861B0088052D /* DOMHTMLButtonElement.h */; };
 		85BA4CDE0AA6861B0088052D /* DOMHTMLButtonElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85BA4CD60AA6861B0088052D /* DOMHTMLButtonElement.mm */; };
 		85BA4CDF0AA6861B0088052D /* DOMHTMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85BA4CD70AA6861B0088052D /* DOMHTMLFieldSetElement.h */; };
@@ -2725,6 +2727,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				85B916870AEBDBC4008DD727 /* DOMHTMLFormElementPrivate.h in CopyFiles */,
 				85A795BA0AD754A30006B9D8 /* DOMRangePrivate.h in CopyFiles */,
 				8538F08C0AD72E0A006A81D1 /* DOMRange.h in CopyFiles */,
 				8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in CopyFiles */,
@@ -3838,6 +3841,7 @@
 		85B499690ADB3FF500925CBB /* DOMSVGPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPathElement.h; sourceTree = "<group>"; };
 		85B4996A0ADB3FF500925CBB /* DOMSVGPathElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGPathElement.mm; sourceTree = "<group>"; };
 		85B499770ADB425E00925CBB /* DOMSVGPathElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPathElementInternal.h; sourceTree = "<group>"; };
+		85B916830AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLFormElementPrivate.h; sourceTree = "<group>"; };
 		85BA4CD50AA6861B0088052D /* DOMHTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLButtonElement.h; sourceTree = "<group>"; };
 		85BA4CD60AA6861B0088052D /* DOMHTMLButtonElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLButtonElement.mm; sourceTree = "<group>"; };
 		85BA4CD70AA6861B0088052D /* DOMHTMLFieldSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLFieldSetElement.h; sourceTree = "<group>"; };
@@ -6975,8 +6979,8 @@
 		85C56D030AA8BAA700D95755 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
-				85DF81210AA7787200486AD7 /* DOMHTMLAnchorElement.h */,
 				1CFCEE7F0AACC3B300348750 /* DOMHTMLAnchorElementPrivate.h */,
+				85DF81210AA7787200486AD7 /* DOMHTMLAnchorElement.h */,
 				85DF81220AA7787200486AD7 /* DOMHTMLAnchorElement.mm */,
 				854075640AD6CBF900620C57 /* DOMHTMLAppletElement.h */,
 				85C050B80AD84F5E005532E7 /* DOMHTMLAppletElement.mm */,
@@ -7013,6 +7017,7 @@
 				85BA4CD80AA6861B0088052D /* DOMHTMLFieldSetElement.mm */,
 				85ECBEE10AA7626800544F0B /* DOMHTMLFontElement.h */,
 				85ECBEE20AA7626800544F0B /* DOMHTMLFontElement.mm */,
+				85B916830AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h */,
 				85DF2C100AA341F600AD64C5 /* DOMHTMLFormElement.h */,
 				85DF2C110AA341F600AD64C5 /* DOMHTMLFormElement.mm */,
 				85DF818D0AA77E4B00486AD7 /* DOMHTMLFrameElement.h */,
@@ -10443,6 +10448,7 @@
 				8542A7950AE5C94100DF58DF /* JSSVGPoint.h in Headers */,
 				8542A7970AE5C94300DF58DF /* JSSVGNumber.h in Headers */,
 				8542A7990AE5C94400DF58DF /* JSSVGElementWrapperFactory.h in Headers */,
+				85B916840AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

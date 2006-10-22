@@ -94,6 +94,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLFormElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHRElement.h \
