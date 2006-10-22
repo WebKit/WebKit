@@ -807,6 +807,8 @@ set(WebCore_SRCS
     ${SVG_SOURCES}
     ${XPATH_SOURCES}
 
+    editing/DeleteButtonController.cpp
+    editing/DeleteButton.cpp
     editing/Editor.cpp
     editing/CommandByName.cpp
     editing/InsertIntoTextNodeCommand.cpp

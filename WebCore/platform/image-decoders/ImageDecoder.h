@@ -69,9 +69,9 @@ public:
         else {
             if (a < 255) {
                 float alphaPercent = a / 255.0f;
-                r *= alphaPercent;
-                g *= alphaPercent;
-                b *= alphaPercent;
+                r = static_cast<unsigned>(r * alphaPercent);
+                g = static_cast<unsigned>(g * alphaPercent);
+                b = static_cast<unsigned>(b * alphaPercent);
             }
             pos = (a << 24 | r << 16 | g << 8 | b);
         }

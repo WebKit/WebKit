@@ -36,8 +36,8 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
 #if __APPLE__
     OSStatus status = 0, findStatus = -1;
     static TextBreakLocatorRef breakLocator = 0;
-#endif
     int nextUCBreak = -1;
+#endif
     int i;
     unsigned short ch, lastCh;
     
