@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,39 @@
  */
 
 #import "WebLoader.h"
-
 #import "WebCoreResourceLoader.h"
 
-@class WebFrameLoader;
+namespace WebCore {
 
-@protocol WebCoreResourceHandle;
-@protocol WebCoreResourceLoader;
+    class SubresourceLoader : public WebResourceLoader {
+    public:
+        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+            NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer);
+        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+            NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer);
 
-@interface WebSubresourceLoader : WebLoader <WebCoreResourceHandle>
-{
-    id <WebCoreResourceLoader> coreLoader;
+        virtual ~SubresourceLoader();
+
+        virtual void signalFinish();
+        virtual void cancel();
+
+        virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
+        virtual void didReceiveResponse(NSURLResponse *);
+        virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
+        virtual void didFinishLoading();
+        virtual void didFail(NSError *);
+
+    private:
+        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+            NSMutableURLRequest *, NSString *method, NSDictionary *customHeaders, NSString *referrer);
+
+        SubresourceLoader(WebFrameLoader *, id <WebCoreResourceLoader>);
+        id <WebCoreResourceHandle> handle();
+
+        void receivedError(NSError *error);
+
+        RetainPtr<id <WebCoreResourceLoader> > m_coreLoader;
+        bool m_loadingMultipartContent;
+    };
+
 }
-
-- (void)signalFinish;
-
-+ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                    withMethod:(NSString *)method
-                                           URL:(NSURL *)URL 
-                                 customHeaders:(NSDictionary *)customHeaders
-                                      referrer:(NSString *)referrer 
-                                forFrameLoader:(WebFrameLoader *)loader;
-
-+ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                    withMethod:(NSString *)method
-                                           URL:(NSURL *)URL 
-                                 customHeaders:(NSDictionary *)customHeaders
-                                      postData:(NSArray *)postData 
-                                      referrer:(NSString *)referrer 
-                                forFrameLoader:(WebFrameLoader *)loader;
-
-@end

@@ -1,3 +1,67 @@
+2006-10-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - convert WebLoader and its 3 subclasses to C++ (this time with a leak fixed)
+
+        Renamed WebLoader to WebCore::WebResourceLoader (should be ResourceLoader, but
+        there's currently another class with that name).
+        Renamed WebMainResourceLoader to WebCore::MainResourceLoader.
+        Renamed WebSubresourceLoader to WebCore::SubresourceLoader.
+        Renamed WebNetscapePlugInStreamLoader to WebCore::NetscapePlugInStreamLoader.
+
+        Converted the classes to C++ and added Objective-C delegates to forward from
+        API that still requires Objective-C.
+
+        Did not yet rename the source files.
+
+        * WebCore.exp: Removed WebLoader, WebNetscapePlugInStreamLoader, and WebSubresourceLoader
+        classes. Added 5 functions from the WebResourceLoader and NetscapePlugInStreamLoader
+        classes.
+
+        * WebCore.xcodeproj/project.pbxproj: Made RetainPtr.h a private header instead of project.
+
+        * platform/cf/RetainPtr.h: Put into the WebCore namespace rather than the WTF namespace.
+
+        * loader/mac/WebLoader.h:
+        * loader/mac/WebLoader.mm:
+        * loader/mac/WebMainResourceLoader.h:
+        * loader/mac/WebMainResourceLoader.mm:
+        * loader/mac/WebNetscapePlugInStreamLoader.h:
+        * loader/mac/WebNetscapePlugInStreamLoader.mm:
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        Translate to C++.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        * loader/mac/WebFrameLoader.h:
+        * loader/mac/WebFrameLoader.mm:
+        (isCaseInsensitiveEqual):
+        (isBackForwardLoadType):
+        (-[WebFrameLoader dealloc]):
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader setDefersCallbacks:]):
+        (-[WebFrameLoader stopLoadingPlugIns]):
+        (-[WebFrameLoader isLoadingMainResource]):
+        (-[WebFrameLoader isLoadingSubresources]):
+        (-[WebFrameLoader isLoadingPlugIns]):
+        (-[WebFrameLoader stopLoadingSubresources]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        (-[WebFrameLoader mainResourceData]):
+        (-[WebFrameLoader releaseMainResourceLoader]):
+        (-[WebFrameLoader cancelMainResourceLoad]):
+        (-[WebFrameLoader startLoadingMainResourceWithRequest:identifier:]):
+        (-[WebFrameLoader stopLoadingWithError:]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrameLoader archiveLoadPendingForLoader:]):
+        (-[WebFrameLoader cancelPendingArchiveLoadForLoader:]):
+        * loader/mac/WebFrameLoaderClient.h:
+        Call the new C++ API.
+
 2006-10-21  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.
