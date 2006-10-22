@@ -1,5 +1,10 @@
 2006-10-21  Darin Adler  <darin@apple.com>
 
+        * Scripts/commit-log-editor: Use baseProductDir() to find the base product directory.
+        This was still using "symroots" so it almost never worked!
+
+2006-10-21  Darin Adler  <darin@apple.com>
+
         * Makefile: Build DumpRenderTree too.
         * Scripts/do-webcore-rename: Removed bogus comment.
 

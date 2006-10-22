@@ -29,21 +29,24 @@
 # Script to put change log comments in as default check-in comment.
 
 use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
 
 my $log = $ARGV[0];
 
-my $symroots = $ENV{SYMROOTS} || "$ENV{HOME}/symroots";
+my $baseDir = baseProductDir();
 
 my $editor = $ENV{SVN_LOG_EDITOR};
 if (!$editor) {
     $editor = $ENV{CVS_LOG_EDITOR};
 }
 if (!$editor) {
-    my $builtEditorApplication = "$symroots/Release/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
+    my $builtEditorApplication = "$baseDir/Release/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     $editor = $builtEditorApplication if -x $builtEditorApplication;
 }
 if (!$editor) {
-    my $builtEditorApplication = "$symroots/Debug/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
+    my $builtEditorApplication = "$baseDir/Debug/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     $editor = $builtEditorApplication if -x $builtEditorApplication;
 }
 if (!$editor) {
