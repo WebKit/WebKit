@@ -1,5 +1,14 @@
 2006-10-21  Darin Adler  <darin@apple.com>
 
+        - fix the Qt build
+
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldShowDeleteInterface):
+        * platform/qt/EditorClientQt.h:
+        * platform/qt/FrameQt.cpp:
+
+2006-10-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - convert WebLoader and its 3 subclasses to C++ (this time with a leak fixed)

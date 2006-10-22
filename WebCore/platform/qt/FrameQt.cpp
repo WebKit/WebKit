@@ -32,6 +32,7 @@
 
 #include "config.h"
 #include "FrameQt.h"
+
 #include "Element.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
@@ -68,6 +69,8 @@
 
 namespace WebCore {
 
+// FIXME: Turned this off to fix buildbot. This function be either deleted or used.
+#if 0
 static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 {
     // FIXME: The scrolling done here should be done in the default handlers
@@ -90,6 +93,7 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 
     r->layer()->scrollToOffset(x, y, true, true);
 }
+#endif
 
 FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* frameClient, EditorClient* editorClient)
     : Frame(page, ownerElement, (editorClient ? editorClient : new EditorClientQt()))

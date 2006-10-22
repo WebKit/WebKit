@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006 Apple Computer, Inc.
  * 
  * All rights reserved.
  *
@@ -32,13 +33,10 @@
 
 namespace WebCore {
 
-class Range;
-
 class EditorClientQt : public EditorClient {
 public:
-    virtual ~EditorClientQt() { }
-
     virtual bool shouldDeleteRange(Range*);
+    virtual bool shouldShowDeleteInterface(HTMLElement*);
 };
 
 }
