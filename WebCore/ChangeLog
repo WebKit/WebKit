@@ -1,3 +1,11 @@
+2006-10-21  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        Popup tweaks.
+
+        * platform/PopupMenu.h:
+
 2006-10-21  Darin Adler  <darin@apple.com>
 
         * editing/DeleteButtonController.cpp: (WebCore::enclosingDeletableTable):

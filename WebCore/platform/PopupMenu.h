@@ -67,7 +67,7 @@ public:
     IntRect clientRect() const;
 
     int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
-    bool setFocusedIndex(int index, bool fireOnChange = false);
+    bool setFocusedIndex(int index, bool setControlText = true, bool fireOnChange = false);
     int focusedIndex() const { return m_focusedIndex; }
 
     void paint(const IntRect& damageRect, HDC hdc = 0);
@@ -79,6 +79,9 @@ public:
 
     void setScrollOffset(int offset) { m_scrollOffset = offset; }
     int scrollOffset() const { return m_scrollOffset; }
+
+    void scrollTo(int);
+    void scrollToRevealSelection();
 
     void incrementWheelDelta(int delta);
     void reduceWheelDelta(int delta);
