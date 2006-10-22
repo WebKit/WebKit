@@ -103,7 +103,7 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
     const HashMap<String, String>& requestHeaders = job->requestHeaders();
 
     if (!requestHeaders.isEmpty())
-        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders] retain];
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];
     
     NSArray *postData = nil;
     if (!job->postData().elements().isEmpty())
@@ -113,7 +113,6 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
     NSDictionary *responseHeaderDict = nil;
     int statusCode = 0;
     NSData *resultData = [bridge syncLoadResourceWithMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
-    [headerDict release];
     
     job->kill();
 

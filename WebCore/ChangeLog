@@ -1,3 +1,13 @@
+2006-10-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * platform/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):
+        Don't leak the header dictionary.
+
 2006-10-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
