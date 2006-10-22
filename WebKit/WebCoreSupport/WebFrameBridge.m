@@ -83,6 +83,7 @@
 #import <WebCore/WebLoader.h>
 #import <WebCore/WebSubresourceLoader.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/RefPtr.h>
 
 // For compatibility only with old SPI. 
 @interface NSObject (OldWebPlugin)
@@ -117,32 +118,33 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [(WebPageBridge *)[self page] webView];
 }
 
-- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
+- (void)finishInitializingWithFrameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([page webView])];
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
+    WebView *webView = [self webView];
 
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView bridge:self];
     ++WebBridgeCount;
 
     [self setName:name];
-    [self initializeSettings:[[self webView] _settings]];
-    [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
+    [self initializeSettings:[webView _settings]];
+    [self setTextSizeMultiplier:[webView textSizeMultiplier]];
+}
 
+- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
+{
+    // FIXME: Need to clear the WebView pointer in WebEditorClient when the WebView is deallocated.
+    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([page webView])];
+    [self finishInitializingWithFrameName:name view:view];
     return self;
 }
 
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    WebEditorClient* editorClient = new WebEditorClient();
-    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:editorClient];
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
+    RefPtr<WebEditorClient> editorClient = new WebEditorClient;
+    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:editorClient.get()];
+    // FIXME: Need to clear the WebView pointer in WebEditorClient when the WebView is deallocated.
     editorClient->setWebView([self webView]);
-    ++WebBridgeCount;
-
-    [self setName:name];
-    [self initializeSettings:[[self webView] _settings]];
-    [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
-
+    [self finishInitializingWithFrameName:name view:view];
     return self;
 }
 

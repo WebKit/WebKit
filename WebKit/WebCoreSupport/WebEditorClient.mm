@@ -38,28 +38,22 @@
 using namespace WebCore;
 
 WebEditorClient::WebEditorClient()
-    : m_webView(NULL) 
+    : m_webView(nil) 
 {
 }
 
 WebEditorClient::WebEditorClient(WebView* webView)
     : m_webView(webView) 
 {
-    [m_webView retain];
 }
 
 WebEditorClient::~WebEditorClient()
 {
-    [m_webView release];
 }
 
 void WebEditorClient::setWebView(WebView* webView)
 { 
-    if (m_webView != webView) {
-        [m_webView release];
-        m_webView = webView; 
-        [m_webView retain];
-    }
+    m_webView = webView; 
 }
 
 bool WebEditorClient::shouldDeleteRange(Range* range)

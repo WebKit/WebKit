@@ -1,5 +1,25 @@
 2006-10-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10328
+          REGRESSION: frame leak reported by buildbot
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient): Don't retain the web view.
+        (WebEditorClient::~WebEditorClient): Don't release the web view.
+        (WebEditorClient::setWebView): Ditto.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge finishInitializingWithFrameName:view:]): Added. Common code for use by both
+        init methods below.
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]): Changed to use new method.
+        Also added comment pointing out design flaw -- we attach the client to the web view here,
+        but we need to be sure to detach in case the web view is deallocated first.
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]): Ditto.
+
+2006-10-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam.
 
         - http://bugs.webkit.org/show_bug.cgi?id=11376
