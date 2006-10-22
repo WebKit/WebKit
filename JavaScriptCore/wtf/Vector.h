@@ -82,7 +82,7 @@ namespace WTF {
     {
         static void initialize(T* begin, T* end) 
         {
-            memset(begin, 0, reinterpret_cast<char *>(end) - reinterpret_cast<char *>(begin));
+            memset(begin, 0, reinterpret_cast<char*>(end) - reinterpret_cast<char*>(begin));
         }
     };
 
@@ -122,11 +122,11 @@ namespace WTF {
     {
         static void move(const T* src, const T* srcEnd, T* dst) 
         {
-            memcpy(dst, src, reinterpret_cast<const char *>(srcEnd) - reinterpret_cast<const char *>(src));
+            memcpy(dst, src, reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
         }
         static void moveOverlapping(const T* src, const T* srcEnd, T* dst) 
         {
-            memmove(dst, src, reinterpret_cast<const char *>(srcEnd) - reinterpret_cast<const char *>(src));
+            memmove(dst, src, reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
         }
     };
 
@@ -151,7 +151,7 @@ namespace WTF {
     {
         static void uninitializedCopy(const T* src, const T* srcEnd, T* dst) 
         {
-            memcpy(dst, src, reinterpret_cast<const char *>(srcEnd) - reinterpret_cast<const char *>(src));
+            memcpy(dst, src, reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
         }
     };
 
@@ -256,6 +256,12 @@ namespace WTF {
         const T* buffer() const { return m_buffer; }
         size_t capacity() const { return m_capacity; }
 
+        void swap(VectorBuffer<T, 0>& other)
+        {
+            std::swap(m_capacity, other.m_capacity);
+            std::swap(m_buffer, other.m_buffer);
+        }
+
         T* releaseBuffer()
         {
             T* buffer = m_buffer;
@@ -317,10 +323,13 @@ namespace WTF {
             return BaseBuffer::releaseBuffer();
         }
 
+        void swap(VectorBuffer<T, inlineCapacity>&);
+
     private:
         static const size_t m_inlineBufferSize = inlineCapacity * sizeof(T);
         T* inlineBuffer() { return reinterpret_cast<T*>(&m_inlineBuffer); }
 
+        // FIXME: Nothing guarantees this buffer is appropriately aligned to hold objects of type T.
         char m_inlineBuffer[m_inlineBufferSize];
     };
 
@@ -427,10 +436,16 @@ namespace WTF {
             TypeOperations::uninitializedFill(begin(), end(), val);
         }
 
-        void fill(const T& val, size_t size);
+        void fill(const T&, size_t);
         void fill(const T& val) { fill(val, size()); }
 
         T* releaseBuffer();
+
+        void swap(Vector<T, inlineCapacity>& other)
+        {
+            std::swap(m_size, other.m_size);
+            m_impl.swap(other.m_impl);
+        }
 
     private:
         void expandCapacity(size_t newMinCapacity);
@@ -643,6 +658,12 @@ namespace WTF {
         iterator end = collection.end();
         for (iterator it = collection.begin(); it != end; ++it)
             delete *it;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    inline void swap(Vector<T, inlineCapacity>& a, Vector<T, inlineCapacity>& b)
+    {
+        a.swap(b);
     }
 
 } // namespace WTF

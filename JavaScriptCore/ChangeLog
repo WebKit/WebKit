@@ -1,5 +1,17 @@
 2006-10-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11377
+          swap(Vector, Vector) should be O(1) instead of O(n)
+
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::swap): Added.
+        (WTF::Vector::swap): Added.
+        (WTF::swap): Added overload that takes two Vector objects.
+
+2006-10-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam.
 
         - http://bugs.webkit.org/show_bug.cgi?id=11376
