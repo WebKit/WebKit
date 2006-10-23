@@ -1,3 +1,11 @@
+2006-10-23  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Geof.
+
+        - Sets the lowercase range correctly in the test and consolidates a variable to make the test more readable.
+
+       * tests/mozilla/ecma/String/15.5.4.11-2.js:
+
 2006-10-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
