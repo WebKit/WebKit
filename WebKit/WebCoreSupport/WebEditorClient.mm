@@ -28,6 +28,8 @@
 
 #import "WebEditorClient.h"
 
+#import <WebKit/DOMHTMLElement.h>
+#import <WebKit/DOMRange.h>
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebEditingDelegate.h"
