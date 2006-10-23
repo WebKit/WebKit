@@ -2703,6 +2703,7 @@
 		E1F0424709839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; };
+		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
 		FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418909759694000540BE /* RenderSVGImage.h */; };
 		FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418A09759694000540BE /* RenderSVGImage.cpp */; };
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
@@ -5674,6 +5675,7 @@
 		E1F0424509839389006694EA /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = textAreaResizeCorner.tiff; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
+		EDEC98020AED7E170059137F /* WebCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePrefix.h; sourceTree = "<group>"; };
 		F523D23B02DE4396018635CA /* HTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23C02DE4396018635CA /* HTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23E02DE4396018635CA /* HTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5772,6 +5774,7 @@
 			isa = PBXGroup;
 			children = (
 				65C97AF208EA908800ACD273 /* config.h */,
+				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
 				93F19B1908245E59001E9ABC /* Info.plist */,
 				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
@@ -10457,6 +10460,7 @@
 				8542A7950AE5C94100DF58DF /* JSSVGPoint.h in Headers */,
 				8542A7970AE5C94300DF58DF /* JSSVGNumber.h in Headers */,
 				8542A7990AE5C94400DF58DF /* JSSVGElementWrapperFactory.h in Headers */,
+				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
 				656B84E20AEA1D3100A095B4 /* ResourceLoaderClient.h in Headers */,
 				656B84E30AEA1D3100A095B4 /* ResourceLoaderInternal.h in Headers */,
 				656B85380AEA1F9A00A095B4 /* ResourceLoader.h in Headers */,
@@ -10508,7 +10512,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
