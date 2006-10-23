@@ -1,3 +1,10 @@
+2006-10-23  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Brady.
+
+        * loader/icon/IconLoader.h: Changed angle-brackets to quotes for
+        #include of ResourceLoader.h, since it's a WebCore header.
+
 2006-10-23  Darin Adler  <darin@apple.com>
 
         - fixed mistake that was preventing any loading from happening

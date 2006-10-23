@@ -25,7 +25,7 @@
 #ifndef ICONLOADER_H_
 #define ICONLOADER_H_
 
-#include <ResourceLoader.h>
+#include "ResourceLoader.h"
 
 namespace WebCore {
 
