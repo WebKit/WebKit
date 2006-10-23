@@ -1,3 +1,23 @@
+2006-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Move the undef try/catch to WebKitPrfix.h and include algorithm so we get
+        exception_defines.h and so the undef of try/catch works.
+
+        Break off the BGRA to ARGB code into WebGraphicsExtras.c, this lets
+        WebBaseNetscapePluginView.m safely compile as ObjC++ and not cause the Accelerate
+        framework to complain about C++ exceptions being disabled.
+
+        * Misc/WebGraphicsExtras.c: Added.
+        (WebConvertBGRAToARGB):
+        * Misc/WebGraphicsExtras.h: Added.
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _aglOffscreenImageForDrawingInRect:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebKitPrefix.h:
+        * WebView/WebView.m:
+
 2006-10-22  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

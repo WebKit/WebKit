@@ -100,10 +100,6 @@
 
 #import <WebCore/WebCoreTextRenderer.h>
 
-/* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
-#undef try
-#undef catch
-
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
 #elif defined(__i386__) || defined(__x86_64__)

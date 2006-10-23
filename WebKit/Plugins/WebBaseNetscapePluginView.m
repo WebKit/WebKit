@@ -33,6 +33,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h" 
 #import "WebFrameView.h"
+#import "WebGraphicsExtras.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSDataExtras.h"
@@ -46,7 +47,6 @@
 #import "WebNullPluginView.h"
 #import "WebPreferences.h"
 #import "WebViewInternal.h"
-#import <Accelerate/Accelerate.h>
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/npruntime_impl.h>
@@ -2756,10 +2756,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     GLsizei width, height;
     if (![self _getAGLOffscreenBuffer:&offscreenBuffer width:&width height:&height])
         return nil;
-        
+
+    unsigned char *plane = (unsigned char *)offscreenBuffer;
+
 #if defined(__i386__) || defined(__x86_64__)
-    // Make sure drawingInRect is inside the offscreen buffer because we're about to directly modify the bits inside drawingInRect
-    drawingInRect = NSIntersectionRect(drawingInRect, NSMakeRect(0, 0, width, height));
+    // Make rect inside the offscreen buffer because we're about to directly modify the bits inside drawingInRect
+    NSRect rect = NSIntegralRect(NSIntersectionRect(drawingInRect, NSMakeRect(0, 0, width, height)));
 
     // The offscreen buffer, being an OpenGL framebuffer, is in BGRA format on x86.  We need to swap the blue and red channels before
     // wrapping the buffer in an NSBitmapImageRep, which only supports RGBA and ARGB.
@@ -2769,24 +2771,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // If only a small region of the plug-in is being redrawn, then it would be a waste to convert the entire image from BGRA to ARGB.
     // Since we know what region of the image will ultimately be drawn to screen (drawingInRect), we restrict the channel swapping to
     // just that region within the offscreen buffer.
-    GLsizei rowBytes = width * 4;
-    GLvoid *swizzleImageBase = (unsigned char *)offscreenBuffer + (int)(NSMinY(drawingInRect) * rowBytes) + (int)(NSMinX(drawingInRect) * 4);
-    vImage_Buffer vImage = {
-        data: swizzleImageBase,
-        height: static_cast<vImagePixelCount>(NSHeight(drawingInRect)),
-        width: static_cast<vImagePixelCount>(NSWidth(drawingInRect)),
-        rowBytes: rowBytes
-    };
-    uint8_t vImagePermuteMap[4] = { 3, 2, 1, 0 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map converts BGRA to ARGB
-    vImage_Error vImageError = vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
-    if (vImageError) {
-        LOG_ERROR("Could not convert BGRA image to ARGB: %d", vImageError);
+    if (!WebConvertBGRAToARGB(plane, width * 4, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height))
         return nil;
-    }
 #endif /* defined(__i386__) || defined(__x86_64__) */
     
     NSBitmapImageRep *aglBitmap = [[NSBitmapImageRep alloc]
-        initWithBitmapDataPlanes:(unsigned char **)&offscreenBuffer
+        initWithBitmapDataPlanes:&plane
                       pixelsWide:width
                       pixelsHigh:height
                    bitsPerSample:8
