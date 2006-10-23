@@ -86,7 +86,7 @@ namespace WebCore {
         // void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&) { }
 
         // void didReceiveResponse(ResourceLoader*, const ResourceResponse&) { }
-        virtual void didReceiveData(ResourceLoader*, const char*, long long) { }
+        virtual void didReceiveData(ResourceLoader*, const char*, int) { }
         virtual void didFinishLoading(ResourceLoader*) { }
         // void didFailWithError(ResourceError*) { }
 
