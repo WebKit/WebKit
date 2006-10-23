@@ -1,3 +1,31 @@
+2006-10-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <http://bugs.webkit.org/show_bug.cgi?id=11333>
+        Writely Editor: After inserting a HR element, pressing return key creates a copy of this HR element in the document
+
+        * editing/inserting/insert-br-009-expected.checksum: Added.
+        * editing/inserting/insert-br-009-expected.png: Added.
+        * editing/inserting/insert-br-009-expected.txt: Added.
+        * editing/inserting/insert-br-009.html: Added.
+        * editing/inserting/insert-paragraph-01-expected.checksum: Added.
+        * editing/inserting/insert-paragraph-01-expected.png: Added.
+        * editing/inserting/insert-paragraph-01-expected.txt: Added.
+        * editing/inserting/insert-paragraph-01.html: Added.
+        * editing/inserting/insert-paragraph-02-expected.checksum: Added.
+        * editing/inserting/insert-paragraph-02-expected.png: Added.
+        * editing/inserting/insert-paragraph-02-expected.txt: Added.
+        * editing/inserting/insert-paragraph-02.html: Added.
+        * editing/inserting/insert-paragraph-03-expected.checksum: Added.
+        * editing/inserting/insert-paragraph-03-expected.png: Added.
+        * editing/inserting/insert-paragraph-03-expected.txt: Added.
+        * editing/inserting/insert-paragraph-03.html: Added.
+        * editing/inserting/insert-paragraph-04-expected.checksum: Added.
+        * editing/inserting/insert-paragraph-04-expected.png: Added.
+        * editing/inserting/insert-paragraph-04-expected.txt: Added.
+        * editing/inserting/insert-paragraph-04.html: Added.
+
 2006-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Beth "pants on fire" Dakin.

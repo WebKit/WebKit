@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
-#include "Logging.h"
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "Range.h"
@@ -86,6 +85,7 @@ void InsertLineBreakCommand::doApply()
         return;
 
     Position pos(selection.start().upstream());
+    Position canonicalPos(VisiblePosition(pos).deepEquivalent());
 
     pos = positionAvoidingSpecialElementBoundary(pos);
 
@@ -106,28 +106,37 @@ void InsertLineBreakCommand::doApply()
     if (isTabSpan) {
         insertNodeAtTabSpanPosition(nodeToInsert.get(), pos);
         setEndingSelection(Selection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM));
-    } else if (isEndOfBlock(VisiblePosition(pos, selection.affinity()))) {
-        Node* block = pos.node()->enclosingBlockFlowElement();
-        
-        // Insert an extra break element so that there will be a blank line after the last
-        // inserted line break. In HTML, a line break at the end of a block ends the last
-        // line in the block, while in editable text, a line break at the end of block
-        // creates a last blank line. We need an extra break element to get HTML to act
-        // the way editable text would.
-        bool haveBreak = pos.downstream().node()->hasTagName(brTag) && pos.downstream().offset() == 0;
+    } else if (canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable() ||
+               canonicalPos.node()->hasTagName(hrTag)) {
+        if (canonicalPos.offset() == 0) {
+            insertNodeBefore(nodeToInsert.get(), canonicalPos.node());
+            // Insert an extra br if the just inserted one collapsed.
+            if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
+                insertNodeBefore(createBreakElement(document()).get(), nodeToInsert.get());
+            // Leave the selection where it was, just before the table/horizontal rule.
+        } else if (canonicalPos.offset() == maxDeepOffset(canonicalPos.node())) {
+            insertNodeAfter(nodeToInsert.get(), canonicalPos.node());
+            setEndingSelection(Selection(VisiblePosition(Position(nodeToInsert.get(), 0))));
+        } else
+            // There aren't any VisiblePositions like this yet.
+            ASSERT_NOT_REACHED();
+    // FIXME: The following doesn't handle positions at the ends of anonymous blocks, and
+    // those cases are buggy.
+    } else if (isEndOfBlock(selection.visibleStart())) {
         insertNodeAt(nodeToInsert.get(), pos.node(), pos.offset());
-        if (!haveBreak)
-            insertNodeAfter(createBreakElement(document()).get(), nodeToInsert.get());
-            
-        setEndingSelection(Selection(Position(block, maxDeepOffset(block)), DOWNSTREAM));
+        VisiblePosition endingPosition(endOfBlock(VisiblePosition(pos)));
+        
+        // Insert an extra br if the inserted one collapsed.
+        if (!isStartOfParagraph(endingPosition))
+            insertNodeBefore(createBreakElement(document()).get(), nodeToInsert.get());
+        
+        setEndingSelection(Selection(endingPosition));
     } else if (pos.offset() <= pos.node()->caretMinOffset()) {
-        LOG(Editing, "input newline case 2");
         // Insert node before downstream position, and place caret there as well. 
         Position endingPosition = pos.downstream();
         insertNodeBeforePosition(nodeToInsert.get(), endingPosition);
         setEndingSelection(Selection(endingPosition, DOWNSTREAM));
     } else if (pos.offset() >= pos.node()->caretMaxOffset()) {
-        LOG(Editing, "input newline case 3");
         // Insert BR after this node. Place caret in the position that is downstream
         // of the current position, reckoned before inserting the BR in between.
         Position endingPosition = pos.downstream();
@@ -135,7 +144,6 @@ void InsertLineBreakCommand::doApply()
         setEndingSelection(Selection(endingPosition, DOWNSTREAM));
     } else {
         // Split a text node
-        LOG(Editing, "input newline case 4");
         ASSERT(pos.node()->isTextNode());
         
         // Do the split

@@ -1,3 +1,31 @@
+2006-10-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=11333>
+        Writely Editor: After inserting a HR element, pressing return key creates a copy of this HR element in the document
+        
+        Added special cases in InsertLineBreakCommand for inserting before
+        and after tables and horizontal rules.  Also, perform InsertLineBreak
+        instead of InsertParagraphSeparator at these positions.
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):  Use the canonical form
+        of the caret position when we check for the new special cases because 
+        we know that we canonicalize VisiblePositions to those positions.
+        Added code to handle inserting before/after tables and horizontal rules.  
+        Fixed a bug when inserting at the end of a block (it checked for a collapse
+        of the inserted br by looking for the absence of a br, but the line break 
+        might have been a '\n' in white-space:pre text).  Removed unused LOGs.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Perform an 
+        InsertLineBreakCommand when before/after a table or a horizontal rule
+        so that we don't have to maintain two pieces of special case code.
+        Migrated to enclosingBlock.
+        * editing/htmlediting.cpp: Added a FIXME.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Added a workaround for 8622.
+        
 2006-10-23  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

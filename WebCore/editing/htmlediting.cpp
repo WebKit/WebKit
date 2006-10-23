@@ -271,6 +271,9 @@ bool isBlock(Node* node)
 }
 
 // FIXME: Deploy this in all of the places where enclosingBlockFlow/enclosingBlockFlowOrTableElement are used.
+// FIXME: Pass a position to this function.  The enclosing block of [table, x] for example, should be the 
+// block that contains the table and not the table, and this function should be the only one responsible for 
+// knowing about these kinds of special cases.
 Node* enclosingBlock(Node* node)
 {
     if (isBlock(node))

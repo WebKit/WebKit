@@ -537,7 +537,7 @@ void ReplaceSelectionCommand::doApply()
         return;
     
     // 1) Insert the content.
-    // 2) Restore the styles of inserted nodes (since styles were removed during the test insertion).
+    // 2) Remove redundant styles and style tags, this inner <b> for example: <b>foo <b>bar</b> baz</b>.
     // 3) Merge the start of the added content with the content before the position being pasted into.
     // 4) Do one of the following: a) expand the last br if the fragment ends with one and it collapsed,
     // b) merge the last paragraph of the incoming fragment with the paragraph that contained the 

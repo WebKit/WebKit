@@ -97,8 +97,12 @@ void InsertParagraphSeparatorCommand::doApply()
     
     // FIXME: Turn into an InsertLineBreak in other cases where we don't want to do the splitting/cloning that
     // InsertParagraphSeparator does.
-    Node* block = pos.node()->enclosingBlockFlowElement();
-    if (!block || !block->parentNode() || block->renderer() && block->renderer()->isTableCell()) {
+    Node* block = enclosingBlock(pos.node());
+    Position canonicalPos = VisiblePosition(pos).deepEquivalent();
+    if (!block || !block->parentNode() || 
+        block->renderer() && block->renderer()->isTableCell() ||
+        canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable() ||
+        canonicalPos.node()->hasTagName(hrTag)) {
         applyCommandToComposite(new InsertLineBreakCommand(document()));
         return;
     }

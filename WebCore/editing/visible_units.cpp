@@ -563,6 +563,13 @@ VisiblePosition nextSentencePosition(const VisiblePosition &c)
 VisiblePosition startOfParagraph(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();
+    // FIXME: Use the leftmost candidate.  Canonicalization should give us the leftmost candidate,
+    // but it sometimes doesn't because of 8622.
+    if (p.upstream().inRenderedContent()) {
+        p = p.upstream();
+        ASSERT(VisiblePosition(p) == c);
+    }
+
     Node *startNode = p.node();
 
     if (!startNode)
