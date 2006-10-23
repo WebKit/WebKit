@@ -1,5 +1,58 @@
 2006-10-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+
+        - start converting ResourceLoaderClient to new API
+
+        Did the bits I could do without introducing new types:
+        
+        - renamed receivedData to didReceiveData
+        - renamed version of receivedAllData that doesn't pass any data to didFinishLoading
+
+        * bridge/mac/WebCoreResourceLoaderImp.mm:
+        (-[WebCoreResourceLoaderImp addData:]):
+        (-[WebCoreResourceLoaderImp finishJobAndHandle:]):
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::didReceiveData):
+        (IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::didReceiveData):
+        * loader/loader.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdkClientDefault::didReceiveData):
+        * platform/gdk/FrameGdk.h:
+        * platform/network/ResourceLoaderClient.h:
+        (WebCore::ResourceLoaderClient::didReceiveData):
+        (WebCore::ResourceLoaderClient::didFinishLoading):
+        (WebCore::ResourceLoaderClient::receivedResponse):
+        * platform/network/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::didReceiveData):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::ResourceLoader::cancel):
+        * platform/network/gdk/ResourceLoaderManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::ResourceLoaderManager::downloadTimerCallback):
+        (WebCore::ResourceLoaderManager::remove):
+        * platform/network/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::slotData):
+        (WebCore::ResourceLoaderManager::remove):
+        * platform/network/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoader::onRequestComplete):
+        (WebCore::ResourceLoader::fileLoadTimer):
+        (WebCore::ResourceLoader::cancel):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::didReceiveData):
+        * platform/qt/FrameQtClient.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
+2006-10-23  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Anders.
 
         - marked files executable

@@ -144,7 +144,7 @@ void Loader::receivedResponse(ResourceLoader* job, PlatformResponse response)
     }
 }
 
-void Loader::receivedData(ResourceLoader* job, const char* data, int size)
+void Loader::didReceiveData(ResourceLoader* job, const char* data, int size)
 {
     Request* request = m_requestsLoading.get(job);
     if (!request)

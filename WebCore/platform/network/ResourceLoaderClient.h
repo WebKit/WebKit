@@ -45,9 +45,9 @@ class NSURLResponse;
 #if PLATFORM(QT)
 #include <QString>
 #include <wtf/RefPtr.h>
+#endif
 
 #include "Shared.h"
-#endif
 
 namespace WebCore {
 
@@ -78,10 +78,24 @@ namespace WebCore {
     class ResourceLoaderClient {
     public:
         virtual ~ResourceLoaderClient() { }
+
+        // request may be modified
+        // void willSendRequest(ResourceLoader*, Request&, const ResourceResonse& redirectResponse) { }
+    
+        // void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&) { }
+        // void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&) { }
+
+        // void didReceiveResponse(ResourceLoader*, const ResourceResponse&) { }
+        virtual void didReceiveData(ResourceLoader*, const char*, long long) { }
+        virtual void didFinishLoading(ResourceLoader*) { }
+        // void didFailWithError(ResourceError*) { }
+
+        // cached response may be modified
+        // void willCacheResponse(ResourceLoader*, CachedResourceResponse&) { }
+
+        // old-style methods
         virtual void receivedRedirect(ResourceLoader*, const KURL&) { }
         virtual void receivedResponse(ResourceLoader*, PlatformResponse) { }
-        virtual void receivedData(ResourceLoader*, const char*, int) { }
-        virtual void receivedAllData(ResourceLoader*) { }
         virtual void receivedAllData(ResourceLoader*, PlatformData) { }
     };
 

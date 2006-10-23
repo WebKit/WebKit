@@ -64,7 +64,7 @@ namespace WebCore {
 
     private:
         virtual void receivedResponse(ResourceLoader*, PlatformResponse);
-        virtual void receivedData(ResourceLoader*, const char*, int);
+        virtual void didReceiveData(ResourceLoader*, const char*, int);
         virtual void receivedAllData(ResourceLoader*, PlatformData);
 
         void servePendingRequests();

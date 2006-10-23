@@ -231,7 +231,7 @@ void ResourceLoader::onRequestComplete(LPARAM lParam)
             setHasReceivedResponse();
             client()->receivedResponse(this, 0);
         }
-        client()->receivedData(this, buffer, buffers.dwBufferLength);
+        client()->didReceiveData(this, buffer, buffers.dwBufferLength);
         buffers.dwBufferLength = bufferSize;
     }
 
@@ -259,7 +259,7 @@ void ResourceLoader::onRequestComplete(LPARAM lParam)
     InternetCloseHandle(d->m_resourceHandle);
     
     client()->receivedAllData(this, &platformData);
-    client()->receivedAllData(this);
+    client()->didFinishLoading(this);
     delete this;
 }
 
@@ -384,7 +384,7 @@ void ResourceLoader::fileLoadTimer(Timer<ResourceLoader>* timer)
         char buffer[bufferSize];
         result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
         if (result && bytesRead)
-            d->client->receivedData(this, buffer, bytesRead);
+            d->client->didReceiveData(this, buffer, bytesRead);
         // Check for end of file. 
     } while (result && bytesRead);
 
@@ -399,7 +399,7 @@ void ResourceLoader::fileLoadTimer(Timer<ResourceLoader>* timer)
     platformData.loaded = TRUE;
 
     d->client->receivedAllData(this, &platformData);
-    d->client->receivedAllData(this);
+    d->client->didFinishLoading(this);
 }
 
 void ResourceLoader::cancel()
@@ -415,7 +415,7 @@ void ResourceLoader::cancel()
     platformData.loaded = FALSE;
 
     d->client->receivedAllData(this, &platformData);
-    d->client->receivedAllData(this);
+    d->client->didFinishLoading(this);
 
     if (!d->m_resourceHandle)
         // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.

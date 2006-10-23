@@ -63,7 +63,7 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
     ResourceLoader* job = static_cast<ResourceLoader*>(obj);
     ResourceLoaderInternal* d = job->getInternal();
     int totalSize = size * nmemb;
-    d->client->receivedData(job, static_cast<char*>(ptr), totalSize);
+    d->client->didReceiveData(job, static_cast<char*>(ptr), totalSize);
     return totalSize;
 }
 
@@ -87,7 +87,7 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
             if (res != CURLE_OK)
                 printf("Error WITH JOB %d\n", res);
             d->client->receivedAllData(job, 0);
-            d->client->receivedAllData(job);
+            d->client->didFinishLoading(job);
             curl_easy_cleanup(d->m_handle);
             d->m_handle = 0;
         }
@@ -170,7 +170,7 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     if (jobs->isEmpty())
         m_downloadTimer.stop();
     d->client->receivedAllData(job, 0);
-    d->client->receivedAllData(job);
+    d->client->didFinishLoading(job);
     if (d->m_handle) {
         curl_multi_remove_handle(curlMultiHandle, d->m_handle);
         curl_easy_cleanup(d->m_handle);

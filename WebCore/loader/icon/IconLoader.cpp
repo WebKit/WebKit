@@ -85,7 +85,7 @@ void IconLoader::stopLoading()
     m_data.clear();
 }
 
-void IconLoader::receivedData(ResourceLoader* resourceLoader, const char* data, int size)
+void IconLoader::didReceiveData(ResourceLoader* resourceLoader, const char* data, int size)
 {
     ASSERT(resourceLoader == m_resourceLoader);
     ASSERT(data);
@@ -95,7 +95,7 @@ void IconLoader::receivedData(ResourceLoader* resourceLoader, const char* data, 
         m_data.append(data[i]);
 }
 
-void IconLoader::receivedAllData(ResourceLoader* resourceLoader)
+void IconLoader::didFinishLoading(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader == m_resourceLoader);
 

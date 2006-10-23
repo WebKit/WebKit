@@ -72,7 +72,7 @@ using namespace WebCore;
     ASSERT(data);
     ASSERT(_job);
     if (ResourceLoaderClient* client = _job->client())
-        client->receivedData(_job, (const char *)[data bytes], [data length]);
+        client->didReceiveData(_job, (const char *)[data bytes], [data length]);
 }
 
 - (void)jobWillBeDeallocated
@@ -95,7 +95,7 @@ using namespace WebCore;
     if (job) {
         if (ResourceLoaderClient* client = job->client()) {
             client->receivedAllData(job, data);
-            client->receivedAllData(job);
+            client->didFinishLoading(job);
         }
         job->kill();
     }

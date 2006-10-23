@@ -145,7 +145,7 @@ void FrameQtClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)
     // no-op
 }
 
-void FrameQtClientDefault::receivedData(ResourceLoader* job, const char* data, int length)
+void FrameQtClientDefault::didReceiveData(ResourceLoader* job, const char* data, int length)
 {
     ResourceLoaderInternal* d = job->getInternal();
     ASSERT(d);

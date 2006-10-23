@@ -72,7 +72,7 @@ void ResourceLoaderManager::slotData(KIO::Job* kioJob, const QByteArray& data)
     if (!d || !d->client)
         return;
 
-    d->client->receivedData(job, data.data(), data.size());
+    d->client->didReceiveData(job, data.data(), data.size());
 }
 
 void ResourceLoaderManager::slotMimetype(KIO::Job* kioJob, const QString& type)
@@ -138,7 +138,7 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
         d->m_charset = job->extractCharsetFromHeaders(headers);
     else if (job->method() == "POST") {
         // Will take care of informing our client...
-        // This must be called before receivedAllData(),
+        // This must be called before didFinishLoading(),
         // otherwhise assembleResponseHeaders() is called too early...
         RefPtr<PlatformResponseQt> response(new PlatformResponseQt());
         response->data = headers;    
@@ -148,7 +148,7 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     }
 
     d->client->receivedAllData(job, 0);
-    d->client->receivedAllData(job);
+    d->client->didFinishLoading(job);
 
     m_jobToKioMap.remove(job);
     m_kioToJobMap.remove(kioJob);

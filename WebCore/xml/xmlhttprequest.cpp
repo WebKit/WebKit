@@ -515,15 +515,17 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL
     const char* bytes = static_cast<const char*>(data.data());
     int len = static_cast<int>(data.size());
 
-    receivedData(0, bytes, len);
+    didReceiveData(0, bytes, len);
     if (m_aborted)
         return;
 
-    receivedAllData(0);
+    didFinishLoading(0);
 }
 
-void XMLHttpRequest::receivedAllData(ResourceLoader*)
+void XMLHttpRequest::didFinishLoading(ResourceLoader* loader)
 {
+    ASSERT(loader == m_loader);
+
     if (m_responseHeaders.isEmpty() && m_loader)
         m_responseHeaders = m_loader->queryMetaData("HTTP-Headers");
 
@@ -554,7 +556,7 @@ void XMLHttpRequest::receivedRedirect(ResourceLoader*, const KURL& m_url)
         abort();
 }
 
-void XMLHttpRequest::receivedData(ResourceLoader*, const char* data, int len)
+void XMLHttpRequest::didReceiveData(ResourceLoader*, const char* data, int len)
 {
     if (m_responseHeaders.isEmpty() && m_loader)
         m_responseHeaders = m_loader->queryMetaData("HTTP-Headers");
