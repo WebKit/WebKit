@@ -331,7 +331,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             tag = WebMenuItemTagPaste;
         } else {
             // FIXME 4158153: we should supply tags for each known item so clients can make
-            // sensible decisions, like we do with PDF context menu items (see WebPDFView.m)
+            // sensible decisions, like we do with PDF context menu items (see WebPDFView.mm)
 
             // Once we have other tag names, we should reconsider if any of them are valid for password fields.
             tag = WebMenuItemTagOther;

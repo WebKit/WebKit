@@ -2,6 +2,27 @@
 
         Reviewed by Darin.
 
+        Rename the now ObjC++ files to be .mm and remove the explicit file types.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Plugins/WebBaseNetscapePluginView.m: Removed.
+        * Plugins/WebNetscapePluginStream.m: Removed.
+        * Plugins/WebPluginController.m: Removed.
+        * WebCoreSupport/WebFrameBridge.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m: Removed.
+        * WebView/WebFrame.m: Removed.
+        * WebView/WebFrameView.m: Removed.
+        * WebView/WebPDFView.m: Removed.
+        * WebView/WebPolicyDelegate.m: Removed.
+        * WebView/WebView.m: Removed.
+
+2006-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
         Move the undef try/catch to WebKitPrfix.h and include algorithm so we get
         exception_defines.h and so the undef of try/catch works.
 
