@@ -649,7 +649,7 @@
 		8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8538F0160AD718D8006A81D1 /* DOMAbstractView.h */; };
 		8538F05B0AD722F1006A81D1 /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F0580AD722F1006A81D1 /* DOMRange.h */; };
 		8538F05C0AD722F1006A81D1 /* DOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8538F0590AD722F1006A81D1 /* DOMRange.mm */; };
-		8538F05D0AD722F1006A81D1 /* DOMRangeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8538F05D0AD722F1006A81D1 /* DOMRangeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; settings = {ATTRIBUTES = (); }; };
 		8538F0850AD72CB6006A81D1 /* DOMRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 8538F0840AD72CB6006A81D1 /* DOMRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8538F08C0AD72E0A006A81D1 /* DOMRange.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8538F0580AD722F1006A81D1 /* DOMRange.h */; };
 		853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
@@ -1161,7 +1161,7 @@
 		85E711A40AC5D5350053270F /* DOMHTMLDivElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711550AC5D5340053270F /* DOMHTMLDivElementInternal.h */; };
 		85E711A50AC5D5350053270F /* DOMHTMLDListElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711560AC5D5340053270F /* DOMHTMLDListElementInternal.h */; };
 		85E711A60AC5D5350053270F /* DOMHTMLDocumentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711570AC5D5340053270F /* DOMHTMLDocumentInternal.h */; };
-		85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85E711A70AC5D5350053270F /* DOMHTMLElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; settings = {ATTRIBUTES = (); }; };
 		85E711A80AC5D5350053270F /* DOMHTMLFieldSetElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711590AC5D5340053270F /* DOMHTMLFieldSetElementInternal.h */; };
 		85E711A90AC5D5350053270F /* DOMHTMLFontElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E7115A0AC5D5340053270F /* DOMHTMLFontElementInternal.h */; };
 		85E711AA0AC5D5350053270F /* DOMHTMLFormElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E7115B0AC5D5340053270F /* DOMHTMLFormElementInternal.h */; };
@@ -10495,6 +10495,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10508,6 +10509,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

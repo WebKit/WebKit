@@ -30,12 +30,19 @@
 
 #import "WebView.h"
 #import "WebViewInternal.h"
-#import <WebCore/DOMHTMLElementInternal.h>
-#import <WebCore/DOMRangeInternal.h>
 #import "WebEditingDelegate.h"
 #import "WebEditingDelegatePrivate.h"
 
-using namespace WebCore;
+// FIXME: we should have a way to get the following DOM interfaces from the WebCore internal headers,
+// we can't make the internal DOM headers private since they are not generated at the time installhdrs is called
+
+@interface DOMHTMLElement (WebCoreInternal)
++ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
+@end
+
+@interface DOMRange (WebCoreInternal)
++ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
+@end
 
 WebEditorClient::WebEditorClient()
     : m_webView(nil) 
@@ -56,12 +63,12 @@ void WebEditorClient::setWebView(WebView* webView)
     m_webView = webView; 
 }
 
-bool WebEditorClient::shouldDeleteRange(Range* range)
+bool WebEditorClient::shouldDeleteRange(WebCore::Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldDeleteDOMRange:[DOMRange _rangeWith:range]];
 }
 
-bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
+bool WebEditorClient::shouldShowDeleteInterface(WebCore::HTMLElement* element)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView shouldShowDeleteInterfaceForElement:[DOMHTMLElement _HTMLElementWith:element]];
 }
