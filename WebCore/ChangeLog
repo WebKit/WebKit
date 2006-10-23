@@ -1,3 +1,14 @@
+2006-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        - fixed build from last change.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest):
+        (WebCore::FrameMac::openURL):
+
 2006-10-23  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

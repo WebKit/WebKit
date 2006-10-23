@@ -379,7 +379,7 @@ void FrameMac::frameDetached()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
+void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -452,7 +452,7 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void FrameMac::openURL(const KURL &url)
+bool FrameMac::openURL(const KURL &url)
 {
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use Frame::processObjectRequest,
@@ -460,10 +460,11 @@ void FrameMac::openURL(const KURL &url)
 
     FrameLoadRequest request;
     request.m_request.setURL(url);
-    request.m_request.setReferrer(referrer());
+    request.m_request.setHTTPReferrer(referrer());
 
     loadRequest(request, userGestureHint());
 
+    return true;
 }
 
 void FrameMac::openURLRequest(const FrameLoadRequest& request)

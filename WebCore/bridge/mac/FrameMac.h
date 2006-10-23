@@ -130,7 +130,7 @@ public:
     virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);
 
-    bool loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent = 0, ObjCDOMElement* submitForm = 0, NSMutableDictionary* formValues = 0);
+    void loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent = 0, ObjCDOMElement* submitForm = 0, NSMutableDictionary* formValues = 0);
 
     virtual bool openURL(const KURL&);
     virtual void submitForm(const FrameLoadRequest&);
