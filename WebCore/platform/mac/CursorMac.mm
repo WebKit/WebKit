@@ -62,7 +62,7 @@ static NSCursor* leakNamedCursor(const char* name, int x, int y)
     NSString* resourceName = [[NSString alloc] initWithUTF8String:name];
     NSImage* cursorImage = [[NSImage alloc] initWithContentsOfFile:
         [[NSBundle bundleForClass:[WebCoreCursorBundle class]]
-        pathForResource:resourceName ofType:@"tiff"]];
+        pathForResource:resourceName ofType:@"png"]];
     [resourceName release];
     NSCursor* cursor = 0;
     if (cursorImage) {

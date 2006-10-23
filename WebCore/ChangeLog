@@ -1,3 +1,50 @@
+2006-10-23  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11291
+        PNG as cursor image format instead of TIFF
+
+        Original patch by Lars Naesbye Christensen (larsnaesbye@stud.ku.dk)
+
+        - Convert cursor images from TIFF to PNG.
+
+        * Resources/eastResizeCursor.png: Added.
+        * Resources/eastResizeCursor.tiff: Removed.
+        * Resources/eastWestResizeCursor.png: Added.
+        * Resources/eastWestResizeCursor.tiff: Removed.
+        * Resources/helpCursor.png: Added.
+        * Resources/helpCursor.tiff: Removed.
+        * Resources/linkCursor.png: Added.
+        * Resources/linkCursor.tiff: Removed.
+        * Resources/moveCursor.png: Added.
+        * Resources/moveCursor.tiff: Removed.
+        * Resources/northEastResizeCursor.png: Added.
+        * Resources/northEastResizeCursor.tiff: Removed.
+        * Resources/northEastSouthWestResizeCursor.png: Added.
+        * Resources/northEastSouthWestResizeCursor.tiff: Removed.
+        * Resources/northResizeCursor.png: Added.
+        * Resources/northResizeCursor.tiff: Removed.
+        * Resources/northSouthResizeCursor.png: Added.
+        * Resources/northSouthResizeCursor.tiff: Removed.
+        * Resources/northWestResizeCursor.png: Added.
+        * Resources/northWestResizeCursor.tiff: Removed.
+        * Resources/northWestSouthEastResizeCursor.png: Added.
+        * Resources/northWestSouthEastResizeCursor.tiff: Removed.
+        * Resources/southEastResizeCursor.png: Added.
+        * Resources/southEastResizeCursor.tiff: Removed.
+        * Resources/southResizeCursor.png: Added.
+        * Resources/southResizeCursor.tiff: Removed.
+        * Resources/southWestResizeCursor.png: Added.
+        * Resources/southWestResizeCursor.tiff: Removed.
+        * Resources/waitCursor.png: Added.
+        * Resources/waitCursor.tiff: Removed.
+        * Resources/westResizeCursor.png: Added.
+        * Resources/westResizeCursor.tiff: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/CursorMac.mm:
+        (WebCore::leakNamedCursor):
+
 2006-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.
