@@ -59,16 +59,19 @@ public:
     RenderMenuList* menuList() const { return m_menuList; }
 
 #if PLATFORM(WIN)
-    bool up();
-    bool down();
+    bool up(unsigned lines = 1);
+    bool down(unsigned lines = 1);
 
     int itemHeight() const { return m_itemHeight; }
     const IntRect& windowRect() const { return m_windowRect; }
     IntRect clientRect() const;
 
     int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
+
     bool setFocusedIndex(int index, bool setControlText = true, bool fireOnChange = false);
     int focusedIndex() const { return m_focusedIndex; }
+    void focusFirst();
+    void focusLast();
 
     void paint(const IntRect& damageRect, HDC hdc = 0);
 
@@ -80,8 +83,8 @@ public:
     void setScrollOffset(int offset) { m_scrollOffset = offset; }
     int scrollOffset() const { return m_scrollOffset; }
 
-    void scrollTo(int);
-    void scrollToRevealSelection();
+    bool scrollTo(int);
+    bool scrollToRevealSelection();
 
     void incrementWheelDelta(int delta);
     void reduceWheelDelta(int delta);
