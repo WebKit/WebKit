@@ -1,3 +1,18 @@
+2006-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+
+        - moved things around so loadURL:... is only called from one place
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::frameDetached):
+        (WebCore::FrameMac::loadRequest):
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::openURL):
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::urlSelected):
+
 2006-10-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

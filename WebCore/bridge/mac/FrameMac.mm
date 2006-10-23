@@ -181,27 +181,6 @@ void FrameMac::freeClipboard()
         _dragClipboard->setAccessPolicy(ClipboardMac::Numb);
 }
 
-bool FrameMac::openURL(const KURL &url)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    // FIXME: The lack of args here to get the reload flag from
-    // indicates a problem in how we use Frame::processObjectRequest,
-    // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.getNSURL()
-            referrer:[_bridge referrer]
-              reload:NO
-         userGesture:userGestureHint()
-              target:nil
-     triggeringEvent:nil
-                form:nil
-          formValues:nil];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return true;
-}
-
 // Either get cached regexp or build one that matches any of the labels.
 // The regexp we build is of the form:  (STR1|STR2|STRN)
 RegularExpression *regExpForLabels(NSArray *labels)
@@ -391,6 +370,49 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
+void FrameMac::frameDetached()
+{
+    Frame::frameDetached();
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [Mac(this)->bridge() frameDetached];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+bool FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSString *referrer;
+    String argsReferrer = request.m_request.httpReferrer();
+    if (!argsReferrer.isEmpty())
+        referrer = argsReferrer;
+    else
+        referrer = [_bridge referrer];
+    
+    if (request.m_request.httpMethod() != "POST") {
+        [_bridge loadURL:request.m_request.url().getNSURL()
+                referrer:referrer
+                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
+             userGesture:userGesture
+                  target:request.m_frameName
+         triggeringEvent:triggeringEvent
+                    form:submitForm
+              formValues:formValues];
+    } else {
+        [_bridge postWithURL:request.m_request.url().getNSURL()
+                    referrer:referrer
+                      target:request.m_frameName
+                        data:arrayFromFormData(request.m_request.httpBody())
+                 contentType:request.m_request.httpContentType()
+             triggeringEvent:triggeringEvent
+                        form:submitForm
+                  formValues:formValues];
+    }
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 void FrameMac::submitForm(const FrameLoadRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -405,11 +427,10 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    WebCoreFrameBridge *target = request.m_frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.m_frameName];
-    Frame *targetPart = [target impl];
+    Frame* target = request.m_frameName.isEmpty() ? this : tree()->find(request.m_frameName);
     bool willReplaceThisFrame = false;
-    for (Frame *p = this; p; p = p->tree()->parent()) {
-        if (p == targetPart) {
+    for (Frame* p = this; p; p = p->tree()->parent()) {
+        if (p == target) {
             willReplaceThisFrame = true;
             break;
         }
@@ -423,85 +444,42 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
     NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
     
-    if (request.m_request.httpMethod() != "POST") {
-        [_bridge loadURL:request.m_request.url().getNSURL()
-                referrer:[_bridge referrer]
-                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
-             userGesture:true
-                  target:request.m_frameName
-         triggeringEvent:_currentEvent
-                    form:submitForm
-              formValues:formValues];
-    } else {
-        [_bridge postWithURL:request.m_request.url().getNSURL()
-                    referrer:[_bridge referrer] 
-                      target:request.m_frameName
-                        data:arrayFromFormData(request.m_request.httpBody())
-                 contentType:request.m_request.httpContentType()
-             triggeringEvent:_currentEvent
-                        form:submitForm
-                  formValues:formValues];
-    }
+    loadRequest(request, true, _currentEvent, submitForm, formValues);
+
     [formValues release];
     clearRecordedFormValues();
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void FrameMac::frameDetached()
+void FrameMac::openURL(const KURL &url)
 {
-    Frame::frameDetached();
+    // FIXME: The lack of args here to get the reload flag from
+    // indicates a problem in how we use Frame::processObjectRequest,
+    // where we are opening the URL before the args are set up.
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [Mac(this)->bridge() frameDetached];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    FrameLoadRequest request;
+    request.m_request.setURL(url);
+    request.m_request.setReferrer(referrer());
+
+    loadRequest(request, userGestureHint());
+
 }
 
 void FrameMac::openURLRequest(const FrameLoadRequest& request)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    NSString *referrer;
-    String argsReferrer = request.m_request.httpReferrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = [_bridge referrer];
-    
-    [_bridge loadURL:request.m_request.url().getNSURL()
-            referrer:referrer
-              reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
-         userGesture:userGestureHint()
-              target:request.m_frameName
-     triggeringEvent:nil
-                form:nil
-          formValues:nil];
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
+    loadRequest(request, userGestureHint());
 }
-
 
 void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    // FIXME: triggeringEvent is passed in but we ignore it.
 
-    NSString* referrer;
-    String argsReferrer = request.m_request.httpReferrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = [_bridge referrer];
+    FrameLoadRequest copy = request;
+    if (copy.m_request.httpReferrer().isEmpty())
+        copy.m_request.setHTTPReferrer(referrer());
 
-    [_bridge loadURL:request.m_request.url().getNSURL()
-            referrer:referrer
-              reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
-         userGesture:true
-              target:request.m_frameName
-     triggeringEvent:_currentEvent
-                form:nil
-          formValues:nil];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
+    loadRequest(copy, true, _currentEvent);
 }
 
 ObjectContentType FrameMac::objectContentType(const KURL& url, const String& mimeType)
