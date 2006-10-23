@@ -1,6 +1,12 @@
 2006-10-23  John Sullivan  <sullivan@apple.com>
 
-        Reviewed by Ander
+        * WebKitPrefix.h:
+        Removed redundant definition of BUILDING_ON_TIGER that I just added. It turns out this had
+        already been added between the last time I updated in this tree and when I needed it locally.
+
+2006-10-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
 
         * WebKit.xcodeproj/project.pbxproj:
         Move WebKitPrefix.h from Misc group to top level, to match WebCore
@@ -33,7 +39,7 @@
 
         Reviewed by Darin.
 
-        Move the undef try/catch to WebKitPrfix.h and include algorithm so we get
+        Move the undef try/catch to WebKitPrefix.h and include algorithm so we get
         exception_defines.h and so the undef of try/catch works.
 
         Break off the BGRA to ARGB code into WebGraphicsExtras.c, this lets
