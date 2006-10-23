@@ -517,7 +517,7 @@
 		F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameBridge.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = url_icon.tiff; path = Resources/url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebKitPrefix.h; path = ../WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5C2869302846DCD018635CA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -587,6 +587,7 @@
 			isa = PBXGroup;
 			children = (
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
+				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F52CA6C002DF9D78018635CA /* Download */,
 				F57D194A034E732C01A80180 /* DOM */,
@@ -678,7 +679,6 @@
 				84CA5F7E042685E800CA2ACA /* WebKitErrorsPrivate.h */,
 				7082F56F038EADAA00A80180 /* WebKitNSStringExtras.h */,
 				7082F570038EADAA00A80180 /* WebKitNSStringExtras.m */,
-				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				BEE52D4A0473032500CA289C /* WebKitSystemBits.h */,
 				BEE52D4B0473032500CA289C /* WebKitSystemBits.m */,
 				1C0D40850AC1C8F40009C113 /* WebKitVersionChecks.h */,

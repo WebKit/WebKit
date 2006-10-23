@@ -1,3 +1,13 @@
+2006-10-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ander
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Move WebKitPrefix.h from Misc group to top level, to match WebCore
+        
+        * WebKitPrefix.h:
+        defined BUILDING_ON_TIGER a la WebCore, in preparation for future use of post-Tiger API
+
 2006-10-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
