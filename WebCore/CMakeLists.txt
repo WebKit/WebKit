@@ -7,6 +7,7 @@ include_directories(
    BEFORE ${CMAKE_CURRENT_BINARY_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/ForwardingHeaders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network
    ${CMAKE_CURRENT_SOURCE_DIR}/loader
    ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
    ${CMAKE_CURRENT_BINARY_DIR}/css
@@ -41,6 +42,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/bmp
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/png
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/bindings
@@ -62,7 +64,7 @@ ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
 
 kde4_automoc(platform/qt/SharedTimerQt.cpp)
 kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
-kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
+kde4_automoc(platform/network/qt/ResourceLoaderManager.cpp)
 
 SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
 
@@ -1015,7 +1017,7 @@ set(WebCore_SRCS
     platform/KURL.cpp
     platform/StringImpl.cpp
     platform/FloatRect.cpp
-    platform/ResourceLoader.cpp
+    platform/network/ResourceLoader.cpp
     platform/Path.cpp
     platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
@@ -1039,8 +1041,8 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/PopupMenuQt.cpp
-    platform/qt/ResourceLoaderManager.cpp
-    platform/qt/ResourceLoaderQt.cpp
+    platform/network/qt/ResourceLoaderManager.cpp
+    platform/network/qt/ResourceLoaderQt.cpp
     platform/qt/FloatPointQt.cpp
     platform/qt/ListBoxQt.cpp
     platform/qt/FloatRectQt.cpp

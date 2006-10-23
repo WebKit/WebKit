@@ -52,6 +52,7 @@
         <cxx-exceptions>off</cxx-exceptions>
         <debug-info>on</debug-info>
         <include>$(SRCDIR)/platform/gdk</include>
+        <include>$(SRCDIR)/platform/network/gdk</include>
     	<define>BUILDING_GDK__</define>
     	<define>BUILDING_CAIRO__</define>
 		<include>platform/gdk</include>
@@ -73,11 +74,11 @@
           platform/gdk/FontPlatformDataGdk.cpp
           platform/gdk/FrameGdk.cpp
           platform/gdk/GlyphMapGdk.cpp
-           platform/gdk/ImageGdk.cpp
+          platform/gdk/ImageGdk.cpp
           platform/gdk/KeyEventGdk.cpp
           platform/gdk/MouseEventGdk.cpp
           platform/gdk/PageGdk.cpp
-          platform/gdk/ResourceLoaderManager.cpp
+          platform/network/gdk/ResourceLoaderManager.cpp
           platform/gdk/RenderThemeGdk.cpp
           platform/gdk/RenderPopupMenuGdk.cpp
           platform/gdk/ScreenGdk.cpp
@@ -85,7 +86,7 @@
           platform/gdk/SharedTimerLinux.cpp
           platform/gdk/SystemTimeLinux.cpp
           platform/gdk/TemporaryLinkStubs.cpp
-          platform/gdk/ResourceLoaderCurl.cpp
+          platform/network/gdk/ResourceLoaderCurl.cpp
           platform/gdk/WheelEventGdk.cpp
           platform/gdk/WidgetGdk.cpp
 		</sources>

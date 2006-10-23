@@ -97,6 +97,7 @@ Base settings shared by all Bakefile-based ports.
         <include>$(SRCDIR)/platform/image-decoders/xbm</include>
         <include>$(SRCDIR)/platform/image-decoders/png</include>
         <include>$(SRCDIR)/platform/image-decoders/zlib</include>
+        <include>$(SRCDIR)/platform/netowrk</include>
         <include>$(SRCDIR)/rendering</include>
         <include>$(SRCDIR)/xml</include>
         <include>$(SRCDIR)/kcanvas</include>
