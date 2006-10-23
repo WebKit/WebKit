@@ -416,7 +416,6 @@ select {
     -webkit-rtl-ordering: logical;
     color: black;
     border: 1px solid;
-    -webkit-border-radius: 5px;
     background-color: white;
     white-space: pre;
 }

@@ -874,8 +874,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
     style->setPaddingTop(Length(styledPopupPaddingTop, Fixed));
     style->setPaddingBottom(Length(styledPopupPaddingBottom, Fixed));
     
-    if (style->hasBorderRadius())
-        style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
+    style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
     
     const int minHeight = 15;
     style->setMinHeight(Length(minHeight, Fixed));
