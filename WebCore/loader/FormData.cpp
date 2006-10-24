@@ -26,8 +26,9 @@
 
 namespace WebCore {
 
-FormData::FormData()
+FormData::FormData(const void* data, size_t size)
 {
+    appendData(data, size);
 }
 
 FormData::FormData(const CString& s)

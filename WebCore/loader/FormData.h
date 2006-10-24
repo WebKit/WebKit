@@ -39,7 +39,8 @@ public:
 
 class FormData {
 public:
-    FormData();
+    FormData() { } 
+    FormData(const void* data, size_t);
     FormData(const CString&);
 
     void appendData(const void* data, size_t);
