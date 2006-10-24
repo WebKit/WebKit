@@ -29,8 +29,6 @@
 #include "AffineTransform.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingFillPainter.h"
-#include "KRenderingStrokePainter.h"
 #include "KRenderingPaintServerGradientQt.h"
 
 namespace WebCore {
@@ -107,23 +105,21 @@ bool KRenderingPaintServerLinearGradientQt::setup(KRenderingDeviceContext* conte
     // TODO: Gradient transform + opacity fixes! 
 
     if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
-        KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
         QBrush brush(gradient);
 
         qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(fillPainter.fillRule());
+        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
     }
 
     if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
-        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
         QPen pen;
         QBrush brush(gradient);
 
-        setPenProperties(strokePainter, pen);
+        setPenProperties(object, renderStyle, pen);
         pen.setBrush(brush);
 
         qtContext->painter().setPen(pen);
@@ -223,23 +219,22 @@ bool KRenderingPaintServerRadialGradientQt::setup(KRenderingDeviceContext* conte
     // qtContext->painter().setMatrix(mat);
 
     if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
-        KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
         QBrush brush(gradient);
 
         qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(fillPainter.fillRule());
+        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
+        
     }
 
     if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
-        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
         QPen pen;
         QBrush brush(gradient);
 
-        setPenProperties(strokePainter, pen);
+        setPenProperties(object, renderStyle, pen);
         pen.setBrush(brush);
 
         qtContext->painter().setPen(pen);

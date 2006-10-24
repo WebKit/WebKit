@@ -32,10 +32,9 @@
 
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasMaskerQuartz.h"
+#import "KCanvasRenderingStyle.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
-#import "KRenderingFillPainter.h"
-#import "KRenderingStrokePainter.h"
 #import "QuartzSupport.h"
 #import "RenderPath.h"
 #import "SVGRenderStyle.h"
@@ -45,10 +44,8 @@ namespace WebCore {
 
 FloatRect RenderPath::strokeBBox() const
 {
-    if (style()->svgStyle()->hasStroke()) {
-        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
-        return strokeBoundingBox(path(), strokePainter);
-    }
+    if (style()->svgStyle()->hasStroke())
+        return strokeBoundingBox(path(), style(), this);
 
     return path().boundingRect();
 }

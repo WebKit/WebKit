@@ -29,16 +29,16 @@
 #ifdef SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
 
+#include "GraphicsTypes.h"
 #include "HTMLNames.h"
 #include "RenderTreeAsText.h"
 #include "RenderSVGContainer.h"
 #include "KCanvasClipper.h"
 #include "KRenderingDevice.h"
-#include "KRenderingFillPainter.h"
 #include "KRenderingPaintServerGradient.h"
 #include "KRenderingPaintServerPattern.h"
 #include "KRenderingPaintServerSolid.h"
-#include "KRenderingStrokePainter.h"
+#include "KCanvasRenderingStyle.h"
 #include "SVGStyledElement.h"
 #include <math.h>
 
@@ -183,28 +183,28 @@ static TextStream& operator<<(TextStream& ts, const KCDashArray &a)
 }
 
 //FIXME: This should be in KRenderingStyle.cpp
-static TextStream& operator<<(TextStream& ts, KCCapStyle style)
+static TextStream& operator<<(TextStream& ts, LineCap style)
 {
     switch (style) {
-    case CAP_BUTT:
+    case ButtCap:
         ts << "BUTT"; break;
-    case CAP_ROUND:
+    case RoundCap:
         ts << "ROUND"; break;
-    case CAP_SQUARE:
+    case SquareCap:
         ts << "SQUARE"; break;
     }
     return ts;
 }
 
 //FIXME: This should be in KRenderingStyle.cpp
-static TextStream& operator<<(TextStream& ts, KCJoinStyle style)
+static TextStream& operator<<(TextStream& ts, LineJoin style)
 {
     switch (style) {
-    case JOIN_MITER:
+    case MiterJoin:
         ts << "MITER"; break;
-    case JOIN_ROUND:
+    case RoundJoin:
         ts << "ROUND"; break;
-    case JOIN_BEVEL:
+    case BevelJoin:
         ts << "BEVEL"; break;
     }
     return ts;
@@ -227,7 +227,7 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
     if (style->opacity() != RenderStyle::initialOpacity())
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
-        const RenderPath &path = static_cast<const RenderPath &>(object);
+        const RenderPath& path = static_cast<const RenderPath&>(object);
         KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
         if (strokePaintServer) {
             TextStreamSeparator s(" ");
@@ -238,21 +238,25 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
                 else
                     ts << s << *strokePaintServer;
             } 
-            KRenderingStrokePainter p = KSVGPainterFactory::strokePainter(style, &path);
-            if (p.opacity() != 1.0f)
-                ts << s << "[opacity=" << p.opacity() << "]";
-            if (p.strokeWidth() != 1.0f)
-                ts << s << "[stroke width=" << p.strokeWidth() << "]";
-            if (p.strokeMiterLimit() != 4)
-                ts << s << "[miter limit=" << p.strokeMiterLimit() << "]";
-            if (p.strokeCapStyle() != 1)
-                ts << s << "[line cap=" << p.strokeCapStyle() << "]";
-            if (p.strokeJoinStyle() != 1)
-                ts << s << "[line join=" << p.strokeJoinStyle() << "]";
-            if (p.dashOffset() != 0.0f)
-                ts << s << "[dash offset=" << p.dashOffset() << "]";
-            if (!p.dashArray().isEmpty())
-                ts << s << "[dash array=" << p.dashArray() << "]";        
+
+            double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0);
+            const KCDashArray& dashArray = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
+            double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeWidth(), 1.0);
+            
+            if (svgStyle->strokeOpacity() != 1.0f)
+                ts << s << "[opacity=" << svgStyle->strokeOpacity() << "]";
+            if (strokeWidth != 1.0f)
+                ts << s << "[stroke width=" << strokeWidth << "]";
+            if (svgStyle->strokeMiterLimit() != 4)
+                ts << s << "[miter limit=" << svgStyle->strokeMiterLimit() << "]";
+            if (svgStyle->capStyle() != 0)
+                ts << s << "[line cap=" << svgStyle->capStyle() << "]";
+            if (svgStyle->joinStyle() != 0)
+                ts << s << "[line join=" << svgStyle->joinStyle() << "]";
+            if (dashOffset != 0.0f)
+                ts << s << "[dash offset=" << dashOffset << "]";
+            if (!dashArray.isEmpty())
+                ts << s << "[dash array=" << dashArray << "]";        
             ts << "}]";
         }
         KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
@@ -265,11 +269,11 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
                 else
                     ts << s << *fillPaintServer;
             }
-            KRenderingFillPainter p = KSVGPainterFactory::fillPainter(style, &path);
-            if (p.opacity() != 1.0f)
-                ts << s << "[opacity=" << p.opacity() << "]";
-            if (p.fillRule() != RULE_NONZERO)
-                ts << s << "[fill rule=" << p.fillRule() << "]";
+            
+            if (style->svgStyle()->fillOpacity() != 1.0f)
+                ts << s << "[opacity=" << style->svgStyle()->fillOpacity() << "]";
+            if (style->svgStyle()->fillRule() != RULE_NONZERO)
+                ts << s << "[fill rule=" << style->svgStyle()->fillRule() << "]";
             ts << "}]";
         }
     }

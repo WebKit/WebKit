@@ -339,13 +339,13 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             switch (primitiveValue->getIdent())
             {
                 case SVGCSS_VAL_MITER:
-                    svgstyle->setJoinStyle(JS_MITER);
+                    svgstyle->setJoinStyle(MiterJoin);
                     break;
                 case CSS_VAL_ROUND:
-                    svgstyle->setJoinStyle(JS_ROUND);
+                    svgstyle->setJoinStyle(RoundJoin);
                     break;
                 case SVGCSS_VAL_BEVEL:
-                    svgstyle->setJoinStyle(JS_BEVEL);
+                    svgstyle->setJoinStyle(BevelJoin);
                 default:
                     return;
             }
@@ -531,13 +531,13 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             switch (primitiveValue->getIdent())
             {
                 case SVGCSS_VAL_BUTT:
-                    svgstyle->setCapStyle(CS_BUTT);
+                    svgstyle->setCapStyle(ButtCap);
                     break;
                 case CSS_VAL_ROUND:
-                    svgstyle->setCapStyle(CS_ROUND);
+                    svgstyle->setCapStyle(RoundCap);
                     break;
                 case CSS_VAL_SQUARE:
-                    svgstyle->setCapStyle(CS_SQUARE);
+                    svgstyle->setCapStyle(SquareCap);
                 default:
                     return;
             }

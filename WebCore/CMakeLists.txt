@@ -645,7 +645,6 @@ set (SVG_SOURCES
     ksvg2/misc/KCanvasRenderingStyle.cpp
     ksvg2/events/JSSVGLazyEventListener.cpp
     ksvg2/events/SVGZoomEvent.cpp
-    kcanvas/KCanvasCreator.cpp
     kcanvas/KCanvasTreeDebug.cpp
     kcanvas/KCanvasFilters.cpp
     kcanvas/KCanvasClipper.cpp
@@ -660,8 +659,6 @@ set (SVG_SOURCES
     kcanvas/RenderSVGText.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
-    kcanvas/device/KRenderingFillPainter.cpp
-    kcanvas/device/KRenderingStrokePainter.cpp
     kcanvas/device/KRenderingPaintServerPattern.cpp
     kcanvas/device/KRenderingDevice.cpp
     kcanvas/device/qt/RenderPathQt.cpp

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderPath.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingStrokePainter.h"
 
 #include <QDebug>
 #include <QPainterPathStroker>
@@ -42,22 +41,25 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
     return false;
 }
 
-static QPainterPath getPathStroke(const QPainterPath &path, const KRenderingStrokePainter &strokePainter)
-{
+static QPainterPath getPathStroke(const QPainterPath &path, const RenderObject* object, const RenderStyle* style)
+{ 
     QPainterPathStroker s;
-    s.setWidth(strokePainter.strokeWidth());
-    if(strokePainter.strokeCapStyle() == CAP_BUTT)
+    s.setWidth(KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
+
+    if (style->svgStyle()->capStyle() == ButtCap)
         s.setCapStyle(Qt::FlatCap);
-    else if(strokePainter.strokeCapStyle() == CAP_ROUND)
+    else if (style->svgStyle()->capStyle() == RoundCap)
         s.setCapStyle(Qt::RoundCap);
 
-    if(strokePainter.strokeJoinStyle() == JOIN_MITER) {
+    if (style->svgStyle()->joinStyle() == MiterJoin) {
         s.setJoinStyle(Qt::MiterJoin);
-        s.setMiterLimit((qreal)strokePainter.strokeMiterLimit());
-    } else if(strokePainter.strokeJoinStyle() == JOIN_ROUND)
+        s.setMiterLimit((qreal) style->svgStyle()->strokeMiterLimit());
+    } else if(style->svgStyle()->joinStyle() == RoundJoin)
         s.setJoinStyle(Qt::RoundJoin);
 
-    const KCDashArray& dashes = strokePainter.dashArray();
+    const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
+    double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
+
     unsigned int dashLength = !dashes.isEmpty() ? dashes.size() : 0;
     if(dashLength) {
         QVector<qreal> pattern;
@@ -67,6 +69,8 @@ static QPainterPath getPathStroke(const QPainterPath &path, const KRenderingStro
             pattern.append(dashes[i % dashLength] / (float)s.width());
 
         s.setDashPattern(pattern);
+    
+        Q_UNUSED(dashOffset);
         // TODO: dash-offset, does/will qt4 API allow it? (Rob)
     }
 
@@ -75,8 +79,7 @@ static QPainterPath getPathStroke(const QPainterPath &path, const KRenderingStro
 
 FloatRect RenderPath::strokeBBox() const
 {
-    KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
-    QPainterPath outline = getPathStroke(*(path().platformPath()), strokePainter);
+    QPainterPath outline = getPathStroke(*(path().platformPath()), this, style());
     return outline.boundingRect();
 }
 

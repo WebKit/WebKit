@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "KCanvasImage.h"
 #include "KRenderingDevice.h"
-#include "KRenderingFillPainter.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"

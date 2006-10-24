@@ -29,7 +29,8 @@ class QPen;
 
 namespace WebCore {
 
-class KRenderingStrokePainter;
+class RenderStyle;
+class RenderObject;
 
 // This class is designed as an extension to
 // KRenderingPaintServer, it won't inherit from it.
@@ -39,7 +40,7 @@ public:
     KRenderingPaintServerQt();
     ~KRenderingPaintServerQt();
 
-    void setPenProperties(const KRenderingStrokePainter&, QPen&) const;
+    void setPenProperties(const RenderObject*, const RenderStyle*, QPen&) const;
 };
 
 }

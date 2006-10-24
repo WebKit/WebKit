@@ -31,8 +31,6 @@
 
 #import "GraphicsContext.h"
 #import "KCanvasResourcesQuartz.h"
-#import "KRenderingFillPainter.h"
-#import "KRenderingStrokePainter.h"
 #import "KCanvasRenderingStyle.h"
 #import "wtf/Assertions.h"
 
@@ -54,27 +52,20 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePainter& strokePainter)
+void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const RenderObject* object)
 {
     /* Shouldn't all these be in the stroke painter? */
-    CGContextSetLineWidth(context, strokePainter.strokeWidth());
+    CGContextSetLineWidth(context, KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
 
-    KCCapStyle capStyle = strokePainter.strokeCapStyle();
-    CGContextSetLineCap(context, CGLineCapFromKC(capStyle));
+    CGContextSetLineCap(context, CGLineCapFromKC(style->svgStyle()->capStyle()));
+    CGContextSetLineJoin(context, CGLineJoinFromKC(style->svgStyle()->joinStyle()));
 
-    KCJoinStyle joinStyle = strokePainter.strokeJoinStyle();
-    CGContextSetLineJoin(context, CGLineJoinFromKC(joinStyle));
+    CGContextSetMiterLimit(context, style->svgStyle()->strokeMiterLimit());
 
-    CGContextSetMiterLimit(context, strokePainter.strokeMiterLimit());
+    const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
+    double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
 
-    const KCDashArray& dashes = strokePainter.dashArray();
-    CGContextSetLineDash(context, strokePainter.dashOffset(), dashes.data(), dashes.size());
-}
-
-void applyStrokeStyleToContext(CGContextRef context, RenderStyle* renderStyle, const RenderObject* renderObject)
-{
-    KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, renderObject);
-    applyStrokeStyleToContext(context, strokePainter);
+    CGContextSetLineDash(context, dashOffset, dashes.data(), dashes.size());
 }
 
 CGContextRef scratchContext()
@@ -94,7 +85,7 @@ CGContextRef scratchContext()
     return scratch;
 }
 
-FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& strokePainter)
+FloatRect strokeBoundingBox(const Path& path, RenderStyle* style, const RenderObject* object)
  {
     // the bbox might grow if the path is stroked.
     // and CGPathGetBoundingBox doesn't support that, so we'll have
@@ -112,7 +103,7 @@ FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& str
 
     CGContextBeginPath(context);
     CGContextAddPath(context, cgPath);
-    applyStrokeStyleToContext(context, strokePainter);
+    applyStrokeStyleToContext(context, style, object);
     CGContextReplacePathWithStrokedPath(context);
     CGRect box = CGContextGetPathBoundingBox(context);
         

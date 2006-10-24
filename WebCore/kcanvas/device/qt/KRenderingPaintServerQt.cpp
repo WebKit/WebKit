@@ -25,7 +25,7 @@
 #include <QPen>
 #include <QVector>
 
-#include "KRenderingStrokePainter.h"
+#include "KCanvasRenderingStyle.h"
 #include "KRenderingPaintServerQt.h"
 
 namespace WebCore {
@@ -38,21 +38,24 @@ KRenderingPaintServerQt::~KRenderingPaintServerQt()
 {
 }
 
-void KRenderingPaintServerQt::setPenProperties(const KRenderingStrokePainter& strokePainter, QPen& pen) const
+void KRenderingPaintServerQt::setPenProperties(const RenderObject* item, const RenderStyle* style, QPen& pen) const
 {
-    pen.setWidthF(strokePainter.strokeWidth());
-    if (strokePainter.strokeCapStyle() == CAP_BUTT)
+    pen.setWidthF(KSVGPainterFactory::cssPrimitiveToLength(item, style->svgStyle()->strokeWidth(), 1.0));
+
+    if (style->svgStyle()->capStyle() == ButtCap)
         pen.setCapStyle(Qt::FlatCap);
-    else if (strokePainter.strokeCapStyle() == CAP_ROUND)
+    else if (style->svgStyle()->capStyle() == RoundCap)
         pen.setCapStyle(Qt::RoundCap);
 
-    if (strokePainter.strokeJoinStyle() == JOIN_MITER) {
+    if (style->svgStyle()->joinStyle() == MiterJoin) {
         pen.setJoinStyle(Qt::MiterJoin);
-        pen.setMiterLimit((qreal)strokePainter.strokeMiterLimit());
-    } else if(strokePainter.strokeJoinStyle() == JOIN_ROUND)
+        pen.setMiterLimit((qreal) style->svgStyle()->strokeMiterLimit());
+    } else if(style->svgStyle()->joinStyle() == RoundJoin)
         pen.setJoinStyle(Qt::RoundJoin);
 
-    const KCDashArray& dashes = strokePainter.dashArray();
+    const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
+    double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(item, style->svgStyle()->strokeDashOffset(), 0.0);
+
     unsigned int dashLength = !dashes.isEmpty() ? dashes.size() : 0;
     if(dashLength) {
         QVector<qreal> pattern;
@@ -62,6 +65,8 @@ void KRenderingPaintServerQt::setPenProperties(const KRenderingStrokePainter& st
             pattern.append(dashes[i % dashLength] / (float)pen.widthF());
 
         pen.setDashPattern(pattern);
+    
+        Q_UNUSED(dashOffset);
         // TODO: dash-offset, does/will qt4 API allow it? (Rob)
     }
 }

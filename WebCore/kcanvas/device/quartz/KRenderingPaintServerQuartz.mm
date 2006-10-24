@@ -35,8 +35,6 @@
 
 #import "KCanvasRenderingStyle.h"
 #import "KRenderingPaintServer.h"
-#import "KRenderingFillPainter.h"
-#import "KRenderingStrokePainter.h"
 #import "KRenderingDevice.h"
 
 #import "Logging.h"
@@ -56,7 +54,7 @@ void KRenderingPaintServerQuartzHelper::clipToStrokePath(CGContextRef context, c
 
 void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const RenderPath* renderPath)
 {
-    if (KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
+    if (renderPath->style()->svgStyle()->fillRule() == RULE_EVENODD)
         CGContextEOFillPath(context);
     else
         CGContextFillPath(context);
@@ -64,7 +62,7 @@ void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const Ren
 
 void KRenderingPaintServerQuartzHelper::clipToFillPath(CGContextRef context, const RenderPath* renderPath)
 {
-    if (KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
+    if (renderPath->style()->svgStyle()->fillRule() == RULE_EVENODD)
         CGContextEOClip(context);
     else
         CGContextClip(context);

@@ -29,8 +29,6 @@
 #include "RenderStyle.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingFillPainter.h"
-#include "KRenderingStrokePainter.h"
 #include "KRenderingPaintServerSolidQt.h"
 
 namespace WebCore {
@@ -65,22 +63,20 @@ bool KRenderingPaintServerSolidQt::setup(KRenderingDeviceContext* context, const
     QColor c = color();
 
     if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
-        KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
-        c.setAlphaF(fillPainter.opacity());
+        c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
 
         QBrush brush(c);
         qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(fillPainter.fillRule());
+        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
 
         /* if(isPaintingText()) ... */
     }
 
     if((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
-        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
-        c.setAlphaF(strokePainter.opacity());
+        c.setAlphaF(renderStyle->svgStyle()->strokeOpacity());
 
         QPen pen(c);
-        setPenProperties(strokePainter, pen);
+        setPenProperties(object, renderStyle, pen);
         qtContext->painter().setPen(pen);
 
         /* if(isPaintingText()) ... */

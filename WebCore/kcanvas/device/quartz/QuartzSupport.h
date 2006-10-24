@@ -25,49 +25,45 @@
 
 #ifdef SVG_SUPPORT
 
-#import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
+#import "GraphicsTypes.h"
 
 namespace WebCore {
 
 typedef struct CGPath *CGMutablePathRef;
 
 class Path;
-class IntRect;
 class FloatRect;
-class FloatPoint;
 class RenderStyle;
 class RenderObject;
-class KRenderingStrokePainter;
 
 CFStringRef CFStringFromCGPath(CGPathRef);
 CFStringRef CFStringFromCGAffineTransform(CGAffineTransform);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
 
-void applyStrokeStyleToContext(CGContextRef, const KRenderingStrokePainter&);
 void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
 
 CGContextRef scratchContext();
-FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter&);
+FloatRect strokeBoundingBox(const Path& path, RenderStyle*, const RenderObject*);
 
-static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
+static inline CGLineCap CGLineCapFromKC(LineCap cap)
 {
-    if (cap == CAP_BUTT)
+    if (cap == ButtCap)
         return kCGLineCapButt;
-    else if (cap == CAP_ROUND)
+    else if (cap == RoundCap)
         return kCGLineCapRound;
-    else if (cap == CAP_SQUARE)
+    else if (cap == SquareCap)
         return kCGLineCapSquare;
     
     return kCGLineCapButt;
 }
 
-static inline CGLineJoin CGLineJoinFromKC(KCJoinStyle join)
+static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
 {
-    if (join == JOIN_MITER)
+    if (join == MiterJoin)
         return kCGLineJoinMiter;
-    else if (join == JOIN_ROUND)
+    else if (join == RoundJoin)
         return kCGLineJoinRound;
-    else if (join == JOIN_BEVEL)
+    else if (join == BevelJoin)
         return kCGLineJoinBevel;
     
     return kCGLineJoinMiter;

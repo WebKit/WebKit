@@ -1,3 +1,59 @@
+2006-10-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11396
+
+        Kill KRenderingFillPainter/KRenderingStrokePainter. Those are not needed
+        anymore, since kcanvas/ksvg2 are tightly integrated. No LayoutTests fixed
+        or broken.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeStyle):
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        * kcanvas/device/KRenderingFillPainter.h:
+        * kcanvas/device/KRenderingStrokePainter.cpp:
+        * kcanvas/device/KRenderingStrokePainter.h:
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp:
+        (WebCore::KRenderingPaintServerLinearGradientQt::setup):
+        (WebCore::KRenderingPaintServerRadialGradientQt::setup):
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp:
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
+        (WebCore::KRenderingPaintServerQt::setPenProperties):
+        * kcanvas/device/qt/KRenderingPaintServerQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp:
+        (WebCore::KRenderingPaintServerSolidQt::setup):
+        * kcanvas/device/qt/RenderPathQt.cpp:
+        (WebCore::getPathStroke):
+        (WebCore::RenderPath::strokeBBox):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::RenderPath::strokeBBox):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerQuartzHelper::fillPath):
+        (WebCore::KRenderingPaintServerQuartzHelper::clipToFillPath):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        (WebCore::CGLineCapFromKC):
+        (WebCore::CGLineJoinFromKC):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::strokeBoundingBox):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::dashArrayFromRenderingStyle):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+
 2006-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders.

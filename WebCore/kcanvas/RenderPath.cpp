@@ -32,9 +32,8 @@
 #include "KCanvasClipper.h"
 #include "KCanvasMasker.h"
 #include "KCanvasMarker.h"
+#include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
-#include "KRenderingFillPainter.h"
-#include "KRenderingStrokePainter.h"
 #include "SVGStyledElement.h"
 #include <wtf/OwnPtr.h>
 
@@ -80,8 +79,7 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
     if (requiresFill && !KSVGPainterFactory::fillPaintServer(style(), this))
         return false;
 
-    return path().contains(mapAbsolutePointToLocal(point),
-                           KSVGPainterFactory::fillPainter(style(), this).fillRule());
+    return path().contains(mapAbsolutePointToLocal(point), style()->svgStyle()->fillRule());
 }
 
 FloatRect RenderPath::relativeBBox(bool includeStroke) const

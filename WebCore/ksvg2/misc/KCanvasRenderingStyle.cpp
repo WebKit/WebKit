@@ -28,10 +28,8 @@
 #include "Document.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
-#include "KRenderingFillPainter.h"
 #include "KRenderingPaintServerGradient.h"
 #include "KRenderingPaintServerSolid.h"
-#include "KRenderingStrokePainter.h"
 #include "RenderObject.h"
 #include "SVGLength.h"
 #include "SVGRenderStyle.h"
@@ -120,43 +118,24 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
     return primitive->computeLengthFloat(const_cast<RenderStyle*>(item->style()));
 }
 
-KRenderingStrokePainter KSVGPainterFactory::strokePainter(const RenderStyle* style, const RenderObject* item)
+KCDashArray KSVGPainterFactory::dashArrayFromRenderingStyle(const RenderStyle* style)
 {
-    KRenderingStrokePainter strokePainter;
-
-    strokePainter.setOpacity(style->svgStyle()->strokeOpacity());
-    strokePainter.setStrokeWidth(KSVGPainterFactory::cssPrimitiveToLength(item, style->svgStyle()->strokeWidth(), 1.0));
-
+    KCDashArray array;
+    
     CSSValueList* dashes = style->svgStyle()->strokeDashArray();
     if (dashes) {
         CSSPrimitiveValue* dash = 0;
-        KCDashArray array;
         unsigned long len = dashes->length();
         for (unsigned long i = 0; i < len; i++) {
             dash = static_cast<CSSPrimitiveValue*>(dashes->item(i));
-            if (dash)
-                array.append((float) dash->computeLengthFloat(const_cast<RenderStyle*>(style)));
-        }
+            if (!dash)
+                continue;
 
-        strokePainter.setDashArray(array);
-        strokePainter.setDashOffset(KSVGPainterFactory::cssPrimitiveToLength(item, style->svgStyle()->strokeDashOffset(), 0.0));
+            array.append((float) dash->computeLengthFloat(const_cast<RenderStyle*>(style)));
+        }
     }
 
-    strokePainter.setStrokeMiterLimit(style->svgStyle()->strokeMiterLimit());
-    strokePainter.setStrokeCapStyle((KCCapStyle) style->svgStyle()->capStyle());
-    strokePainter.setStrokeJoinStyle((KCJoinStyle) style->svgStyle()->joinStyle());
-
-    return strokePainter;
-}
-
-KRenderingFillPainter KSVGPainterFactory::fillPainter(const RenderStyle* style, const RenderObject* item)
-{
-    KRenderingFillPainter fillPainter;
-    
-    fillPainter.setFillRule(style->svgStyle()->fillRule());
-    fillPainter.setOpacity(style->svgStyle()->fillOpacity());
-
-    return fillPainter;
+    return array;
 }
 
 }

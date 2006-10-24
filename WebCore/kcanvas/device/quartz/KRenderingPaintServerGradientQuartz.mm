@@ -33,9 +33,7 @@
 #import "KCanvasImage.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
-#import "KRenderingFillPainter.h"
 #import "KRenderingPaintServer.h"
-#import "KRenderingStrokePainter.h"
 #import "QuartzSupport.h"
 #import "RenderObject.h"
 

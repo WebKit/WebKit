@@ -29,19 +29,6 @@
 
 namespace WebCore {
 
-// FIXME: these should be removed, use KSVG ones instead
-enum KCCapStyle {
-    CAP_BUTT = 1,
-    CAP_ROUND = 2,
-    CAP_SQUARE = 3
-};
-
-enum KCJoinStyle {
-    JOIN_MITER = 1,
-    JOIN_ROUND = 2,
-    JOIN_BEVEL = 3
-};
-
 // Special types
 #if PLATFORM(CG)
 typedef Vector<CGFloat> KCDashArray;
@@ -50,21 +37,18 @@ typedef Vector<float> KCDashArray;
 #endif
 
     class CSSValue;
-    class KRenderingFillPainter;
-    class KRenderingStrokePainter;
     class KRenderingPaintServer;
     class RenderStyle;
     class RenderObject;
 
     class KSVGPainterFactory {
     public:
-        static KRenderingFillPainter fillPainter(const RenderStyle*, const RenderObject*);
-        static KRenderingStrokePainter strokePainter(const RenderStyle*, const RenderObject*);
-
         static KRenderingPaintServer* strokePaintServer(const RenderStyle*, const RenderObject*);
         static KRenderingPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
 
+        // Helpers
         static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);
+        static KCDashArray dashArrayFromRenderingStyle(const RenderStyle*);
     };
 
 } // namespace WebCore

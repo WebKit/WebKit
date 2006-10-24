@@ -32,8 +32,6 @@
 #include "RenderStyle.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingFillPainter.h"
-#include "KRenderingStrokePainter.h"
 #include "KRenderingPaintServerPatternQt.h"
 #include "KCanvasImage.h"
 
