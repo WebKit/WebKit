@@ -29,9 +29,7 @@
 #import <WebCore/WebCoreFrameBridge.h>
 
 @class WebPageBridge;
-@class WebCoreRenderPart;
 @class WebFrame;
-@class WebFrameLoader;
 @class WebFrameView;
 
 @protocol WebOpenPanelResultListener;

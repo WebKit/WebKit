@@ -30,20 +30,17 @@
 #import "WebLoader.h"
 #import <wtf/Forward.h>
 
-@class WebCoreMainResourceLoaderPolicyDelegate;
+@class WebCoreMainResourceLoaderAsPolicyDelegate;
 
 namespace WebCore {
 
     class MainResourceLoader : public WebResourceLoader {
     public:
-        static PassRefPtr<MainResourceLoader> create(WebFrameLoader *);
+        static PassRefPtr<MainResourceLoader> create(Frame*);
 
         virtual ~MainResourceLoader();
 
         virtual bool load(NSURLRequest *);
-
-        using WebResourceLoader::cancel;
-        virtual void cancel(NSError *);
 
         virtual void setDefersCallbacks(bool);
 
@@ -59,11 +56,13 @@ namespace WebCore {
         void continueAfterContentPolicy(WebPolicyAction);
 
     private:
-        MainResourceLoader(WebFrameLoader *);
+        virtual void didCancel(NSError *);
+
+        MainResourceLoader(Frame*);
 
         virtual void releaseDelegate();
 
-        WebCoreMainResourceLoaderPolicyDelegate *policyDelegate();
+        WebCoreMainResourceLoaderAsPolicyDelegate *policyDelegate();
         void releasePolicyDelegate();
 
         NSURLRequest *loadNow(NSURLRequest *);
@@ -80,7 +79,7 @@ namespace WebCore {
         RetainPtr<NSURLResponse> m_response;
         RetainPtr<id> m_proxy;
         RetainPtr<NSURLRequest> m_initialRequest;
-        RetainPtr<WebCoreMainResourceLoaderPolicyDelegate> m_policyDelegate;
+        RetainPtr<WebCoreMainResourceLoaderAsPolicyDelegate> m_policyDelegate;
         bool m_loadingMultipartContent;
     };
 

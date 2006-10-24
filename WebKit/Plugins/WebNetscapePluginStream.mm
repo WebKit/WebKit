@@ -29,6 +29,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <Foundation/NSURLConnection.h>
+#import <WebCore/FrameMac.h>
 #import <WebCore/WebFrameLoader.h>
 #import <WebCore/WebNetscapePlugInStreamLoader.h>
 #import <WebKit/WebDataSourceInternal.h>
@@ -72,7 +73,7 @@ using namespace WebCore;
     if (hideReferrer)
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
 
-    _loader = NetscapePlugInStreamLoader::create([[view webFrame] _frameLoader], self).release();
+    _loader = NetscapePlugInStreamLoader::create([bridge impl], self).release();
     
     isTerminated = NO;
 
@@ -98,10 +99,9 @@ using namespace WebCore;
 {
     ASSERT(request);
 
-    [_loader->frameLoader() addPlugInStreamLoader:_loader];
-
+    _loader->frameLoader()->addPlugInStreamLoader(_loader);
     if (!_loader->load(request))
-        [_loader->frameLoader() removePlugInStreamLoader:_loader];
+        _loader->frameLoader()->removePlugInStreamLoader(_loader);
 }
 
 - (void)cancelLoadWithError:(NSError *)error
@@ -112,7 +112,8 @@ using namespace WebCore;
 
 - (void)stop
 {
-    [self cancelLoadAndDestroyStreamWithError:_loader->cancelledError()];
+    if (!_loader->isDone())
+        [self cancelLoadAndDestroyStreamWithError:_loader->cancelledError()];
 }
 
 @end

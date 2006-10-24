@@ -391,7 +391,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad
 {
-    return [WebFrameLoader timeOfLastCompletedLoad];
+    return FrameLoader::timeOfLastCompletedLoad();
 }
 
 - (BOOL)_createPageCacheForItem:(WebHistoryItem *)item
@@ -477,8 +477,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     
     // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
     // Perhaps they should.
-    if (!formData && ![[self _frameLoader] shouldReloadForCurrent:itemURL andDestination:currentURL] && [self _URLsMatchItem:item] )
-    {
+    if (!formData && ![self _frameLoader]->shouldReload(itemURL, currentURL) && [self _URLsMatchItem:item]) {
 #if 0
         // FIXME:  We need to normalize the code paths for anchor navigation.  Something
         // like the following line of code should be done, but also accounting for correct
@@ -500,7 +499,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
         // Fake the URL change by updating the data source's request.  This will no longer
         // be necessary if we do the better fix described above.
-        [[[self _frameLoader] documentLoader] replaceRequestURLForAnchorScrollWithURL:itemURL];
+        [[self _frameLoader]->documentLoader() replaceRequestURLForAnchorScrollWithURL:itemURL];
         
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didChangeLocationWithinPageForFrame:self];
@@ -521,7 +520,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
             if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]) {
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
-                [[self _frameLoader] loadDocumentLoader:[newDataSource _documentLoader] withLoadType:loadType formState:0];   
+                [self _frameLoader]->load([newDataSource _documentLoader], loadType, 0);   
                 inPageCache = YES;
             } else {
                 LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
@@ -531,7 +530,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
         
         if (!inPageCache) {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
-            [[self _frameLoader] addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(formData != nil) ? YES : NO];
+            [self _frameLoader]->addExtraFieldsToRequest(request, true, (formData != nil));
 
             // If this was a repost that failed the page cache, we might try to repost the form.
             NSDictionary *action;
@@ -541,7 +540,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
                 webSetHTTPBody(request, formData);
                 [request _web_setHTTPContentType:[item formContentType]];
 
-                // Slight hack to test if the WF cache contains the page we're going to.  We want
+                // Slight hack to test if the NSURL cache contains the page we're going to.  We want
                 // to know this before talking to the policy delegate, since it affects whether we
                 // show the DoYouReallyWantToRepost nag.
                 //
@@ -552,13 +551,12 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
                 NSURLResponse *synchResponse = nil;
                 [NSURLConnection sendSynchronousRequest:request returningResponse:&synchResponse error:nil];
                 if (synchResponse == nil) { 
-                    // Not in WF cache
+                    // Not in the NSURL cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-                    action = [[self _frameLoader] actionInformationForNavigationType:NavigationTypeFormResubmitted event:nil originalURL:itemURL];
-                } else {
+                    action = [self _frameLoader]->actionInformation(NavigationTypeFormResubmitted, nil, itemURL);
+                } else
                     // We can use the cache, don't use navType=resubmit
-                    action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
-                }
+                    action = [self _frameLoader]->actionInformation(loadType, false, nil, itemURL);
             } else {
                 switch (loadType) {
                     case FrameLoadTypeReload:
@@ -581,10 +579,10 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
                         ASSERT_NOT_REACHED();
                 }
 
-                action = [[self _frameLoader] actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
+                action = [self _frameLoader]->actionInformation(loadType, false, nil, itemOriginalURL);
             }
 
-            [[self _frameLoader] _loadRequest:request triggeringAction:action loadType:loadType formState:0];
+            [self _frameLoader]->load(request, action, loadType, 0);
             [request release];
         }
     }
@@ -666,7 +664,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 {
     WebHistoryItem *parentItem = _private->currentItem;
     NSArray *childItems = [parentItem children];
-    FrameLoadType loadType = [[self _frameLoader] loadType];
+    FrameLoadType loadType = [self _frameLoader]->loadType();
     FrameLoadType childLoadType = FrameLoadTypeInternal;
     WebHistoryItem *childItem = nil;
 
@@ -700,7 +698,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     if (archive)
         [childFrame loadArchive:archive];
     else
-        [[childFrame _frameLoader] loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
+        [childFrame _frameLoader]->load(URL, referrer, childLoadType, nil, nil, nil, nil);
 }
 
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item
@@ -751,7 +749,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 // Return the item that we would reset to, so we can decide later whether to actually reset.
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo
 {
-    if (isBackForwardLoadType([[self _frameLoader] loadType]) && [self _isMainFrame])
+    if (isBackForwardLoadType([self _frameLoader]->loadType()) && [self _isMainFrame])
         return _private->currentItem;
     return nil;
 }
@@ -774,7 +772,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 - (WebHistoryItem *)_itemForRestoringDocState
 {
-    switch ([[self _frameLoader] loadType]) {
+    switch ([self _frameLoader]->loadType()) {
         case FrameLoadTypeReload:
         case FrameLoadTypeReloadAllowingStaleData:
         case FrameLoadTypeSame:
@@ -1048,7 +1046,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     [_private->inspectors removeObject:inspector];
 }
 
-- (WebFrameLoader *)_frameLoader
+- (FrameLoader*)_frameLoader
 {
     return [_private->bridge frameLoader];
 }
@@ -1100,12 +1098,12 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (BOOL)_firstLayoutDone
 {
-    return [[self _frameLoader] firstLayoutDone];
+    return [self _frameLoader]->firstLayoutDone();
 }
 
 - (WebFrameLoadType)_loadType
 {
-    return (WebFrameLoadType)[[self _frameLoader] loadType];
+    return (WebFrameLoadType)[self _frameLoader]->loadType();
 }
 
 @end
@@ -1169,17 +1167,17 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (WebDataSource *)provisionalDataSource
 {
-    return dataSource([[self _frameLoader] provisionalDocumentLoader]);
+    return dataSource([self _frameLoader]->provisionalDocumentLoader());
 }
 
 - (WebDataSource *)dataSource
 {
-    return dataSource([[self _frameLoader] documentLoader]);
+    return dataSource([self _frameLoader]->documentLoader());
 }
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    [[self _frameLoader] loadRequest:request];
+    [self _frameLoader]->load(request);
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -1225,18 +1223,18 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
                                               unreachableURL:nil];
         WebDocumentLoader *documentLoader = [self _createDocumentLoaderWithRequest:request];
         [dataSource(documentLoader) _addToUnarchiveState:archive];
-        [[self _frameLoader] loadDocumentLoader:documentLoader];
+        [self _frameLoader]->load(documentLoader);
     }
 }
 
 - (void)stopLoading
 {
-    [[self _frameLoader] stopLoading];
+    [self _frameLoader]->stopLoading();
 }
 
 - (void)reload
 {
-    [[self _frameLoader] reload];
+    [self _frameLoader]->reload();
 }
 
 - (WebFrame *)findFrameNamed:(NSString *)name
@@ -1339,7 +1337,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 
 - (void)_updateHistoryForCommit
 {
-    FrameLoadType type = [[self _frameLoader] loadType];
+    FrameLoadType type = [self _frameLoader]->loadType();
     if (isBackForwardLoadType(type) ||
         (type == FrameLoadTypeReload && [[self provisionalDataSource] unreachableURL] != nil)) {
         // Once committed, we want to use current item for saving DocState, and
@@ -1358,7 +1356,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     WebHistoryItem *currItem = _private->currentItem;
     LOG(PageCache, "Clearing back/forward cache, %@\n", [currItem URL]);
     [currItem setHasPageCache:NO];
-    if ([[self _frameLoader] loadType] == FrameLoadTypeReload)
+    if ([self _frameLoader]->loadType() == FrameLoadTypeReload)
         [self _saveScrollPositionAndViewStateToItem:currItem];
     WebDataSource *dataSource = [self dataSource];
     NSURLRequest *request = [dataSource request];
@@ -1415,7 +1413,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_updateHistoryForInternalLoad
 {
     // Add an item to the item tree for this frame
-    ASSERT(![[[self _frameLoader] documentLoader] isClientRedirect]);
+    ASSERT(![[self _frameLoader]->documentLoader() isClientRedirect]);
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame) {
         WebHistoryItem *parentItem = parentFrame->_private->currentItem;
@@ -1966,7 +1964,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         return;
     if (_private->pendingArchivedResources->isEmpty())
         return;
-    if ([[self _frameLoader] defersCallbacks])
+    if ([self _frameLoader]->defersCallbacks())
         return;
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverArchivedResources) object:nil];
@@ -1979,7 +1977,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         return NO;
     if (![self _canUseResourceForRequest:r])
         return NO;
-    WebResource *resource = [dataSource([[self _frameLoader] activeDocumentLoader]) _archivedSubresourceForURL:originalURL];
+    WebResource *resource = [dataSource([self _frameLoader]->activeDocumentLoader()) _archivedSubresourceForURL:originalURL];
     if (!resource)
         return NO;
     if (![self _canUseResourceWithResponse:[resource _response]])
@@ -2023,7 +2021,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         return;
     if (_private->pendingArchivedResources->isEmpty())
         return;
-    if ([[self _frameLoader] defersCallbacks])
+    if ([self _frameLoader]->defersCallbacks())
         return;
 
     const ResourceMap copy = *_private->pendingArchivedResources;
@@ -2172,13 +2170,10 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     NSView *frameView = [self frameView];
     NSWindow *window = [frameView window];
     NSResponder *firstResp = [window firstResponder];
-    if ([firstResp isKindOfClass:[NSView class]]
-        && [(NSView *)firstResp isDescendantOf:frameView])
-    {
+    if ([firstResp isKindOfClass:[NSView class]] && [(NSView *)firstResp isDescendantOf:frameView])
         [window endEditingFor:firstResp];
-    }
     
-    [[self _frameLoader] detachChildren];
+    [self _frameLoader]->detachChildren();
 }
 
 - (void)_didFinishLoad
@@ -2200,7 +2195,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
 
 - (void)_provisionalLoadStarted
 {
-    FrameLoadType loadType = [[self _frameLoader] loadType];
+    FrameLoadType loadType = [self _frameLoader]->loadType();
     
     // FIXME: This is OK as long as no one resizes the window,
     // but in the case where someone does, it means garbage outside
@@ -2216,12 +2211,12 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     if ([self _canCachePage]
         && [_private->bridge canCachePage]
         && item
-        && ![[self _frameLoader] isQuickRedirectComing]
+        && ![self _frameLoader]->isQuickRedirectComing()
         && loadType != FrameLoadTypeReload 
         && loadType != FrameLoadTypeReloadAllowingStaleData
         && loadType != FrameLoadTypeSame
         && ![[self dataSource] isLoading]
-        && ![[[self _frameLoader] documentLoader] isStopping]) {
+        && ![[self _frameLoader]->documentLoader() isStopping]) {
         if ([[[self dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]]) {
             if (![item pageCache]){
                 // Add the items to this page's cache.

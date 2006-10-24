@@ -29,12 +29,10 @@
 
 #import "WebViewInternal.h"
 
-#import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDashboardRegion.h"
-#import <WebCore/WebDataProtocol.h>
 #import "WebDataSourceInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultFrameLoadDelegate.h"
@@ -44,7 +42,6 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
-#import <WebCore/WebDocumentLoader.h>
 #import "WebDownload.h"
 #import "WebDownloadInternal.h"
 #import "WebDynamicScrollBarsView.h"
@@ -52,7 +49,6 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import <WebCore/WebFrameLoader.h>
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
@@ -75,12 +71,12 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebPageBridge.h"
 #import "WebPDFView.h"
+#import "WebPageBridge.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
-#import "WebPreferencesPrivate.h"
 #import "WebPreferenceKeysPrivate.h"
+#import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
@@ -88,17 +84,22 @@
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSettings.h>
+#import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/WebDataProtocol.h>
+#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/WebFrameLoader.h>
 #import <WebKit/DOM.h>
-#import <WebKit/DOMPrivate.h>
 #import <WebKit/DOMExtensions.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
 
-#import <WebCore/WebCoreTextRenderer.h>
+using namespace WebCore;
 
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
@@ -621,7 +622,9 @@ static bool debugWidget = true;
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
 
-    [[[self mainFrame] _frameLoader] detachFromParent];
+    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
+    if (mainFrameLoader)
+        mainFrameLoader->detachFromParent();
     [_private->_pageBridge close];
     [_private->_pageBridge release];
     _private->_pageBridge = nil;
@@ -694,12 +697,13 @@ static bool debugWidget = true;
 
 - (void)setDefersCallbacks:(BOOL)defers
 {
-    if (defers == _private->defersCallbacks) {
+    if (defers == _private->defersCallbacks)
         return;
-    }
 
     _private->defersCallbacks = defers;
-    [[[self mainFrame] _frameLoader] defersCallbacksChanged];
+    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
+    if (mainFrameLoader)
+        mainFrameLoader->defersCallbacksChanged();
 }
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
@@ -2185,10 +2189,11 @@ NS_ENDHANDLER
 - (void)setCustomTextEncodingName:(NSString *)encoding
 {
     NSString *oldEncoding = [self customTextEncodingName];
-    if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding]) {
+    if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
-    }
-    [[[self mainFrame] _frameLoader] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
+    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
+    if (mainFrameLoader)
+        mainFrameLoader->reloadAllowingStaleData(encoding);
 }
 
 - (NSString *)_mainFrameOverrideEncoding

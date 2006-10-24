@@ -28,16 +28,19 @@
 
 #include "RetainPtr.h"
 #include "Shared.h"
+#include <wtf/RefPtr.h>
 
 @class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
-@class WebFrameLoader;
-@class WebCoreResourceLoaderDelegate;
+@class WebCoreResourceLoaderAsDelegate;
 
 namespace WebCore {
+
+    class Frame;
+    class FrameLoader;
 
     // FIXME: Rename to ResourceLoader after resolving conflict with existing class of that name.
     class WebResourceLoader : public Shared<WebResourceLoader> {
@@ -46,19 +49,16 @@ namespace WebCore {
 
         virtual bool load(NSURLRequest *);
 
-        virtual void signalFinish();
+        FrameLoader *frameLoader() const;
 
-        void setFrameLoader(WebFrameLoader *);
-        WebFrameLoader *frameLoader() const;
-
-        virtual void cancel();
-        virtual void cancel(NSError *);
+        virtual void cancel(NSError * = nil);
         NSError *cancelledError();
 
         virtual void setDefersCallbacks(bool);
         bool defersCallbacks() const;
 
         void setIdentifier(id);
+        id identifier() const { return m_identifier.get(); }
 
         virtual void releaseResources();
         NSURLResponse *response() const;
@@ -85,26 +85,27 @@ namespace WebCore {
         static bool inConnectionCallback();
 
     protected:
-        WebResourceLoader(WebFrameLoader *);
-        WebCoreResourceLoaderDelegate *delegate();
+        WebResourceLoader(Frame*);
+        WebCoreResourceLoaderAsDelegate *delegate();
         virtual void releaseDelegate();
+
+        virtual void didCancel(NSError *);
+        void didFinishLoadingOnePart();
 
         NSURLConnection *connection() const { return m_connection.get(); }
         NSURLRequest *request() const { return m_request.get(); }
         bool reachedTerminalState() const { return m_reachedTerminalState; }
-        bool signalledFinish() const { return m_signalledFinish; }
         bool cancelled() const { return m_cancelled; }
-        id identifier() const { return m_identifier.get(); }
 
         RetainPtr<NSURLConnection> m_connection;
 
     private:
         RetainPtr<NSURLRequest> m_request;
         bool m_reachedTerminalState;
-        bool m_signalledFinish;
         bool m_cancelled;
+        bool m_calledDidFinishLoad;
 
-        RetainPtr<WebFrameLoader> m_frameLoader;
+        RefPtr<Frame> m_frame;
         RetainPtr<id> m_identifier;
         RetainPtr<NSURLResponse> m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
@@ -112,7 +113,7 @@ namespace WebCore {
         bool m_defersCallbacks;
         RetainPtr<NSURL> m_originalURL;
         RetainPtr<NSMutableData> m_resourceData;
-        RetainPtr<WebCoreResourceLoaderDelegate> m_delegate;
+        RetainPtr<WebCoreResourceLoaderAsDelegate> m_delegate;
     };
 
 }

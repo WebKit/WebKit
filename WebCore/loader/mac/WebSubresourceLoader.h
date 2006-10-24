@@ -33,15 +33,12 @@ namespace WebCore {
 
     class SubresourceLoader : public WebResourceLoader {
     public:
-        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
             NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer);
-        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
             NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer);
 
         virtual ~SubresourceLoader();
-
-        virtual void signalFinish();
-        virtual void cancel();
 
         virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
         virtual void didReceiveResponse(NSURLResponse *);
@@ -50,13 +47,13 @@ namespace WebCore {
         virtual void didFail(NSError *);
 
     private:
-        static id <WebCoreResourceHandle> create(WebFrameLoader *, id <WebCoreResourceLoader>,
+        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
             NSMutableURLRequest *, NSString *method, NSDictionary *customHeaders, NSString *referrer);
 
-        SubresourceLoader(WebFrameLoader *, id <WebCoreResourceLoader>);
+        SubresourceLoader(Frame*, id <WebCoreResourceLoader>);
         id <WebCoreResourceHandle> handle();
 
-        void receivedError(NSError *error);
+        virtual void didCancel(NSError *);
 
         RetainPtr<id <WebCoreResourceLoader> > m_coreLoader;
         bool m_loadingMultipartContent;

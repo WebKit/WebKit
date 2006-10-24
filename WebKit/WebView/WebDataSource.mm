@@ -55,6 +55,8 @@
 #import <WebKitSystemInterface.h>
 #import "WebDocumentLoaderMac.h"
 
+using namespace WebCore;
+
 @interface WebDataSourcePrivate : NSObject
 {
     @public
@@ -288,7 +290,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [_private->loader prepareForLoadStart];
     _private->loadingFromPageCache = YES;
     [_private->loader setCommitted:YES];
-    [[_private->loader frameLoader] commitProvisionalLoad:pageCache];
+    [_private->loader frameLoader]->commitProvisionalLoad(pageCache);
 }
 
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
@@ -304,7 +306,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebView *)_webView
 {
-    return [(WebFrame *)[[_private->loader frameLoader] client] webView];
+    return [[self webFrame] webView];
 }
 
 - (BOOL)_isDocumentHTML
@@ -404,7 +406,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebFrame *)webFrame
 {
-    return (WebFrame *)[[_private->loader frameLoader] client];
+    FrameLoader* frameLoader = [_private->loader frameLoader];
+    if (!frameLoader)
+        return nil;
+    return (WebFrame *)frameLoader->client();
 }
 
 -(NSURLRequest *)initialRequest

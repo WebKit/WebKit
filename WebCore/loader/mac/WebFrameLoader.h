@@ -27,197 +27,229 @@
  */
 
 #import "FrameLoaderTypes.h"
-#import <Cocoa/Cocoa.h>
+#import "RetainPtr.h"
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
+#import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
-#import <wtf/Vector.h>
-
-namespace WebCore {
-    class FormState;
-    class MainResourceLoader;
-    class WebResourceLoader;
-}
 
 @class DOMElement;
-@class WebDocumentLoader;
 @class WebCoreFrameBridge;
+@class WebCoreFrameLoaderAsDelegate;
+@class WebDocumentLoader;
 @class WebPolicyDecider;
 @protocol WebFrameLoaderClient;
 
-bool isBackForwardLoadType(FrameLoadType);
+namespace WebCore {
 
-@interface WebFrameLoader : NSObject 
-{
-    WebCoreFrameBridge *frameBridge;
+    class FormState;
+    class Frame;
+    class MainResourceLoader;
+    class WebResourceLoader;
+
+    bool isBackForwardLoadType(FrameLoadType);
+
+    class FrameLoader : Noncopyable {
+    public:
+        FrameLoader(Frame*);
+        ~FrameLoader();
+
+        Frame* frame() const { return m_frame; }
+
+        void addPlugInStreamLoader(WebResourceLoader*);
+        void removePlugInStreamLoader(WebResourceLoader*);
+        void stopLoadingPlugIns();
+        bool isLoadingMainResource() const;
+        bool isLoadingSubresources() const;
+        bool isLoading() const;
+        void stopLoadingSubresources();
+        void addSubresourceLoader(WebResourceLoader*);
+        void removeSubresourceLoader(WebResourceLoader*);
+        NSData *mainResourceData() const;
+        void releaseMainResourceLoader();
+        void cancelMainResourceLoad();
+        void stopLoading(NSError *);
+        void stopLoading();
+
+        WebDocumentLoader *activeDocumentLoader() const;
+        WebDocumentLoader *documentLoader() const;
+        WebDocumentLoader *provisionalDocumentLoader();
+        WebFrameState state() const;
+        void setupForReplace();
+        static double timeOfLastCompletedLoad();
+
+        bool defersCallbacks() const;
+        void defersCallbacksChanged();
+        id identifierForInitialRequest(NSURLRequest *);
+        NSURLRequest *willSendRequest(WebResourceLoader*, NSMutableURLRequest *, NSURLResponse *redirectResponse);
+        void didReceiveAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
+        void didCancelAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
+        void didReceiveResponse(WebResourceLoader*, NSURLResponse *);
+        void didReceiveData(WebResourceLoader*, NSData *, int lengthReceived);
+        void didFinishLoad(WebResourceLoader*);
+        void didFailToLoad(WebResourceLoader*, NSError *);
+        bool privateBrowsingEnabled() const;
+        NSURLRequest *originalRequest() const;
+        void receivedMainResourceError(NSError *, bool isComplete);
+        NSURLRequest *initialRequest() const;
+        void receivedData(NSData *);
+        void setRequest(NSURLRequest *);
+        void download(NSURLConnection *, NSURLRequest *request, NSURLResponse *, id proxy);
+        void handleFallbackContent();
+        bool isStopping() const;
+        void setupForReplaceByMIMEType(NSString *newMIMEType);
+        void setResponse(NSURLResponse *);
+
+        void finishedLoading();
+        NSURL *URL() const;
+
+        NSError *cancelledError(NSURLRequest *) const;
+        NSError *fileDoesNotExistError(NSURLResponse *) const;
+        bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *) const;
+        bool isArchiveLoadPending(WebResourceLoader*) const;
+        void cancelPendingArchiveLoad(WebResourceLoader*);
+        void cannotShowMIMEType(NSURLResponse *);
+        NSError *interruptionForPolicyChangeError(NSURLRequest *);
+        bool isHostedByObjectElement() const;
+        bool isLoadingMainFrame() const;
+        bool canShowMIMEType(NSString *MIMEType) const;
+        bool representationExistsForURLScheme(NSString *URLScheme);
+        NSString *generatedMIMETypeForURLScheme(NSString *URLScheme);
+        void notifyIconChanged(NSURL *iconURL);
+        void checkNavigationPolicy(NSURLRequest *newRequest, id continuationObject, SEL continuationSelector);
+        void checkContentPolicy(NSString *MIMEType, id continuationObject, SEL continuationSelector);
+        void cancelContentPolicyCheck();
+        void reload();
+        void reloadAllowingStaleData(NSString *overrideEncoding);
+        void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
+
+        void didReceiveServerRedirectForProvisionalLoadForFrame();
+        void finishedLoadingDocument(WebDocumentLoader *);
+        void committedLoad(WebDocumentLoader *, NSData *data);
+        bool isReplacing() const;
+        void setReplacing();
+        void revertToProvisional(WebDocumentLoader *);
+        void setMainDocumentError(WebDocumentLoader *, NSError *);
+        void mainReceivedCompleteError(WebDocumentLoader *, NSError *);
+        void finalSetupForReplace(WebDocumentLoader *);
+        void prepareForLoadStart();
+        bool subframeIsLoading() const;
+        void willChangeTitle(WebDocumentLoader *);
+        void didChangeTitle(WebDocumentLoader *);
+
+        FrameLoadType loadType() const;
+
+        void load(WebDocumentLoader *);
+        void load(WebDocumentLoader *, FrameLoadType, PassRefPtr<FormState>);
+
+        void didFirstLayout();
+        bool firstLayoutDone() const;
+
+        void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
+        void clientRedirected(NSURL *, double delay, NSDate *fireDate, bool lockHistory, bool isJavaScriptFormAction);
+        void load(NSURL *, NSString *referrer, FrameLoadType loadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *formValues);
+        void commitProvisionalLoad(NSDictionary *pageCache);
+        bool isQuickRedirectComing() const;
+        bool shouldReload(NSURL *currentURL, NSURL *destinationURL);
+
+        void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
+        NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
+        void load(NSURLRequest *);
+        void load(NSURLRequest *, NSString *frameName);
+        void post(NSURL *, NSString *referrer, NSString *target, NSArray *postData, NSString *contentType, NSEvent *, DOMElement *form, NSDictionary *formValues);
+
+        void checkLoadComplete();
+        void detachFromParent();
+        void safeLoad(NSURL *);
+        void detachChildren();
+        void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
+        NSDictionary *actionInformation(NavigationType, NSEvent *, NSURL *);
+        NSDictionary *actionInformation(FrameLoadType loadType, bool isFormSubmission, NSEvent *, NSURL *);
+
+        void setFrameLoaderClient(id <WebFrameLoaderClient>);
+        id <WebFrameLoaderClient> client() const;
+
+        void continueAfterWillSubmitForm(WebPolicyAction);
+        void continueAfterNewWindowPolicy(WebPolicyAction);
+        void continueAfterNavigationPolicy(WebPolicyAction);
+        void continueLoadRequestAfterNavigationPolicy(NSURLRequest *, FormState*);
+        void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
+        void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, NSString *frameName, FormState*);
+
+    private:
+        void setDefersCallbacks(bool);
+        bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
+        void clearProvisionalLoad();
+        void stopLoadingSubframes();
+        void markLoadComplete();
+        void commitProvisionalLoad();
+        void startLoading();
+        void provisionalLoadStarted();
+        void frameLoadCompleted();
+
+        void mainReceivedError(NSError *, bool isComplete);
+
+        void setLoadType(FrameLoadType);
+
+        void invalidatePendingPolicyDecision(bool callDefaultAction);
+        void checkNewWindowPolicy(NSURLRequest *, NSDictionary *, NSString *frameName, PassRefPtr<FormState>);
+        void checkNavigationPolicy(NSURLRequest *, WebDocumentLoader *, PassRefPtr<FormState>, id continuationObject, SEL continuationSelector);
+
+        void transitionToCommitted(NSDictionary *pageCache);
+        void checkLoadCompleteForThisFrame();
+
+        void setDocumentLoader(WebDocumentLoader *);
+        void setPolicyDocumentLoader(WebDocumentLoader *);
+        void setProvisionalDocumentLoader(WebDocumentLoader *);
+
+        bool isLoadingPlugIns() const;
+
+        void setState(WebFrameState);
+
+        WebCoreFrameBridge *bridge() const;
+
+        WebCoreFrameLoaderAsDelegate *asDelegate();
+
+        void closeOldDataSources();
+        void opened();
+
+        void handleUnimplementablePolicy(NSError *);
+        bool shouldReloadToHandleUnreachableURL(NSURLRequest *);
+
+        Frame* m_frame;
+        RetainPtr<WebCoreFrameLoaderAsDelegate> m_asDelegate;
+
+        RefPtr<MainResourceLoader> m_mainResourceLoader;
+        HashSet<RefPtr<WebResourceLoader> > m_subresourceLoaders;
+        HashSet<RefPtr<WebResourceLoader> > m_plugInStreamLoaders;
     
-    WebCore::MainResourceLoader *m_mainResourceLoader;
-    
-    HashSet<RefPtr<WebCore::WebResourceLoader> >* m_subresourceLoaders;
-    HashSet<RefPtr<WebCore::WebResourceLoader> >* m_plugInStreamLoaders;
-    
-    id <WebFrameLoaderClient> client;
-    WebDocumentLoader *documentLoader;
-    WebDocumentLoader *provisionalDocumentLoader;
-    WebDocumentLoader *policyDocumentLoader;
-        
-    WebFrameState state;
-    
-    FrameLoadType loadType;
+        id <WebFrameLoaderClient> m_client;
 
-    // state we'll need to continue after waiting for the policy delegate's decision
-    WebPolicyDecider *policyDecider;    
+        RetainPtr<WebDocumentLoader> m_documentLoader;
+        RetainPtr<WebDocumentLoader> m_provisionalDocumentLoader;
+        RetainPtr<WebDocumentLoader> m_policyDocumentLoader;
 
-    NSURLRequest *policyRequest;
-    NSString *policyFrameName;
-    id policyTarget;
-    SEL policySelector;
-    WebCore::FormState *policyFormState;
-    FrameLoadType policyLoadType;
+        WebFrameState m_state;
+        FrameLoadType m_loadType;
 
-    BOOL delegateIsHandlingProvisionalLoadError;
-    BOOL delegateIsDecidingNavigationPolicy;
-    BOOL delegateIsHandlingUnimplementablePolicy;
+        // state we'll need to continue after waiting for the policy delegate's decision
+        RetainPtr<WebPolicyDecider> m_policyDecider;    
 
-    BOOL firstLayoutDone;
-    BOOL quickRedirectComing;
-    BOOL sentRedirectNotification;
-    BOOL isStoppingLoad;    
+        RetainPtr<NSURLRequest> m_policyRequest;
+        RetainPtr<NSString> m_policyFrameName;
+        RetainPtr<id> m_policyTarget;
+        SEL m_policySelector;
+        RefPtr<FormState> m_policyFormState;
+        FrameLoadType m_policyLoadType;
+
+        bool m_delegateIsHandlingProvisionalLoadError;
+        bool m_delegateIsDecidingNavigationPolicy;
+        bool m_delegateIsHandlingUnimplementablePolicy;
+
+        bool m_firstLayoutDone;
+        bool m_quickRedirectComing;
+        bool m_sentRedirectNotification;
+        bool m_isStoppingLoad;    
+    };
+
 }
-
-- (id)initWithFrameBridge:(WebCoreFrameBridge *)bridge;
-- (void)addPlugInStreamLoader:(WebCore::WebResourceLoader *)loader;
-- (void)removePlugInStreamLoader:(WebCore::WebResourceLoader *)loader;
-- (void)setDefersCallbacks:(BOOL)defers;
-- (void)stopLoadingPlugIns;
-- (BOOL)isLoadingMainResource;
-- (BOOL)isLoadingSubresources;
-- (BOOL)isLoading;
-- (void)stopLoadingSubresources;
-- (void)addSubresourceLoader:(WebCore::WebResourceLoader *)loader;
-- (void)removeSubresourceLoader:(WebCore::WebResourceLoader *)loader;
-- (NSData *)mainResourceData;
-- (void)releaseMainResourceLoader;
-- (void)cancelMainResourceLoad;
-- (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier;
-- (void)stopLoadingWithError:(NSError *)error;
-- (void)clearProvisionalLoad;
-- (void)stopLoading;
-- (void)stopLoadingSubframes;
-- (void)markLoadComplete;
-- (void)commitProvisionalLoad;
-- (void)startLoading;
-- (void)startProvisionalLoad:(WebDocumentLoader *)loader;
-- (WebDocumentLoader *)activeDocumentLoader;
-- (WebDocumentLoader *)documentLoader;
-- (WebDocumentLoader *)provisionalDocumentLoader;
-- (WebFrameState)state;
-- (void)setupForReplace;
-+ (CFAbsoluteTime)timeOfLastCompletedLoad;
-- (void)provisionalLoadStarted;
-- (void)frameLoadCompleted;
-
-- (BOOL)defersCallbacks;
-- (void)defersCallbacksChanged;
-- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
-- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
-- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
-- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
-- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier;
-- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier;
-- (void)_didFinishLoadingForResource:(id)identifier;
-- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier;
-- (BOOL)_privateBrowsingEnabled;
-- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier;
-- (void)_finishedLoadingResource;
-- (void)_receivedError:(NSError *)error;
-- (NSURLRequest *)_originalRequest;
-- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete;
-- (NSURLRequest *)initialRequest;
-- (void)_receivedData:(NSData *)data;
-- (void)_setRequest:(NSURLRequest *)request;
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy;
-- (void)_handleFallbackContent;
-- (BOOL)_isStopping;
-- (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType;
-- (void)_setResponse:(NSURLResponse *)response;
-- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
-- (void)_finishedLoading;
-- (NSURL *)_URL;
-
-- (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
-- (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
-- (BOOL)willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebCore::WebResourceLoader *)loader;
-- (BOOL)archiveLoadPendingForLoader:(WebCore::WebResourceLoader *)loader;
-- (void)cancelPendingArchiveLoadForLoader:(WebCore::WebResourceLoader *)loader;
-- (void)cannotShowMIMETypeWithResponse:(NSURLResponse *)response;
-- (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request;
-- (BOOL)isHostedByObjectElement;
-- (BOOL)isLoadingMainFrame;
-- (BOOL)_canShowMIMEType:(NSString *)MIMEType;
-- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
-- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
-- (void)_notifyIconChanged:(NSURL *)iconURL;
-- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel;
-- (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel;
-- (void)cancelContentPolicy;
-- (void)reload;
-- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(FrameLoadType)loadType formState:(PassRefPtr<WebCore::FormState>)formState;
-
-- (void)didReceiveServerRedirectForProvisionalLoadForFrame;
-- (WebCoreFrameBridge *)bridge;
-- (void)finishedLoadingDocument:(WebDocumentLoader *)loader;
-- (void)committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data;
-- (BOOL)isReplacing;
-- (void)setReplacing;
-- (void)revertToProvisionalWithDocumentLoader:(WebDocumentLoader *)loader;
-- (void)documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error;
-- (void)documentLoader:(WebDocumentLoader *)loader mainReceivedCompleteError:(NSError *)error;
-- (void)finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader;
-- (void)prepareForLoadStart;
-- (BOOL)subframeIsLoading;
-- (void)willChangeTitleForDocument:(WebDocumentLoader *)loader;
-- (void)didChangeTitleForDocument:(WebDocumentLoader *)loader;
-
-- (FrameLoadType)loadType;
-- (void)setLoadType:(FrameLoadType)type;
-
-- (void)invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
-- (void)checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(PassRefPtr<WebCore::FormState>)formState andCall:(id)target withSelector:(SEL)selector;
-- (void)checkNavigationPolicyForRequest:(NSURLRequest *)request documentLoader:(WebDocumentLoader *)loader formState:(PassRefPtr<WebCore::FormState>)formState andCall:(id)target withSelector:(SEL)selector;
-- (void)continueAfterWillSubmitForm:(WebPolicyAction)policy;
-- (void)loadDocumentLoader:(WebDocumentLoader *)loader;
-- (void)loadDocumentLoader:(WebDocumentLoader *)loader withLoadType:(FrameLoadType)loadType formState:(PassRefPtr<WebCore::FormState>)formState;
-
-- (void)didFirstLayout;
-- (BOOL)firstLayoutDone;
-
-- (void)clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress;
-- (void)clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(FrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)commitProvisionalLoad:(NSDictionary *)pageCache;
-- (BOOL)isQuickRedirectComing;
-- (BOOL)shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL;
-
-- (void)transitionToCommitted:(NSDictionary *)pageCache;
-- (void)checkLoadCompleteForThisFrame;
-- (void)sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
-- (NSURLRequest *)requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
-- (void)loadRequest:(NSURLRequest *)request;
-- (void)loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-
-- (void)checkLoadComplete;
-- (void)detachFromParent;
-- (void)safeLoadURL:(NSURL *)URL;
-- (void)defersCallbacksChanged;
-- (void)detachChildren;
-- (void)addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)alwaysFromRequest;
-- (NSDictionary *)actionInformationForNavigationType:(NavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
-- (NSDictionary *)actionInformationForLoadType:(FrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
-
-- (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)cli;
-- (id<WebFrameLoaderClient>)client;
-   
-@end

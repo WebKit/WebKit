@@ -1,3 +1,255 @@
+2006-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - converted WebFrameLoader to C++
+
+        * WebCore.exp: Added many new entry points for WebKit.
+        * WebCore.xcodeproj/project.pbxproj: Made more files private (SPI).
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initMainFrameWithPage:withEditorClient:]):
+        (-[WebCoreFrameBridge initSubframeWithOwnerElement:withEditorClient:]):
+        (-[WebCoreFrameBridge dealloc]):
+        (-[WebCoreFrameBridge close]):
+        (-[WebCoreFrameBridge clearFrame]):
+        (-[WebCoreFrameBridge setFrameLoaderClient:]):
+        (-[WebCoreFrameBridge frameLoader]):
+        (-[WebCoreFrameBridge setTitle:]):
+        (-[WebCoreFrameBridge didFirstLayout]):
+        (-[WebCoreFrameBridge notifyIconChanged:]):
+        (-[WebCoreFrameBridge originalRequestURL]):
+        (-[WebCoreFrameBridge isLoadTypeReload]):
+        (-[WebCoreFrameBridge frameDetached]):
+        (-[WebCoreFrameBridge tokenizerProcessedData]):
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebCoreFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebCoreFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebCoreFrameBridge reportClientRedirectCancelled:]):
+        (-[WebCoreFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebCoreFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebCoreFrameBridge incomingReferrer]):
+        (-[WebCoreFrameBridge isReloading]):
+        (-[WebCoreFrameBridge handledOnloadEvents]):
+        (-[WebCoreFrameBridge mainResourceURLResponse]):
+        (-[WebCoreFrameBridge loadEmptyDocumentSynchronously]):
+        * loader/mac/WebDocumentLoader.h:
+        * loader/mac/WebDocumentLoader.mm:
+        (-[WebDocumentLoader frameLoader]):
+        (-[WebDocumentLoader dealloc]):
+        (-[WebDocumentLoader mainResourceData]):
+        (-[WebDocumentLoader setRequest:]):
+        (-[WebDocumentLoader bridge]):
+        (-[WebDocumentLoader setMainDocumentError:]):
+        (-[WebDocumentLoader mainReceivedError:complete:]):
+        (-[WebDocumentLoader stopLoading]):
+        (-[WebDocumentLoader setupForReplace]):
+        (-[WebDocumentLoader commitIfReady]):
+        (-[WebDocumentLoader finishedLoading]):
+        (-[WebDocumentLoader commitLoadWithData:]):
+        (-[WebDocumentLoader doesProgressiveLoadWithMIMEType:]):
+        (-[WebDocumentLoader setupForReplaceByMIMEType:]):
+        (-[WebDocumentLoader updateLoading]):
+        (-[WebDocumentLoader setFrame:]):
+        (-[WebDocumentLoader attachToFrame]):
+        (-[WebDocumentLoader detachFromFrame]):
+        (-[WebDocumentLoader prepareForLoadStart]):
+        (-[WebDocumentLoader setPrimaryLoadComplete:]):
+        (-[WebDocumentLoader isLoadingInAPISense]):
+        (-[WebDocumentLoader setTitle:]):
+        * loader/mac/WebFrameLoader.h:
+        (WebCore::FrameLoader::frame):
+        * loader/mac/WebFrameLoader.mm:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::activeDocumentLoader):
+        (WebCore::FrameLoader::addPlugInStreamLoader):
+        (WebCore::FrameLoader::removePlugInStreamLoader):
+        (WebCore::FrameLoader::defersCallbacksChanged):
+        (WebCore::FrameLoader::defersCallbacks):
+        (WebCore::setAllDefersCallbacks):
+        (WebCore::FrameLoader::setDefersCallbacks):
+        (WebCore::cancelAll):
+        (WebCore::FrameLoader::stopLoadingPlugIns):
+        (WebCore::FrameLoader::isLoadingMainResource):
+        (WebCore::FrameLoader::isLoadingSubresources):
+        (WebCore::FrameLoader::isLoadingPlugIns):
+        (WebCore::FrameLoader::isLoading):
+        (WebCore::FrameLoader::stopLoadingSubresources):
+        (WebCore::FrameLoader::addSubresourceLoader):
+        (WebCore::FrameLoader::removeSubresourceLoader):
+        (WebCore::FrameLoader::mainResourceData):
+        (WebCore::FrameLoader::releaseMainResourceLoader):
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::setDocumentLoader):
+        (WebCore::FrameLoader::documentLoader):
+        (WebCore::FrameLoader::setPolicyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        (WebCore::FrameLoader::setProvisionalDocumentLoader):
+        (WebCore::FrameLoader::state):
+        (WebCore::FrameLoader::timeOfLastCompletedLoad):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::markLoadComplete):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::stopLoadingSubframes):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::identifierForInitialRequest):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveAuthenticationChallenge):
+        (WebCore::FrameLoader::didCancelAuthenticationChallenge):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::didFinishLoad):
+        (WebCore::FrameLoader::didFailToLoad):
+        (WebCore::FrameLoader::privateBrowsingEnabled):
+        (WebCore::FrameLoader::originalRequest):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::clientRedirectCancelledOrFinished):
+        (WebCore::FrameLoader::clientRedirected):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::closeOldDataSources):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::initialRequest):
+        (WebCore::FrameLoader::receivedData):
+        (WebCore::FrameLoader::setRequest):
+        (WebCore::FrameLoader::download):
+        (WebCore::FrameLoader::bridge):
+        (WebCore::FrameLoader::handleFallbackContent):
+        (WebCore::FrameLoader::isStopping):
+        (WebCore::FrameLoader::setupForReplaceByMIMEType):
+        (WebCore::FrameLoader::setResponse):
+        (WebCore::FrameLoader::mainReceivedError):
+        (WebCore::FrameLoader::finishedLoading):
+        (WebCore::FrameLoader::notifyIconChanged):
+        (WebCore::FrameLoader::URL):
+        (WebCore::FrameLoader::cancelledError):
+        (WebCore::FrameLoader::fileDoesNotExistError):
+        (WebCore::FrameLoader::willUseArchive):
+        (WebCore::FrameLoader::isArchiveLoadPending):
+        (WebCore::FrameLoader::cancelPendingArchiveLoad):
+        (WebCore::FrameLoader::handleUnimplementablePolicy):
+        (WebCore::FrameLoader::cannotShowMIMEType):
+        (WebCore::FrameLoader::interruptionForPolicyChangeError):
+        (WebCore::FrameLoader::isHostedByObjectElement):
+        (WebCore::FrameLoader::isLoadingMainFrame):
+        (WebCore::FrameLoader::canShowMIMEType):
+        (WebCore::FrameLoader::representationExistsForURLScheme):
+        (WebCore::FrameLoader::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::cancelContentPolicyCheck):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        (WebCore::FrameLoader::committedLoad):
+        (WebCore::FrameLoader::isReplacing):
+        (WebCore::FrameLoader::setReplacing):
+        (WebCore::FrameLoader::revertToProvisional):
+        (WebCore::FrameLoader::setMainDocumentError):
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+        (WebCore::FrameLoader::finalSetupForReplace):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::subframeIsLoading):
+        (WebCore::FrameLoader::willChangeTitle):
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::loadType):
+        (WebCore::FrameLoader::invalidatePendingPolicyDecision):
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueAfterWillSubmitForm):
+        (WebCore::FrameLoader::continueLoadRequestAfterNavigationPolicy):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::frameLoadCompleted):
+        (WebCore::FrameLoader::firstLayoutDone):
+        (WebCore::FrameLoader::isQuickRedirectComing):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadRequestAfterNewWindowPolicy):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::detachChildren):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::safeLoad):
+        (WebCore::FrameLoader::actionInformation):
+        (WebCore::FrameLoader::checkLoadComplete):
+        (WebCore::FrameLoader::setFrameLoaderClient):
+        (WebCore::FrameLoader::client):
+        (WebCore::FrameLoader::asDelegate):
+        (-[WebCoreFrameLoaderAsDelegate initWithLoader:]):
+        (-[WebCoreFrameLoaderAsDelegate detachFromLoader]):
+        (-[WebCoreFrameLoaderAsDelegate continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterNewWindowPolicy:]):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterNavigationPolicy:]):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterWillSubmitForm:]):
+        (-[WebCoreFrameLoaderAsDelegate continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebCoreFrameLoaderAsDelegate continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        * loader/mac/WebLoader.h:
+        (WebCore::WebResourceLoader::identifier):
+        (WebCore::WebResourceLoader::reachedTerminalState):
+        (WebCore::WebResourceLoader::cancelled):
+        * loader/mac/WebLoader.mm:
+        (WebCore::WebResourceLoader::WebResourceLoader):
+        (WebCore::WebResourceLoader::releaseResources):
+        (WebCore::WebResourceLoader::load):
+        (WebCore::WebResourceLoader::frameLoader):
+        (WebCore::WebResourceLoader::willSendRequest):
+        (WebCore::WebResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::WebResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::WebResourceLoader::didReceiveResponse):
+        (WebCore::WebResourceLoader::didReceiveData):
+        (WebCore::WebResourceLoader::didFinishLoading):
+        (WebCore::WebResourceLoader::didFinishLoadingOnePart):
+        (WebCore::WebResourceLoader::didFail):
+        (WebCore::WebResourceLoader::willCacheResponse):
+        (WebCore::WebResourceLoader::didCancel):
+        (WebCore::WebResourceLoader::cancel):
+        (WebCore::WebResourceLoader::cancelledError):
+        (WebCore::WebResourceLoader::delegate):
+        * loader/mac/WebMainResourceLoader.h:
+        * loader/mac/WebMainResourceLoader.mm:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::create):
+        (WebCore::MainResourceLoader::receivedError):
+        (WebCore::MainResourceLoader::didCancel):
+        (WebCore::MainResourceLoader::interruptionForPolicyChangeError):
+        (WebCore::MainResourceLoader::isPostOrRedirectAfterPost):
+        (WebCore::MainResourceLoader::addData):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::policyDelegate):
+        * loader/mac/WebNetscapePlugInStreamLoader.h:
+        * loader/mac/WebNetscapePlugInStreamLoader.mm:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::create):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoader::didFail):
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        (-[WebCoreSubresourceHandle initWithLoader:]):
+
 2006-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Bradee.

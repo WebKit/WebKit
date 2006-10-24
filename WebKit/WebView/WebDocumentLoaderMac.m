@@ -30,21 +30,11 @@
 
 #import <JavaScriptCore/Assertions.h>
 
-#import <WebKitSystemInterface.h>
-
 @implementation WebDocumentLoaderMac
-
-
-- (id)initWithRequest:(NSURLRequest *)req
-{
-    self = [super initWithRequest:req];
-    return self;
-}
 
 - (void)dealloc
 {
     [dataSource release];
-    
     [super dealloc];
 }    
 
@@ -60,9 +50,9 @@
     return dataSource;
 }
 
-- (void)setFrameLoader:(WebFrameLoader *)fl
+- (void)attachToFrame
 {
-    [super setFrameLoader:fl];
+    [super attachToFrame];
     if (detachedDataSource) {
         ASSERT(!dataSource);
         [self setDataSource:detachedDataSource];
@@ -70,15 +60,11 @@
     }
 }
 
-- (void)detachFromFrameLoader
+- (void)detachFromFrame
 {
-    [super detachFromFrameLoader];
+    [super detachFromFrame];
     detachedDataSource = dataSource;
     [self setDataSource:nil];
 }
 
 @end
-
-
-
-

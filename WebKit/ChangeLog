@@ -1,3 +1,71 @@
+2006-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - converted WebFrameLoader to C++
+
+        * History/WebHistoryItem.m:
+        (+[WebHistoryItem _closeObjectsInPendingPageCaches]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream stop]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _webView]):
+        (-[WebDataSource webFrame]):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.m:
+        (-[WebDocumentLoaderMac dealloc]):
+        (-[WebDocumentLoaderMac attachToFrame]):
+        (-[WebDocumentLoaderMac detachFromFrame]):
+        * WebView/WebFrame.mm:
+        (+[WebFrame _timeOfLastCompletedLoad]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _itemForRestoringDocState]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame _firstLayoutDone]):
+        (-[WebFrame _loadType]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame stopLoading]):
+        (-[WebFrame reload]):
+        (-[WebFrame _updateHistoryForCommit]):
+        (-[WebFrame _updateHistoryForReload]):
+        (-[WebFrame _updateHistoryForInternalLoad]):
+        (-[WebFrame _deliverArchivedResourcesAfterDelay]):
+        (-[WebFrame _willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrame _deliverArchivedResources]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _clearLastHitViewIfSelf]):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[NSArray removeMouseMovedObserverUnconditionally]):
+        (-[NSArray removeMouseMovedObserver]):
+        (-[NSArray viewWillMoveToWindow:]):
+        (-[NSArray viewDidMoveToWindow]):
+        (-[WebHTMLView _canMakeTextSmaller]):
+        (-[WebHTMLView _canMakeTextLarger]):
+        (-[WebHTMLView _canMakeTextStandardSize]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView setDefersCallbacks:]):
+        (-[WebView setCustomTextEncodingName:]):
+
 2006-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Bradee.

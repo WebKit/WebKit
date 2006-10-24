@@ -34,9 +34,17 @@
 
 @class WebDocumentLoader;
 @class WebInspector;
-@class WebFrameLoader;
 @class WebFrameView;
 @class WebFrameBridge;
+
+#ifdef __cplusplus
+namespace WebCore {
+    class FrameLoader;
+}
+typedef WebCore::FrameLoader WebCoreFrameLoader;
+#else
+@class WebCoreFrameLoader;
+#endif
 
 @interface WebFrame (WebInternal)
 
@@ -64,7 +72,7 @@
 - (void)_addInspector:(WebInspector *)inspector;
 - (void)_removeInspector:(WebInspector *)inspector;
 
-- (WebFrameLoader *)_frameLoader;
+- (WebCoreFrameLoader*)_frameLoader;
 - (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader;
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;

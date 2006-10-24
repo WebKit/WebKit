@@ -29,11 +29,14 @@
 #import "config.h"
 #import "WebDocumentLoader.h"
 
-#import <wtf/Assertions.h>
-#import "WebFrameLoader.h"
-#import "WebDataProtocol.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
+#import "WebDataProtocol.h"
+#import "WebFrameLoader.h"
+#import <wtf/Assertions.h>
+
+using namespace WebCore;
 
 @implementation WebDocumentLoader
 
@@ -51,10 +54,16 @@
     return self;
 }
 
+- (FrameLoader*)frameLoader
+{
+    if (!m_frame)
+        return 0;
+    return [Mac(m_frame)->bridge() frameLoader];
+}
+
 - (void)dealloc
 {
-    ASSERT([frameLoader activeDocumentLoader] != self || ![frameLoader isLoading]);
-    
+    ASSERT(!m_frame || [self frameLoader]->activeDocumentLoader() != self || ![self frameLoader]->isLoading());
 
     [mainResourceData release];
     [originalRequest release];
@@ -71,19 +80,6 @@
 }    
 
 
-- (void)setFrameLoader:(WebFrameLoader *)fl
-{
-    ASSERT(fl);
-    ASSERT(!frameLoader);
-    
-    frameLoader = fl;
-}
-
-- (WebFrameLoader *)frameLoader
-{
-    return frameLoader;
-}
-
 - (void)setMainResourceData:(NSData *)data
 {
     [data retain];
@@ -93,7 +89,7 @@
 
 - (NSData *)mainResourceData
 {
-    return mainResourceData != nil ? mainResourceData : [frameLoader mainResourceData];
+    return mainResourceData != nil ? mainResourceData : [self frameLoader]->mainResourceData();
 }
 
 - (NSURLRequest *)originalRequest
@@ -174,7 +170,7 @@
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     // Also, don't send it when replacing unreachable URLs with alternate content.
     if (!handlingUnreachableURL && ![[oldRequest URL] isEqual:[req URL]])
-        [frameLoader didReceiveServerRedirectForProvisionalLoadForFrame];
+        [self frameLoader]->didReceiveServerRedirectForProvisionalLoadForFrame();
     
     [oldRequest release];
 }
@@ -193,7 +189,9 @@
 
 - (WebCoreFrameBridge *)bridge
 {
-    return [frameLoader bridge];
+    if (!m_frame)
+        return nil;
+    return Mac(m_frame)->bridge();
 }
 
 - (void)setMainDocumentError:(NSError *)error
@@ -202,7 +200,7 @@
     [mainDocumentError release];
     mainDocumentError = error;
     
-    [frameLoader documentLoader:self setMainDocumentError:error];
+    [self frameLoader]->setMainDocumentError(self, error);
  }
 
 - (NSError *)mainDocumentError
@@ -218,14 +216,13 @@
 
 - (void)mainReceivedError:(NSError *)error complete:(BOOL)isComplete
 {
-    if (!frameLoader)
+    if (![self frameLoader])
         return;
     
     [self setMainDocumentError:error];
     
-    if (isComplete) {
-        [frameLoader documentLoader:self mainReceivedCompleteError:error];
-    }
+    if (isComplete)
+        [self frameLoader]->mainReceivedCompleteError(self, error);
 }
 
 // Cancels the data source's pending loads.  Conceptually, a data source only loads
@@ -242,25 +239,27 @@
     if (!loading)
         return;
     
+    RefPtr<Frame> protect(m_frame);
     [self retain];
-    
+
     stopping = YES;
+
+    FrameLoader* frameLoader = [self frameLoader];
     
-    if ([frameLoader isLoadingMainResource]) {
+    if (frameLoader->isLoadingMainResource())
         // Stop the main resource loader and let it send the cancelled message.
-        [frameLoader cancelMainResourceLoad];
-    } else if ([frameLoader isLoadingSubresources]) {
+        frameLoader->cancelMainResourceLoad();
+    else if (frameLoader->isLoadingSubresources())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
-        [self setMainDocumentError:[frameLoader cancelledErrorWithRequest:request]];
-    } else {
+        [self setMainDocumentError:frameLoader->cancelledError(request)];
+    else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        [self mainReceivedError:[frameLoader cancelledErrorWithRequest:request] complete:YES];
-    }
+        [self mainReceivedError:frameLoader->cancelledError(request) complete:YES];
     
-    [frameLoader stopLoadingSubresources];
-    [frameLoader stopLoadingPlugIns];
+    frameLoader->stopLoadingSubresources();
+    frameLoader->stopLoadingPlugIns();
     
     stopping = NO;
     
@@ -269,7 +268,7 @@
 
 - (void)setupForReplace
 {
-    [frameLoader setupForReplace];
+    [self frameLoader]->setupForReplace();
     committed = NO;
 }
 
@@ -277,7 +276,7 @@
 {
     if (gotFirstByte && !committed) {
         committed = YES;
-        [frameLoader commitProvisionalLoad:nil];
+        [self frameLoader]->commitProvisionalLoad(nil);
     }
 }
 
@@ -285,7 +284,7 @@
 {
     gotFirstByte = YES;   
     [self commitIfReady];
-    [frameLoader finishedLoadingDocument:self];
+    [self frameLoader]->finishedLoadingDocument(self);
     [[self bridge] end];
 }
 
@@ -316,14 +315,15 @@
     [self retain];
     [self commitIfReady];
     
-    [frameLoader committedLoadWithDocumentLoader:self data:data];
+    if (FrameLoader* frameLoader = [self frameLoader])
+        frameLoader->committedLoad(self, data);
 
     [self release];
 }
 
 - (BOOL)doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
 {
-    return ![frameLoader isReplacing] || [MIMEType isEqualToString:@"text/html"];
+    return ![self frameLoader]->isReplacing() || [MIMEType isEqualToString:@"text/html"];
 }
 
 - (void)receivedData:(NSData *)data
@@ -342,33 +342,33 @@
     NSString *oldMIMEType = [response MIMEType];
     
     if (![self doesProgressiveLoadWithMIMEType:oldMIMEType]) {
-        [frameLoader revertToProvisionalWithDocumentLoader:self];
+        [self frameLoader]->revertToProvisional(self);
         [self setupForReplace];
         [self commitLoadWithData:[self mainResourceData]];
     }
     
-    [frameLoader finishedLoadingDocument:self];
+    [self frameLoader]->finishedLoadingDocument(self);
     [[self bridge] end];
     
-    [frameLoader setReplacing];
+    [self frameLoader]->setReplacing();
     gotFirstByte = NO;
     
     if ([self doesProgressiveLoadWithMIMEType:newMIMEType]) {
-        [frameLoader revertToProvisionalWithDocumentLoader:self];
+        [self frameLoader]->revertToProvisional(self);
         [self setupForReplace];
     }
     
-    [frameLoader stopLoadingSubresources];
-    [frameLoader stopLoadingPlugIns];
+    [self frameLoader]->stopLoadingSubresources();
+    [self frameLoader]->stopLoadingPlugIns();
 
-    [frameLoader finalSetupForReplaceWithDocumentLoader:self];
+    [self frameLoader]->finalSetupForReplace(self);
 }
 
 - (void)updateLoading
 {
-    ASSERT(self == [frameLoader activeDocumentLoader]);
+    ASSERT(self == [self frameLoader]->activeDocumentLoader());
     
-    [self setLoading:[frameLoader isLoading]];
+    [self setLoading:[self frameLoader]->isLoading()];
 }
 
 - (NSURLResponse *)response
@@ -376,16 +376,31 @@
     return response;
 }
 
-- (void)detachFromFrameLoader
+- (void)setFrame:(Frame*)frame
 {
-    frameLoader = nil;
+    if (m_frame == frame)
+        return;
+    ASSERT(frame && !m_frame);
+    m_frame = frame;
+    [self attachToFrame];
+}
+
+- (void)attachToFrame
+{
+    ASSERT(m_frame);
+}
+
+- (void)detachFromFrame
+{
+    ASSERT(m_frame);
+    m_frame = 0;
 }
 
 - (void)prepareForLoadStart
 {
     ASSERT(!stopping);
     [self setPrimaryLoadComplete:NO];
-    ASSERT(frameLoader != nil);
+    ASSERT([self frameLoader]);
     [self clearErrors];
     
     // Mark the start loading time.
@@ -393,7 +408,7 @@
     
     [self setLoading:YES];
     
-    [frameLoader prepareForLoadStart];
+    [self frameLoader]->prepareForLoadStart();
 }
 
 - (double)loadingStartedTime
@@ -416,9 +431,9 @@
     primaryLoadComplete = flag;
     
     if (flag) {
-        if ([frameLoader isLoadingMainResource]) {
-            [self setMainResourceData:[frameLoader mainResourceData]];
-            [frameLoader releaseMainResourceLoader];
+        if ([self frameLoader]->isLoadingMainResource()) {
+            [self setMainResourceData:[self frameLoader]->mainResourceData()];
+            [self frameLoader]->releaseMainResourceLoader();
         }
         
         [self updateLoading];
@@ -429,16 +444,16 @@
 {
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
-    if ([frameLoader state] != WebFrameStateComplete) {
+    if ([self frameLoader]->state() != WebFrameStateComplete) {
         if (!primaryLoadComplete && [self isLoading])
             return YES;
-        if ([frameLoader isLoadingSubresources])
+        if ([self frameLoader]->isLoadingSubresources())
             return YES;
-        if (![[frameLoader bridge] doneProcessingData])
+        if (![[self bridge] doneProcessingData])
             return YES;
     }
     
-    return [frameLoader subframeIsLoading];
+    return [self frameLoader]->subframeIsLoading();
 }
 
 - (void)addResponse:(NSURLResponse *)r
@@ -512,10 +527,10 @@
     CFStringTrimWhitespace((CFMutableStringRef)trimmed);
 
     if ([trimmed length] != 0 && ![pageTitle isEqualToString:trimmed]) {
-        [frameLoader willChangeTitleForDocument:self];
+        [self frameLoader]->willChangeTitle(self);
         [pageTitle release];
         pageTitle = [trimmed copy];
-        [frameLoader didChangeTitleForDocument:self];
+        [self frameLoader]->didChangeTitle(self);
     }
 
     [trimmed release];

@@ -1894,7 +1894,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     // don't let a plugin start any loads if it is no longer part of a document that is being
     // displayed
-    if ([[self dataSource] _documentLoader] !=  [[[self webFrame] _frameLoader] activeDocumentLoader])
+    if ([[self dataSource] _documentLoader] != [[self webFrame] _frameLoader]->activeDocumentLoader())
         return NPERR_GENERIC_ERROR;
     
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];

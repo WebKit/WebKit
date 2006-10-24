@@ -29,6 +29,8 @@
 #import "config.h"
 #import "WebLoader.h"
 
+#import "FrameMac.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import "WebFrameLoader.h"
@@ -41,7 +43,7 @@
 
 using namespace WebCore;
 
-@interface WebCoreResourceLoaderDelegate : NSObject <NSURLAuthenticationChallengeSender>
+@interface WebCoreResourceLoaderAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
 {
     WebResourceLoader* m_loader;
 }
@@ -66,13 +68,13 @@ static bool NSURLConnectionSupportsBufferedData;
 static bool isInitializingConnection;
 #endif
 
-WebResourceLoader::WebResourceLoader(WebFrameLoader *frameLoader)
+WebResourceLoader::WebResourceLoader(Frame* frame)
     : m_reachedTerminalState(false)
-    , m_signalledFinish(false)
     , m_cancelled(false)
-    , m_frameLoader(frameLoader)
+    , m_calledDidFinishLoad(false)
+    , m_frame(frame)
     , m_currentConnectionChallenge(nil)
-    , m_defersCallbacks([frameLoader defersCallbacks])
+    , m_defersCallbacks(frameLoader()->defersCallbacks())
 {
     static bool initialized = false;
     if (!initialized) {
@@ -97,13 +99,14 @@ void WebResourceLoader::releaseResources()
     // has been deallocated and also to avoid reentering this method.
     RefPtr<WebResourceLoader> protector(this);
 
+    m_frame = 0;
+
     // We need to set reachedTerminalState to true before we release
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
     m_reachedTerminalState = true;
 
     m_identifier = nil;
     m_connection = nil;
-    m_frameLoader = nil;
     m_resourceData = nil;
 
     releaseDelegate();
@@ -112,18 +115,18 @@ void WebResourceLoader::releaseResources()
 bool WebResourceLoader::load(NSURLRequest *r)
 {
     ASSERT(m_connection == nil);
-    ASSERT(![m_frameLoader.get() archiveLoadPendingForLoader:this]);
+    ASSERT(!frameLoader()->isArchiveLoadPending(this));
     
     m_originalURL = [r URL];
     
     NSURLRequest *clientRequest = willSendRequest(r, nil);
     if (clientRequest == nil) {
-        didFail([m_frameLoader.get() cancelledErrorWithRequest:r]);
+        didFail(frameLoader()->cancelledError(r));
         return false;
     }
     r = clientRequest;
     
-    if ([m_frameLoader.get() willUseArchiveForRequest:r originalURL:m_originalURL.get() loader:this])
+    if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
         return true;
     
 #ifndef NDEBUG
@@ -152,16 +155,11 @@ bool WebResourceLoader::defersCallbacks() const
     return m_defersCallbacks;
 }
 
-void WebResourceLoader::setFrameLoader(WebFrameLoader *fl)
+FrameLoader* WebResourceLoader::frameLoader() const
 {
-    ASSERT(fl);
-    m_frameLoader = fl;
-    setDefersCallbacks([fl defersCallbacks]);
-}
-
-WebFrameLoader *WebResourceLoader::frameLoader() const
-{
-    return m_frameLoader.get();
+    if (!m_frame)
+        return 0;
+    return [Mac(m_frame.get())->bridge() frameLoader];
 }
 
 void WebResourceLoader::addData(NSData *data, bool allAtOnce)
@@ -224,14 +222,10 @@ NSURLRequest *WebResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     else
         haveDataSchemeRequest = true;
     
-    if (!m_identifier) {
-        id identifier = [m_frameLoader.get() _identifierForInitialRequest:clientRequest];
-        m_identifier = identifier;
-        [identifier release];
-    }
+    if (!m_identifier)
+        m_identifier = frameLoader()->identifierForInitialRequest(clientRequest);
 
-    NSURLRequest *updatedRequest = [m_frameLoader.get() _willSendRequest:clientRequest
-        forResource:m_identifier.get() redirectResponse:redirectResponse];
+    NSURLRequest *updatedRequest = frameLoader()->willSendRequest(this, clientRequest, redirectResponse);
 
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
@@ -278,7 +272,7 @@ void WebResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationCha
     NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:delegate()];
     m_currentWebChallenge = webChallenge;
 
-    [m_frameLoader.get() _didReceiveAuthenticationChallenge:webChallenge forResource:m_identifier.get()];
+    frameLoader()->didReceiveAuthenticationChallenge(this, webChallenge);
 
     [webChallenge release];
 }
@@ -294,8 +288,7 @@ void WebResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChal
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<WebResourceLoader> protector(this);
 
-    [m_frameLoader.get() _didCancelAuthenticationChallenge:m_currentWebChallenge.get()
-        forResource:m_identifier.get()];
+    frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge.get());
 }
 
 void WebResourceLoader::didReceiveResponse(NSURLResponse *r)
@@ -314,7 +307,7 @@ void WebResourceLoader::didReceiveResponse(NSURLResponse *r)
 
     m_response = r;
 
-    [m_frameLoader.get() _didReceiveResponse:r forResource:m_identifier.get()];
+    frameLoader()->didReceiveResponse(this, r);
 }
 
 void WebResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
@@ -328,10 +321,10 @@ void WebResourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<WebResourceLoader> protector(this);
-    
+
     addData(data, allAtOnce);
-    
-    [m_frameLoader.get() _didReceiveData:data contentLength:(int)lengthReceived forResource:m_identifier.get()];
+    if (m_frame)
+        frameLoader()->didReceiveData(this, data, lengthReceived);
 }
 
 void WebResourceLoader::willStopBufferingData(NSData *data)
@@ -342,39 +335,41 @@ void WebResourceLoader::willStopBufferingData(NSData *data)
     [copy release];
 }
 
-void WebResourceLoader::signalFinish()
-{
-    m_signalledFinish = true;
-    [m_frameLoader.get() _didFinishLoadingForResource:m_identifier.get()];
-}
-
 void WebResourceLoader::didFinishLoading()
 {
     // If load has been cancelled after finishing (which could happen with a 
-    // javascript that changes the window location), do nothing.
+    // JavaScript that changes the window location), do nothing.
     if (m_cancelled)
         return;
-    
     ASSERT(!m_reachedTerminalState);
 
-    if (!m_signalledFinish)
-        signalFinish();
-
+    didFinishLoadingOnePart();
     releaseResources();
+}
+
+void WebResourceLoader::didFinishLoadingOnePart()
+{
+    if (m_cancelled)
+        return;
+    ASSERT(!m_reachedTerminalState);
+
+    if (m_calledDidFinishLoad)
+        return;
+    m_calledDidFinishLoad = true;
+    frameLoader()->didFinishLoad(this);
 }
 
 void WebResourceLoader::didFail(NSError *error)
 {
     if (m_cancelled)
         return;
-    
     ASSERT(!m_reachedTerminalState);
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<WebResourceLoader> protector(this);
 
-    [m_frameLoader.get() _didFailLoadingWithError:error forResource:m_identifier.get()];
+    frameLoader()->didFailToLoad(this, error);
 
     releaseResources();
 }
@@ -382,17 +377,17 @@ void WebResourceLoader::didFail(NSError *error)
 NSCachedURLResponse *WebResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
 {
     // When in private browsing mode, prevent caching to disk
-    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [m_frameLoader.get() _privateBrowsingEnabled]) {
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && frameLoader()->privateBrowsingEnabled())
         cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
                                                                    data:[cachedResponse data]
                                                                userInfo:[cachedResponse userInfo]
                                                           storagePolicy:NSURLCacheStorageAllowedInMemoryOnly] autorelease];
-    }
     return cachedResponse;
 }
 
-void WebResourceLoader::cancel(NSError *error)
+void WebResourceLoader::didCancel(NSError *error)
 {
+    ASSERT(!m_cancelled);
     ASSERT(!m_reachedTerminalState);
 
     // This flag prevents bad behavior when loads that finish cause the
@@ -405,18 +400,22 @@ void WebResourceLoader::cancel(NSError *error)
     m_currentConnectionChallenge = nil;
     m_currentWebChallenge = nil;
 
-    [m_frameLoader.get() cancelPendingArchiveLoadForLoader:this];
+    frameLoader()->cancelPendingArchiveLoad(this);
     [m_connection.get() cancel];
 
-    [m_frameLoader.get() _didFailLoadingWithError:error forResource:m_identifier.get()];
+    frameLoader()->didFailToLoad(this, error);
 
     releaseResources();
 }
 
-void WebResourceLoader::cancel()
+void WebResourceLoader::cancel(NSError *error)
 {
-    if (!m_reachedTerminalState)
-        cancel(cancelledError());
+    if (m_reachedTerminalState)
+        return;
+    if (error)
+        didCancel(error);
+    else
+        didCancel(cancelledError());
 }
 
 void WebResourceLoader::setIdentifier(id identifier)
@@ -436,7 +435,7 @@ bool WebResourceLoader::inConnectionCallback()
 
 NSError *WebResourceLoader::cancelledError()
 {
-    return [m_frameLoader.get() cancelledErrorWithRequest:m_request.get()];
+    return frameLoader()->cancelledError(m_request.get());
 }
 
 void WebResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
@@ -471,10 +470,10 @@ void WebResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *chall
     cancel();
 }
 
-WebCoreResourceLoaderDelegate *WebResourceLoader::delegate()
+WebCoreResourceLoaderAsDelegate *WebResourceLoader::delegate()
 {
     if (!m_delegate) {
-        WebCoreResourceLoaderDelegate *d = [[WebCoreResourceLoaderDelegate alloc] initWithLoader:this];
+        WebCoreResourceLoaderAsDelegate *d = [[WebCoreResourceLoaderAsDelegate alloc] initWithLoader:this];
         m_delegate = d;
         [d release];
     }
@@ -491,7 +490,7 @@ void WebResourceLoader::releaseDelegate()
 
 }
 
-@implementation WebCoreResourceLoaderDelegate
+@implementation WebCoreResourceLoaderAsDelegate
 
 - (id)initWithLoader:(WebResourceLoader*)loader
 {

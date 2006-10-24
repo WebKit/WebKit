@@ -714,7 +714,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
         WebHTMLView *HTMLView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
         if ([HTMLView isKindOfClass:[WebHTMLView class]]) {
             // To avoid any possible retain cycles, call close on all the WebHTMLView.
-            // Don't close the WebHTMLVIew that is currently being viewed.
+            // Don't close the WebHTMLView that is currently being viewed.
             if ([[[HTMLView _frame] frameView] documentView] != HTMLView)
                 [HTMLView close];
         }

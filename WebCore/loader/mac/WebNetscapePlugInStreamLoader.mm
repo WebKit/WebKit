@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(WebFrameLoader *fl, id <WebPlugInStreamLoaderDelegate> stream)
-    : WebResourceLoader(fl)
+NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, id <WebPlugInStreamLoaderDelegate> stream)
+    : WebResourceLoader(frame)
     , m_stream(stream)
 {
 }
@@ -44,9 +44,9 @@ NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
 {
 }
 
-PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(WebFrameLoader* fl, id <WebPlugInStreamLoaderDelegate> d)
+PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame* frame, id <WebPlugInStreamLoaderDelegate> d)
 {
-    return new NetscapePlugInStreamLoader(fl, d);
+    return new NetscapePlugInStreamLoader(frame, d);
 }
 
 bool NetscapePlugInStreamLoader::isDone() const
@@ -77,7 +77,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
         return;
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
         ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
-        NSError *error = [frameLoader() fileDoesNotExistErrorWithResponse:theResponse];
+        NSError *error = frameLoader()->fileDoesNotExistError(theResponse);
         [m_stream.get() cancelLoadAndDestroyStreamWithError:error];
     }
 }
@@ -98,8 +98,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
     // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    [frameLoader() removePlugInStreamLoader:this];
-    [frameLoader() _finishedLoadingResource];
+    frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() finishedLoadingWithData:resourceData()];
     WebResourceLoader::didFinishLoading();
 }
@@ -109,21 +108,21 @@ void NetscapePlugInStreamLoader::didFail(NSError *error)
     // Protect self in this delegate method since the additional processing can do
     // anything including possibly getting rid of the last reference to this object.
     // One example of this is Radar 3266216.
+    RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    [frameLoader() removePlugInStreamLoader:this];
-    [frameLoader() _receivedError:error];
+    frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
     WebResourceLoader::didFail(error);
 }
 
-void NetscapePlugInStreamLoader::cancel(NSError *error)
+void NetscapePlugInStreamLoader::didCancel(NSError *error)
 {
     // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    [frameLoader() removePlugInStreamLoader:this];
+    frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
-    WebResourceLoader::cancel(error);
+    WebResourceLoader::didCancel(error);
 }
 
 }

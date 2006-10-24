@@ -484,6 +484,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return nil;
 
     m_frame = new FrameMac([page impl], 0, client);
+    m_frameLoader = new FrameLoader(m_frame);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -493,8 +494,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         WebCore::cache()->setMaximumSize([self getObjectCacheSize]);
         initializedObjectCacheSize = true;
     }
-
-    _frameLoader = [[WebFrameLoader alloc] initWithFrameBridge:self];
     
     return self;
 }
@@ -505,10 +504,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return nil;
     
     m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement, client);
+    m_frameLoader = new FrameLoader(m_frame);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
-
-    _frameLoader = [[WebFrameLoader alloc] initWithFrameBridge:self];
 
     return self;
 }
@@ -526,10 +524,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)dealloc
 {
     ASSERT(_closed);
-    
-    [_frameLoader release];
-    _frameLoader = nil;
-    
     [super dealloc];
 }
 
@@ -543,8 +537,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     [self removeFromFrame];
     [self clearFrame];
-    [_frameLoader release];
-    _frameLoader = nil;
     _closed = YES;
 }
 
@@ -757,6 +749,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)clearFrame
 {
     m_frame = 0;
+    delete m_frameLoader;
+    m_frameLoader = 0;
 }
 
 - (void)handleFallbackContent
@@ -2619,12 +2613,12 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)client
 {
-    [_frameLoader setFrameLoaderClient:client];
+    m_frameLoader->setFrameLoaderClient(client);
 }
 
-- (WebFrameLoader *)frameLoader
+- (FrameLoader *)frameLoader
 {
-    return _frameLoader;
+    return m_frameLoader;
 }
 
 static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
@@ -2673,44 +2667,50 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (void)setTitle:(NSString *)title
 {
-    [[[self frameLoader] documentLoader] setTitle:stringByCollapsingNonPrintingCharacters(title)];
+    if (!m_frame)
+        return;
+    [m_frameLoader->documentLoader() setTitle:stringByCollapsingNonPrintingCharacters(title)];
 }
 
 - (void)didFirstLayout
 {
-    [[self frameLoader] didFirstLayout];
+    if (!m_frame)
+        return;
+    m_frameLoader->didFirstLayout();
 }
 
 - (void)notifyIconChanged:(NSURL*)iconURL
 {
-    [[self frameLoader] _notifyIconChanged:iconURL];
+    if (!m_frame)
+        return;
+    m_frameLoader->notifyIconChanged(iconURL);
 }
 
 - (NSURL*)originalRequestURL
 {
-    return [[[[self frameLoader] activeDocumentLoader] initialRequest] URL];
+    return [[m_frameLoader->activeDocumentLoader() initialRequest] URL];
 }
 
 - (BOOL)isLoadTypeReload
 {
-    return [[self frameLoader] loadType] == FrameLoadTypeReload;
+    return m_frameLoader->loadType() == FrameLoadTypeReload;
 }
 
 - (void)frameDetached
 {
-    [[self frameLoader] stopLoading];
-    [[self frameLoader] detachFromParent];
+    m_frameLoader->stopLoading();
+    m_frameLoader->detachFromParent();
 }
 
 - (void)tokenizerProcessedData
 {
-    [[self frameLoader] checkLoadComplete];
+    m_frameLoader->checkLoadComplete();
 }
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = [[[self frameLoader] documentLoader] overrideEncoding];
+    NSString *encoding = [m_frameLoader->documentLoader() overrideEncoding];
     BOOL userChosen = encoding != nil;
     if (encoding == nil) {
         encoding = textEncodingName;
@@ -2732,18 +2732,18 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
     
-    return SubresourceLoader::create([self frameLoader], resourceLoader,
+    return SubresourceLoader::create(m_frame, resourceLoader,
         method, URL, customHeaders, hideReferrer ? nil : [self referrer]);
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     NSError *error;
     id identifier;
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];    
-    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
+    m_frameLoader->requestFromDelegate(request, identifier, error);    
+    m_frameLoader->sendRemainingDelegateMessages(identifier, response, [data length], error);
     [request release];
 }
 
@@ -2760,18 +2760,18 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
     
-    return SubresourceLoader::create([self frameLoader], resourceLoader,
+    return SubresourceLoader::create(m_frame, resourceLoader,
         method, URL, customHeaders, postData, hideReferrer ? nil : [self referrer]);
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    [[self frameLoader] clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
+    m_frameLoader->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
 }
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [[self frameLoader] clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
+    m_frameLoader->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
 }
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
@@ -2780,28 +2780,24 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
         return;
     
-    if ([target length] == 0) {
+    if ([target length] == 0)
         target = nil;
-    }
     
     WebCoreFrameBridge *targetFrame = [self findFrameNamed:target];
-    if (![self canTargetLoadInFrame:targetFrame]) {
+    if (![self canTargetLoadInFrame:targetFrame])
         return;
-    }
     
     FrameLoadType loadType;
-    
     if (reload)
         loadType = FrameLoadTypeReload;
     else if (!forUser)
         loadType = FrameLoadTypeInternal;
     else
         loadType = FrameLoadTypeStandard;
-    [[self frameLoader] loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
+    m_frameLoader->load(URL, (hideReferrer ? nil : referrer), loadType, target, event, form, values);
     
-    if (targetFrame != nil && self != targetFrame) {
+    if (targetFrame != nil && self != targetFrame)
         [targetFrame activateWindow];
-    }
 }
 
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
@@ -2817,9 +2813,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     if (![self canTargetLoadInFrame:targetFrame])
         return;
     
-    [[self frameLoader] postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target
-                               data:postData contentType:contentType
-                    triggeringEvent:event form:form formValues:values];
+    m_frameLoader->post(URL, (hideReferrer ? nil : referrer), target, postData, contentType, event, form, values);
     
     if (targetFrame != nil && self != targetFrame)
         [targetFrame activateWindow];
@@ -2851,17 +2845,17 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     if (isConditionalRequest(request))
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [request setCachePolicy:[[[[self frameLoader] documentLoader] request] cachePolicy]];
+        [request setCachePolicy:[[m_frameLoader->documentLoader() request] cachePolicy]];
     if (!hideReferrer)
         setHTTPReferrer(request, [self referrer]);
     
     WebCorePageBridge *page = [self page];
-    [request setMainDocumentURL:[[[[[page mainFrame] frameLoader] documentLoader] request] URL]];
+    [request setMainDocumentURL:[[[[page mainFrame] frameLoader]->documentLoader() request] URL]];
     [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     NSError *error = nil;
     id identifier = nil;    
-    NSURLRequest *newRequest = [[self frameLoader] requestFromDelegateForRequest:request identifier:&identifier error:&error];
+    NSURLRequest *newRequest = m_frameLoader->requestFromDelegate(request, identifier, error);
     
     NSURLResponse *response = nil;
     NSData *result = nil;
@@ -2890,7 +2884,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
         }
     }
     
-    [[self frameLoader] sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
+    m_frameLoader->sendRemainingDelegateMessages(identifier, response, [result length], error);
     [request release];
     
     return result;
@@ -2899,29 +2893,29 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (NSString *)incomingReferrer
 {
-    return [[[[self frameLoader] documentLoader] request] valueForHTTPHeaderField:@"Referer"];
+    return [[m_frameLoader->documentLoader() request] valueForHTTPHeaderField:@"Referer"];
 }
 
 - (BOOL)isReloading
 {
-    return [[[[self frameLoader] documentLoader] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+    return [[m_frameLoader->documentLoader() request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
 - (void)handledOnloadEvents
 {
-    [[[self frameLoader] client] _dispatchDidHandleOnloadEventsForFrame];
+    [m_frameLoader->client() _dispatchDidHandleOnloadEventsForFrame];
 }
 
 - (NSURLResponse*)mainResourceURLResponse
 {
-    return [[[self frameLoader] documentLoader] response];
+    return [m_frameLoader->documentLoader() response];
 }
 
 - (void)loadEmptyDocumentSynchronously
 {
     NSURL *url = [[NSURL alloc] initWithString:@""];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    [[self frameLoader] loadRequest:request];
+    m_frameLoader->load(request);
     [request release];
     [url release];
 }

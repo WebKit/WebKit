@@ -31,6 +31,8 @@
 
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "FrameMac.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreResourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFormDataStream.h"
@@ -49,22 +51,23 @@ using namespace WebCore;
 
 namespace WebCore {
 
-SubresourceLoader::SubresourceLoader(WebFrameLoader *fl, id <WebCoreResourceLoader> l)
-    : WebResourceLoader(fl)
+SubresourceLoader::SubresourceLoader(Frame* frame, id <WebCoreResourceLoader> l)
+    : WebResourceLoader(frame)
     , m_coreLoader(l)
     , m_loadingMultipartContent(false)
 {
-    [fl addSubresourceLoader:this];
+    frameLoader()->addSubresourceLoader(this);
 }
 
 SubresourceLoader::~SubresourceLoader()
 {
 }
 
-id <WebCoreResourceHandle> SubresourceLoader::create(WebFrameLoader *fl, id <WebCoreResourceLoader> rLoader,
+id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
     NSMutableURLRequest *newRequest, NSString *method, NSDictionary *customHeaders, NSString *referrer)
 {
-    if ([fl state] == WebFrameStateProvisional)
+    FrameLoader* fl = [Mac(frame)->bridge() frameLoader];
+    if (fl->state() == WebFrameStateProvisional)
         return nil;
 
     // setHTTPMethod is not called for GET requests to work around <rdar://4464032>.
@@ -87,39 +90,34 @@ id <WebCoreResourceHandle> SubresourceLoader::create(WebFrameLoader *fl, id <Web
     if (isConditionalRequest(newRequest))
         [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [newRequest setCachePolicy:[[fl _originalRequest] cachePolicy]];
+        [newRequest setCachePolicy:[fl->originalRequest() cachePolicy]];
     setHTTPReferrer(newRequest, referrer);
     
-    [fl addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
+    fl->addExtraFieldsToRequest(newRequest, false, false);
 
-    RefPtr<SubresourceLoader> loader(new SubresourceLoader(fl, rLoader));
+    RefPtr<SubresourceLoader> loader(new SubresourceLoader(frame, rLoader));
     if (!loader->load(newRequest))
         return nil;
     return loader->handle();
 }
 
-id <WebCoreResourceHandle> SubresourceLoader::create(WebFrameLoader *fl, id <WebCoreResourceLoader> rLoader,
+id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
     NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer)
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    id <WebCoreResourceHandle> handle = create(fl, rLoader, newRequest, method, customHeaders, referrer);
+    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, method, customHeaders, referrer);
     [newRequest release];
     return handle;
 }
 
-id <WebCoreResourceHandle> SubresourceLoader::create(WebFrameLoader *fl, id <WebCoreResourceLoader> rLoader,
+id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
     NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer)
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     webSetHTTPBody(newRequest, postData);
-    id <WebCoreResourceHandle> handle = create(fl, rLoader, newRequest, method, customHeaders, referrer);
+    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, method, customHeaders, referrer);
     [newRequest release];
     return handle;
-}
-
-void SubresourceLoader::receivedError(NSError *error)
-{
-    [frameLoader() _receivedError:error];
 }
 
 NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
@@ -149,15 +147,14 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     WebResourceLoader::didReceiveResponse(r);
     
     if (m_loadingMultipartContent && [resourceData() length]) {
-        // A subresource loader does not load multipart sections progressively, deliver the previously received data to the coreLoader all at once
+        // Since a subresource loader does not load multipart sections progressively,
+        // deliver the previously received data to the coreLoader all at once now.
+        // Then clear the data to make way for the next multipart section.
         [m_coreLoader.get() addData:resourceData()];
-
-        // Clears the data to make way for the next multipart section
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
-        if (!signalledFinish())
-            signalFinish();
+        didFinishLoadingOnePart();
     }
 }
 
@@ -167,52 +164,57 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
 
-    // A subresource loader does not load multipart sections progressively, don't deliver any data to the coreLoader yet
+    // A subresource loader does not load multipart sections progressively.
+    // So don't deliver any data to the coreLoader yet.
     if (!m_loadingMultipartContent)
         [m_coreLoader.get() addData:data];
     WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
-void SubresourceLoader::signalFinish()
-{
-    [frameLoader() removeSubresourceLoader:this];
-    [frameLoader() _finishedLoadingResource];
-    WebResourceLoader::signalFinish();
-}
-
 void SubresourceLoader::didFinishLoading()
 {
+    if (cancelled())
+        return;
+    ASSERT(!reachedTerminalState());
+
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
-    
+
     [m_coreLoader.get() finishWithData:resourceData()];
-    
-    if (!signalledFinish())
-        signalFinish();
-        
+    if (cancelled())
+        return;
+    frameLoader()->removeSubresourceLoader(this);
     WebResourceLoader::didFinishLoading();
 }
 
 void SubresourceLoader::didFail(NSError *error)
 {
+    if (cancelled())
+        return;
+    ASSERT(!reachedTerminalState());
+
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
-    
+
     [m_coreLoader.get() reportError];
-    [frameLoader() removeSubresourceLoader:this];
-    receivedError(error);
+    if (cancelled())
+        return;
+    frameLoader()->removeSubresourceLoader(this);
     WebResourceLoader::didFail(error);
 }
 
-void SubresourceLoader::cancel()
+void SubresourceLoader::didCancel(NSError *error)
 {
+    ASSERT(!reachedTerminalState());
+
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
-        
+
     [m_coreLoader.get() cancel];
-    [frameLoader() removeSubresourceLoader:this];
-    receivedError(cancelledError());
-    WebResourceLoader::cancel();
+    if (cancelled())
+        return;
+    frameLoader()->removeSubresourceLoader(this);
+    WebResourceLoader::didCancel(error);
 }
 
 id <WebCoreResourceHandle> SubresourceLoader::handle()

@@ -38,12 +38,13 @@
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/Vector.h>
 
 // FIXME: More that is in common with SubresourceLoader should move up into WebResourceLoader.
 
 using namespace WebCore;
 
-@interface WebCoreMainResourceLoaderPolicyDelegate : NSObject
+@interface WebCoreMainResourceLoaderAsPolicyDelegate : NSObject
 {
     MainResourceLoader* m_loader;
 }
@@ -55,8 +56,8 @@ namespace WebCore {
 
 const size_t URLBufferLength = 2048;
 
-MainResourceLoader::MainResourceLoader(WebFrameLoader *fl)
-    : WebResourceLoader(fl)
+MainResourceLoader::MainResourceLoader(Frame* frame)
+    : WebResourceLoader(frame)
     , m_contentLength(0)
     , m_bytesReceived(0)
     , m_proxy(wkCreateNSURLConnectionDelegateProxy())
@@ -77,49 +78,42 @@ void MainResourceLoader::releaseDelegate()
     WebResourceLoader::releaseDelegate();
 }
 
-PassRefPtr<MainResourceLoader> MainResourceLoader::create(WebFrameLoader *fl)
+PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
 {
-    return new MainResourceLoader(fl);
+    return new MainResourceLoader(frame);
 }
 
 void MainResourceLoader::receivedError(NSError *error)
 {
-    // Calling _receivedMainResourceError will likely result in the last reference to this object to go away.
+    // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
-
-    WebFrameLoader *fl = [frameLoader() retain]; // WebResourceLoader::didFailWithError will release the frameLoader
 
     if (!cancelled()) {
         ASSERT(!reachedTerminalState());
-        [fl _didFailLoadingWithError:error forResource:identifier()];
+        frameLoader()->didFailToLoad(this, error);
     }
 
-    [fl _receivedMainResourceError:error complete:YES];
+    frameLoader()->receivedMainResourceError(error, true);
 
     if (!cancelled())
         releaseResources();
 
     ASSERT(reachedTerminalState());
-
-    [fl release];
 }
 
-void MainResourceLoader::cancel(NSError *error)
+void MainResourceLoader::didCancel(NSError *error)
 {
-    // Calling _receivedMainResourceError will likely result in the last reference to this class to go away.
+    // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
 
-    [frameLoader() cancelContentPolicy];
-    [frameLoader() retain];
-    [frameLoader() _receivedMainResourceError:error complete:YES];
-    [frameLoader() release];
-
-    WebResourceLoader::cancel(error);
+    frameLoader()->cancelContentPolicyCheck();
+    frameLoader()->receivedMainResourceError(error, true);
+    WebResourceLoader::didCancel(error);
 }
 
 NSError *MainResourceLoader::interruptionForPolicyChangeError() const
 {
-    return [frameLoader() interruptForPolicyChangeErrorWithRequest:request()];
+    return frameLoader()->interruptionForPolicyChangeError(request());
 }
 
 void MainResourceLoader::stopLoadingForPolicyChange()
@@ -141,7 +135,7 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSU
     if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
         int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
         if (((status >= 301 && status <= 303) || status == 307)
-                && [[[frameLoader() initialRequest] HTTPMethod] isEqualToString:@"POST"])
+                && [[frameLoader()->initialRequest() HTTPMethod] isEqualToString:@"POST"])
             return true;
     }
     
@@ -151,7 +145,7 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSU
 void MainResourceLoader::addData(NSData *data, bool allAtOnce)
 {
     WebResourceLoader::addData(data, allAtOnce);
-    [frameLoader() _receivedData:data];
+    frameLoader()->receivedData(data);
 }
 
 NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
@@ -171,7 +165,7 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([frameLoader() isLoadingMainFrame]) {
+    if (frameLoader()->isLoadingMainFrame()) {
         mutableRequest = [newRequest mutableCopy];
         [mutableRequest setMainDocumentURL:URL];
     }
@@ -194,10 +188,9 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     newRequest = [[WebResourceLoader::willSendRequest(newRequest, redirectResponse) retain] autorelease];
 
     // Don't set this on the first request. It is set when the main load was started.
-    [frameLoader() _setRequest:newRequest];
+    frameLoader()->setRequest(newRequest);
 
-    [frameLoader() _checkNavigationPolicyForRequest:newRequest
-        andCall:policyDelegate() withSelector:@selector(continueAfterNavigationPolicy:formState:)];
+    frameLoader()->checkNavigationPolicy(newRequest, policyDelegate(), @selector(continueAfterNavigationPolicy:formState:));
 
     return newRequest;
 }
@@ -231,8 +224,8 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
         bool isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
-        if (![frameLoader() _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
-            [frameLoader() cannotShowMIMETypeWithResponse:r];
+        if (!frameLoader()->canShowMIMEType(MIMEType) || isRemoteWebArchive) {
+            frameLoader()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState())
                 stopLoadingForPolicyChange();
@@ -240,9 +233,10 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
         }
         break;
     }
+
     case WebPolicyDownload:
         [m_proxy.get() setDelegate:nil];
-        [frameLoader() _downloadWithLoadingConnection:connection() request:request() response:r proxy:m_proxy.get()];
+        frameLoader()->download(connection(), request(), r, m_proxy.get());
         m_proxy = nil;
         receivedError(interruptionForPolicyChangeError());
         return;
@@ -260,9 +254,9 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
     if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
         int status = [(NSHTTPURLResponse *)r statusCode];
         if (status < 200 || status >= 300) {
-            bool hostedByObject = [frameLoader() isHostedByObjectElement];
+            bool hostedByObject = frameLoader()->isHostedByObjectElement();
 
-            [frameLoader() _handleFallbackContent];
+            frameLoader()->handleFallbackContent();
             // object elements are no longer rendered after we fallback, so don't
             // keep trying to process data from their load
 
@@ -275,14 +269,14 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
     if (!reachedTerminalState())
         WebResourceLoader::didReceiveResponse(r);
 
-    if (![frameLoader() _isStopping] && (shouldLoadAsEmptyDocument(URL) || [frameLoader() _representationExistsForURLScheme:[URL scheme]]))
+    if (frameLoader() && !frameLoader()->isStopping() && (shouldLoadAsEmptyDocument(URL) || frameLoader()->representationExistsForURLScheme([URL scheme])))
         didFinishLoading();
 }
 
 void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction policy)
 {
-    bool isStopping = [frameLoader() _isStopping];
-    [frameLoader() cancelContentPolicy];
+    bool isStopping = frameLoader()->isStopping();
+    frameLoader()->cancelContentPolicyCheck();
     if (!isStopping)
         continueAfterContentPolicy(policy, m_response.get());
 }
@@ -290,10 +284,10 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction policy)
 void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
 {
     ASSERT(shouldLoadAsEmptyDocument([r URL]) || !defersCallbacks());
-    ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![frameLoader() defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([r URL]) || !frameLoader()->defersCallbacks());
 
     if (m_loadingMultipartContent) {
-        [frameLoader() _setupForReplaceByMIMEType:[r MIMEType]];
+        frameLoader()->setupForReplaceByMIMEType([r MIMEType]);
         clearResourceData();
     }
     
@@ -304,12 +298,11 @@ void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    [frameLoader() _setResponse:r];
+    frameLoader()->setResponse(r);
     m_contentLength = (int)[r expectedContentLength];
 
     m_response = r;
-    [frameLoader() _checkContentPolicyForMIMEType:[m_response.get() MIMEType]
-        andCall:policyDelegate() withSelector:@selector(continueAfterContentPolicy:)];
+    frameLoader()->checkContentPolicy([m_response.get() MIMEType], policyDelegate(), @selector(continueAfterContentPolicy:));
 }
 
 void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
@@ -317,7 +310,7 @@ void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, 
     ASSERT(data);
     ASSERT([data length] != 0);
     ASSERT(!defersCallbacks());
-    ASSERT(![frameLoader() defersCallbacks]);
+    ASSERT(!frameLoader()->defersCallbacks());
  
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
@@ -329,21 +322,21 @@ void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, 
 
 void MainResourceLoader::didFinishLoading()
 {
-    ASSERT(shouldLoadAsEmptyDocument([frameLoader() _URL]) || !defersCallbacks());
-    ASSERT(shouldLoadAsEmptyDocument([frameLoader() _URL]) || ![frameLoader() defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->URL()) || !defersCallbacks());
+    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->URL()) || !frameLoader()->defersCallbacks());
 
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
 
-    [frameLoader() _finishedLoading];
+    frameLoader()->finishedLoading();
     WebResourceLoader::didFinishLoading();
 }
 
 void MainResourceLoader::didFail(NSError *error)
 {
     ASSERT(!defersCallbacks());
-    ASSERT(![frameLoader() defersCallbacks]);
+    ASSERT(!frameLoader()->defersCallbacks());
 
     receivedError(error);
 }
@@ -354,7 +347,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
 
     ASSERT(!connection());
     ASSERT(shouldLoadEmptyBeforeRedirect || !defersCallbacks());
-    ASSERT(shouldLoadEmptyBeforeRedirect || ![frameLoader() defersCallbacks]);
+    ASSERT(shouldLoadEmptyBeforeRedirect || !frameLoader()->defersCallbacks());
 
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
@@ -366,12 +359,12 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersCallbacks())
         return r;
 
-    if (shouldLoadEmpty || [frameLoader() _representationExistsForURLScheme:[URL scheme]]) {
+    if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme([URL scheme])) {
         NSString *MIMEType;
         if (shouldLoadEmpty)
             MIMEType = @"text/html";
         else
-            MIMEType = [frameLoader() _generatedMIMETypeForURLScheme:[URL scheme]];
+            MIMEType = frameLoader()->generatedMIMETypeForURLScheme([URL scheme]);
 
         NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
             expectedContentLength:0 textEncodingName:nil];
@@ -425,10 +418,10 @@ void MainResourceLoader::setDefersCallbacks(bool defers)
     }
 }
 
-WebCoreMainResourceLoaderPolicyDelegate *MainResourceLoader::policyDelegate()
+WebCoreMainResourceLoaderAsPolicyDelegate *MainResourceLoader::policyDelegate()
 {
     if (!m_policyDelegate) {
-        WebCoreMainResourceLoaderPolicyDelegate *d = [[WebCoreMainResourceLoaderPolicyDelegate alloc] initWithLoader:this];
+        WebCoreMainResourceLoaderAsPolicyDelegate *d = [[WebCoreMainResourceLoaderAsPolicyDelegate alloc] initWithLoader:this];
         m_policyDelegate = d;
         [d release];
     }
@@ -445,7 +438,7 @@ void MainResourceLoader::releasePolicyDelegate()
 
 }
 
-@implementation WebCoreMainResourceLoaderPolicyDelegate
+@implementation WebCoreMainResourceLoaderAsPolicyDelegate
 
 - (id)initWithLoader:(MainResourceLoader*)loader
 {

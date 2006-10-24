@@ -300,7 +300,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
-        [[frame _frameLoader] loadRequest:request inFrameNamed:target];
+        [frame _frameLoader]->load(request, target);
     }
 }
 
@@ -375,7 +375,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]];
-        [[[_dataSource _documentLoader] frameLoader] stopLoadingWithError:error];
+        [[_dataSource _documentLoader] frameLoader]->stopLoading(error);
         [error release];
     }        
 }

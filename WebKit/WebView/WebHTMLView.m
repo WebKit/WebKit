@@ -1024,9 +1024,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_clearLastHitViewIfSelf
 {
-    if (lastHitView == self) {
+    if (lastHitView == self)
         lastHitView = nil;
-    }
 }
 
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside
@@ -1166,7 +1165,7 @@ static WebHTMLView *lastHitView = nil;
     if (view)
         [view retain];
 
-    if (lastHitView != view && lastHitView != nil) {
+    if (lastHitView != view && lastHitView && [lastHitView _frame]) {
         // If we are moving out of a view (or frame), let's pretend the mouse moved
         // all the way out of that view. But we have to account for scrolling, because
         // khtml doesn't understand our clipping.
@@ -2320,16 +2319,20 @@ static WebHTMLView *lastHitView = nil;
     [self _frameOrBoundsChanged];
 }
 
+- (void)removeMouseMovedObserverUnconditionally
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+        name:WKMouseMovedNotification() object:nil];
+}
+
 - (void)removeMouseMovedObserver
 {
     // Don't remove the observer if we're running the Dashboard.
-    // FIXME: Right for the windowDidResignKey: case, but wrong for the viewWillMoveToWindow: case.
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows])
         return;
 
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-        name:WKMouseMovedNotification() object:nil];
+    [self removeMouseMovedObserverUnconditionally];
 }
 
 - (void)addSuperviewObservers
@@ -2416,15 +2419,16 @@ static WebHTMLView *lastHitView = nil;
     // when decoding a WebView.  When WebViews are decoded their subviews
     // are created by initWithCoder: and so won't be normally
     // initialized.  The stub views are discarded by WebView.
-    if (_private) {
-        // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
-        [self removeMouseMovedObserver];
-        [self removeWindowObservers];
-        [self removeSuperviewObservers];
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
-    
-        [[self _pluginController] stopAllPlugins];
-    }
+    if (!_private)
+        return;
+
+    // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
+    [self removeMouseMovedObserverUnconditionally];
+    [self removeWindowObservers];
+    [self removeSuperviewObservers];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+
+    [[self _pluginController] stopAllPlugins];
 }
 
 - (void)viewDidMoveToWindow
@@ -2433,26 +2437,27 @@ static WebHTMLView *lastHitView = nil;
     // when decoding a WebView.  When WebViews are decoded their subviews
     // are created by initWithCoder: and so won't be normally
     // initialized.  The stub views are discarded by WebView.
-    if (_private) {
-        [self _stopAutoscrollTimer];
-        if ([self window]) {
-            _private->lastScrollPosition = [[self superview] bounds].origin;
-            [self addWindowObservers];
-            [self addSuperviewObservers];
-            [self addMouseMovedObserver];
+    if (!_private)
+        return;
+        
+    [self _stopAutoscrollTimer];
+    if ([self window]) {
+        _private->lastScrollPosition = [[self superview] bounds].origin;
+        [self addWindowObservers];
+        [self addSuperviewObservers];
+        [self addMouseMovedObserver];
 
-            // Schedule this update, rather than making the call right now.
-            // The reason is that placing the caret in the just-installed view requires
-            // the HTML/XML document to be available on the WebCore side, but it is not
-            // at the time this code is running. However, it will be there on the next
-            // crank of the run loop. Doing this helps to make a blinking caret appear 
-            // in a new, empty window "automatic".
-            [self performSelector:@selector(_updateActiveState) withObject:nil afterDelay:0];
+        // Schedule this update, rather than making the call right now.
+        // The reason is that placing the caret in the just-installed view requires
+        // the HTML/XML document to be available on the WebCore side, but it is not
+        // at the time this code is running. However, it will be there on the next
+        // crank of the run loop. Doing this helps to make a blinking caret appear 
+        // in a new, empty window "automatic".
+        [self performSelector:@selector(_updateActiveState) withObject:nil afterDelay:0];
 
-            [[self _pluginController] startAllPlugins];
-    
-            _private->lastScrollPosition = NSZeroPoint;
-        }
+        [[self _pluginController] startAllPlugins];
+
+        _private->lastScrollPosition = NSZeroPoint;
     }
 }
 
@@ -4833,9 +4838,23 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 }
 
 // never sent because we track the common size factor
-- (BOOL)_canMakeTextSmaller          {   ASSERT_NOT_REACHED(); return NO;    }
-- (BOOL)_canMakeTextLarger           {   ASSERT_NOT_REACHED(); return NO;    }
-- (BOOL)_canMakeTextStandardSize     {   ASSERT_NOT_REACHED(); return NO;    }
+- (BOOL)_canMakeTextSmaller
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+- (BOOL)_canMakeTextLarger
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+- (BOOL)_canMakeTextStandardSize
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
 
 @end
 
