@@ -25,6 +25,7 @@
 #define SVGRenderStyle_H
 #ifdef SVG_SUPPORT
 
+#include "CSSValueList.h"
 #include "DataRef.h"
 #include "GraphicsTypes.h"
 #include "SVGPaint.h"
@@ -35,7 +36,8 @@
 typedef unsigned long long uint64_t;
 #endif
 
-// Helper macros for SVG's 'RenderStyle' properties
+// "Helper" macros for SVG's RenderStyle properties
+// FIXME: These are impossible to work with or debug.
 #define RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
     void set##Type(Data val) { noninherited_flags.f._##Name = val; } \
     Data Name() const { return (Data) noninherited_flags.f._##Name; } \
@@ -53,6 +55,14 @@ typedef unsigned long long uint64_t;
 #define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Data, Group, Variable, Type, Name, Initial) \
     RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
     static Data initial##Type() { return Initial; }
+
+#define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(Data, Group, Variable, Type, Name, Initial) \
+    Data* Name() const { return Group->Variable.get(); } \
+    void set##Type(PassRefPtr<Data> obj) { \
+        if(!(Group->Variable == obj)) \
+            Group.access()->Variable = obj; \
+    } \
+    static Data* initial##Type() { return Initial; }
 
 #define RS_SET_VARIABLE(Group, Variable, Value) \
     if(!(Group->Variable == Value)) \
@@ -94,15 +104,15 @@ namespace WebCore {
 
         // SVG CSS Properties (using DataRef's)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint*, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint*, stroke, paint, StrokePaint, strokePaint, SVGPaint::defaultStroke())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueList*, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, stroke, paint, StrokePaint, strokePaint, SVGPaint::defaultStroke())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValueList, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(unsigned int, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4)
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue*, stroke, width, StrokeWidth, strokeWidth, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue*, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, width, StrokeWidth, strokeWidth, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
