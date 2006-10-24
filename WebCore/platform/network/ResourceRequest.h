@@ -57,6 +57,7 @@ namespace WebCore {
             : m_url(url)
             , m_cachePolicy(UseProtocolCachePolicy)
             , m_timeoutInterval(defaultTimeoutInterval)
+            , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
         {
         }
@@ -65,6 +66,7 @@ namespace WebCore {
             : m_url(url)
             , m_cachePolicy(policy)
             , m_timeoutInterval(defaultTimeoutInterval)
+            , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
         {
             setHTTPReferrer(referrer);
@@ -98,6 +100,7 @@ namespace WebCore {
         String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
         void setHTTPHeaderField(const String& name, const String& value) { m_httpHeaderFields.set(name, value); }
         void addHTTPHeaderField(const String& name, const String& value);
+        void addHTTPHeaderFields(const HTTPHeaderMap& headerFields);
         
         String httpContentType() const { return httpHeaderField("Content-Type");  }
         void setHTTPContentType(const String& httpContentType) { setHTTPHeaderField("Content-Type", httpContentType); }
@@ -107,7 +110,10 @@ namespace WebCore {
         
         String httpUserAgent() const { return httpHeaderField("User-Agent"); }
         void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }
-        
+
+        String httpAccept() const { return httpHeaderField("Accept"); }
+        void setHTTPAccept(const String& httpUserAgent) { setHTTPHeaderField("Accept", httpUserAgent); }
+
         const FormData& httpBody() const { return m_httpBody; }
         FormData& httpBody() { return m_httpBody; }
         void setHTTPBody(const FormData& httpBody) { m_httpBody = httpBody; } 
@@ -134,6 +140,14 @@ namespace WebCore {
         pair<HTTPHeaderMap::iterator, bool> result = m_httpHeaderFields.add(name, value); 
         if (!result.second)
             result.first->second += "," + value;
+    }
+
+    // FIXME: probably shouldn't inline this
+    inline void ResourceRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
+    {
+        HTTPHeaderMap::const_iterator end = headerFields.end();
+        for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it)
+            addHTTPHeaderField(it->first, it->second);
     }
 
 } // namespace WebCore

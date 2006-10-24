@@ -27,6 +27,7 @@
 #define ResourceLoader_h
 
 #include "ResourceLoaderClient.h" // for PlatformResponse
+#include "ResourceRequest.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -61,35 +62,23 @@ class ResourceLoaderInternal;
 
 class ResourceLoader : public Shared<ResourceLoader> {
 private:
-    ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&);
-    ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&, const FormData& postData);
+    ResourceLoader(const ResourceRequest&, ResourceLoaderClient*);
 
 public:
-    static PassRefPtr<ResourceLoader> create(ResourceLoaderClient*, const String& method, const KURL&);
-    static PassRefPtr<ResourceLoader> create(ResourceLoaderClient*, const String& method, const KURL&, const FormData& postData);    
+    // FIXME: should not need the DocLoader
+    static PassRefPtr<ResourceLoader> create(const ResourceRequest&, ResourceLoaderClient*, DocLoader*);
 
     ~ResourceLoader();
-
-    bool start(DocLoader*);
-    bool startHTTPRequest(const String& referrer);
 
     int error() const;
     void setError(int);
     String errorText() const;
     bool isErrorPage() const;
     
-    void setRequestHeaders(const HashMap<String, String>& requestHeaders);
-    const HashMap<String, String>& requestHeaders() const;
-    
     String responseEncoding() const;
-    String queryMetaData(const String&) const;
-    void addMetaData(const String& key, const String& value);
-    void addMetaData(const HashMap<String, String>&);
-    void kill();
 
-    KURL url() const;
-    String method() const;
-    FormData postData() const;
+    String responseHTTPHeadersAsString() const;
+    void kill();
 
 #if PLATFORM(MAC)
     void setLoader(WebCoreResourceLoaderImp*);
@@ -121,7 +110,14 @@ public:
 
     void receivedResponse(PlatformResponse);
 
+    const ResourceRequest::HTTPHeaderMap& requestHeaders() const;
+    const KURL& url() const;
+    const String& method() const;
+    const FormData& postData() const;
+
 private:
+    bool start(DocLoader*);
+
     void assembleResponseHeaders() const;
     void retrieveResponseEncoding() const;
 

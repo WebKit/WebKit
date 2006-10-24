@@ -244,7 +244,6 @@ void refreshPlugins(bool) { }
 
 void ResourceLoader::assembleResponseHeaders() const { }
 void ResourceLoader::retrieveResponseEncoding() const {}
-bool ResourceLoader::startHTTPRequest(const String& referrer) { return false; }
 
 
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }

@@ -62,19 +62,20 @@ void IconLoader::startLoading()
         return;
     
     m_httpStatusCode = 0;
-    m_resourceLoader = ResourceLoader::create(this, "GET", m_frame->iconURL());
     
     // A frame may be documentless - one example is viewing a PDF directly
     if (!m_frame->document()) {
         // FIXME - http://bugzilla.opendarwin.org/show_bug.cgi?id=10902
         // Once the loader infrastructure will cleanly let us load an icon without a DocLoader, we can implement this
         LOG(IconDatabase, "Documentless-frame - icon won't be loaded");
-    } else if (!m_resourceLoader->start(m_frame->document()->docLoader())) {
+    } 
+    
+    m_url = m_frame->iconURL();
+    ResourceRequest request(m_url);
+    m_resourceLoader = ResourceLoader::create(request, this, m_frame->document()->docLoader());
+
+    if (!m_resourceLoader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->iconURL().url().ascii());
-        if (m_resourceLoader)
-            m_resourceLoader->kill();
-        m_resourceLoader = 0;
-    }
 }
 
 void IconLoader::stopLoading()
@@ -114,7 +115,7 @@ void IconLoader::didFinishLoading(ResourceLoader* resourceLoader)
     IconDatabase* iconDatabase = IconDatabase::sharedIconDatabase();
     ASSERT(iconDatabase);
     
-    KURL iconURL(resourceLoader->url());
+    KURL iconURL(m_url);
     
     if (data)
         iconDatabase->setIconDataForIconURL(data, size, iconURL.url());

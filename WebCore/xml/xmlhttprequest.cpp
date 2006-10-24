@@ -297,6 +297,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     m_aborted = false;
 
+    ResourceRequest request(m_url);
+    
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
         String contentType = getRequestHeader("Content-Type");
         String charset;
@@ -314,16 +316,17 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         if (!m_encoding.isValid()) // FIXME: report an error?
             m_encoding = UTF8Encoding();
 
-        m_loader = ResourceLoader::create(m_async ? this : 0, m_method, m_url, m_encoding.encode(body.characters(), body.length()));
+        request.setHTTPBody(m_encoding.encode(body.characters(), body.length()));
     } else {
         // FIXME: HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
+        // FIXME: the radar is fixed, should conditionalize this
         if (m_method == "HEAD")
             m_method = "GET";
-        m_loader = ResourceLoader::create(m_async ? this : 0, m_method, m_url);
     }
+    request.setHTTPMethod(m_method);
 
     if (m_requestHeaders.size() > 0)
-        m_loader->setRequestHeaders(m_requestHeaders);
+        request.addHTTPHeaderFields(m_requestHeaders);
 
     if (!m_async) {
         Vector<char> data;
@@ -333,7 +336,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
             KJS::JSLock::DropAllLocks dropLocks;
-            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), m_loader.get(), finalURL, headers);
+            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), request, finalURL, headers);
         }
 
         m_loader = 0;
@@ -351,11 +354,10 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
     }
   
-    // start can return false here, for example if we're no longer attached to a page.
+    // create can return null here, for example if we're no longer attached to a page.
     // this is true while running onunload handlers
-    // FIXME: Maybe start can return false for other reasons too?
-    if (!m_loader->start(m_doc->docLoader()))
-        m_loader = 0;
+    // FIXME: Maybe create can return false for other reasons too?
+    m_loader = ResourceLoader::create(request, this, m_doc->docLoader());
 }
 
 void XMLHttpRequest::abort()
@@ -527,7 +529,7 @@ void XMLHttpRequest::didFinishLoading(ResourceLoader* loader)
     ASSERT(loader == m_loader);
 
     if (m_responseHeaders.isEmpty() && m_loader)
-        m_responseHeaders = m_loader->queryMetaData("HTTP-Headers");
+        m_responseHeaders = m_loader->responseHTTPHeadersAsString();
 
     if (m_state < Sent)
         changeState(Sent);
@@ -559,7 +561,7 @@ void XMLHttpRequest::receivedRedirect(ResourceLoader*, const KURL& m_url)
 void XMLHttpRequest::didReceiveData(ResourceLoader*, const char* data, int len)
 {
     if (m_responseHeaders.isEmpty() && m_loader)
-        m_responseHeaders = m_loader->queryMetaData("HTTP-Headers");
+        m_responseHeaders = m_loader->responseHTTPHeadersAsString();
 
     if (m_state < Sent)
         changeState(Sent);

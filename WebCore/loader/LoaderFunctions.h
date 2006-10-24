@@ -27,13 +27,14 @@
 #include <wtf/HashMap.h>
 #include "PlatformString.h"
 #include "ResourceLoaderClient.h"  // Defines PlatformResponse
+#include "ResourceRequest.h"
 
 #ifdef __OBJC__
 @class NSDictionary;
 @class NSString;
 
 @interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderMap:(const HashMap<WebCore::String, WebCore::String>&)headerMap;
++ (id)_webcore_dictionaryWithHeaderMap:(const WebCore::ResourceRequest::HTTPHeaderMap&)headerMap;
 @end
 
 #else
@@ -48,9 +49,9 @@ class DeprecatedString;
 class DocLoader;
 class Loader;
 class Request;
+class ResourceRequest;
 
-
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL& finalURL, DeprecatedString& headers);
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, KURL& finalURL, DeprecatedString& headers);
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*);
 bool CheckIfReloading(DocLoader*);

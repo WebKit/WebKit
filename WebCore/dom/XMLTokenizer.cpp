@@ -457,10 +457,11 @@ static void* openFunc(const char* uri)
     if (!globalDocLoader || !shouldAllowExternalLoad(uri))
         return &globalDescriptor;
 
+    KURL kurl(uri);
+    ResourceRequest request(kurl);
     KURL finalURL;
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(0, "GET", uri);
     DeprecatedString headers;
-    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, loader.get(), finalURL, headers);
+    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, finalURL, headers);
     
     return new OffsetBuffer(data);
 }

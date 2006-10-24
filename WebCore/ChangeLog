@@ -1,3 +1,60 @@
+2006-10-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - More movement towards the final network API.
+        
+        Changed ResourceLoader::create to take a ResurceRequest and start
+        the load. Removed methods relating to setting request
+        headers. Removed methods relating to metaData. Added some more
+        convenience methods to ResourceRequest.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * loader/LoaderFunctions.h:
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::startLoading):
+        (IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdkClientDefault::openURL):
+        (WebCore::FrameGdkClientDefault::submitForm):
+        * platform/network/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::create):
+        (WebCore::ResourceLoader::responseHTTPHeadersAsString):
+        (WebCore::ResourceLoader::url):
+        (WebCore::ResourceLoader::postData):
+        (WebCore::ResourceLoader::method):
+        (WebCore::ResourceLoader::client):
+        * platform/network/ResourceLoader.h:
+        * platform/network/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::httpAccept):
+        (WebCore::ResourceRequest::setHTTPAccept):
+        (WebCore::ResourceRequest::addHTTPHeaderFields):
+        * platform/network/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::receivedResponse):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ResourceLoader::retrieveResponseEncoding):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
 2006-10-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

@@ -68,22 +68,23 @@ void Loader::servePendingRequests()
     // get the first pending request
     Request* req = m_requestsPending.take(0);
 
-    KURL u(req->cachedObject()->url().deprecatedString());
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", u);
+    ResourceRequest request(req->cachedObject()->url());
 
     if (!req->cachedObject()->accept().isEmpty())
-        loader->addMetaData("accept", req->cachedObject()->accept());
+        request.setHTTPAccept(req->cachedObject()->accept());
     if (req->docLoader())  {
         KURL r = req->docLoader()->doc()->URL();
         if (r.protocol().startsWith("http") && r.path().isEmpty())
             r.setPath("/");
-        loader->addMetaData("referrer", r.url());
+        request.setHTTPReferrer(r.url());
         DeprecatedString domain = r.host();
         if (req->docLoader()->doc()->isHTMLDocument())
             domain = static_cast<HTMLDocument*>(req->docLoader()->doc())->domain().deprecatedString();
     }
+    
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, req->docLoader());
 
-    if (loader->start(req->docLoader()))
+    if (loader)
         m_requestsLoading.add(loader.get(), req);
 }
 

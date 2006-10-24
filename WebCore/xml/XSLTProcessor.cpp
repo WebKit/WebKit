@@ -84,13 +84,13 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             xmlChar *base = xmlNodeGetBase(context->document->doc, context->node);
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
+            ResourceRequest request(url);
             KURL finalURL;
-            RefPtr<ResourceLoader> loader = ResourceLoader::create(0, "GET", url);
             DeprecatedString headers;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;
             
-            Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, loader.get(), finalURL, headers);
+            Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, finalURL, headers);
         
             xmlSetGenericErrorFunc(0, parseErrorFunc);
             // We don't specify an encoding here. Neither Gecko nor WinIE respects

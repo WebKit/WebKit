@@ -80,8 +80,8 @@ bool ResourceLoader::start(DocLoader* docLoader)
 
     NSDictionary* headerDict = nil;
     
-    if (!d->m_requestHeaders.isEmpty())
-        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderMap:d->m_requestHeaders] retain];
+    if (!d->m_request.httpHeaderFields().isEmpty())
+        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderMap:d->m_request.httpHeaderFields()] retain];
 
     if (!postData().elements().isEmpty())
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict postData:arrayFromFormData(postData())];
@@ -134,8 +134,8 @@ void ResourceLoader::receivedResponse(NSURLResponse* response)
     d->m_retrievedResponseEncoding = false;
     d->response = response;
     HardRetain(d->response);
-    if (d->client)
-        d->client->receivedResponse(this, response);
+    if (client())
+        client()->receivedResponse(this, response);
 }
 
 void ResourceLoader::cancel()

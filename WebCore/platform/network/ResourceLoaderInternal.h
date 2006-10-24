@@ -58,11 +58,10 @@ namespace WebCore {
     class ResourceLoaderInternal
     {
     public:
-        ResourceLoaderInternal(ResourceLoader* job, ResourceLoaderClient* c, const String& method, const KURL& u)
-            : client(c)
+        ResourceLoaderInternal(ResourceLoader* loader, const ResourceRequest& request, ResourceLoaderClient* c)
+            : m_client(c)
+            , m_request(request)
             , status(0)
-            , URL(u)
-            , method(method)
             , assembledResponseHeaders(true)
             , m_retrievedResponseEncoding(true)
             , m_loading(false)
@@ -75,7 +74,7 @@ namespace WebCore {
 #endif
 #if USE(WININET)
             , m_fileHandle(INVALID_HANDLE_VALUE)
-            , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
+            , m_fileLoadTimer(loader, &ResourceLoader::fileLoadTimer)
             , m_resourceHandle(0)
             , m_secondaryHandle(0)
             , m_jobId(0)
@@ -93,54 +92,13 @@ namespace WebCore {
         {
         }
         
-        ResourceLoaderInternal(ResourceLoader* job, ResourceLoaderClient* c, const String& method, const KURL& u, const FormData& p)
-            : client(c)
-            , status(0)
-            , URL(u)
-            , method(method)
-            , postData(p)
-            , assembledResponseHeaders(true)
-            , m_retrievedResponseEncoding(true)
-            , m_loading(false)
-            , m_cancelled(false)
-#if USE(CFNETWORK)
-            , m_connection(0)
-#elif PLATFORM(MAC)
-            , loader(nil)
-            , response(nil)
-#endif
-#if USE(WININET)
-            , m_fileHandle(INVALID_HANDLE_VALUE)
-            , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
-            , m_resourceHandle(0)
-            , m_secondaryHandle(0)
-            , m_jobId(0)
-            , m_threadId(0)
-            , m_writing(false)
-            , m_formDataString(0)
-            , m_formDataLength(0)
-            , m_bytesRemainingToWrite(0)
-            , m_hasReceivedResponse(false)
-            , m_resend(false)
-#endif
-#if USE(CURL)
-            , m_handle(0)
-#endif
-        {
-        }
-
         ~ResourceLoaderInternal();
         
-        ResourceLoaderClient* client;
+        ResourceLoaderClient* m_client;
+        
+        ResourceRequest m_request;
         
         int status;
-        HashMap<String, String> metaData;
-        KURL URL;
-        String method;
-        FormData postData;
-        
-        HashMap<String, String> m_requestHeaders;
-        
         String m_responseEncoding;
         DeprecatedString responseHeaders;
 

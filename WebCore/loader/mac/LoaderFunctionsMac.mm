@@ -38,6 +38,7 @@
 #import "Logging.h"
 #import "Request.h"
 #import "ResourceLoader.h"
+#import "ResourceRequest.h"
 #import "WebCoreFrameBridge.h"
 #import "loader.h"
 #import <wtf/Vector.h>
@@ -47,12 +48,12 @@ using namespace WebCore;
 
 @implementation NSDictionary (WebCore_Extras)
 
-+ (id)_webcore_dictionaryWithHeaderMap:(const HashMap<String, String>&)headerMap
++ (id)_webcore_dictionaryWithHeaderMap:(const ResourceRequest::HTTPHeaderMap&)headerMap
 {
     NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
     
-    HashMap<String, String>::const_iterator end = headerMap.end();
-    for (HashMap<String, String>::const_iterator it = headerMap.begin(); it != end; ++it)
+    ResourceRequest::HTTPHeaderMap::const_iterator end = headerMap.end();
+    for (ResourceRequest::HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it)
         [headers setValue:it->second forKey:it->first];
     
     return [headers autorelease];
@@ -86,7 +87,7 @@ NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, ResourceLoader *job, KURL &finalURL, DeprecatedString &responseHeaders)
+Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const ResourceRequest& request, KURL &finalURL, DeprecatedString &responseHeaders)
 {
     FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     
@@ -95,27 +96,25 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
     
     WebCoreFrameBridge *bridge = frame->bridge();
 
-    frame->didTellBridgeAboutLoad(job->url().url());
+    frame->didTellBridgeAboutLoad(request.url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSDictionary *headerDict = nil;
-    const HashMap<String, String>& requestHeaders = job->requestHeaders();
+    const ResourceRequest::HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
 
     if (!requestHeaders.isEmpty())
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];
     
     NSArray *postData = nil;
-    if (!job->postData().elements().isEmpty())
-        postData = arrayFromFormData(job->postData());
+    if (!request.httpBody().elements().isEmpty())
+        postData = arrayFromFormData(request.httpBody());
 
     NSURL *finalNSURL = nil;
     NSDictionary *responseHeaderDict = nil;
     int statusCode = 0;
-    NSData *resultData = [bridge syncLoadResourceWithMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
+    NSData *resultData = [bridge syncLoadResourceWithMethod:request.httpMethod() URL:request.url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
     
-    job->kill();
-
     finalURL = finalNSURL;
     responseHeaders = DeprecatedString::fromNSString(HeaderStringFromDictionary(responseHeaderDict, statusCode));
 

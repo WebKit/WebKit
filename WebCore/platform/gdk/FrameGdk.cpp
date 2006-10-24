@@ -92,16 +92,19 @@ void FrameGdkClientDefault::openURL(const KURL& url)
     m_frame->didOpenURL(url);
     m_beginCalled = false;
 
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", url);
-    loader->start(0);
+    ResourceRequest request(url);
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, 0);
 }
 
 void FrameGdkClientDefault::submitForm(const String& method, const KURL& url, const FormData* postData)
 {
     m_beginCalled = false;
 
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, method, url, *postData);
-    loader->start(0);
+    ResourceRequest request(url);
+    request.setHTTPMethod(method);
+    request.setHTTPBody(*postData);
+
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, 0);
 }
 
 void FrameGdkClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)
