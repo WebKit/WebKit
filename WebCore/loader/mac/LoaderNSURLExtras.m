@@ -119,7 +119,7 @@ NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL)
         return nil;
     
     NSURL *result = nil;
-    int length = [data length];
+    size_t length = [data length];
     if (length > 0) {
         // work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
         baseURL = urlByRemovingResourceSpecifier(baseURL);
@@ -161,14 +161,9 @@ BOOL urlIsEmpty(NSURL *url)
 {
     if (!url)
         return false;
-
-    int length = 0;
     if (!CFURLGetBaseURL((CFURLRef)url))
-        length = CFURLGetBytes((CFURLRef)url, NULL, 0);
-    else
-        length = [urlOriginalData(url) length];
-
-    return length == 0;
+        return CFURLGetBytes((CFURLRef)url, NULL, 0) == 0;
+    return [urlOriginalData(url) length] == 0;
 }
 
 NSURL *canonicalURL(NSURL *url)

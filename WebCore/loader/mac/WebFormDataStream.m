@@ -292,7 +292,7 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
 void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
 {
-    unsigned count = [formData count];
+    size_t count = [formData count];
 
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1) {
