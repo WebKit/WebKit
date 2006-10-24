@@ -71,6 +71,10 @@ namespace WebCore {
 
         SelectionController* dragCaretController() const;
 
+        bool canRunModal();
+        bool canRunModalNow();
+        void runModal();
+
 #if PLATFORM(MAC)
         Page(WebCorePageBridge*);
         WebCorePageBridge* bridge() const { return m_bridge; }

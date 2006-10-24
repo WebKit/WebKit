@@ -89,7 +89,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     
     WebCorePageBridge *pageBridge;
     if (windowFeatures.dialog)
-        pageBridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
+        pageBridge = [m_frame->page()->bridge() createModalDialogWithURL:url.getNSURL() referrer:m_frame->referrer()];
     else
         pageBridge = [m_frame->bridge() createWindowWithURL:url.getNSURL()];
     if (!pageBridge)
@@ -124,49 +124,6 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     
     [frameBridge showWindow];
     
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-int BrowserExtensionMac::getHistoryLength()
-{
-    return [m_frame->bridge() historyLength];
-}
-
-void BrowserExtensionMac::goBackOrForward(int distance)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame->bridge() goBackOrForward:distance];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-KURL BrowserExtensionMac::historyURL(int distance)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return KURL([m_frame->bridge() historyURL:distance]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return KURL();
-}
-
-bool BrowserExtensionMac::canRunModal()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [m_frame->bridge() canRunModal];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return false;
-}
-
-bool BrowserExtensionMac::canRunModalNow()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [m_frame->bridge() canRunModalNow];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return false;
-}
-
-void BrowserExtensionMac::runModal()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame->bridge() runModal];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

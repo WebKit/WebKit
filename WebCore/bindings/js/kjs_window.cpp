@@ -596,14 +596,16 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const Depre
 
 static bool canShowModalDialog(const Window *window)
 {
-    Frame *frame = window->frame();
-    return frame && static_cast<BrowserExtension *>(frame->browserExtension())->canRunModal();
+    if (Frame* frame = window->frame())
+        return frame->page()->canRunModal();
+    return false;
 }
 
 static bool canShowModalDialogNow(const Window *window)
 {
-    Frame *frame = window->frame();
-    return frame && static_cast<BrowserExtension *>(frame->browserExtension())->canRunModalNow();
+    if (Frame* frame = window->frame())
+        return frame->page()->canRunModalNow();
+    return false;
 }
 
 static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const List& args)
@@ -669,7 +671,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // properties (in Window::clear), or when on return from runModal.
     JSValue* returnValue = 0;
     dialogWindow->setReturnValueSlot(&returnValue);
-    static_cast<BrowserExtension *>(dialogFrame->browserExtension())->runModal();
+    dialogFrame->page()->runModal();
     dialogWindow->setReturnValueSlot(0);
 
     // If we don't have a return value, get it now.
@@ -2455,11 +2457,7 @@ bool History::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 JSValue *History::getValueProperty(ExecState *, int token) const
 {
     ASSERT(token == Length);
-    BrowserExtension *ext = m_frame->browserExtension();
-    if (!ext)
-      return jsNumber(0);
-
-    return jsNumber(ext->getHistoryLength());
+    return m_frame ? jsNumber(m_frame->getHistoryLength()) : jsNumber(0);
 }
 
 UString History::toString(ExecState *exec) const
@@ -2488,7 +2486,8 @@ JSValue *HistoryFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const L
     return jsUndefined();
   }
 
-  history->m_frame->scheduleHistoryNavigation(steps);
+  if (Frame* frame = history->m_frame)
+      frame->scheduleHistoryNavigation(steps);
   return jsUndefined();
 }
 

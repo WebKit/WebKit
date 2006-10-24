@@ -375,7 +375,7 @@ void FrameMac::frameDetached()
     Frame::frameDetached();
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [Mac(this)->bridge() frameDetached];
+    [_bridge frameDetached];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -626,7 +626,7 @@ void FrameMac::unfocusWindow()
             // We want to shift focus to our parent.
             FrameMac* parentFrame = static_cast<FrameMac*>(tree()->parent());
             NSView* parentView = parentFrame->d->m_view->getDocumentView();
-            [parentFrame->bridge() makeFirstResponder:parentView];
+            [parentFrame->_bridge makeFirstResponder:parentView];
         }
     }
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -1181,12 +1181,12 @@ WebCoreFrameBridge *FrameMac::bridgeForWidget(const Widget *widget)
     
     FrameMac *frame = Mac(frameForWidget(widget));
     ASSERT(frame);
-    return frame->bridge();
+    return frame->_bridge;
 }
 
 NSView *FrameMac::documentViewForNode(Node *node)
 {
-    WebCoreFrameBridge *bridge = Mac(frameForNode(node))->bridge();
+    WebCoreFrameBridge *bridge = Mac(frameForNode(node))->_bridge;
     return [bridge documentView];
 }
 
@@ -1859,7 +1859,7 @@ bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, 
     switch ([_currentEvent type]) {
         case NSMouseMoved: {
             ASSERT(subframePart);
-            [Mac(subframePart)->bridge() mouseMoved:_currentEvent];
+            [Mac(subframePart)->_bridge mouseMoved:_currentEvent];
             return true;
         }
         
@@ -3512,17 +3512,17 @@ bool FrameMac::dispatchDragSrcEvent(const AtomicString &eventType, const Platfor
 
 void Frame::setNeedsReapplyStyles()
 {
-    [Mac(this)->bridge() setNeedsReapplyStyles];
+    [Mac(this)->_bridge setNeedsReapplyStyles];
 }
 
 FloatRect FrameMac::customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect)
 {
-    return [bridge() customHighlightRect:type forLine:lineRect];
+    return [_bridge customHighlightRect:type forLine:lineRect];
 }
 
 void FrameMac::paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line)
 {
-    [bridge() paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line];
+    [_bridge paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
 
 KURL FrameMac::originalRequestURL() const
@@ -3535,4 +3535,24 @@ bool FrameMac::isLoadTypeReload()
     return [_bridge isLoadTypeReload];
 }
 
+int FrameMac::getHistoryLength()
+{
+    return [_bridge historyLength];
 }
+
+void FrameMac::goBackOrForward(int distance)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge goBackOrForward:distance];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+KURL FrameMac::historyURL(int distance)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return KURL([_bridge historyURL:distance]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return KURL();
+}
+
+} // namespace WebCore

@@ -34,17 +34,7 @@ class FrameWin;
 class BrowserExtensionWin : public BrowserExtension {
 public:
     BrowserExtensionWin(FrameWin*);
- 
     virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& newFrame);
-
-    virtual int getHistoryLength();
-    virtual void goBackOrForward(int distance);
-    virtual KURL historyURL(int distance);
-
-    virtual bool canRunModal();
-    virtual bool canRunModalNow();
-    virtual void runModal();
-    
 private:
      FrameWin* m_frame;
 };

@@ -1,3 +1,52 @@
+2006-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Bradee.
+
+        Shrunk BrowserExtension in preparation for its imminent death, moving page-
+        level operations to Page and frame-level operations to Frame.
+        
+        Removed bizarre Mac(this) syntax inside virtual FrameMac member functions, 
+        because 'this' is guaranteed by the compiler to be a FrameMac*.
+        
+        * bindings/js/kjs_window.cpp: Added NULL checks for m_frame in places
+        where it can be NULL.
+        * bindings/js/kjs_window.cpp:
+        (KJS::canShowModalDialog):
+        (KJS::canShowModalDialogNow):
+        (KJS::showModalDialog):
+        (KJS::History::getValueProperty):
+        (KJS::HistoryFunc::callAsFunction):
+        * bridge/BrowserExtension.h:
+        (WebCore::BrowserExtension::~BrowserExtension):
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::frameDetached):
+        (WebCore::FrameMac::unfocusWindow):
+        (WebCore::FrameMac::bridgeForWidget):
+        (WebCore::FrameMac::documentViewForNode):
+        (WebCore::FrameMac::passSubframeEventToSubframe):
+        (WebCore::Frame::setNeedsReapplyStyles):
+        (WebCore::FrameMac::customHighlightLineRect):
+        (WebCore::FrameMac::paintCustomHighlight):
+        (WebCore::FrameMac::getHistoryLength):
+        (WebCore::FrameMac::goBackOrForward):
+        (WebCore::FrameMac::historyURL):
+        * bridge/mac/PageMac.mm:
+        (WebCore::Page::canRunModal):
+        (WebCore::Page::canRunModalNow):
+        (WebCore::Page::runModal):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/win/BrowserExtensionWin.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::scheduleHistoryNavigation):
+        (WebCore::Frame::redirectionTimerFired):
+        * page/Frame.h:
+        * page/Page.h:
+
 2006-10-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

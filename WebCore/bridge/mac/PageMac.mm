@@ -21,6 +21,7 @@
 #import "config.h"
 #import "Page.h"
 
+#import "BlockExceptions.h"
 #import "Frame.h"
 #import "FloatRect.h"
 #import "Screen.h"
@@ -50,4 +51,27 @@ void Page::setWindowRect(const FloatRect& r)
     [bridge() setWindowFrame:flipScreenRect(scalePageRectToScreenCoordinates(r, this))];
 }
 
+bool Page::canRunModal()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [bridge() canRunModal];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return false;
 }
+
+bool Page::canRunModalNow()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [bridge() canRunModalNow];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return false;
+}
+
+void Page::runModal()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [bridge() runModal];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+} // namespace WebCore

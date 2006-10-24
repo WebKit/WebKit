@@ -198,6 +198,11 @@ public:
    */
   void scheduleHistoryNavigation(int steps);
 
+  virtual bool canGoBackOrForward(int distance) const = 0;
+  virtual void goBackOrForward(int distance) = 0;
+  virtual int getHistoryLength() = 0;
+  virtual KURL historyURL(int distance) = 0;
+
   /**
    * Clears the widget and prepares it for new content.
    *
@@ -583,7 +588,6 @@ public:
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
-  virtual bool canGoBackOrForward(int distance) const = 0;
   virtual void openURLRequest(const FrameLoadRequest&) = 0;
   virtual void submitForm(const FrameLoadRequest&) = 0;
   virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;

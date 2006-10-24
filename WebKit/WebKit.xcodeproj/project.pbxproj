@@ -376,7 +376,7 @@
 		65A0006808527D1A005620FA /* libWebKitSystemInterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitSystemInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65C7F42A0979DE640022E453 /* WebPageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPageBridge.h; sourceTree = "<group>"; };
-		65C7F42B0979DE640022E453 /* WebPageBridge.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebPageBridge.m; sourceTree = "<group>"; };
+		65C7F42B0979DE640022E453 /* WebPageBridge.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebPageBridge.m; sourceTree = "<group>"; };
 		65DA2608052CC18700A97B31 /* WebHistory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebHistory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLRequestExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSURLRequestExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1216,7 +1216,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1231,7 +1230,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
