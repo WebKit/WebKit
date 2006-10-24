@@ -126,6 +126,15 @@ FrameQt::~FrameQt()
     cancelAndClear();
 }
 
+bool FrameQt::openURL(const KURL& url)
+{
+    if (!m_client)
+        return false;
+
+    m_client->openURL(url);
+    return true;
+}
+
 void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
 {
     ResourceRequest request = frameLoadRequest.m_request;
@@ -295,6 +304,11 @@ void FrameQt::saveDocumentState()
 void FrameQt::restoreDocumentState()
 {
     // FIXME: Implement this as soon a KPart is created...
+}
+
+void FrameQt::openURLRequest(const FrameLoadRequest& request)
+{
+    urlSelected(request, 0);
 }
 
 void FrameQt::scheduleClose()

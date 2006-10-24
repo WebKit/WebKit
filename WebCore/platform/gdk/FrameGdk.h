@@ -78,6 +78,8 @@ public:
     virtual ~FrameGdk();
 
     void handleGdkEvent(GdkEvent*);
+    virtual bool openURL(const KURL&);
+    virtual void openURLRequest(const FrameLoadRequest&);
     virtual void submitForm(const FrameLoadRequest&);
     virtual void urlSelected(const FrameLoadRequest&);
 

@@ -197,6 +197,15 @@ FrameGdk::~FrameGdk()
     cancelAndClear();
 }
 
+bool FrameGdk::openURL(const KURL& url)
+{
+    if (!m_client)
+        return false;
+
+    m_client->openURL(url);
+    return true;
+}
+
 void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest)
 {
     ResourceRequest request = frameLoadRequest.m_request;

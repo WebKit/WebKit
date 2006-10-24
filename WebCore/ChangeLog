@@ -1,3 +1,30 @@
+2006-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolling out my last change because it broke the world.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::openURL):
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::urlSelected):
+        * page/Frame.cpp:
+        (WebCore::Frame::openURL):
+        (WebCore::Frame::frameLoader):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::redirectionTimerFired):
+        * page/Frame.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::openURL):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::openURLRequest):
+        * platform/qt/FrameQt.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::FrameWin::openURL):
+        (WebCore::FrameWin::openURLRequest):
+
 2006-10-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adam.

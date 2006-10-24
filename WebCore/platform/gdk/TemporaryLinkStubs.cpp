@@ -162,6 +162,7 @@ KJS::Bindings::Instance* FrameGdk::getAppletInstanceForWidget(Widget*) { notImpl
 bool FrameGdk::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameGdk::issueCutCommand() { notImplemented(); }
 void FrameGdk::issueCopyCommand() { notImplemented(); }
+void FrameGdk::openURLRequest(struct WebCore::FrameLoadRequest const&) { notImplemented(); }
 void FrameGdk::issueUndoCommand() { notImplemented(); }
 String FrameGdk::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameGdk::issuePasteCommand() { notImplemented(); }

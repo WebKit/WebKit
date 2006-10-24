@@ -263,13 +263,33 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+bool FrameMac::openURL(const KURL &url)
+{
+    // FIXME: The lack of args here to get the reload flag from
+    // indicates a problem in how we use Frame::processObjectRequest,
+    // where we are opening the URL before the args are set up.
+
+    FrameLoadRequest request;
+    request.m_request.setURL(url);
+    request.m_request.setHTTPReferrer(referrer());
+
+    loadRequest(request, userGestureHint());
+
+    return true;
+}
+
+void FrameMac::openURLRequest(const FrameLoadRequest& request)
+{
+    loadRequest(request, userGestureHint());
+}
+
 void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
     FrameLoadRequest copy = request;
     if (copy.m_request.httpReferrer().isEmpty())
         copy.m_request.setHTTPReferrer(referrer());
 
-    loadRequest(copy, userGestureHint(), _currentEvent);
+    loadRequest(copy, true, _currentEvent);
 }
 
 void FrameMac::openURLFromPageCache(WebCorePageState *state)

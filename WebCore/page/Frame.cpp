@@ -238,7 +238,13 @@ Frame::~Frame()
     d = 0;
 }
 
-#pragma mark BEGIN LOADING FUNCTIONS
+#pragma mark END LOADING FUNCTIONS
+
+bool Frame::openURL(const KURL& URL)
+{
+    ASSERT_NOT_REACHED();
+    return true;
+}
 
 void Frame::changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory, bool userGesture)
 {
@@ -290,6 +296,11 @@ void Frame::urlSelected(const ResourceRequest& request, const String& _target, c
   urlSelected(frameRequest, triggeringEvent);
 }
 
+FrameLoader* Frame::frameLoader()
+{
+    return d->m_frameLoader;
+}
+
 bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)
 {
     DeprecatedString _url = urlParam.deprecatedString();
@@ -308,7 +319,7 @@ bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const At
         ResourceRequest request(url, d->m_referrer, policy);
         FrameLoadRequest frameRequest;
         frameRequest.m_request = request;
-        frame->urlSelected(frameRequest, 0);
+        frame->openURLRequest(frameRequest);
     } else
         frame = loadSubframe(ownerElement, url, frameName, d->m_referrer);
     
@@ -529,11 +540,6 @@ void Frame::cancelRedirection(bool cancelWithLoadInProgress)
 }
 
 #pragma mark END LOADING FUNCTIONS
-
-FrameLoader* Frame::frameLoader()
-{
-    return d->m_frameLoader;
-}
 
 KURL Frame::iconURL()
 {
@@ -1316,8 +1322,8 @@ void Frame::redirectionTimerFired(Timer<Frame>*)
         // go(i!=0) from a frame navigates into the history of the frame only,
         // in both IE and NS (but not in Mozilla).... we can't easily do that
         // in Konqueror...
-        if (d->m_scheduledHistoryNavigationSteps == 0)
-            urlSelected(url(), "", 0);
+        if (d->m_scheduledHistoryNavigationSteps == 0) // add && parent() to get only frames, but doesn't matter
+            openURL(url()); /// ## need args.reload=true?
         else {
             if (d->m_extension) {
                 goBackOrForward(d->m_scheduledHistoryNavigationSteps);
