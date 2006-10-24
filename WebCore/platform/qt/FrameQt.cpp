@@ -44,7 +44,6 @@
 #include "EditorClientQt.h"
 #include "FrameLoadRequest.h"
 #include "DOMImplementation.h"
-#include "BrowserExtensionQt.h"
 #include "ResourceLoaderInternal.h"
 #include "Document.h"
 #include "Settings.h"
@@ -99,7 +98,6 @@ FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* frameClient, 
     : Frame(page, ownerElement, (editorClient ? editorClient : new EditorClientQt()))
     , m_bindingRoot(0)
 {
-    d->m_extension = new BrowserExtensionQt(this);
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
     settings->setMinFontSize(5);
@@ -572,6 +570,28 @@ void FrameQt::tokenizerProcessedData()
 FrameQtClient* FrameQt::client() const
 {
     return m_client;
+}
+
+void FrameQt::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& args, Frame*& frame)
+{
+    notImplemented();
+}
+
+void FrameQt::goBackOrForward(int) 
+{
+    notImplemented();
+}
+
+KURL FrameQt::historyURL(int distance) 
+{
+    notImplemented();
+    return KURL();
+}
+
+int FrameQt::getHistoryLength()
+{
+    notImplemented();
+    return 0;
 }
 
 }

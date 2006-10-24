@@ -1028,7 +1028,6 @@ set(WebCore_SRCS
     platform/qt/StringQt.cpp
     platform/qt/ColorQt.cpp
     platform/qt/GlyphMapQt.cpp
-    platform/qt/BrowserExtensionQt.cpp
     platform/qt/CookieJarQt.cpp
     platform/qt/FontPlatformDataQt.cpp
     platform/qt/GraphicsContextQt.cpp

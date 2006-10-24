@@ -35,6 +35,7 @@
 
 #include "Frame.h"
 #include "FrameQtClient.h"
+#include "WindowFeatures.h"
 
 class QWidget;
 class QPaintEvent;
@@ -136,6 +137,12 @@ public:
     virtual void tokenizerProcessedData();
 
     FrameQtClient* client() const;
+
+    void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*&);
+    void goBackOrForward(int);
+
+    KURL historyURL(int distance);
+    int getHistoryLength();
 
 private:
     void init();
