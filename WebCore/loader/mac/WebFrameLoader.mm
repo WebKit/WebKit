@@ -250,7 +250,8 @@ void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType
         load(request, action, newLoadType, formState.release());
         if (isRedirect) {
             m_quickRedirectComing = false;
-            m_provisionalDocumentLoader->setIsClientRedirect(true);
+            if (m_provisionalDocumentLoader)
+                m_provisionalDocumentLoader->setIsClientRedirect(true);
         } else if (sameURL)
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
@@ -568,7 +569,8 @@ void FrameLoader::setState(WebFrameState newState)
     else if (newState == WebFrameStateComplete) {
         frameLoadCompleted();
         storedTimeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        m_documentLoader->stopRecordingResponses();
+        if (m_documentLoader)
+            m_documentLoader->stopRecordingResponses();
     }
 }
 

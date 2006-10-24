@@ -1,3 +1,13 @@
+2006-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed two crashes in layout tests I just introduced
+
+        * loader/mac/WebFrameLoader.mm:
+        (WebCore::FrameLoader::load): Add null check.
+        (WebCore::FrameLoader::setState): Ditto.
+
 2006-10-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
