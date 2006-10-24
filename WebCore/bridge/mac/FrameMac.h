@@ -119,8 +119,6 @@ public:
     ~FrameMac();
 
     // FIXME: Merge these and move them into WebFrameLoader.
-    virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const FrameLoadRequest&);
     void loadRequest(const FrameLoadRequest&, bool userGesture, NSEvent* triggeringEvent = 0, ObjCDOMElement* submitForm = 0, NSMutableDictionary* formValues = 0);
     virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);

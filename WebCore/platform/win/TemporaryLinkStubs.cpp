@@ -166,13 +166,11 @@ void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { notImp
 void FrameWin::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
 bool FrameWin::runJavaScriptPrompt(String const&, String const&, String &) { notImplemented(); return 0; }
 bool FrameWin::shouldInterruptJavaScript() { notImplemented(); return false; }
-bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImplemented(); return 0; }
 bool FrameWin::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
-void FrameWin::openURLRequest(const FrameLoadRequest&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(Node*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
 String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
