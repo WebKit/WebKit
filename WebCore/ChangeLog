@@ -1,3 +1,15 @@
+2006-10-24  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11314
+        Fix build when XSLT_SUPPORT is not defined
+
+        Fix unconditional use of XSLT support.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::end):
+
 2006-10-24  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Darin.

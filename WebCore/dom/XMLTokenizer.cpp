@@ -1215,6 +1215,7 @@ void XMLTokenizer::initializeParserContext()
 
 void XMLTokenizer::end()
 {
+#ifdef XSLT_SUPPORT
     if (m_sawXSLTransform) {
         m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->URL()));
         
@@ -1223,7 +1224,8 @@ void XMLTokenizer::end()
         m_doc->setParsing(true);
         m_parserStopped = true;
     }
-    
+#endif
+
     if (m_context) {
         // Tell libxml we're done.
         xmlParseChunk(m_context, 0, 0, 1);
