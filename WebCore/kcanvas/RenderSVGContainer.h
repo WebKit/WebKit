@@ -20,12 +20,12 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasContainer_H
-#define KCanvasContainer_H
+#ifndef RenderSVGContainer_H
+#define RenderSVGContainer_H
 #ifdef SVG_SUPPORT
 
-#include "kcanvas/RenderPath.h"
 #include "RenderContainer.h"
+#include "RenderPath.h"
 
 namespace WebCore {
 
@@ -44,8 +44,7 @@ enum KCAlign {
 
 class SVGElement;
 
-class RenderSVGContainer : public RenderContainer
-{
+class RenderSVGContainer : public RenderContainer {
 public:
     RenderSVGContainer(SVGStyledElement*);
     ~RenderSVGContainer();
@@ -109,9 +108,9 @@ private:
     IntRect m_absoluteBounds;
 };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // RenderSVGContainer_H
 
 // vim:ts=4:noet

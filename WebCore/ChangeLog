@@ -1,3 +1,17 @@
+2006-10-24  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Change #includes using <kcanvas/*.h> to use "*.h" instead
+        to prepare for moving the kcanvas files.
+
+        * kcanvas/RenderSVGContainer.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGStyledLocatableElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+
 2006-10-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

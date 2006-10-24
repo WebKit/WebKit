@@ -21,16 +21,17 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
-#include "RegularExpression.h"
+
+#include "SVGStyledTransformableElement.h"
+
 #include "Attr.h"
-
-#include <kcanvas/RenderPath.h>
-
+#include "RegularExpression.h"
+#include "RenderPath.h"
+#include "SVGDocument.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
-#include "SVGDocument.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
 

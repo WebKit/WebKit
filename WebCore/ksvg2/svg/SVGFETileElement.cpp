@@ -21,15 +21,16 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
+#include "SVGFETileElement.h"
+
 #include "Attr.h"
-
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
-#include "SVGFETileElement.h"
 
 namespace WebCore {
 

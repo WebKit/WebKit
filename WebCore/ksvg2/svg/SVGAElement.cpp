@@ -21,7 +21,9 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
 #include "SVGAElement.h"
 
 #include "Attr.h"
@@ -29,14 +31,14 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "KRenderingDevice.h"
 #include "MouseEvent.h"
 #include "MouseEvent.h"
+#include "RenderSVGContainer.h"
 #include "ResourceRequest.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "csshelper.h"
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
 
 namespace WebCore {
 
@@ -107,7 +109,7 @@ void SVGAElement::defaultEventHandler(Event *evt)
     SVGStyledTransformableElement::defaultEventHandler(evt);
 }
 
-}
+} // namespace WebCore
 
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
