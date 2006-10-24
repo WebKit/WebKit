@@ -175,6 +175,215 @@ FrameMac::~FrameMac()
     cancelAndClear();
 }
 
+#pragma mark BEGIN LOADING FUNCTIONS
+
+void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSString *referrer;
+    String argsReferrer = request.m_request.httpReferrer();
+    if (!argsReferrer.isEmpty())
+        referrer = argsReferrer;
+    else
+        referrer = [_bridge referrer];
+    
+    if (request.m_request.httpMethod() != "POST") {
+        [_bridge loadURL:request.m_request.url().getNSURL()
+                referrer:referrer
+                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
+             userGesture:userGesture
+                  target:request.m_frameName
+         triggeringEvent:triggeringEvent
+                    form:submitForm
+              formValues:formValues];
+    } else {
+        [_bridge postWithURL:request.m_request.url().getNSURL()
+                    referrer:referrer
+                      target:request.m_frameName
+                        data:arrayFromFormData(request.m_request.httpBody())
+                 contentType:request.m_request.httpContentType()
+             triggeringEvent:triggeringEvent
+                        form:submitForm
+                  formValues:formValues];
+    }
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void FrameMac::submitForm(const FrameLoadRequest& request)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
+    // We do not want to submit more than one form from the same page,
+    // nor do we want to submit a single form more than once.
+    // This flag prevents these from happening; not sure how other browsers prevent this.
+    // The flag is reset in each time we start handle a new mouse or key down event, and
+    // also in setView since this part may get reused for a page from the back/forward cache.
+    // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
+    // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
+    // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
+    // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
+    Frame* target = request.m_frameName.isEmpty() ? this : tree()->find(request.m_frameName);
+    bool willReplaceThisFrame = false;
+    for (Frame* p = this; p; p = p->tree()->parent()) {
+        if (p == target) {
+            willReplaceThisFrame = true;
+            break;
+        }
+    }
+    if (willReplaceThisFrame) {
+        if (d->m_submittedFormURL == request.m_request.url())
+            return;
+        d->m_submittedFormURL = request.m_request.url();
+    }
+
+    ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
+    NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
+    
+    loadRequest(request, true, _currentEvent, submitForm, formValues);
+
+    [formValues release];
+    clearRecordedFormValues();
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+bool FrameMac::openURL(const KURL &url)
+{
+    // FIXME: The lack of args here to get the reload flag from
+    // indicates a problem in how we use Frame::processObjectRequest,
+    // where we are opening the URL before the args are set up.
+
+    FrameLoadRequest request;
+    request.m_request.setURL(url);
+    request.m_request.setHTTPReferrer(referrer());
+
+    loadRequest(request, userGestureHint());
+
+    return true;
+}
+
+void FrameMac::openURLRequest(const FrameLoadRequest& request)
+{
+    loadRequest(request, userGestureHint());
+}
+
+void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
+{
+    // FIXME: triggeringEvent is passed in but we ignore it.
+
+    FrameLoadRequest copy = request;
+    if (copy.m_request.httpReferrer().isEmpty())
+        copy.m_request.setHTTPReferrer(referrer());
+
+    loadRequest(copy, true, _currentEvent);
+}
+
+void FrameMac::openURLFromPageCache(WebCorePageState *state)
+{
+    // It's safe to assume none of the WebCorePageState methods will raise
+    // exceptions, since WebCorePageState is implemented by WebCore and
+    // does not throw
+
+    Document *doc = [state document];
+    Node *mousePressNode = [state mousePressNode];
+    KURL *kurl = [state URL];
+    SavedProperties *windowProperties = [state windowProperties];
+    SavedProperties *locationProperties = [state locationProperties];
+    SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
+    PausedTimeouts *timeouts = [state pausedTimeouts];
+    
+    cancelRedirection();
+
+    // We still have to close the previous part page.
+    closeURL();
+            
+    d->m_bComplete = false;
+    
+    // Don't re-emit the load event.
+    d->m_bLoadEventEmitted = true;
+    
+    // delete old status bar msg's from kjs (if it _was_ activated on last URL)
+    if (jScriptEnabled()) {
+        d->m_kjsStatusBarText = String();
+        d->m_kjsDefaultStatusBarText = String();
+    }
+
+    ASSERT(kurl);
+    
+    d->m_url = *kurl;
+    
+    // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
+    // data arrives) (Simon)
+    if (url().protocol().startsWith("http") && !url().host().isEmpty() && url().path().isEmpty())
+        d->m_url.setPath("/");
+    
+    // copy to m_workingURL after fixing url() above
+    d->m_workingURL = url();
+        
+    started();
+    
+    // -----------begin-----------
+    clear();
+
+    doc->setInPageCache(NO);
+
+    d->m_bCleared = false;
+    d->m_bComplete = false;
+    d->m_bLoadEventEmitted = false;
+    d->m_referrer = url().url();
+    
+    setView(doc->view());
+    
+    d->m_doc = doc;
+    d->m_mousePressNode = mousePressNode;
+    d->m_decoder = doc->decoder();
+
+    updatePolicyBaseURL();
+
+    { // scope the lock
+        JSLock lock;
+        restoreWindowProperties(windowProperties);
+        restoreLocationProperties(locationProperties);
+        restoreInterpreterBuiltins(*interpreterBuiltins);
+    }
+
+    resumeTimeouts(timeouts);
+    
+    checkCompleted();
+}
+
+Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    BOOL allowsScrolling = YES;
+    int marginWidth = -1;
+    int marginHeight = -1;
+    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
+        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
+        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
+        marginWidth = o->getMarginWidth();
+        marginHeight = o->getMarginHeight();
+    }
+
+    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name
+                                                             withURL:url.getNSURL()
+                                                            referrer:referrer 
+                                                          ownerElement:ownerElement
+                                                     allowsScrolling:allowsScrolling
+                                                         marginWidth:marginWidth
+                                                        marginHeight:marginHeight];
+    return [childBridge impl];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return 0;
+}
+
+#pragma mark END LOADING FUNCTIONS
+
 void FrameMac::freeClipboard()
 {
     if (_dragClipboard)
@@ -379,110 +588,6 @@ void FrameMac::frameDetached()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    NSString *referrer;
-    String argsReferrer = request.m_request.httpReferrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = [_bridge referrer];
-    
-    if (request.m_request.httpMethod() != "POST") {
-        [_bridge loadURL:request.m_request.url().getNSURL()
-                referrer:referrer
-                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
-             userGesture:userGesture
-                  target:request.m_frameName
-         triggeringEvent:triggeringEvent
-                    form:submitForm
-              formValues:formValues];
-    } else {
-        [_bridge postWithURL:request.m_request.url().getNSURL()
-                    referrer:referrer
-                      target:request.m_frameName
-                        data:arrayFromFormData(request.m_request.httpBody())
-                 contentType:request.m_request.httpContentType()
-             triggeringEvent:triggeringEvent
-                        form:submitForm
-                  formValues:formValues];
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void FrameMac::submitForm(const FrameLoadRequest& request)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
-    // We do not want to submit more than one form from the same page,
-    // nor do we want to submit a single form more than once.
-    // This flag prevents these from happening; not sure how other browsers prevent this.
-    // The flag is reset in each time we start handle a new mouse or key down event, and
-    // also in setView since this part may get reused for a page from the back/forward cache.
-    // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
-    // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
-    // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
-    // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    Frame* target = request.m_frameName.isEmpty() ? this : tree()->find(request.m_frameName);
-    bool willReplaceThisFrame = false;
-    for (Frame* p = this; p; p = p->tree()->parent()) {
-        if (p == target) {
-            willReplaceThisFrame = true;
-            break;
-        }
-    }
-    if (willReplaceThisFrame) {
-        if (d->m_submittedFormURL == request.m_request.url())
-            return;
-        d->m_submittedFormURL = request.m_request.url();
-    }
-
-    ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
-    NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
-    
-    loadRequest(request, true, _currentEvent, submitForm, formValues);
-
-    [formValues release];
-    clearRecordedFormValues();
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-bool FrameMac::openURL(const KURL &url)
-{
-    // FIXME: The lack of args here to get the reload flag from
-    // indicates a problem in how we use Frame::processObjectRequest,
-    // where we are opening the URL before the args are set up.
-
-    FrameLoadRequest request;
-    request.m_request.setURL(url);
-    request.m_request.setHTTPReferrer(referrer());
-
-    loadRequest(request, userGestureHint());
-
-    return true;
-}
-
-void FrameMac::openURLRequest(const FrameLoadRequest& request)
-{
-    loadRequest(request, userGestureHint());
-}
-
-void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
-{
-    // FIXME: triggeringEvent is passed in but we ignore it.
-
-    FrameLoadRequest copy = request;
-    if (copy.m_request.httpReferrer().isEmpty())
-        copy.m_request.setHTTPReferrer(referrer());
-
-    loadRequest(copy, true, _currentEvent);
-}
-
 ObjectContentType FrameMac::objectContentType(const KURL& url, const String& mimeType)
 {
     return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
@@ -517,33 +622,6 @@ void FrameMac::redirectDataToPlugin(Widget* pluginWidget)
     [_bridge redirectDataToPlugin:pluginWidget->getView()];
 }
 
-
-Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    BOOL allowsScrolling = YES;
-    int marginWidth = -1;
-    int marginHeight = -1;
-    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
-        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
-        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
-        marginWidth = o->getMarginWidth();
-        marginHeight = o->getMarginHeight();
-    }
-
-    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name
-                                                             withURL:url.getNSURL()
-                                                            referrer:referrer 
-                                                          ownerElement:ownerElement
-                                                     allowsScrolling:allowsScrolling
-                                                         marginWidth:marginWidth
-                                                        marginHeight:marginHeight];
-    return [childBridge impl];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
 
 void FrameMac::setView(FrameView *view)
 {
@@ -1099,80 +1177,6 @@ void FrameMac::partClearedInBegin()
 {
     if (jScriptEnabled())
         [_bridge windowObjectCleared];
-}
-
-void FrameMac::openURLFromPageCache(WebCorePageState *state)
-{
-    // It's safe to assume none of the WebCorePageState methods will raise
-    // exceptions, since WebCorePageState is implemented by WebCore and
-    // does not throw
-
-    Document *doc = [state document];
-    Node *mousePressNode = [state mousePressNode];
-    KURL *kurl = [state URL];
-    SavedProperties *windowProperties = [state windowProperties];
-    SavedProperties *locationProperties = [state locationProperties];
-    SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
-    PausedTimeouts *timeouts = [state pausedTimeouts];
-    
-    cancelRedirection();
-
-    // We still have to close the previous part page.
-    closeURL();
-            
-    d->m_bComplete = false;
-    
-    // Don't re-emit the load event.
-    d->m_bLoadEventEmitted = true;
-    
-    // delete old status bar msg's from kjs (if it _was_ activated on last URL)
-    if (jScriptEnabled()) {
-        d->m_kjsStatusBarText = String();
-        d->m_kjsDefaultStatusBarText = String();
-    }
-
-    ASSERT(kurl);
-    
-    d->m_url = *kurl;
-    
-    // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
-    // data arrives) (Simon)
-    if (url().protocol().startsWith("http") && !url().host().isEmpty() && url().path().isEmpty())
-        d->m_url.setPath("/");
-    
-    // copy to m_workingURL after fixing url() above
-    d->m_workingURL = url();
-        
-    started();
-    
-    // -----------begin-----------
-    clear();
-
-    doc->setInPageCache(NO);
-
-    d->m_bCleared = false;
-    d->m_bComplete = false;
-    d->m_bLoadEventEmitted = false;
-    d->m_referrer = url().url();
-    
-    setView(doc->view());
-    
-    d->m_doc = doc;
-    d->m_mousePressNode = mousePressNode;
-    d->m_decoder = doc->decoder();
-
-    updatePolicyBaseURL();
-
-    { // scope the lock
-        JSLock lock;
-        restoreWindowProperties(windowProperties);
-        restoreLocationProperties(locationProperties);
-        restoreInterpreterBuiltins(*interpreterBuiltins);
-    }
-
-    resumeTimeouts(timeouts);
-    
-    checkCompleted();
 }
 
 WebCoreFrameBridge *FrameMac::bridgeForWidget(const Widget *widget)

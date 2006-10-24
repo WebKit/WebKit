@@ -2,6 +2,38 @@
 
         RS by Maciej.
 
+        Inside Frame, moved the plethora of load() and stopLoading() functions next 
+        to each other to facilitate merging and crying.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest):
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::openURL):
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::urlSelected):
+        (WebCore::FrameMac::openURLFromPageCache):
+        (WebCore::FrameMac::createFrame):
+        * page/Frame.cpp:
+        (WebCore::Frame::openURL):
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::loadSubframe):
+        (WebCore::Frame::submitFormAgain):
+        (WebCore::Frame::submitForm):
+        (WebCore::Frame::stop):
+        (WebCore::Frame::closeURL):
+        (WebCore::Frame::cancelRedirection):
+        (WebCore::Frame::iconURL):
+        (WebCore::Frame::didOpenURL):
+        (WebCore::Frame::didExplicitOpen):
+        * page/Frame.h:
+
+2006-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Maciej.
+
         Moved our plethora of load() and stopLoading() functions next to each other
         to facilitate merging and laughter.
 

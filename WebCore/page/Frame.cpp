@@ -158,6 +158,18 @@ static inline Frame* parentFromOwnerElement(Element* ownerElement)
     return ownerElement->document()->frame();
 }
 
+static bool getString(JSValue* result, String& string)
+{
+    if (!result)
+        return false;
+    JSLock lock;
+    UString ustring;
+    if (!result->getString(ustring))
+        return false;
+    string = ustring;
+    return true;
+}
+
 Frame::Frame(Page* page, Element* ownerElement, PassRefPtr<EditorClient> client) 
     : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement, client))
 {
@@ -225,6 +237,309 @@ Frame::~Frame()
     delete d;
     d = 0;
 }
+
+#pragma mark END LOADING FUNCTIONS
+
+bool Frame::openURL(const KURL& URL)
+{
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void Frame::changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory, bool userGesture)
+{
+    if (URL.find("javascript:", 0, false) == 0) {
+        String script = KURL::decode_string(URL.mid(11));
+        JSValue* result = executeScript(0, script, userGesture);
+        String scriptResult;
+        if (getString(result, scriptResult)) {
+            begin(url());
+            write(scriptResult);
+            end();
+        }
+        return;
+    }
+
+    ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
+    ResourceRequest request(completeURL(URL), referrer, policy);
+    
+    urlSelected(request, "_self", 0, lockHistory);
+}
+
+void Frame::urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent)
+{
+    urlSelected(ResourceRequest(completeURL(url)), target, triggeringEvent);
+}
+
+void Frame::urlSelected(const ResourceRequest& request, const String& _target, const Event* triggeringEvent, bool lockHistory)
+{
+  String target = _target;
+  if (target.isEmpty() && d->m_doc)
+    target = d->m_doc->baseTarget();
+
+  const KURL& url = request.url();
+
+  if (url.url().startsWith("javascript:", false)) {
+    executeScript(0, KURL::decode_string(url.url().mid(11)), true);
+    return;
+  }
+
+  if (!url.isValid())
+    // ### ERROR HANDLING
+    return;
+
+  FrameLoadRequest frameRequest;
+  frameRequest.m_request = request;
+  frameRequest.m_frameName = target;
+
+  if (d->m_bHTTPRefresh)
+    d->m_bHTTPRefresh = false;
+
+  if (frameRequest.m_request.httpReferrer().isEmpty())
+      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
+
+  urlSelected(frameRequest, triggeringEvent);
+}
+
+bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)
+{
+    DeprecatedString _url = urlParam.deprecatedString();
+    // Support for <frame src="javascript:string">
+    KURL scriptURL;
+    KURL url;
+    if (_url.startsWith("javascript:", false)) {
+        scriptURL = _url;
+        url = "about:blank";
+    } else
+        url = completeURL(_url);
+
+    Frame* frame = tree()->child(frameName);
+    if (frame) {
+        ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
+        ResourceRequest request(url, d->m_referrer, policy);
+        FrameLoadRequest frameRequest;
+        frameRequest.m_request = request;
+        frame->openURLRequest(frameRequest);
+    } else
+        frame = loadSubframe(ownerElement, url, frameName, d->m_referrer);
+    
+    if (!frame)
+        return false;
+
+    if (!scriptURL.isEmpty())
+        frame->replaceContentsWithScriptResult(scriptURL);
+
+    return true;
+}
+
+Frame* Frame::loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer)
+{
+    Frame* frame = createFrame(url, name, ownerElement, referrer);
+    if (!frame)  {
+        checkEmitLoadEvent();
+        return 0;
+    }
+    
+    frame->childBegin();
+    
+    if (ownerElement->renderer() && frame->view())
+        static_cast<RenderWidget*>(ownerElement->renderer())->setWidget(frame->view());
+    
+    checkEmitLoadEvent();
+    
+    // In these cases, the synchronous load would have finished
+    // before we could connect the signals, so make sure to send the 
+    // completed() signal for the child by hand
+    // FIXME: In this case the Frame will have finished loading before 
+    // it's being added to the child list. It would be a good idea to
+    // create the child first, then invoke the loader separately.
+    if (url.isEmpty() || url == "about:blank") {
+        frame->completed(false);
+        frame->checkCompleted();
+    }
+
+    return frame;
+}
+
+void Frame::submitFormAgain()
+{
+    FramePrivate::SubmitForm* form = d->m_submitForm;
+    d->m_submitForm = 0;
+    if (d->m_doc && !d->m_doc->parsing() && form)
+        submitForm(form->submitAction, form->submitUrl, form->submitFormData,
+            form->target, form->submitContentType, form->submitBoundary);
+    delete form;
+}
+
+void Frame::submitForm(const char *action, const String& url, const FormData& formData, const String& _target, const String& contentType, const String& boundary)
+{
+  KURL u = completeURL(url.deprecatedString());
+
+  if (!u.isValid())
+    // ### ERROR HANDLING!
+    return;
+
+  DeprecatedString urlstring = u.url();
+  if (urlstring.startsWith("javascript:", false)) {
+    urlstring = KURL::decode_string(urlstring);
+    d->m_executingJavaScriptFormAction = true;
+    executeScript(0, urlstring.mid(11));
+    d->m_executingJavaScriptFormAction = false;
+    return;
+  }
+
+  FrameLoadRequest frameRequest;
+
+  if (!d->m_referrer.isEmpty())
+      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
+
+  frameRequest.m_frameName = _target.isEmpty() ? d->m_doc->baseTarget() : _target ;
+
+  // Handle mailto: forms
+  if (u.protocol() == "mailto") {
+      // 2)  Append body=
+      DeprecatedString bodyEnc;
+      if (contentType.lower() == "multipart/form-data")
+         // FIXME: is this correct?  I suspect not
+         bodyEnc = KURL::encode_string(formData.flattenToString().deprecatedString());
+      else if (contentType.lower() == "text/plain") {
+         // Convention seems to be to decode, and s/&/\n/
+         DeprecatedString tmpbody = formData.flattenToString().deprecatedString();
+         tmpbody.replace('&', '\n');
+         tmpbody.replace('+', ' ');
+         tmpbody = KURL::decode_string(tmpbody);  // Decode the rest of it
+         bodyEnc = KURL::encode_string(tmpbody);  // Recode for the URL
+      } else
+         bodyEnc = KURL::encode_string(formData.flattenToString().deprecatedString());
+
+      DeprecatedString query = u.query();
+      if (!query.isEmpty())
+          query += '&';
+      query += "body=" + bodyEnc;
+      
+      u.setQuery(query);
+  } 
+
+  if (strcmp(action, "get") == 0) {
+    if (u.protocol() != "mailto")
+       u.setQuery(formData.flattenToString().deprecatedString());
+  } else {
+      frameRequest.m_request.setHTTPBody(formData);
+      frameRequest.m_request.setHTTPMethod("POST");
+
+    // construct some user headers if necessary
+    if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
+      frameRequest.m_request.setHTTPContentType(contentType);
+    else // contentType must be "multipart/form-data"
+      frameRequest.m_request.setHTTPContentType(contentType + "; boundary=" + boundary);
+  }
+
+  if (d->m_runningScripts > 0) {
+    if (d->m_submitForm)
+        return;
+    d->m_submitForm = new FramePrivate::SubmitForm;
+    d->m_submitForm->submitAction = action;
+    d->m_submitForm->submitUrl = url;
+    d->m_submitForm->submitFormData = formData;
+    d->m_submitForm->target = _target;
+    d->m_submitForm->submitContentType = contentType;
+    d->m_submitForm->submitBoundary = boundary;
+  } else {
+      frameRequest.m_request.setURL(u);
+      submitForm(frameRequest);
+  }
+}
+
+void Frame::stopLoading(bool sendUnload)
+{
+  if (d->m_doc && d->m_doc->tokenizer())
+    d->m_doc->tokenizer()->stopParsing();
+  
+  d->m_metaData.clear();
+
+  if (sendUnload) {
+    if (d->m_doc) {
+      if (d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted) {
+        Node* currentFocusNode = d->m_doc->focusNode();
+        if (currentFocusNode)
+            currentFocusNode->aboutToUnload();
+        d->m_doc->dispatchWindowEvent(unloadEvent, false, false);
+        if (d->m_doc)
+          d->m_doc->updateRendering();
+        d->m_bUnloadEventEmitted = true;
+      }
+    }
+    
+    if (d->m_doc && !d->m_doc->inPageCache())
+      d->m_doc->removeAllEventListenersFromAllNodes();
+  }
+
+  d->m_bComplete = true; // to avoid calling completed() in finishedParsing() (David)
+  d->m_bLoadingMainResource = false;
+  d->m_bLoadEventEmitted = true; // don't want that one either
+  d->m_cachePolicy = CachePolicyVerify; // Why here?
+
+  if (d->m_doc && d->m_doc->parsing()) {
+    finishedParsing();
+    d->m_doc->setParsing(false);
+  }
+  
+  d->m_workingURL = KURL();
+
+  if (Document *doc = d->m_doc.get()) {
+    if (DocLoader *docLoader = doc->docLoader())
+      cache()->loader()->cancelRequests(docLoader);
+      XMLHttpRequest::cancelRequests(doc);
+  }
+
+  // tell all subframes to stop as well
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+      child->stopLoading(sendUnload);
+
+  d->m_bPendingChildRedirection = false;
+
+  cancelRedirection();
+}
+
+void Frame::stop()
+{
+    // http://bugzilla.opendarwin.org/show_bug.cgi?id=10854
+    // The frame's last ref may be remove and it be deleted by checkCompleted(), 
+    // so we'll add a protective refcount
+    RefPtr<Frame> protector(this);
+    
+    if (d->m_doc) {
+        if (d->m_doc->tokenizer())
+            d->m_doc->tokenizer()->stopParsing();
+        d->m_doc->finishParsing();
+    } else
+        // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
+        // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
+        // become true.  An example is when a subframe is a pure text doc, and that subframe is the
+        // last one to complete.
+        checkCompleted();
+    if (d->m_iconLoader)
+        d->m_iconLoader->stopLoading();
+}
+
+bool Frame::closeURL()
+{
+    saveDocumentState();
+    stopLoading(true);
+    clearUndoRedoOperations();
+    return true;
+}
+
+void Frame::cancelRedirection(bool cancelWithLoadInProgress)
+{
+    if (d) {
+        d->m_cancelWithLoadInProgress = cancelWithLoadInProgress;
+        d->m_scheduledRedirection = noRedirectionScheduled;
+        stopRedirectionTimer();
+    }
+}
+
+#pragma mark END LOADING FUNCTIONS
 
 KURL Frame::iconURL()
 {
@@ -298,57 +613,6 @@ void Frame::didExplicitOpen()
   d->m_url = d->m_doc->URL();
 }
 
-void Frame::stopLoading(bool sendUnload)
-{
-  if (d->m_doc && d->m_doc->tokenizer())
-    d->m_doc->tokenizer()->stopParsing();
-  
-  d->m_metaData.clear();
-
-  if (sendUnload) {
-    if (d->m_doc) {
-      if (d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted) {
-        Node* currentFocusNode = d->m_doc->focusNode();
-        if (currentFocusNode)
-            currentFocusNode->aboutToUnload();
-        d->m_doc->dispatchWindowEvent(unloadEvent, false, false);
-        if (d->m_doc)
-          d->m_doc->updateRendering();
-        d->m_bUnloadEventEmitted = true;
-      }
-    }
-    
-    if (d->m_doc && !d->m_doc->inPageCache())
-      d->m_doc->removeAllEventListenersFromAllNodes();
-  }
-
-  d->m_bComplete = true; // to avoid calling completed() in finishedParsing() (David)
-  d->m_bLoadingMainResource = false;
-  d->m_bLoadEventEmitted = true; // don't want that one either
-  d->m_cachePolicy = CachePolicyVerify; // Why here?
-
-  if (d->m_doc && d->m_doc->parsing()) {
-    finishedParsing();
-    d->m_doc->setParsing(false);
-  }
-  
-  d->m_workingURL = KURL();
-
-  if (Document *doc = d->m_doc.get()) {
-    if (DocLoader *docLoader = doc->docLoader())
-      cache()->loader()->cancelRequests(docLoader);
-      XMLHttpRequest::cancelRequests(doc);
-  }
-
-  // tell all subframes to stop as well
-  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-      child->stopLoading(sendUnload);
-
-  d->m_bPendingChildRedirection = false;
-
-  cancelRedirection();
-}
-
 BrowserExtension *Frame::browserExtension() const
 {
   return d->m_extension;
@@ -384,18 +648,6 @@ KJSProxy *Frame::jScript()
         d->m_jscript = new KJSProxy(this);
 
     return d->m_jscript;
-}
-
-static bool getString(JSValue* result, String& string)
-{
-    if (!result)
-        return false;
-    JSLock lock;
-    UString ustring;
-    if (!result->getString(ustring))
-        return false;
-    string = ustring;
-    return true;
 }
 
 void Frame::replaceContentsWithScriptResult(const KURL& url)
@@ -811,27 +1063,6 @@ void Frame::commitIconURLToIconDatabase()
     iconDatabase->setIconURLForPageURL(icon.url(), originalRequestURL().url());
 }
 
-void Frame::stop()
-{
-    // http://bugzilla.opendarwin.org/show_bug.cgi?id=10854
-    // The frame's last ref may be remove and it be deleted by checkCompleted(), 
-    // so we'll add a protective refcount
-    RefPtr<Frame> protector(this);
-    
-    if (d->m_doc) {
-        if (d->m_doc->tokenizer())
-            d->m_doc->tokenizer()->stopParsing();
-        d->m_doc->finishParsing();
-    } else
-        // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
-        // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
-        // become true.  An example is when a subframe is a pure text doc, and that subframe is the
-        // last one to complete.
-        checkCompleted();
-    if (d->m_iconLoader)
-        d->m_iconLoader->stopLoading();
-}
-
 void Frame::gotoAnchor()
 {
     // If our URL has no ref, then we have no place we need to jump to.
@@ -1080,35 +1311,6 @@ void Frame::scheduleHistoryNavigation(int steps)
     stopRedirectionTimer();
     if (d->m_bComplete)
         startRedirectionTimer();
-}
-
-void Frame::cancelRedirection(bool cancelWithLoadInProgress)
-{
-    if (d) {
-        d->m_cancelWithLoadInProgress = cancelWithLoadInProgress;
-        d->m_scheduledRedirection = noRedirectionScheduled;
-        stopRedirectionTimer();
-    }
-}
-
-void Frame::changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory, bool userGesture)
-{
-    if (URL.find("javascript:", 0, false) == 0) {
-        String script = KURL::decode_string(URL.mid(11));
-        JSValue* result = executeScript(0, script, userGesture);
-        String scriptResult;
-        if (getString(result, scriptResult)) {
-            begin(url());
-            write(scriptResult);
-            end();
-        }
-        return;
-    }
-
-    ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
-    ResourceRequest request(completeURL(URL), referrer, policy);
-    
-    urlSelected(request, "_self", 0, lockHistory);
 }
 
 void Frame::redirectionTimerFired(Timer<Frame>*)
@@ -1413,72 +1615,6 @@ void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
         dragCaretController->paintCaret(p, rect);
 }
 
-void Frame::urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent)
-{
-    urlSelected(ResourceRequest(completeURL(url)), target, triggeringEvent);
-}
-
-void Frame::urlSelected(const ResourceRequest& request, const String& _target, const Event* triggeringEvent, bool lockHistory)
-{
-  String target = _target;
-  if (target.isEmpty() && d->m_doc)
-    target = d->m_doc->baseTarget();
-
-  const KURL& url = request.url();
-
-  if (url.url().startsWith("javascript:", false)) {
-    executeScript(0, KURL::decode_string(url.url().mid(11)), true);
-    return;
-  }
-
-  if (!url.isValid())
-    // ### ERROR HANDLING
-    return;
-
-  FrameLoadRequest frameRequest;
-  frameRequest.m_request = request;
-  frameRequest.m_frameName = target;
-
-  if (d->m_bHTTPRefresh)
-    d->m_bHTTPRefresh = false;
-
-  if (frameRequest.m_request.httpReferrer().isEmpty())
-      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
-
-  urlSelected(frameRequest, triggeringEvent);
-}
-
-bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)
-{
-    DeprecatedString _url = urlParam.deprecatedString();
-    // Support for <frame src="javascript:string">
-    KURL scriptURL;
-    KURL url;
-    if (_url.startsWith("javascript:", false)) {
-        scriptURL = _url;
-        url = "about:blank";
-    } else
-        url = completeURL(_url);
-
-    Frame* frame = tree()->child(frameName);
-    if (frame) {
-        ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
-        ResourceRequest request(url, d->m_referrer, policy);
-        FrameLoadRequest frameRequest;
-        frameRequest.m_request = request;
-        frame->openURLRequest(frameRequest);
-    } else
-        frame = loadSubframe(ownerElement, url, frameName, d->m_referrer);
-    
-    if (!frame)
-        return false;
-
-    if (!scriptURL.isEmpty())
-        frame->replaceContentsWithScriptResult(scriptURL);
-
-    return true;
-}
-
 bool Frame::requestObject(RenderPart* renderer, const String& url, const AtomicString& frameName,
                           const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
@@ -1544,35 +1680,6 @@ bool Frame::loadPlugin(RenderPart *renderer, const KURL& url, const String& mime
     return true;
 }
 
-Frame* Frame::loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer)
-{
-    Frame* frame = createFrame(url, name, ownerElement, referrer);
-    if (!frame)  {
-        checkEmitLoadEvent();
-        return 0;
-    }
-    
-    frame->childBegin();
-    
-    if (ownerElement->renderer() && frame->view())
-        static_cast<RenderWidget*>(ownerElement->renderer())->setWidget(frame->view());
-    
-    checkEmitLoadEvent();
-    
-    // In these cases, the synchronous load would have finished
-    // before we could connect the signals, so make sure to send the 
-    // completed() signal for the child by hand
-    // FIXME: In this case the Frame will have finished loading before 
-    // it's being added to the child list. It would be a good idea to
-    // create the child first, then invoke the loader separately.
-    if (url.isEmpty() || url == "about:blank") {
-        frame->completed(false);
-        frame->checkCompleted();
-    }
-
-    return frame;
-}
-
 void Frame::clearRecordedFormValues()
 {
     d->m_formAboutToBeSubmitted = 0;
@@ -1583,95 +1690,6 @@ void Frame::recordFormValue(const String& name, const String& value, PassRefPtr<
 {
     d->m_formAboutToBeSubmitted = element;
     d->m_formValuesAboutToBeSubmitted.set(name, value);
-}
-
-void Frame::submitFormAgain()
-{
-    FramePrivate::SubmitForm* form = d->m_submitForm;
-    d->m_submitForm = 0;
-    if (d->m_doc && !d->m_doc->parsing() && form)
-        submitForm(form->submitAction, form->submitUrl, form->submitFormData,
-            form->target, form->submitContentType, form->submitBoundary);
-    delete form;
-}
-
-void Frame::submitForm(const char *action, const String& url, const FormData& formData, const String& _target, const String& contentType, const String& boundary)
-{
-  KURL u = completeURL(url.deprecatedString());
-
-  if (!u.isValid())
-    // ### ERROR HANDLING!
-    return;
-
-  DeprecatedString urlstring = u.url();
-  if (urlstring.startsWith("javascript:", false)) {
-    urlstring = KURL::decode_string(urlstring);
-    d->m_executingJavaScriptFormAction = true;
-    executeScript(0, urlstring.mid(11));
-    d->m_executingJavaScriptFormAction = false;
-    return;
-  }
-
-  FrameLoadRequest frameRequest;
-
-  if (!d->m_referrer.isEmpty())
-      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
-
-  frameRequest.m_frameName = _target.isEmpty() ? d->m_doc->baseTarget() : _target ;
-
-  // Handle mailto: forms
-  if (u.protocol() == "mailto") {
-      // 2)  Append body=
-      DeprecatedString bodyEnc;
-      if (contentType.lower() == "multipart/form-data")
-         // FIXME: is this correct?  I suspect not
-         bodyEnc = KURL::encode_string(formData.flattenToString().deprecatedString());
-      else if (contentType.lower() == "text/plain") {
-         // Convention seems to be to decode, and s/&/\n/
-         DeprecatedString tmpbody = formData.flattenToString().deprecatedString();
-         tmpbody.replace('&', '\n');
-         tmpbody.replace('+', ' ');
-         tmpbody = KURL::decode_string(tmpbody);  // Decode the rest of it
-         bodyEnc = KURL::encode_string(tmpbody);  // Recode for the URL
-      } else
-         bodyEnc = KURL::encode_string(formData.flattenToString().deprecatedString());
-
-      DeprecatedString query = u.query();
-      if (!query.isEmpty())
-          query += '&';
-      query += "body=" + bodyEnc;
-      
-      u.setQuery(query);
-  } 
-
-  if (strcmp(action, "get") == 0) {
-    if (u.protocol() != "mailto")
-       u.setQuery(formData.flattenToString().deprecatedString());
-  } else {
-      frameRequest.m_request.setHTTPBody(formData);
-      frameRequest.m_request.setHTTPMethod("POST");
-
-    // construct some user headers if necessary
-    if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
-      frameRequest.m_request.setHTTPContentType(contentType);
-    else // contentType must be "multipart/form-data"
-      frameRequest.m_request.setHTTPContentType(contentType + "; boundary=" + boundary);
-  }
-
-  if (d->m_runningScripts > 0) {
-    if (d->m_submitForm)
-        return;
-    d->m_submitForm = new FramePrivate::SubmitForm;
-    d->m_submitForm->submitAction = action;
-    d->m_submitForm->submitUrl = url;
-    d->m_submitForm->submitFormData = formData;
-    d->m_submitForm->target = _target;
-    d->m_submitForm->submitContentType = contentType;
-    d->m_submitForm->submitBoundary = boundary;
-  } else {
-      frameRequest.m_request.setURL(u);
-      submitForm(frameRequest);
-  }
 }
 
 void Frame::parentCompleted()
@@ -2752,12 +2770,6 @@ bool Frame::isFrameSet() const
     return body && body->renderer() && body->hasTagName(framesetTag);
 }
 
-bool Frame::openURL(const KURL& URL)
-{
-    ASSERT_NOT_REACHED();
-    return true;
-}
-
 void Frame::didNotOpenURL(const KURL& URL)
 {
     if (d->m_submittedFormURL == URL)
@@ -3268,14 +3280,6 @@ void Frame::scrollToAnchor(const KURL& URL)
     // Otherwise, the parent frame may think we never finished loading.
     d->m_bComplete = false;
     checkCompleted();
-}
-
-bool Frame::closeURL()
-{
-    saveDocumentState();
-    stopLoading(true);
-    clearUndoRedoOperations();
-    return true;
 }
 
 bool Frame::canMouseDownStartSelect(Node* node)

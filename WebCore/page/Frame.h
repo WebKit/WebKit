@@ -107,9 +107,31 @@ public:
   Frame(Page*, Element*, PassRefPtr<EditorClient>);
   virtual ~Frame();
 
+  // FIXME: Merge these methods and move them into FrameLoader.
   virtual bool openURL(const KURL&);
-  virtual bool closeURL();
+  virtual void openURLRequest(const FrameLoadRequest&) = 0;
+  void changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
+  virtual void urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent);
+  virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
+  virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
 
+  bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
+  virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;
+  Frame* loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer);
+
+  virtual void submitForm(const FrameLoadRequest&) = 0;
+  void submitForm(const char* action, const String& url, const FormData& formData,
+                  const String& target, const String& contentType = String(),
+                  const String& boundary = String());
+  void submitFormAgain();
+
+  void stop();
+  void stopLoading(bool sendUnload = false);
+  virtual bool closeURL();
+private:
+  void cancelRedirection(bool newLoadInProgress = false);
+
+public:
   void didExplicitOpen();
 
   KURL iconURL();
@@ -118,11 +140,6 @@ public:
   Page* page() const;
   void pageDestroyed();
   
-  /**
-   * Stop loading the document and kill all data requests (for images, etc.)
-   */
-  void stopLoading(bool sendUnload = false);
-
   /**
    * Returns a pointer to the @ref BrowserExtension.
    */
@@ -187,7 +204,6 @@ public:
    * Make a location change, or schedule one for later.
    * These are used for JavaScript-triggered location changes.
    */
-  void changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
   void scheduleLocationChange(const DeprecatedString& url, const String& referrer, bool lockHistory = true, bool userGesture = false);
   void scheduleRefresh(bool userGesture = false);
   bool isScheduledLocationChangePending() const;
@@ -258,11 +274,6 @@ public:
   virtual void end();
 
   void endIfNotLoading();
-
-  /**
-   * Similar to end, but called to abort a load rather than cleanly end.
-   */
-  void stop();
 
   void paint(GraphicsContext*, const IntRect&);
 
@@ -540,9 +551,6 @@ public:
 
   void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
 
-  virtual void urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent);
-  virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
-
   // Methods with platform-specific overrides (and no base class implementation).
   virtual void setTitle(const String&) = 0;
   virtual void handledOnloadEvents() = 0;
@@ -588,15 +596,11 @@ public:
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
-  virtual void openURLRequest(const FrameLoadRequest&) = 0;
-  virtual void submitForm(const FrameLoadRequest&) = 0;
-  virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
   virtual void redirectDataToPlugin(Widget* pluginWidget) { }
 protected:
   virtual Plugin* createPlugin(Element* node, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 
   virtual void redirectionTimerFired(Timer<Frame>*);
@@ -616,8 +620,6 @@ public:
 private:
   void childBegin();
 
-  void submitFormAgain();
-
   void started();
 
   void completed(bool);
@@ -634,17 +636,10 @@ private:
   bool shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback);
   bool loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
                   const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
-  Frame* loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer);
 
 public:
-  void submitForm(const char* action, const String& url, const FormData& formData,
-                  const String& target, const String& contentType = String(),
-                  const String& boundary = String());
-  
   bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
                      const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
-  bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
-
   Document* document() const;
   void setDocument(Document* newDoc);
 
@@ -660,9 +655,6 @@ public:
   void setMouseDownMayStartDrag(bool b);
   
   void handleFallbackContent();
-
-private:
-  void cancelRedirection(bool newLoadInProgress = false);
 
  public:
   KJS::JSValue* executeScript(const String& filename, int baseLine, Node*, const String& script);

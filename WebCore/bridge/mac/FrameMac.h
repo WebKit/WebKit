@@ -117,6 +117,17 @@ class FrameMac : public Frame
 public:
     FrameMac(Page*, Element*, PassRefPtr<EditorClient>);
     ~FrameMac();
+
+    // FIXME: Merge these and move them into WebFrameLoader.
+    void loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent = 0, ObjCDOMElement* submitForm = 0, NSMutableDictionary* formValues = 0);
+    virtual bool openURL(const KURL&);
+    virtual void openURLRequest(const FrameLoadRequest&);
+    virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
+    virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer);
+    void openURLFromPageCache(WebCorePageState*);
+    virtual void submitForm(const FrameLoadRequest&);
+
+    virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     
     void clear();
 
@@ -130,25 +141,13 @@ public:
     virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);
 
-    void loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent = 0, ObjCDOMElement* submitForm = 0, NSMutableDictionary* formValues = 0);
-
-    virtual bool openURL(const KURL&);
-    virtual void submitForm(const FrameLoadRequest&);
-    virtual void openURLRequest(const FrameLoadRequest&);
-    virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
-
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
-    virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     virtual void redirectDataToPlugin(Widget* pluginWidget);
-
-    virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer);
 
     virtual void scheduleClose();
 
     virtual void focusWindow();
     virtual void unfocusWindow();
-    
-    void openURLFromPageCache(WebCorePageState*);
 
     virtual void saveDocumentState();
     virtual void restoreDocumentState();
