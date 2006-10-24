@@ -72,6 +72,14 @@ static bool isCaseInsensitiveEqual(NSString *a, NSString *b)
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
 
+static void cancelAll(const ResourceLoaderSet& loaders)
+{
+    const ResourceLoaderSet copy = loaders;
+    ResourceLoaderSet::const_iterator end = copy.end();
+    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->cancel();
+}
+
 bool isBackForwardLoadType(FrameLoadType type)
 {
     switch (type) {
@@ -109,6 +117,284 @@ FrameLoader::FrameLoader(Frame* frame)
 FrameLoader::~FrameLoader()
 {
     [m_asDelegate.get() detachFromLoader];
+}
+
+void FrameLoader::prepareForLoadStart()
+{
+    [m_client _progressStarted];
+    [m_client _dispatchDidStartProvisionalLoadForFrame];
+}
+
+void FrameLoader::setupForReplace()
+{
+    setState(WebFrameStateProvisional);
+    m_provisionalDocumentLoader = m_documentLoader;
+    m_documentLoader = nil;
+    detachChildren();
+}
+
+void FrameLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
+{
+    [activeDocumentLoader() setupForReplaceByMIMEType:newMIMEType];
+}
+
+void FrameLoader::finalSetupForReplace(WebDocumentLoader *loader)
+{
+    [m_client _clearUnarchivingStateForLoader:loader];
+}
+
+void FrameLoader::safeLoad(NSURL *URL)
+{
+    [bridge() loadURL:URL 
+             referrer:urlOriginalDataAsString([[m_documentLoader.get() request] URL])
+               reload:NO
+          userGesture:YES       
+               target:nil
+      triggeringEvent:[NSApp currentEvent]
+                 form:nil 
+           formValues:nil];
+}
+
+void FrameLoader::load(NSURLRequest *request)
+{
+    // FIXME: is this the right place to reset loadType? Perhaps this should be done after loading is finished or aborted.
+    m_loadType = FrameLoadTypeStandard;
+    WebDocumentLoader *dl = [m_client _createDocumentLoaderWithRequest:request];
+    load(dl);
+    [dl release];
+}
+
+void FrameLoader::load(NSURLRequest *request, NSString *frameName)
+{
+    if (!frameName) {
+        load(request);
+        return;
+    }
+
+    Frame* frame = m_frame->tree()->find(frameName);
+    if (frame) {
+        [Mac(frame)->bridge() frameLoader]->load(request);
+        return;
+    }
+
+    NSDictionary *action = actionInformation(NavigationTypeOther, nil, [request URL]);
+    checkNewWindowPolicy(request, action, frameName, 0);
+}
+
+void FrameLoader::load(NSURLRequest *request, NSDictionary *action, FrameLoadType type, PassRefPtr<FormState> formState)
+{
+    WebDocumentLoader *loader = [m_client _createDocumentLoaderWithRequest:request];
+    setPolicyDocumentLoader(loader);
+    [loader release];
+
+    [loader setTriggeringAction:action];
+    [loader setOverrideEncoding:[m_documentLoader.get() overrideEncoding]];
+
+    load(loader, type, formState);
+}
+
+void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *values)
+{
+    bool isFormSubmission = values != nil;
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    setHTTPReferrer(request, referrer);
+    addExtraFieldsToRequest(request, true, event || isFormSubmission);
+    if (newLoadType == FrameLoadTypeReload)
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+
+    ASSERT(newLoadType != FrameLoadTypeSame);
+
+    NSDictionary *action = actionInformation(newLoadType, isFormSubmission, event, URL);
+    RefPtr<FormState> formState;
+    if (form && values)
+        formState = FormState::create(form, values, bridge());
+    
+    if (target) {
+        Frame* targetFrame = m_frame->tree()->find(target);
+        if (targetFrame)
+            [Mac(targetFrame)->bridge() frameLoader]->load(URL, referrer, newLoadType, nil, event, form, values);
+        else
+            checkNewWindowPolicy(request, action, target, formState.release());
+        [request release];
+        return;
+    }
+
+    WebDocumentLoader *oldDocumentLoader = [m_documentLoader.get() retain];
+
+    bool sameURL = [m_client _shouldTreatURLAsSameAsCurrent:URL];
+    
+    // Make sure to do scroll to anchor processing even if the URL is
+    // exactly the same so pages with '#' links and DHTML side effects
+    // work properly.
+    if (!isFormSubmission
+        && newLoadType != FrameLoadTypeReload
+        && newLoadType != FrameLoadTypeSame
+        && !shouldReload(URL, [bridge() URL])
+        // We don't want to just scroll if a link from within a
+        // frameset is trying to reload the frameset into _top.
+        && ![bridge() isFrameSet]) {
+
+        // Just do anchor navigation within the existing content.
+        
+        // We don't do this if we are submitting a form, explicitly reloading,
+        // currently displaying a frameset, or if the new URL does not have a fragment.
+        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
+        
+        // FIXME: What about load types other than Standard and Reload?
+        
+        [oldDocumentLoader setTriggeringAction:action];
+        invalidatePendingPolicyDecision(true);
+        checkNavigationPolicy(request, oldDocumentLoader, formState.release(),
+            asDelegate(), @selector(continueFragmentScrollAfterNavigationPolicy:formState:));
+    } else {
+        // must grab this now, since this load may stop the previous load and clear this flag
+        bool isRedirect = m_quickRedirectComing;
+        load(request, action, newLoadType, formState.release());
+        if (isRedirect) {
+            m_quickRedirectComing = false;
+            [m_provisionalDocumentLoader.get() setIsClientRedirect:YES];
+        } else if (sameURL)
+            // Example of this case are sites that reload the same URL with a different cookie
+            // driving the generated content, or a master frame with links that drive a target
+            // frame, where the user has clicked on the same link repeatedly.
+            m_loadType = FrameLoadTypeSame;
+    }
+    
+    [request release];
+    [oldDocumentLoader release];
+}
+
+void FrameLoader::load(WebDocumentLoader *newDocumentLoader)
+{
+    invalidatePendingPolicyDecision(true);
+    setPolicyDocumentLoader(newDocumentLoader);
+
+    NSMutableURLRequest *r = [newDocumentLoader request];
+    addExtraFieldsToRequest(r, true, false);
+    FrameLoadType type;
+    if ([m_client _shouldTreatURLAsSameAsCurrent:[[newDocumentLoader originalRequest] URL]]) {
+        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        type = FrameLoadTypeSame;
+    } else
+        type = FrameLoadTypeStandard;
+    
+    [newDocumentLoader setOverrideEncoding:[documentLoader() overrideEncoding]];
+    
+    // When we loading alternate content for an unreachable URL that we're
+    // visiting in the b/f list, we treat it as a reload so the b/f list 
+    // is appropriately maintained.
+    if (shouldReloadToHandleUnreachableURL([newDocumentLoader originalRequest])) {
+        ASSERT(type == FrameLoadTypeStandard);
+        type = FrameLoadTypeReload;
+    }
+
+    load(newDocumentLoader, type, 0);
+}
+
+void FrameLoader::load(WebDocumentLoader *loader, FrameLoadType type, PassRefPtr<FormState> formState)
+{
+    ASSERT([m_client _hasWebView]);
+
+    // Unfortunately the view must be non-nil, this is ultimately due
+    // to parser requiring a FrameView.  We should fix this dependency.
+
+    ASSERT([m_client _hasFrameView]);
+
+    m_policyLoadType = type;
+
+    if (Frame* parent = m_frame->tree()->parent())
+        [loader setOverrideEncoding:[[Mac(parent)->bridge() frameLoader]->documentLoader() overrideEncoding]];
+
+    invalidatePendingPolicyDecision(true);
+    setPolicyDocumentLoader(loader);
+
+    checkNavigationPolicy([loader request], loader, formState,
+        asDelegate(), @selector(continueLoadRequestAfterNavigationPolicy:formState:));
+}
+
+bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)
+{
+    ASSERT(!m_mainResourceLoader);
+    m_mainResourceLoader = MainResourceLoader::create(m_frame);
+    m_mainResourceLoader->setIdentifier(identifier);
+    addExtraFieldsToRequest(request, true, false);
+    if (!m_mainResourceLoader->load(request)) {
+        // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
+        // should it be caught by other parts of WebKit or other parts of the app?
+        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [request URL]);
+        m_mainResourceLoader = 0;
+        return false;
+    }
+    return true;
+}
+
+// FIXME: Poor method name; also, why is this not part of startProvisionalLoad:?
+void FrameLoader::startLoading()
+{
+    [m_provisionalDocumentLoader.get() prepareForLoadStart];
+
+    if (isLoadingMainResource())
+        return;
+
+    [m_client _clearLoadingFromPageCacheForDocumentLoader:m_provisionalDocumentLoader.get()];
+
+    id identifier = [m_client _dispatchIdentifierForInitialRequest:[m_provisionalDocumentLoader.get() originalRequest]
+        fromDocumentLoader:m_provisionalDocumentLoader.get()];
+        
+    if (!startLoadingMainResource([m_provisionalDocumentLoader.get() actualRequest], identifier))
+        [m_provisionalDocumentLoader.get() updateLoading];
+}
+
+void FrameLoader::stopLoadingPlugIns()
+{
+    cancelAll(m_plugInStreamLoaders);
+}
+
+void FrameLoader::stopLoadingSubresources()
+{
+    cancelAll(m_subresourceLoaders);
+}
+
+void FrameLoader::stopLoading(NSError *error)
+{
+    m_mainResourceLoader->cancel(error);
+}
+
+void FrameLoader::stopLoadingSubframes()
+{
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        [Mac(child)->bridge() frameLoader]->stopLoading();
+}
+
+void FrameLoader::stopLoading()
+{
+    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
+    if (m_isStoppingLoad)
+        return;
+    
+    m_isStoppingLoad = true;
+    
+    invalidatePendingPolicyDecision(true);
+    
+    stopLoadingSubframes();
+    [m_provisionalDocumentLoader.get() stopLoading];
+    [m_documentLoader.get() stopLoading];
+    setProvisionalDocumentLoader(nil);
+    [m_client _clearArchivedResources];
+    
+    m_isStoppingLoad = false;    
+}
+
+void FrameLoader::cancelMainResourceLoad()
+{
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->cancel();
+}
+
+void FrameLoader::cancelPendingArchiveLoad(WebResourceLoader* loader)
+{
+    [m_client _cancelPendingArchiveLoadForLoader:loader];
 }
 
 WebDocumentLoader *FrameLoader::activeDocumentLoader() const
@@ -159,19 +445,6 @@ void FrameLoader::setDefersCallbacks(bool defers)
     [m_client _setDefersCallbacks:defers];
 }
 
-static void cancelAll(const ResourceLoaderSet& loaders)
-{
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->cancel();
-}
-
-void FrameLoader::stopLoadingPlugIns()
-{
-    cancelAll(m_plugInStreamLoaders);
-}
-
 bool FrameLoader::isLoadingMainResource() const
 {
     return m_mainResourceLoader;
@@ -190,11 +463,6 @@ bool FrameLoader::isLoadingPlugIns() const
 bool FrameLoader::isLoading() const
 {
     return isLoadingMainResource() || isLoadingSubresources() || isLoadingPlugIns();
-}
-
-void FrameLoader::stopLoadingSubresources()
-{
-    cancelAll(m_subresourceLoaders);
 }
 
 void FrameLoader::addSubresourceLoader(WebResourceLoader* loader)
@@ -221,33 +489,6 @@ NSData *FrameLoader::mainResourceData() const
 void FrameLoader::releaseMainResourceLoader()
 {
     m_mainResourceLoader = 0;
-}
-
-void FrameLoader::cancelMainResourceLoad()
-{
-    if (m_mainResourceLoader)
-        m_mainResourceLoader->cancel();
-}
-
-bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)
-{
-    ASSERT(!m_mainResourceLoader);
-    m_mainResourceLoader = MainResourceLoader::create(m_frame);
-    m_mainResourceLoader->setIdentifier(identifier);
-    addExtraFieldsToRequest(request, true, false);
-    if (!m_mainResourceLoader->load(request)) {
-        // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
-        // should it be caught by other parts of WebKit or other parts of the app?
-        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [request URL]);
-        m_mainResourceLoader = 0;
-        return false;
-    }
-    return true;
-}
-
-void FrameLoader::stopLoading(NSError *error)
-{
-    m_mainResourceLoader->cancel(error);
 }
 
 void FrameLoader::setDocumentLoader(WebDocumentLoader* loader)
@@ -348,56 +589,6 @@ void FrameLoader::commitProvisionalLoad()
     setDocumentLoader(m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nil);
     setState(WebFrameStateCommittedPage);
-}
-
-void FrameLoader::stopLoadingSubframes()
-{
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        [Mac(child)->bridge() frameLoader]->stopLoading();
-}
-
-void FrameLoader::stopLoading()
-{
-    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
-    if (m_isStoppingLoad)
-        return;
-
-    m_isStoppingLoad = true;
-
-    invalidatePendingPolicyDecision(true);
-
-    stopLoadingSubframes();
-    [m_provisionalDocumentLoader.get() stopLoading];
-    [m_documentLoader.get() stopLoading];
-    setProvisionalDocumentLoader(nil);
-    [m_client _clearArchivedResources];
-
-    m_isStoppingLoad = false;    
-}
-
-// FIXME: Poor method name; also, why is this not part of startProvisionalLoad:?
-void FrameLoader::startLoading()
-{
-    [m_provisionalDocumentLoader.get() prepareForLoadStart];
-
-    if (isLoadingMainResource())
-        return;
-
-    [m_client _clearLoadingFromPageCacheForDocumentLoader:m_provisionalDocumentLoader.get()];
-
-    id identifier = [m_client _dispatchIdentifierForInitialRequest:[m_provisionalDocumentLoader.get() originalRequest]
-        fromDocumentLoader:m_provisionalDocumentLoader.get()];
-        
-    if (!startLoadingMainResource([m_provisionalDocumentLoader.get() actualRequest], identifier))
-        [m_provisionalDocumentLoader.get() updateLoading];
-}
-
-void FrameLoader::setupForReplace()
-{
-    setState(WebFrameStateProvisional);
-    m_provisionalDocumentLoader = m_documentLoader;
-    m_documentLoader = nil;
-    detachChildren();
 }
 
 id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
@@ -535,78 +726,6 @@ bool FrameLoader::shouldReload(NSURL *currentURL, NSURL *destinationURL)
 {
     return !(([currentURL fragment] || [destinationURL fragment])
         && [urlByRemovingFragment(currentURL) isEqual:urlByRemovingFragment(destinationURL)]);
-}
-
-void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *values)
-{
-    bool isFormSubmission = values != nil;
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    setHTTPReferrer(request, referrer);
-    addExtraFieldsToRequest(request, true, event || isFormSubmission);
-    if (newLoadType == FrameLoadTypeReload)
-        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-
-    ASSERT(newLoadType != FrameLoadTypeSame);
-
-    NSDictionary *action = actionInformation(newLoadType, isFormSubmission, event, URL);
-    RefPtr<FormState> formState;
-    if (form && values)
-        formState = FormState::create(form, values, bridge());
-    
-    if (target) {
-        Frame* targetFrame = m_frame->tree()->find(target);
-        if (targetFrame)
-            [Mac(targetFrame)->bridge() frameLoader]->load(URL, referrer, newLoadType, nil, event, form, values);
-        else
-            checkNewWindowPolicy(request, action, target, formState.release());
-        [request release];
-        return;
-    }
-
-    WebDocumentLoader *oldDocumentLoader = [m_documentLoader.get() retain];
-
-    bool sameURL = [m_client _shouldTreatURLAsSameAsCurrent:URL];
-    
-    // Make sure to do scroll to anchor processing even if the URL is
-    // exactly the same so pages with '#' links and DHTML side effects
-    // work properly.
-    if (!isFormSubmission
-        && newLoadType != FrameLoadTypeReload
-        && newLoadType != FrameLoadTypeSame
-        && !shouldReload(URL, [bridge() URL])
-        // We don't want to just scroll if a link from within a
-        // frameset is trying to reload the frameset into _top.
-        && ![bridge() isFrameSet]) {
-
-        // Just do anchor navigation within the existing content.
-        
-        // We don't do this if we are submitting a form, explicitly reloading,
-        // currently displaying a frameset, or if the new URL does not have a fragment.
-        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
-        
-        // FIXME: What about load types other than Standard and Reload?
-        
-        [oldDocumentLoader setTriggeringAction:action];
-        invalidatePendingPolicyDecision(true);
-        checkNavigationPolicy(request, oldDocumentLoader, formState.release(),
-            asDelegate(), @selector(continueFragmentScrollAfterNavigationPolicy:formState:));
-    } else {
-        // must grab this now, since this load may stop the previous load and clear this flag
-        bool isRedirect = m_quickRedirectComing;
-        load(request, action, newLoadType, formState.release());
-        if (isRedirect) {
-            m_quickRedirectComing = false;
-            [m_provisionalDocumentLoader.get() setIsClientRedirect:YES];
-        } else if (sameURL)
-            // Example of this case are sites that reload the same URL with a different cookie
-            // driving the generated content, or a master frame with links that drive a target
-            // frame, where the user has clicked on the same link repeatedly.
-            m_loadType = FrameLoadTypeSame;
-    }
-    
-    [request release];
-    [oldDocumentLoader release];
 }
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(NSURLRequest *request)
@@ -772,11 +891,6 @@ bool FrameLoader::isStopping() const
     return [activeDocumentLoader() isStopping];
 }
 
-void FrameLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
-{
-    [activeDocumentLoader() setupForReplaceByMIMEType:newMIMEType];
-}
-
 void FrameLoader::setResponse(NSURLResponse *response)
 {
     [activeDocumentLoader() setResponse:response];
@@ -840,11 +954,6 @@ bool FrameLoader::willUseArchive(WebResourceLoader* loader, NSURLRequest *reques
 bool FrameLoader::isArchiveLoadPending(WebResourceLoader* loader) const
 {
     return [m_client _archiveLoadPendingForLoader:loader];
-}
-
-void FrameLoader::cancelPendingArchiveLoad(WebResourceLoader* loader)
-{
-    [m_client _cancelPendingArchiveLoadForLoader:loader];
 }
 
 void FrameLoader::handleUnimplementablePolicy(NSError *error)
@@ -930,45 +1039,6 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(NSURLRequest *request)
         compareDocumentLoader = m_provisionalDocumentLoader.get();
 
     return compareDocumentLoader && [unreachableURL isEqual:[[compareDocumentLoader request] URL]];
-}
-
-void FrameLoader::load(WebDocumentLoader *newDocumentLoader)
-{
-    invalidatePendingPolicyDecision(true);
-    setPolicyDocumentLoader(newDocumentLoader);
-
-    NSMutableURLRequest *r = [newDocumentLoader request];
-    addExtraFieldsToRequest(r, true, false);
-    FrameLoadType type;
-    if ([m_client _shouldTreatURLAsSameAsCurrent:[[newDocumentLoader originalRequest] URL]]) {
-        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-        type = FrameLoadTypeSame;
-    } else
-        type = FrameLoadTypeStandard;
-    
-    [newDocumentLoader setOverrideEncoding:[documentLoader() overrideEncoding]];
-    
-    // When we loading alternate content for an unreachable URL that we're
-    // visiting in the b/f list, we treat it as a reload so the b/f list 
-    // is appropriately maintained.
-    if (shouldReloadToHandleUnreachableURL([newDocumentLoader originalRequest])) {
-        ASSERT(type == FrameLoadTypeStandard);
-        type = FrameLoadTypeReload;
-    }
-
-    load(newDocumentLoader, type, 0);
-}
-
-void FrameLoader::load(NSURLRequest *request, NSDictionary *action, FrameLoadType type, PassRefPtr<FormState> formState)
-{
-    WebDocumentLoader *loader = [m_client _createDocumentLoaderWithRequest:request];
-    setPolicyDocumentLoader(loader);
-    [loader release];
-
-    [loader setTriggeringAction:action];
-    [loader setOverrideEncoding:[m_documentLoader.get() overrideEncoding]];
-
-    load(loader, type, formState);
 }
 
 void FrameLoader::reloadAllowingStaleData(NSString *encoding)
@@ -1070,17 +1140,6 @@ void FrameLoader::mainReceivedCompleteError(WebDocumentLoader *loader, NSError *
     [loader setPrimaryLoadComplete:YES];
     [m_client _dispatchDidLoadMainResourceForDocumentLoader:activeDocumentLoader()];
     checkLoadComplete();
-}
-
-void FrameLoader::finalSetupForReplace(WebDocumentLoader *loader)
-{
-    [m_client _clearUnarchivingStateForLoader:loader];
-}
-
-void FrameLoader::prepareForLoadStart()
-{
-    [m_client _progressStarted];
-    [m_client _dispatchDidStartProvisionalLoadForFrame];
 }
 
 bool FrameLoader::subframeIsLoading() const
@@ -1322,27 +1381,6 @@ void FrameLoader::continueLoadRequestAfterNavigationPolicy(NSURLRequest *request
         [decider release];
     } else
         continueAfterWillSubmitForm(WebPolicyUse);
-}
-
-void FrameLoader::load(WebDocumentLoader *loader, FrameLoadType type, PassRefPtr<FormState> formState)
-{
-    ASSERT([m_client _hasWebView]);
-
-    // Unfortunately the view must be non-nil, this is ultimately due
-    // to parser requiring a FrameView.  We should fix this dependency.
-
-    ASSERT([m_client _hasFrameView]);
-
-    m_policyLoadType = type;
-
-    if (Frame* parent = m_frame->tree()->parent())
-        [loader setOverrideEncoding:[[Mac(parent)->bridge() frameLoader]->documentLoader() overrideEncoding]];
-
-    invalidatePendingPolicyDecision(true);
-    setPolicyDocumentLoader(loader);
-
-    checkNavigationPolicy([loader request], loader, formState,
-        asDelegate(), @selector(continueLoadRequestAfterNavigationPolicy:formState:));
 }
 
 void FrameLoader::didFirstLayout()
@@ -1590,32 +1628,6 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
     return newRequest;
 }
 
-void FrameLoader::load(NSURLRequest *request)
-{
-    // FIXME: is this the right place to reset loadType? Perhaps this should be done after loading is finished or aborted.
-    m_loadType = FrameLoadTypeStandard;
-    WebDocumentLoader *dl = [m_client _createDocumentLoaderWithRequest:request];
-    load(dl);
-    [dl release];
-}
-
-void FrameLoader::load(NSURLRequest *request, NSString *frameName)
-{
-    if (!frameName) {
-        load(request);
-        return;
-    }
-
-    Frame* frame = m_frame->tree()->find(frameName);
-    if (frame) {
-        [Mac(frame)->bridge() frameLoader]->load(request);
-        return;
-    }
-
-    NSDictionary *action = actionInformation(NavigationTypeOther, nil, [request URL]);
-    checkNewWindowPolicy(request, action, frameName, 0);
-}
-
 void FrameLoader::post(NSURL *URL, NSString *referrer, NSString *target, NSArray *postData,
     NSString *contentType, NSEvent *event, DOMElement *form, NSDictionary *formValues)
 {
@@ -1698,18 +1710,6 @@ void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mai
     
     if (mainResource)
         [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
-}
-
-void FrameLoader::safeLoad(NSURL *URL)
-{
-    [bridge() loadURL:URL 
-             referrer:urlOriginalDataAsString([[m_documentLoader.get() request] URL])
-               reload:NO
-          userGesture:YES       
-               target:nil
-      triggeringEvent:[NSApp currentEvent]
-                 form:nil 
-           formValues:nil];
 }
 
 NSDictionary *FrameLoader::actionInformation(FrameLoadType type, bool isFormSubmission, NSEvent *event, NSURL *originalURL)

@@ -1,3 +1,31 @@
+2006-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Maciej.
+
+        Moved our plethora of load() and stopLoading() functions next to each other
+        to facilitate merging and laughter.
+
+        * loader/mac/WebFrameLoader.h:
+        * loader/mac/WebFrameLoader.mm:
+        (WebCore::cancelAll):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::setupForReplaceByMIMEType):
+        (WebCore::FrameLoader::finalSetupForReplace):
+        (WebCore::FrameLoader::safeLoad):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::stopLoadingPlugIns):
+        (WebCore::FrameLoader::stopLoadingSubresources):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::stopLoadingSubframes):
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::cancelPendingArchiveLoad):
+        (WebCore::FrameLoader::removeSubresourceLoader):
+        (WebCore::FrameLoader::mainResourceData):
+        (WebCore::FrameLoader::releaseMainResourceLoader):
+
 2006-10-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -56,26 +56,41 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
+        // FIXME: This is not cool, people.
+        void prepareForLoadStart();
+        void setupForReplace();
+        void setupForReplaceByMIMEType(NSString *newMIMEType);
+        void finalSetupForReplace(WebDocumentLoader *);
+        void safeLoad(NSURL *);
+        void load(NSURLRequest *);
+        void load(NSURLRequest *, NSString *frameName);
+        void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
+        void load(WebDocumentLoader *);
+        void load(WebDocumentLoader *, FrameLoadType, PassRefPtr<FormState>);
+        void load(NSURL *, NSString *referrer, FrameLoadType loadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *formValues);
+
+        // Also not cool.
+        void stopLoadingPlugIns();
+        void stopLoadingSubresources();
+        void stopLoading(NSError *);
+        void stopLoading();
+        void cancelMainResourceLoad();
+        void cancelPendingArchiveLoad(WebResourceLoader*);
+            
         void addPlugInStreamLoader(WebResourceLoader*);
         void removePlugInStreamLoader(WebResourceLoader*);
-        void stopLoadingPlugIns();
         bool isLoadingMainResource() const;
         bool isLoadingSubresources() const;
         bool isLoading() const;
-        void stopLoadingSubresources();
         void addSubresourceLoader(WebResourceLoader*);
         void removeSubresourceLoader(WebResourceLoader*);
         NSData *mainResourceData() const;
         void releaseMainResourceLoader();
-        void cancelMainResourceLoad();
-        void stopLoading(NSError *);
-        void stopLoading();
 
         WebDocumentLoader *activeDocumentLoader() const;
         WebDocumentLoader *documentLoader() const;
         WebDocumentLoader *provisionalDocumentLoader();
         WebFrameState state() const;
-        void setupForReplace();
         static double timeOfLastCompletedLoad();
 
         bool defersCallbacks() const;
@@ -97,7 +112,6 @@ namespace WebCore {
         void download(NSURLConnection *, NSURLRequest *request, NSURLResponse *, id proxy);
         void handleFallbackContent();
         bool isStopping() const;
-        void setupForReplaceByMIMEType(NSString *newMIMEType);
         void setResponse(NSURLResponse *);
 
         void finishedLoading();
@@ -107,7 +121,6 @@ namespace WebCore {
         NSError *fileDoesNotExistError(NSURLResponse *) const;
         bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *) const;
         bool isArchiveLoadPending(WebResourceLoader*) const;
-        void cancelPendingArchiveLoad(WebResourceLoader*);
         void cannotShowMIMEType(NSURLResponse *);
         NSError *interruptionForPolicyChangeError(NSURLRequest *);
         bool isHostedByObjectElement() const;
@@ -121,7 +134,6 @@ namespace WebCore {
         void cancelContentPolicyCheck();
         void reload();
         void reloadAllowingStaleData(NSString *overrideEncoding);
-        void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
 
         void didReceiveServerRedirectForProvisionalLoadForFrame();
         void finishedLoadingDocument(WebDocumentLoader *);
@@ -131,36 +143,27 @@ namespace WebCore {
         void revertToProvisional(WebDocumentLoader *);
         void setMainDocumentError(WebDocumentLoader *, NSError *);
         void mainReceivedCompleteError(WebDocumentLoader *, NSError *);
-        void finalSetupForReplace(WebDocumentLoader *);
-        void prepareForLoadStart();
         bool subframeIsLoading() const;
         void willChangeTitle(WebDocumentLoader *);
         void didChangeTitle(WebDocumentLoader *);
 
         FrameLoadType loadType() const;
 
-        void load(WebDocumentLoader *);
-        void load(WebDocumentLoader *, FrameLoadType, PassRefPtr<FormState>);
-
         void didFirstLayout();
         bool firstLayoutDone() const;
 
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
         void clientRedirected(NSURL *, double delay, NSDate *fireDate, bool lockHistory, bool isJavaScriptFormAction);
-        void load(NSURL *, NSString *referrer, FrameLoadType loadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *formValues);
         void commitProvisionalLoad(NSDictionary *pageCache);
         bool isQuickRedirectComing() const;
         bool shouldReload(NSURL *currentURL, NSURL *destinationURL);
 
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
-        void load(NSURLRequest *);
-        void load(NSURLRequest *, NSString *frameName);
         void post(NSURL *, NSString *referrer, NSString *target, NSArray *postData, NSString *contentType, NSEvent *, DOMElement *form, NSDictionary *formValues);
 
         void checkLoadComplete();
         void detachFromParent();
-        void safeLoad(NSURL *);
         void detachChildren();
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
         NSDictionary *actionInformation(NavigationType, NSEvent *, NSURL *);
@@ -177,13 +180,15 @@ namespace WebCore {
         void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, NSString *frameName, FormState*);
 
     private:
-        void setDefersCallbacks(bool);
+        // Also not cool.
+        void startLoading();
         bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
-        void clearProvisionalLoad();
         void stopLoadingSubframes();
+
+        void setDefersCallbacks(bool);
+        void clearProvisionalLoad();
         void markLoadComplete();
         void commitProvisionalLoad();
-        void startLoading();
         void provisionalLoadStarted();
         void frameLoadCompleted();
 
