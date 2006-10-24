@@ -1,3 +1,30 @@
+2006-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolling back in, now fixed:
+        
+        Nixed a few more redundant loading functions in Frame. Did my best to update
+        the non-Mac builds.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::urlSelected): Kept always 'true' argument for userGesture
+        always 'true', because changing it broke the world, and testing seems to
+        indicate that the one caller that might have passed 'false' didn't need to.
+        * page/Frame.cpp:
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::frameLoader):
+        (WebCore::Frame::redirectionTimerFired):
+        * page/Frame.h:
+        * platform/gdk/FrameGdk.cpp:
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::issueCopyCommand):
+        * platform/qt/FrameQt.cpp:
+        * platform/qt/FrameQt.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::FrameWin::shouldInterruptJavaScript):
+        (WebCore::FrameWin::issueCopyCommand):
+
 2006-10-24  Anders Carlsson  <acarlsson@apple.com>
 
         Fix the build (Update for changes to ResourceLoader)
