@@ -1,3 +1,13 @@
+2006-10-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=11334>
+        Writely Editor: Placing caret in a list "highlights" both Numbered List and Bulleted List toolbar icons
+
+        * editing/execCommand/queryCommandState-01-expected.txt: Added.
+        * editing/execCommand/queryCommandState-01.html: Added.
+
 2006-10-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

@@ -30,6 +30,8 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
+#include "Frame.h"
+
 namespace WebCore {
 
 class DeleteButtonController;
@@ -56,6 +58,9 @@ public:
 
     void respondToChangedSelection(const Selection& oldSelection);
     void respondToChangedContents();
+    
+    Frame::TriState selectionUnorderedListState() const;
+    Frame::TriState selectionOrderedListState() const;
 
     Frame* frame() const { return m_frame; }
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }

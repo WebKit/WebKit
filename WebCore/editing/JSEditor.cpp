@@ -30,6 +30,7 @@
 #include "CreateLinkCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Editor.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -572,9 +573,14 @@ Frame::TriState stateItalic(Frame* frame)
     return stateStyle(frame, CSS_PROP_FONT_STYLE, "italic");
 }
 
-Frame::TriState stateList(Frame* frame)
+Frame::TriState stateUnorderedList(Frame* frame)
 {
-    return frame->selectionListState();
+    return frame->editor()->selectionUnorderedListState();
+}
+
+Frame::TriState stateOrderedList(Frame* frame)
+{
+    return frame->editor()->selectionOrderedListState();
 }
 
 Frame::TriState stateStrikethrough(Frame* frame)
@@ -659,11 +665,11 @@ CommandMap* createCommandDictionary()
         { "InsertHTML", { execInsertHTML, enabledAnyEditableSelection, stateNone, valueNull } },
         { "InsertImage", { execInsertImage, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertLineBreak", { execInsertLineBreak, enabledAnyEditableSelection, stateNone, valueNull } },
-        { "InsertOrderedList", { execInsertOrderedList, enabledAnyRichlyEditableSelection, stateList, valueNull } },
+        { "InsertOrderedList", { execInsertOrderedList, enabledAnyRichlyEditableSelection, stateOrderedList, valueNull } },
         { "InsertParagraph", { execInsertParagraph, enabledAnyEditableSelection, stateNone, valueNull } },
         { "InsertNewlineInQuotedContent", { execInsertNewlineInQuotedContent, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertText", { execInsertText, enabledAnyEditableSelection, stateNone, valueNull } },
-        { "InsertUnorderedList", { execInsertUnorderedList, enabledAnyRichlyEditableSelection, stateList, valueNull } },
+        { "InsertUnorderedList", { execInsertUnorderedList, enabledAnyRichlyEditableSelection, stateUnorderedList, valueNull } },
         { "Italic", { execItalic, enabledAnyRichlyEditableSelection, stateItalic, valueNull } },
         { "JustifyCenter", { execJustifyCenter, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "JustifyFull", { execJustifyFull, enabledAnyRichlyEditableSelection, stateNone, valueNull } },

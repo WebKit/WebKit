@@ -2378,21 +2378,6 @@ static void updateState(CSSMutableStyleDeclaration *desiredStyle, CSSComputedSty
     }
 }
 
-Frame::TriState Frame::selectionListState() const
-{
-    TriState state = falseTriState;
-
-    if (!selectionController()->isRange()) {
-        Node* selectionNode = selectionController()->selection().start().node();
-        if (enclosingList(selectionNode))
-            return trueTriState;
-    } else {
-        //FIXME: Support ranges
-    }
-
-    return state;
-}
-
 Frame::TriState Frame::selectionHasStyle(CSSStyleDeclaration *style) const
 {
     bool atStart = true;

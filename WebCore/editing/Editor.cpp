@@ -28,12 +28,16 @@
 
 #include "DeleteButtonController.h"
 #include "EditorClient.h"
-#include "Frame.h"
+#include "htmlediting.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "Range.h"
+#include "SelectionController.h"
 #include "Sound.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 // implement as platform-specific
 static Pasteboard generalPasteboard()
@@ -160,6 +164,38 @@ void Editor::respondToChangedSelection(const Selection& oldSelection)
 void Editor::respondToChangedContents()
 {
     m_deleteButtonController->respondToChangedContents();
+}
+
+Frame::TriState Editor::selectionUnorderedListState() const
+{
+    if (m_frame->selectionController()->isCaret()) {
+        Node* selectionNode = m_frame->selectionController()->selection().start().node();
+        if (enclosingNodeWithTag(selectionNode, ulTag))
+            return Frame::trueTriState;
+    } else if (m_frame->selectionController()->isRange()) {
+        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start().node(), ulTag);
+        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end().node(), ulTag);
+        if (startNode && endNode && startNode == endNode)
+            return Frame::trueTriState;
+    }
+
+    return Frame::falseTriState;
+}
+
+Frame::TriState Editor::selectionOrderedListState() const
+{
+    if (m_frame->selectionController()->isCaret()) {
+        Node* selectionNode = m_frame->selectionController()->selection().start().node();
+        if (enclosingNodeWithTag(selectionNode, olTag))
+            return Frame::trueTriState;
+    } else if (m_frame->selectionController()->isRange()) {
+        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start().node(), olTag);
+        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end().node(), olTag);
+        if (startNode && endNode && startNode == endNode)
+            return Frame::trueTriState;
+    }
+
+    return Frame::falseTriState;
 }
 
 // =============================================================================
