@@ -182,7 +182,7 @@ static UString formatTime(const GregorianDateTime &t, bool utc)
     } else {
         int offset = abs(gmtoffset(t));
         char tzname[70];
-        struct ::tm gtm = t.toTM();
+        struct tm gtm = t;
         strftime(tzname, sizeof(tzname), "%Z", &gtm);
 
         if (tzname) {
@@ -480,19 +480,19 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     break;
 #else
   case ToLocaleString: {
-    struct tm gtm = t.toTM();
+    struct tm gtm = t;
     strftime(timebuffer, bufsize, "%c", &gtm);
     return jsString(timebuffer);
     break;
     }
   case ToLocaleDateString: {
-    struct tm gtm = t.toTM();
+    struct tm gtm = t;
     strftime(timebuffer, bufsize, "%x", &gtm);
     return jsString(timebuffer);
     break;
     }
   case ToLocaleTimeString: {
-    struct tm gtm = t.toTM();
+    struct tm gtm = t;
     strftime(timebuffer, bufsize, "%X", &gtm);
     return jsString(timebuffer);
     break;

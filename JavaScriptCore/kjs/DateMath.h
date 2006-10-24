@@ -67,6 +67,7 @@ struct GregorianDateTime;
 void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
 double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset();
+int equivalentYearForDST(int year);
 
 // Intentionally overridding the default tm of the system
 // Not all OS' have the same members of their tm's
@@ -115,7 +116,7 @@ struct GregorianDateTime {
 #endif
     }
 
-    tm toTM() const
+    operator tm() const
     {
         tm ret;
         memset(&ret, 0, sizeof(ret));

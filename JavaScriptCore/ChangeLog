@@ -2,7 +2,21 @@
 
         Reviewed by Maciej.
 
-       - Fixes two regressions on win.  Both are stack overflows. For one the number of regressions is capped at 100, and for the other, nested parenthesis pairs are not evaluated (since they would evaluate to whatever is in them anyway).
+        - Makes the toTM function an operator.  Was going to piggy back on a patch but the patch needs more work.
+
+        * kjs/DateMath.cpp:
+        (KJS::equivalentYearForDST):
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::operator tm):
+        * kjs/date_object.cpp:
+        (KJS::formatTime):
+        (KJS::DateProtoFunc::callAsFunction):
+
+2006-10-23  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Maciej.
+
+       - Fixes two regressions on win.  Both are stack overflows. For one the number of recursions is capped at 100, and for the other, nested parenthesis pairs are not evaluated (since they would evaluate to whatever is in them anyway).
 
         * kjs/grammar.y:
         * kjs/object.cpp:

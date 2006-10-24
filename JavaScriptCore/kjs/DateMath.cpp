@@ -296,7 +296,7 @@ static int dateToDayInYear(int year, int month, int day)
  * for determining DST; it hasn't been proven not to produce an
  * incorrect year for times near year boundaries.
  */
-static inline int equivalentYearForDST(int year)
+inline int equivalentYearForDST(int year)
 {
     int day;
 
