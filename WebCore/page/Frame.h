@@ -112,7 +112,6 @@ public:
   virtual bool openURL(const KURL&);
   virtual void openURLRequest(const FrameLoadRequest&) = 0;
   void changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-  virtual void urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent);
   virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
   virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
   

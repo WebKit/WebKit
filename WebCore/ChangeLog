@@ -1,3 +1,30 @@
+2006-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Removed one of Frame's redundant urlSelected methods.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::urlSelected):
+        since it's unused.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Changed DeprecatedString
+        to String because the former is deprecated and its performance is irrelevant
+        here. Added call to completeURL because Frame no longer does it for us.
+        Having the call here also improves clarity about the element's behavior.
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): ditto. Also removed bizarre
+        irrelevent NULL checks on ownerDocument() because I couldn't help myself.
+        * page/Frame.cpp:
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::urlSelected):
+        * page/Frame.h:
+        * platform/network/ResourceRequest.h: Removed explicit keyword on constructor
+        because we want to be able to use these constructors instead of helper functions
+        mimicking their behavior sprinkled across different classes.
+        (WebCore::ResourceRequest::ResourceRequest):
+
 2006-10-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

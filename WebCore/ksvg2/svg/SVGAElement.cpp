@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "MouseEvent.h"
 #include "MouseEvent.h"
+#include "ResourceRequest.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "csshelper.h"
@@ -85,24 +86,20 @@ void SVGAElement::defaultEventHandler(Event *evt)
     if ((evt->type() == EventNames::mouseupEvent && m_isLink)) {
         MouseEvent *e = static_cast<MouseEvent*>(evt);
 
-        DeprecatedString url;
-        DeprecatedString utarget;
         if (e && e->button() == 2) {
             SVGStyledTransformableElement::defaultEventHandler(evt);
             return;
         }
-        url = parseURL(href()).deprecatedString();
-        utarget = getAttribute(SVGNames::targetAttr).deprecatedString();
 
+        String url = parseURL(href());
+
+        String target = getAttribute(SVGNames::targetAttr);
         if (e && e->button() == 1)
-            utarget = "_blank";
+            target = "_blank";
 
-        if (!evt->defaultPrevented()) {
-            if (ownerDocument() && ownerDocument()->view() && ownerDocument()->frame()) {
-                //document()->view()->resetCursor();
-                document()->frame()->urlSelected(url, utarget, evt);
-            }
-        }
+        if (!evt->defaultPrevented())
+            if (document() && document()->frame())
+                document()->frame()->urlSelected(document()->completeURL(url), target, evt);
 
         evt->setDefaultHandled();
     }

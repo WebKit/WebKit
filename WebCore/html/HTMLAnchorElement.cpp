@@ -36,6 +36,7 @@
 #include "MutationEvent.h"
 #include "RenderFlow.h"
 #include "RenderImage.h"
+#include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "UIEvent.h"
@@ -177,11 +178,11 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
             }
         }
 
-        DeprecatedString url = parseURL(getAttribute(hrefAttr)).deprecatedString();
-        String utarget = getAttribute(targetAttr);
+        String url = parseURL(getAttribute(hrefAttr));
 
+        String target = getAttribute(targetAttr);
         if (e && e->button() == 1)
-            utarget = "_blank";
+            target = "_blank";
 
         if (evt->target()->hasTagName(imgTag)) {
             HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target());
@@ -205,7 +206,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
         }
 
         if (!evt->defaultPrevented() && document()->frame())
-            document()->frame()->urlSelected(url, utarget, evt);
+            document()->frame()->urlSelected(document()->completeURL(url), target, evt);
 
         evt->setDefaultHandled();
     } else if (m_isLink && isContentEditable()) {

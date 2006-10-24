@@ -45,7 +45,15 @@ namespace WebCore {
 
     struct ResourceRequest {
 
-        explicit ResourceRequest(const KURL& url) 
+        ResourceRequest(const String& url) 
+            : m_url(url.deprecatedString())
+            , m_cachePolicy(UseProtocolCachePolicy)
+            , m_timeoutInterval(defaultTimeoutInterval)
+            , m_allowHTTPCookies(true)
+        {
+        }
+
+        ResourceRequest(const KURL& url) 
             : m_url(url)
             , m_cachePolicy(UseProtocolCachePolicy)
             , m_timeoutInterval(defaultTimeoutInterval)

@@ -285,8 +285,6 @@ void FrameMac::openURLRequest(const FrameLoadRequest& request)
 
 void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
-    // FIXME: triggeringEvent is passed in but we ignore it.
-
     FrameLoadRequest copy = request;
     if (copy.m_request.httpReferrer().isEmpty())
         copy.m_request.setHTTPReferrer(referrer());
