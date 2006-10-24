@@ -49,6 +49,7 @@ namespace WebCore {
             : m_url(url.deprecatedString())
             , m_cachePolicy(UseProtocolCachePolicy)
             , m_timeoutInterval(defaultTimeoutInterval)
+            , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
         {
         }
