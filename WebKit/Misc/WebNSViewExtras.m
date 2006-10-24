@@ -75,6 +75,12 @@
     return (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
 }
 
+// FIXME: Mail is the only client of _webView, remove this method once no versions of Mail need it.
+- (WebView *)_webView
+{
+    return (WebView *)[self _web_superviewOfClass:[WebView class]];
+}
+
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
 - (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
                            withExpiration:(NSDate *)expiration
