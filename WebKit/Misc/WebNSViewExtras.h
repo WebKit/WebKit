@@ -32,6 +32,7 @@
 
 @class DOMElement;
 @class WebFrameView;
+@class WebView;
 
 @interface NSView (WebExtras)
 
