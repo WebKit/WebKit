@@ -162,6 +162,7 @@ FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> c
     , _windowScriptNPObject(0)
 {
     d->m_extension = new BrowserExtensionMac(this);
+    d->m_frameLoader = new FrameLoader(this);
 }
 
 FrameMac::~FrameMac()
@@ -171,6 +172,8 @@ FrameMac::~FrameMac()
     clearRecordedFormValues();    
     
     [_bridge clearFrame];
+    delete d->m_frameLoader;
+    d->m_frameLoader = 0;
     HardRelease(_bridge);
     _bridge = nil;
 
@@ -208,10 +211,10 @@ void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NS
         else
             loadType = FrameLoadTypeStandard;    
     
-        [_bridge frameLoader]->load(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), loadType, 
+        d->m_frameLoader->load(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), loadType, 
             (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), triggeringEvent, submitForm, formValues);
     } else
-        [_bridge frameLoader]->post(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
+        d->m_frameLoader->post(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
             arrayFromFormData(request.m_request.httpBody()), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
 
     if (targetFrame != nil && _bridge != targetFrame) {

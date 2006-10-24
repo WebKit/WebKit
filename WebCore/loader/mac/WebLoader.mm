@@ -159,7 +159,7 @@ FrameLoader* WebResourceLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
-    return [Mac(m_frame.get())->bridge() frameLoader];
+    return m_frame->frameLoader();
 }
 
 void WebResourceLoader::addData(NSData *data, bool allAtOnce)

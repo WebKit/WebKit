@@ -50,7 +50,6 @@ namespace WebCore {
 
     class Decoder;
     class UserStyleSheetLoader;
-    class IconLoader;
 
     enum RedirectionScheduled {
         noRedirectionScheduled,
@@ -103,6 +102,7 @@ namespace WebCore {
             , m_executingJavaScriptFormAction(false)
             , m_cancelWithLoadInProgress(false)
             , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
+            , m_frameLoader(0)
             , m_userStyleSheetLoader(0)
             , m_iconLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
@@ -225,6 +225,7 @@ namespace WebCore {
 
         Timer<Frame> m_lifeSupportTimer;
 
+        FrameLoader* m_frameLoader;
         UserStyleSheetLoader* m_userStyleSheetLoader;
         IconLoader* m_iconLoader;
         

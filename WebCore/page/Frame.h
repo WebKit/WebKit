@@ -67,6 +67,7 @@ class EditorClient;
 class FormData;
 class FramePrivate;
 class FrameLoadRequest;
+class FrameLoader;
 class FrameTree;
 class KJSProxy;
 class Page;
@@ -114,6 +115,8 @@ public:
   virtual void urlSelected(const DeprecatedString& url, const String& target, const Event* triggeringEvent);
   virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
   virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
+  
+  FrameLoader* frameLoader();
 
   bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
   virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;

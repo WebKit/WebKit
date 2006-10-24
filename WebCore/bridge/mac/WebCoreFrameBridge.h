@@ -189,7 +189,6 @@ typedef enum {
 @interface WebCoreFrameBridge : NSObject
 {
     WebCoreFrameMac* m_frame;
-    WebCoreFrameLoader* m_frameLoader;
 
     BOOL _shouldCreateRenderers;
     BOOL _closed;

@@ -1,3 +1,73 @@
+2006-10-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Moved FrameLoader from WebCoreFrameBridge to Frame.  Frame.h/cpp have generic accessors to the FrameLoader itself
+        and creation/deletion is currently managed in FrameMac.mm
+
+        Besides explicitly commented-upon methods, most of the touched code simply changes to get the FrameLoader from the 
+        frame instead of the bridge.
+
+        The method [WebCoreFrameBridge frameLoader] remains but only for WebKit's use - No new WebCore code should make 
+        use of it as its days are numbered!
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac): Create the FrameLoader
+        (WebCore::FrameMac::~FrameMac): Nuke it
+        (WebCore::FrameMac::loadRequest):
+
+        * bridge/mac/WebCoreFrameBridge.h: No longer holds an m_frameLoader
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initMainFrameWithPage:withEditorClient:]): No longer creates the FrameLoader
+        (-[WebCoreFrameBridge initSubframeWithOwnerElement:withEditorClient:]): Ditto
+        (-[WebCoreFrameBridge clearFrame]): No longer tears down the FrameLoader
+        (-[WebCoreFrameBridge setFrameLoaderClient:]):
+        (-[WebCoreFrameBridge frameLoader]):
+        (-[WebCoreFrameBridge setTitle:]):
+        (-[WebCoreFrameBridge didFirstLayout]):
+        (-[WebCoreFrameBridge notifyIconChanged:]):
+        (-[WebCoreFrameBridge originalRequestURL]):
+        (-[WebCoreFrameBridge isLoadTypeReload]):
+        (-[WebCoreFrameBridge frameDetached]):
+        (-[WebCoreFrameBridge tokenizerProcessedData]):
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        (-[WebCoreFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebCoreFrameBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebCoreFrameBridge reportClientRedirectCancelled:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebCoreFrameBridge incomingReferrer]):
+        (-[WebCoreFrameBridge isReloading]):
+        (-[WebCoreFrameBridge handledOnloadEvents]):
+        (-[WebCoreFrameBridge mainResourceURLResponse]):
+        (-[WebCoreFrameBridge loadEmptyDocumentSynchronously]):
+
+        * loader/mac/WebDocumentLoader.mm:
+        (WebCore::DocumentLoader::frameLoader):
+
+        * loader/mac/WebFrameLoader.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::stopLoadingSubframes):
+        (WebCore::FrameLoader::defersCallbacksChanged):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::closeOldDataSources):
+        (WebCore::FrameLoader::subframeIsLoading):
+        (WebCore::FrameLoader::continueLoadRequestAfterNewWindowPolicy):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::detachChildren):
+        (WebCore::FrameLoader::checkLoadComplete):
+
+        * loader/mac/WebLoader.mm:
+        (WebCore::WebResourceLoader::frameLoader):
+
+        * loader/mac/WebSubresourceLoader.mm:
+        (-[WebCoreSubresourceHandle initWithLoader:]):
+
+        * page/Frame.cpp:
+        (WebCore::Frame::frameLoader):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+
 2006-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

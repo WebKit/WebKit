@@ -61,7 +61,7 @@ FrameLoader* DocumentLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
-    return [Mac(m_frame)->bridge() frameLoader];
+    return m_frame->frameLoader();
 }
 
 DocumentLoader::~DocumentLoader()

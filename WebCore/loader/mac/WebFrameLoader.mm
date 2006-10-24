@@ -170,7 +170,7 @@ void FrameLoader::load(NSURLRequest *request, NSString *frameName)
 
     Frame* frame = m_frame->tree()->find(frameName);
     if (frame) {
-        [Mac(frame)->bridge() frameLoader]->load(request);
+        frame->frameLoader()->load(request);
         return;
     }
 
@@ -210,7 +210,7 @@ void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType
     if (target) {
         Frame* targetFrame = m_frame->tree()->find(target);
         if (targetFrame)
-            [Mac(targetFrame)->bridge() frameLoader]->load(URL, referrer, newLoadType, nil, event, form, values);
+            targetFrame->frameLoader()->load(URL, referrer, newLoadType, nil, event, form, values);
         else
             checkNewWindowPolicy(request, action, target, formState.release());
         [request release];
@@ -302,7 +302,7 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
     m_policyLoadType = type;
 
     if (Frame* parent = m_frame->tree()->parent())
-        loader->setOverrideEncoding([Mac(parent)->bridge() frameLoader]->documentLoader()->overrideEncoding());
+        loader->setOverrideEncoding(parent->frameLoader()->documentLoader()->overrideEncoding());
 
     invalidatePendingPolicyDecision(true);
     setPolicyDocumentLoader(loader);
@@ -362,7 +362,7 @@ void FrameLoader::stopLoading(NSError *error)
 void FrameLoader::stopLoadingSubframes()
 {
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        [Mac(child)->bridge() frameLoader]->stopLoading();
+        child->frameLoader()->stopLoading();
 }
 
 void FrameLoader::stopLoading()
@@ -420,7 +420,7 @@ void FrameLoader::defersCallbacksChanged()
 {
     bool defers = defersCallbacks();
     for (Frame* child = m_frame; child; child = child->tree()->traverseNext(m_frame))
-        [Mac(child)->bridge() frameLoader]->setDefersCallbacks(defers);
+        child->frameLoader()->setDefersCallbacks(defers);
 }
 
 bool FrameLoader::defersCallbacks() const
@@ -775,7 +775,7 @@ void FrameLoader::closeOldDataSources()
     // If so, add helpers for postorder traversal, and use them. If not, then lets not
     // use a recursive algorithm here.
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        [Mac(child)->bridge() frameLoader]->closeOldDataSources();
+        child->frameLoader()->closeOldDataSources();
     
     if (m_documentLoader)
         [m_client _dispatchWillCloseFrame];
@@ -1142,7 +1142,7 @@ bool FrameLoader::subframeIsLoading() const
 {
     // It's most likely that the last added frame is the last to load so we walk backwards.
     for (Frame* child = m_frame->tree()->lastChild(); child; child = child->tree()->previousSibling()) {
-        FrameLoader* childLoader = [Mac(child)->bridge() frameLoader];
+        FrameLoader* childLoader = child->frameLoader();
         DocumentLoader* documentLoader = childLoader->documentLoader();
         if (documentLoader && documentLoader->isLoadingInAPISense())
             return true;
@@ -1586,9 +1586,9 @@ void FrameLoader::continueLoadRequestAfterNewWindowPolicy(NSURLRequest *request,
     [mainBridge retain];
 
     [mainBridge setName:frameName];
-    [[mainBridge frameLoader]->client() _dispatchShow];
+    [[mainBridge impl]->frameLoader()->client() _dispatchShow];
     [mainBridge impl]->setOpener(frame.get());
-    [mainBridge frameLoader]->load(request, nil, FrameLoadTypeStandard, formState);
+    [mainBridge impl]->frameLoader()->load(request, nil, FrameLoadTypeStandard, formState);
 
     [mainBridge release];
 }
@@ -1648,7 +1648,7 @@ void FrameLoader::post(NSURL *URL, NSString *referrer, NSString *target, NSArray
     if (target != nil) {
         Frame* targetFrame = m_frame->tree()->find(target);
         if (targetFrame)
-            [Mac(targetFrame)->bridge() frameLoader]->load(request, action, FrameLoadTypeStandard, formState.release());
+            targetFrame->frameLoader()->load(request, action, FrameLoadTypeStandard, formState.release());
         else
             checkNewWindowPolicy(request, action, target, formState.release());
     } else
@@ -1663,7 +1663,7 @@ void FrameLoader::detachChildren()
     Frame* previous;
     for (Frame* child = m_frame->tree()->lastChild(); child; child = previous) {
         previous = child->tree()->previousSibling();
-        [Mac(child)->bridge() frameLoader]->detachFromParent();
+        child->frameLoader()->detachFromParent();
     }
 }
 
@@ -1752,7 +1752,7 @@ void FrameLoader::checkLoadComplete()
     ASSERT([m_client _hasWebView]);
 
     for (RefPtr<Frame> frame = m_frame; frame; frame = frame->tree()->parent())
-        [Mac(frame.get())->bridge() frameLoader]->checkLoadCompleteForThisFrame();
+        frame->frameLoader()->checkLoadCompleteForThisFrame();
 }
 
 void FrameLoader::setFrameLoaderClient(id <WebFrameLoaderClient> client)

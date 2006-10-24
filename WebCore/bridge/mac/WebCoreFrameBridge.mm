@@ -484,7 +484,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return nil;
 
     m_frame = new FrameMac([page impl], 0, client);
-    m_frameLoader = new FrameLoader(m_frame);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -504,7 +503,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return nil;
     
     m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement, client);
-    m_frameLoader = new FrameLoader(m_frame);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -749,8 +747,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)clearFrame
 {
     m_frame = 0;
-    delete m_frameLoader;
-    m_frameLoader = 0;
 }
 
 - (void)handleFallbackContent
@@ -2613,12 +2609,16 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)client
 {
-    m_frameLoader->setFrameLoaderClient(client);
+    if (!m_frame)
+        return;
+    m_frame->frameLoader()->setFrameLoaderClient(client);
 }
 
-- (FrameLoader *)frameLoader
+- (WebCoreFrameLoader *)frameLoader
 {
-    return m_frameLoader;
+    if (!m_frame)
+        return 0;
+    return m_frame->frameLoader();
 }
 
 static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
@@ -2669,48 +2669,48 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 {
     if (!m_frame)
         return;
-    m_frameLoader->documentLoader()->setTitle(stringByCollapsingNonPrintingCharacters(title));
+    m_frame->frameLoader()->documentLoader()->setTitle(stringByCollapsingNonPrintingCharacters(title));
 }
 
 - (void)didFirstLayout
 {
     if (!m_frame)
         return;
-    m_frameLoader->didFirstLayout();
+    m_frame->frameLoader()->didFirstLayout();
 }
 
 - (void)notifyIconChanged:(NSURL*)iconURL
 {
     if (!m_frame)
         return;
-    m_frameLoader->notifyIconChanged(iconURL);
+    m_frame->frameLoader()->notifyIconChanged(iconURL);
 }
 
 - (NSURL*)originalRequestURL
 {
-    return [m_frameLoader->activeDocumentLoader()->initialRequest() URL];
+    return [m_frame->frameLoader()->activeDocumentLoader()->initialRequest() URL];
 }
 
 - (BOOL)isLoadTypeReload
 {
-    return m_frameLoader->loadType() == FrameLoadTypeReload;
+    return m_frame->frameLoader()->loadType() == FrameLoadTypeReload;
 }
 
 - (void)frameDetached
 {
-    m_frameLoader->stopLoading();
-    m_frameLoader->detachFromParent();
+    m_frame->frameLoader()->stopLoading();
+    m_frame->frameLoader()->detachFromParent();
 }
 
 - (void)tokenizerProcessedData
 {
-    m_frameLoader->checkLoadComplete();
+    m_frame->frameLoader()->checkLoadComplete();
 }
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = m_frameLoader->documentLoader()->overrideEncoding();
+    NSString *encoding = m_frame ? m_frame->frameLoader()->documentLoader()->overrideEncoding() : nil;
     bool userChosen = encoding != nil;
     if (!encoding)
         encoding = textEncodingName;
@@ -2736,12 +2736,15 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
+    if (!m_frame)
+        return;
+        
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     NSError *error;
     id identifier;
-    m_frameLoader->requestFromDelegate(request, identifier, error);    
-    m_frameLoader->sendRemainingDelegateMessages(identifier, response, [data length], error);
+    m_frame->frameLoader()->requestFromDelegate(request, identifier, error);    
+    m_frame->frameLoader()->sendRemainingDelegateMessages(identifier, response, [data length], error);
     [request release];
 }
 
@@ -2763,13 +2766,13 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
-{
-    m_frameLoader->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
+{   
+    m_frame->frameLoader()->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
 }
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    m_frameLoader->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
+    m_frame->frameLoader()->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
 }
 
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
@@ -2798,17 +2801,18 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     if (isConditionalRequest(request))
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [request setCachePolicy:[m_frameLoader->documentLoader()->request() cachePolicy]];
+        [request setCachePolicy:[m_frame->frameLoader()->documentLoader()->request() cachePolicy]];
+    
     if (!hideReferrer)
         setHTTPReferrer(request, [self referrer]);
     
     WebCorePageBridge *page = [self page];
-    [request setMainDocumentURL:[[[page mainFrame] frameLoader]->documentLoader()->request() URL]];
+    [request setMainDocumentURL:[[[page mainFrame] impl]->frameLoader()->documentLoader()->request() URL]];
     [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     NSError *error = nil;
     id identifier = nil;    
-    NSURLRequest *newRequest = m_frameLoader->requestFromDelegate(request, identifier, error);
+    NSURLRequest *newRequest = m_frame->frameLoader()->requestFromDelegate(request, identifier, error);
     
     NSURLResponse *response = nil;
     NSData *result = nil;
@@ -2837,7 +2841,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
         }
     }
     
-    m_frameLoader->sendRemainingDelegateMessages(identifier, response, [result length], error);
+    m_frame->frameLoader()->sendRemainingDelegateMessages(identifier, response, [result length], error);
     [request release];
     
     return result;
@@ -2846,29 +2850,32 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (NSString *)incomingReferrer
 {
-    return [m_frameLoader->documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
+    return [m_frame->frameLoader()->documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
 }
 
 - (BOOL)isReloading
 {
-    return [m_frameLoader->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+    return [m_frame->frameLoader()->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
 - (void)handledOnloadEvents
 {
-    [m_frameLoader->client() _dispatchDidHandleOnloadEventsForFrame];
+    [m_frame->frameLoader()->client() _dispatchDidHandleOnloadEventsForFrame];
 }
 
 - (NSURLResponse *)mainResourceURLResponse
 {
-    return m_frameLoader->documentLoader()->response();
+    return m_frame->frameLoader()->documentLoader()->response();
 }
 
 - (void)loadEmptyDocumentSynchronously
 {
+    if (!m_frame)
+        return;
+        
     NSURL *url = [[NSURL alloc] initWithString:@""];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    m_frameLoader->load(request);
+    m_frame->frameLoader()->load(request);
     [request release];
     [url release];
 }
