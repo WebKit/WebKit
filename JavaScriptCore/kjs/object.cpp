@@ -34,7 +34,7 @@
 
 // maximum global call stack size. Protects against accidental or
 // malicious infinite recursions. Define to -1 if you want no limit.
-#if PLATFORM(DARWIN)
+#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
 // Given OS X stack sizes we run out of stack at about 350 levels.
 // If we improve our stack usage, we can bump this number.
 #define KJS_MAX_STACK 100

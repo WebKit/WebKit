@@ -239,7 +239,8 @@ PrimaryExprNoBrace:
   | Literal
   | ArrayLiteral
   | IDENT                               { $$ = new ResolveNode(*$1); }
-  | '(' Expr ')'                        { $$ = $2->isResolveNode() ? $2 : new GroupNode($2); }
+  | '(' Expr ')'                        { $$ = $2->isResolveNode() || $$ = $2->isGroupNode() ?
+                                            $2 : new GroupNode($2); }
 ;
 
 ArrayLiteral:

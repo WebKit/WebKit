@@ -1,3 +1,12 @@
+2006-10-23  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Maciej.
+
+       - Fixes two regressions on win.  Both are stack overflows. For one the number of regressions is capped at 100, and for the other, nested parenthesis pairs are not evaluated (since they would evaluate to whatever is in them anyway).
+
+        * kjs/grammar.y:
+        * kjs/object.cpp:
+
 2006-10-21  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
