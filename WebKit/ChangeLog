@@ -1,3 +1,15 @@
+2006-10-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        http://bugs.webkit.org/show_bug.cgi?id=11406 - Crash in [WebFrame dataSource]
+        In the transition to ObjC++ we lost alot of our free nil checking that we must now do manually
+        to prevent null dereferencing.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+
 2006-10-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

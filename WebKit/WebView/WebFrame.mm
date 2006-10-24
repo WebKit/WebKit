@@ -1175,12 +1175,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebDataSource *)provisionalDataSource
 {
-    return dataSource([self _frameLoader]->provisionalDocumentLoader());
+    WebCoreFrameLoader* frameLoader = [self _frameLoader];
+    return frameLoader ? dataSource(frameLoader->provisionalDocumentLoader()) : nil;
 }
 
 - (WebDataSource *)dataSource
 {
-    return dataSource([self _frameLoader]->documentLoader());
+    WebCoreFrameLoader* frameLoader = [self _frameLoader];
+    return frameLoader ? dataSource(frameLoader->documentLoader()) : nil;
 }
 
 - (void)loadRequest:(NSURLRequest *)request
