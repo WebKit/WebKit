@@ -275,6 +275,7 @@
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EDD6132C0AED9990000B75CA /* WebViewEditingContextMenuOld.nib in Resources */ = {isa = PBXBuildFile; fileRef = EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -488,6 +489,7 @@
 		ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		EDD6132B0AED9990000B75CA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebViewEditingContextMenuOld.nib; sourceTree = "<group>"; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F508946902B71D59018A9CD4 /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSViewExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSViewExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -635,6 +637,7 @@
 				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
 				9345D4E70365C58D008635CE /* WebJavaScriptTextInputPanel.nib */,
 				8476113206EF82DB00AB2914 /* WebViewEditingContextMenu.nib */,
+				EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */,
 				9325FBDC07D829AE00159862 /* IDNScriptWhiteList.txt */,
 			);
 			name = Resources;
@@ -1216,6 +1219,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1230,6 +1234,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1249,6 +1254,7 @@
 				939810B90824BF01008DF038 /* WebViewEditingContextMenu.nib in Resources */,
 				939810BA0824BF01008DF038 /* IDNScriptWhiteList.txt in Resources */,
 				1C68F667095B5FC100C2984E /* webInspector in Resources */,
+				EDD6132C0AED9990000B75CA /* WebViewEditingContextMenuOld.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1451,6 +1457,14 @@
 				9345D4E80365C58D008635CE /* English */,
 			);
 			name = WebJavaScriptTextInputPanel.nib;
+			sourceTree = "<group>";
+		};
+		EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EDD6132B0AED9990000B75CA /* English */,
+			);
+			name = WebViewEditingContextMenuOld.nib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

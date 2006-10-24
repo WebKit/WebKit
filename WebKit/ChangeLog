@@ -1,3 +1,67 @@
+2006-10-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Initial plumbing for grammar checking. No actual grammar are checked at this time.
+
+        * English.lproj/WebViewEditingContextMenu.nib/classes.nib:
+        * English.lproj/WebViewEditingContextMenu.nib/info.nib:
+        * English.lproj/WebViewEditingContextMenu.nib/objects.nib:
+        Added grammar-checking item, reworded to match changes in framework. This will be used
+        post-Tiger.
+
+        * English.lproj/WebViewEditingContextMenuOld.nib/classes.nib: Added.
+        * English.lproj/WebViewEditingContextMenuOld.nib/info.nib: Added.
+        * English.lproj/WebViewEditingContextMenuOld.nib/objects.nib: Added.
+        Copy of WebViewEditingContextMenu.nib, unchanged. This will be used on Tiger.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        Choose the right context menu based on BUILDING_ON_TIGER.
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        declare grammar-related NSUserDefault value
+
+        * WebView/WebViewPrivate.h:
+        declare grammar-related methods
+
+        * WebView/WebView.mm:
+        declare static BOOL grammarCheckingEnabled
+        (-[WebViewPrivate init]):
+        initialize grammarCheckingEnabled to NSUserDefaults value
+        (-[WebView validateUserInterfaceItem:]):
+        validate toggleGrammarChecking: menu item
+        (-[WebView isGrammarCheckingEnabled]):
+        return value of grammarCheckingEnabled
+        (-[WebView setGrammarCheckingEnabled:]):
+        set value of grammarCheckingEnabled, call frame to remove existing bad grammar markers
+        (-[WebView toggleGrammarChecking:]):
+        flip the value
+        
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _unmarkAllBadGrammar]):
+        new placeholder method, does nothing yet
+        
+        * WebView/WebHTMLViewInternal.h:
+        declare grammar-related methods
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
+        validate toggleGrammarChecking: menu item
+        (-[WebHTMLView isGrammarCheckingEnabled]):
+        new method, calls through to WebView
+        (-[WebHTMLView setGrammarCheckingEnabled:]):
+        ditto
+        (-[WebHTMLView toggleGrammarChecking:]):
+        ditto
+                
+        * English.lproj/StringsNotToBeLocalized.txt:
+        Updated for these changes
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        updated for new files        
+
 2006-10-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

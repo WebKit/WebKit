@@ -2250,6 +2250,18 @@ static WebHTMLView *lastHitView = nil;
         return [self _canEditRichly];
     } else if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
+#if !BUILDING_ON_TIGER
+    } else if (action == @selector(toggleGrammarChecking:)) {
+        // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 
+        // the selector here because we implement it here, and we must implement it here because the AppKit 
+        // code checks the first responder.
+        BOOL checkMark = [self isGrammarCheckingEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+#endif
     }
     
     return YES;
@@ -5074,6 +5086,31 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return;
     [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
 }
+
+#if !BUILDING_ON_TIGER
+
+- (BOOL)isGrammarCheckingEnabled
+{
+    // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must implement the method here because
+    // the AppKit code checks the first responder.
+    return [[self _webView] isGrammarCheckingEnabled];
+}
+
+- (void)setGrammarCheckingEnabled:(BOOL)flag
+{
+    // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must implement the method here because
+    // the AppKit code checks the first responder.
+    [[self _webView] setGrammarCheckingEnabled:flag];
+}
+
+- (void)toggleGrammarChecking:(id)sender
+{
+    // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must implement the method here because
+    // the AppKit code checks the first responder.
+    [[self _webView] toggleGrammarChecking:sender];
+}
+
+#endif /* !BUILDING_ON_TIGER */
 
 @end
 

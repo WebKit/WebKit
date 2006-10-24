@@ -309,14 +309,20 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     // Load our NSTextView-like context menu nib.
     if (defaultMenu == nil) {
         static NSNib *textViewMenuNib = nil;
-        if (textViewMenuNib == nil) {
-            textViewMenuNib = [[NSNib alloc] initWithNibNamed:@"WebViewEditingContextMenu" bundle:[NSBundle bundleForClass:[self class]]];
+        if (!textViewMenuNib) {
+#if BUILDING_ON_TIGER
+            NSString *contextMenuNibName = @"WebViewEditingContextMenuOld";
+#else
+            NSString *contextMenuNibName = @"WebViewEditingContextMenu";
+#endif
+            textViewMenuNib = [[NSNib alloc] initWithNibNamed:contextMenuNibName bundle:[NSBundle bundleForClass:[self class]]];
         }
         [textViewMenuNib instantiateNibWithOwner:self topLevelObjects:nil];
         ASSERT(defaultMenu != nil);
     }
     
     // Add tags to the menu items because this is what the WebUIDelegate expects.
+    // Also remove any future-looking items if appropriate.
     NSEnumerator *enumerator = [[defaultMenu itemArray] objectEnumerator];
     while ((item = [enumerator nextObject]) != nil) {
         item = [item copy];
@@ -331,12 +337,14 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             tag = WebMenuItemTagPaste;
         } else {
             // FIXME 4158153: we should supply tags for each known item so clients can make
-            // sensible decisions, like we do with PDF context menu items (see WebPDFView.mm)
+            // sensible decisions, like we do with PDF context menu items (see WebPDFView.mm).
+            // FIXME: This ignores the contents of submenus entirely.
 
             // Once we have other tag names, we should reconsider if any of them are valid for password fields.
             tag = WebMenuItemTagOther;
             validForPassword = false;
         }
+        
         if (!inPasswordField || validForPassword) {
             [item setTag:tag];
             [menuItems addObject:item];

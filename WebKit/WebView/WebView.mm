@@ -373,6 +373,9 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 
 
 static BOOL continuousSpellCheckingEnabled;
+#if !BUILDING_ON_TIGER
+static BOOL grammarCheckingEnabled;
+#endif
 
 @implementation WebViewPrivate
 
@@ -391,7 +394,10 @@ static BOOL continuousSpellCheckingEnabled;
     tabKeyCyclesThroughElements = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
-
+#if !BUILDING_ON_TIGER
+    grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+#endif
+    
     return self;
 }
 
@@ -2809,6 +2815,15 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return retVal;
+#if !BUILDING_ON_TIGER
+    } else if (action == @selector(toggleGrammarChecking:)) {
+        BOOL checkMark = [self isGrammarCheckingEnabled];
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return YES;
+#endif
     }
     FOR_EACH_RESPONDER_SELECTOR(VALIDATE)
 
@@ -3260,6 +3275,39 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 @end
+
+#if !BUILDING_ON_TIGER
+@implementation WebView (WebViewGrammarChecking)
+
+// FIXME: This method should be merged into WebViewEditing when we're not in API freeze
+- (BOOL)isGrammarCheckingEnabled
+{
+    return grammarCheckingEnabled;
+}
+
+// FIXME: This method should be merged into WebViewEditing when we're not in API freeze
+- (void)setGrammarCheckingEnabled:(BOOL)flag
+{
+    if (grammarCheckingEnabled != flag) {
+        grammarCheckingEnabled = flag;
+        [[NSUserDefaults standardUserDefaults] setBool:grammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
+    }
+    
+    // We call _preflightSpellChecker when turning continuous spell checking on, but we don't need to do that here
+    // because grammar checking only occurs on code paths that already preflight spell checking appropriately.
+    
+    if (![self isGrammarCheckingEnabled])
+        [[self mainFrame] _unmarkAllBadGrammar];
+}
+
+// FIXME: This method should be merged into WebIBActions when we're not in API freeze
+- (void)toggleGrammarChecking:(id)sender
+{
+    [self setGrammarCheckingEnabled:![self isGrammarCheckingEnabled]];
+}
+
+@end
+#endif
 
 @implementation WebView (WebViewUndoableEditing)
 

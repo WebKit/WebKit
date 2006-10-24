@@ -932,6 +932,13 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     return _private->internalLoadDelegate;
 }
 
+#if !BUILDING_ON_TIGER
+- (void)_unmarkAllBadGrammar
+{
+    // FIXME: Implement this across the bridge a la _unmarkAllMisspellings
+}
+#endif
+
 - (void)_unmarkAllMisspellings
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])

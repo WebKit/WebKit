@@ -54,6 +54,9 @@ typedef WebCore::FrameLoader WebCoreFrameLoader;
 - (void)_updateBackground;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;
 - (id)_internalLoadDelegate;
+#if !BUILDING_ON_TIGER
+- (void)_unmarkAllBadGrammar;
+#endif
 - (void)_unmarkAllMisspellings;
 // Note that callers should not perform any ops on these views that could change the set of frames
 - (NSArray *)_documentViews;
