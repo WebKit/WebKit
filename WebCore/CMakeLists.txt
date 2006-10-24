@@ -651,12 +651,6 @@ set (SVG_SOURCES
     kcanvas/KCanvasMarker.cpp
     kcanvas/KCanvasMasker.cpp
     kcanvas/KCanvasResource.cpp
-    kcanvas/SVGRootInlineBox.cpp
-    kcanvas/SVGInlineFlowBox.cpp
-    kcanvas/RenderSVGInline.cpp
-    kcanvas/RenderSVGInlineText.cpp
-    kcanvas/RenderSVGTSpan.cpp
-    kcanvas/RenderSVGText.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
     kcanvas/device/KRenderingPaintServerPattern.cpp
@@ -670,10 +664,16 @@ set (SVG_SOURCES
     kcanvas/device/qt/KCanvasClipperQt.cpp
 #   kcanvas/device/qt/KCanvasFilterQt.cpp
 #   kcanvas/device/qt/KCanvasImageItemQt.cpp
-    kcanvas/RenderSVGContainer.cpp
-    kcanvas/RenderPath.cpp
-    kcanvas/RenderSVGImage.cpp
-    kcanvas/RenderForeignObject.cpp
+    rendering/RenderForeignObject.cpp
+    rendering/RenderPath.cpp
+    rendering/RenderSVGContainer.cpp
+    rendering/RenderSVGImage.cpp
+    rendering/RenderSVGInline.cpp
+    rendering/RenderSVGInlineText.cpp
+    rendering/RenderSVGText.cpp
+    rendering/RenderSVGTSpan.cpp
+    rendering/SVGInlineFlowBox.cpp
+    rendering/SVGRootInlineBox.cpp
  )
 ENDIF(WEBKIT_USE_SVG_SUPPORT)
 
