@@ -626,7 +626,17 @@ function breakpointDragEnd(event)
         
     var breakpoint = draggingBreakpoint.breakpoint;
     breakpoint.row = tr;
+    
+    // leave the editor there if it exists... we'll want to update it to the new values
+    breakpoint.editor = file.breakpoints[row].editor;
+    
     file.breakpoints[row] = breakpoint;
+    
+    if (breakpoint.editor) {
+        breakpoint.editor.id = row;
+        updateBreakpointTypeOnLine(row);
+        setConditionFieldText(breakpoint);
+    }
     
     if (!breakpoint.enabled)
         tr.addStyleClass("disabled");
