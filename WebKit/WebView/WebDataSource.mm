@@ -77,9 +77,9 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    ASSERT(![loader isLoading]);
+    ASSERT(!loader->isLoading());
 
-    [loader release];
+    loader->deref();
     
     [representation release];
     [unarchivingState release];
@@ -125,7 +125,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSError *)_mainDocumentError
 {
-    return [_private->loader mainDocumentError];
+    return _private->loader->mainDocumentError();
 }
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
@@ -282,15 +282,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    return [_private->loader URL];
+    return _private->loader->URL();
 }
 
 - (void)_loadFromPageCache:(NSDictionary *)pageCache
 {
-    [_private->loader prepareForLoadStart];
+    _private->loader->prepareForLoadStart();
     _private->loadingFromPageCache = YES;
-    [_private->loader setCommitted:YES];
-    [_private->loader frameLoader]->commitProvisionalLoad(pageCache);
+    _private->loader->setCommitted(true);
+    _private->loader->frameLoader()->commitProvisionalLoad(pageCache);
 }
 
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
@@ -300,7 +300,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebFrameBridge *)_bridge
 {
-    ASSERT([_private->loader isCommitted]);
+    ASSERT(_private->loader->isCommitted());
     return [[self webFrame] _bridge];
 }
 
@@ -336,7 +336,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)_URLForHistory
 {
-    return [[_private->loader URLForHistory] _webkit_canonicalize];
+    return [_private->loader->URLForHistory() _webkit_canonicalize];
 }
 
 - (void)_addToUnarchiveState:(WebArchive *)archive
@@ -346,7 +346,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [_private->unarchivingState addArchive:archive];
 }
 
-- (WebDocumentLoader *)_documentLoader
+- (DocumentLoader*)_documentLoader
 {
     return _private->loader;
 }
@@ -354,15 +354,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (id)_initWithDocumentLoader:(WebDocumentLoaderMac *)loader
 {
     self = [super init];
-    if (!self) {
+    if (!self)
         return nil;
-    }
     
     _private = [[WebDataSourcePrivate alloc] init];
     
-    _private->loader = [loader retain];
+    _private->loader = loader;
+    loader->ref();
         
-    LOG(Loading, "creating datasource for %@", [[_private->loader request] URL]);
+    LOG(Loading, "creating datasource for %@", [_private->loader->request() URL]);
     
     ++WebDataSourceCount;
     
@@ -373,9 +373,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 @implementation WebDataSource
 
--(id)initWithRequest:(NSURLRequest *)request
+- (id)initWithRequest:(NSURLRequest *)request
 {
-    return [self _initWithDocumentLoader:[[WebDocumentLoader alloc] initWithRequest:request]];
+    return [self _initWithDocumentLoader:new WebDocumentLoaderMac(request)];
 }
 
 - (void)dealloc
@@ -396,7 +396,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSData *)data
 {
-    return [_private->loader mainResourceData];
+    return _private->loader->mainResourceData();
 }
 
 - (id <WebDocumentRepresentation>)representation
@@ -406,40 +406,38 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebFrame *)webFrame
 {
-    FrameLoader* frameLoader = [_private->loader frameLoader];
+    FrameLoader* frameLoader = _private->loader->frameLoader();
     if (!frameLoader)
         return nil;
     return (WebFrame *)frameLoader->client();
 }
 
--(NSURLRequest *)initialRequest
+- (NSURLRequest *)initialRequest
 {
-    return [_private->loader initialRequest];
+    return _private->loader->initialRequest();
 }
 
--(NSMutableURLRequest *)request
+- (NSMutableURLRequest *)request
 {
-    return [_private->loader request];
+    return _private->loader->request();
 }
 
 - (NSURLResponse *)response
 {
-    return [_private->loader response];
+    return _private->loader->response();
 }
 
 - (NSString *)textEncodingName
 {
-    NSString *textEncodingName = [_private->loader overrideEncoding];
-
+    NSString *textEncodingName = _private->loader->overrideEncoding();
     if (!textEncodingName)
         textEncodingName = [[self response] textEncodingName];
-
     return textEncodingName;
 }
 
 - (BOOL)isLoading
 {
-    return [_private->loader isLoadingInAPISense];
+    return _private->loader->isLoadingInAPISense();
 }
 
 // Returns nil or the page title.
@@ -450,15 +448,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)unreachableURL
 {
-    return [_private->loader unreachableURL];
+    return _private->loader->unreachableURL();
 }
 
 - (WebArchive *)webArchive
 {
     // it makes no sense to grab a WebArchive from an uncommitted document.
-    if (![_private->loader isCommitted])
+    if (!_private->loader->isCommitted())
         return nil;
-
     return [WebArchiver archiveFrame:[self webFrame]];
 }
 

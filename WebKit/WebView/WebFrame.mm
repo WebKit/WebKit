@@ -290,7 +290,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     WebHistoryItem *bfItem;
 
     if (useOriginal)
-        request = [[dataSrc _documentLoader] originalRequestCopy];
+        request = [dataSrc _documentLoader]->originalRequestCopy();
     else
         request = [dataSrc request];
 
@@ -299,7 +299,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
         originalURL = unreachableURL;
     } else {
         URL = [request URL];
-        originalURL = [[[dataSrc _documentLoader] originalRequestCopy] URL];
+        originalURL = [[dataSrc _documentLoader]->originalRequestCopy() URL];
     }
 
     LOG (History, "creating item for %@", request);
@@ -499,7 +499,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
         // Fake the URL change by updating the data source's request.  This will no longer
         // be necessary if we do the better fix described above.
-        [[self _frameLoader]->documentLoader() replaceRequestURLForAnchorScrollWithURL:itemURL];
+        [self _frameLoader]->documentLoader()->replaceRequestURLForAnchorScroll(itemURL);
         
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didChangeLocationWithinPageForFrame:self];
@@ -740,7 +740,8 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 - (void)_addChild:(WebFrame *)child
 {
     [[self _bridge] appendChild:[child _bridge]];
-    [[[child dataSource] _documentLoader] setOverrideEncoding:[[[self dataSource] _documentLoader] overrideEncoding]];  
+    if ([child dataSource])
+        [[child dataSource] _documentLoader]->setOverrideEncoding([[self dataSource] _documentLoader]->overrideEncoding());  
 }
 
 // If we bailed out of a b/f navigation, we might need to set the b/f cursor back to the current
@@ -1051,17 +1052,17 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     return [_private->bridge frameLoader];
 }
 
-static inline WebDataSource *dataSource(WebDocumentLoader *loader)
+static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
-    return [(WebDocumentLoaderMac *)loader dataSource];
+    return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
 }
 
-- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader
+- (WebDataSource *)_dataSourceForDocumentLoader:(DocumentLoader*)loader
 {
     return dataSource(loader);
 }
 
-- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive
+- (void)_addDocumentLoader:(DocumentLoader*)loader toUnarchiveState:(WebArchive *)archive
 {
     [dataSource(loader) _addToUnarchiveState:archive];
 }
@@ -1221,9 +1222,9 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        WebDocumentLoader *documentLoader = [self _createDocumentLoaderWithRequest:request];
-        [dataSource(documentLoader) _addToUnarchiveState:archive];
-        [self _frameLoader]->load(documentLoader);
+        RefPtr<DocumentLoader> documentLoader = [self _createDocumentLoaderWithRequest:request];
+        [dataSource(documentLoader.get()) _addToUnarchiveState:archive];
+        [self _frameLoader]->load(documentLoader.get());
     }
 }
 
@@ -1364,7 +1365,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     if ([request _webDataRequestUnreachableURL] == nil)
         [currItem setURL:[request URL]];
     // Update the last visited time. Mostly interesting for URL autocompletion statistics.
-    NSURL *URL = [[[[dataSource _documentLoader] originalRequestCopy] URL] _webkit_canonicalize];
+    NSURL *URL = [[[dataSource _documentLoader]->originalRequestCopy() URL] _webkit_canonicalize];
     WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
     WebHistoryItem *oldItem = [sharedHistory itemForURL:URL];
     if (oldItem)
@@ -1374,7 +1375,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_updateHistoryForStandardLoad
 {
     WebDataSource *dataSource = [self dataSource];
-    if (![[dataSource _documentLoader] isClientRedirect]) {
+    if (![dataSource _documentLoader]->isClientRedirect()) {
         NSURL *URL = [dataSource _URLForHistory];
         if (URL && ![URL _web_isEmpty]) {
             ASSERT([self webView]);
@@ -1413,7 +1414,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 - (void)_updateHistoryForInternalLoad
 {
     // Add an item to the item tree for this frame
-    ASSERT(![[self _frameLoader]->documentLoader() isClientRedirect]);
+    ASSERT(![self _frameLoader]->documentLoader()->isClientRedirect());
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame) {
         WebHistoryItem *parentItem = parentFrame->_private->currentItem;
@@ -1462,7 +1463,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
        didReceiveServerRedirectForProvisionalLoadForFrame:self];
 }
 
-- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)clientRequest fromDocumentLoader:(WebDocumentLoader *)loader
+- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)clientRequest fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     id resourceLoadDelegate = [webView resourceLoadDelegate];
@@ -1473,7 +1474,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
     return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:dataSource(loader)];
 }
 
-- (NSURLRequest *)_dispatchResource:(id)identifier willSendRequest:(NSURLRequest *)clientRequest redirectResponse:(NSURLResponse *)redirectResponse fromDocumentLoader:(WebDocumentLoader *)loader
+- (NSURLRequest *)_dispatchResource:(id)identifier willSendRequest:(NSURLRequest *)clientRequest redirectResponse:(NSURLResponse *)redirectResponse fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     id resourceLoadDelegate = [webView resourceLoadDelegate];
@@ -1484,7 +1485,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
         return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource(loader)];
 }
 
-- (void)_dispatchDidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchDidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     id resourceLoadDelegate = [webView resourceLoadDelegate];
@@ -1495,7 +1496,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
 }
 
-- (void)_dispatchDidCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchDidCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     id resourceLoadDelegate = [webView resourceLoadDelegate];
@@ -1506,7 +1507,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource(loader)];
 }
 
-- (void)_dispatchResource:(id)identifier didReceiveResponse:(NSURLResponse *)r fromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchResource:(id)identifier didReceiveResponse:(NSURLResponse *)r fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
 
@@ -1516,7 +1517,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource(loader)];
 }
 
-- (void)_dispatchResource:(id)identifier didReceiveContentLength:(int)lengthReceived fromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchResource:(id)identifier didReceiveContentLength:(int)lengthReceived fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
 
@@ -1526,7 +1527,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:dataSource(loader)];
 }
 
-- (void)_dispatchResource:(id)identifier didFinishLoadingFromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchResource:(id)identifier didFinishLoadingFromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     
@@ -1537,7 +1538,7 @@ static inline WebDataSource *dataSource(WebDocumentLoader *loader)
 }
 
 
-- (void)_dispatchResource:(id)identifier didFailLoadingWithError:error fromDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchResource:(id)identifier didFailLoadingWithError:error fromDocumentLoader:(DocumentLoader*)loader
 {
     WebView *webView = [self webView];
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource(loader)];
@@ -1757,7 +1758,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
 }
 
-- (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebDocumentLoader *)loader
+- (void)_dispatchDidLoadMainResourceForDocumentLoader:(DocumentLoader*)loader
 {
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:[self webView]
@@ -1779,32 +1780,32 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     }
 }
 
-- (void)_clearLoadingFromPageCacheForDocumentLoader:(WebDocumentLoader *)loader
+- (void)_clearLoadingFromPageCacheForDocumentLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _setLoadingFromPageCache:NO];
 }
 
-- (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebDocumentLoader *)loader
+- (BOOL)_isDocumentLoaderLoadingFromPageCache:(DocumentLoader*)loader
 {
     return [dataSource(loader) _loadingFromPageCache];
 }
 
-- (void)_makeRepresentationForDocumentLoader:(WebDocumentLoader *)loader
+- (void)_makeRepresentationForDocumentLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _makeRepresentation];
 }
 
-- (void)_revertToProvisionalStateForDocumentLoader:(WebDocumentLoader *)loader
+- (void)_revertToProvisionalStateForDocumentLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _revertToProvisionalState];
 }
 
-- (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(WebDocumentLoader *)loader
+- (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _setMainDocumentError:error];
 }
 
-- (void)_clearUnarchivingStateForLoader:(WebDocumentLoader *)loader
+- (void)_clearUnarchivingStateForLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _clearUnarchivingState];
 }
@@ -1839,13 +1840,13 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     [[self webView] setMainFrameDocumentReady:ready];
 }
 
-- (void)_willChangeTitleForDocument:(WebDocumentLoader *)loader
+- (void)_willChangeTitleForDocument:(DocumentLoader*)loader
 {
     // FIXME: Should do this only in main frame case, right?
     [[self webView] _willChangeValueForKey:_WebMainFrameTitleKey];
 }
 
-- (void)_didChangeTitleForDocument:(WebDocumentLoader *)loader
+- (void)_didChangeTitleForDocument:(DocumentLoader*)loader
 {
     // FIXME: Should do this only in main frame case, right?
     [[self webView] _didChangeValueForKey:_WebMainFrameTitleKey];
@@ -1857,22 +1858,22 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     [[self webView] _downloadURL:[request URL]];
 }
 
-- (void)_finishedLoadingDocument:(WebDocumentLoader *)loader
+- (void)_finishedLoadingDocument:(DocumentLoader*)loader
 {
     [dataSource(loader) _finishedLoading];
 }
 
-- (void)_committedLoadWithDocumentLoader:(WebDocumentLoader *)loader data:(NSData *)data
+- (void)_committedLoadWithDocumentLoader:(DocumentLoader*)loader data:(NSData *)data
 {
     [dataSource(loader) _receivedData:data];
 }
 
-- (void)_documentLoader:(WebDocumentLoader *)loader setMainDocumentError:(NSError *)error
+- (void)_documentLoader:(DocumentLoader*)loader setMainDocumentError:(NSError *)error
 {
     [dataSource(loader) _setMainDocumentError:error];
 }
 
-- (void)_finalSetupForReplaceWithDocumentLoader:(WebDocumentLoader *)loader
+- (void)_finalSetupForReplaceWithDocumentLoader:(DocumentLoader*)loader
 {
     [dataSource(loader) _clearUnarchivingState];
 }
@@ -2137,15 +2138,15 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     [_private->currentItem setTitle:title];
 }
 
-- (WebDocumentLoader *)_createDocumentLoaderWithRequest:(NSURLRequest *)request
+- (PassRefPtr<DocumentLoader>)_createDocumentLoaderWithRequest:(NSURLRequest *)request
 {
-    WebDocumentLoaderMac *loader = [[WebDocumentLoaderMac alloc] initWithRequest:request];
-    
-    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader];
-    [loader setDataSource:dataSource];
+    RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request);
+
+    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader.get()];
+    loader->setDataSource(dataSource);
     [dataSource release];
-    
-    return loader;
+
+    return loader.release();
 }
 
 - (void)_prepareForDataSourceReplacement
@@ -2216,7 +2217,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
         && loadType != FrameLoadTypeReloadAllowingStaleData
         && loadType != FrameLoadTypeSame
         && ![[self dataSource] isLoading]
-        && ![[self _frameLoader]->documentLoader() isStopping]) {
+        && ![self _frameLoader]->documentLoader()->isStopping()) {
         if ([[[self dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]]) {
             if (![item pageCache]){
                 // Add the items to this page's cache.

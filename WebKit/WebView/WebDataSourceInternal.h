@@ -28,13 +28,22 @@
 
 #import "WebDataSourcePrivate.h"
 
+#ifdef __cplusplus
+namespace WebCore {
+    class DocumentLoader;
+}
+typedef WebCore::DocumentLoader WebCoreDocumentLoader;
+class WebDocumentLoaderMac;
+#else
+@class WebCoreDocumentLoader;
+@class WebDocumentLoaderMac;
+#endif
+
 @class DOMDocumentFragment;
 @class DOMElement;
 @class NSError;
 @class NSURL;
 @class WebArchive;
-@class WebDocumentLoader;
-@class WebDocumentLoaderMac;
 @class WebFrameBridge;
 @class WebResource;
 @class WebView;
@@ -59,11 +68,11 @@
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
-- (id)_initWithDocumentLoader:(WebDocumentLoaderMac *)loader;
+- (id)_initWithDocumentLoader:(WebDocumentLoaderMac*)loader;
 - (void)_finishedLoading;
 - (void)_receivedData:(NSData *)data;
 - (void)_revertToProvisionalState;
 - (void)_setMainDocumentError:(NSError *)error;
 - (void)_clearUnarchivingState;
-- (WebDocumentLoader *)_documentLoader;
+- (WebCoreDocumentLoader*)_documentLoader;
 @end

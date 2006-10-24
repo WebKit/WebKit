@@ -2199,13 +2199,11 @@ NS_ENDHANDLER
 - (NSString *)_mainFrameOverrideEncoding
 {
     WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
-    if (dataSource == nil) {
+    if (dataSource == nil)
         dataSource = [[self mainFrame] dataSource];
-    }
-    if (dataSource == nil) {
+    if (dataSource == nil)
         return nil;
-    }
-    return [[dataSource _documentLoader] overrideEncoding];
+    return [dataSource _documentLoader]->overrideEncoding();
 }
 
 - (NSString *)customTextEncodingName

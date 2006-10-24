@@ -30,41 +30,35 @@
 
 #import <JavaScriptCore/Assertions.h>
 
-@implementation WebDocumentLoaderMac
-
-- (void)dealloc
+WebDocumentLoaderMac::WebDocumentLoaderMac(NSURLRequest *request)
+    : DocumentLoader(request)
+    , m_detachedDataSource(nil)
 {
-    [dataSource release];
-    [super dealloc];
-}    
-
-- (void)setDataSource:(WebDataSource *)ds
-{
-    [ds retain];
-    [dataSource release];
-    dataSource = ds;    
 }
 
-- (WebDataSource *)dataSource
+void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource)
 {
-    return dataSource;
+    m_dataSource = dataSource;    
 }
 
-- (void)attachToFrame
+WebDataSource *WebDocumentLoaderMac::dataSource() const
 {
-    [super attachToFrame];
-    if (detachedDataSource) {
-        ASSERT(!dataSource);
-        [self setDataSource:detachedDataSource];
-        detachedDataSource = nil;
+    return m_dataSource.get();
+}
+
+void WebDocumentLoaderMac::attachToFrame()
+{
+    DocumentLoader::attachToFrame();
+    if (m_detachedDataSource) {
+        ASSERT(!m_dataSource);
+        m_dataSource = m_detachedDataSource;
+        m_detachedDataSource = nil;
     }
 }
 
-- (void)detachFromFrame
+void WebDocumentLoaderMac::detachFromFrame()
 {
-    [super detachFromFrame];
-    detachedDataSource = dataSource;
-    [self setDataSource:nil];
+    DocumentLoader::detachFromFrame();
+    m_detachedDataSource = m_dataSource.get();
+    m_dataSource = nil;
 }
-
-@end

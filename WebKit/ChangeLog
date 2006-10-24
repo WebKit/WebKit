@@ -1,3 +1,79 @@
+2006-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - converted WebDocumentLoader to C++
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _mainDocumentError]):
+        (-[WebDataSource _URL]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _bridge]):
+        (-[WebDataSource _URLForHistory]):
+        (-[WebDataSource _documentLoader]):
+        (-[WebDataSource _initWithDocumentLoader:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource data]):
+        (-[WebDataSource webFrame]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        (-[WebDataSource response]):
+        (-[WebDataSource textEncodingName]):
+        (-[WebDataSource isLoading]):
+        (-[WebDataSource unreachableURL]):
+        (-[WebDataSource webArchive]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac):
+        (WebDocumentLoaderMac::setDataSource):
+        (WebDocumentLoaderMac::dataSource):
+        (WebDocumentLoaderMac::attachToFrame):
+        (WebDocumentLoaderMac::detachFromFrame):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _addChild:]):
+        (dataSource):
+        (-[WebFrame _dataSourceForDocumentLoader:]):
+        (-[WebFrame _addDocumentLoader:toUnarchiveState:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame _updateHistoryForReload]):
+        (-[WebFrame _updateHistoryForStandardLoad]):
+        (-[WebFrame _updateHistoryForInternalLoad]):
+        (-[WebFrame _dispatchIdentifierForInitialRequest:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:willSendRequest:redirectResponse:fromDocumentLoader:]):
+        (-[WebFrame _dispatchDidReceiveAuthenticationChallenge:forResource:fromDocumentLoader:]):
+        (-[WebFrame _dispatchDidCancelAuthenticationChallenge:forResource:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didReceiveResponse:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didReceiveContentLength:fromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didFinishLoadingFromDocumentLoader:]):
+        (-[WebFrame _dispatchResource:didFailLoadingWithError:fromDocumentLoader:]):
+        (-[WebFrame _dispatchDidLoadMainResourceForDocumentLoader:]):
+        (-[WebFrame _clearLoadingFromPageCacheForDocumentLoader:]):
+        (-[WebFrame _isDocumentLoaderLoadingFromPageCache:]):
+        (-[WebFrame _makeRepresentationForDocumentLoader:]):
+        (-[WebFrame _revertToProvisionalStateForDocumentLoader:]):
+        (-[WebFrame _setMainDocumentError:forDocumentLoader:]):
+        (-[WebFrame _clearUnarchivingStateForLoader:]):
+        (-[WebFrame _willChangeTitleForDocument:]):
+        (-[WebFrame _didChangeTitleForDocument:]):
+        (-[WebFrame _finishedLoadingDocument:]):
+        (-[WebFrame _committedLoadWithDocumentLoader:data:]):
+        (-[WebFrame _documentLoader:setMainDocumentError:]):
+        (-[WebFrame _finalSetupForReplaceWithDocumentLoader:]):
+        (-[WebFrame _createDocumentLoaderWithRequest:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation title]):
+        * WebView/WebView.mm:
+        (-[WebView _mainFrameOverrideEncoding]):
+
 2006-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Maciej.

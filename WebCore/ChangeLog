@@ -1,3 +1,130 @@
+2006-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - converted WebDocumentLoader to C++
+
+        * WebCore.exp:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setTitle:]):
+        (-[WebCoreFrameBridge originalRequestURL]):
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebCoreFrameBridge incomingReferrer]):
+        (-[WebCoreFrameBridge isReloading]):
+        (-[WebCoreFrameBridge mainResourceURLResponse]):
+        * loader/mac/WebDocumentLoader.h:
+        * loader/mac/WebDocumentLoader.mm:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::frameLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::setMainResourceData):
+        (WebCore::DocumentLoader::mainResourceData):
+        (WebCore::DocumentLoader::originalRequest):
+        (WebCore::DocumentLoader::originalRequestCopy):
+        (WebCore::DocumentLoader::request):
+        (WebCore::DocumentLoader::initialRequest):
+        (WebCore::DocumentLoader::actualRequest):
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::unreachableURL):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::setResponse):
+        (WebCore::DocumentLoader::isStopping):
+        (WebCore::DocumentLoader::bridge):
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::mainDocumentError):
+        (WebCore::DocumentLoader::clearErrors):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::setupForReplace):
+        (WebCore::DocumentLoader::commitIfReady):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::setCommitted):
+        (WebCore::DocumentLoader::isCommitted):
+        (WebCore::DocumentLoader::setLoading):
+        (WebCore::DocumentLoader::isLoading):
+        (WebCore::DocumentLoader::commitLoad):
+        (WebCore::DocumentLoader::doesProgressiveLoad):
+        (WebCore::DocumentLoader::receivedData):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::updateLoading):
+        (WebCore::DocumentLoader::response):
+        (WebCore::DocumentLoader::setFrame):
+        (WebCore::DocumentLoader::attachToFrame):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        (WebCore::DocumentLoader::loadingStartedTime):
+        (WebCore::DocumentLoader::setIsClientRedirect):
+        (WebCore::DocumentLoader::isClientRedirect):
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::addResponse):
+        (WebCore::DocumentLoader::stopRecordingResponses):
+        (WebCore::DocumentLoader::title):
+        (WebCore::DocumentLoader::setLastCheckedRequest):
+        (WebCore::DocumentLoader::lastCheckedRequest):
+        (WebCore::DocumentLoader::triggeringAction):
+        (WebCore::DocumentLoader::setTriggeringAction):
+        (WebCore::DocumentLoader::responses):
+        (WebCore::DocumentLoader::setOverrideEncoding):
+        (WebCore::DocumentLoader::overrideEncoding):
+        (WebCore::DocumentLoader::setTitle):
+        (WebCore::DocumentLoader::URLForHistory):
+        * loader/mac/WebFrameLoader.h:
+        * loader/mac/WebFrameLoader.mm:
+        (WebCore::FrameLoader::setupForReplaceByMIMEType):
+        (WebCore::FrameLoader::finalSetupForReplace):
+        (WebCore::FrameLoader::safeLoad):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::activeDocumentLoader):
+        (WebCore::FrameLoader::addPlugInStreamLoader):
+        (WebCore::FrameLoader::removePlugInStreamLoader):
+        (WebCore::FrameLoader::addSubresourceLoader):
+        (WebCore::FrameLoader::removeSubresourceLoader):
+        (WebCore::FrameLoader::setDocumentLoader):
+        (WebCore::FrameLoader::documentLoader):
+        (WebCore::FrameLoader::setPolicyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        (WebCore::FrameLoader::setProvisionalDocumentLoader):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::originalRequest):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::initialRequest):
+        (WebCore::FrameLoader::receivedData):
+        (WebCore::FrameLoader::setRequest):
+        (WebCore::FrameLoader::isStopping):
+        (WebCore::FrameLoader::setResponse):
+        (WebCore::FrameLoader::mainReceivedError):
+        (WebCore::FrameLoader::finishedLoading):
+        (WebCore::FrameLoader::notifyIconChanged):
+        (WebCore::FrameLoader::URL):
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        (WebCore::FrameLoader::committedLoad):
+        (WebCore::FrameLoader::revertToProvisional):
+        (WebCore::FrameLoader::setMainDocumentError):
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+        (WebCore::FrameLoader::subframeIsLoading):
+        (WebCore::FrameLoader::willChangeTitle):
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadRequestAfterNavigationPolicy):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::detachFromParent):
+        * loader/mac/WebFrameLoaderClient.h:
+
 2006-10-23  Brady Eidson  <beidson@apple.com>
 
         Lovingly reviewed by Maciej

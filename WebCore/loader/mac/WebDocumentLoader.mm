@@ -36,215 +36,196 @@
 #import "WebFrameLoader.h"
 #import <wtf/Assertions.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-@implementation WebDocumentLoader
-
-- (id)initWithRequest:(NSURLRequest *)req
+DocumentLoader::DocumentLoader(NSURLRequest *req)
+    : m_frame(0)
+    , m_originalRequest(req)
+    , m_originalRequestCopy([req copy])
+    , m_request([req mutableCopy])
+    , m_loadingStartedTime(0)
+    , m_committed(false)
+    , m_stopping(false)
+    , m_loading(false)
+    , m_gotFirstByte(false)
+    , m_primaryLoadComplete(false)
+    , m_isClientRedirect(false)
+    , m_stopRecordingResponses(false)
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    originalRequest = [req retain];
-    originalRequestCopy = [originalRequest copy];
-    request = [originalRequest mutableCopy];
-    wkSupportsMultipartXMixedReplace(request);
-
-    return self;
+    [m_originalRequestCopy.get() release];
+    [m_request.get() release];
+    wkSupportsMultipartXMixedReplace(m_request.get());
 }
 
-- (FrameLoader*)frameLoader
+FrameLoader* DocumentLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
     return [Mac(m_frame)->bridge() frameLoader];
 }
 
-- (void)dealloc
+DocumentLoader::~DocumentLoader()
 {
-    ASSERT(!m_frame || [self frameLoader]->activeDocumentLoader() != self || ![self frameLoader]->isLoading());
-
-    [mainResourceData release];
-    [originalRequest release];
-    [originalRequestCopy release];
-    [request release];
-    [response release];
-    [mainDocumentError release];
-    [pageTitle release];
-    [triggeringAction release];
-    [lastCheckedRequest release];
-    [responses release];    
-    
-    [super dealloc];
+    ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
 }    
 
 
-- (void)setMainResourceData:(NSData *)data
+void DocumentLoader::setMainResourceData(NSData *data)
 {
-    [data retain];
-    [mainResourceData release];
-    mainResourceData = data;
+    m_mainResourceData = data;
 }
 
-- (NSData *)mainResourceData
+NSData *DocumentLoader::mainResourceData() const
 {
-    return mainResourceData != nil ? mainResourceData : [self frameLoader]->mainResourceData();
+    return m_mainResourceData ? m_mainResourceData.get() : frameLoader()->mainResourceData();
 }
 
-- (NSURLRequest *)originalRequest
+NSURLRequest *DocumentLoader::originalRequest() const
 {
-    return originalRequest;
+    return m_originalRequest.get();
 }
 
-- (NSURLRequest *)originalRequestCopy
+NSURLRequest *DocumentLoader::originalRequestCopy() const
 {
-    return originalRequestCopy;
+    return m_originalRequestCopy.get();
 }
 
-- (NSMutableURLRequest *)request
+NSMutableURLRequest *DocumentLoader::request()
 {
-    NSMutableURLRequest *clientRequest = [request _webDataRequestExternalRequest];
+    NSMutableURLRequest *clientRequest = [m_request.get() _webDataRequestExternalRequest];
     if (!clientRequest)
-        clientRequest = request;
+        clientRequest = m_request.get();
     return clientRequest;
 }
 
-- (NSURLRequest *)initialRequest
+NSURLRequest *DocumentLoader::initialRequest() const
 {
-    NSURLRequest *clientRequest = [[self originalRequest] _webDataRequestExternalRequest];
+    NSURLRequest *clientRequest = [m_originalRequest.get() _webDataRequestExternalRequest];
     if (!clientRequest)
-        clientRequest = [self originalRequest];
+        clientRequest = m_originalRequest.get();
     return clientRequest;
 }
 
-- (NSMutableURLRequest *)actualRequest
+NSMutableURLRequest *DocumentLoader::actualRequest()
 {
-    return request;
+    return m_request.get();
 }
 
-- (NSURL *)URL
+NSURL *DocumentLoader::URL() const
 {
-    return [[self request] URL];
+    return [const_cast<DocumentLoader*>(this)->request() URL];
 }
 
-- (NSURL *)unreachableURL
+NSURL *DocumentLoader::unreachableURL() const
 {
-    return [[self originalRequest] _webDataRequestUnreachableURL];
+    return [m_originalRequest.get() _webDataRequestUnreachableURL];
 }
 
-- (void)replaceRequestURLForAnchorScrollWithURL:(NSURL *)URL
+void DocumentLoader::replaceRequestURLForAnchorScroll(NSURL *URL)
 {
     // assert that URLs differ only by fragment ID
     
-    NSMutableURLRequest *newOriginalRequest = [originalRequestCopy mutableCopy];
-    [originalRequestCopy release];
+    NSMutableURLRequest *newOriginalRequest = [m_originalRequestCopy.get() mutableCopy];
     [newOriginalRequest setURL:URL];
-    originalRequestCopy = newOriginalRequest;
+    m_originalRequestCopy = newOriginalRequest;
+    [newOriginalRequest release];
     
-    NSMutableURLRequest *newRequest = [request mutableCopy];
-    [request release];
+    NSMutableURLRequest *newRequest = [m_request.get() mutableCopy];
     [newRequest setURL:URL];
-    request = newRequest;
+    m_request = newRequest;
+    [newRequest release];
 }
 
-- (void)setRequest:(NSURLRequest *)req
+void DocumentLoader::setRequest(NSURLRequest *req)
 {
-    ASSERT_ARG(req, req != request);
-    
+    ASSERT_ARG(req, req != m_request);
+
     // Replacing an unreachable URL with alternate content looks like a server-side
     // redirect at this point, but we can replace a committed dataSource.
-    BOOL handlingUnreachableURL = [req _webDataRequestUnreachableURL] != nil;
+    bool handlingUnreachableURL = [req _webDataRequestUnreachableURL] != nil;
     if (handlingUnreachableURL)
-        committed = NO;
-    
+        m_committed = false;
+
     // We should never be getting a redirect callback after the data
     // source is committed, except in the unreachable URL case. It 
     // would be a WebFoundation bug if it sent a redirect callback after commit.
-    ASSERT(!committed);
-    
-    NSURLRequest *oldRequest = request;
-    
-    request = [req mutableCopy];
-    
+    ASSERT(!m_committed);
+
+    NSURLRequest *oldRequest = [m_request.get() retain];
+    NSMutableURLRequest *copy = [req mutableCopy];
+    m_request = copy;
+    [copy release];
+
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     // Also, don't send it when replacing unreachable URLs with alternate content.
     if (!handlingUnreachableURL && ![[oldRequest URL] isEqual:[req URL]])
-        [self frameLoader]->didReceiveServerRedirectForProvisionalLoadForFrame();
-    
+        frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
+
     [oldRequest release];
 }
 
-- (void)setResponse:(NSURLResponse *)resp
+void DocumentLoader::setResponse(NSURLResponse *resp)
 {
-    [resp retain];
-    [response release];
-    response = resp;
+    m_response = resp;
 }
 
-- (BOOL)isStopping
+bool DocumentLoader::isStopping() const
 {
-    return stopping;
+    return m_stopping;
 }
 
-- (WebCoreFrameBridge *)bridge
+WebCoreFrameBridge *DocumentLoader::bridge() const
 {
     if (!m_frame)
         return nil;
     return Mac(m_frame)->bridge();
 }
 
-- (void)setMainDocumentError:(NSError *)error
+void DocumentLoader::setMainDocumentError(NSError *error)
 {
-    [error retain];
-    [mainDocumentError release];
-    mainDocumentError = error;
-    
-    [self frameLoader]->setMainDocumentError(self, error);
+    m_mainDocumentError = error;    
+    frameLoader()->setMainDocumentError(this, error);
  }
 
-- (NSError *)mainDocumentError
+NSError *DocumentLoader::mainDocumentError() const
 {
-    return mainDocumentError;
+    return m_mainDocumentError.get();
 }
 
-- (void)clearErrors
+void DocumentLoader::clearErrors()
 {
-    [mainDocumentError release];
-    mainDocumentError = nil;
+    m_mainDocumentError = nil;
 }
 
-- (void)mainReceivedError:(NSError *)error complete:(BOOL)isComplete
+void DocumentLoader::mainReceivedError(NSError *error, bool isComplete)
 {
-    if (![self frameLoader])
+    if (!frameLoader())
         return;
-    
-    [self setMainDocumentError:error];
-    
+    setMainDocumentError(error);
     if (isComplete)
-        [self frameLoader]->mainReceivedCompleteError(self, error);
+        frameLoader()->mainReceivedCompleteError(this, error);
 }
 
 // Cancels the data source's pending loads.  Conceptually, a data source only loads
 // one document at a time, but one document may have many related resources. 
 // stopLoading will stop all loads initiated by the data source, 
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
-- (void)stopLoading
+void DocumentLoader::stopLoading()
 {
     // Always attempt to stop the bridge/part because it may still be loading/parsing after the data source
     // is done loading and not stopping it can cause a world leak.
-    if (committed)
-        [[self bridge] stopLoading];
+    if (m_committed)
+        [bridge() stopLoading];
     
-    if (!loading)
+    if (!m_loading)
         return;
     
-    RefPtr<Frame> protect(m_frame);
-    [self retain];
+    RefPtr<Frame> protectFrame(m_frame);
+    RefPtr<DocumentLoader> protectLoader(this);
 
-    stopping = YES;
+    m_stopping = true;
 
-    FrameLoader* frameLoader = [self frameLoader];
+    FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
     if (frameLoader->isLoadingMainResource())
         // Stop the main resource loader and let it send the cancelled message.
@@ -252,273 +233,259 @@ using namespace WebCore;
     else if (frameLoader->isLoadingSubresources())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
-        [self setMainDocumentError:frameLoader->cancelledError(request)];
+        setMainDocumentError(frameLoader->cancelledError(m_request.get()));
     else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        [self mainReceivedError:frameLoader->cancelledError(request) complete:YES];
+        mainReceivedError(frameLoader->cancelledError(m_request.get()), true);
     
     frameLoader->stopLoadingSubresources();
     frameLoader->stopLoadingPlugIns();
     
-    stopping = NO;
-    
-    [self release];
+    m_stopping = false;
 }
 
-- (void)setupForReplace
+void DocumentLoader::setupForReplace()
 {
-    [self frameLoader]->setupForReplace();
-    committed = NO;
+    frameLoader()->setupForReplace();
+    m_committed = NO;
 }
 
-- (void)commitIfReady
+void DocumentLoader::commitIfReady()
 {
-    if (gotFirstByte && !committed) {
-        committed = YES;
-        [self frameLoader]->commitProvisionalLoad(nil);
+    if (m_gotFirstByte && !m_committed) {
+        m_committed = true;
+        frameLoader()->commitProvisionalLoad(nil);
     }
 }
 
-- (void)finishedLoading
+void DocumentLoader::finishedLoading()
 {
-    gotFirstByte = YES;   
-    [self commitIfReady];
-    [self frameLoader]->finishedLoadingDocument(self);
-    [[self bridge] end];
+    m_gotFirstByte = true;   
+    commitIfReady();
+    frameLoader()->finishedLoadingDocument(this);
+    [bridge() end];
 }
 
-- (void)setCommitted:(BOOL)f
+void DocumentLoader::setCommitted(bool f)
 {
-    committed = f;
+    m_committed = f;
 }
 
-- (BOOL)isCommitted
+bool DocumentLoader::isCommitted() const
 {
-    return committed;
+    return m_committed;
 }
 
-- (void)setLoading:(BOOL)f
+void DocumentLoader::setLoading(bool f)
 {
-    loading = f;
+    m_loading = f;
 }
 
-- (BOOL)isLoading
+bool DocumentLoader::isLoading() const
 {
-    return loading;
+    return m_loading;
 }
 
-- (void)commitLoadWithData:(NSData *)data
+void DocumentLoader::commitLoad(NSData *data)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
-    [self retain];
-    [self commitIfReady];
-    
-    if (FrameLoader* frameLoader = [self frameLoader])
-        frameLoader->committedLoad(self, data);
+    RefPtr<DocumentLoader> protect(this);
 
-    [self release];
+    commitIfReady();
+    if (FrameLoader* frameLoader = DocumentLoader::frameLoader())
+        frameLoader->committedLoad(this, data);
 }
 
-- (BOOL)doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
+bool DocumentLoader::doesProgressiveLoad(NSString *MIMEType) const
 {
-    return ![self frameLoader]->isReplacing() || [MIMEType isEqualToString:@"text/html"];
+    return !frameLoader()->isReplacing() || [MIMEType isEqualToString:@"text/html"];
 }
 
-- (void)receivedData:(NSData *)data
+void DocumentLoader::receivedData(NSData *data)
 {    
-    gotFirstByte = YES;
-    
-    if ([self doesProgressiveLoadWithMIMEType:[response MIMEType]])
-        [self commitLoadWithData:data];
+    m_gotFirstByte = true;
+    if (doesProgressiveLoad([m_response.get() MIMEType]))
+        commitLoad(data);
 }
 
-- (void)setupForReplaceByMIMEType:(NSString *)newMIMEType
+void DocumentLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
 {
-    if (!gotFirstByte)
+    if (!m_gotFirstByte)
         return;
     
-    NSString *oldMIMEType = [response MIMEType];
+    NSString *oldMIMEType = [m_response.get() MIMEType];
     
-    if (![self doesProgressiveLoadWithMIMEType:oldMIMEType]) {
-        [self frameLoader]->revertToProvisional(self);
-        [self setupForReplace];
-        [self commitLoadWithData:[self mainResourceData]];
+    if (!doesProgressiveLoad(oldMIMEType)) {
+        frameLoader()->revertToProvisional(this);
+        setupForReplace();
+        commitLoad(mainResourceData());
     }
     
-    [self frameLoader]->finishedLoadingDocument(self);
-    [[self bridge] end];
+    frameLoader()->finishedLoadingDocument(this);
+    [bridge() end];
     
-    [self frameLoader]->setReplacing();
-    gotFirstByte = NO;
+    frameLoader()->setReplacing();
+    m_gotFirstByte = false;
     
-    if ([self doesProgressiveLoadWithMIMEType:newMIMEType]) {
-        [self frameLoader]->revertToProvisional(self);
-        [self setupForReplace];
+    if (doesProgressiveLoad(newMIMEType)) {
+        frameLoader()->revertToProvisional(this);
+        setupForReplace();
     }
     
-    [self frameLoader]->stopLoadingSubresources();
-    [self frameLoader]->stopLoadingPlugIns();
+    frameLoader()->stopLoadingSubresources();
+    frameLoader()->stopLoadingPlugIns();
 
-    [self frameLoader]->finalSetupForReplace(self);
+    frameLoader()->finalSetupForReplace(this);
 }
 
-- (void)updateLoading
+void DocumentLoader::updateLoading()
 {
-    ASSERT(self == [self frameLoader]->activeDocumentLoader());
-    
-    [self setLoading:[self frameLoader]->isLoading()];
+    ASSERT(this == frameLoader()->activeDocumentLoader());
+    setLoading(frameLoader()->isLoading());
 }
 
-- (NSURLResponse *)response
+NSURLResponse *DocumentLoader::response() const
 {
-    return response;
+    return m_response.get();
 }
 
-- (void)setFrame:(Frame*)frame
+void DocumentLoader::setFrame(Frame* frame)
 {
     if (m_frame == frame)
         return;
     ASSERT(frame && !m_frame);
     m_frame = frame;
-    [self attachToFrame];
+    attachToFrame();
 }
 
-- (void)attachToFrame
+void DocumentLoader::attachToFrame()
 {
     ASSERT(m_frame);
 }
 
-- (void)detachFromFrame
+void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
     m_frame = 0;
 }
 
-- (void)prepareForLoadStart
+void DocumentLoader::prepareForLoadStart()
 {
-    ASSERT(!stopping);
-    [self setPrimaryLoadComplete:NO];
-    ASSERT([self frameLoader]);
-    [self clearErrors];
+    ASSERT(!m_stopping);
+    setPrimaryLoadComplete(false);
+    ASSERT(frameLoader());
+    clearErrors();
     
     // Mark the start loading time.
-    loadingStartedTime = CFAbsoluteTimeGetCurrent();
+    m_loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
-    [self setLoading:YES];
+    setLoading(true);
     
-    [self frameLoader]->prepareForLoadStart();
+    frameLoader()->prepareForLoadStart();
 }
 
-- (double)loadingStartedTime
+double DocumentLoader::loadingStartedTime() const
 {
-    return loadingStartedTime;
+    return m_loadingStartedTime;
 }
 
-- (void)setIsClientRedirect:(BOOL)flag
+void DocumentLoader::setIsClientRedirect(bool flag)
 {
-    isClientRedirect = flag;
+    m_isClientRedirect = flag;
 }
 
-- (BOOL)isClientRedirect
+bool DocumentLoader::isClientRedirect() const
 {
-    return isClientRedirect;
+    return m_isClientRedirect;
 }
 
-- (void)setPrimaryLoadComplete:(BOOL)flag
+void DocumentLoader::setPrimaryLoadComplete(bool flag)
 {
-    primaryLoadComplete = flag;
-    
+    m_primaryLoadComplete = flag;
     if (flag) {
-        if ([self frameLoader]->isLoadingMainResource()) {
-            [self setMainResourceData:[self frameLoader]->mainResourceData()];
-            [self frameLoader]->releaseMainResourceLoader();
+        if (frameLoader()->isLoadingMainResource()) {
+            setMainResourceData(frameLoader()->mainResourceData());
+            frameLoader()->releaseMainResourceLoader();
         }
-        
-        [self updateLoading];
+        updateLoading();
     }
 }
 
-- (BOOL)isLoadingInAPISense
+bool DocumentLoader::isLoadingInAPISense() const
 {
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
-    if ([self frameLoader]->state() != WebFrameStateComplete) {
-        if (!primaryLoadComplete && [self isLoading])
-            return YES;
-        if ([self frameLoader]->isLoadingSubresources())
-            return YES;
-        if (![[self bridge] doneProcessingData])
-            return YES;
+    if (frameLoader()->state() != WebFrameStateComplete) {
+        if (!m_primaryLoadComplete && isLoading())
+            return true;
+        if (frameLoader()->isLoadingSubresources())
+            return true;
+        if (![bridge() doneProcessingData])
+            return true;
     }
-    
-    return [self frameLoader]->subframeIsLoading();
+    return frameLoader()->subframeIsLoading();
 }
 
-- (void)addResponse:(NSURLResponse *)r
+void DocumentLoader::addResponse(NSURLResponse *r)
 {
-    if (!stopRecordingResponses) {
-        if (!responses)
-            responses = [[NSMutableArray alloc] init];
-        [responses addObject: r];
-    }
+    if (!m_stopRecordingResponses)
+        m_responses.append(r);
 }
 
-- (void)stopRecordingResponses
+void DocumentLoader::stopRecordingResponses()
 {
-    stopRecordingResponses = YES;
+    m_stopRecordingResponses = true;
 }
 
-- (NSString *)title
+NSString *DocumentLoader::title() const
 {
-    return pageTitle;
+    return [[m_pageTitle.get() retain] autorelease];
 }
 
-- (void)setLastCheckedRequest:(NSURLRequest *)req
+void DocumentLoader::setLastCheckedRequest(NSURLRequest *req)
 {
-    NSURLRequest *oldRequest = lastCheckedRequest;
-    lastCheckedRequest = [req copy];
-    [oldRequest release];
+    NSURLRequest *copy = [req copy];
+    m_lastCheckedRequest = req;
+    [copy release];
 }
 
-- (NSURLRequest *)lastCheckedRequest
+NSURLRequest *DocumentLoader::lastCheckedRequest() const
 {
     // It's OK not to make a copy here because we know the caller
     // isn't going to modify this request
-    return [[lastCheckedRequest retain] autorelease];
+    return [[m_lastCheckedRequest.get() retain] autorelease];
 }
 
-- (NSDictionary *)triggeringAction
+NSDictionary *DocumentLoader::triggeringAction() const
 {
-    return [[triggeringAction retain] autorelease];
+    return [[m_triggeringAction.get() retain] autorelease];
 }
 
-- (void)setTriggeringAction:(NSDictionary *)action
+void DocumentLoader::setTriggeringAction(NSDictionary *action)
 {
-    [action retain];
-    [triggeringAction release];
-    triggeringAction = action;
+    m_triggeringAction = action;
 }
 
-- (NSArray *)responses
+const ResponseVector& DocumentLoader::responses() const
 {
-    return responses;
+    return m_responses;
 }
 
-- (void)setOverrideEncoding:(NSString *)enc
+void DocumentLoader::setOverrideEncoding(NSString *enc)
 {
     NSString *copy = [enc copy];
-    [overrideEncoding release];
-    overrideEncoding = copy;
+    m_overrideEncoding = copy;
+    [copy release];
 }
 
-- (NSString *)overrideEncoding
+NSString *DocumentLoader::overrideEncoding() const
 {
-    return [[overrideEncoding copy] autorelease];
+    return [[m_overrideEncoding.get() copy] autorelease];
 }
 
-- (void)setTitle:(NSString *)title
+void DocumentLoader::setTitle(NSString *title)
 {
     if (!title)
         return;
@@ -526,26 +493,26 @@ using namespace WebCore;
     NSString *trimmed = [title mutableCopy];
     CFStringTrimWhitespace((CFMutableStringRef)trimmed);
 
-    if ([trimmed length] != 0 && ![pageTitle isEqualToString:trimmed]) {
-        [self frameLoader]->willChangeTitle(self);
-        [pageTitle release];
-        pageTitle = [trimmed copy];
-        [self frameLoader]->didChangeTitle(self);
+    if ([trimmed length] != 0 && ![m_pageTitle.get() isEqualToString:trimmed]) {
+        NSString *copy = [trimmed copy];
+        frameLoader()->willChangeTitle(this);
+        m_pageTitle = copy;
+        frameLoader()->didChangeTitle(this);
+        [copy release];
     }
 
     [trimmed release];
 }
 
-- (NSURL *)URLForHistory
+NSURL *DocumentLoader::URLForHistory() const
 {
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-    NSURL *URL = [originalRequestCopy URL];
+    NSURL *URL = [m_originalRequestCopy.get() URL];
     if ([WebDataProtocol _webIsDataProtocolURL:URL])
-        URL = [originalRequestCopy _webDataRequestUnreachableURL];
-
+        URL = [m_originalRequestCopy.get() _webDataRequestUnreachableURL];
     return URL;
 }
 
-@end
+}

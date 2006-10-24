@@ -39,10 +39,13 @@
 
 #ifdef __cplusplus
 namespace WebCore {
+    class DocumentLoader;
     class FrameLoader;
 }
+typedef WebCore::DocumentLoader WebCoreDocumentLoader;
 typedef WebCore::FrameLoader WebCoreFrameLoader;
 #else
+@class WebCoreDocumentLoader;
 @class WebCoreFrameLoader;
 #endif
 
@@ -73,7 +76,7 @@ typedef WebCore::FrameLoader WebCoreFrameLoader;
 - (void)_removeInspector:(WebInspector *)inspector;
 
 - (WebCoreFrameLoader*)_frameLoader;
-- (WebDataSource *)_dataSourceForDocumentLoader:(WebDocumentLoader *)loader;
+- (WebDataSource *)_dataSourceForDocumentLoader:(WebCoreDocumentLoader*)loader;
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 
@@ -110,7 +113,7 @@ typedef WebCore::FrameLoader WebCoreFrameLoader;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
-- (void)_addDocumentLoader:(WebDocumentLoader *)loader toUnarchiveState:(WebArchive *)archive;
+- (void)_addDocumentLoader:(WebCoreDocumentLoader*)loader toUnarchiveState:(WebArchive *)archive;
 
 @end
 

@@ -41,7 +41,7 @@
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/DOM.h>
+#import <WebCore/WebDocumentLoader.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -213,7 +213,7 @@
 
 - (NSString *)title
 {
-    return [[_private->dataSource _documentLoader] title];
+    return [_private->dataSource _documentLoader]->title();
 }
 
 - (DOMDocument *)DOMDocument
