@@ -1,3 +1,10 @@
+2006-10-24  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Darin.
+
+        * QtLauncher/CMakeLists.txt, WebKitPart/CMakeLists.txt: Added project name to
+          kde4_automoc macro, as required by the latest KDE4 cmake module.
+
 2006-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Anders.

@@ -24,7 +24,7 @@ set (WebKitPart_SRCS WebKitFactory.cpp WebKitPart.cpp WebKitPartBrowserExtension
 
 qt4_add_dbus_adaptor (WebKitPart_SRCS org.kde.WebKitPart.xml WebKitPartInterface.h WebKitPartInterface)
 
-kde4_automoc (${WebKitPart_SRCS})
+kde4_automoc (WebKitPart ${WebKitPart_SRCS})
 kde4_add_plugin (WebKitPart WITH_PREFIX ${WebKitPart_SRCS})
 target_link_libraries (WebKitPart ${KDE4_KDECORE_LIBS} kparts WebCore-unity)
 

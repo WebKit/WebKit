@@ -62,9 +62,9 @@ IF(__KDE_HAVE_WVARIADIC_MACROS)
   add_definitions ( -Wno-variadic-macros )
 ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
 
-kde4_automoc(platform/qt/SharedTimerQt.cpp)
-kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
-kde4_automoc(platform/network/qt/ResourceLoaderManager.cpp)
+kde4_automoc(WebCore platform/qt/SharedTimerQt.cpp)
+kde4_automoc(WebCore platform/qt/ScrollViewCanvasQt.cpp)
+kde4_automoc(WebCore platform/network/qt/ResourceLoaderManager.cpp)
 
 SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
 

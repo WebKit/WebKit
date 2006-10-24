@@ -21,6 +21,6 @@ include_directories(
 add_definitions(-Wno-undef -Wno-unused-parameter)
 
 set(testunity_SRCS main.cpp)
-kde4_automoc(${testunity_SRCS})
+kde4_automoc(testunity ${testunity_SRCS})
 kde4_add_executable(testunity RUN_UNINSTALLED ${testunity_SRCS})
 target_link_libraries(testunity  ${KDE4_KDECORE_LIBS} WebCore-unity )
