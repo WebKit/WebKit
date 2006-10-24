@@ -31,6 +31,7 @@
 
 #import "DOMElementInternal.h"
 #import "Element.h"
+#import "FrameLoadRequest.h"
 #import "FrameMac.h"
 #import "FrameTree.h"
 #import "HTMLNames.h"
@@ -145,14 +146,12 @@ void FrameLoader::finalSetupForReplace(WebDocumentLoader *loader)
 
 void FrameLoader::safeLoad(NSURL *URL)
 {
-    [bridge() loadURL:URL 
-             referrer:urlOriginalDataAsString([[m_documentLoader.get() request] URL])
-               reload:NO
-          userGesture:YES       
-               target:nil
-      triggeringEvent:[NSApp currentEvent]
-                 form:nil 
-           formValues:nil];
+    // Call to the Frame because this is where our security checks are made.
+    FrameLoadRequest request;
+    request.m_request.setURL(URL);
+    request.m_request.setHTTPReferrer(urlOriginalDataAsString([[m_documentLoader.get() request] URL]));
+    
+    [bridge() impl]->loadRequest(request, true, [NSApp currentEvent], nil, nil);
 }
 
 void FrameLoader::load(NSURLRequest *request)

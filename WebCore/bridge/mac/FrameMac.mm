@@ -44,6 +44,7 @@
 #import "FoundationExtras.h"
 #import "FramePrivate.h"
 #import "FrameLoadRequest.h"
+#import "FrameLoaderTypes.h"
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
@@ -73,6 +74,7 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
+#import "WebFrameLoader.h"
 #import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -187,25 +189,33 @@ void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NS
         referrer = argsReferrer;
     else
         referrer = [_bridge referrer];
-    
+ 
+    BOOL hideReferrer;
+    if (![_bridge canLoadURL:request.m_request.url().getNSURL() fromReferrer:referrer hideReferrer:&hideReferrer])
+        return;
+           
+    WebCoreFrameBridge *targetFrame = [_bridge findFrameNamed:request.m_frameName];
+    if (![_bridge canTargetLoadInFrame:targetFrame]) {
+        return;
+    }
+        
     if (request.m_request.httpMethod() != "POST") {
-        [_bridge loadURL:request.m_request.url().getNSURL()
-                referrer:referrer
-                  reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData
-             userGesture:userGesture
-                  target:request.m_frameName
-         triggeringEvent:triggeringEvent
-                    form:submitForm
-              formValues:formValues];
-    } else {
-        [_bridge postWithURL:request.m_request.url().getNSURL()
-                    referrer:referrer
-                      target:request.m_frameName
-                        data:arrayFromFormData(request.m_request.httpBody())
-                 contentType:request.m_request.httpContentType()
-             triggeringEvent:triggeringEvent
-                        form:submitForm
-                  formValues:formValues];
+        FrameLoadType loadType;
+        if (request.m_request.cachePolicy() == ReloadIgnoringCacheData)
+            loadType = FrameLoadTypeReload;
+        else if (!userGesture)
+            loadType = FrameLoadTypeInternal;
+        else
+            loadType = FrameLoadTypeStandard;    
+    
+        [_bridge frameLoader]->load(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), loadType, 
+            (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), triggeringEvent, submitForm, formValues);
+    } else
+        [_bridge frameLoader]->post(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
+            arrayFromFormData(request.m_request.httpBody()), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
+
+    if (targetFrame != nil && _bridge != targetFrame) {
+        [targetFrame activateWindow];
     }
     
     END_BLOCK_OBJC_EXCEPTIONS;

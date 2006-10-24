@@ -1,3 +1,21 @@
+2006-10-23  Brady Eidson  <beidson@apple.com>
+
+        Lovingly reviewed by Maciej
+
+        Moved loadURL and postURL logic out of WebCoreFrameBridge to FrameMac::loadRequest
+        This is a big step towards moving FrameLoader out of the Bridge into Frame/Mac itself
+
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow): Use FrameMac::loadRequest
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest): loadURL and postURL logic moved from WebCoreFrameBridge to here
+
+        * bridge/mac/WebCoreFrameBridge.h: Nuked loadURL and postURL
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto
+        * loader/mac/WebFrameLoader.mm:
+        (-[WebFrameLoader safeLoadURL:]): Use FrameMac::loadRequest
+
 2006-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Maciej.

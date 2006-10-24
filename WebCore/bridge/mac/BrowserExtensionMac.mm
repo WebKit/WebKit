@@ -60,24 +60,10 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     NSString *frameName = request.m_frameName.isEmpty() ? nil : (NSString*)request.m_frameName;
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
+        // ANSWER: No, because such a method doesn't exist - YET
         if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
-            if (!url.isEmpty()) {
-                String argsReferrer = request.m_request.httpReferrer();
-                NSString *referrer;
-                if (!argsReferrer.isEmpty())
-                    referrer = argsReferrer;
-                else
-                    referrer = [frameBridge referrer];
-
-                [frameBridge loadURL:url.getNSURL() 
-                       referrer:referrer 
-                         reload:request.m_request.cachePolicy() == ReloadIgnoringCacheData 
-                    userGesture:true 
-                         target:nil 
-                triggeringEvent:nil 
-                           form:nil 
-                     formValues:nil];
-            }
+            if (!url.isEmpty())
+                [frameBridge impl]->loadRequest(request, true, nil, nil, nil);
 
             [frameBridge activateWindow];
 

@@ -536,8 +536,6 @@ typedef enum {
 - (BOOL)isReloading;
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (NSString *)incomingReferrer;
 - (NSURLResponse*)mainResourceURLResponse;
 - (void)loadEmptyDocumentSynchronously;

@@ -2774,51 +2774,6 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     m_frameLoader->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
 }
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
-{
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
-        return;
-    
-    if ([target length] == 0)
-        target = nil;
-    
-    WebCoreFrameBridge *targetFrame = [self findFrameNamed:target];
-    if (![self canTargetLoadInFrame:targetFrame])
-        return;
-    
-    FrameLoadType loadType;
-    if (reload)
-        loadType = FrameLoadTypeReload;
-    else if (!forUser)
-        loadType = FrameLoadTypeInternal;
-    else
-        loadType = FrameLoadTypeStandard;
-    m_frameLoader->load(URL, (hideReferrer ? nil : referrer), loadType, target, event, form, values);
-    
-    if (targetFrame != nil && self != targetFrame)
-        [targetFrame activateWindow];
-}
-
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
-{
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
-        return;
-    
-    if ([target length] == 0)
-        target = nil;
-    
-    WebCoreFrameBridge *targetFrame = [self findFrameNamed:target];
-    if (![self canTargetLoadInFrame:targetFrame])
-        return;
-    
-    m_frameLoader->post(URL, (hideReferrer ? nil : referrer), target, postData, contentType, event, form, values);
-    
-    if (targetFrame != nil && self != targetFrame)
-        [targetFrame activateWindow];
-}
-
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).
