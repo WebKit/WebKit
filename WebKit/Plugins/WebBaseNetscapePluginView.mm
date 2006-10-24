@@ -2120,7 +2120,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)invalidateRegion:(NPRegion)invalidRegion
 {
     LOG(Plugins, "NPN_InvalidateRegion");
-    NSRect invalidRect;
+    NSRect invalidRect = NSZeroRect;
     switch (drawingModel) {
 #ifndef NP_NO_QUICKDRAW
         case NPDrawingModelQuickDraw:
