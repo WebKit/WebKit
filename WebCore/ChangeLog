@@ -1,3 +1,13 @@
+2006-10-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Tim H.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11394
+          HTMLViewSourceDocuments are leaking
+
+        * html/HTMLViewSourceDocument.h: Changed RefPtr to plain pointer to avoid
+        ref cycle.
+
 2006-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
