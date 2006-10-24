@@ -1,3 +1,14 @@
+2006-10-24  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Brady.
+
+        - Fixes a date formatting issue on win.  Specifically strftime cannot handle some ranges of time so we shift time call strftime and then manipulate the returned string, if needed.
+
+        * kjs/date_object.cpp:
+        (KJS::):
+        (KJS::formatLocaleDate):
+        (KJS::DateProtoFunc::callAsFunction):
+
 2006-10-23  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by 

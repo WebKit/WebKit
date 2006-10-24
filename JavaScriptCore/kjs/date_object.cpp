@@ -154,7 +154,46 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
     return UString(buffer, length);
 }
 
-#endif // PLATFORM(MAC)
+#else if PLATFORM(WIN_OS)
+
+enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
+ 
+static JSCell* formatLocaleDate(GregorianDateTime gdt, const LocaleDateTimeFormat format)
+{
+    static const char* formatStrings[] = {"%#c", "%#x", "%X"};
+ 
+    // Offset year if needed
+    struct tm localTM = gdt;
+    gdt.year += 1900;
+    bool yearNeedsOffset = gdt.year < 1900 || gdt.year > 2038;
+    if (yearNeedsOffset) {
+        localTM.tm_year = equivalentYearForDST(gdt.year) - 1900;
+     }
+ 
+    // Do the formatting
+    const int bufsize=128;
+    char timebuffer[bufsize];
+    int ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
+ 
+    if ( ret == 0 )
+        return jsString("");
+ 
+    // Copy original into the buffer
+    if (yearNeedsOffset && format != LocaleTime) {
+        static const int yearLen = 5;   // FIXME will be a problem in the year 10,000
+        char yearString[yearLen];
+ 
+        snprintf(yearString, yearLen, "%d", localTM.tm_year + 1900);
+        char* yearLocation = strstr(timebuffer, yearString);
+        snprintf(yearString, yearLen, "%d", gdt.year);
+ 
+        strncpy(yearLocation, yearString, yearLen - 1);
+    }
+ 
+    return jsString(timebuffer);
+}
+
+#endif // PLATFORM(WIN_OS)
 
 static UString formatDate(const GregorianDateTime &t)
 {
@@ -479,24 +518,15 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return jsString(formatLocaleDate(exec, secs, false, true, args));
     break;
 #else
-  case ToLocaleString: {
-    struct tm gtm = t;
-    strftime(timebuffer, bufsize, "%c", &gtm);
-    return jsString(timebuffer);
+  case ToLocaleString:
+    return formatLocaleDate(t, LocaleDateAndTime);
     break;
-    }
-  case ToLocaleDateString: {
-    struct tm gtm = t;
-    strftime(timebuffer, bufsize, "%x", &gtm);
-    return jsString(timebuffer);
+  case ToLocaleDateString:
+    return formatLocaleDate(t, LocaleDate);
     break;
-    }
-  case ToLocaleTimeString: {
-    struct tm gtm = t;
-    strftime(timebuffer, bufsize, "%X", &gtm);
-    return jsString(timebuffer);
+  case ToLocaleTimeString:
+    return formatLocaleDate(t, LocaleTime);
     break;
-    }
 #endif
   case ValueOf:
   case GetTime:
