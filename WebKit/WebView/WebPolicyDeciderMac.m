@@ -44,7 +44,7 @@
 
 - (void)dealloc
 {
-    [decisionListener dealloc];
+    [decisionListener release];
     [super dealloc];
 }
 

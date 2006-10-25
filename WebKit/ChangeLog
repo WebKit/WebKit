@@ -1,3 +1,13 @@
+2006-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        <rdar://problem/4785575> REGRESSION: form resubmission warning occurs twice, then Safari crashes in autorelease pool
+        <rdar://problem/4799383> REGRESSION: Crash occurs when dismissing the "Would you like to save this password" sheet
+
+        * WebView/WebPolicyDeciderMac.m:
+        (-[WebPolicyDeciderMac dealloc]): release the listener, don't dealloc it
+
 2006-10-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
