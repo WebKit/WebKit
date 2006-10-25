@@ -1,3 +1,11 @@
+2006-10-25  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix some HTML bugs in the coding style guidelines.
+
+        * coding/coding-style.html:
+
 2006-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.

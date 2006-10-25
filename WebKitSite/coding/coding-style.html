@@ -53,14 +53,14 @@ void foo() {
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-for (int i = 0; i < 10; i++) {
+for (int i = 0; i &lt; 10; i++) {
     // do stuff
 }
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-for (int i = 0; i < 10; i++)
+for (int i = 0; i &lt; 10; i++)
 {
     // do stuff
 }
@@ -242,16 +242,16 @@ they should read like a phrase or sentence and each piece of the selector should
 <h4 class="right">Right:</h4>
 <pre class="code">
 #define WBStopButtonTitle() \
-        NSLocalizedString(@\"Stop\", @\"Stop button title\")
+        NSLocalizedString(@"Stop", @"Stop button title")
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
 #define WB_STOP_BUTTON_TITLE \
-        NSLocalizedString(@\"Stop\", @\"Stop button\")
+        NSLocalizedString(@"Stop", @"Stop button title")
 
 #define WBStopButtontitle \
-        NSLocalizedString(@\"Stop\", @\"Stop button\")
+        NSLocalizedString(@"Stop", @"Stop button title")
 </pre>
 </li>
 
@@ -314,18 +314,18 @@ should be written with no space between the type name and the * or &amp;.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-Image* SVGStyledElement::doSomething(PaintInfo& paintInfo)
+Image* SVGStyledElement::doSomething(PaintInfo&amp; paintInfo)
 {
-  SVGStyledElement* element = static_cast<SVGStyledElement*>(node());
-  const KCDashArray& dashes = dashArray();
+  SVGStyledElement* element = static_cast&lt;SVGStyledElement*>(node());
+  const KCDashArray&amp; dashes = dashArray();
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-Image *SVGStyledElement::doSomething(PaintInfo &paintInfo)
+Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
 {
-    SVGStyledElement *element = static_cast<SVGStyledElement *>(node());
-    const KCDashArray &dashes = dashArray();
+    SVGStyledElement *element = static_cast&lt;SVGStyledElement *>(node());
+    const KCDashArray &amp;dashes = dashArray();
 </pre>
 
 <h3>Include Statements</h3>
