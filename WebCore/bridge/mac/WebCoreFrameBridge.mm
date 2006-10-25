@@ -380,7 +380,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return YES;
     }
     
-    WebCoreFrameBridge *parentBridge = Mac([targetFrame _frame]->tree()->parent())->bridge();
+    Frame *target = [targetFrame _frame];
+    WebCoreFrameBridge *parentBridge = target ? Mac(target->tree()->parent())->bridge() : nil;
     // Allow if target is an entire window.
     if (!parentBridge)
         return YES;
