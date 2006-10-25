@@ -290,7 +290,7 @@
 		6550B6A6099DF0270090D781 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* Text.h */; };
 		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */; };
-		655A81BA0AEF67D3000975F0 /* WebCoreResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 655A81B70AEF67D3000975F0 /* WebCoreResourceLoader.h */; };
+		655A81BA0AEF67D3000975F0 /* WebCoreResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 655A81B70AEF67D3000975F0 /* WebCoreResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		655A81BB0AEF67D4000975F0 /* WebCoreResourceLoaderImp.h in Headers */ = {isa = PBXBuildFile; fileRef = 655A81B80AEF67D3000975F0 /* WebCoreResourceLoaderImp.h */; };
 		655A81BC0AEF67D4000975F0 /* WebCoreResourceLoaderImp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 655A81B90AEF67D3000975F0 /* WebCoreResourceLoaderImp.mm */; };
 		655A81BE0AEF67E6000975F0 /* HTTPHeaderMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 655A81BD0AEF67E6000975F0 /* HTTPHeaderMap.h */; };
