@@ -70,9 +70,7 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
     if (fl->state() == WebFrameStateProvisional)
         return nil;
 
-    // setHTTPMethod is not called for GET requests to work around <rdar://4464032>.
-    if (![method isEqualToString:@"GET"])
-        [newRequest setHTTPMethod:method];
+    [newRequest setHTTPMethod:method];
 
     wkSupportsMultipartXMixedReplace(newRequest);
 

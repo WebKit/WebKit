@@ -82,7 +82,7 @@ GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.<
              req.open("DELETE", "methods.cgi", true);
              req.send(null);
            } else if (asyncStep == 11) {
-             asyncStep = 15;// 12;
+             asyncStep = 12;
              log('DELETE(null): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
              req.open("DELETE", "methods.cgi", true);
              req.send("123");
@@ -103,8 +103,7 @@ GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.<
              req.send("123");
            } else if (asyncStep == 15) {
              asyncStep = 16;
-             log('DELETE("123"): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
-             //log('HEAD("123"): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
+             log('HEAD("123"): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
              req.open("WKFOOBAR", "methods.cgi", true);
              req.send("");
            } else if (asyncStep == 16) {

@@ -65,7 +65,7 @@ GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.<
     req.open("DELETE", "methods.cgi", false);
     req.send("123");
     log('DELETE("123"): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
-/*
+
     req.open("HEAD", "methods.cgi", false);
     req.send("");
     log('HEAD(""): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
@@ -77,7 +77,7 @@ GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.<
     req.open("HEAD", "methods.cgi", false);
     req.send("123");
     log('HEAD("123"): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
-*/
+
     req.open("WKFOOBAR", "methods.cgi", false);
     req.send("");
     log('WKFOOBAR(""): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));

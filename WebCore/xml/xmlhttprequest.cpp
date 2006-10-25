@@ -298,6 +298,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     m_aborted = false;
 
     ResourceRequest request(m_url);
+    request.setHTTPMethod(m_method);
     
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
         String contentType = getRequestHeader("Content-Type");
@@ -317,13 +318,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
             m_encoding = UTF8Encoding();
 
         request.setHTTPBody(m_encoding.encode(body.characters(), body.length()));
-    } else {
-        // FIXME: HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
-        // FIXME: the radar is fixed, should conditionalize this
-        if (m_method == "HEAD")
-            m_method = "GET";
     }
-    request.setHTTPMethod(m_method);
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);

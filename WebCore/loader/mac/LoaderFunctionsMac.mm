@@ -48,12 +48,12 @@ using namespace WebCore;
 
 @implementation NSDictionary (WebCore_Extras)
 
-+ (id)_webcore_dictionaryWithHeaderMap:(const ResourceRequest::HTTPHeaderMap&)headerMap
++ (id)_webcore_dictionaryWithHeaderMap:(const HTTPHeaderMap&)headerMap
 {
     NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
     
-    ResourceRequest::HTTPHeaderMap::const_iterator end = headerMap.end();
-    for (ResourceRequest::HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it)
+    HTTPHeaderMap::const_iterator end = headerMap.end();
+    for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it)
         [headers setValue:it->second forKey:it->first];
     
     return [headers autorelease];
@@ -101,7 +101,7 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSDictionary *headerDict = nil;
-    const ResourceRequest::HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
+    const HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
 
     if (!requestHeaders.isEmpty())
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];

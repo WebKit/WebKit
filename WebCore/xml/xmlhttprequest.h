@@ -27,7 +27,7 @@
 #include "KURL.h"
 #include "ResourceLoaderClient.h"
 #include "PlatformString.h"
-#include "ResourceRequest.h"
+#include "HTTPHeaderMap.h"
 #include "StringHash.h"
 
 namespace WebCore {
@@ -102,7 +102,7 @@ private:
     KURL m_url;
     DeprecatedString m_method;
     bool m_async;
-    ResourceRequest::HTTPHeaderMap m_requestHeaders;
+    HTTPHeaderMap m_requestHeaders;
 
     RefPtr<ResourceLoader> m_loader;
 

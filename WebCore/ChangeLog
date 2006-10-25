@@ -1,3 +1,27 @@
+2006-10-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - more ResourceLoader cleanup
+            - moved HTTPHeaderMap out of ResourceRequest class, so ResourceResponse will be able to use it too
+            - took out attempts to suppress setting of "HEAD" and "GET" methods, since underlying bugs are now fixed
+        
+        * loader/LoaderFunctions.h:
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * loader/mac/WebSubresourceLoader.mm:
+        (-[WebCoreSubresourceHandle initWithLoader:]):
+        * platform/network/HTTPHeaderMap.h: Added.
+        * platform/network/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::requestHeaders):
+        * platform/network/ResourceLoader.h:
+        * platform/network/ResourceRequest.h:
+        * platform/network/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::addHeadersFromHashMap):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/xmlhttprequest.h:
+
 2006-10-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

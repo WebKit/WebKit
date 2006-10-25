@@ -1,5 +1,6 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Vector.h>
-#include <wtf/HashMap.h>
+#ifndef HTTPHeaderMap_H_
+#define HTTPHeaderMap_H_
+
 #include "PlatformString.h"
-#include "ResourceLoaderClient.h"  // Defines PlatformResponse
-#include "HTTPHeaderMap.h"
-
-#ifdef __OBJC__
-@class NSDictionary;
-@class NSString;
-
-@interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderMap:(const WebCore::HTTPHeaderMap&)headerMap;
-@end
-
-#else
-class NSDictionary;
-class NSString;
-#endif
+#include "StringHash.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class CachedResource;
-class DeprecatedString;
-class DocLoader;
-class Loader;
-class Request;
-class ResourceRequest;
+    typedef HashMap<String, String, CaseInsensitiveHash<String> > HTTPHeaderMap;
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, KURL& finalURL, DeprecatedString& headers);
+} // namespace WebCore
 
-void CheckCacheObjectStatus(DocLoader*, CachedResource*);
-bool CheckIfReloading(DocLoader*);
-bool IsResponseURLEqualToURL(PlatformResponse , const String& URL);
-DeprecatedString ResponseURL(PlatformResponse);
-DeprecatedString ResponseMIMEType(PlatformResponse);
-bool ResponseIsMultipart(PlatformResponse);
-int NumberOfPendingOrLoadingRequests(DocLoader*);
-time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse);
-NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
-
-}
+#endif // HTTPHeaderMap_H_

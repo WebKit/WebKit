@@ -150,14 +150,14 @@ void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challeng
     // Do nothing right now
 }
 
-void addHeadersFromHashMap(CFHTTPMessageRef request, const ResourceRequest::HTTPHeaderMap& requestHeaders) 
+void addHeadersFromHashMap(CFHTTPMessageRef request, const HTTPHeaderMap& requestHeaders) 
 {
     if (!requestHeaders.size())
         return;
 
     CFMutableDictionaryRef allHeaders = CFDictionaryCreateMutable(0, requestHeaders.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    ResourceRequest::HTTPHeaderMap::const_iterator end = requestHeaders.end();
-    for (ResourceRequest::HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
+    HTTPHeaderMap::const_iterator end = requestHeaders.end();
+    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
         CFStringRef key = it->first.createCFString();
         CFStringRef value = it->second.createCFString();
         CFDictionaryAddValue(allHeaders, key, value);

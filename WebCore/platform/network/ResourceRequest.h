@@ -30,9 +30,7 @@
 
 #include "FormData.h"
 #include "KURL.h"
-#include "PlatformString.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
+#include "HTTPHeaderMap.h"
 
 namespace WebCore {
 
@@ -95,8 +93,6 @@ namespace WebCore {
         const String& httpMethod() const { return m_httpMethod; }
         void setHTTPMethod(const String& httpMethod) { m_httpMethod = httpMethod; }
         
-        typedef HashMap<String, String, CaseInsensitiveHash<String> > HTTPHeaderMap;
-
         const HTTPHeaderMap& httpHeaderFields() const { return m_httpHeaderFields; }
         String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
         void setHTTPHeaderField(const String& name, const String& value) { m_httpHeaderFields.set(name, value); }

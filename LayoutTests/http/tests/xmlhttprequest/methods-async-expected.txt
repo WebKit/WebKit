@@ -12,6 +12,9 @@ PUT("123"): PUT(3 bytes), Content-Type: application/xml
 DELETE(""): DELETE(0 bytes), Content-Type: application/xml
 DELETE(null): DELETE(0 bytes), Content-Type: undefined
 DELETE("123"): DELETE(3 bytes), Content-Type: application/xml
+HEAD(""): HEAD(0 bytes), Content-Type: undefined
+HEAD(null): HEAD(0 bytes), Content-Type: undefined
+HEAD("123"): HEAD(0 bytes), Content-Type: undefined
 WKFOOBAR(""): WKFOOBAR(0 bytes), Content-Type: application/xml
 WKFOOBAR(null): WKFOOBAR(0 bytes), Content-Type: undefined
 WKFOOBAR("123"): WKFOOBAR(3 bytes), Content-Type: application/xml

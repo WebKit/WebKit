@@ -85,7 +85,7 @@ void ResourceLoader::kill()
     }
 }
 
-const ResourceRequest::HTTPHeaderMap& ResourceLoader::requestHeaders() const
+const HTTPHeaderMap& ResourceLoader::requestHeaders() const
 {
     return d->m_request.httpHeaderFields();
 }
