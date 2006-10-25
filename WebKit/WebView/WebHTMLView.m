@@ -4028,8 +4028,8 @@ done:
     NSString *aFamilyName = [a familyName];
     NSString *bFamilyName = [b familyName];
 
-    int aPointSize = [a pointSize];
-    int bPointSize = [b pointSize];
+    int aPointSize = (int)[a pointSize];
+    int bPointSize = (int)[b pointSize];
 
     int aWeight = [fm weightOfFont:a];
     int bWeight = [fm weightOfFont:b];
@@ -4065,7 +4065,7 @@ done:
         [style setFontFamily:[NSString stringWithFormat:@"'%@'", familyNameForCSS]];
     }
 
-    int soa = [oa pointSize];
+    int soa = (int)[oa pointSize];
     if (aPointSize == bPointSize)
         [style setFontSize:[NSString stringWithFormat:@"%dpx", aPointSize]];
     else if (aPointSize < soa)
