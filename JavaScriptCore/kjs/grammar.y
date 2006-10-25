@@ -97,7 +97,6 @@ static Node *makeDeleteNode(Node *expr);
 
 /* literals */
 %token NULLTOKEN TRUETOKEN FALSETOKEN
-%token STRING NUMBER
 
 /* keywords */
 %token BREAK CASE DEFAULT FOR NEW VAR CONST CONTINUE
