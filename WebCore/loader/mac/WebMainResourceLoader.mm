@@ -29,9 +29,9 @@
 #import "config.h"
 #import "WebMainResourceLoader.h"
 
+#import "FrameLoader.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
-#import "WebFrameLoader.h"
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>

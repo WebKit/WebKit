@@ -328,8 +328,8 @@
 		656D37390ADBA5DE00A4554D /* WebFormDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D37210ADBA5DE00A4554D /* WebFormDataStream.m */; };
 		656D373A0ADBA5DE00A4554D /* WebFormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* WebFormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373B0ADBA5DE00A4554D /* WebFormState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* WebFormState.mm */; };
-		656D373C0ADBA5DE00A4554D /* WebFrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* WebFrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D373D0ADBA5DE00A4554D /* WebFrameLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37250ADBA5DE00A4554D /* WebFrameLoader.mm */; };
+		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		656D373D0ADBA5DE00A4554D /* FrameLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37250ADBA5DE00A4554D /* FrameLoader.mm */; };
 		656D373E0ADBA5DE00A4554D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* WebFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373F0ADBA5DE00A4554D /* WebLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* WebLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37400ADBA5DE00A4554D /* WebLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37280ADBA5DE00A4554D /* WebLoader.mm */; };
@@ -3239,8 +3239,8 @@
 		656D37210ADBA5DE00A4554D /* WebFormDataStream.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebFormDataStream.m; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* WebFormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* WebFormState.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFormState.mm; sourceTree = "<group>"; };
-		656D37240ADBA5DE00A4554D /* WebFrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFrameLoader.h; sourceTree = "<group>"; };
-		656D37250ADBA5DE00A4554D /* WebFrameLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFrameLoader.mm; sourceTree = "<group>"; };
+		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
+		656D37250ADBA5DE00A4554D /* FrameLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FrameLoader.mm; sourceTree = "<group>"; };
 		656D37260ADBA5DE00A4554D /* WebFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFrameLoaderClient.h; sourceTree = "<group>"; };
 		656D37270ADBA5DE00A4554D /* WebLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebLoader.h; sourceTree = "<group>"; };
 		656D37280ADBA5DE00A4554D /* WebLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebLoader.mm; sourceTree = "<group>"; };
@@ -7507,8 +7507,8 @@
 				656D37210ADBA5DE00A4554D /* WebFormDataStream.m */,
 				656D37220ADBA5DE00A4554D /* WebFormState.h */,
 				656D37230ADBA5DE00A4554D /* WebFormState.mm */,
-				656D37240ADBA5DE00A4554D /* WebFrameLoader.h */,
-				656D37250ADBA5DE00A4554D /* WebFrameLoader.mm */,
+				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
+				656D37250ADBA5DE00A4554D /* FrameLoader.mm */,
 				656D37260ADBA5DE00A4554D /* WebFrameLoaderClient.h */,
 				656D37270ADBA5DE00A4554D /* WebLoader.h */,
 				656D37280ADBA5DE00A4554D /* WebLoader.mm */,
@@ -10414,7 +10414,7 @@
 				656D37360ADBA5DE00A4554D /* WebDocumentLoader.h in Headers */,
 				656D37380ADBA5DE00A4554D /* WebFormDataStream.h in Headers */,
 				656D373A0ADBA5DE00A4554D /* WebFormState.h in Headers */,
-				656D373C0ADBA5DE00A4554D /* WebFrameLoader.h in Headers */,
+				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* WebFrameLoaderClient.h in Headers */,
 				656D373F0ADBA5DE00A4554D /* WebLoader.h in Headers */,
 				656D37410ADBA5DE00A4554D /* WebMainResourceLoader.h in Headers */,
@@ -11660,7 +11660,7 @@
 				656D37370ADBA5DE00A4554D /* WebDocumentLoader.mm in Sources */,
 				656D37390ADBA5DE00A4554D /* WebFormDataStream.m in Sources */,
 				656D373B0ADBA5DE00A4554D /* WebFormState.mm in Sources */,
-				656D373D0ADBA5DE00A4554D /* WebFrameLoader.mm in Sources */,
+				656D373D0ADBA5DE00A4554D /* FrameLoader.mm in Sources */,
 				656D37400ADBA5DE00A4554D /* WebLoader.mm in Sources */,
 				656D37420ADBA5DE00A4554D /* WebMainResourceLoader.mm in Sources */,
 				656D37440ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm in Sources */,

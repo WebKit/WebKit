@@ -75,10 +75,10 @@
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebCore/WebFormDataStream.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebCore/WebFrameLoaderClient.h>
 #import <WebCore/WebLoader.h>
 #import <WebCore/WebSubresourceLoader.h>

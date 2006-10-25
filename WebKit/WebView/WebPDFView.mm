@@ -30,6 +30,7 @@
 
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
+#import "WebDocumentPrivate.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
@@ -42,10 +43,9 @@
 #import "WebUIDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
-#import "WebDocumentPrivate.h"
 #import <JavaScriptCore/Assertions.h>
 #import <PDFKit/PDFKit.h>
-#import <WebCore/WebFrameLoader.h>
+#import <WebCore/FrameLoader.h>
 #import <WebKitSystemInterface.h>
 
 #define TEMP_PREFIX "/tmp/XXXXXX-"

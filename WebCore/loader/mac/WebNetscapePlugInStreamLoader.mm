@@ -29,7 +29,7 @@
 #import "config.h"
 #import "WebNetscapePlugInStreamLoader.h"
 
-#import "WebFrameLoader.h"
+#import "FrameLoader.h"
 #import <wtf/PassRefPtr.h>
 
 namespace WebCore {

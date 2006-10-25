@@ -85,6 +85,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
@@ -93,7 +94,6 @@
 #import <WebCore/WebCoreView.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebDocumentLoader.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>

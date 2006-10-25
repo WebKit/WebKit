@@ -29,11 +29,11 @@
 #import "config.h"
 #import "WebLoader.h"
 
+#import "FrameLoader.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
-#import "WebFrameLoader.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>

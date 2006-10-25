@@ -27,8 +27,8 @@
  */
 
 #import "WebPolicyDelegatePrivate.h"
-#import <WebCore/WebFrameLoader.h>
 
+#import <WebCore/FrameLoader.h>
 #import <objc/objc-runtime.h>
 
 NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";

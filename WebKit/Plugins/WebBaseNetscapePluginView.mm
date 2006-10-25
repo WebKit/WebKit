@@ -50,7 +50,7 @@
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/npruntime_impl.h>
-#import <WebCore/WebFrameLoader.h> 
+#import <WebCore/FrameLoader.h> 
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>

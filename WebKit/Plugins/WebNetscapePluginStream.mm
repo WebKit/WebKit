@@ -29,8 +29,8 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <Foundation/NSURLConnection.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebCore/WebNetscapePlugInStreamLoader.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameBridge.h>

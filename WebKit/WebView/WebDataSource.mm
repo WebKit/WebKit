@@ -50,8 +50,8 @@
 #import "WebUnarchivingState.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>

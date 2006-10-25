@@ -29,7 +29,11 @@
 
 #import <WebKit/WebPluginController.h>
 
+#import <Foundation/NSURLRequest.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDocumentLoader.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
@@ -44,14 +48,8 @@
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginPrivate.h>
 #import <WebKit/WebPluginViewFactory.h>
-#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebCore/WebFrameLoader.h>
-
-#import <WebCore/WebCoreFrameBridge.h>
-
-#import <Foundation/NSURLRequest.h>
+#import <WebKit/WebViewInternal.h>
 
 @interface NSView (PluginSecrets)
 - (void)setContainingWindow:(NSWindow *)w;

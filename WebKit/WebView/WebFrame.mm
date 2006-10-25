@@ -66,12 +66,12 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Element.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebFormDataStream.h>
 #import <WebCore/WebFormState.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebCore/WebLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKitSystemInterface.h>

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IconLoader.h"
 
+#include "FrameLoader.h"
 #include "FrameMac.h"
-#include "WebFrameLoader.h"
 
 using namespace WebCore;
 

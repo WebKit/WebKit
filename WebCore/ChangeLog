@@ -1,3 +1,22 @@
+2006-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam.
+
+        Renamed WebFrameLoader to FrameLoader, to match class name.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * loader/mac/FrameLoader.mm: Added.
+        * loader/mac/IconLoaderMac.mm:
+        * loader/mac/WebDocumentLoader.mm:
+        * loader/mac/WebFrameLoader.h: Removed.
+        * loader/mac/WebFrameLoader.mm: Removed.
+        * loader/mac/WebLoader.mm:
+        * loader/mac/WebMainResourceLoader.mm:
+        * loader/mac/WebNetscapePlugInStreamLoader.mm:
+        * loader/mac/WebSubresourceLoader.mm:
+
 2006-10-25  Darin Adler  <darin@apple.com>
 
         - fix full builds

@@ -29,11 +29,11 @@
 #import "config.h"
 #import "WebDocumentLoader.h"
 
+#import "FrameLoader.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
-#import "WebFrameLoader.h"
 #import <wtf/Assertions.h>
 
 namespace WebCore {

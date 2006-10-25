@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebFrameLoader.h"
+#import "FrameLoader.h"
 
 #import "DOMElementInternal.h"
 #import "Element.h"
