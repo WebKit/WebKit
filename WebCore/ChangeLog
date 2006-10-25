@@ -1,5 +1,16 @@
 2006-10-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Mitz.
+
+        - moved some files that are essentially part of the ResourceLoader implementation to platform/network/mac
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreResourceLoader.h: Moved to platform/network/mac.
+        * bridge/mac/WebCoreResourceLoaderImp.h: Moved to platform/network/mac.
+        * bridge/mac/WebCoreResourceLoaderImp.mm: Moved to platform/network/mac.
+
+2006-10-25  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Mark.
 
         - remove no longer existing symbol that was breaking linking
