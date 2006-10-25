@@ -2902,7 +2902,7 @@ bool FrameMac::haveToldBridgeAboutLoad(const String& URL)
     return urlsBridgeKnowsAbout.contains(URL);
 }
 
-void FrameMac::clear()
+void FrameMac::clear(bool clearWindowProperties)
 {
     urlsBridgeKnowsAbout.clear();
     setMarkedTextRange(0, nil, nil);

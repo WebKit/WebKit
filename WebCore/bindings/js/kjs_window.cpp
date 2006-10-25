@@ -1350,8 +1350,10 @@ void Window::clear()
   clearProperties();
   setPrototype(JSDOMWindowProto::self()); // clear the prototype
 
-  // Now recreate a working global object for the next URL that will use us
-  interpreter()->initGlobalObject();
+  // Now recreate a working global object for the next URL that will use us; but only if we haven't been
+  // disconnected yet
+  if (m_frame)
+    interpreter()->initGlobalObject();
 
   // there's likely to be lots of garbage now
   Collector::collect();

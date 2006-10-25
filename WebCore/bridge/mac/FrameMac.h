@@ -127,7 +127,7 @@ public:
 
     virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     
-    void clear();
+    void clear(bool clearWindowProperties = true);
 
     void setBridge(WebCoreFrameBridge* p);
     WebCoreFrameBridge* bridge() const { return _bridge; }

@@ -1,3 +1,19 @@
+2006-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mitz.
+        
+        - fixed "REGRESSION: Activity window doesn't always list all files until refresh"
+        http://bugs.webkit.org/show_bug.cgi?id=11212
+
+        I couldn't figure out how to write a test case.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::clear): Avoid crashing if already detached.
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::clear): Change prototype to make this a proper
+        overload for Frame::clear once again(!).
+
 2006-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
