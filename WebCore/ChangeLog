@@ -1,3 +1,63 @@
+2006-10-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <http://bugs.webkit.org/show_bug.cgi?id=10993>
+        GMail Editor: Caret doesn't always position itself after list marker
+        
+        List creation uses moveParagraphs to push content into list items.  
+        moveParagraphs uses a TextIterator to restore selections after moves.
+        Some characters emitted by the TextIterator had bad ranges associated
+        with them.  rangeFromLocationAndLength would skip past the range it
+        should have used when asked for ranges of length 0.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): No longer need to initialize a
+        removed member variable.
+        (WebCore::TextIterator::advance): An extra newline is emitted when leaving
+        some blocks.  Use the same range for this newline as for the first newline.
+        We should remove this code and just emit two '\n's.
+        (WebCore::TextIterator::handleTextNode): Setup m_range.
+        (WebCore::TextIterator::handleTextBox): Ditto.
+        (WebCore::TextIterator::handleReplacedElement): Ditto.
+        (WebCore::TextIterator::handleNonTextNode): Ditto.
+        (WebCore::TextIterator::exitNode): Use an m_range from the last VisiblePosition
+        in the block we're leaving to that VP after that one.
+        (WebCore::TextIterator::emitCharacter): This function now takes in the start
+        and the end of the range associated with the emited character, and sets up m_range.
+        (WebCore::TextIterator::range): Return m_range.  If it is null (we are atEnd), 
+        return the end of the range used to create the iterator, as a convenience to
+        callers that use call range() on an iterator that is atEnd.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        Same as the changes made to TextIterator's constructor.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Use a null m_range instead of
+        a null m_positionNode to signal that we're finished.
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::handleReplacedElement): Similar to changes
+        made to TextIterator.
+        (WebCore::SimplifiedBackwardsTextIterator::emitCharacter): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::emitNewline): Simplified.
+        (WebCore::SimplifiedBackwardsTextIterator::range): Similar to the changes made to
+        TextIterator::range.
+        (WebCore::CharacterIterator::range): This function assumed that an iterator's
+        range() was safe to modify.
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        If the range we're looking for starts in the current chunk, this function assumed
+        that if the chunk started in a text node, it would end in the same text node.  This
+        is no longer the case.
+        If the range we're looking for starts in the middle of the current chunk, I assume
+        that the chunk is inside a text node, because those are the only chunks with length
+        greater than one at the moment.
+        If the range we're looking for is a zero length range that starts/ends at the end of the
+        current chunk, we used to return the start of the next chunk, but that's wrong and
+        is what caused this bug.
+        * editing/TextIterator.h:
+        (WebCore::TextIterator::atEnd): The iterator is atEnd when m_range is null.
+        (WebCore::SimplifiedBackwardsTextIterator::atEnd):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): Cleaned up by using a convenience function.
+        (WebCore::nextBoundary): Ditto.
+
 2006-10-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

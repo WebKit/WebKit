@@ -1,3 +1,25 @@
+2006-10-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <http://bugs.webkit.org/show_bug.cgi?id=10993>
+        GMail Editor: Caret doesn't always position itself after list marker
+
+        * editing/execCommand/create-list-1-expected.checksum: Added.
+        * editing/execCommand/create-list-1-expected.png: Added.
+        * editing/execCommand/create-list-1-expected.txt: Added.
+        * editing/execCommand/create-list-1.html: Added.
+        
+        Fixed:
+        * editing/execCommand/create-list-with-hr-expected.checksum:
+        * editing/execCommand/create-list-with-hr-expected.png:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/execCommand/create-list-with-hr.html:
+        * editing/execCommand/remove-list-1-expected.checksum:
+        * editing/execCommand/remove-list-1-expected.png:
+        * editing/execCommand/remove-list-1-expected.txt:
+        * fast/text/attributed-substring-from-range-001-expected.txt:
+        
 2006-10-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
