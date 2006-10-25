@@ -30,14 +30,14 @@
 
 #import "WebArchive.h"
 #import "WebArchiver.h"
-#import <WebCore/WebDataProtocol.h>
-#import <WebKit/WebDataSourceInternal.h>
+#import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocument.h"
+#import "WebDocumentLoaderMac.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import <WebCore/WebFrameLoader.h>
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameLoaderClient.h"
 #import "WebHTMLRepresentation.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -50,10 +50,11 @@
 #import "WebUnarchivingState.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/WebDataProtocol.h>
+#import <WebCore/WebFrameLoader.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import "WebDocumentLoaderMac.h"
 
 using namespace WebCore;
 
@@ -409,7 +410,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     FrameLoader* frameLoader = _private->loader->frameLoader();
     if (!frameLoader)
         return nil;
-    return (WebFrame *)frameLoader->client();
+    return static_cast<WebFrameLoaderClient*>(frameLoader->client())->webFrame();
 }
 
 - (NSURLRequest *)initialRequest

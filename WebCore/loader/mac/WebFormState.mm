@@ -55,7 +55,7 @@ FormState::FormState(PassRefPtr<Element> form, const HashMap<String, String>& va
 
 FormState::FormState(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
     : m_form([form _element])
-    , m_sourceFrame([sourceFrame impl])
+    , m_sourceFrame([sourceFrame _frame])
 {
     NSEnumerator *keyEnumerator = [values keyEnumerator];
     while (NSString *key = [keyEnumerator nextObject])

@@ -530,7 +530,7 @@ void Frame::cancelRedirection(bool cancelWithLoadInProgress)
 
 #pragma mark END LOADING FUNCTIONS
 
-FrameLoader* Frame::frameLoader()
+FrameLoader* Frame::loader() const
 {
     return d->m_frameLoader;
 }

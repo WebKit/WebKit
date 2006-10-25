@@ -2309,7 +2309,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    FrameMac* frameMac = [bridge impl];
+    FrameMac* frameMac = [bridge _frame];
     if (!frameMac)
         return NULL;
         

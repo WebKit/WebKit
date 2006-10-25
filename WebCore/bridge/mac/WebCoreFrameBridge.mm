@@ -60,9 +60,9 @@
 #import "RenderTreeAsText.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RetainPtr.h"
 #import "ReplaceSelectionCommand.h"
 #import "ResourceRequest.h"
+#import "RetainPtr.h"
 #import "Screen.h"
 #import "SelectionController.h"
 #import "TextEncoding.h"
@@ -323,7 +323,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return nil;
 }
 
-// FIXME: this is not getting called any more! security regression...
+#if 0
+// FIXME: This is not getting called any more! security regression!?
 - (BOOL)_shouldAllowAccessFrom:(WebCoreFrameBridge *)source
 {
     // if no source frame, allow access
@@ -346,8 +347,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         if (ancestorDomain != nil && 
             isCaseSensitiveEqual(sourceDomain, ancestorDomain))
             return YES;
-        
-        ancestor = [ancestor parent];
     }
 
     //   - allow access if this frame is a toplevel window and the source
@@ -362,6 +361,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // otherwise deny access
     return NO;
 }
+#endif
 
 - (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame
 {
@@ -380,7 +380,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return YES;
     }
     
-    WebCoreFrameBridge *parentBridge = [targetFrame parent];
+    WebCoreFrameBridge *parentBridge = Mac([targetFrame _frame]->tree()->parent())->bridge();
     // Allow if target is an entire window.
     if (!parentBridge)
         return YES;
@@ -538,16 +538,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     _closed = YES;
 }
 
-- (WebCoreFrameBridge *)parent
-{
-    return bridge(m_frame->tree()->parent());
-}
-
-- (void)provisionalLoadStarted
-{
-    m_frame->provisionalLoadStarted();
-}
-
 - (void)openURL:(NSURL *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {
@@ -572,11 +562,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
 }
 
-- (void)setEncoding:(NSString *)encoding userChosen:(BOOL)userChosen
-{
-    m_frame->setEncoding(encoding, userChosen);
-}
-
 - (void)addData:(NSData *)data
 {
     Document *doc = m_frame->document();
@@ -594,16 +579,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)closeURL
 {
     m_frame->closeURL();
-}
-
-- (void)stopLoading
-{
-    m_frame->stopLoading();
-}
-
-- (void)didNotOpenURL:(NSURL *)URL
-{
-    m_frame->didNotOpenURL(KURL(URL).url());
 }
 
 - (void)invalidatePageCache:(NSDictionary *)pageCache
@@ -672,21 +647,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     doc->setStateForNewFormElements(stateVector);
 }
 
-- (void)scrollToAnchorWithURL:(NSURL *)URL
-{
-    m_frame->scrollToAnchor(KURL(URL).url().latin1());
-}
-
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
 {
     if (!m_frame)
         return NO;
     return m_frame->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
-}
-
-- (BOOL)sendScrollWheelEvent:(NSEvent *)event
-{
-    return m_frame ? m_frame->wheelEvent(event) : NO;
 }
 
 - (BOOL)saveDocumentToPageCache
@@ -727,21 +692,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (BOOL)canCachePage
 {
     return m_frame->canCachePage();
-}
-
-- (void)clear
-{
-    m_frame->clear();
-}
-
-- (void)end
-{
-    m_frame->end();
-}
-
-- (void)stop
-{
-    m_frame->stop();
 }
 
 - (void)clearFrame
@@ -1494,7 +1444,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)setOpener:(WebCoreFrameBridge *)bridge;
 {
-    if (Frame* f = [bridge impl])
+    if (Frame* f = [bridge _frame])
         f->setOpener(m_frame);
 }
 
@@ -2220,20 +2170,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->applyParagraphStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
 }
 
-- (void)indent
-{
-    if (!m_frame)
-        return;
-    m_frame->indent();
-}
-
-- (void)outdent
-{
-    if (!m_frame)
-        return;
-    m_frame->outdent();
-}
-
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
@@ -2256,34 +2192,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return NSOffState;
 }
 
-- (void)applyEditingStyleToBodyElement
-{
-    if (!m_frame)
-        return;
-    m_frame->applyEditingStyleToBodyElement();
-}
-
-- (void)removeEditingStyleFromBodyElement
-{
-    if (!m_frame)
-        return;
-    m_frame->removeEditingStyleFromBodyElement();
-}
-
-- (void)applyEditingStyleToElement:(DOMElement *)element
-{
-    if (!m_frame)
-        return;
-    m_frame->applyEditingStyleToElement([element _element]);
-}
-
-- (void)removeEditingStyleFromElement:(DOMElement *)element
-{
-    if (!m_frame)
-        return;
-    m_frame->removeEditingStyleFromElement([element _element]);
-}
-
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts
 {
     bool multipleFonts = false;
@@ -2295,20 +2203,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return font;
 }
 
-- (NSDictionary *)fontAttributesForSelectionStart
-{
-    return m_frame ? m_frame->fontAttributesForSelectionStart() : nil;
-}
-
 - (NSWritingDirection)baseWritingDirectionForSelectionStart
 {
     // FIXME: remove this NSWritingDirection cast once <rdar://problem/4509035> is fixed
     return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
-}
-
-- (BOOL)eventMayStartDrag:(NSEvent *)event
-{
-    return m_frame ? m_frame->eventMayStartDrag(event) : NO;
 }
 
 static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
@@ -2414,36 +2312,6 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     }
 }
 
-- (BOOL)mayDHTMLCut
-{
-    return m_frame->mayDHTMLCut();
-}
-
-- (BOOL)mayDHTMLCopy
-{
-    return m_frame->mayDHTMLCopy();
-}
-
-- (BOOL)mayDHTMLPaste
-{
-    return m_frame->mayDHTMLPaste();
-}
-
-- (BOOL)tryDHTMLCut
-{
-    return m_frame->tryDHTMLCut();
-}
-
-- (BOOL)tryDHTMLCopy
-{
-    return m_frame->tryDHTMLCopy();
-}
-
-- (BOOL)tryDHTMLPaste
-{
-    return m_frame->tryDHTMLPaste();
-}
-
 - (DOMRange *)rangeOfCharactersAroundCaret
 {
     if (!m_frame)
@@ -2462,12 +2330,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     return [DOMRange _rangeWith:makeRange(previous, next).get()];
 }
 
-- (NSMutableDictionary *)dashboardRegions
-{
-    return m_frame->dashboardRegionsDictionary();
-}
-
-// FIXME: The following 2 functions are copied from AppKit. It would be best share code.
+// FIXME: The following 2 functions are copied from AppKit. It would be best to share code.
 
 // MF:!!! For now we will use static character sets for the computation, but we should eventually probably make these keys in the language dictionaries.
 // MF:!!! The following characters (listed with their nextstep encoding values) were in the preSmartTable in the old text objet, but aren't yet in the new text object: NS_FIGSPACE (0x80), exclamdown (0xa1), sterling (0xa3), yen (0xa5), florin (0xa6) section (0xa7), currency (0xa8), quotesingle (0xa9), quotedblleft (0xaa), guillemotleft (0xab), guilsinglleft (0xac), endash (0xb1), quotesinglbase (0xb8), quotedblbase (0xb9), questiondown (0xbf), emdash (0xd0), plusminus (0xd1).
@@ -2525,7 +2388,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL
 {
-    Document* doc = [self impl]->document();
+    Document* doc = m_frame->document();
     if (!doc)
         return NO;
 
@@ -2540,7 +2403,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses
 {
-    Document* doc = [self impl]->document();
+    Document* doc = m_frame->document();
     if (!doc) {
         NSArray* emptyArray = [NSArray array];
         *datas = emptyArray;
@@ -2582,43 +2445,9 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [self canProvideDocumentSource];
 }
 
-- (BOOL)containsPlugins
-{
-    return m_frame->containsPlugins();
-}
-
-- (void)setInViewSourceMode:(BOOL)flag
-{
-    m_frame->setInViewSourceMode(flag);
-}
-
-- (BOOL)inViewSourceMode
-{
-    return m_frame->inViewSourceMode();
-}
-
-- (void)setProhibitsScrolling:(BOOL)prohibits
-{
-    m_frame->setProhibitsScrolling(prohibits);
-}
-
 - (BOOL)isMainFrame
 {
     return m_frame->page()->mainFrame() == m_frame;
-}
-
-- (void)setFrameLoaderClient:(id<WebFrameLoaderClient>)client
-{
-    if (!m_frame)
-        return;
-    m_frame->frameLoader()->setFrameLoaderClient(client);
-}
-
-- (WebCoreFrameLoader *)frameLoader
-{
-    if (!m_frame)
-        return 0;
-    return m_frame->frameLoader();
 }
 
 static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
@@ -2669,52 +2498,38 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 {
     if (!m_frame)
         return;
-    m_frame->frameLoader()->documentLoader()->setTitle(stringByCollapsingNonPrintingCharacters(title));
-}
-
-- (void)didFirstLayout
-{
-    if (!m_frame)
-        return;
-    m_frame->frameLoader()->didFirstLayout();
-}
-
-- (void)notifyIconChanged:(NSURL*)iconURL
-{
-    if (!m_frame)
-        return;
-    m_frame->frameLoader()->notifyIconChanged(iconURL);
+    m_frame->loader()->documentLoader()->setTitle(stringByCollapsingNonPrintingCharacters(title));
 }
 
 - (NSURL*)originalRequestURL
 {
-    return [m_frame->frameLoader()->activeDocumentLoader()->initialRequest() URL];
+    return [m_frame->loader()->activeDocumentLoader()->initialRequest() URL];
 }
 
 - (BOOL)isLoadTypeReload
 {
-    return m_frame->frameLoader()->loadType() == FrameLoadTypeReload;
+    return m_frame->loader()->loadType() == FrameLoadTypeReload;
 }
 
 - (void)frameDetached
 {
-    m_frame->frameLoader()->stopLoading();
-    m_frame->frameLoader()->detachFromParent();
+    m_frame->loader()->stopLoading();
+    m_frame->loader()->detachFromParent();
 }
 
 - (void)tokenizerProcessedData
 {
-    m_frame->frameLoader()->checkLoadComplete();
+    m_frame->loader()->checkLoadComplete();
 }
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = m_frame ? m_frame->frameLoader()->documentLoader()->overrideEncoding() : nil;
+    NSString *encoding = m_frame ? m_frame->loader()->documentLoader()->overrideEncoding() : nil;
     bool userChosen = encoding != nil;
     if (!encoding)
         encoding = textEncodingName;
-    [self setEncoding:encoding userChosen:userChosen];
+    m_frame->setEncoding(encoding, userChosen);
     [self addData:data];
 }
 
@@ -2743,8 +2558,8 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     NSError *error;
     id identifier;
-    m_frame->frameLoader()->requestFromDelegate(request, identifier, error);    
-    m_frame->frameLoader()->sendRemainingDelegateMessages(identifier, response, [data length], error);
+    m_frame->loader()->requestFromDelegate(request, identifier, error);    
+    m_frame->loader()->sendRemainingDelegateMessages(identifier, response, [data length], error);
     [request release];
 }
 
@@ -2767,12 +2582,12 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {   
-    m_frame->frameLoader()->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
+    m_frame->loader()->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
 }
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    m_frame->frameLoader()->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
+    m_frame->loader()->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
 }
 
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
@@ -2801,18 +2616,18 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     if (isConditionalRequest(request))
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [request setCachePolicy:[m_frame->frameLoader()->documentLoader()->request() cachePolicy]];
+        [request setCachePolicy:[m_frame->loader()->documentLoader()->request() cachePolicy]];
     
     if (!hideReferrer)
         setHTTPReferrer(request, [self referrer]);
     
     WebCorePageBridge *page = [self page];
-    [request setMainDocumentURL:[[[page mainFrame] impl]->frameLoader()->documentLoader()->request() URL]];
+    [request setMainDocumentURL:[[[page mainFrame] _frame]->loader()->documentLoader()->request() URL]];
     [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     NSError *error = nil;
     id identifier = nil;    
-    NSURLRequest *newRequest = m_frame->frameLoader()->requestFromDelegate(request, identifier, error);
+    NSURLRequest *newRequest = m_frame->loader()->requestFromDelegate(request, identifier, error);
     
     NSURLResponse *response = nil;
     NSData *result = nil;
@@ -2841,7 +2656,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
         }
     }
     
-    m_frame->frameLoader()->sendRemainingDelegateMessages(identifier, response, [result length], error);
+    m_frame->loader()->sendRemainingDelegateMessages(identifier, response, [result length], error);
     [request release];
     
     return result;
@@ -2850,22 +2665,22 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (NSString *)incomingReferrer
 {
-    return [m_frame->frameLoader()->documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
+    return [m_frame->loader()->documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
 }
 
 - (BOOL)isReloading
 {
-    return [m_frame->frameLoader()->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+    return [m_frame->loader()->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
 - (void)handledOnloadEvents
 {
-    [m_frame->frameLoader()->client() _dispatchDidHandleOnloadEventsForFrame];
+    m_frame->loader()->client()->dispatchDidHandleOnloadEvents();
 }
 
 - (NSURLResponse *)mainResourceURLResponse
 {
-    return m_frame->frameLoader()->documentLoader()->response();
+    return m_frame->loader()->documentLoader()->response();
 }
 
 - (void)loadEmptyDocumentSynchronously
@@ -2875,9 +2690,14 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
         
     NSURL *url = [[NSURL alloc] initWithString:@""];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    m_frame->frameLoader()->load(request);
+    m_frame->loader()->load(request);
     [request release];
     [url release];
+}
+
+- (FrameMac*)_frame
+{
+    return m_frame;
 }
 
 @end
@@ -2886,21 +2706,12 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {
-    FrameMac *frame = [self impl];
+    FrameMac *frame = [self _frame];
     RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
     root->setRootObjectImp(Window::retrieveWindow(frame));
     root->setInterpreter(frame->jScript()->interpreter());
     frame->addPluginRootObject(root);
     return root;
-}
-
-@end
-
-@implementation WebCoreFrameBridge (WebCoreInternalUse)
-
-- (FrameMac*)impl
-{
-    return m_frame;
 }
 
 @end

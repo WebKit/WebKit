@@ -226,9 +226,8 @@ Widget::FocusPolicy Slider::focusPolicy() const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
-    if (!bridge || ![bridge impl] || ![bridge impl]->tabsToAllControls()) {
+    if (!bridge || ![bridge _frame] || ![bridge _frame]->tabsToAllControls())
         return NoFocus;
-    }
     
     END_BLOCK_OBJC_EXCEPTIONS;
     

@@ -66,7 +66,7 @@ SubresourceLoader::~SubresourceLoader()
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
     NSMutableURLRequest *newRequest, NSString *method, NSDictionary *customHeaders, NSString *referrer)
 {
-    FrameLoader* fl = frame->frameLoader();
+    FrameLoader* fl = frame->loader();
     if (fl->state() == WebFrameStateProvisional)
         return nil;
 

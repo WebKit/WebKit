@@ -63,11 +63,11 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
         // ANSWER: No, because such a method doesn't exist - YET
         if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty())
-                [frameBridge impl]->loadRequest(request, true, nil, nil, nil);
+                [frameBridge _frame]->loadRequest(request, true, nil, nil, nil);
 
             [frameBridge activateWindow];
 
-            newFrame = [frameBridge impl];
+            newFrame = [frameBridge _frame];
 
             return;
         }
@@ -82,10 +82,10 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
         return;
     
     WebCoreFrameBridge *frameBridge = [pageBridge mainFrame];
-    if ([frameBridge impl])
-        [frameBridge impl]->tree()->setName(AtomicString(request.m_frameName));
+    if ([frameBridge _frame])
+        [frameBridge _frame]->tree()->setName(AtomicString(request.m_frameName));
     
-    newFrame = [frameBridge impl];
+    newFrame = [frameBridge _frame];
     
     [frameBridge setToolbarsVisible:windowFeatures.toolBarVisible || windowFeatures.locationBarVisible];
     [frameBridge setStatusbarVisible:windowFeatures.statusBarVisible];

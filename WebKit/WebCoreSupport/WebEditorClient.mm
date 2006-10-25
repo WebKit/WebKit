@@ -39,11 +39,11 @@
 // we can't make the internal DOM headers private since they are not generated at the time installhdrs is called
 
 @interface DOMHTMLElement (WebCoreInternal)
-+ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
++ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement*)impl;
 @end
 
 @interface DOMRange (WebCoreInternal)
-+ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
++ (DOMRange *)_rangeWith:(WebCore::Range*)impl;
 @end
 
 WebEditorClient::WebEditorClient()

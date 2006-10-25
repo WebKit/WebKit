@@ -38,6 +38,7 @@
 #import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameLoaderClient.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -65,12 +66,12 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Element.h>
-#import <WebCore/Frame.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/FrameTree.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebFormDataStream.h>
 #import <WebCore/WebFormState.h>
 #import <WebCore/WebFrameLoader.h>
-#import <WebCore/WebFrameLoaderClient.h>
 #import <WebCore/WebLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKitSystemInterface.h>
@@ -123,9 +124,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
-@end
-
-@interface WebFrame (WebFrameLoaderClient) <WebFrameLoaderClient>
 @end
 
 @interface NSView (WebFramePluginHosting)
@@ -220,6 +218,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 {
     return [(WebFrameBridge *)bridge webFrame];
+}
+
+static inline WebFrame *frame(Frame* f)
+{
+    return f ? [(WebFrameBridge *)Mac(f)->bridge() webFrame] : nil;
 }
 
 @implementation WebFrame (FrameTraversal)
@@ -489,9 +492,9 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
         [self _saveScrollPositionAndViewStateToItem:_private->currentItem];
         // FIXME: form state might want to be saved here too
 
-        // We always call scrollToAnchorWithURL here, even if the URL doesn't have an
+        // We always call scrollToAnchor here, even if the URL doesn't have an
         // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
-        [_private->bridge scrollToAnchorWithURL:[item URL]];
+        [_private->bridge _frame]->scrollToAnchor([item URL]);
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];
@@ -829,7 +832,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
         NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
-        if (([documentView isKindOfClass:[WebHTMLView class]] && [_private->bridge containsPlugins]))
+        if (([documentView isKindOfClass:[WebHTMLView class]] && [_private->bridge _frame]->containsPlugins()))
             [frame reload];
     }
 }
@@ -884,7 +887,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
     ++WebFrameCount;
 
-    [bridge setFrameLoaderClient:self];
+    [self _frameLoader]->setClient(new WebFrameLoaderClient(self));
 
     return self;
 }
@@ -1056,7 +1059,8 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 
 - (FrameLoader*)_frameLoader
 {
-    return [_private->bridge frameLoader];
+    Frame* frame = [_private->bridge _frame];
+    return frame ? frame->loader() : 0;
 }
 
 static inline WebDataSource *dataSource(DocumentLoader* loader)
@@ -1175,13 +1179,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebDataSource *)provisionalDataSource
 {
-    WebCoreFrameLoader* frameLoader = [self _frameLoader];
+    FrameLoader* frameLoader = [self _frameLoader];
     return frameLoader ? dataSource(frameLoader->provisionalDocumentLoader()) : nil;
 }
 
 - (WebDataSource *)dataSource
 {
-    WebCoreFrameLoader* frameLoader = [self _frameLoader];
+    FrameLoader* frameLoader = [self _frameLoader];
     return frameLoader ? dataSource(frameLoader->documentLoader()) : nil;
 }
 
@@ -1254,7 +1258,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebFrame *)parentFrame
 {
-    return [[frame([[self _bridge] parent]) retain] autorelease];
+    return [[frame([_private->bridge _frame]->tree()->parent()) retain] autorelease];
 }
 
 - (NSArray *)childFrames
@@ -2242,7 +2246,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
             }
         } else
             // Put the document into a null state, so it can be restored correctly.
-            [_private->bridge clear];
+            [_private->bridge _frame]->clear();
     } else
         LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }

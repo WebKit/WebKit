@@ -1,3 +1,156 @@
+2006-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - converted WebFrameLoaderClient to C++
+        - renamed frame->frameLoader() function to frame->loader()
+        - renamed [bridge impl] to [bridge _frame]
+        - removed some bridge methods
+
+        * Plugins/WebNetscapePluginStream.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h: Added.
+        (WebFrameLoaderClient::webFrame):
+        * WebCoreSupport/WebFrameLoaderClient.mm: Added.
+        (WebFrameLoaderClient::detachFrameLoader):
+        (WebFrameLoaderClient::hasWebView):
+        (WebFrameLoaderClient::hasFrameView):
+        (WebFrameLoaderClient::hasBackForwardList):
+        (WebFrameLoaderClient::resetBackForwardList):
+        (WebFrameLoaderClient::provisionalItemIsTarget):
+        (WebFrameLoaderClient::loadProvisionalItemFromPageCache):
+        (WebFrameLoaderClient::invalidateCurrentItemPageCache):
+        (WebFrameLoaderClient::privateBrowsingEnabled):
+        (WebFrameLoaderClient::makeDocumentView):
+        (WebFrameLoaderClient::makeRepresentation):
+        (WebFrameLoaderClient::setDocumentViewFromPageCache):
+        (WebFrameLoaderClient::forceLayout):
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::updateHistoryForCommit):
+        (WebFrameLoaderClient::updateHistoryForBackForwardNavigation):
+        (WebFrameLoaderClient::updateHistoryForReload):
+        (WebFrameLoaderClient::updateHistoryForStandardLoad):
+        (WebFrameLoaderClient::updateHistoryForInternalLoad):
+        (WebFrameLoaderClient::updateHistoryAfterClientRedirect):
+        (WebFrameLoaderClient::setCopiesOnScroll):
+        (WebFrameLoaderClient::tokenForLoadErrorReset):
+        (WebFrameLoaderClient::resetAfterLoadError):
+        (WebFrameLoaderClient::doNotResetAfterLoadError):
+        (WebFrameLoaderClient::detachedFromParent1):
+        (WebFrameLoaderClient::detachedFromParent2):
+        (WebFrameLoaderClient::detachedFromParent3):
+        (WebFrameLoaderClient::detachedFromParent4):
+        (WebFrameLoaderClient::loadedFromPageCache):
+        (WebFrameLoaderClient::download):
+        (WebFrameLoaderClient::dispatchIdentifierForInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebFrameLoaderClient::dispatchWillClose):
+        (WebFrameLoaderClient::dispatchDidReceiveIcon):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::dispatchShow):
+        (WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::dispatchDidLoadMainResource):
+        (WebFrameLoaderClient::clearLoadingFromPageCache):
+        (WebFrameLoaderClient::isLoadingFromPageCache):
+        (WebFrameLoaderClient::revertToProvisionalState):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::clearUnarchivingState):
+        (WebFrameLoaderClient::progressStarted):
+        (WebFrameLoaderClient::progressCompleted):
+        (WebFrameLoaderClient::incrementProgress):
+        (WebFrameLoaderClient::completeProgress):
+        (WebFrameLoaderClient::setMainFrameDocumentReady):
+        (WebFrameLoaderClient::startDownload):
+        (WebFrameLoaderClient::willChangeTitle):
+        (WebFrameLoaderClient::didChangeTitle):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::finishedLoading):
+        (WebFrameLoaderClient::finalSetupForReplace):
+        (WebFrameLoaderClient::cancelledError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::interruptForPolicyChangeError):
+        (WebFrameLoaderClient::cannotShowMIMETypeError):
+        (WebFrameLoaderClient::fileDoesNotExistError):
+        (WebFrameLoaderClient::shouldFallBack):
+        (WebFrameLoaderClient::mainFrameURL):
+        (WebFrameLoaderClient::setDefersCallbacks):
+        (WebFrameLoaderClient::willUseArchive):
+        (WebFrameLoaderClient::isArchiveLoadPending):
+        (WebFrameLoaderClient::cancelPendingArchiveLoad):
+        (WebFrameLoaderClient::clearArchivedResources):
+        (WebFrameLoaderClient::canHandleRequest):
+        (WebFrameLoaderClient::canShowMIMEType):
+        (WebFrameLoaderClient::representationExistsForURLScheme):
+        (WebFrameLoaderClient::generatedMIMETypeForURLScheme):
+        (WebFrameLoaderClient::elementForEvent):
+        (WebFrameLoaderClient::createPolicyDecider):
+        (WebFrameLoaderClient::frameLoadCompleted):
+        (WebFrameLoaderClient::restoreScrollPositionAndViewState):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        (WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent):
+        (WebFrameLoaderClient::addHistoryItemForFragmentScroll):
+        (WebFrameLoaderClient::didFinishLoad):
+        (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebFrameLoaderClient::createDocumentLoader):
+        (WebFrameLoaderClient::setTitle):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource webFrame]):
+        * WebView/WebFrame.mm:
+        (frame):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _reloadForPluginChanges]):
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[NSArray validateUserInterfaceItem:]):
+        (-[NSArray scrollWheel:]):
+        (-[NSArray acceptsFirstMouse:]):
+        (-[NSArray shouldDelayWindowOrderingForEvent:]):
+        (-[NSArray _selectionStartFontAttributesAsRTF]):
+        (-[NSArray changeBaseWritingDirection:]):
+        (-[NSArray indent:]):
+        (-[NSArray outdent:]):
+        (-[WebHTMLView copy:]):
+        (-[WebHTMLView cut:]):
+        (-[WebHTMLView paste:]):
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]):
+        (-[WebView setProhibitsMainFrameScrolling:]):
+        (-[WebView _setInViewSourceMode:]):
+        (-[WebView _inViewSourceMode]):
+        (-[WebView setEditable:]):
+
 2006-10-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker

@@ -61,7 +61,7 @@ FrameLoader* DocumentLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
-    return m_frame->frameLoader();
+    return m_frame->loader();
 }
 
 DocumentLoader::~DocumentLoader()
@@ -212,10 +212,10 @@ void DocumentLoader::mainReceivedError(NSError *error, bool isComplete)
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 void DocumentLoader::stopLoading()
 {
-    // Always attempt to stop the bridge/part because it may still be loading/parsing after the data source
+    // Always attempt to stop the frame because it may still be loading/parsing after the data source
     // is done loading and not stopping it can cause a world leak.
     if (m_committed)
-        [bridge() stopLoading];
+        m_frame->stopLoading();
     
     if (!m_loading)
         return;
@@ -264,7 +264,7 @@ void DocumentLoader::finishedLoading()
     m_gotFirstByte = true;   
     commitIfReady();
     frameLoader()->finishedLoadingDocument(this);
-    [bridge() end];
+    m_frame->end();
 }
 
 void DocumentLoader::setCommitted(bool f)
@@ -324,7 +324,7 @@ void DocumentLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
     }
     
     frameLoader()->finishedLoadingDocument(this);
-    [bridge() end];
+    m_frame->end();
     
     frameLoader()->setReplacing();
     m_gotFirstByte = false;

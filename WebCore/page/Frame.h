@@ -113,8 +113,6 @@ public:
   virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
   virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
   
-  FrameLoader* frameLoader();
-
   bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
   virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;
   Frame* loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer);
@@ -832,6 +830,8 @@ public:
   DOMWindow* domWindow() const;
   Editor* editor() const;
   CommandByName* command() const;
+  FrameLoader* loader() const;
+
  private:
   friend class FramePrivate;
   FramePrivate* d;

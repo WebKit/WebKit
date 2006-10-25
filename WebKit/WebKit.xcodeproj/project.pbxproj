@@ -69,6 +69,8 @@
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */; };
 		7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */; };
+		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
+		931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */; };
 		939810110824BF01008DF038 /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607D020F50ED0ECA1767 /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810120824BF01008DF038 /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F520FB190221DEFD01C1A525 /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810130824BF01008DF038 /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607F020F50ED0ECA1767 /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -317,7 +319,7 @@
 		35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebHTMLRepresentation.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		35081D9502B6D4D80ACA2ACA /* WebHTMLView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebHTMLView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		35081D9502B6D4D80ACA2ACA /* WebHTMLView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebHTMLView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9602B6D4D80ACA2ACA /* WebHTMLViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081DAE02B6D4F50ACA2ACA /* WebDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35F3577F0198AAB80ACA1520 /* English */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -438,6 +440,8 @@
 		930D02BD06275F710076701E /* WebFrameInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPanelAuthenticationHandler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93154EF203A41270008635CE /* WebPanelAuthenticationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPanelAuthenticationHandler.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoaderClient.h; sourceTree = "<group>"; };
+		931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameLoaderClient.mm; sourceTree = "<group>"; };
 		93185DB506679F42005D5E7E /* WebHTMLViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		931A72D203265920008635CE /* WebBaseNetscapePluginViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		932399D8034CF7F6008635CE /* English */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; name = English; path = English.lproj/StringsNotToBeLocalized.txt; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -934,20 +938,22 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
 				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
-				51E4D3970A886B5E00ECEE2C /* WebIconDatabaseBridge.h */,
-				51E4D3980A886B5E00ECEE2C /* WebIconDatabaseBridge.m */,
-				65C7F42A0979DE640022E453 /* WebPageBridge.h */,
-				65C7F42B0979DE640022E453 /* WebPageBridge.mm */,
 				F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */,
 				F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */,
-				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
-				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
+				931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */,
+				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
+				51E4D3970A886B5E00ECEE2C /* WebIconDatabaseBridge.h */,
+				51E4D3980A886B5E00ECEE2C /* WebIconDatabaseBridge.m */,
 				9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */,
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
+				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
+				65C7F42A0979DE640022E453 /* WebPageBridge.h */,
+				65C7F42B0979DE640022E453 /* WebPageBridge.mm */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
 				93EB178C09F88D460091F8FF /* WebSystemInterface.m */,
 				F5F7174C02885C5B018635CA /* WebViewFactory.h */,
@@ -1185,6 +1191,7 @@
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 				1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */,
+				931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,7 +1226,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1234,7 +1240,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1412,6 +1417,7 @@
 				658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */,
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */,
+				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

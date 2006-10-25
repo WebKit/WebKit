@@ -368,7 +368,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* owner
                                                      allowsScrolling:allowsScrolling
                                                          marginWidth:marginWidth
                                                         marginHeight:marginHeight];
-    return [childBridge impl];
+    return [childBridge _frame];
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
@@ -3386,7 +3386,7 @@ bool FrameMac::canGoBackOrForward(int distance) const
 
 void FrameMac::didFirstLayout()
 {
-    [_bridge didFirstLayout];
+    loader()->didFirstLayout();
 }
 
 NSMutableDictionary *FrameMac::dashboardRegionsDictionary()

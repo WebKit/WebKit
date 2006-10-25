@@ -41,6 +41,7 @@
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameMac.h>
 #import <WebCore/WebDocumentLoader.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -192,7 +193,7 @@
         
         WebView *webView = [frame webView];
         if ([webView isEditable])
-            [_private->bridge applyEditingStyleToBodyElement];
+            [_private->bridge _frame]->applyEditingStyleToBodyElement();
     }
 }
 

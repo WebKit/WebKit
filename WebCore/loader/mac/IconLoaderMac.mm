@@ -27,7 +27,7 @@
 #include "IconLoader.h"
 
 #include "FrameMac.h"
-#include "WebCoreFrameBridge.h"
+#include "WebFrameLoader.h"
 
 using namespace WebCore;
 
@@ -45,7 +45,6 @@ void IconLoader::receivedResponse(ResourceLoader* resourceLoader, NSURLResponse*
 
 void IconLoader::notifyIconChanged(const KURL& iconURL)
 {
-    FrameMac* frame = Mac(m_frame);
-    [frame->bridge() notifyIconChanged:iconURL.getNSURL()];
+    m_frame->loader()->notifyIconChanged(iconURL.getNSURL());
 }
 

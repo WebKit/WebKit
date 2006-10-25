@@ -37,13 +37,13 @@
 @class WebCoreFrameBridge;
 @class WebCoreFrameLoaderAsDelegate;
 @class WebPolicyDecider;
-@protocol WebFrameLoaderClient;
 
 namespace WebCore {
 
     class DocumentLoader;
     class FormState;
     class Frame;
+    class FrameLoaderClient;
     class MainResourceLoader;
     class WebResourceLoader;
 
@@ -169,8 +169,8 @@ namespace WebCore {
         NSDictionary *actionInformation(NavigationType, NSEvent *, NSURL *);
         NSDictionary *actionInformation(FrameLoadType loadType, bool isFormSubmission, NSEvent *, NSURL *);
 
-        void setFrameLoaderClient(id <WebFrameLoaderClient>);
-        id <WebFrameLoaderClient> client() const;
+        void setClient(FrameLoaderClient*);
+        FrameLoaderClient* client() const;
 
         void continueAfterWillSubmitForm(WebPolicyAction);
         void continueAfterNewWindowPolicy(WebPolicyAction);
@@ -228,7 +228,7 @@ namespace WebCore {
         HashSet<RefPtr<WebResourceLoader> > m_subresourceLoaders;
         HashSet<RefPtr<WebResourceLoader> > m_plugInStreamLoaders;
     
-        id <WebFrameLoaderClient> m_client;
+        FrameLoaderClient* m_client;
 
         RefPtr<DocumentLoader> m_documentLoader;
         RefPtr<DocumentLoader> m_provisionalDocumentLoader;

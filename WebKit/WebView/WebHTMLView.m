@@ -26,63 +26,65 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHTMLView.h>
+#import "WebHTMLView.h"
 
+#import "WebArchive.h"
+#import "WebArchiver.h"
+#import "WebBaseNetscapePluginViewInternal.h"
+#import "WebClipView.h"
+#import "WebDOMOperationsPrivate.h"
+#import "WebDataSourceInternal.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebDocumentInternal.h"
+#import "WebEditingDelegate.h"
+#import "WebElementDictionary.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFramePrivate.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLRepresentationPrivate.h"
+#import "WebHTMLViewInternal.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSAttributedStringExtras.h"
+#import "WebNSEventExtras.h"
+#import "WebNSFileManagerExtras.h"
+#import "WebNSImageExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSPrintOperationExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebNetscapePluginEmbeddedView.h"
+#import "WebPluginController.h"
+#import "WebPreferences.h"
+#import "WebPreferencesPrivate.h"
+#import "WebResourcePrivate.h"
+#import "WebStringTruncator.h"
+#import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
+#import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/WebCoreTextRenderer.h>
+#import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
-#import <WebKit/WebArchive.h>
-#import <WebKit/WebArchiver.h>
-#import <WebKit/WebBaseNetscapePluginViewInternal.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebClipView.h>
-#import <WebCore/WebDataProtocol.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDOMOperationsPrivate.h>
-#import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebElementDictionary.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebHTMLViewInternal.h>
-#import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebLocalizableStrings.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
-#import <WebKit/WebNSAttributedStringExtras.h>
-#import <WebKit/WebNSEventExtras.h>
-#import <WebKit/WebNSFileManagerExtras.h>
-#import <WebKit/WebNSImageExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSPrintOperationExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebStringTruncator.h>
-#import <WebKit/WebUIDelegatePrivate.h>
-#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
-#import <WebCore/WebCoreTextRenderer.h>
-
-#import <AppKit/NSAccessibility.h>
-
-// Included so usage of _NSSoftLinkingGetFrameworkFuncPtr will compile
 #import <mach-o/dyld.h> 
 
+using namespace WebCore;
+
+extern "C" {
 
 // need to declare this because AppKit does not make it available as API or SPI
 extern NSString *NSMarkedClauseSegmentAttributeName; 
 extern NSString *NSTextInputReplacementRangeAttributeName; 
 
 // Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
+
 void _NSInitializeKillRing(void);
 void _NSAppendToKillRing(NSString *);
 void _NSPrependToKillRing(NSString *);
@@ -91,6 +93,8 @@ NSString *_NSYankPreviousFromKillRing(void);
 void _NSNewKillRingSequence(void);
 void _NSSetKillRingToYankedState(void);
 void _NSResetKillRingOperationFlag(void);
+
+}
 
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
@@ -176,11 +180,8 @@ static BOOL forceNSViewHitTest = NO;
 static BOOL forceWebHTMLViewHitTest = NO;
 
 // Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
-void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
-                                        NSString *inFrameworkName,
-                                        const char *inFuncName,
-                                        const struct mach_header **ioCachedFrameworkImageHeaderPtr);
-
+extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
+    NSString *inFrameworkName, const char *inFuncName, const struct mach_header **);
 
 @interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
 @end
@@ -1699,21 +1700,23 @@ static WebHTMLView *lastHitView = nil;
     }
     
     // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
-    static OSStatus (*__dictionaryServiceWindowShow)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection) = NULL;
-    static const struct mach_header *frameworkImageHeader = NULL;
-    static BOOL lookedForFunction = NO;
+    static bool lookedForFunction = false;
+    typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
+    static ServiceWindowShowFunction dictionaryServiceWindowShow;
     if (!lookedForFunction) {
-        __dictionaryServiceWindowShow = _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader);
-        lookedForFunction = YES;
+        const struct mach_header *frameworkImageHeader;
+        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
+            _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
+        lookedForFunction = true;
     }
-    if (!__dictionaryServiceWindowShow) {
+    if (!dictionaryServiceWindowShow) {
         LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
         return;
     }
-    
+
     // FIXME: must check for right-to-left here
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
-    
+
     NSAttributedString *attrString = [self selectedAttributedString];
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
@@ -1721,7 +1724,7 @@ static WebHTMLView *lastHitView = nil;
     NSRect rect = [self convertRect:[[self _bridge] visibleSelectionRect] toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
-    (void)__dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
 }
 
 - (BOOL)_transparentBackground
@@ -2082,6 +2085,7 @@ static WebHTMLView *lastHitView = nil;
 {
     SEL action = [item action];
     WebFrameBridge *bridge = [self _bridge];
+    FrameMac* frame = [bridge _frame];
 
     if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
@@ -2167,7 +2171,7 @@ static WebHTMLView *lastHitView = nil;
     if (action == @selector(changeBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            NSWritingDirection writingDirection = [item tag];
+            NSWritingDirection writingDirection = static_cast<NSWritingDirection>([item tag]);
             if (writingDirection == NSWritingDirectionNatural) {
                 [menuItem setState:NO];
                 return NO;
@@ -2217,10 +2221,10 @@ static WebHTMLView *lastHitView = nil;
         return [[self _webView] isEditable] && [self _canEditRichly];
     
     if (action == @selector(copy:))
-        return [bridge mayDHTMLCopy] || [self _canCopy];
+        return (frame && frame->mayDHTMLCopy()) || [self _canCopy];
     
     if (action == @selector(cut:))
-        return [bridge mayDHTMLCut] || [self _canCut];
+        return (frame && frame->mayDHTMLCut()) || [self _canCut];
     
     if (action == @selector(delete:))
         return [self _canDelete];
@@ -2231,10 +2235,10 @@ static WebHTMLView *lastHitView = nil;
         return [self _hasSelection];
     
     if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
-        return [bridge mayDHTMLPaste] || [self _canPaste];
+        return (frame && frame->mayDHTMLPaste()) || [self _canPaste];
     
     if (action == @selector(pasteAsRichText:))
-        return [bridge mayDHTMLPaste] || ([self _canPaste] && [[self _bridge] isSelectionRichlyEditable]);
+        return (frame && frame->mayDHTMLPaste()) || ([self _canPaste] && [[self _bridge] isSelectionRichlyEditable]);
     
     if (action == @selector(performFindPanelAction:))
         // FIXME: Not yet implemented.
@@ -2798,11 +2802,9 @@ static WebHTMLView *lastHitView = nil;
 - (void)scrollWheel:(NSEvent *)event
 {
     [self retain];
-    
-    if (![[self _bridge] sendScrollWheelEvent:event]) {
-        [[self nextResponder] scrollWheel:event];
-    }    
-    
+    FrameMac* frame = [[self _bridge] _frame];
+    if (!frame || !frame->wheelEvent(event))
+        [[self nextResponder] scrollWheel:event];    
     [self release];
 }
 
@@ -2823,11 +2825,14 @@ static WebHTMLView *lastHitView = nil;
     if (hitHTMLView != nil) {
         [hitHTMLView _setMouseDownEvent:event];
         [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
-        BOOL result = [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+        bool result = false;
+        if ([hitHTMLView _isSelectionEvent:event])
+            if (FrameMac* frame = [[hitHTMLView _bridge] _frame])
+                result = frame->eventMayStartDrag(event);
         [hitHTMLView _setMouseDownEvent:nil];
         return result;
-    } else
-        return [hitView acceptsFirstMouse:event];
+    }
+    return [hitView acceptsFirstMouse:event];
 }
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
@@ -2835,12 +2840,14 @@ static WebHTMLView *lastHitView = nil;
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     if (hitHTMLView != nil) {
-        [hitHTMLView _setMouseDownEvent:event];
-        BOOL result = [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+        bool result = false;
+        if ([hitHTMLView _isSelectionEvent:event])
+            if (FrameMac* frame = [[hitHTMLView _bridge] _frame])
+                result = frame->eventMayStartDrag(event);
         [hitHTMLView _setMouseDownEvent:nil];
         return result;
-    } else
-        return [hitView shouldDelayWindowOrderingForEvent:event];
+    }
+    return [hitView shouldDelayWindowOrderingForEvent:event];
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -3763,7 +3770,7 @@ done:
 - (NSData *)_selectionStartFontAttributesAsRTF
 {
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
-        attributes:[[self _bridge] fontAttributesForSelectionStart]];
+        attributes:[[self _bridge] _frame]->fontAttributesForSelectionStart()];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [string release];
     return data;
@@ -4754,7 +4761,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![self _canEdit])
         return;
     
-    NSWritingDirection writingDirection = [sender tag];
+    NSWritingDirection writingDirection = static_cast<NSWritingDirection>([sender tag]);
     
     // We disable the menu item that performs this action because we can't implement
     // NSWritingDirectionNatural's behavior using CSS.
@@ -4767,12 +4774,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)indent:(id)sender
 {
-    [[self _bridge] indent];
+    [[self _bridge] _frame]->indent();
 }
 
 - (void)outdent:(id)sender
 {
-    [[self _bridge] outdent];
+    [[self _bridge] _frame]->outdent();
 }
 
 #if 0
@@ -4785,18 +4792,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 // It's probably simple to do the equivalent thing for WebKit.
 - (void)insertTable:(id)sender;
 
-// === key binding methods that NSTextView has that don't have standard key bindings
-
-// These could be important.
+// This could be important.
 - (void)toggleTraditionalCharacterShape:(id)sender;
 
 // I'm not sure what the equivalents of these in the web world are.
 - (void)insertLineSeparator:(id)sender;
 - (void)insertPageBreak:(id)sender;
 
-// === methods not present in NSTextView
-
-// These methods are not implemented in NSTextView yet, so perhaps there's no rush.
+// These methods are not implemented in NSTextView yet at the time of this writing.
 - (void)changeCaseOfLetter:(id)sender;
 - (void)transposeWords:(id)sender;
 
@@ -5092,7 +5095,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)copy:(id)sender
 {
-    if ([[self _bridge] tryDHTMLCopy])
+    FrameMac* frame = [[self _bridge] _frame];
+    if (frame && frame->tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (![self _canCopy]) {
         NSBeep();
@@ -5104,7 +5108,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)cut:(id)sender
 {
     WebFrameBridge *bridge = [self _bridge];
-    if ([bridge tryDHTMLCut])
+    FrameMac* frame = [bridge _frame];
+    if (frame && frame->tryDHTMLCut())
         return; // DHTML did the whole operation
     if (![self _canCut]) {
         NSBeep();
@@ -5119,11 +5124,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)paste:(id)sender
 {
-    if ([[self _bridge] tryDHTMLPaste])
-        return;     // DHTML did the whole operation
+    WebFrameBridge *bridge = [self _bridge];
+    FrameMac* frame = [bridge _frame];
+    if (frame && frame->tryDHTMLPaste())
+        return; // DHTML did the whole operation
     if (![self _canPaste])
         return;
-    if ([[self _bridge] isSelectionRichlyEditable])
+    if ([bridge isSelectionRichlyEditable])
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];

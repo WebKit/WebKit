@@ -26,160 +26,164 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Forward.h>
+
+@class WebPolicyDecider;
 
 namespace WebCore {
+
     class DocumentLoader;
+    class Element;
+    class Frame;
     class WebResourceLoader;
+
+    struct LoadErrorResetToken;
+
+    class FrameLoaderClient : Noncopyable {
+    public:
+        virtual void detachFrameLoader() = 0;
+
+        virtual bool hasWebView() const = 0; // mainly for assertions
+        virtual bool hasFrameView() const = 0; // ditto
+
+        virtual bool hasBackForwardList() const = 0;
+        virtual void resetBackForwardList() = 0;
+
+        virtual bool provisionalItemIsTarget() const = 0;
+        virtual bool loadProvisionalItemFromPageCache() = 0;
+        virtual void invalidateCurrentItemPageCache() = 0;
+
+        virtual bool privateBrowsingEnabled() const = 0;
+
+        virtual void makeDocumentView() = 0;
+        virtual void makeRepresentation(DocumentLoader*) = 0;
+        virtual void setDocumentViewFromPageCache(NSDictionary *) = 0;
+        virtual void forceLayout() = 0;
+        virtual void forceLayoutForNonHTML() = 0;
+
+        virtual void updateHistoryForCommit() = 0;
+
+        virtual void updateHistoryForBackForwardNavigation() = 0;
+        virtual void updateHistoryForReload() = 0;
+        virtual void updateHistoryForStandardLoad() = 0;
+        virtual void updateHistoryForInternalLoad() = 0;
+
+        virtual void updateHistoryAfterClientRedirect() = 0;
+
+        virtual void setCopiesOnScroll() = 0;
+
+        virtual LoadErrorResetToken* tokenForLoadErrorReset() = 0;
+        virtual void resetAfterLoadError(LoadErrorResetToken*) = 0;
+        virtual void doNotResetAfterLoadError(LoadErrorResetToken*) = 0;
+
+        virtual void detachedFromParent1() = 0;
+        virtual void detachedFromParent2() = 0;
+        virtual void detachedFromParent3() = 0;
+        virtual void detachedFromParent4() = 0;
+
+        virtual void loadedFromPageCache() = 0;
+
+        virtual void download(NSURLConnection *, NSURLRequest *, NSURLResponse *, id proxy) = 0;
+
+        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, NSURLRequest *) = 0;
+        virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) = 0;
+        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
+        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
+        virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, NSURLResponse *) = 0;
+        virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
+        virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
+        virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, NSError *) = 0;
+
+        virtual void dispatchDidHandleOnloadEvents() = 0;
+        virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
+        virtual void dispatchDidCancelClientRedirect() = 0;
+        virtual void dispatchWillPerformClientRedirect(NSURL *URL, NSTimeInterval, NSDate *) = 0;
+        virtual void dispatchDidChangeLocationWithinPage() = 0;
+        virtual void dispatchWillClose() = 0;
+        virtual void dispatchDidReceiveIcon(NSImage *) = 0;
+        virtual void dispatchDidStartProvisionalLoad() = 0;
+        virtual void dispatchDidReceiveTitle(NSString *title) = 0;
+        virtual void dispatchDidCommitLoad() = 0;
+        virtual void dispatchDidFailProvisionalLoad(NSError *) = 0;
+        virtual void dispatchDidFailLoad(NSError *) = 0;
+        virtual void dispatchDidFinishLoad() = 0;
+        virtual void dispatchDidFirstLayout() = 0;
+
+        virtual Frame* dispatchCreatePage(NSURLRequest *) = 0;
+        virtual void dispatchShow() = 0;
+
+        virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, NSString *MIMEType, NSURLRequest *) = 0;
+        virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, NSString *frameName) = 0;
+        virtual void dispatchDecidePolicyForNavigationAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *) = 0;
+        virtual void dispatchUnableToImplementPolicy(NSError *) = 0;
+
+        virtual void dispatchWillSubmitForm(WebPolicyDecider *, Frame* sourceFrame, Element* form, NSDictionary *values) = 0;
+
+        virtual void dispatchDidLoadMainResource(DocumentLoader*) = 0;
+        virtual void clearLoadingFromPageCache(DocumentLoader*) = 0;
+        virtual bool isLoadingFromPageCache(DocumentLoader*) = 0;
+        virtual void revertToProvisionalState(DocumentLoader*) = 0;
+        virtual void setMainDocumentError(DocumentLoader*, NSError *) = 0;
+        virtual void clearUnarchivingState(DocumentLoader*) = 0;
+
+        virtual void progressStarted() = 0;
+        virtual void progressCompleted() = 0;
+
+        virtual void incrementProgress(id identifier, NSURLResponse *) = 0;
+        virtual void incrementProgress(id identifier, NSData *) = 0;
+        virtual void completeProgress(id identifier) = 0;
+
+        virtual void setMainFrameDocumentReady(bool) = 0;
+
+        virtual void startDownload(NSURLRequest *) = 0;
+
+        virtual void willChangeTitle(DocumentLoader*) = 0;
+        virtual void didChangeTitle(DocumentLoader*) = 0;
+
+        virtual void committedLoad(DocumentLoader*, NSData *) = 0;
+        virtual void finishedLoading(DocumentLoader*) = 0;
+        virtual void finalSetupForReplace(DocumentLoader*) = 0;
+
+        virtual NSError *cancelledError(NSURLRequest *) = 0;
+        virtual NSError *cannotShowURLError(NSURLRequest *) = 0;
+        virtual NSError *interruptForPolicyChangeError(NSURLRequest *) = 0;
+
+        virtual NSError *cannotShowMIMETypeError(NSURLResponse *) = 0;
+        virtual NSError *fileDoesNotExistError(NSURLResponse *) = 0;
+
+        virtual bool shouldFallBack(NSError *) = 0;
+
+        virtual NSURL *mainFrameURL() = 0;
+
+        virtual void setDefersCallbacks(bool) = 0;
+
+        virtual bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *originalURL) const = 0;
+        virtual bool isArchiveLoadPending(WebResourceLoader*) const = 0;
+        virtual void cancelPendingArchiveLoad(WebResourceLoader*) = 0;
+        virtual void clearArchivedResources() = 0;
+
+        virtual bool canHandleRequest(NSURLRequest *) const = 0;
+        virtual bool canShowMIMEType(NSString *MIMEType) const = 0;
+        virtual bool representationExistsForURLScheme(NSString *URLScheme) const = 0;
+        virtual NSString *generatedMIMETypeForURLScheme(NSString *URLScheme) const = 0;
+
+        virtual NSDictionary *elementForEvent(NSEvent *) const = 0;
+
+        virtual WebPolicyDecider *createPolicyDecider(id object, SEL selector) = 0;
+
+        virtual void frameLoadCompleted() = 0;
+        virtual void restoreScrollPositionAndViewState() = 0;
+        virtual void provisionalLoadStarted() = 0;
+        virtual bool shouldTreatURLAsSameAsCurrent(NSURL *) const = 0;
+        virtual void addHistoryItemForFragmentScroll() = 0;
+        virtual void didFinishLoad() = 0;
+        virtual void prepareForDataSourceReplacement() = 0;
+        virtual PassRefPtr<DocumentLoader> createDocumentLoader(NSURLRequest *) = 0;
+        virtual void setTitle(NSString *title, NSURL *URL) = 0;
+
+    protected:
+        virtual ~FrameLoaderClient();
+    };
+
 }
-
-typedef struct LoadErrorResetToken LoadErrorResetToken;
-
-@class DOMElement;
-@class WebCoreFrameBridge;
-@class WebPolicyDecider;
-@class WebResource;
-
-@protocol WebFrameLoaderClient <NSObject>
-
-- (BOOL)_hasWebView; // mainly for assertions
-- (BOOL)_hasFrameView; // ditto
-
-- (BOOL)_hasBackForwardList;
-- (void)_resetBackForwardList;
-
-- (BOOL)_provisionalItemIsTarget;
-- (BOOL)_loadProvisionalItemFromPageCache;
-- (void)_invalidateCurrentItemPageCache;
-
-- (BOOL)_privateBrowsingEnabled;
-
-- (void)_makeDocumentView;
-- (void)_makeRepresentationForDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_setDocumentViewFromPageCache:(NSDictionary *)dictionary;
-- (void)_forceLayout;
-- (void)_forceLayoutForNonHTML;
-
-- (void)_updateHistoryForCommit;
-
-- (void)_updateHistoryForBackForwardNavigation;
-- (void)_updateHistoryForReload;
-- (void)_updateHistoryForStandardLoad;
-- (void)_updateHistoryForInternalLoad;
-
-- (void)_updateHistoryAfterClientRedirect;
-
-- (void)_setCopiesOnScroll;
-
-- (LoadErrorResetToken *)_tokenForLoadErrorReset;
-- (void)_resetAfterLoadError:(LoadErrorResetToken *)token;
-- (void)_doNotResetAfterLoadError:(LoadErrorResetToken *)token;
-
-- (void)_detachedFromParent1;
-- (void)_detachedFromParent2;
-- (void)_detachedFromParent3;
-- (void)_detachedFromParent4;
-
-- (void)_loadedFromPageCache;
-
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)response proxy:(id)proxy;
-
-- (id)_dispatchIdentifierForInitialRequest:(NSURLRequest *)request fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (NSURLRequest *)_dispatchResource:(id)identifier willSendRequest:(NSURLRequest *)clientRequest redirectResponse:(NSURLResponse *)redirectResponse fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchDidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchDidCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchResource:(id)identifier didReceiveResponse:(NSURLResponse *)r fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchResource:(id)identifier didReceiveContentLength:(int)lengthReceived fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchResource:(id)identifier didFinishLoadingFromDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_dispatchResource:(id)identifier didFailLoadingWithError:error fromDocumentLoader:(WebCore::DocumentLoader*)loader;
-
-- (void)_dispatchDidHandleOnloadEventsForFrame;
-- (void)_dispatchDidReceiveServerRedirectForProvisionalLoadForFrame;
-- (void)_dispatchDidCancelClientRedirectForFrame;
-- (void)_dispatchWillPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
-- (void)_dispatchDidChangeLocationWithinPageForFrame;
-- (void)_dispatchWillCloseFrame;
-- (void)_dispatchDidReceiveIcon:(NSImage *)icon;
-- (void)_dispatchDidStartProvisionalLoadForFrame;
-- (void)_dispatchDidReceiveTitle:(NSString *)title;
-- (void)_dispatchDidCommitLoadForFrame;
-- (void)_dispatchDidFailProvisionalLoadWithError:(NSError *)error;
-- (void)_dispatchDidFailLoadWithError:(NSError *)error;
-- (void)_dispatchDidFinishLoadForFrame;
-- (void)_dispatchDidFirstLayoutInFrame;
-
-- (WebCoreFrameBridge *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request;
-- (void)_dispatchShow;
-
-- (void)_dispatchDecidePolicyForMIMEType:(NSString *)MIMEType request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider;
-- (void)_dispatchDecidePolicyForNewWindowAction:(NSDictionary *)action request:(NSURLRequest *)request newFrameName:(NSString *)frameName decider:(WebPolicyDecider *)decider;
-- (void)_dispatchDecidePolicyForNavigationAction:(NSDictionary *)action request:(NSURLRequest *)request decider:(WebPolicyDecider *)decider;
-- (void)_dispatchUnableToImplementPolicyWithError:(NSError *)error;
-
-- (void)_dispatchSourceFrame:(WebCoreFrameBridge *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider;
-
-- (void)_dispatchDidLoadMainResourceForDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_clearLoadingFromPageCacheForDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (BOOL)_isDocumentLoaderLoadingFromPageCache:(WebCore::DocumentLoader*)loader;
-- (void)_revertToProvisionalStateForDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_setMainDocumentError:(NSError *)error forDocumentLoader:(WebCore::DocumentLoader*)loader;
-- (void)_clearUnarchivingStateForLoader:(WebCore::DocumentLoader*)loader;
-
-- (void)_progressStarted;
-- (void)_progressCompleted;
-
-- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
-- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)data;
-- (void)_completeProgressForIdentifier:(id)identifier;
-
-- (void)_setMainFrameDocumentReady:(BOOL)ready;
-
-- (void)_startDownloadWithRequest:(NSURLRequest *)request;
-
-- (void)_willChangeTitleForDocument:(WebCore::DocumentLoader*)loader;
-- (void)_didChangeTitleForDocument:(WebCore::DocumentLoader*)loader;
-
-- (void)_committedLoadWithDocumentLoader:(WebCore::DocumentLoader*)loader data:(NSData *)data;
-- (void)_finishedLoadingDocument:(WebCore::DocumentLoader*)loader;
-- (void)_documentLoader:(WebCore::DocumentLoader*)loader setMainDocumentError:(NSError *)error;
-- (void)_finalSetupForReplaceWithDocumentLoader:(WebCore::DocumentLoader*)loader;
-
-- (NSError *)_cancelledErrorWithRequest:(NSURLRequest *)request;
-- (NSError *)_cannotShowURLErrorWithRequest:(NSURLRequest *)request;
-- (NSError *)_interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request;
-
-- (NSError *)_cannotShowMIMETypeErrorWithResponse:(NSURLResponse *)response;
-- (NSError *)_fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
-
-- (BOOL)_shouldFallBackForError:(NSError *)error;
-
-- (NSURL *)_mainFrameURL;
-
-- (void)_setDefersCallbacks:(BOOL)defers;
-
-- (BOOL)_willUseArchiveForRequest:(NSURLRequest *)request originalURL:(NSURL *)originalURL loader:(WebCore::WebResourceLoader *)loader;
-- (BOOL)_archiveLoadPendingForLoader:(WebCore::WebResourceLoader *)loader;
-- (void)_cancelPendingArchiveLoadForLoader:(WebCore::WebResourceLoader *)loader;
-- (void)_clearArchivedResources;
-
-- (BOOL)_canHandleRequest:(NSURLRequest *)request;
-- (BOOL)_canShowMIMEType:(NSString *)MIMEType;
-- (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
-- (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
-
-- (NSDictionary *)_elementForEvent:(NSEvent *)event;
-
-- (WebPolicyDecider *)_createPolicyDeciderWithTarget:(id)obj action:(SEL)selector;
-
-- (void)_frameLoadCompleted;
-- (void)_restoreScrollPositionAndViewState;
-- (void)_provisionalLoadStarted;
-    // used to decide to use loadType=Same
-- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
-- (void)_addHistoryItemForFragmentScroll;
-- (void)_didFinishLoad;
-- (void)_prepareForDataSourceReplacement;
-- (PassRefPtr<WebCore::DocumentLoader>)_createDocumentLoaderWithRequest:(NSURLRequest *)request;
-- (void)_setTitle:(NSString *)title forURL:(NSURL *)URL;
-
-@end

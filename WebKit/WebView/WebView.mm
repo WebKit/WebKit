@@ -85,6 +85,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSettings.h>
@@ -1405,7 +1406,10 @@ static bool debugWidget = true;
 - (NSDictionary *)_dashboardRegions
 {
     // Only return regions from main frame.
-    NSMutableDictionary *regions = [[[self mainFrame] _bridge] dashboardRegions];
+    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    if (!mainFrame)
+        return nil;
+    NSMutableDictionary *regions = mainFrame->dashboardRegionsDictionary();
     [self _addScrollerDashboardRegions:regions];
     return regions;
 }
@@ -1503,7 +1507,9 @@ static bool debugWidget = true;
 
 - (void)setProhibitsMainFrameScrolling:(BOOL)prohibits
 {
-    [[[self mainFrame] _bridge] setProhibitsScrolling:YES];
+    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    if (mainFrame)
+        mainFrame->setProhibitsScrolling(prohibits);
 }
 
 - (BOOL)alwaysShowHorizontalScroller
@@ -1514,12 +1520,15 @@ static bool debugWidget = true;
 
 - (void)_setInViewSourceMode:(BOOL)flag
 {
-    [[[self mainFrame] _bridge] setInViewSourceMode:flag];
+    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    if (mainFrame)
+        mainFrame->setInViewSourceMode(flag);
 }
 
 - (BOOL)_inViewSourceMode
 {
-    return [[[self mainFrame] _bridge] inViewSourceMode];
+    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    return mainFrame && mainFrame->inViewSourceMode();
 }
 
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
@@ -3153,14 +3162,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         _private->editable = flag;
         if (!_private->tabKeyCyclesThroughElementsChanged)
             _private->tabKeyCyclesThroughElements = !flag;
-        WebFrameBridge *bridge = [[self mainFrame] _bridge];
-        if (flag) {
-            [bridge applyEditingStyleToBodyElement];
-            // If the WebView is made editable and the selection is empty, set it to something.
-            if (![self selectedDOMRange])
-                [bridge setSelectionFromNone];
-        } else
-            [bridge removeEditingStyleFromBodyElement];
+        FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+        if (mainFrame) {
+            if (flag) {
+                mainFrame->applyEditingStyleToBodyElement();
+                // If the WebView is made editable and the selection is empty, set it to something.
+                if (![self selectedDOMRange])
+                    mainFrame->setSelectionFromNone();
+            } else
+                mainFrame->removeEditingStyleFromBodyElement();
+        }
     }
 }
 

@@ -368,7 +368,7 @@
 		659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 659DDC8109E198BA001BF3C6 /* JSDocument.h */; };
 		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; };
 		65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTree.cpp */; };
-		65A21485097A3F5300B9050A /* FrameTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTree.h */; };
+		65A21485097A3F5300B9050A /* FrameTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65BAAABE0ADCA015005BB5A4 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BAAABD0ADCA015005BB5A4 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65BF022E0974816300C43196 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02290974816300C43196 /* Frame.cpp */; };
 		65BF022F0974816300C43196 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; settings = {ATTRIBUTES = (Private, ); }; };
