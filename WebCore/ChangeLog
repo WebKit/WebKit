@@ -1,5 +1,13 @@
 2006-10-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Mark.
+
+        - remove no longer existing symbol that was breaking linking
+
+        * WebCore.exp:
+
+2006-10-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mitz.
         
         - fixed "REGRESSION: Activity window doesn't always list all files until refresh"
