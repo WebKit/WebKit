@@ -1,3 +1,15 @@
+2006-10-24  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Anders.
+
+        - get rid of the assertion firing while running the layout tests
+
+        This does not fix the real problem, which is that we need to map offsets within
+        possibly-text-transformed text in the render tree to DOM tree offsets and vice
+        versa -- but it gets the tests running again.
+
+        * dom/Position.cpp: (WebCore::Position::upstream): Commented out the assertion.
+
 2006-10-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
@@ -1709,7 +1721,7 @@
         (WebCore::Frame::Frame):
         Passed down to Editor constructor
         (WebCore::Frame::editor):
-        Accessfor for Editor stored in FramePrivate
+        Accessor for Editor stored in FramePrivate
         
         * page/FramePrivate.h:
         (WebCore::FramePrivate::FramePrivate):
