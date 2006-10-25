@@ -2147,12 +2147,24 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(pageUp:)
             || action == @selector(pageUpAndModifySelection:)
             || action == @selector(pasteFont:)
-            || action == @selector(showGuessPanel:)
             || action == @selector(transpose:)
             || action == @selector(yank:)
-            || action == @selector(yankAndSelect:)) {
+            || action == @selector(yankAndSelect:))
         return [self _canEdit];
-    } else if (action == @selector(changeBaseWritingDirection:)) {
+    
+    if (action == @selector(showGuessPanel:)) {
+#if !BUILDING_ON_TIGER
+        // Match OS X AppKit behavior for post-Tiger. Don't change Tiger behavior.
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
+            [menuItem setTitle:panelShowing ? UI_STRING("Hide Spelling", "menu item title") : UI_STRING("Show Spelling", "menu item title")];
+        }
+#endif
+        return [self _canEdit];
+    }
+    
+    if (action == @selector(changeBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             NSWritingDirection writingDirection = [item tag];
@@ -2165,7 +2177,9 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEdit];
-    } else if (action == @selector(toggleBaseWritingDirection:)) {
+    }
+    
+    if (action == @selector(toggleBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration* rtl = [self _emptyStyle];
@@ -2175,7 +2189,9 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setTitle:[[self _bridge] selectionHasStyle:rtl] ? UI_STRING("Left to Right", "Left to Right context menu item") : UI_STRING("Right to Left", "Right to Left context menu item")];
         }
         return [self _canEdit];
-    } else if (action == @selector(alignCenter:)
+    } 
+    
+    if (action == @selector(alignCenter:)
             || action == @selector(alignLeft:)
             || action == @selector(alignJustified:)
             || action == @selector(alignRight:)
@@ -2183,40 +2199,52 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(changeColor:)        
             || action == @selector(changeFont:)
             || action == @selector(indent:)
-            || action == @selector(outdent:)) {
+            || action == @selector(outdent:))
         return [self _canEditRichly];
-    } else if (action == @selector(capitalizeWord:)
+    
+    if (action == @selector(capitalizeWord:)
                || action == @selector(lowercaseWord:)
-               || action == @selector(uppercaseWord:)) {
+               || action == @selector(uppercaseWord:))
         return [self _hasSelection] && [self _isEditable];
-    } else if (action == @selector(centerSelectionInVisibleArea:)
+    
+    if (action == @selector(centerSelectionInVisibleArea:)
                || action == @selector(jumpToSelection:)
                || action == @selector(copyFont:)
-               || action == @selector(setMark:)) {
+               || action == @selector(setMark:))
         return [self _hasSelection] || ([self _isEditable] && [self _hasInsertionPoint]);
-    } else if (action == @selector(changeDocumentBackgroundColor:)) {
+    
+    if (action == @selector(changeDocumentBackgroundColor:))
         return [[self _webView] isEditable] && [self _canEditRichly];
-    } else if (action == @selector(copy:)) {
+    
+    if (action == @selector(copy:))
         return [bridge mayDHTMLCopy] || [self _canCopy];
-    } else if (action == @selector(cut:)) {
+    
+    if (action == @selector(cut:))
         return [bridge mayDHTMLCut] || [self _canCut];
-    } else if (action == @selector(delete:)) {
+    
+    if (action == @selector(delete:))
         return [self _canDelete];
-    } else if (action == @selector(_ignoreSpellingFromMenu:)
+    
+    if (action == @selector(_ignoreSpellingFromMenu:)
             || action == @selector(_learnSpellingFromMenu:)
-            || action == @selector(takeFindStringFromSelection:)) {
+            || action == @selector(takeFindStringFromSelection:))
         return [self _hasSelection];
-    } else if (action == @selector(paste:) || action == @selector(pasteAsPlainText:)) {
+    
+    if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
         return [bridge mayDHTMLPaste] || [self _canPaste];
-    } else if (action == @selector(pasteAsRichText:)) {
+    
+    if (action == @selector(pasteAsRichText:))
         return [bridge mayDHTMLPaste] || ([self _canPaste] && [[self _bridge] isSelectionRichlyEditable]);
-    } else if (action == @selector(performFindPanelAction:)) {
+    
+    if (action == @selector(performFindPanelAction:))
         // FIXME: Not yet implemented.
         return NO;
-    } else if (action == @selector(selectToMark:)
-            || action == @selector(swapWithMark:)) {
+    
+    if (action == @selector(selectToMark:)
+            || action == @selector(swapWithMark:))
         return [self _hasSelectionOrInsertionPoint] && [[self _bridge] markDOMRange] != nil;
-    } else if (action == @selector(subscript:)) {
+    
+    if (action == @selector(subscript:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -2224,7 +2252,9 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEditRichly];
-    } else if (action == @selector(superscript:)) {
+    } 
+    
+    if (action == @selector(superscript:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -2232,7 +2262,9 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEditRichly];
-    } else if (action == @selector(underline:)) {
+    } 
+    
+    if (action == @selector(underline:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -2240,7 +2272,9 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEditRichly];
-    } else if (action == @selector(unscript:)) {
+    } 
+    
+    if (action == @selector(unscript:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -2248,10 +2282,14 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEditRichly];
-    } else if (action == @selector(_lookUpInDictionaryFromMenu:)) {
+    } 
+    
+    if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
+    } 
+    
 #if !BUILDING_ON_TIGER
-    } else if (action == @selector(toggleGrammarChecking:)) {
+    if (action == @selector(toggleGrammarChecking:)) {
         // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 
         // the selector here because we implement it here, and we must implement it here because the AppKit 
         // code checks the first responder.
@@ -2261,8 +2299,8 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return YES;
-#endif
     }
+#endif
     
     return YES;
 }
@@ -4446,10 +4484,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         LOG_ERROR("No NSSpellChecker");
         return;
     }
+    
+    NSPanel *spellingPanel = [checker spellingPanel];
+#if !BUILDING_ON_TIGER
+    // Post-Tiger, this menu item is a show/hide toggle, to match AppKit. Leave Tiger behavior alone
+    // to match rest of OS X.
+    if ([spellingPanel isVisible]) {
+        [spellingPanel orderOut:sender];
+        return;
+    }
+#endif
+    
     NSString *badWord = [[self _bridge] advanceToNextMisspellingStartingJustBeforeSelection];
     if (badWord)
         [checker updateSpellingPanelWithMisspelledWord:badWord];
-    [[checker spellingPanel] orderFront:sender];
+    [spellingPanel orderFront:sender];
 }
 
 - (void)_changeSpellingToWord:(NSString *)newWord

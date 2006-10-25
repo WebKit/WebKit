@@ -1,3 +1,20 @@
+2006-10-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/4801331> "Spelling..." menu item should be "Show/Hide Spelling" post-Tiger, to match AppKit
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
+        post-Tiger, update the menu item text to "Show Spelling"/"Hide Spelling" based on whether
+        the spelling panel is already showing. Also, removed else's after returns, and removed
+        braces around one-line if clauses.
+        (-[NSArray showGuessPanel:]):
+        post-Tiger, make this item hide the spelling panel if it's already showing
+
+        * English.lproj/Localizable.strings:
+        updated for this change
+        
 2006-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.

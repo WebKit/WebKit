@@ -88,6 +88,7 @@
 "Cache-Control"
 "Content-Length"
 "Courier"
+"DELEGATE METHODS"
 "DOCBASE"
 "DYLD_FRAMEWORK_PATH"
 "FrameName"
