@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt34.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt34$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc34$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc34$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
+				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -110,6 +110,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

@@ -1,3 +1,9 @@
+2006-10-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Build config change
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2006-10-24  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Brady.
