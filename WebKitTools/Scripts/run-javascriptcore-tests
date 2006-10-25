@@ -32,22 +32,37 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+use POSIX;
 
+# determine configuration
+my $configuration;
 setConfiguration();
-my $productDir = productDir();
+$configuration = configuration();
 
+# Find JavaScriptCore directory
 chdirWebKit();
-chdir "JavaScriptCore/tests/mozilla" or die;
+chdir("JavaScriptCore");
+
+#compile TestKJS
+my @options = XcodeOptions();
+my $result;
+if (isOSX()) {
+    $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @ARGV;
+}elsif (isCygwin()) {
+    $result = buildVisualStudioProject( "JavaScriptCore" );
+}
+exit WEXITSTATUS($result) if WEXITSTATUS($result);
+
+my $productDir = productDir();
+chdir "tests/mozilla" or die;
 
 $productDir .= "/JavaScriptCore" if (isQt());
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 
 my $testkjsName;
-my $configuration;
 sub determineTestkjsName
 {
     return if $testkjsName;
-    $configuration = configuration();
     if (isCygwin() && ($configuration eq "Debug")) {
         $testkjsName = "testkjs_debug";
     } else {
@@ -56,7 +71,7 @@ sub determineTestkjsName
 }
 $testkjsName = determineTestkjsName();
 
-my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/$testkjsName", "-f", "actual.html", @ARGV;
+$result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/$testkjsName", "-f", "actual.html", @ARGV;
 
 exit $result if $result;
 
