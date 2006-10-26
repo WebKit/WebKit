@@ -38,6 +38,7 @@
 #include "RenderHTMLCanvas.h"
 #include "cssparser.h"
 #include "AffineTransform.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

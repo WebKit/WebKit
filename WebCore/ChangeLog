@@ -1,3 +1,10 @@
+2006-10-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Build fix.
+
+        * html/CanvasRenderingContext2D.cpp:
+        Include MathExtras.h
+        
 2006-10-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders.
