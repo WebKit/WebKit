@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef break_lines_h
+#define break_lines_h
+
 #include "UChar.h"
 
 namespace WebCore {
@@ -33,4 +36,6 @@ namespace WebCore {
         return pos == nextBreakable;
     }
 
-}
+} // namespace WebCore
+
+#endif // break_lines_h

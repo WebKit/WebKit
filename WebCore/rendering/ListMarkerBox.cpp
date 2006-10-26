@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "ListMarkerBox.h"
 
@@ -41,4 +42,4 @@ bool ListMarkerBox::isText() const
     return !static_cast<RenderListMarker*>(object())->listImage();
 }
 
-}
+} // namespace WebCore

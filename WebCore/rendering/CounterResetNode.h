@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  *
 */
-#ifndef Counter_Reset_Node_h_
-#define Counter_Reset_Node_h_
+#ifndef CounterResetNode_h
+#define CounterResetNode_h
 
 #include "CounterNode.h"
 
@@ -34,14 +34,13 @@ namespace WebCore {
 
 // Implementation of counter-reset and root
 class CounterResetNode : public CounterNode {
-
 public:
     CounterResetNode(RenderObject*);
 
     virtual CounterNode* firstChild() const { return m_first; };
     virtual CounterNode* lastChild() const { return m_last; };
     virtual void insertAfter(CounterNode* newChild, CounterNode* refChild);
-    virtual void removeChild (CounterNode*);
+    virtual void removeChild(CounterNode*);
 
     virtual bool isReset() const { return true; };
     virtual CounterNode* recountAndGetNext(bool setDirty = true);

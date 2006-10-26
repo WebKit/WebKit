@@ -29,14 +29,13 @@
 
 namespace WebCore {
 
-class ListMarkerBox : public InlineBox
-{
+class ListMarkerBox : public InlineBox {
 public:
     ListMarkerBox(RenderObject*);
-    
+
     virtual bool isText() const;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // ListMarkerBox_H

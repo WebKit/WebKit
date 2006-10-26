@@ -59,6 +59,6 @@ namespace WebCore {
         IntRect m_right;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // GapRects_h

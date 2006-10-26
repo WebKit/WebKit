@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef LENGTH_H
-#define LENGTH_H
+#ifndef Length_H
+#define Length_H
 
 namespace WebCore {
 
@@ -30,10 +30,20 @@ namespace WebCore {
     enum LengthType { Auto, Relative, Percent, Fixed, Static, Intrinsic, MinIntrinsic };
 
     struct Length {
-        Length() : m_value(0) { }
-        Length(LengthType t) : m_value(t) { }
-        Length(int v, LengthType t, bool q = false) : m_value((v * 16) | (q << 3) | t) { }
-            // FIXME: Doesn't work if the passed-in value is very large!
+        Length()
+            : m_value(0)
+        {
+        }
+
+        Length(LengthType t)
+            : m_value(t)
+        {
+        }
+
+        Length(int v, LengthType t, bool q = false)
+            : m_value((v * 16) | (q << 3) | t) // FIXME: Doesn't work if the passed-in value is very large!
+        {
+        }
 
         bool operator==(const Length& o) const { return m_value == o.m_value; }
         bool operator!=(const Length& o) const { return m_value != o.m_value; }
@@ -84,6 +94,6 @@ namespace WebCore {
         int m_value;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // Length_H

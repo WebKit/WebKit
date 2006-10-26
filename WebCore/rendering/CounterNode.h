@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  *
 */
-#ifndef Counter_Node_h_
-#define Counter_Node_h_
+#ifndef CounterNode_h
+#define CounterNode_h
 
 #include "RenderObject.h"
 
@@ -37,7 +37,7 @@ class CounterResetNode;
 class CounterNode {
 public:
     CounterNode(RenderObject*);
-    virtual ~CounterNode() {}
+    virtual ~CounterNode() { }
 
     CounterResetNode* parent() const { return m_parent; }
     CounterNode* previousSibling() const { return m_previous; }
@@ -45,7 +45,7 @@ public:
     virtual CounterNode* firstChild() const { return 0; }
     virtual CounterNode* lastChild() const { return 0; }
     virtual void insertAfter(CounterNode* newChild, CounterNode* refChild);
-    virtual void removeChild (CounterNode* oldChild);
+    virtual void removeChild(CounterNode*);
     void remove();
 
     int value() const { return m_value; }
@@ -54,7 +54,7 @@ public:
     void setCount(int c) { m_count = c; }
     void setHasSeparator() { m_hasSeparator = true; }
 
-    virtual bool isReset() const{ return false; }
+    virtual bool isReset() const { return false; }
     virtual CounterNode* recountAndGetNext(bool setDirty = true);
     virtual void recountTree(bool setDirty = true);
     virtual void setSelfDirty();

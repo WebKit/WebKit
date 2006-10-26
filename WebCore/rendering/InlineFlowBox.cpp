@@ -18,6 +18,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "InlineFlowBox.h"
 
@@ -26,11 +27,11 @@
 #include "EllipsisBox.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
-#include "RootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderFlow.h"
 #include "RenderListMarker.h"
 #include "RenderTableCell.h"
+#include "RootInlineBox.h"
 
 using namespace std;
 
@@ -849,4 +850,4 @@ void InlineFlowBox::clearTruncation()
         box->clearTruncation();
 }
 
-} // namespace
+} // namespace WebCore

@@ -29,8 +29,7 @@
 
 namespace WebCore {
 
-class RenderPartObject : public RenderPart
-{
+class RenderPartObject : public RenderPart {
 public:
     RenderPartObject(HTMLElement*);
 
@@ -42,6 +41,6 @@ public:
     virtual void viewCleared();
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderPartObject_H

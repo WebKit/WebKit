@@ -28,16 +28,14 @@
 
 namespace WebCore {
 
-class CounterListItem : public CounterNode
-{
+class CounterListItem : public CounterNode {
 public:
     int count() const;
 
     virtual void recount(bool setDirty = true);
     virtual void setSelfDirty();
-
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // CounterListItem_H

@@ -21,20 +21,21 @@
  *
  */
 
+#include "config.h"
 
 #ifdef SVG_SUPPORT
 
-#include "config.h"
 #include "SVGInlineFlowBox.h"
-#include "KRenderingDevice.h"
-#include "KCanvasRenderingStyle.h"
+
+#include "GraphicsContext.h"
+#include "InlineTextBox.h"
 #include "KCanvasClipper.h"
 #include "KCanvasMasker.h"
-#include "InlineTextBox.h"
+#include "KCanvasRenderingStyle.h"
+#include "KRenderingDevice.h"
 #include "RootInlineBox.h"
-#include "SVGTextPositioningElement.h"
 #include "SVGLengthList.h"
-#include "GraphicsContext.h"
+#include "SVGTextPositioningElement.h"
 #include <wtf/OwnPtr.h>
 
 using namespace std;
@@ -290,5 +291,6 @@ void placeSVGFlowVertically(InlineFlowBox* flow, int& heightOfBlock)
     flow->setVerticalSelectionPositions(top, bottom);
 }
 
-}
+} // namespace WebCore
+
 #endif // SVG_SUPPORT

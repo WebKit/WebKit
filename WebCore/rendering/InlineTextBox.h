@@ -22,12 +22,12 @@
  *
  */
 
-#ifndef KHTML_InlineTextBox_H
-#define KHTML_InlineTextBox_H
+#ifndef InlineTextBox_H
+#define InlineTextBox_H
 
 #include "DocumentMarker.h"
-#include "RenderText.h"
 #include "InlineRunBox.h"
+#include "RenderText.h"
 
 namespace WebCore {
 
@@ -39,44 +39,43 @@ class StringImpl;
 class MarkedTextUnderline;
 class Position;
 
-class InlineTextBox : public InlineRunBox
-{
+class InlineTextBox : public InlineRunBox {
 public:
     InlineTextBox(RenderObject* obj)
-    :InlineRunBox(obj)
+        : InlineRunBox(obj)
+        , m_start(0)
+        , m_len(0)
+        , m_truncation(cNoTruncation)
+        , m_reversed(false)
+        , m_treatAsText(true)
+        , m_toAdd(0)
     {
-        m_start = 0;
-        m_len = 0;
-        m_reversed = false;
-        m_treatAsText = true;
-        m_toAdd = 0;
-        m_truncation = cNoTruncation;
     }
-    
+
     InlineTextBox* nextTextBox() const { return static_cast<InlineTextBox*>(nextLineBox()); }
     InlineTextBox* prevTextBox() const { return static_cast<InlineTextBox*>(prevLineBox()); }
-    
+
     unsigned start() const { return m_start; }
-    unsigned end() const { return m_len ? m_start+m_len-1 : m_start; }
+    unsigned end() const { return m_len ? m_start + m_len - 1 : m_start; }
     unsigned len() const { return m_len; }
-  
+
     void setStart(unsigned start) { m_start = start; }
     void setLen(unsigned len) { m_len = len; }
 
     void offsetRun(int d) { m_start += d; }
 
-    void destroy(RenderArena* arena);
-    
+    void destroy(RenderArena*);
+
     IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
-    
-    virtual void paint(RenderObject::PaintInfo& i, int tx, int ty);
-    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
 
     RenderText* textObject() const;
-    
-    virtual void deleteLine(RenderArena* arena);
+
+    virtual void deleteLine(RenderArena*);
     virtual void extractLine();
     virtual void attachLine();
 
@@ -89,14 +88,14 @@ public:
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
-    void* operator new(size_t sz, RenderArena* renderArena) throw();    
+    void* operator new(size_t, RenderArena*) throw();  
 
     // Overridden to prevent the normal delete from being called.
-    void operator delete(void* ptr, size_t sz);
-    
+    void operator delete(void*, size_t);
+
 private:
     // The normal operator new is disallowed.
-    void* operator new(size_t sz) throw();
+    void* operator new(size_t) throw();
 
 public:
     void setSpaceAdd(int add) { m_width -= m_toAdd; m_toAdd = add; m_width += m_toAdd; }
@@ -105,7 +104,7 @@ public:
     virtual bool isInlineTextBox() { return true; }    
     virtual bool isText() const { return m_treatAsText; }
     void setIsText(bool b) { m_treatAsText = b; }
-    
+
     void paintDecoration(GraphicsContext*, int tx, int ty, int decoration);
     void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
     void paintMarkedTextBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
@@ -119,16 +118,16 @@ public:
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
-    
+
     int textPos() const;
-    int offsetForPosition(int _x, bool includePartialGlyphs = true) const;
+    int offsetForPosition(int x, bool includePartialGlyphs = true) const;
     int positionForOffset(int offset) const;
 
     bool containsCaretOffset(int offset) const; // false for offset after line break
-    
+
     int m_start;
     unsigned short m_len;
-    
+
     int m_truncation; // Where to truncate when text overflow is applied.  We use special constants to
                       // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
 
@@ -141,11 +140,11 @@ private:
     friend class RenderText;
 };
 
-inline RenderText *InlineTextBox::textObject() const
+inline RenderText* InlineTextBox::textObject() const
 {
-    return static_cast<RenderText *>(m_object);
+    return static_cast<RenderText*>(m_object);
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // InlineTextBox_H

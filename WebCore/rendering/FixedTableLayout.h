@@ -31,8 +31,7 @@ namespace WebCore {
 
 class RenderTable;
 
-class FixedTableLayout : public TableLayout
-{
+class FixedTableLayout : public TableLayout {
 public:
     FixedTableLayout(RenderTable*);
     ~FixedTableLayout();
@@ -46,6 +45,6 @@ protected:
     Vector<Length> m_width;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // FixedTableLayout_H

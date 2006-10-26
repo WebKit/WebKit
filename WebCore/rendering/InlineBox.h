@@ -31,8 +31,7 @@ class RootInlineBox;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
-class InlineBox
-{
+class InlineBox {
 public:
     InlineBox(RenderObject* obj)
         : m_object(obj)
@@ -51,6 +50,24 @@ public:
     {
     }
 
+    InlineBox(RenderObject* obj, int x, int y, int width, int height, int baseline, bool firstLine, bool constructed,
+              bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
+        : m_object(obj)
+        , m_x(x)
+        , m_y(y)
+        , m_width(width)
+        , m_height(height)
+        , m_baseline(baseline)
+        , m_firstLine(firstLine)
+        , m_constructed(constructed)
+        , m_dirty(dirty)
+        , m_extracted(extracted)
+        , m_next(next)
+        , m_prev(prev)
+        , m_parent(parent)
+    {
+    }
+
     virtual ~InlineBox() { }
 
     virtual void destroy(RenderArena*);
@@ -63,9 +80,9 @@ public:
 
     virtual void adjustPosition(int dx, int dy);
 
-    virtual void paint(RenderObject::PaintInfo&, int _tx, int _ty);
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
-    
+
     // Overloaded new operator.
     void* operator new(size_t, RenderArena*) throw();
 
@@ -75,7 +92,7 @@ public:
 private:
     // The normal operator new is disallowed.
     void* operator new(size_t) throw();
-    
+
 public:
 #ifndef NDEBUG
     void showTreeForThis() const;
@@ -89,11 +106,13 @@ public:
     virtual bool isText() const { return false; }
 
     bool isConstructed() { return m_constructed; }
-    virtual void setConstructed() {
+    virtual void setConstructed()
+    {
         m_constructed = true;
         if (m_next)
             m_next->setConstructed();
     }
+
     void setExtracted(bool b = true) { m_extracted = b; }
     
     void setFirstLineStyleBit(bool f) { m_firstLine = f; }
@@ -148,10 +167,10 @@ public:
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
     
-    virtual void clearTruncation() {};
+    virtual void clearTruncation() { }
 
     bool isDirty() const { return m_dirty; }
-    void markDirty(bool dirty=true) { m_dirty = dirty; }
+    void markDirty(bool dirty = true) { m_dirty = dirty; }
 
     void dirtyLineBoxes();
     
@@ -169,7 +188,7 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
     int m_width;
     int m_height;
     int m_baseline;
-    
+
     bool m_firstLine : 1;
     bool m_constructed : 1;
     bool m_dirty : 1;
@@ -181,11 +200,11 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
     InlineFlowBox* m_parent; // The box that contains us.
 };
 
-} //namespace
+} // namespace WebCore
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::InlineBox*);
 #endif
 
-#endif
+#endif // InlineBox_H

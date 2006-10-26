@@ -31,11 +31,11 @@
 namespace WebCore {
 
     class HTMLInputElement;
-    
+
     class DeprecatedSlider : public RenderFormElement {
     public:
         DeprecatedSlider(HTMLInputElement*);
-        
+
         virtual const char* renderName() const { return "DeprecatedSlider"; }
 
         virtual void calcMinMaxWidth();
@@ -44,7 +44,6 @@ namespace WebCore {
     private:
         virtual void valueChanged(Widget*);
     };
-
 
 } // namespace WebCore
 

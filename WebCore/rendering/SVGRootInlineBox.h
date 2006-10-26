@@ -32,14 +32,18 @@ namespace WebCore {
     
 class SVGRootInlineBox : public RootInlineBox {
 public:
-    SVGRootInlineBox(RenderObject* obj) : RootInlineBox(obj) {}
-    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    SVGRootInlineBox(RenderObject* obj)
+        : RootInlineBox(obj)
+    {
+    }
+
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
     virtual void verticallyAlignBoxes(int& heightOfBlock);
 };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 
-#endif // !RootInlineBox_H
+#endif // SVGRootInlineBox_H

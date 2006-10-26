@@ -27,17 +27,17 @@
 
 namespace WebCore {
 
-class InlineFlowBox : public InlineRunBox
-{
+class InlineFlowBox : public InlineRunBox {
 public:
     InlineFlowBox(RenderObject* obj)
-    :InlineRunBox(obj)
+        : InlineRunBox(obj)
+        , m_firstChild(0)
+        , m_lastChild(0)
+        , m_maxHorizontalShadow(0)
+        , m_includeLeftEdge(false)
+        , m_includeRightEdge(false)
+        , m_hasTextChildren(false)
     {
-        m_firstChild = 0;
-        m_lastChild = 0;
-        m_includeLeftEdge = m_includeRightEdge = false;
-        m_hasTextChildren = false;
-        m_maxHorizontalShadow = 0;
     }
 
     RenderFlow* flowObject();
@@ -46,37 +46,38 @@ public:
 
     InlineFlowBox* prevFlowBox() const { return static_cast<InlineFlowBox*>(m_prevLine); }
     InlineFlowBox* nextFlowBox() const { return static_cast<InlineFlowBox*>(m_nextLine); }
-    
+
     InlineBox* firstChild() { return m_firstChild; }
     InlineBox* lastChild() { return m_lastChild; }
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
-    InlineBox* firstLeafChildAfterBox(InlineBox* start=0);
-    InlineBox* lastLeafChildBeforeBox(InlineBox* start=0);
-        
-    virtual void setConstructed() {
+    InlineBox* firstLeafChildAfterBox(InlineBox* start = 0);
+    InlineBox* lastLeafChildBeforeBox(InlineBox* start = 0);
+
+    virtual void setConstructed()
+    {
         InlineBox::setConstructed();
         if (m_firstChild)
             m_firstChild->setConstructed();
     }
-    void addToLine(InlineBox* child);
 
-    virtual void deleteLine(RenderArena* arena);
+    void addToLine(InlineBox* child);
+    virtual void deleteLine(RenderArena*);
     virtual void extractLine();
     virtual void attachLine();
     virtual void adjustPosition(int dx, int dy);
 
     virtual void clearTruncation();
-    
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty);
-    void paintBackgrounds(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
-                          int my, int mh, int _tx, int _ty, int w, int h);
-    void paintBackground(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
-                         int my, int mh, int _tx, int _ty, int w, int h);
-    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
-    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+
+    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo&, int tx, int ty);
+    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*,
+                          int my, int mh, int tx, int ty, int w, int h);
+    void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*,
+                         int my, int mh, int tx, int ty, int w, int h);
+    virtual void paintDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
 
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();
@@ -86,13 +87,15 @@ public:
     int borderRight() { if (includeRightEdge()) return object()->borderRight(); return 0; }
     int paddingLeft() { if (includeLeftEdge()) return object()->paddingLeft(); return 0; }
     int paddingRight() { if (includeRightEdge()) return object()->paddingRight(); return 0; }
-    
+
     bool includeLeftEdge() { return m_includeLeftEdge; }
     bool includeRightEdge() { return m_includeRightEdge; }
-    void setEdges(bool includeLeft, bool includeRight) {
+    void setEdges(bool includeLeft, bool includeRight)
+    {
         m_includeLeftEdge = includeLeft;
         m_includeRightEdge = includeRight;
     }
+
     virtual bool hasTextChildren() { return m_hasTextChildren; }
 
     // Helper functions used during line construction and placement.
@@ -109,12 +112,12 @@ public:
                               int& topPosition, int& bottomPosition, int& selectionTop, int& selectionBottom);
     void shrinkBoxesWithNoTextChildren(int topPosition, int bottomPosition);
     
-    virtual void setVerticalOverflowPositions(int top, int bottom) {}
-    virtual void setVerticalSelectionPositions(int top, int bottom) {}
+    virtual void setVerticalOverflowPositions(int top, int bottom) { }
+    virtual void setVerticalSelectionPositions(int top, int bottom) { }
     int maxHorizontalShadow() const { return m_maxHorizontalShadow; }
 
     void removeChild(InlineBox* child);
-    
+
     virtual RenderObject::SelectionState selectionState();
 
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
@@ -129,11 +132,11 @@ protected:
     bool m_hasTextChildren : 1;
 };
 
-} //namespace
+} // namespace WebCore
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showTree(const WebCore::InlineBox*);
 #endif
 
-#endif
+#endif // InlineFlowBox_H

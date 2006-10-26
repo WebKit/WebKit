@@ -1,3 +1,75 @@
+2006-10-26  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11424
+        Cleanup rendering code
+
+        - Assorted code cleanup.
+
+        * rendering/AutoTableLayout.cpp:
+        * rendering/AutoTableLayout.h:
+        (WebCore::AutoTableLayout::totalPercent):
+        * rendering/CounterListItem.h:
+        * rendering/CounterNode.cpp:
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::~CounterNode):
+        (WebCore::CounterNode::isReset):
+        * rendering/CounterResetNode.cpp:
+        * rendering/CounterResetNode.h:
+        * rendering/DataRef.h:
+        (WebCore::DataRef::DataRef):
+        * rendering/DeprecatedRenderSelect.h:
+        * rendering/DeprecatedSlider.cpp:
+        * rendering/DeprecatedSlider.h:
+        * rendering/EllipsisBox.cpp:
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/FixedTableLayout.cpp:
+        * rendering/FixedTableLayout.h:
+        * rendering/GapRects.h:
+        * rendering/InlineBox.cpp:
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::setConstructed):
+        (WebCore::InlineBox::clearTruncation):
+        (WebCore::InlineBox::markDirty):
+        * rendering/InlineFlowBox.cpp:
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::setConstructed):
+        (WebCore::InlineFlowBox::setEdges):
+        (WebCore::InlineFlowBox::setVerticalOverflowPositions):
+        (WebCore::InlineFlowBox::setVerticalSelectionPositions):
+        * rendering/InlineRunBox.h:
+        (WebCore::InlineRunBox::paintBackgroundAndBorder):
+        (WebCore::InlineRunBox::paintDecorations):
+        * rendering/InlineTextBox.cpp:
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::InlineTextBox):
+        (WebCore::InlineTextBox::end):
+        (WebCore::InlineTextBox::textObject):
+        * rendering/Length.h:
+        (WebCore::Length::Length):
+        * rendering/ListMarkerBox.cpp:
+        * rendering/ListMarkerBox.h:
+        * rendering/RenderPartObject.h:
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        * rendering/SVGInlineFlowBox.cpp:
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::SVGInlineFlowBox):
+        * rendering/SVGRootInlineBox.cpp:
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        * rendering/TableLayout.h:
+        (WebCore::TableLayout::TableLayout):
+        (WebCore::TableLayout::~TableLayout):
+        * rendering/bidi.h:
+        (WebCore::BidiStatus::BidiStatus):
+        (WebCore::BidiRun::BidiRun):
+        * rendering/break_lines.h:
+
 2006-10-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

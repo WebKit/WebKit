@@ -31,8 +31,7 @@ namespace WebCore {
 class EllipsisBox;
 struct GapRects;
 
-class RootInlineBox : public InlineFlowBox
-{
+class RootInlineBox : public InlineFlowBox {
 public:
     RootInlineBox(RenderObject* obj)
         : InlineFlowBox(obj)
@@ -86,29 +85,28 @@ public:
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
     EllipsisBox* ellipsisBox() const { return m_ellipsisBox; }
-    void paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _ty) const;
-    bool hitTestEllipsisBox(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                            HitTestAction hitTestAction, bool inBox);
+    void paintEllipsisBox(RenderObject::PaintInfo&, int tx, int ty) const;
+    bool hitTestEllipsisBox(RenderObject::NodeInfo&, int x, int y, int tx, int ty, HitTestAction, bool inBox);
     
     virtual void clearTruncation();
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
-    void paintCustomHighlight(RenderObject::PaintInfo& i, int tx, int ty, const AtomicString& highlightType);
+    void paintCustomHighlight(RenderObject::PaintInfo&, int tx, int ty, const AtomicString& highlightType);
 #endif
 
-    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildren; }
     void setHasSelectedChildren(bool b);
-    
+
     virtual RenderObject::SelectionState selectionState();
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
     
     GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, 
-                                  int tx, int ty, const RenderObject::PaintInfo* i);
+                                  int tx, int ty, const RenderObject::PaintInfo*);
     
     RenderBlock* block() const;
 
@@ -116,7 +114,7 @@ public:
     int selectionBottom() { return m_selectionBottom; }
     int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
  
-    InlineBox* closestLeafChildForXPos(int _x, int _tx);
+    InlineBox* closestLeafChildForXPos(int x, int tx);
 
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
@@ -152,6 +150,6 @@ protected:
     EllipsisBox* m_ellipsisBox;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // RootInlineBox_H

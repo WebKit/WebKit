@@ -30,21 +30,24 @@
 
 namespace WebCore {
 
-void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject::PaintInfo& i, 
-                        int _tx, int _ty);
-int placeSVGFlowHorizontally(InlineFlowBox* flow, int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
-void placeSVGFlowVertically(InlineFlowBox* flow, int& heightOfBlock);
+void paintSVGInlineFlow(InlineFlowBox*, RenderObject*, RenderObject::PaintInfo&, int tx, int ty);
+int placeSVGFlowHorizontally(InlineFlowBox*, int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
+void placeSVGFlowVertically(InlineFlowBox*, int& heightOfBlock);
 
 class SVGInlineFlowBox : public InlineFlowBox {
 public:
-    SVGInlineFlowBox(RenderObject* obj) : InlineFlowBox(obj) {}
-    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    SVGInlineFlowBox(RenderObject* obj)
+        : InlineFlowBox(obj)
+    {
+    }
+
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
     virtual void verticallyAlignBoxes(int& heightOfBlock);
 };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 
-#endif // !SVGInlineFlowBox_H
+#endif // SVGInlineFlowBox_H

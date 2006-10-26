@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-// -------------------------------------------------------------------------
 
 #include "config.h"
 #include "EllipsisBox.h"
@@ -84,4 +83,4 @@ bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y, int tx
     return false;
 }
 
-}
+} // namespace WebCore

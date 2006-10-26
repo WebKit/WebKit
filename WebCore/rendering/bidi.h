@@ -34,13 +34,18 @@ namespace WebCore {
     class InlineBox;
 
     struct BidiStatus {
-        BidiStatus() : eor(U_OTHER_NEUTRAL), lastStrong(U_OTHER_NEUTRAL), last(U_OTHER_NEUTRAL) {}
-        
+        BidiStatus()
+            : eor(U_OTHER_NEUTRAL)
+            , lastStrong(U_OTHER_NEUTRAL)
+            , last(U_OTHER_NEUTRAL)
+        {
+        }
+
         UCharDirection eor;
         UCharDirection lastStrong;
         UCharDirection last;
     };
-        
+
     class BidiContext {
     public:
         BidiContext(unsigned char level, UCharDirection embedding, BidiContext* parent = 0, bool override = false);
@@ -65,7 +70,12 @@ namespace WebCore {
 
     struct BidiRun {
         BidiRun(int start_, int stop_, RenderObject* o, BidiContext* context, UCharDirection dir)
-            :  start(start_), stop(stop_), obj(o), box(0), override(context->override), nextRun(0)
+            : start(start_)
+            , stop(stop_)
+            , obj(o)
+            , box(0)
+            , override(context->override)
+            , nextRun(0)
         {
             if (dir == U_OTHER_NEUTRAL) 
                 dir = context->dir();
@@ -100,14 +110,14 @@ namespace WebCore {
         int start;
         int stop;
 
-        RenderObject *obj;
+        RenderObject* obj;
         InlineBox* box;
-        
+
         // explicit + implicit levels here
         unsigned char level;
         bool override : 1;
         bool compact : 1;
-        
+
         BidiRun* nextRun;
     };
 

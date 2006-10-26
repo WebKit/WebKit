@@ -27,8 +27,7 @@
 
 namespace WebCore {
 
-class InlineRunBox : public InlineBox
-{
+class InlineRunBox : public InlineBox {
 public:
     InlineRunBox(RenderObject* obj)
         : InlineBox(obj)
@@ -42,14 +41,14 @@ public:
     void setNextLineBox(InlineRunBox* n) { m_nextLine = n; }
     void setPreviousLineBox(InlineRunBox* p) { m_prevLine = p; }
 
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo&, int _tx, int _ty) {};
-    virtual void paintDecorations(RenderObject::PaintInfo&, int _tx, int _ty, bool paintedChildren = false) {};
+    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo&, int tx, int ty) { }
+    virtual void paintDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false) { }
     
 protected:
     InlineRunBox* m_prevLine;  // The previous box that also uses our RenderObject
     InlineRunBox* m_nextLine;  // The next box that also uses our RenderObject
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // InlineRunBox_H

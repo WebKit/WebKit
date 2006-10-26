@@ -32,8 +32,7 @@ namespace WebCore {
 class RenderTable;
 class RenderTableCell;
 
-class AutoTableLayout : public TableLayout
-{
+class AutoTableLayout : public TableLayout {
 public:
     AutoTableLayout(RenderTable*);
     ~AutoTableLayout();
@@ -44,13 +43,17 @@ public:
 protected:
     void fullRecalc();
     void recalcColumn(int effCol);
-    int totalPercent() const {
+
+    void calcPercentages() const;
+    int totalPercent() const
+    {
         if (m_percentagesDirty)
             calcPercentages();
         return m_totalPercent;
     }
-    void calcPercentages() const;
+
     int calcEffectiveWidth();
+
     void insertSpanCell(RenderTableCell*);
 
     struct Layout {
@@ -77,6 +80,6 @@ protected:
     mutable unsigned short m_totalPercent;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // AutoTableLayout_H

@@ -27,8 +27,8 @@
 #include "DeprecatedSlider.h"
 
 #include "EventNames.h"
-#include "HTMLNames.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "Slider.h"
 
 using std::min;

@@ -18,13 +18,15 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "RootInlineBox.h"
 
-#include "EllipsisBox.h"
-#include "RenderBlock.h"
-#include "GraphicsContext.h"
 #include "Document.h"
+#include "EllipsisBox.h"
+#include "GraphicsContext.h"
+#include "RenderBlock.h"
+
 #if PLATFORM(MAC)
 #include "FrameMac.h"
 #endif
@@ -319,4 +321,4 @@ void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiS
         m_lineBreakBidiStatus = *status;
 }
 
-}
+} // namespace WebCore

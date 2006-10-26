@@ -30,10 +30,12 @@
 
 namespace WebCore {
 
-template <typename T> class DataRef
-{
+template <typename T> class DataRef {
 public:
-    DataRef() : m_data(0) { }
+    DataRef()
+        : m_data(0)
+    {
+    }
 
     DataRef(const DataRef<T>& d)
     {
@@ -98,6 +100,6 @@ private:
     T* m_data;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // DataRef_h

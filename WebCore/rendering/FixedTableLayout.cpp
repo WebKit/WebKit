@@ -336,4 +336,4 @@ void FixedTableLayout::layout()
 
 #undef DEBUG_LAYOUT
 
-}
+} // namespace WebCore
