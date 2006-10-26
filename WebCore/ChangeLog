@@ -1,3 +1,15 @@
+2006-10-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+        Fixes <rdar://problem/4800518> -- needed to update existing
+        canvas path elements when transforms are performed on the
+        context.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+
 2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
 #include "cssparser.h"
+#include "AffineTransform.h"
 
 namespace WebCore {
 
@@ -276,6 +277,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     if (!c)
         return;
     c->scale(FloatSize(sx, sy));
+    state().m_path.transform(AffineTransform().scale(1.0/sx, 1.0/sy));
 }
 
 void CanvasRenderingContext2D::rotate(float angleInRadians)
@@ -284,6 +286,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     if (!c)
         return;
     c->rotate(angleInRadians);
+    state().m_path.transform(AffineTransform().rotate(-angleInRadians/M_PI*180));
 }
 
 void CanvasRenderingContext2D::translate(float tx, float ty)
@@ -292,6 +295,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     if (!c)
         return;
     c->translate(tx, ty);
+    state().m_path.transform(AffineTransform().translate(-tx, -ty));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)

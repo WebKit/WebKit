@@ -1,3 +1,13 @@
+2006-10-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+        Layout test for <rdar://problem/4800518>
+
+        * fast/canvas/canvas-transforms-during-path-expected.checksum: Added.
+        * fast/canvas/canvas-transforms-during-path-expected.png: Added.
+        * fast/canvas/canvas-transforms-during-path-expected.txt: Added.
+        * fast/canvas/canvas-transforms-during-path.html: Added.
+
 2006-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
