@@ -197,5 +197,9 @@ void PopupMenu::addOption(HTMLOptionElement* element)
 
     [string release];
 }
+    
+void PopupMenu::updateFromElement()
+{
+}
 
 }

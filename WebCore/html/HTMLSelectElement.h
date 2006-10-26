@@ -26,6 +26,7 @@
 #ifndef HTML_HTMLSelectElementImpl_H
 #define HTML_HTMLSelectElementImpl_H
 
+#include "Event.h"
 #include "HTMLGenericFormElement.h"
 #include "HTMLCollection.h"
 #include "RenderStyle.h"
@@ -36,6 +37,7 @@ namespace WebCore {
 class DeprecatedRenderSelect;
 class HTMLOptionElement;
 class HTMLOptionsCollection;
+class KeyboardEvent;
 
 class HTMLSelectElement : public HTMLGenericFormElement {
     friend class DeprecatedRenderSelect;
@@ -132,6 +134,7 @@ private:
     int previousSelectableListIndex(int startIndex);
     void menuListDefaultEventHandler(Event*);
     void listBoxDefaultEventHandler(Event*);
+    void typeAheadFind(KeyboardEvent*);
 
     mutable Vector<HTMLElement*> m_listItems;
     int m_minwidth;
@@ -139,6 +142,11 @@ private:
     bool m_multiple;
     mutable bool m_recalcListItems;
     int m_lastOnChangeIndex;
+
+    // Instance variables for type-ahead find
+    UChar m_repeatingChar;
+    DOMTimeStamp m_lastCharTime;
+    String m_typedString;
 
     HTMLCollection::CollectionInfo m_collectionInfo;
 };

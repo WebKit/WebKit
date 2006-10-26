@@ -66,6 +66,9 @@ HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     , m_multiple(false)
     , m_recalcListItems(false)
     , m_lastOnChangeIndex(0)
+    , m_repeatingChar(0)
+    , m_lastCharTime(0)
+    , m_typedString(String())
 {
     document()->registerFormElementWithState(this);
 }
@@ -526,12 +529,24 @@ void HTMLSelectElement::dispatchBlurEvent()
 #endif
     HTMLGenericFormElement::dispatchBlurEvent();
 }
+
 void HTMLSelectElement::defaultEventHandler(Event* evt)
 {
     if (usesMenuList())
         menuListDefaultEventHandler(evt);
     else if (renderer() && renderer()->isListBox() && renderer()->isListBox()) 
         listBoxDefaultEventHandler(evt);
+
+    if (!evt->defaultHandled() && evt->type() == keypressEvent && evt->isKeyboardEvent()) {
+        KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(evt);
+    
+        if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey()
+            && isprint(static_cast<KeyboardEvent*>(evt)->charCode())) {
+            typeAheadFind(static_cast<KeyboardEvent*>(evt));
+            evt->setDefaultHandled();
+        }
+    }
+
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
 
@@ -579,17 +594,16 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             if (listIndex >= 0 && listIndex < size)
                 setSelectedIndex(listToOptionIndex(listIndex));
             handled = true;
-        } else if (keyIdentifier == "Enter" && listIndex != m_lastOnChangeIndex) {
+        } else if (keyIdentifier == "Enter") {
             setSelectedIndex(listToOptionIndex(listIndex), true, true);
         }
-
 #endif
         if (handled)
             evt->setDefaultHandled();
 
     }
     if (evt->type() == mousedownEvent) {
-         focus();
+        focus();
         if (menuList->popupIsVisible())
             menuList->hidePopup();
         else
@@ -624,9 +638,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             }
             setSelectedIndex(optionIndex, deselectOtherOptions);
         }
-    }
-    
-    if (evt->type() == keypressEvent) {
+    } else if (evt->type() == keypressEvent) {
         if (!evt->isKeyboardEvent())
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
@@ -650,6 +662,65 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             evt->setDefaultHandled();
             setChanged();
             renderer()->repaint();
+        }
+    }
+}
+
+static String stripLeadingWhiteSpace(const String& string)
+{
+    const UChar nonBreakingSpace = 0xA0;
+
+    int length = string.length();
+    int i;
+    for (i = 0; i < length; ++i)
+        if (string[i] != nonBreakingSpace && (string[i] <= 0x7F ? !isspace(string[i]) : (u_charDirection(string[i]) != U_WHITE_SPACE_NEUTRAL)))
+            break;
+
+    return string.substring(i, length - i);
+}
+
+const DOMTimeStamp typeAheadTimeout = 1000;
+void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
+{
+    if (event->timeStamp() < m_lastCharTime)
+        return;
+
+    DOMTimeStamp delta = event->timeStamp() - m_lastCharTime;
+
+    m_lastCharTime = event->timeStamp();
+
+    UChar c = event->charCode();
+
+    String prefix;
+    int searchStartOffset = 1;
+    if (delta > typeAheadTimeout) {
+        m_typedString = prefix = String(&c, 1);
+        m_repeatingChar = c;
+    } else {
+        m_typedString.append(c);
+
+        if (c == m_repeatingChar)
+            // The user is likely trying to cycle through all the items starting with this character, so just search on the character
+            prefix = String(&c, 1);
+        else {
+            m_repeatingChar = 0;
+            prefix = m_typedString;
+            searchStartOffset = 0;
+        }
+    }
+
+    const Vector<HTMLElement*>& items = listItems();
+    int itemCount = items.size();
+
+    int index = (optionToListIndex(selectedIndex()) + searchStartOffset) % itemCount;
+    for (int i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
+        if (!items[index]->hasTagName(optionTag) || items[index]->disabled())
+            continue;
+
+        if (stripLeadingWhiteSpace(static_cast<HTMLOptionElement*>(items[index])->optionText()).startsWith(prefix, false)) {
+            setSelectedIndex(listToOptionIndex(index));
+            setChanged();
+            return;
         }
     }
 }

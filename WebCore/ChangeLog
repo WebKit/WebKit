@@ -1,3 +1,42 @@
+2006-10-26  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Fix: <rdar://problem/3951815> add "type-to-select" feature for list
+        boxes (<select> elements)
+
+        This also adds type-ahead find for closed menulists (popups).
+
+        * WebCore.xcodeproj/project.pbxproj: Version wars.
+        * html/HTMLSelectElement.h: Add new instance variables for type-ahead
+        find.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Initialize new
+        instance variables.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Perform type-ahead
+        find on printable character presses.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Remove
+        redundant check that the listIndex has changed (setSelectedIndex does
+        this for us), and fix indentation.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Change an if
+        to an else-if.
+        (WebCore::stripLeadingWhiteSpace): Helper function for typeAheadFind()
+        to strip leading whitespace (including non-breaking spaces) from a
+        string.
+        (WebCore::HTMLSelectElement::typeAheadFind): New method to perform
+        type-ahead find.
+        * platform/PopupMenu.h: Added new updateFromElement() method to be
+        called from RenderMenuList::updateFromElement().
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::updateFromElement): While we are using
+        NSPopUpButtonCell for our popups, this method can stay empty.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Scroll to reveal the first
+        selected element.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateFromElement): Tell the popup to update
+        if it's visible.
+
 2006-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

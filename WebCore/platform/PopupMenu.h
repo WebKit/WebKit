@@ -55,6 +55,8 @@ public:
 
     void show(const IntRect&, FrameView*, int index);
     void hide();
+
+    void updateFromElement();
     
     RenderMenuList* menuList() const { return m_menuList; }
 
@@ -69,7 +71,7 @@ public:
     int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
 
     bool setFocusedIndex(int index, bool setControlText = true, bool fireOnChange = false);
-    int focusedIndex() const { return m_focusedIndex; }
+    int focusedIndex() const;
     void focusFirst();
     void focusLast();
 
@@ -112,7 +114,6 @@ private:
     bool m_wasClicked;
     IntRect m_windowRect;
     int m_itemHeight;
-    int m_focusedIndex;
     int m_scrollOffset;
     int m_wheelDelta;
 #endif

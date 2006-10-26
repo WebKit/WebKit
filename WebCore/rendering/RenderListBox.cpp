@@ -78,9 +78,11 @@ void RenderListBox::setStyle(RenderStyle* style)
 void RenderListBox::updateFromElement()
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    int size = listItems.size();
-    if (m_optionsChanged) {  
+
+    if (m_optionsChanged) {
+        const Vector<HTMLElement*>& listItems = select->listItems();
+        int size = listItems.size();
+        
         float width = 0;
         TextStyle textStyle(0, 0, 0, false, false, false, false);
         for (int i = 0; i < size; ++i) {
@@ -106,6 +108,8 @@ void RenderListBox::updateFromElement()
         m_optionsChanged = false;
         setNeedsLayoutAndMinMaxRecalc();
     }
+    
+    scrollToRevealElementAtListIndex(select->optionToListIndex(select->selectedIndex()));
 }
 
 void RenderListBox::calcMinMaxWidth()
