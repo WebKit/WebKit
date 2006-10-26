@@ -31,6 +31,8 @@
 #import <WebCore/FrameLoader.h>
 #import <objc/objc-runtime.h>
 
+using namespace WebCore;
+
 NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
 NSString *WebActionElementKey = @"WebActionElementKey";
 NSString *WebActionButtonKey = @"WebActionButtonKey"; 
@@ -86,10 +88,10 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 }
 
 
--(void)_usePolicy:(WebPolicyAction)policy
+-(void)_usePolicy:(PolicyAction)policy
 {
     if (_private->target != nil)
-        ((void (*)(id, SEL, WebPolicyAction))objc_msgSend)(_private->target, _private->action, policy);
+        ((void (*)(id, SEL, PolicyAction))objc_msgSend)(_private->target, _private->action, policy);
 }
 
 -(void)_invalidate
@@ -104,24 +106,24 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 -(void)use
 {
-    [self _usePolicy:WebPolicyUse];
+    [self _usePolicy:PolicyUse];
 }
 
 -(void)ignore
 {
-    [self _usePolicy:WebPolicyIgnore];
+    [self _usePolicy:PolicyIgnore];
 }
 
 -(void)download
 {
-    [self _usePolicy:WebPolicyDownload];
+    [self _usePolicy:PolicyDownload];
 }
 
 // WebFormSubmissionListener implementation
 
 -(void)continue
 {
-    [self _usePolicy:WebPolicyUse];
+    [self _usePolicy:PolicyUse];
 }
 
 @end

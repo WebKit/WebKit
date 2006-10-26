@@ -51,6 +51,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/npruntime_impl.h>
 #import <WebCore/FrameLoader.h> 
+#import <WebCore/FrameMac.h> 
+#import <WebCore/FrameTree.h> 
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>
@@ -1761,7 +1763,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request _web_setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
+    [request _web_setHTTPReferrer:core([self webFrame])->referrer()];
     return request;
 }
 
@@ -1861,7 +1863,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
             }
             frame = [newWebView mainFrame];
-            [[frame _bridge] setName:frameName];
+            core(frame)->tree()->setName(frameName);
             [[newWebView _UIDelegateForwarder] webViewShow:newWebView];
         }
     }
@@ -2160,7 +2162,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     switch (variable) {
         case NPNVWindowNPObject:
         {
-            NPObject *windowScriptObject = [[[self webFrame] _bridge] windowScriptNPObject];
+            NPObject *windowScriptObject = core([self webFrame])->windowScriptNPObject();
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (windowScriptObject)

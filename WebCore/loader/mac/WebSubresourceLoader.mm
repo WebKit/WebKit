@@ -67,7 +67,7 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
     NSMutableURLRequest *newRequest, NSDictionary *customHeaders, NSString *referrer)
 {
     FrameLoader* fl = frame->loader();
-    if (fl->state() == WebFrameStateProvisional)
+    if (fl->state() == FrameStateProvisional)
         return nil;
 
     wkSupportsMultipartXMixedReplace(newRequest);

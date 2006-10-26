@@ -103,20 +103,15 @@ using KJS::BooleanType;
 using KJS::DateInstance;
 using KJS::ExecState;
 using KJS::GetterSetterType;
-using KJS::Identifier;
-using KJS::Interpreter;
 using KJS::JSLock;
 using KJS::JSObject;
-using KJS::JSType;
 using KJS::JSValue;
-using KJS::List;
 using KJS::NullType;
 using KJS::NumberType;
 using KJS::ObjectType;
 using KJS::SavedBuiltins;
 using KJS::SavedProperties;
 using KJS::StringType;
-using KJS::UString;
 using KJS::UndefinedType;
 using KJS::UnspecifiedType;
 using KJS::Window;
@@ -126,10 +121,10 @@ using KJS::Bindings::RootObject;
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
-- (RootObject *)executionContextForView:(NSView *)aView;
+- (RootObject*)executionContextForView:(NSView *)aView;
 @end
 
-static RootObject *rootForView(void *v)
+static RootObject* rootForView(void* v)
 {
     NSView *aView = (NSView *)v;
     WebCoreFrameBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
@@ -143,7 +138,7 @@ static RootObject *rootForView(void *v)
 
 static pthread_t mainThread = 0;
 
-static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
+static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
 {
     if (pthread_self() != mainThread)
         return;
@@ -151,11 +146,11 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
     if (!rootObject)
         return;
         
-    Window *window = static_cast<Window*>(rootObject);
+    Window* window = static_cast<Window*>(rootObject);
     if (!window)
         return;
         
-    Document *doc = static_cast<Document*>(window->frame()->document());
+    Document* doc = static_cast<Document*>(window->frame()->document());
     if (doc)
         doc->updateRendering();
 }
@@ -255,66 +250,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return Mac(frame)->bridge();
 }
 
-- (WebCoreFrameBridge *)firstChild
-{
-    return bridge(m_frame->tree()->firstChild());
-}
-
-- (WebCoreFrameBridge *)lastChild
-{
-    return bridge(m_frame->tree()->lastChild());
-}
-
-- (unsigned)childCount
-{
-    return m_frame->tree()->childCount();
-}
-
-- (WebCoreFrameBridge *)previousSibling;
-{
-    return bridge(m_frame->tree()->previousSibling());
-}
-
-- (WebCoreFrameBridge *)nextSibling;
-{
-    return bridge(m_frame->tree()->nextSibling());
-}
-
-- (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor
-{
-    return m_frame->tree()->isDescendantOf(ancestor->m_frame);
-}
-
-- (WebCoreFrameBridge *)traverseNextFrameStayWithin:(WebCoreFrameBridge *)stayWithin
-{
-    return bridge(m_frame->tree()->traverseNext(stayWithin->m_frame));
-}
-
-- (void)appendChild:(WebCoreFrameBridge *)child
-{
-    m_frame->tree()->appendChild(adoptRef(child->m_frame));
-}
-
-- (void)removeChild:(WebCoreFrameBridge *)child
-{
-    m_frame->tree()->removeChild(child->m_frame);
-}
-
-- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
-{
-    return bridge(m_frame->tree()->child(name));
-}
-
-- (WebCoreFrameBridge *)nextFrameWithWrap:(BOOL)wrapFlag
-{
-    return bridge(m_frame->tree()->traverseNextWithWrap(wrapFlag));
-}
-
-- (WebCoreFrameBridge *)previousFrameWithWrap:(BOOL)wrapFlag
-{
-    return bridge(m_frame->tree()->traversePreviousWithWrap(wrapFlag));
-}
-
 - (NSString *)domain
 {
     Document *doc = m_frame->document();
@@ -369,16 +304,15 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
     
     // don't mess with navigation within the same page/frameset
-    if ([self page] == [targetFrame page])
+    if (m_frame->page() == [targetFrame _frame]->page())
         return YES;
 
     // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
     // Jaguar as well where the DOM API doesn't exist.
     NSString *thisDomain = [self domain];
-    if ([thisDomain length] == 0) {
+    if ([thisDomain length] == 0)
         // Allow if the request is made from a local file.
         return YES;
-    }
     
     Frame *target = [targetFrame _frame];
     WebCoreFrameBridge *parentBridge = target ? Mac(target->tree()->parent())->bridge() : nil;
@@ -392,11 +326,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return YES;
 
     return NO;
-}
-
-- (WebCoreFrameBridge *)findFrameNamed:(NSString *)name
-{
-    return bridge(m_frame->tree()->find(name));
 }
 
 + (NSArray *)supportedNonImageMIMETypes
@@ -508,16 +437,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     _shouldCreateRenderers = YES;
 
     return self;
-}
-
-- (WebCorePageBridge *)page
-{
-    return m_frame->page()->bridge();
-}
-
-- (void)initializeSettings:(WebCoreSettings *)settings
-{
-    m_frame->setSettings([settings settings]);
 }
 
 - (void)dealloc
@@ -690,22 +609,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return result;
 }
 
-- (BOOL)canCachePage
-{
-    return m_frame->canCachePage();
-}
-
 - (void)clearFrame
 {
     m_frame = 0;
-}
-
-- (void)handleFallbackContent
-{
-    // this needs to be callable even after teardown of the frame
-    if (!m_frame)
-        return;
-    m_frame->handleFallbackContent();
 }
 
 - (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
@@ -722,21 +628,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         frameView->setMarginWidth(mw);
     if (mh >= 0)
         frameView->setMarginHeight(mh);
-}
-
-- (BOOL)isSelectionInPasswordField
-{
-    return m_frame->isSelectionInPasswordField();
-}
-
-- (BOOL)isSelectionEditable
-{
-    return m_frame->selectionController()->isContentEditable();
-}
-
-- (BOOL)isSelectionRichlyEditable
-{
-    return m_frame->selectionController()->isContentRichlyEditable();
 }
 
 - (WebSelectionState)selectionState
@@ -863,9 +754,8 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     [self _setupRootForPrinting:YES];
     m_frame->forceLayout();
-    if (flag) {
-        [self adjustViewSize];
-    }
+    if (flag)
+        m_frame->view()->adjustViewSize();
     [self _setupRootForPrinting:NO];
 }
 
@@ -873,9 +763,8 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     [self _setupRootForPrinting:YES];
     m_frame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth);
-    if (flag) {
-        [self adjustViewSize];
-    }
+    if (flag)
+        m_frame->view()->adjustViewSize();
     [self _setupRootForPrinting:NO];
 }
 
@@ -1001,7 +890,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     // If this isn't the main frame, it must have a render m_frame set, or it
     // won't ever get installed in the view hierarchy.
-    ASSERT(self == [[self page] mainFrame] || m_frame->ownerElement());
+    ASSERT(m_frame == m_frame->page()->mainFrame() || m_frame->ownerElement());
 
     m_frame->view()->setView(view);
     // FIXME: frame tries to do this too, is it needed?
@@ -1011,36 +900,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     }
 
     m_frame->view()->initScrollbars();
-}
-
-- (void)setActivationEventNumber:(int)num
-{
-    m_frame->setActivationEventNumber(num);
-}
-
-- (void)mouseDown:(NSEvent *)event
-{
-    m_frame->mouseDown(event);
-}
-
-- (void)mouseDragged:(NSEvent *)event
-{
-    m_frame->mouseDragged(event);
-}
-
-- (void)mouseUp:(NSEvent *)event
-{
-    m_frame->mouseUp(event);
-}
-
-- (void)mouseMoved:(NSEvent *)event
-{
-    m_frame->mouseMoved(event);
-}
-
-- (BOOL)sendContextMenuEvent:(NSEvent *)event
-{
-    return m_frame->sendContextMenuEvent(event);
 }
 
 - (DOMElement*)elementForView:(NSView*)view
@@ -1314,31 +1173,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return aeDescFromJSValue(m_frame->jScript()->interpreter()->globalExec(), result);
 }
 
-- (WebScriptObject *)windowScriptObject
-{
-    return m_frame->windowScriptObject();
-}
-
-- (NPObject *)windowScriptNPObject
-{
-    return m_frame->windowScriptNPObject();
-}
-
-- (DOMDocument *)DOMDocument
-{
-    return [DOMDocument _documentWith:m_frame->document()];
-}
-
-- (DOMHTMLElement *)frameElement
-{
-    // Not [[self DOMDocument] _ownerElement], since our doc is not set up at the start of our own load.
-    // FIXME: There really is no guarantee this is an HTML element.
-    // For example, it could be something like an SVG foreign object element.
-    // Because of that, I believe the cast here is wrong and also the public API
-    // of WebKit might have to be changed.
-    return (DOMHTMLElement *)[DOMElement _elementWith:m_frame->ownerElement()];
-}
-
 - (NSAttributedString *)selectedAttributedString
 {
     // FIXME: should be a no-arg version of attributedString() that does this
@@ -1351,25 +1185,11 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->attributedString([start _node], startOffset, [end _node], endOffset);
 }
 
-- (NSRect)selectionRect
-{
-    return m_frame->selectionRect(); 
-}
-
-- (NSRect)visibleSelectionRect
-{
-    return m_frame->visibleSelectionRect(); 
-}
-
-- (void)centerSelectionInVisibleArea
-{
-    m_frame->revealSelection(RenderLayer::gAlignCenterAlways);
-}
-
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
     return [node _node]->renderer()->caretRect(offset, static_cast<EAffinity>(affinity));
 }
+
 - (NSRect)firstRectForDOMRange:(DOMRange *)range
 {
     int extraWidthToEndOfLine = 0;
@@ -1403,50 +1223,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     }
 }
 
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;
-{
-    return m_frame->selectionImage(forceWhiteText);
-}
-
-- (void)setName:(NSString *)name
-{
-    m_frame->tree()->setName(name);
-}
-
-- (NSString *)name
-{
-    return m_frame->tree()->name();
-}
-
-- (NSURL *)URL
-{
-    return m_frame->url().getNSURL();
-}
-
 - (NSURL *)baseURL
 {
     return m_frame->completeURL(m_frame->document()->baseURL()).getNSURL();
-}
-
-- (NSString *)referrer
-{
-    return m_frame->referrer();
-}
-
-- (WebCoreFrameBridge *)opener
-{
-    Frame *openerPart = m_frame->opener();
-
-    if (openerPart)
-        return Mac(openerPart)->bridge();
-
-    return nil;
-}
-
-- (void)setOpener:(WebCoreFrameBridge *)bridge;
-{
-    if (Frame* f = [bridge _frame])
-        f->setOpener(m_frame);
 }
 
 - (NSString *)stringWithData:(NSData *)data
@@ -1479,29 +1258,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         renderer->setNeedsLayout(true);
 }
 
-- (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
-{
-    return m_frame->keyEvent(event);
-}
-
 - (NSString *)renderTreeAsExternalRepresentation
 {
     return externalRepresentation(m_frame->renderer()).getNSString();
-}
-
-- (void)setSelectionFromNone
-{
-    m_frame->setSelectionFromNone();
-}
-
-- (void)setIsActive:(BOOL)flag
-{
-    m_frame->setIsActive(flag);
-}
-
-- (void)setWindowHasFocus:(BOOL)flag
-{
-    m_frame->setWindowHasFocus(flag);
 }
 
 - (void)setShouldCreateRenderers:(BOOL)f
@@ -1517,9 +1276,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (int)numPendingOrLoadingRequests
 {
     Document *doc = m_frame->document();
-    
     if (doc)
-        return NumberOfPendingOrLoadingRequests (doc->docLoader());
+        return NumberOfPendingOrLoadingRequests(doc->docLoader());
     return 0;
 }
 
@@ -1534,27 +1292,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return YES;
 }
 
-- (BOOL)shouldClose
-{
-    return m_frame->shouldClose();
-}
-
-- (NSColor *)bodyBackgroundColor
-{
-    return m_frame->bodyBackgroundColor();
-}
-
-// FIXME: Not sure what this method is for.  It seems to only be used by plug-ins over in WebKit.
 - (NSColor *)selectionColor
 {
     return m_frame->isActive() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
-}
-
-- (void)adjustViewSize
-{
-    FrameView *view = m_frame->view();
-    if (view)
-        view->adjustViewSize();
 }
 
 - (id)accessibilityTree
@@ -1671,11 +1411,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     VisiblePosition visibleEnd(endContainer, [range endOffset], SEL_DEFAULT_AFFINITY);
     Selection selection(visibleStart, visibleEnd);
     m_frame->selectionController()->setSelection(selection, closeTyping);
-}
-
-- (DOMRange *)selectedDOMRange
-{
-    return [DOMRange _rangeWith:m_frame->selectionController()->toRange().get()];
 }
 
 - (NSRange)convertToNSRange:(Range *)range
@@ -1937,7 +1672,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    DOMDocumentFragment *fragment = [[self DOMDocument] createDocumentFragment];
+    DOMDocumentFragment *fragment = [DOMDocumentFragment _documentFragmentWith:m_frame->document()->createDocumentFragment().get()];
     [fragment appendChild:node];
     [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
@@ -2071,11 +1806,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->dragCaretController()->setSelection(dragCaret);
 }
 
-- (void)removeDragCaret
-{
-    m_frame->dragCaretController()->clear();
-}
-
 - (DOMRange *)dragCaretDOMRange
 {
     return [DOMRange _rangeWith:m_frame->dragCaretController()->toRange().get()];
@@ -2206,7 +1936,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSWritingDirection)baseWritingDirectionForSelectionStart
 {
-    // FIXME: remove this NSWritingDirection cast once <rdar://problem/4509035> is fixed
     return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
 }
 
@@ -2240,15 +1969,14 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
                 if (!clipboard->destinationOperation(&op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
                     // (as does WinIE).
-                    if (srcOp & NSDragOperationCopy) {
+                    if (srcOp & NSDragOperationCopy)
                         op = NSDragOperationCopy;
-                    } else if (srcOp & NSDragOperationMove || srcOp & NSDragOperationGeneric) {
+                    else if (srcOp & NSDragOperationMove || srcOp & NSDragOperationGeneric)
                         op = NSDragOperationMove;
-                    } else if (srcOp & NSDragOperationLink) {
+                    else if (srcOp & NSDragOperationLink)
                         op = NSDragOperationLink;
-                    } else {
+                    else
                         op = NSDragOperationGeneric;
-                    }
                 } else if (!(op & srcOp)) {
                     // make sure WC picked an op that was offered.  Cocoa doesn't seem to enforce this,
                     // but IE does.
@@ -2446,11 +2174,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [self canProvideDocumentSource];
 }
 
-- (BOOL)isMainFrame
-{
-    return m_frame->page()->mainFrame() == m_frame;
-}
-
 static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 {
     NSMutableString *result = [NSMutableString string];
@@ -2471,20 +2194,17 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     while (position != length) {
         NSRange nonSpace = [string rangeOfCharacterFromSet:charactersToNotTurnIntoSpaces
                                                  options:0 range:NSMakeRange(position, length - position)];
-        if (nonSpace.location == NSNotFound) {
+        if (nonSpace.location == NSNotFound)
             break;
-        }
         
         NSRange space = [string rangeOfCharacterFromSet:charactersToTurnIntoSpaces
                                               options:0 range:NSMakeRange(nonSpace.location, length - nonSpace.location)];
-        if (space.location == NSNotFound) {
+        if (space.location == NSNotFound)
             space.location = length;
-        }
         
         if (space.location > nonSpace.location) {
-            if (position != 0) {
+            if (position != 0)
                 [result appendString:@" "];
-            }
             [result appendString:[string substringWithRange:
                 NSMakeRange(nonSpace.location, space.location - nonSpace.location)]];
         }
@@ -2505,11 +2225,6 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 - (NSURL*)originalRequestURL
 {
     return [m_frame->loader()->activeDocumentLoader()->initialRequest() URL];
-}
-
-- (BOOL)isLoadTypeReload
-{
-    return m_frame->loader()->loadType() == FrameLoadTypeReload;
 }
 
 - (void)frameDetached
@@ -2536,18 +2251,20 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
 {
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if ([self page] == nil)
+    // If we are no longer attached to a page, this must be an attempted load from an
+    // onunload handler, so let's just block it.
+    if (!m_frame->page())
         return nil;
     
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    NSString *referrer = m_frame->referrer();
     BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    if (hideReferrer)
+        referrer = nil;
     
-    return SubresourceLoader::create(m_frame, resourceLoader,
-        method, URL, customHeaders, hideReferrer ? nil : [self referrer]);
+    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, referrer);
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
@@ -2568,35 +2285,30 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
 {
     // If we are no longer attached to a Page, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if ([self page] == nil)
+    // onunload handler, so let's just block it.
+    if (!m_frame->page())
         return nil;
     
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    NSString *referrer = m_frame->referrer();
     BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    if (hideReferrer)
+        referrer = nil;
     
-    return SubresourceLoader::create(m_frame, resourceLoader,
-        method, URL, customHeaders, postData, hideReferrer ? nil : [self referrer]);
-}
-
-- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
-{   
-    m_frame->loader()->clientRedirected(URL, seconds, date, lockHistory, isJavaScriptFormAction);
-}
-
-- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
-{
-    m_frame->loader()->clientRedirectCancelledOrFinished(cancelWithLoadInProgress);
+    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, postData, referrer);
 }
 
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    NSString *referrer = m_frame->referrer();
     BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
+    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    if (hideReferrer)
+        referrer = nil;
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setTimeoutInterval:10];
@@ -2619,11 +2331,10 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     else
         [request setCachePolicy:[m_frame->loader()->documentLoader()->request() cachePolicy]];
     
-    if (!hideReferrer)
-        setHTTPReferrer(request, [self referrer]);
+    if (referrer)
+        setHTTPReferrer(request, referrer);
     
-    WebCorePageBridge *page = [self page];
-    [request setMainDocumentURL:[[[page mainFrame] _frame]->loader()->documentLoader()->request() URL]];
+    [request setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];
     [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
     
     NSError *error = nil;
@@ -2650,11 +2361,10 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     } else {
         *finalURL = URL;
         *responseHeaderDict = [NSDictionary dictionary];
-        if ([error domain] == NSURLErrorDomain) {
+        if ([error domain] == NSURLErrorDomain)
             *statusCode = [error code];
-        } else {
+        else
             *statusCode = 404;
-        }
     }
     
     m_frame->loader()->sendRemainingDelegateMessages(identifier, response, [result length], error);
@@ -2662,6 +2372,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     
     return result;
 }
+
 // -------------------
 
 - (NSString *)incomingReferrer
@@ -2672,16 +2383,6 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 - (BOOL)isReloading
 {
     return [m_frame->loader()->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
-}
-
-- (void)handledOnloadEvents
-{
-    m_frame->loader()->client()->dispatchDidHandleOnloadEvents();
-}
-
-- (NSURLResponse *)mainResourceURLResponse
-{
-    return m_frame->loader()->documentLoader()->response();
 }
 
 - (void)loadEmptyDocumentSynchronously

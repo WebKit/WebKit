@@ -41,7 +41,7 @@ PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, const HashMap<
     return new FormState(form, values, sourceFrame);
 }
 
-PassRefPtr<FormState> FormState::create(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
+PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
 {
     return new FormState(form, values, sourceFrame);
 }
@@ -53,8 +53,8 @@ FormState::FormState(PassRefPtr<Element> form, const HashMap<String, String>& va
 {
 }
 
-FormState::FormState(DOMElement *form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
-    : m_form([form _element])
+FormState::FormState(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
+    : m_form(form)
     , m_sourceFrame([sourceFrame _frame])
 {
     NSEnumerator *keyEnumerator = [values keyEnumerator];

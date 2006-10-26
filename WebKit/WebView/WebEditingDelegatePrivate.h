@@ -26,10 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-
-@class WebView;
-@class DOMHTMLElement;
+#import "WebEditingDelegate.h"
 
 @interface NSObject (WebViewEditingDelegatePrivate)
 - (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element;

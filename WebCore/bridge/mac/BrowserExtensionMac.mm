@@ -28,8 +28,8 @@
 
 #import "BlockExceptions.h"
 #import "FloatRect.h"
-#import "FrameMac.h"
 #import "FrameLoadRequest.h"
+#import "FrameMac.h"
 #import "FrameTree.h"
 #import "KURL.h"
 #import "Page.h"
@@ -59,16 +59,11 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
 
     NSString *frameName = request.m_frameName.isEmpty() ? nil : (NSString*)request.m_frameName;
     if (frameName) {
-        // FIXME: Can't we just use m_frame->findFrame?
-        // ANSWER: No, because such a method doesn't exist - YET
-        if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
+        if (Frame* frame = m_frame->tree()->find(frameName)) {
             if (!url.isEmpty())
-                [frameBridge _frame]->loadRequest(request, true, nil, nil, nil);
-
-            [frameBridge activateWindow];
-
-            newFrame = [frameBridge _frame];
-
+                Mac(frame)->loadRequest(request, true, nil, nil, nil);
+            [Mac(frame)->bridge() activateWindow];
+            newFrame = frame;
             return;
         }
     }

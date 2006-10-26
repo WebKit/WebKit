@@ -44,6 +44,8 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <objc/objc-runtime.h>
 
+using namespace WebCore;
+
 @implementation WebPluginContainerCheck
 
 + (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(WebPluginController *)controller
@@ -81,9 +83,9 @@
     [super dealloc];
 }
 
-- (void)_continueWithPolicy:(WebPolicyAction)policy
+- (void)_continueWithPolicy:(PolicyAction)policy
 {
-    ((void (*)(id, SEL, BOOL))objc_msgSend)(_resultObject, _resultSelector, (policy == WebPolicyUse));
+    ((void (*)(id, SEL, BOOL))objc_msgSend)(_resultObject, _resultSelector, (policy == PolicyUse));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
@@ -95,7 +97,7 @@
    WebFrameBridge *bridge = [_controller bridge];
    ASSERT(bridge);
    if (![bridge canLoadURL:[_request URL] fromReferrer:[_controller URLPolicyCheckReferrer] hideReferrer:&ignore]) {
-       [self _continueWithPolicy:WebPolicyIgnore];
+       [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }
 

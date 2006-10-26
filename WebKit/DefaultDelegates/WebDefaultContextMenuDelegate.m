@@ -26,30 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDefaultContextMenuDelegate.h>
+#import "WebDefaultContextMenuDelegate.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/DOM.h>
-#import <WebKit/DOMPrivate.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDOMOperations.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebLocalizableStrings.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebPolicyDelegate.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebUIDelegatePrivate.h>
-
-#import <WebCore/WebCoreFrameBridge.h>
-
+#import "WebDOMOperations.h"
+#import "WebDataSourcePrivate.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebPolicyDelegate.h"
+#import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
+#import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/WebCoreFrameBridge.h>
+#import <WebKit/DOM.h>
+#import <WebKit/DOMPrivate.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 
@@ -383,10 +382,9 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     WebView *webView = [webFrame webView];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    NSString *referrer = [[webFrame _bridge] referrer];
-    if (referrer) {
+    NSString *referrer = core(webFrame)->referrer();
+    if (referrer)
         [request _web_setHTTPReferrer:referrer];
-    }
     
     [webView _openNewWindowWithRequest:request];
 }

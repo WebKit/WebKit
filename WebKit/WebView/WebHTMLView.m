@@ -66,7 +66,9 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOM.h>
@@ -282,7 +284,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 
 - (DOMRange *)_documentRange
 {
-    return [[[self _bridge] DOMDocument] _documentRange];
+    return [[[self _frame] DOMDocument] _documentRange];
 }
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
@@ -345,7 +347,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
         } else {
             // Non-image file types
             NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
-            [domNodes addObject:[[[self _bridge] DOMDocument] createTextNode: url]];
+            [domNodes addObject:[[[self _frame] DOMDocument] createTextNode: url]];
         }
     }
     
@@ -430,7 +432,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
             self, @"WebResourceHandler", nil];
         NSArray *subresources;
         DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
-                                                          document:[[self _bridge] DOMDocument] 
+                                                          document:[[self _frame] DOMDocument] 
                                                 documentAttributes:documentAttributes
                                                       subresources:&subresources];
         [documentAttributes release];
@@ -461,7 +463,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     }    
     
     if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
-        DOMDocument* document = [[self _bridge] DOMDocument];
+        DOMDocument* document = [[self _frame] DOMDocument];
         ASSERT(document);
         if (document) {
             DOMHTMLAnchorElement* anchor = (DOMHTMLAnchorElement*)[document createElement:@"a"];
@@ -580,7 +582,10 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 
 - (DOMRange *)_selectedRange
 {
-    return [[self _bridge] selectedDOMRange];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return nil;
+    return kit(coreFrame->selectionController()->toRange().get());
 }
 
 - (BOOL)_shouldDeleteRange:(DOMRange *)range
@@ -1181,13 +1186,15 @@ static WebHTMLView *lastHitView = nil;
                          windowNumber:[[view window] windowNumber]
                          context:[[NSApp currentEvent] context]
                          eventNumber:0 clickCount:0 pressure:0];
-        [[lastHitView _bridge] mouseMoved:event];
+        if (FrameMac* lastHitCoreFrame = core([lastHitView _frame]))
+            lastHitCoreFrame->mouseMoved(event);
     }
 
     lastHitView = view;
 
     if (view) {
-        [[view _bridge] mouseMoved:event];
+        if (FrameMac* coreFrame = core([view _frame]))
+            coreFrame->mouseMoved(event);
 
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
         NSDictionary *element = [view elementAtPoint:point];
@@ -1617,7 +1624,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canEditRichly
 {
-    return [self _canEdit] && [[self _bridge] isSelectionRichlyEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return [self _canEdit] && coreFrame->selectionController()->isContentRichlyEditable();
 }
 
 - (BOOL)_canAlterCurrentSelection
@@ -1627,27 +1637,42 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_hasSelection
 {
-    return [[self _bridge] selectionState] == WebSelectionStateRange;
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->selectionController()->isRange();
 }
 
 - (BOOL)_hasSelectionOrInsertionPoint
 {
-    return [[self _bridge] selectionState] != WebSelectionStateNone;
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->selectionController()->isCaretOrRange();
 }
 
 - (BOOL)_hasInsertionPoint
 {
-    return [[self _bridge] selectionState] == WebSelectionStateCaret;
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->selectionController()->isCaret();
 }
 
 - (BOOL)_isEditable
 {
-    return [[self _webView] isEditable] || [[self _bridge] isSelectionEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return [[self _webView] isEditable] || coreFrame->selectionController()->isContentEditable();
 }
 
 - (BOOL)_isSelectionInPasswordField
 {
-    return [[self _bridge] isSelectionInPasswordField];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    return coreFrame->isSelectionInPasswordField();
 }
 
 - (BOOL)_isSelectionMisspelled
@@ -1695,9 +1720,8 @@ static WebHTMLView *lastHitView = nil;
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
     // This should only be called when there's a selection, but play it safe.
-    if (![self _hasSelection]) {
+    if (![self _hasSelection])
         return;
-    }
     
     // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
     static bool lookedForFunction = false;
@@ -1721,7 +1745,7 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
     // the bottom of the selection rather than at the selected word.
-    NSRect rect = [self convertRect:[[self _bridge] visibleSelectionRect] toView:nil];
+    NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
@@ -1740,7 +1764,7 @@ static WebHTMLView *lastHitView = nil;
 - (NSImage *)_selectionDraggingImage
 {
     if ([self _hasSelection]) {
-        NSImage *dragImage = [[self _bridge] selectionImageForcingWhiteText:NO];
+        NSImage *dragImage = core([self _frame])->selectionImage();
         [dragImage _web_dissolveToFraction:WebDragImageAlpha];
         return dragImage;
     }
@@ -1755,12 +1779,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canIncreaseSelectionListLevel
 {
-    return ([self _canEditRichly] && [[self _bridge] canIncreaseSelectionListLevel]);
+    return [self _canEditRichly] && [[self _bridge] canIncreaseSelectionListLevel];
 }
 
 - (BOOL)_canDecreaseSelectionListLevel
 {
-    return ([self _canEditRichly] && [[self _bridge] canDecreaseSelectionListLevel]);
+    return [self _canEditRichly] && [[self _bridge] canDecreaseSelectionListLevel];
 }
 
 - (DOMNode *)_increaseSelectionListLevel
@@ -1820,7 +1844,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // This method does the job of updating the view based on the view's firstResponder-ness and
     // the window key-ness of the window containing this view. This involves four kinds of 
-    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
+    // drawing updates right now. 
     // 
     // The four display attributes are as follows:
     // 
@@ -1837,9 +1861,11 @@ static WebHTMLView *lastHitView = nil;
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
     BOOL isActive = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
-    
-    [[self _bridge] setWindowHasFocus:windowOrSheetIsKey];
-    [[self _bridge] setIsActive:isActive];
+
+    if (Frame* coreFrame = core([self _frame])) {
+        coreFrame->setWindowHasFocus(windowOrSheetIsKey);
+        coreFrame->setIsActive(isActive);
+    }
 }
 
 - (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
@@ -2049,7 +2075,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard
 {
-    if ([[self _bridge] isSelectionRichlyEditable])
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NO;
+    if (coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:pasteboard allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:pasteboard];
@@ -2084,8 +2113,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
-    WebFrameBridge *bridge = [self _bridge];
-    FrameMac* frame = [bridge _frame];
+    FrameMac* frame = core([self _frame]);
 
     if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
@@ -2238,7 +2266,8 @@ static WebHTMLView *lastHitView = nil;
         return (frame && frame->mayDHTMLPaste()) || [self _canPaste];
     
     if (action == @selector(pasteAsRichText:))
-        return (frame && frame->mayDHTMLPaste()) || ([self _canPaste] && [[self _bridge] isSelectionRichlyEditable]);
+        return frame && (frame->mayDHTMLPaste()
+            || ([self _canPaste] && frame->selectionController()->isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
         // FIXME: Not yet implemented.
@@ -2334,29 +2363,32 @@ static WebHTMLView *lastHitView = nil;
     // <rdar://problem/3672088>: "Editable WebViews should maintain a selection even 
     //                            when they're not firstResponder"
     // it was decided to add a switch to act more like an NSTextView.
-    id nextResponder = [[self window] _newFirstResponderAfterResigning];
+
+    if ([[self _webView] maintainsInactiveSelection])
+        return YES;
 
     // Predict the case where we are losing first responder status only to
-    // gain it back again.  Want to keep the selection in that case.
+    // gain it back again. Want to keep the selection in that case.
+    id nextResponder = [[self window] _newFirstResponderAfterResigning];
     if ([nextResponder isKindOfClass:[NSScrollView class]]) {
         id contentView = [nextResponder contentView];
-        if (contentView) {
+        if (contentView)
             nextResponder = contentView;
-        }
     }
     if ([nextResponder isKindOfClass:[NSClipView class]]) {
         id documentView = [nextResponder documentView];
-        if (documentView) {
+        if (documentView)
             nextResponder = documentView;
-        }
     }
-
     if (nextResponder == self)
         return YES;
-        
-    BOOL nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]] && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
 
-    return [[self _webView] maintainsInactiveSelection] || ([[self _bridge] isSelectionEditable] && nextResponderIsInWebView);
+    FrameMac* coreFrame = core([self _frame]);
+    bool selectionIsEditable = coreFrame && coreFrame->selectionController()->isContentEditable();
+    bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
+        && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
+
+    return selectionIsEditable && nextResponderIsInWebView;
 }
 
 - (void)addMouseMovedObserver
@@ -2617,7 +2649,7 @@ static WebHTMLView *lastHitView = nil;
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
     _private->handlingMouseDownEvent = YES;
-    BOOL handledEvent = [[self _bridge] sendContextMenuEvent:event];
+    BOOL handledEvent = core([self _frame])->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
     if (handledEvent)
         return nil;
@@ -2802,7 +2834,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)scrollWheel:(NSEvent *)event
 {
     [self retain];
-    FrameMac* frame = [[self _bridge] _frame];
+    FrameMac* frame = core([self _frame]);
     if (!frame || !frame->wheelEvent(event))
         [[self nextResponder] scrollWheel:event];    
     [self release];
@@ -2822,14 +2854,15 @@ static WebHTMLView *lastHitView = nil;
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
         return YES;
     
-    if (hitHTMLView != nil) {
-        [hitHTMLView _setMouseDownEvent:event];
-        [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
+    if (hitHTMLView) {
         bool result = false;
-        if ([hitHTMLView _isSelectionEvent:event])
-            if (FrameMac* frame = [[hitHTMLView _bridge] _frame])
-                result = frame->eventMayStartDrag(event);
-        [hitHTMLView _setMouseDownEvent:nil];
+        if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
+            coreFrame->setActivationEventNumber([event eventNumber]);
+            [hitHTMLView _setMouseDownEvent:event];
+            if ([hitHTMLView _isSelectionEvent:event])
+                result = coreFrame->eventMayStartDrag(event);
+            [hitHTMLView _setMouseDownEvent:nil];
+        }
         return result;
     }
     return [hitView acceptsFirstMouse:event];
@@ -2839,12 +2872,14 @@ static WebHTMLView *lastHitView = nil;
 {
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
-    if (hitHTMLView != nil) {
+    if (hitHTMLView) {
         bool result = false;
         if ([hitHTMLView _isSelectionEvent:event])
-            if (FrameMac* frame = [[hitHTMLView _bridge] _frame])
-                result = frame->eventMayStartDrag(event);
-        [hitHTMLView _setMouseDownEvent:nil];
+            if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
+                [hitHTMLView _setMouseDownEvent:event];
+                result = coreFrame->eventMayStartDrag(event);
+                [hitHTMLView _setMouseDownEvent:nil];
+            }
         return result;
     }
     return [hitView shouldDelayWindowOrderingForEvent:event];
@@ -2873,9 +2908,9 @@ static WebHTMLView *lastHitView = nil;
         // Don't do any mouseover while the mouse is down.
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-        // Let KHTML get a chance to deal with the event. This will call back to us
+        // Let WebCore get a chance to deal with the event. This will call back to us
         // to start the autoscroll timer if appropriate.
-        [[self _bridge] mouseDown:event];
+        core([self _frame])->mouseDown(event);
     }
 
 done:
@@ -2928,7 +2963,7 @@ done:
     [self retain];
 
     if (!_private->ignoringMouseDraggedEvents)
-        [[self _bridge] mouseDragged:event];
+        core([self _frame])->mouseDragged(event);
 
     [self release];
 }
@@ -3011,7 +3046,7 @@ done:
     [self retain];
 
     [self _stopAutoscrollTimer];
-    [[self _bridge] mouseUp:event];
+    core([self _frame])->mouseUp(event);
     [self _updateMouseoverWithFakeEvent];
 
     [self release];
@@ -3384,8 +3419,7 @@ done:
 
     _private->keyDownEvent = event;
 
-    WebFrameBridge *bridge = [self _bridge];
-    if ([bridge interceptKeyEvent:event toView:self]) {
+    if (core([self _frame])->keyEvent(event)) {
         // WebCore processed a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
     } else if (_private->compController && [_private->compController filterKeyDown:event]) {
@@ -3410,7 +3444,7 @@ done:
 - (void)keyUp:(NSEvent *)event
 {
     [self retain];
-    if (![[self _bridge] interceptKeyEvent:event toView:self])
+    if (!core([self _frame])->keyEvent(event))
         [super keyUp:event];    
     [self release];
 }
@@ -3457,7 +3491,8 @@ done:
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-    [[self _bridge] centerSelectionInVisibleArea];
+    if (FrameMac* coreFrame = core([self _frame]))
+        coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
 }
 
 - (void)moveBackward:(id)sender
@@ -3770,7 +3805,7 @@ done:
 - (NSData *)_selectionStartFontAttributesAsRTF
 {
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
-        attributes:[[self _bridge] _frame]->fontAttributesForSelectionStart()];
+        attributes:core([self _frame])->fontAttributesForSelectionStart()];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [string release];
     return data;
@@ -3793,7 +3828,7 @@ done:
 
 - (DOMCSSStyleDeclaration *)_emptyStyle
 {
-    return [[[self _bridge] DOMDocument] createCSSStyleDeclaration];
+    return [[[self _frame] DOMDocument] createCSSStyleDeclaration];
 }
 
 - (NSString *)_colorAsString:(NSColor *)color
@@ -3968,7 +4003,7 @@ done:
     // But don't do it if we have already handled the event.
     if (event != _private->keyDownEvent
             && [self _web_firstResponderIsSelfOrDescendantView]
-            && [[self _bridge] interceptKeyEvent:event toView:self])
+            && core([self _frame])->keyEvent(event))
         ret = YES;
     else
         ret = [super performKeyEquivalent:event];
@@ -4774,12 +4809,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)indent:(id)sender
 {
-    [[self _bridge] _frame]->indent();
+    core([self _frame])->indent();
 }
 
 - (void)outdent:(id)sender
 {
-    [[self _bridge] _frame]->outdent();
+    core([self _frame])->outdent();
 }
 
 #if 0
@@ -5108,7 +5143,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)cut:(id)sender
 {
     WebFrameBridge *bridge = [self _bridge];
-    FrameMac* frame = [bridge _frame];
+    FrameMac* frame = core([self _frame]);
     if (frame && frame->tryDHTMLCut())
         return; // DHTML did the whole operation
     if (![self _canCut]) {
@@ -5124,13 +5159,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)paste:(id)sender
 {
-    WebFrameBridge *bridge = [self _bridge];
-    FrameMac* frame = [bridge _frame];
-    if (frame && frame->tryDHTMLPaste())
+    FrameMac* coreFrame = core([self _frame]);
+    if (coreFrame && coreFrame->tryDHTMLPaste())
         return; // DHTML did the whole operation
     if (![self _canPaste])
         return;
-    if ([bridge isSelectionRichlyEditable])
+    if (coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
@@ -5288,7 +5322,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     ASSERT([self hasMarkedText]);
 
     WebFrameBridge *bridge = [self _bridge];
-    DOMRange *selectedRange = [[bridge DOMDocument] createRange];
+    DOMRange *selectedRange = [[[self _frame] DOMDocument] createRange];
     DOMRange *markedTextRange = [bridge markedTextDOMRange];
     
     ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
@@ -5594,8 +5628,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
         // Get preceeding word stem
         WebFrameBridge *bridge = [_view _bridge];
-        DOMRange *selection = [bridge selectedDOMRange];
-        DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+        DOMRange *selection = kit(core([_view _frame])->selectionController()->toRange().get());
+        DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending
+            direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
 
@@ -5733,7 +5768,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSRect)selectionRect
 {
-    return [[self _bridge] selectionRect];
+    if ([self _hasSelection])
+        return core([self _frame])->selectionRect();
+    return NSZeroRect;
 }
 
 - (NSView *)selectionView
@@ -5744,15 +5781,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
 {
     if ([self _hasSelection])
-        return [[self _bridge] selectionImageForcingWhiteText:forceWhiteText];
-
+        return core([self _frame])->selectionImage(forceWhiteText);
     return nil;
 }
 
 - (NSRect)selectionImageRect
 {
     if ([self _hasSelection])
-        return [[self _bridge] visibleSelectionRect];
+        return core([self _frame])->visibleSelectionRect();
     return NSZeroRect;
 }
 
@@ -5804,7 +5840,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (NSAttributedString *)attributedString
 {
     WebFrameBridge *bridge = [self _bridge];
-    DOMDocument *document = [bridge DOMDocument];
+    DOMDocument *document = [[self _frame] DOMDocument];
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (attributedString == nil) {
         attributedString = [bridge attributedStringFrom:document startOffset:0 to:nil endOffset:0];
@@ -5869,8 +5905,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (BOOL)_isMoveDrag
 {
+    FrameMac* coreFrame = core([self _frame]);
     return _private->initiatedDrag
-        && [[self _bridge] isSelectionEditable]
+        && coreFrame
+        && coreFrame->selectionController()->isContentEditable()
         && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask);
 }
 
@@ -5946,14 +5984,20 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         NSColor *color = [NSColor colorFromPasteboard:[draggingInfo draggingPasteboard]];
         if (!color)
             return NO;
+        Frame* coreFrame = core(innerFrame);
+        if (!coreFrame)
+            return NO;
+        DOMRange *innerRange = kit(coreFrame->selectionController()->toRange().get());
         DOMCSSStyleDeclaration *style = [self _emptyStyle];
         [style setProperty:@"color" value:[self _colorAsString:color] priority:@""];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[innerBridge selectedDOMRange]]) {
-            [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-            [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];
-            return YES;
-        }
-        return NO;
+        if (![[webView _editingDelegateForwarder] webView:webView
+                shouldApplyStyle:style toElementsInDOMRange:innerRange])
+            return NO;
+        [[webView _UIDelegateForwarder] webView:webView
+            willPerformDragDestinationAction:WebDragDestinationActionEdit
+            forDraggingInfo:draggingInfo];
+        [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];
+        return YES;
     }
 
     BOOL didInsert = NO;

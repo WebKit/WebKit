@@ -214,13 +214,13 @@ static bool shouldLoadAsEmptyDocument(NSURL *url)
     return (bytesFilled == 0) || (bytesFilled > 5 && strncmp((char *)buffer.data(), "about:", 6) == 0);
 }
 
-void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolicy, NSURLResponse *r)
+void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, NSURLResponse *r)
 {
     NSURL *URL = [request() URL];
     NSString *MIMEType = [r MIMEType]; 
     
     switch (contentPolicy) {
-    case WebPolicyUse: {
+    case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
         bool isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
@@ -234,14 +234,14 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
         break;
     }
 
-    case WebPolicyDownload:
+    case PolicyDownload:
         [m_proxy.get() setDelegate:nil];
         frameLoader()->download(connection(), request(), r, m_proxy.get());
         m_proxy = nil;
         receivedError(interruptionForPolicyChangeError());
         return;
 
-    case WebPolicyIgnore:
+    case PolicyIgnore:
         stopLoadingForPolicyChange();
         return;
     
@@ -273,7 +273,7 @@ void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction contentPolic
         didFinishLoading();
 }
 
-void MainResourceLoader::continueAfterContentPolicy(WebPolicyAction policy)
+void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 {
     bool isStopping = frameLoader()->isStopping();
     frameLoader()->cancelContentPolicyCheck();
@@ -461,7 +461,7 @@ void MainResourceLoader::releasePolicyDelegate()
     m_loader->continueAfterNavigationPolicy(request);
 }
 
-- (void)continueAfterContentPolicy:(WebPolicyAction)policy
+- (void)continueAfterContentPolicy:(PolicyAction)policy
 {
     if (!m_loader)
         return;

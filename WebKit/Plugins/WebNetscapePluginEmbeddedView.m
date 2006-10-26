@@ -26,22 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import "WebNetscapePluginEmbeddedView.h"
 
+#import "WebBaseNetscapePluginViewPrivate.h"
+#import "WebDataSource.h"
+#import "WebFrame.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebNetscapePluginStream.h"
+#import "WebView.h"
 #import <JavaScriptCore/Assertions.h>
-
-#import <WebKit/WebBaseNetscapePluginViewPrivate.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebView.h>
+#import <WebCore/FrameMac.h>
 
 @implementation WebNetscapePluginEmbeddedView
 
@@ -100,7 +100,7 @@
     // Check for this and don't start a load in this case.
     if (URL != nil && ![URL _web_isEmpty]) {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
+        [request _web_setHTTPReferrer:core([self webFrame])->referrer()];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     } 
 }

@@ -27,14 +27,17 @@
  */
 
 #import "WebScriptDebugDelegatePrivate.h"
-#import "WebScriptDebugServerPrivate.h"
+
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
-
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebViewInternal.h>
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebScriptDebugServerPrivate.h"
+#import "WebViewInternal.h"
+#import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreScriptDebugger.h>
+
+using namespace WebCore;
 
 // FIXME: these error strings should be public for future use by WebScriptObject and in WebScriptObject.h
 NSString * const WebScriptErrorDomain = @"WebScriptErrorDomain";
@@ -46,8 +49,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 - (WebScriptCallFrame *)_initWithFrame:(WebCoreScriptCallFrame *)frame;
 
 @end
-
-
 
 @implementation WebScriptDebugger
 
@@ -68,7 +69,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (WebScriptObject *)globalObject
 {
-    return [[_webFrame _bridge] windowScriptObject];
+    return core(_webFrame)->windowScriptObject();
 }
 
 - (id)newWrapperForFrame:(WebCoreScriptCallFrame *)frame

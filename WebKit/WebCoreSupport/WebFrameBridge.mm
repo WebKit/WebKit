@@ -76,7 +76,11 @@
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/FrameTree.h>
+#import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
+#import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebCore/WebFormDataStream.h>
 #import <WebCore/WebFrameLoaderClient.h>
@@ -116,19 +120,19 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (WebView *)webView
 {
-    ASSERT([[self page] isKindOfClass:[WebPageBridge class]]);
-    return [(WebPageBridge *)[self page] webView];
+    ASSERT([[self _frame]->page()->bridge() isKindOfClass:[WebPageBridge class]]);
+    return [(WebPageBridge *)[self _frame]->page()->bridge() webView];
 }
 
 - (void)finishInitializingWithFrameName:(NSString *)name view:(WebFrameView *)view
 {
     WebView *webView = [self webView];
 
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView bridge:self];
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView coreFrame:m_frame];
     ++WebBridgeCount;
 
-    [self setName:name];
-    [self initializeSettings:[webView _settings]];
+    [self _frame]->tree()->setName(name);
+    [self _frame]->setSettings([[webView _settings] settings]);
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 }
 
@@ -248,7 +252,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSMutableURLRequest *request = nil;
     if (URL != nil && ![URL _web_isEmpty]) {
         request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:[self referrer]];
+        [request _web_setHTTPReferrer:m_frame->referrer()];
     }
 
     WebView *currentWebView = [self webView];
@@ -729,7 +733,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                     loadManually:(BOOL)loadManually
 {
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+    if (![self canLoadURL:URL fromReferrer:m_frame->referrer() hideReferrer:&hideReferrer])
         return nil;
 
     ASSERT([attributeNames count] == [attributeValues count]);
@@ -1271,7 +1275,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)windowObjectCleared
 {
     WebView *wv = [self webView];
-    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
+    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:m_frame->windowScriptObject()];
     if ([wv scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger]; // FIXME: remove this once <rdar://problem/4608404> is fixed
         [_frame _attachScriptDebugger];
@@ -1395,7 +1399,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
     if (URL != nil && ![URL _web_isEmpty]) {
         request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:[self referrer]];
+        [request _web_setHTTPReferrer:m_frame->referrer()];
     }
 
     WebView *currentWebView = [self webView];

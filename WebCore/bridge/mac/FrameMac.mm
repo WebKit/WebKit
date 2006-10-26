@@ -76,6 +76,7 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
+#import "WebFrameLoaderClient.h"
 #import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -182,7 +183,7 @@ FrameMac::~FrameMac()
 
 #pragma mark BEGIN LOADING FUNCTIONS
 
-void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, ObjCDOMElement* submitForm, NSMutableDictionary* formValues)
+void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, Element* submitForm, NSMutableDictionary* formValues)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -191,16 +192,17 @@ void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NS
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
-        referrer = [_bridge referrer];
+        referrer = FrameMac::referrer();
  
     BOOL hideReferrer;
     if (![_bridge canLoadURL:request.m_request.url().getNSURL() fromReferrer:referrer hideReferrer:&hideReferrer])
         return;
+    if (hideReferrer)
+        referrer = nil;
            
-    WebCoreFrameBridge *targetFrame = [_bridge findFrameNamed:request.m_frameName];
-    if (![_bridge canTargetLoadInFrame:targetFrame]) {
+    WebCoreFrameBridge *targetFrame = Mac(tree()->find(request.m_frameName))->bridge();
+    if (![_bridge canTargetLoadInFrame:targetFrame])
         return;
-    }
         
     if (request.m_request.httpMethod() != "POST") {
         FrameLoadType loadType;
@@ -211,10 +213,10 @@ void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NS
         else
             loadType = FrameLoadTypeStandard;    
     
-        d->m_frameLoader->load(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), loadType, 
+        d->m_frameLoader->load(request.m_request.url().getNSURL(), referrer, loadType, 
             (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), triggeringEvent, submitForm, formValues);
     } else
-        d->m_frameLoader->post(request.m_request.url().getNSURL(), (hideReferrer ? nil : referrer), (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
+        d->m_frameLoader->post(request.m_request.url().getNSURL(), referrer, (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
             arrayFromFormData(request.m_request.httpBody()), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
 
     if (targetFrame != nil && _bridge != targetFrame) {
@@ -252,10 +254,9 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
         d->m_submittedFormURL = request.m_request.url();
     }
 
-    ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
     NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
     
-    loadRequest(request, true, _currentEvent, submitForm, formValues);
+    loadRequest(request, true, _currentEvent, d->m_formAboutToBeSubmitted.get(), formValues);
 
     [formValues release];
     clearRecordedFormValues();
@@ -843,11 +844,8 @@ void FrameMac::startRedirectionTimer()
     if (d->m_scheduledRedirection != historyNavigationScheduled) {
         NSTimeInterval interval = d->m_redirectionTimer.nextFireInterval();
         NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceNow:interval];
-        [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
-                                     delay:d->m_delayRedirect
-                                  fireDate:fireDate
-                               lockHistory:d->m_redirectLockHistory
-                               isJavaScriptFormAction:d->m_executingJavaScriptFormAction];
+        loader()->clientRedirected(KURL(d->m_redirectURL).getNSURL(),
+            d->m_delayRedirect, fireDate, d->m_redirectLockHistory, d->m_executingJavaScriptFormAction);
         [fireDate release];
     }
 }
@@ -860,7 +858,7 @@ void FrameMac::stopRedirectionTimer()
 
     // Don't report history navigations, just actual redirection.
     if (wasActive && d->m_scheduledRedirection != historyNavigationScheduled)
-        [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
+        loader()->clientRedirectCancelledOrFinished(d->m_cancelWithLoadInProgress);
 }
 
 String FrameMac::userAgent() const
@@ -1848,43 +1846,36 @@ void FrameMac::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event
     _sendingEventToSubview = false;
 }
 
-bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframePart)
+bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     switch ([_currentEvent type]) {
-        case NSMouseMoved: {
-            ASSERT(subframePart);
-            [Mac(subframePart)->_bridge mouseMoved:_currentEvent];
+        case NSMouseMoved:
+            Mac(subframe)->mouseMoved(_currentEvent);
             return true;
-        }
         
         case NSLeftMouseDown: {
-            Node *node = event.targetNode();
-            if (!node) {
+            Node* node = event.targetNode();
+            if (!node)
                 return false;
-            }
             RenderObject *renderer = node->renderer();
-            if (!renderer || !renderer->isWidget()) {
+            if (!renderer || !renderer->isWidget())
                 return false;
-            }
             Widget *widget = static_cast<RenderWidget*>(renderer)->widget();
             if (!widget || !widget->isFrameView())
                 return false;
-            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget*>(renderer))) {
+            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget*>(renderer)))
                 return false;
-            }
             _mouseDownWasInSubframe = true;
             return true;
         }
         case NSLeftMouseUp: {
-            if (!_mouseDownWasInSubframe) {
+            if (!_mouseDownWasInSubframe)
                 return false;
-            }
             NSView *view = mouseDownViewIfStillGood();
-            if (!view) {
+            if (!view)
                 return false;
-            }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
             [view mouseUp:_currentEvent];
@@ -1892,13 +1883,11 @@ bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, 
             return true;
         }
         case NSLeftMouseDragged: {
-            if (!_mouseDownWasInSubframe) {
+            if (!_mouseDownWasInSubframe)
                 return false;
-            }
             NSView *view = mouseDownViewIfStillGood();
-            if (!view) {
+            if (!view)
                 return false;
-            }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
             [view mouseDragged:_currentEvent];
@@ -3445,7 +3434,7 @@ bool FrameMac::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
 
 void FrameMac::handledOnloadEvents()
 {
-    [_bridge handledOnloadEvents];
+    loader()->client()->dispatchDidHandleOnloadEvents();
 }
 
 bool FrameMac::shouldClose()
@@ -3528,7 +3517,7 @@ KURL FrameMac::originalRequestURL() const
 
 bool FrameMac::isLoadTypeReload()
 {
-    return [_bridge isLoadTypeReload];
+    return loader()->loadType() == FrameLoadTypeReload;
 }
 
 int FrameMac::getHistoryLength()

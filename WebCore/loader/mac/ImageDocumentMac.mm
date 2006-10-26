@@ -27,8 +27,10 @@
 
 #include "CachedImage.h"
 #include "Document.h"
+#include "FrameLoader.h"
 #include "FrameMac.h"
 #include "WebCoreFrameBridge.h"
+#include "WebDocumentLoader.h"
 
 namespace WebCore {
     
@@ -41,13 +43,13 @@ void finishImageLoad(Document* document, CachedImage* image, const void* imageDa
     image->setAllData(nsData);
     [nsData release];
 
-    WebCoreFrameBridge* bridge = Mac(document->frame())->bridge();
-    NSURLResponse* response = [bridge mainResourceURLResponse];
+    Frame* frame = document->frame();
+    NSURLResponse *response = frame->loader()->documentLoader()->response();
     image->setResponse(response);
 
     IntSize size = image->imageSize();
     if (size.width())
-        document->setTitle([bridge imageTitleForFilename:[response suggestedFilename] size:size]);
+        document->setTitle([Mac(frame)->bridge() imageTitleForFilename:[response suggestedFilename] size:size]);
 }
     
 }

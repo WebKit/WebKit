@@ -259,7 +259,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     DOMElement *imageElement = [self _imageElementWithImageResource:resource];
     if (!imageElement)
         return 0;
-    DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
+    DOMDocumentFragment *fragment = [[[self webFrame] DOMDocument] createDocumentFragment];
     [fragment appendChild:imageElement];
     return fragment;
 }
@@ -271,7 +271,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     [self addSubresource:resource];
     
-    DOMElement *imageElement = [[[self _bridge] DOMDocument] createElement:@"img"];
+    DOMElement *imageElement = [[[self webFrame] DOMDocument] createElement:@"img"];
     
     // FIXME: calling _web_originalDataAsString on a file URL returns an absolute path. Workaround this.
     NSURL *URL = [resource URL];

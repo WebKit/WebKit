@@ -37,6 +37,7 @@
 #import "HTMLNames.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
 #import "WebCoreSystemInterface.h"
@@ -103,7 +104,7 @@ bool isBackForwardLoadType(FrameLoadType type)
 FrameLoader::FrameLoader(Frame* frame)
     : m_frame(frame)
     , m_client(nil)
-    , m_state(WebFrameStateCommittedPage)
+    , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
     , m_delegateIsDecidingNavigationPolicy(false)
@@ -130,7 +131,7 @@ void FrameLoader::prepareForLoadStart()
 
 void FrameLoader::setupForReplace()
 {
-    setState(WebFrameStateProvisional);
+    setState(FrameStateProvisional);
     m_provisionalDocumentLoader = m_documentLoader;
     m_documentLoader = nil;
     detachChildren();
@@ -192,7 +193,7 @@ void FrameLoader::load(NSURLRequest *request, NSDictionary *action, FrameLoadTyp
     load(loader.get(), type, formState);
 }
 
-void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *values)
+void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType, NSString *target, NSEvent *event, Element* form, NSDictionary *values)
 {
     bool isFormSubmission = values != nil;
     
@@ -229,7 +230,7 @@ void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType
     if (!isFormSubmission
         && newLoadType != FrameLoadTypeReload
         && newLoadType != FrameLoadTypeSame
-        && !shouldReload(URL, [bridge() URL])
+        && !shouldReload(URL, m_frame->url().getNSURL())
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && ![bridge() isFrameSet]) {
@@ -401,7 +402,7 @@ void FrameLoader::cancelPendingArchiveLoad(WebResourceLoader* loader)
 
 DocumentLoader* FrameLoader::activeDocumentLoader() const
 {
-    if (m_state == WebFrameStateProvisional)
+    if (m_state == FrameStateProvisional)
         return m_provisionalDocumentLoader.get();
     return m_documentLoader.get();
 }
@@ -545,7 +546,7 @@ void FrameLoader::setProvisionalDocumentLoader(DocumentLoader* loader)
     m_provisionalDocumentLoader = loader;
 }
 
-WebFrameState FrameLoader::state() const
+FrameState FrameLoader::state() const
 {
     return m_state;
 }
@@ -562,13 +563,13 @@ void FrameLoader::provisionalLoadStarted()
     m_client->provisionalLoadStarted();
 }
 
-void FrameLoader::setState(WebFrameState newState)
+void FrameLoader::setState(FrameState newState)
 {    
     m_state = newState;
     
-    if (newState == WebFrameStateProvisional)
+    if (newState == FrameStateProvisional)
         provisionalLoadStarted();
-    else if (newState == WebFrameStateComplete) {
+    else if (newState == FrameStateComplete) {
         frameLoadCompleted();
         storedTimeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
         if (m_documentLoader)
@@ -580,12 +581,12 @@ void FrameLoader::clearProvisionalLoad()
 {
     setProvisionalDocumentLoader(0);
     m_client->progressCompleted();
-    setState(WebFrameStateComplete);
+    setState(FrameStateComplete);
 }
 
 void FrameLoader::markLoadComplete()
 {
-    setState(WebFrameStateComplete);
+    setState(FrameStateComplete);
 }
 
 void FrameLoader::commitProvisionalLoad()
@@ -595,7 +596,7 @@ void FrameLoader::commitProvisionalLoad()
 
     setDocumentLoader(m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(0);
-    setState(WebFrameStateCommittedPage);
+    setState(FrameStateCommittedPage);
 }
 
 id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
@@ -669,10 +670,10 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
         // Can't call _bridge because we might not have commited yet
         m_frame->stop();
         if (m_client->shouldFallBack(error))
-            [bridge() handleFallbackContent];
+            m_frame->handleFallbackContent();
     }
     
-    if (m_state == WebFrameStateProvisional) {
+    if (m_state == FrameStateProvisional) {
         NSURL *failedURL = [m_provisionalDocumentLoader->originalRequestCopy() URL];
         m_frame->didNotOpenURL(failedURL);
         m_client->invalidateCurrentItemPageCache();
@@ -875,7 +876,7 @@ WebCoreFrameBridge *FrameLoader::bridge() const
 
 void FrameLoader::handleFallbackContent()
 {
-    [bridge() handleFallbackContent];
+    m_frame->handleFallbackContent();
 }
 
 bool FrameLoader::isStopping() const
@@ -966,7 +967,8 @@ bool FrameLoader::isHostedByObjectElement() const
 
 bool FrameLoader::isLoadingMainFrame() const
 {
-    return [bridge() isMainFrame];
+    Page* page = m_frame->page();
+    return page && m_frame == page->mainFrame();
 }
 
 bool FrameLoader::canShowMIMEType(NSString *MIMEType) const
@@ -1203,7 +1205,7 @@ void FrameLoader::checkNewWindowPolicy(NSURLRequest *request, NSDictionary *acti
     [decider release];
 }
 
-void FrameLoader::continueAfterNewWindowPolicy(WebPolicyAction policy)
+void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
 {
     RetainPtr<NSURLRequest> request = m_policyRequest;
     RetainPtr<NSString> frameName = m_policyFrameName;
@@ -1214,14 +1216,14 @@ void FrameLoader::continueAfterNewWindowPolicy(WebPolicyAction policy)
     invalidatePendingPolicyDecision(false);
 
     switch (policy) {
-        case WebPolicyIgnore:
+        case PolicyIgnore:
             request = nil;
             break;
-        case WebPolicyDownload:
+        case PolicyDownload:
             m_client->startDownload(request.get());
             request = nil;
             break;
-        case WebPolicyUse:
+        case PolicyUse:
             break;
     }
 
@@ -1271,7 +1273,7 @@ void FrameLoader::checkNavigationPolicy(NSURLRequest *request, DocumentLoader* l
     [decider release];
 }
 
-void FrameLoader::continueAfterNavigationPolicy(WebPolicyAction policy)
+void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
 {
     RetainPtr<NSURLRequest> request = m_policyRequest;
     RetainPtr<id> target = m_policyTarget;
@@ -1281,14 +1283,14 @@ void FrameLoader::continueAfterNavigationPolicy(WebPolicyAction policy)
     invalidatePendingPolicyDecision(false);
 
     switch (policy) {
-        case WebPolicyIgnore:
+        case PolicyIgnore:
             request = nil;
             break;
-        case WebPolicyDownload:
+        case PolicyDownload:
             m_client->startDownload(request.get());
             request = nil;
             break;
-        case WebPolicyUse:
+        case PolicyUse:
             if (!m_client->canHandleRequest(request.get())) {
                 handleUnimplementablePolicy(m_client->cannotShowURLError(request.get()));
                 request = nil;
@@ -1299,7 +1301,7 @@ void FrameLoader::continueAfterNavigationPolicy(WebPolicyAction policy)
     objc_msgSend(target.get(), selector, request.get(), formState.get());
 }
 
-void FrameLoader::continueAfterWillSubmitForm(WebPolicyAction policy)
+void FrameLoader::continueAfterWillSubmitForm(PolicyAction policy)
 {
     if (m_policyDecider) {
         [m_policyDecider.get() invalidate];
@@ -1322,7 +1324,7 @@ void FrameLoader::continueLoadRequestAfterNavigationPolicy(NSURLRequest *request
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
-    bool canContinue = request && (!isLoadingMainFrame() || [bridge() shouldClose]);
+    bool canContinue = request && (!isLoadingMainFrame() || Mac(m_frame)->shouldClose());
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
@@ -1345,7 +1347,7 @@ void FrameLoader::continueLoadRequestAfterNavigationPolicy(NSURLRequest *request
     stopLoading();
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
-    setState(WebFrameStateProvisional);
+    setState(FrameStateProvisional);
 
     setPolicyDocumentLoader(0);
 
@@ -1353,14 +1355,14 @@ void FrameLoader::continueLoadRequestAfterNavigationPolicy(NSURLRequest *request
         return;
 
     if (formState) {
-        // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
+        // It's a bit of a hack to reuse the WebPolicyDecider for the continuation
         // mechanism across the willSubmitForm callout.
         WebPolicyDecider *decider = m_client->createPolicyDecider(asDelegate(), @selector(continueAfterWillSubmitForm:));
         m_policyDecider = decider;
         m_client->dispatchWillSubmitForm(decider, formState->sourceFrame(), formState->form(), formState->valuesAsNSDictionary());
         [decider release];
     } else
-        continueAfterWillSubmitForm(WebPolicyUse);
+        continueAfterWillSubmitForm(PolicyUse);
 }
 
 void FrameLoader::didFirstLayout()
@@ -1395,9 +1397,9 @@ bool FrameLoader::isQuickRedirectComing() const
 void FrameLoader::transitionToCommitted(NSDictionary *pageCache)
 {
     ASSERT(m_client->hasWebView());
-    ASSERT(m_state == WebFrameStateProvisional);
+    ASSERT(m_state == FrameStateProvisional);
 
-    if (m_state != WebFrameStateProvisional)
+    if (m_state != FrameStateProvisional)
         return;
 
     m_client->setCopiesOnScroll();
@@ -1474,7 +1476,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     ASSERT(m_client->hasWebView());
 
     switch (m_state) {
-        case WebFrameStateProvisional: {
+        case FrameStateProvisional: {
             if (m_delegateIsHandlingProvisionalLoadError)
                 return;
 
@@ -1516,7 +1518,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             return;
         }
         
-        case WebFrameStateCommittedPage: {
+        case FrameStateCommittedPage: {
             DocumentLoader* dl = m_documentLoader.get();            
             if (dl->isLoadingInAPISense())
                 return;
@@ -1544,7 +1546,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             return;
         }
         
-        case WebFrameStateComplete:
+        case FrameStateComplete:
             // Even if already complete, we might have set a previous item on a frame that
             // didn't do any data loading on the past transaction. Make sure to clear these out.
             m_client->frameLoadCompleted();
@@ -1560,12 +1562,11 @@ void FrameLoader::continueLoadRequestAfterNewWindowPolicy(NSURLRequest *request,
         return;
 
     RefPtr<Frame> frame = m_frame;
-
     RefPtr<Frame> mainFrame = m_client->dispatchCreatePage(nil);
     if (!mainFrame)
         return;
 
-    [Mac(mainFrame.get())->bridge() setName:frameName];
+    mainFrame->tree()->setName(frameName);
     mainFrame->loader()->client()->dispatchShow();
     mainFrame->setOpener(frame.get());
     mainFrame->loader()->load(request, nil, FrameLoadTypeStandard, formState);
@@ -1601,7 +1602,7 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
 }
 
 void FrameLoader::post(NSURL *URL, NSString *referrer, NSString *target, NSArray *postData,
-    NSString *contentType, NSEvent *event, DOMElement *form, NSDictionary *formValues)
+    NSString *contentType, NSEvent *event, Element* form, NSDictionary *formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1778,19 +1779,19 @@ FrameLoaderClient::~FrameLoaderClient()
         m_loader->continueFragmentScrollAfterNavigationPolicy(request);
 }
 
-- (void)continueAfterNewWindowPolicy:(WebPolicyAction)policy
+- (void)continueAfterNewWindowPolicy:(PolicyAction)policy
 {
     if (m_loader)
         m_loader->continueAfterNewWindowPolicy(policy);
 }
 
-- (void)continueAfterNavigationPolicy:(WebPolicyAction)policy
+- (void)continueAfterNavigationPolicy:(PolicyAction)policy
 {
     if (m_loader)
         m_loader->continueAfterNavigationPolicy(policy);
 }
 
-- (void)continueAfterWillSubmitForm:(WebPolicyAction)policy
+- (void)continueAfterWillSubmitForm:(PolicyAction)policy
 {
     if (m_loader)
         m_loader->continueAfterWillSubmitForm(policy);

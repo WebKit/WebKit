@@ -37,13 +37,6 @@
 
 using namespace WebCore;
 
-// FIXME: We should have a way to get the following DOM interface from the WebCore internal headers, but we
-// can't make the internal DOM headers private since they are not generated at the time installhdrs is called.
-
-@interface DOMElement (WebCoreInternal)
-+ (DOMElement *)_elementWith:(WebCore::Element*)impl;
-@end
-
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
 {
@@ -319,7 +312,7 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(NSURLRequest *request)
 {
-    return [[m_webFrame.get() _dispatchCreateWebViewWithRequest:request] _frame];
+    return [m_webFrame.get() _dispatchCreateWebViewWithRequest:request];
 }
 
 void WebFrameLoaderClient::dispatchShow()
@@ -354,8 +347,8 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(NSError *error)
 void WebFrameLoaderClient::dispatchWillSubmitForm(WebPolicyDecider *decider, Frame* sourceFrame,
     Element* form, NSDictionary *values)
 {
-    [m_webFrame.get() _dispatchSourceFrame:Mac(sourceFrame)->bridge()
-        willSubmitForm:[DOMElement _elementWith:form] withValues:values submissionDecider:decider];
+    [m_webFrame.get() _dispatchSourceFrame:sourceFrame
+        willSubmitForm:form withValues:values submissionDecider:decider];
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)

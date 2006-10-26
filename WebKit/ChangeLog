@@ -1,3 +1,160 @@
+2006-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - removed 55 methods from WebCoreFrameBridge
+        - changed callers to use Frame directly instead
+        - put FrameLoaderTypes.h types into the WebCore namespace
+        - first steps to get FrameLoader.h ready for cross-platform duty
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate openNewWindowWithURL:element:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]):
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebPluginContainerCheck.m:
+        (-[WebPluginContainerCheck _continueWithPolicy:]):
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldDeleteRange):
+        (WebEditorClient::shouldShowDeleteInterface):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge webView]):
+        (-[WebFrameBridge finishInitializingWithFrameName:view:]):
+        (-[WebFrameBridge createWindowWithURL:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        (-[WebFrameBridge windowObjectCleared]):
+        (-[WebFrameBridge createModalDialogWithURL:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebArchiver.m:
+        (+[WebArchiver archiveSelectionInFrame:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithImageResource:]):
+        (-[WebDataSource _imageElementWithImageResource:]):
+        * WebView/WebEditingDelegatePrivate.h:
+        * WebView/WebFrame.mm:
+        (core):
+        (kit):
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _childFramesMatchItem:]):
+        (-[WebFrame _URLsMatchItem:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):
+        (-[WebFrame _viewWillMoveToHostWindow:]):
+        (-[WebFrame _viewDidMoveToHostWindow]):
+        (-[WebFrame _addChild:]):
+        (-[WebFrame _saveDocumentAndScrollState]):
+        (-[WebFrame _numPendingOrLoadingRequests:]):
+        (-[WebFrame _reloadForPluginChanges]):
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _initWithWebFrameView:webView:coreFrame:]):
+        (-[WebFrame _documentViews]):
+        (-[WebFrame _updateBackground]):
+        (-[WebFrame _unmarkAllMisspellings]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _atMostOneFrameHasSelection]):
+        (-[WebFrame _findFrameWithSelection]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame _isDescendantOfFrame:]):
+        (-[WebFrame _setShouldCreateRenderers:]):
+        (-[WebFrame _bodyBackgroundColor]):
+        (-[WebFrame init]):
+        (-[WebFrame initWithName:webFrameView:webView:]):
+        (-[WebFrame dealloc]):
+        (-[WebFrame finalize]):
+        (-[WebFrame name]):
+        (-[WebFrame webView]):
+        (-[WebFrame DOMDocument]):
+        (-[WebFrame frameElement]):
+        (-[WebFrame findFrameNamed:]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame childFrames]):
+        (-[WebFrame _invalidateCurrentItemPageCache]):
+        (-[WebFrame _dispatchCreateWebViewWithRequest:]):
+        (-[WebFrame _dispatchSourceFrame:willSubmitForm:withValues:submissionDecider:]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation DOMDocument]):
+        (-[WebHTMLRepresentation attributedText]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _documentRange]):
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]):
+        (-[WebHTMLView _selectedRange]):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView _canEditRichly]):
+        (-[WebHTMLView _hasSelection]):
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]):
+        (-[WebHTMLView _hasInsertionPoint]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView _isSelectionInPasswordField]):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView _canIncreaseSelectionListLevel]):
+        (-[WebHTMLView _canDecreaseSelectionListLevel]):
+        (-[WebHTMLView _updateActiveState]):
+        (-[NSArray readSelectionFromPasteboard:]):
+        (-[NSArray validateUserInterfaceItem:]):
+        (-[NSArray maintainsInactiveSelection]):
+        (-[NSArray menuForEvent:]):
+        (-[NSArray scrollWheel:]):
+        (-[NSArray acceptsFirstMouse:]):
+        (-[NSArray shouldDelayWindowOrderingForEvent:]):
+        (-[NSArray mouseDown:]):
+        (-[NSArray mouseDragged:]):
+        (-[NSArray mouseUp:]):
+        (-[NSArray keyDown:]):
+        (-[NSArray keyUp:]):
+        (-[NSArray centerSelectionInVisibleArea:]):
+        (-[NSArray _selectionStartFontAttributesAsRTF]):
+        (-[NSArray _emptyStyle]):
+        (-[NSArray performKeyEquivalent:]):
+        (-[NSArray indent:]):
+        (-[NSArray outdent:]):
+        (-[WebHTMLView cut:]):
+        (-[WebHTMLView paste:]):
+        (-[WebHTMLView _selectRangeInMarkedText:]):
+        (-[WebTextCompleteController doCompletion]):
+        (-[WebHTMLView selectionRect]):
+        (-[WebHTMLView selectionImageForcingWhiteText:]):
+        (-[WebHTMLView selectionImageRect]):
+        (-[WebHTMLView attributedString]):
+        (-[WebHTMLView _isMoveDrag]):
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]):
+        * WebView/WebPolicyDelegate.mm:
+        (-[WebPolicyDecisionListener _usePolicy:]):
+        (-[WebPolicyDecisionListener use]):
+        (-[WebPolicyDecisionListener ignore]):
+        (-[WebPolicyDecisionListener download]):
+        (-[WebPolicyDecisionListener continue]):
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame _initWithFrame:initWithWebFrame:]):
+        (-[WebScriptCallFrame globalObject]):
+        * WebView/WebView.mm:
+        (-[WebView _attachScriptDebuggerToAllFrames]):
+        (-[WebView _detachScriptDebuggerFromAllFrames]):
+        (-[WebView windowScriptObject]):
+        (incrementFrame):
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebView removeDragCaret]):
+        (-[WebView setScriptDebugDelegate:]):
+        (-[WebView scriptDebugDelegate]):
+        (-[WebView shouldClose]):
+        (-[WebView selectedDOMRange]):
+        (-[WebView styleDeclarationWithText:]):
+
 2006-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam.

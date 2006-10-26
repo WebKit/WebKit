@@ -53,7 +53,7 @@ namespace WebCore {
         virtual void didFail(NSError *);
 
         void continueAfterNavigationPolicy(NSURLRequest *);
-        void continueAfterContentPolicy(WebPolicyAction);
+        void continueAfterContentPolicy(PolicyAction);
 
     private:
         virtual void didCancel(NSError *);
@@ -72,7 +72,7 @@ namespace WebCore {
         void stopLoadingForPolicyChange();
         bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 
-        void continueAfterContentPolicy(WebPolicyAction, NSURLResponse *);
+        void continueAfterContentPolicy(PolicyAction, NSURLResponse *);
 
         int m_contentLength; // for logging only
         int m_bytesReceived; // for logging only

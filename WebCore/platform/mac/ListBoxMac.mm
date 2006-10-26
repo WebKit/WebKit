@@ -490,23 +490,18 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
 
 - (void)keyDown:(NSEvent *)event
 {
-    if (!_box)  {
+    if (!_box)
         return;
-    }
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_box);
-    if (![bridge interceptKeyEvent:event toView:self]) {
-    [super keyDown:event];
-    }
+    if (!Mac(Frame::frameForWidget(_box))->keyEvent(event))
+        [super keyDown:event];
 }
 
 - (void)keyUp:(NSEvent *)event
 {
-    if (!_box)  {
+    if (!_box)
         return;
-    }
     
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_box);
-    if (![bridge interceptKeyEvent:event toView:self]) {
+    if (!Mac(Frame::frameForWidget(_box))->keyEvent(event)) {
         [super keyUp:event];
         NSString *string = [event characters];
        
@@ -546,7 +541,6 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
         
         [self selectRowIndexes:[NSIndexSet indexSetWithIndex:closestItem] byExtendingSelection:NO];
         [self scrollRowToVisible:closestItem];
-        
     }
 }
 

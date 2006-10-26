@@ -65,10 +65,12 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
-#import <WebCore/Element.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HTMLElement.h>
+#import <WebCore/Page.h>
+#import <WebCore/SelectionController.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebFormDataStream.h>
 #import <WebCore/WebFormState.h>
@@ -78,6 +80,29 @@
 #import <objc/objc-runtime.h>
 #import <wtf/HashMap.h>
 
+// FIXME: We should have a way to get the following DOM interface from the WebCore internal headers, but we
+// can't make the internal DOM headers private since they are not generated at the time installhdrs is called.
+
+@interface DOMDocument (WebCoreInternal)
+- (WebCore::Document *)_document;
++ (DOMDocument *)_documentWith:(WebCore::Document *)impl;
+@end
+
+@interface DOMElement (WebCoreInternal)
+- (WebCore::Element *)_element;
++ (DOMElement *)_elementWith:(WebCore::Element *)impl;
+@end
+
+@interface DOMHTMLElement (WebCoreInternal)
+- (WebCore::HTMLElement *)_HTMLElement;
++ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
+@end
+
+@interface DOMRange (WebCoreInternal)
+- (WebCore::Range *)_range;
++ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
+@end
+
 /*
 Here is the current behavior matrix for four types of navigations:
 
@@ -85,28 +110,28 @@ Standard Nav:
 
  Restore form state:   YES
  Restore scroll and focus state:  YES
- WF Cache policy: NSURLRequestUseProtocolCachePolicy
+ Cache policy: NSURLRequestUseProtocolCachePolicy
  Add to back/forward list: YES
  
 Back/Forward:
 
  Restore form state:   YES
  Restore scroll and focus state:  YES
- WF Cache policy: NSURLRequestReturnCacheDataElseLoad
+ Cache policy: NSURLRequestReturnCacheDataElseLoad
  Add to back/forward list: NO
 
 Reload (meaning only the reload button):
 
  Restore form state:   NO
  Restore scroll and focus state:  YES
- WF Cache policy: NSURLRequestReloadIgnoringCacheData
+ Cache policy: NSURLRequestReloadIgnoringCacheData
  Add to back/forward list: NO
 
 Repeat load of the same URL (by any other means of navigation other than the reload button, including hitting return in the location field):
 
  Restore form state:   NO
  Restore scroll and focus state:  NO, reset to initial conditions
- WF Cache policy: NSURLRequestReloadIgnoringCacheData
+ Cache policy: NSURLRequestReloadIgnoringCacheData
  Add to back/forward list: NO
 */
 
@@ -220,44 +245,55 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     return [(WebFrameBridge *)bridge webFrame];
 }
 
-static inline WebFrame *frame(Frame* f)
+FrameMac* core(WebFrame *frame)
 {
-    return f ? [(WebFrameBridge *)Mac(f)->bridge() webFrame] : nil;
+    return [[frame _bridge] _frame];
 }
 
-@implementation WebFrame (FrameTraversal)
-
-- (WebFrame *)_firstChildFrame
+WebFrame *kit(Frame* frame)
 {
-    return frame([[self _bridge] firstChild]);
+    return frame ? [(WebFrameBridge *)Mac(frame)->bridge() webFrame] : nil;
 }
 
-- (WebFrame *)_lastChildFrame
+Element* core(DOMElement *element)
 {
-    return frame([[self _bridge] lastChild]);
+    return [element _element];
 }
 
-- (unsigned)_childFrameCount
+DOMElement *kit(Element* element)
 {
-    return [[self _bridge] childCount];
+    return [DOMElement _elementWith:element];
 }
 
-- (WebFrame *)_previousSiblingFrame;
+Document* core(DOMDocument *document)
 {
-    return frame([[self _bridge] previousSibling]);
+    return [document _document];
 }
 
-- (WebFrame *)_nextSiblingFrame;
+DOMDocument *kit(Document* document)
 {
-    return frame([[self _bridge] nextSibling]);
+    return [DOMDocument _documentWith:document];
 }
 
-- (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin
+HTMLElement* core(DOMHTMLElement *element)
 {
-    return frame([[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]]);
+    return [element _HTMLElement];
 }
 
-@end
+DOMHTMLElement *kit(HTMLElement *element)
+{
+    return [DOMHTMLElement _HTMLElementWith:element];
+}
+
+Range* core(DOMRange *range)
+{
+    return [range _range];
+}
+
+DOMRange *kit(Range* range)
+{
+    return [DOMRange _rangeWith:range];
+}
 
 @implementation WebFrame (WebInternal)
 
@@ -347,8 +383,8 @@ static inline WebFrame *frame(Frame* f)
         // save frame state for items that aren't loading (khtml doesn't save those)
         [_private->bridge saveDocumentState];
 
-        for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
-            [bfItem addChildItem:[child _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip]];
+        for (Frame* child = core(self)->tree()->firstChild(); child; child = child->tree()->nextSibling())
+            [bfItem addChildItem:[kit(child) _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip]];
     }
     if (self == targetFrame)
         [bfItem setIsTargetItem:YES];
@@ -356,14 +392,9 @@ static inline WebFrame *frame(Frame* f)
     return bfItem;
 }
 
-- (WebFrame *)_immediateChildFrameNamed:(NSString *)name
-{
-    return frame([[self _bridge] childFrameNamed:name]);
-}
-
 - (BOOL)_canCachePage
 {
-    return [[[self webView] backForwardList] _usesPageCache];
+    return [[[self webView] backForwardList] _usesPageCache] && core(self)->canCachePage();
 }
 
 - (void)_purgePageCache
@@ -427,7 +458,7 @@ static inline WebFrame *frame(Frame* f)
 {
     NSArray *childItems = [item children];
     int numChildItems = [childItems count];
-    int numChildFrames = [self _childFrameCount];
+    int numChildFrames = core(self)->tree()->childCount();
     if (numChildFrames != numChildItems)
         return NO;
 
@@ -435,7 +466,7 @@ static inline WebFrame *frame(Frame* f)
     for (i = 0; i < numChildItems; i++) {
         NSString *itemTargetName = [[childItems objectAtIndex:i] target];
         //Search recursive here?
-        if (![self _immediateChildFrameNamed:itemTargetName])
+        if (!core(self)->tree()->child(itemTargetName))
             return NO; // couldn't match the i'th itemTarget
     }
 
@@ -456,8 +487,8 @@ static inline WebFrame *frame(Frame* f)
     int i, count = [childItems count];
     for (i = 0; i < count; i++){
         childItem = [childItems objectAtIndex:i];
-        childFrame = [self _immediateChildFrameNamed:[childItem target]];
-        if (![childFrame _URLsMatchItem: childItem])
+        childFrame = kit(core(self)->tree()->child([childItem target]));
+        if (![childFrame _URLsMatchItem:childItem])
             return NO;
     }
     
@@ -494,7 +525,7 @@ static inline WebFrame *frame(Frame* f)
 
         // We always call scrollToAnchor here, even if the URL doesn't have an
         // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
-        [_private->bridge _frame]->scrollToAnchor([item URL]);
+        core(self)->scrollToAnchor([item URL]);
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];
@@ -633,7 +664,7 @@ static inline WebFrame *frame(Frame* f)
             NSString *childName = [childItem target];
             WebHistoryItem *fromChildItem = [fromItem childItemWithName:childName];
             ASSERT(fromChildItem || [fromItem isTargetItem]);
-            WebFrame *childFrame = [self _immediateChildFrameNamed:childName];
+            WebFrame *childFrame = kit(core(self)->tree()->child(childName));
             ASSERT(childFrame);
             [childFrame _recursiveGoToItem:childItem fromItem:fromChildItem withLoadType:type];
         }
@@ -730,19 +761,21 @@ static inline WebFrame *frame(Frame* f)
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        [[[frame frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
 }
 
 - (void)_viewDidMoveToHostWindow
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        [[[frame frameView] documentView] viewDidMoveToHostWindow];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
 }
 
 - (void)_addChild:(WebFrame *)child
 {
-    [[self _bridge] appendChild:[child _bridge]];
+    core(self)->tree()->appendChild(adoptRef(core(child)));
     if ([child dataSource])
         [[child dataSource] _documentLoader]->setOverrideEncoding([[self dataSource] _documentLoader]->overrideEncoding());  
 }
@@ -798,42 +831,33 @@ static inline WebFrame *frame(Frame* f)
 // history item.
 - (void)_saveDocumentAndScrollState
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        [[frame _bridge] saveDocumentState];
-        [frame _saveScrollPositionAndViewStateToItem:frame->_private->currentItem];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        [Mac(frame)->bridge() saveDocumentState];
+        [kit(frame) _saveScrollPositionAndViewStateToItem:kit(frame)->_private->currentItem];
     }
-}
-
-// Return next frame to be traversed, visiting children after parent
-- (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
-{
-    return frame([[self _bridge] nextFrameWithWrap:wrapFlag]);
-}
-
-// Return previous frame to be traversed, exact reverse order of _nextFrame
-- (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
-{
-    return frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
 }
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
 {
     if (!recurse)
-        return [[self _bridge] numPendingOrLoadingRequests];
+        return [_private->bridge numPendingOrLoadingRequests];
 
     int num = 0;
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        num += [[frame _bridge] numPendingOrLoadingRequests];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        num += [Mac(frame)->bridge() numPendingOrLoadingRequests];
 
     return num;
 }
 
 - (void)_reloadForPluginChanges
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
-        if (([documentView isKindOfClass:[WebHTMLView class]] && [_private->bridge _frame]->containsPlugins()))
-            [frame reload];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if (([documentView isKindOfClass:[WebHTMLView class]] && coreFrame->containsPlugins()))
+            [kit(frame) reload];
     }
 }
 
@@ -854,8 +878,9 @@ static inline WebFrame *frame(Frame* f)
 
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
     }
@@ -863,14 +888,15 @@ static inline WebFrame *frame(Frame* f)
 
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
     }
 }
 
-- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v coreFrame:(Frame*)coreFrame
 {
     self = [super init];
     if (!self)
@@ -878,7 +904,7 @@ static inline WebFrame *frame(Frame* f)
 
     _private = [[WebFramePrivate alloc] init];
 
-    _private->bridge = bridge;
+    _private->bridge = (WebFrameBridge *)Mac(coreFrame)->bridge();
 
     if (fv) {
         [_private setWebFrameView:fv];
@@ -895,12 +921,12 @@ static inline WebFrame *frame(Frame* f)
 - (NSArray *)_documentViews
 {
     NSMutableArray *result = [NSMutableArray array];
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        id docView = [[frame frameView] documentView];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        id docView = [[kit(frame) frameView] documentView];
         if (docView)
             [result addObject:docView];
     }
-        
     return result;
 }
 
@@ -909,19 +935,22 @@ static inline WebFrame *frame(Frame* f)
     BOOL drawsBackground = [[self webView] drawsBackground];
     NSColor *backgroundColor = [[self webView] backgroundColor];
 
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        WebFrameBridge *bridge = (WebFrameBridge *)Mac(frame)->bridge();
+        WebFrame *webFrame = [bridge webFrame];
         // Never call setDrawsBackground:YES here on the scroll view or the background color will
         // flash between pages loads. setDrawsBackground:YES will be called in _frameLoadCompleted.
         if (!drawsBackground)
-            [[[frame frameView] _scrollView] setDrawsBackground:NO];
-        [[[frame frameView] _scrollView] setBackgroundColor:backgroundColor];
-        id documentView = [[frame frameView] documentView];
+            [[[webFrame frameView] _scrollView] setDrawsBackground:NO];
+        [[[webFrame frameView] _scrollView] setBackgroundColor:backgroundColor];
+        id documentView = [[webFrame frameView] documentView];
         if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
             [documentView setDrawsBackground:drawsBackground];
         if ([documentView respondsToSelector:@selector(setBackgroundColor:)])
             [documentView setBackgroundColor:backgroundColor];
-        [[frame _bridge] setDrawsBackground:drawsBackground];
-        [[frame _bridge] setBaseBackgroundColor:backgroundColor];
+        [bridge setDrawsBackground:drawsBackground];
+        [bridge setBaseBackgroundColor:backgroundColor];
     }
 }
 
@@ -944,20 +973,20 @@ static inline WebFrame *frame(Frame* f)
 
 - (void)_unmarkAllMisspellings
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        [[frame _bridge] unmarkAllMisspellings];
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [Mac(frame)->bridge() unmarkAllMisspellings];
 }
 
 - (BOOL)_hasSelection
 {
     id documentView = [[self frameView] documentView];    
-    
+
     // optimization for common case to avoid creating potentially large selection string
-    if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        DOMRange *selectedDOMRange = [[self _bridge] selectedDOMRange];
-        return selectedDOMRange && ![selectedDOMRange collapsed];
-    }
-    
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        if (Frame* coreFrame = core(self))
+            return coreFrame->selectionController()->isRange();
+
     if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         return [[documentView selectedString] length] > 0;
     
@@ -977,23 +1006,23 @@ static inline WebFrame *frame(Frame* f)
 {
     // FIXME: 4186050 is one known case that makes this debug check fail.
     BOOL found = NO;
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        if ([frame _hasSelection]) {
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        if ([kit(frame) _hasSelection]) {
             if (found)
                 return NO;
             found = YES;
         }
-    }
     return YES;
 }
 #endif
 
 - (WebFrame *)_findFrameWithSelection
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        if ([frame _hasSelection])
-            return frame;
-
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        if ([kit(frame) _hasSelection])
+            return kit(frame);
     return nil;
 }
 
@@ -1059,7 +1088,7 @@ static inline WebFrame *frame(Frame* f)
 
 - (FrameLoader*)_frameLoader
 {
-    Frame* frame = [_private->bridge _frame];
+    Frame* frame = core(self);
     return frame ? frame->loader() : 0;
 }
 
@@ -1090,17 +1119,18 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 // FIXME: Yhis exists only as a convenience for Safari, consider moving there.
 - (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
 {
-    return [[self _bridge] isDescendantOfFrame:[ancestor _bridge]];
+    Frame* coreFrame = core(self);
+    return coreFrame && coreFrame->tree()->isDescendantOf(core(ancestor));
 }
 
-- (void)_setShouldCreateRenderers:(BOOL)f
+- (void)_setShouldCreateRenderers:(BOOL)frame
 {
-    [_private->bridge setShouldCreateRenderers:f];
+    [_private->bridge setShouldCreateRenderers:frame];
 }
 
 - (NSColor *)_bodyBackgroundColor
 {
-    return [_private->bridge bodyBackgroundColor];
+    return core(self)->bodyBackgroundColor();
 }
 
 - (BOOL)_isFrameSet
@@ -1124,37 +1154,36 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (id)init
 {
-    return [self initWithName:nil webFrameView:nil webView:nil];
+    return nil;
 }
 
-// FIXME: this method can't work any more and should be marked deprecated
-- (id)initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
+// Should be deprecated.
+- (id)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView
 {
-    return [self _initWithWebFrameView:fv webView:v bridge:nil];
+    return nil;
 }
 
 - (void)dealloc
 {
     ASSERT(_private->bridge == nil);
     [_private release];
-
     --WebFrameCount;
-
     [super dealloc];
 }
 
 - (void)finalize
 {
     ASSERT(_private->bridge == nil);
-
     --WebFrameCount;
-
     [super finalize];
 }
 
 - (NSString *)name
 {
-    return [[self _bridge] name];
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return nil;
+    return coreFrame->tree()->name();
 }
 
 - (WebFrameView *)frameView
@@ -1164,17 +1193,30 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebView *)webView
 {
-    return [[[self _bridge] page] webView];
+    Frame* coreFrame = core(self);
+    return coreFrame ? [coreFrame->page()->bridge() webView] : nil;
 }
 
 - (DOMDocument *)DOMDocument
 {
-    return [[self dataSource] _isDocumentHTML] ? [_private->bridge DOMDocument] : nil;
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return nil;
+    // FIXME: Why do we need this check?
+    if (![[self dataSource] _isDocumentHTML])
+        return nil;
+    return kit(coreFrame->document());
 }
 
 - (DOMHTMLElement *)frameElement
 {
-    return [[self webView] mainFrame] != self ? [_private->bridge frameElement] : nil;
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return nil;
+    Element* element = coreFrame->ownerElement();
+    if (!element->isHTMLElement())
+        return nil;
+    return kit(static_cast<HTMLElement*>(element));
 }
 
 - (WebDataSource *)provisionalDataSource
@@ -1253,20 +1295,28 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebFrame *)findFrameNamed:(NSString *)name
 {
-    return frame([[self _bridge] findFrameNamed:name]);
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return nil;
+    return kit(coreFrame->tree()->find(name));
 }
 
 - (WebFrame *)parentFrame
 {
-    return [[frame([_private->bridge _frame]->tree()->parent()) retain] autorelease];
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return nil;
+    return [[kit(coreFrame->tree()->parent()) retain] autorelease];
 }
 
 - (NSArray *)childFrames
 {
-    NSMutableArray *children = [NSMutableArray arrayWithCapacity:[self _childFrameCount]];
-    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
-        [children addObject:child];
-
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return [NSArray array];
+    NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree()->childCount()];
+    for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        [children addObject:kit(child)];
     return children;
 }
 
@@ -1294,7 +1344,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // When we are pre-commit, the currentItem is where the pageCache data resides
     NSDictionary *pageCache = [_private->currentItem pageCache];
 
-    [[self _bridge] invalidatePageCache:pageCache];
+    [_private->bridge invalidatePageCache:pageCache];
     
     // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
     [_private->currentItem setHasPageCache:NO];
@@ -1647,14 +1697,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:self];
 }
 
-- (WebCoreFrameBridge *)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request
+- (Frame*)_dispatchCreateWebViewWithRequest:(NSURLRequest *)request
 {
     WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        return [[[wd webView:currentWebView createWebViewWithRequest:request] mainFrame] _bridge];
-
-    return [[[[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request] mainFrame] _bridge];
+        return core([[wd webView:currentWebView createWebViewWithRequest:request] mainFrame]);
+    return core([[[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request] mainFrame]);
 }
 
 - (void)_dispatchShow
@@ -1706,9 +1755,9 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:self];    
 }
 
-- (void)_dispatchSourceFrame:(WebCoreFrameBridge *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider
+- (void)_dispatchSourceFrame:(Frame*)sourceFrame willSubmitForm:(Element*)form withValues:(NSDictionary *)values submissionDecider:(WebPolicyDecider *)decider
 {
-    [[self _formDelegate] frame:self sourceFrame:frame(sourceFrame) willSubmitForm:form withValues:values submissionListener:decisionListener(decider)];
+    [[self _formDelegate] frame:self sourceFrame:kit(sourceFrame) willSubmitForm:kit(form) withValues:values submissionListener:decisionListener(decider)];
 }
 
 - (void)_detachedFromParent1
@@ -2165,7 +2214,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
 - (void)_prepareForDataSourceReplacement
 {
     if (![self dataSource]) {
-        ASSERT(![self _childFrameCount]);
+        ASSERT(!core(self)->tree()->childCount());
         return;
     }
     
@@ -2223,7 +2272,6 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
     // over it again when we leave that page.
     WebHistoryItem *item = _private->currentItem;
     if ([self _canCachePage]
-        && [_private->bridge canCachePage]
         && item
         && ![self _frameLoader]->isQuickRedirectComing()
         && loadType != FrameLoadTypeReload 
@@ -2246,7 +2294,7 @@ static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *deci
             }
         } else
             // Put the document into a null state, so it can be restored correctly.
-            [_private->bridge _frame]->clear();
+            core(self)->clear();
     } else
         LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 }

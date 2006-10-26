@@ -306,7 +306,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
         if (DOMHTMLInputElement* input = inputElement(widget))
             intercepted = [bridge textField:input shouldHandleEvent:event];
         if (!intercepted)
-            intercepted = [bridge interceptKeyEvent:event toView:view];
+            intercepted = [bridge _frame]->keyEvent(event);
 
         // Always intercept key up events because we don't want them
         // passed along the responder chain. This is arguably a bug in

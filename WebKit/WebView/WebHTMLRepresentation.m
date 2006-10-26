@@ -182,18 +182,17 @@
     }
 
     if (frame) {
-        if ([self _isDisplayingWebArchive]) {
+        if ([self _isDisplayingWebArchive])
             [self loadArchive];
-        } else {
+        else
             // Telling the bridge we received some data and passing nil as the data is our
             // way to get work done that is normally done when the first bit of data is
             // received, even for the case of a document with no data (like about:blank).
             [_private->bridge receivedData:nil textEncodingName:[[_private->dataSource response] textEncodingName]];
-        }
         
         WebView *webView = [frame webView];
         if ([webView isEditable])
-            [_private->bridge _frame]->applyEditingStyleToBodyElement();
+            core(frame)->applyEditingStyleToBodyElement();
     }
 }
 
@@ -219,12 +218,12 @@
 
 - (DOMDocument *)DOMDocument
 {
-    return [_private->bridge DOMDocument];
+    return [[_private->bridge webFrame] DOMDocument];
 }
 
 - (NSAttributedString *)attributedText
 {
-    // FIXME:  Implement
+    // FIXME: Implement
     return nil;
 }
 

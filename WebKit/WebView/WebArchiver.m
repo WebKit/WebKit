@@ -28,16 +28,20 @@
 
 #import "WebArchiver.h"
 
-#import <WebKit/DOM.h>
 #import "WebArchive.h"
-#import <JavaScriptCore/Assertions.h>
-#import "WebDocument.h"
-#import "WebDataSource.h"
 #import "WebDOMOperationsPrivate.h"
+#import "WebDataSource.h"
+#import "WebDocument.h"
 #import "WebFrame.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebResource.h"
+#import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/SelectionController.h>
+#import <WebKit/DOM.h>
+
+using namespace WebCore;
 
 @implementation WebArchiver
 
@@ -136,9 +140,13 @@
 
 + (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame
 {
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return nil;
+
     WebFrameBridge *bridge = [frame _bridge];
     NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromRange:[bridge selectedDOMRange] nodes:&nodes];
+    NSString *markupString = [bridge markupStringFromRange:kit(coreFrame->selectionController()->toRange().get()) nodes:&nodes];
     WebArchive *archive = [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 
     if ([bridge isFrameSet]) {

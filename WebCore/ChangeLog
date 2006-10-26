@@ -1,3 +1,81 @@
+2006-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - removed 55 methods from WebCoreFrameBridge
+        - changed callers to use Frame directly instead
+        - put FrameLoaderTypes.h types into the WebCore namespace
+        - first steps to get FrameLoader.h ready for cross-platform duty
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest):
+        (WebCore::FrameMac::startRedirectionTimer):
+        (WebCore::FrameMac::stopRedirectionTimer):
+        (WebCore::FrameMac::passSubframeEventToSubframe):
+        (WebCore::FrameMac::handledOnloadEvents):
+        (WebCore::FrameMac::isLoadTypeReload):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge executionContextForView:]):
+        (updateRenderingForBindings):
+        (-[WebCoreFrameBridge canTargetLoadInFrame:]):
+        (-[WebCoreFrameBridge forceLayoutAdjustingViewSize:]):
+        (-[WebCoreFrameBridge forceLayoutWithMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        (-[WebCoreFrameBridge installInFrame:]):
+        (-[WebCoreFrameBridge numPendingOrLoadingRequests]):
+        (-[WebCoreFrameBridge replaceSelectionWithNode:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge baseWritingDirectionForSelectionStart]):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (stringByCollapsingNonPrintingCharacters):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebCoreFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * loader/FrameLoaderTypes.h:
+        * loader/mac/FrameLoader.h:
+        * loader/mac/FrameLoader.mm:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::activeDocumentLoader):
+        (WebCore::FrameLoader::state):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::markLoadComplete):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::handleFallbackContent):
+        (WebCore::FrameLoader::isLoadingMainFrame):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueAfterWillSubmitForm):
+        (WebCore::FrameLoader::continueLoadRequestAfterNavigationPolicy):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadRequestAfterNewWindowPolicy):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterNewWindowPolicy:]):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterNavigationPolicy:]):
+        (-[WebCoreFrameLoaderAsDelegate continueAfterWillSubmitForm:]):
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+        * loader/mac/WebDocumentLoader.mm:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        * loader/mac/WebMainResourceLoader.h:
+        * loader/mac/WebMainResourceLoader.mm:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (-[WebCoreMainResourceLoaderAsPolicyDelegate continueAfterContentPolicy:]):
+        * loader/mac/WebSubresourceLoader.mm:
+        (-[WebCoreSubresourceHandle initWithLoader:]):
+        * platform/mac/ListBoxMac.mm:
+        (-[WebCoreTableView keyDown:]):
+        (-[WebCoreTableView keyUp:]):
+        * platform/mac/WebCoreTextField.mm:
+        (-[WebCoreTextFieldController textView:shouldHandleEvent:]):
+
 2006-10-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin.

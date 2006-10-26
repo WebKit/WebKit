@@ -26,39 +26,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef enum {
-    WebFrameStateProvisional,
-    
-    // This state indicates we are ready to commit to a page,
-    // which means the view will transition to use the new data source.
-    WebFrameStateCommittedPage,
-    
-    WebFrameStateComplete
-} WebFrameState;
+namespace WebCore {
 
-typedef enum {
-    WebPolicyUse,
-    WebPolicyDownload,
-    WebPolicyIgnore,
-} WebPolicyAction;
+    enum FrameState {
+        FrameStateProvisional,
+        // This state indicates we are ready to commit to a page,
+        // which means the view will transition to use the new data source.
+        FrameStateCommittedPage,
+        FrameStateComplete
+    };
 
-typedef enum {
-    FrameLoadTypeStandard,
-    FrameLoadTypeBack,
-    FrameLoadTypeForward,
-    FrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
-    FrameLoadTypeReload,
-    FrameLoadTypeReloadAllowingStaleData,
-    FrameLoadTypeSame,               // user loads same URL again (but not reload button)
-    FrameLoadTypeInternal,
-    FrameLoadTypeReplace
-} FrameLoadType;
+    enum PolicyAction {
+        PolicyUse,
+        PolicyDownload,
+        PolicyIgnore,
+    };
 
-typedef enum {
-    NavigationTypeLinkClicked,
-    NavigationTypeFormSubmitted,
-    NavigationTypeBackForward,
-    NavigationTypeReload,
-    NavigationTypeFormResubmitted,
-    NavigationTypeOther
-} NavigationType;
+    enum FrameLoadType {
+        FrameLoadTypeStandard,
+        FrameLoadTypeBack,
+        FrameLoadTypeForward,
+        FrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
+        FrameLoadTypeReload,
+        FrameLoadTypeReloadAllowingStaleData,
+        FrameLoadTypeSame,               // user loads same URL again (but not reload button)
+        FrameLoadTypeInternal,
+        FrameLoadTypeReplace
+    };
+
+    enum NavigationType {
+        NavigationTypeLinkClicked,
+        NavigationTypeFormSubmitted,
+        NavigationTypeBackForward,
+        NavigationTypeReload,
+        NavigationTypeFormResubmitted,
+        NavigationTypeOther
+    };
+
+}

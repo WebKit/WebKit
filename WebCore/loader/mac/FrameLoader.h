@@ -27,20 +27,25 @@
  */
 
 #import "FrameLoaderTypes.h"
-#import "RetainPtr.h"
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 
-@class DOMElement;
+#if PLATFORM(MAC)
+
+#import "RetainPtr.h"
+
 @class WebCoreFrameBridge;
 @class WebCoreFrameLoaderAsDelegate;
 @class WebPolicyDecider;
 
+#endif
+
 namespace WebCore {
 
     class DocumentLoader;
+    class Element;
     class FormState;
     class Frame;
     class FrameLoaderClient;
@@ -56,6 +61,7 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
+#if PLATFORM(MAC)
         // FIXME: This is not cool, people.
         void prepareForLoadStart();
         void setupForReplace();
@@ -67,7 +73,7 @@ namespace WebCore {
         void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
-        void load(NSURL *, NSString *referrer, FrameLoadType, NSString *target, NSEvent *event, DOMElement *form, NSDictionary *formValues);
+        void load(NSURL *, NSString *referrer, FrameLoadType, NSString *target, NSEvent *event, Element* form, NSDictionary *formValues);
 
         // Also not cool.
         void stopLoadingPlugIns();
@@ -90,7 +96,7 @@ namespace WebCore {
         DocumentLoader* activeDocumentLoader() const;
         DocumentLoader* documentLoader() const;
         DocumentLoader* provisionalDocumentLoader();
-        WebFrameState state() const;
+        FrameState state() const;
         static double timeOfLastCompletedLoad();
 
         bool defersCallbacks() const;
@@ -160,7 +166,7 @@ namespace WebCore {
 
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
-        void post(NSURL *, NSString *referrer, NSString *target, NSArray *postData, NSString *contentType, NSEvent *, DOMElement *form, NSDictionary *formValues);
+        void post(NSURL *, NSString *referrer, NSString *target, NSArray *postData, NSString *contentType, NSEvent *, Element* form, NSDictionary *formValues);
 
         void checkLoadComplete();
         void detachFromParent();
@@ -172,14 +178,16 @@ namespace WebCore {
         void setClient(FrameLoaderClient*);
         FrameLoaderClient* client() const;
 
-        void continueAfterWillSubmitForm(WebPolicyAction);
-        void continueAfterNewWindowPolicy(WebPolicyAction);
-        void continueAfterNavigationPolicy(WebPolicyAction);
+        void continueAfterWillSubmitForm(PolicyAction);
+        void continueAfterNewWindowPolicy(PolicyAction);
+        void continueAfterNavigationPolicy(PolicyAction);
         void continueLoadRequestAfterNavigationPolicy(NSURLRequest *, FormState*);
         void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
         void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, NSString *frameName, FormState*);
+#endif
 
     private:
+#if PLATFORM(MAC)
         // Also not cool.
         void startLoading();
         bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
@@ -209,7 +217,7 @@ namespace WebCore {
 
         bool isLoadingPlugIns() const;
 
-        void setState(WebFrameState);
+        void setState(FrameState);
 
         WebCoreFrameBridge *bridge() const;
 
@@ -220,22 +228,24 @@ namespace WebCore {
 
         void handleUnimplementablePolicy(NSError *);
         bool shouldReloadToHandleUnreachableURL(NSURLRequest *);
+#endif
 
         Frame* m_frame;
-        RetainPtr<WebCoreFrameLoaderAsDelegate> m_asDelegate;
+        FrameLoaderClient* m_client;
+
+        FrameState m_state;
+        FrameLoadType m_loadType;
 
         RefPtr<MainResourceLoader> m_mainResourceLoader;
         HashSet<RefPtr<WebResourceLoader> > m_subresourceLoaders;
         HashSet<RefPtr<WebResourceLoader> > m_plugInStreamLoaders;
     
-        FrameLoaderClient* m_client;
+#if PLATFORM(MAC)
+        RetainPtr<WebCoreFrameLoaderAsDelegate> m_asDelegate;
 
         RefPtr<DocumentLoader> m_documentLoader;
         RefPtr<DocumentLoader> m_provisionalDocumentLoader;
         RefPtr<DocumentLoader> m_policyDocumentLoader;
-
-        WebFrameState m_state;
-        FrameLoadType m_loadType;
 
         // state we'll need to continue after waiting for the policy delegate's decision
         RetainPtr<WebPolicyDecider> m_policyDecider;    
@@ -254,7 +264,8 @@ namespace WebCore {
         bool m_firstLayoutDone;
         bool m_quickRedirectComing;
         bool m_sentRedirectNotification;
-        bool m_isStoppingLoad;    
+        bool m_isStoppingLoad;
+#endif
     };
 
 }

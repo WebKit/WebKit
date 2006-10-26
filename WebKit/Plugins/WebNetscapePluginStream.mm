@@ -56,7 +56,7 @@ using namespace WebCore;
 
     WebFrameBridge *bridge = [[view webFrame] _bridge];
     BOOL hideReferrer;
-    if (![bridge canLoadURL:[theRequest URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
+    if (![bridge canLoadURL:[theRequest URL] fromReferrer:core([view webFrame])->referrer() hideReferrer:&hideReferrer])
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]
@@ -73,7 +73,7 @@ using namespace WebCore;
     if (hideReferrer)
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
 
-    _loader = NetscapePlugInStreamLoader::create([bridge _frame], self).release();
+    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), self).release();
     
     isTerminated = NO;
 

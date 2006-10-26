@@ -87,6 +87,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/FrameTree.h>
+#import <WebCore/Page.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSettings.h>
@@ -1542,20 +1544,14 @@ static bool debugWidget = true;
 
 - (void)_attachScriptDebuggerToAllFrames
 {
-    WebFrame *frame = [self mainFrame];
-    do {
-        [frame _attachScriptDebugger];
-        frame = [frame _nextFrameWithWrap:NO];
-    } while (frame);
+    for (Frame* frame = core([self mainFrame]); frame; frame = frame->tree()->traverseNext())
+        [kit(frame) _attachScriptDebugger];
 }
 
 - (void)_detachScriptDebuggerFromAllFrames
 {
-    WebFrame *frame = [self mainFrame];
-    do {
-        [frame _detachScriptDebugger];
-        frame = [frame _nextFrameWithWrap:NO];
-    } while (frame);
+    for (Frame* frame = core([self mainFrame]); frame; frame = frame->tree()->traverseNext())
+        [kit(frame) _detachScriptDebugger];
 }
 
 - (void)setBackgroundColor:(NSColor *)backgroundColor
@@ -1577,7 +1573,6 @@ static bool debugWidget = true;
 
 @end
 
-
 @implementation _WebSafeForwarder
 
 - initWithTarget: t defaultTarget: dt templateClass: (Class)aClass
@@ -1591,7 +1586,6 @@ static bool debugWidget = true;
     templateClass = aClass;
     return self;
 }
-
 
 // Used to send messages to delegates that implement informal protocols.
 + safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
@@ -2233,7 +2227,7 @@ NS_ENDHANDLER
 
 - (WebScriptObject *)windowScriptObject
 {
-    return [[[self mainFrame] _bridge] windowScriptObject];
+    return core([self mainFrame])->windowScriptObject();
 }
 
 // Get the appropriate user-agent string for a particular URL.
@@ -2483,8 +2477,10 @@ NS_ENDHANDLER
 
 static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
-    return forward ? [curr _nextFrameWithWrap:wrapFlag]
-                   : [curr _previousFrameWithWrap:wrapFlag];
+    Frame* coreFrame = core(curr);
+    return kit(forward
+        ? coreFrame->tree()->traverseNextWithWrap(wrapFlag)
+        : coreFrame->tree()->traversePreviousWithWrap(wrapFlag));
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
@@ -2507,12 +2503,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             // first time through
             if (frame == startFrame) {
                 // Remember if start even has a selection, to know if we need to search more later
-                if ([searchView isKindOfClass:[WebHTMLView class]]) {
+                if ([searchView isKindOfClass:[WebHTMLView class]])
                     // optimization for the common case, to avoid making giant string for selection
-                    startHasSelection = [[startFrame _bridge] selectedDOMRange] != nil;
-                } else if ([searchView conformsToProtocol:@protocol(WebDocumentText)]) {
+                    startHasSelection = [startFrame _hasSelection];
+                else if ([searchView conformsToProtocol:@protocol(WebDocumentText)])
                     startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
-                }
                 startSearchView = searchView;
             }
             
@@ -2569,12 +2564,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    WebFrameBridge *bridge = [self _bridgeForSelectedOrMainFrame];
-    if (bridge && [bridge selectionState] != WebSelectionStateRange) {
-        NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
-        if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+    WebFrame *frame = [self _selectedOrMainFrame];
+    if (frame && [frame _hasSelection]) {
+        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+        if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)])
             [(NSView <WebDocumentSelection> *)documentView writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
-        }
     }
 }
 
@@ -2608,7 +2602,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)removeDragCaret
 {
-    [[[self mainFrame] _bridge] removeDragCaret];
+    [_private->_pageBridge impl]->dragCaretController()->clear();
 }
 
 - (void)setMainFrameURL:(NSString *)URLString
@@ -2874,7 +2868,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->tabKeyCyclesThroughElements;
 }
 
-- (void)setScriptDebugDelegate:delegate
+- (void)setScriptDebugDelegate:(id)delegate
 {
     _private->scriptDebugDelegate = delegate;
     [_private->scriptDebugDelegateForwarder release];
@@ -2885,17 +2879,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         [self _detachScriptDebuggerFromAllFrames];
 }
 
-- scriptDebugDelegate
+- (id)scriptDebugDelegate
 {
     return _private->scriptDebugDelegate;
 }
 
 - (BOOL)shouldClose
 {
-    WebFrameBridge *bridge = [[self mainFrame] _bridge];
-    if (!bridge)
+    FrameMac* coreFrame = core([self mainFrame]);
+    if (!coreFrame)
         return YES;
-    return [bridge shouldClose];
+    return coreFrame->shouldClose();
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script
@@ -3148,7 +3142,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMRange *)selectedDOMRange
 {
-    return [[self _bridgeForSelectedOrMainFrame] selectedDOMRange];
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return nil;
+    return kit(coreFrame->selectionController()->toRange().get());
 }
 
 - (NSSelectionAffinity)selectionAffinity
@@ -3280,7 +3277,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text
 {
     // FIXME: Should this really be attached to the document with the current selection?
-    DOMCSSStyleDeclaration *decl = [[[self _bridgeForSelectedOrMainFrame] DOMDocument] createCSSStyleDeclaration];
+    DOMCSSStyleDeclaration *decl = [[[self _selectedOrMainFrame] DOMDocument] createCSSStyleDeclaration];
     [decl setCssText:text];
     return decl;
 }
