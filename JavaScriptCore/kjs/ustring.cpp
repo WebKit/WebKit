@@ -374,14 +374,6 @@ void UString::expandPreCapacity(int requiredPreCap)
   }
 }
 
-
-UString::UString(char c)
-{
-    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar)));
-    d[0] = c;
-    m_rep = Rep::create(d, 1);
-}
-
 UString::UString(const char *c)
 {
   if (!c) {

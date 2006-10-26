@@ -220,11 +220,7 @@ namespace KJS {
      */
     UString();
     /**
-     * Constructs a string from the single character c.
-     */
-    explicit UString(char c);
-    /**
-     * Constructs a string from a classical zero determined char string.
+     * Constructs a string from a classical zero-terminated char string.
      */
     UString(const char *c);
     /**

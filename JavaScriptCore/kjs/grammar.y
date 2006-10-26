@@ -203,7 +203,7 @@ Literal:
   | DIVEQUAL /* regexp with /= */       {
                                             Lexer *l = Lexer::curr();
                                             if (!l->scanRegExp()) YYABORT;
-                                            $$ = new RegExpNode(UString('=') + l->pattern, l->flags);
+                                            $$ = new RegExpNode("=" + l->pattern, l->flags);
                                         }
 ;
 

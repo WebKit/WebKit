@@ -1,3 +1,25 @@
+2006-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix iteration of properties of string objects (found because of a warning
+          emitted by the MSVC compiler)
+
+        * kjs/string_object.cpp: (StringInstance::getPropertyNames): Change code that
+        wants to format a number as a string to use UString::from. Before it was using
+        the UString constructor that makes a string from a character!
+
+        * kjs/ustring.h:
+        * kjs/ustring.cpp: Remove the dangerous and not all that helpful UString(char)
+        constructor.
+
+        * kjs/grammar.y: Change code to not depend on the UString(char) constructor.
+        This is potentially more efficient anyway because we could overload the + operator
+        some day to handle char* directly instead of creating a UString.
+
+        * kjs/nodes2string.cpp: (SourceStream::operator<<): Change code to not depend on
+        the UString(char) constructor.
+
 2006-10-25  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Steve (rubber stamp).

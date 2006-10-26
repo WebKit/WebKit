@@ -52,7 +52,8 @@ using namespace KJS;
 
 SourceStream& SourceStream::operator<<(char c)
 {
-  str += UString(c);
+  UChar ch(c);
+  str += UString(&ch, 1);
   return *this;
 }
 

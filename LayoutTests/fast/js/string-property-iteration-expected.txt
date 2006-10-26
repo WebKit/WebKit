@@ -1,0 +1,23 @@
+This page tests iteration of properties on the string object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WARN: shouldBe() expects string arguments
+FAIL 0 should be 5 (of type number). Was 0 (of type number).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 0 (of type number). Was undefined (of type undefined).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 1 (of type number). Was undefined (of type undefined).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 2 (of type number). Was undefined (of type undefined).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 3 (of type number). Was undefined (of type undefined).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 4 (of type number). Was undefined (of type undefined).
+WARN: shouldBe() expects string arguments
+FAIL undefined should be 5 (of type number). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
