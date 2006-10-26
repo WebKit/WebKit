@@ -1,3 +1,12 @@
+2006-10-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11412
+          Stray list item in coding/coding-style.html
+
+        * coding/coding-style.html:
+
 2006-10-25  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.
