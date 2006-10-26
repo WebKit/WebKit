@@ -315,18 +315,15 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& from, const Vis
 
 void ReplaceSelectionCommand::removeRedundantStyles()
 {
-    typedef HashMap<Node*, RefPtr<CSSMutableStyleDeclaration> > NodeStyleMap;
-
-    Node* node = m_firstNodeInserted.get();
-    
     // There's usually a top level style span that holds the document's default style, push it down.
+    Node* node = m_firstNodeInserted.get();
     if (isStyleSpan(node)) {
-        
-        RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(node, 0).computedStyle()->copyInheritableProperties();
-        
+        RefPtr<CSSMutableStyleDeclaration> parentStyle
+            = Position(node, 0).computedStyle()->copyInheritableProperties();
+
         RefPtr<Node> child = node->firstChild();
         while (child) {
-            Node* next = child->nextSibling();
+            RefPtr<Node> next = child->nextSibling();
             if (isStyleSpan(child.get())) {
                 HTMLElement* elem = static_cast<HTMLElement*>(child.get());
                 CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
@@ -347,7 +344,7 @@ void ReplaceSelectionCommand::removeRedundantStyles()
             }
             child = next;
         }
-        
+
         if (m_firstNodeInserted == node)
             m_firstNodeInserted = node->firstChild();
         if (m_lastNodeInserted == node)
@@ -355,71 +352,63 @@ void ReplaceSelectionCommand::removeRedundantStyles()
         removeNodePreservingChildren(node);
     }
     
-    node = m_firstNodeInserted.get();
-    
-    // Compute and save the non-redundant styles for all Elements.  Don't do any mutation here, because
-    // that would cause the diffs to trigger layouts.
-    NodeStyleMap map;
-    while (node) {
-        Node* next = node->traverseNextNode();
-        
-        if (!node->isHTMLElement()) {
-            node = next;
-            continue;
+    // Compute and save the non-redundant styles for all HTML elements.
+    // Don't do any mutation here, because that would cause the diffs to trigger layouts.
+    Vector<RefPtr<CSSMutableStyleDeclaration> > styles;
+    Vector<RefPtr<HTMLElement> > elements;
+    for (node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
+        if (node->isHTMLElement()) {
+            elements.append(static_cast<HTMLElement*>(node));
+            RefPtr<CSSMutableStyleDeclaration> style
+                = Position(node, 0).computedStyle()->copyInheritableProperties();
+            RefPtr<CSSMutableStyleDeclaration> parentStyle
+                = Position(node->parentNode(), 0).computedStyle()->copyInheritableProperties();
+            parentStyle->diff(style.get());
+            styles.append(style.release());
         }
-        
-        RefPtr<CSSMutableStyleDeclaration> style = Position(node, 0).computedStyle()->copyInheritableProperties();
-        RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(node->parentNode(), 0).computedStyle()->copyInheritableProperties();
-        
-        parentStyle->diff(style.get());
-        map.add(node, style);
-        
-        if (node == m_lastNodeInserted.get())
+        if (node == m_lastNodeInserted)
             break;
-            
-        node = next;
     }
     
-    NodeStyleMap::const_iterator e = map.end();
-    for (NodeStyleMap::const_iterator it = map.begin(); it != e; ++it) {
-        Node* node = it->first;
-        
-        // This node could have aleady been removed during pruning if one 
-        // of its descendants came off of the hash map iterator before it 
-        // and that descendant was a redundant style span or font tag.
-        if (!node->inDocument())
+    size_t count = styles.size();
+    for (size_t i = 0; i < count; ++i) {
+        HTMLElement* element = elements[i].get();
+
+        // Handle case where the element was already removed by earlier processing.
+        // It's possible this no longer occurs, but it did happen in an earlier version
+        // that processed elements in a less-determistic order, and I can't prove it
+        // does not occur.
+        if (!element->inDocument())
             continue;
-        
+
         // Remove empty style spans.
-        if (isStyleSpan(node) && !node->hasChildNodes()) {
-            removeNodeAndPruneAncestors(node);
+        if (isStyleSpan(element) && !element->hasChildNodes()) {
+            removeNodeAndPruneAncestors(element);
             continue;
         }
-        
-        RefPtr<CSSMutableStyleDeclaration> style = it->second;
-        if (style->length() == 0) {
-            // Remove redundant style tags and style spans.
-            if (isStyleSpan(node) ||
-                node->hasTagName(bTag) ||
-                node->hasTagName(fontTag) ||
-                node->hasTagName(iTag) ||
-                node->hasTagName(uTag)) {
-                if (node == m_firstNodeInserted.get())
-                    m_firstNodeInserted = node->traverseNextNode();
-                if (node == m_lastNodeInserted.get())
-                    m_lastNodeInserted = node->traverseNextNode();
-                removeNodePreservingChildren(node);
-                continue;
-            }
+
+        // Remove redundant style tags and style spans.
+        CSSMutableStyleDeclaration* style = styles[i].get();
+        if (style->length() == 0
+                && (isStyleSpan(element)
+                    || element->hasTagName(bTag)
+                    || element->hasTagName(fontTag)
+                    || element->hasTagName(iTag)
+                    || element->hasTagName(uTag))) {
+            if (element == m_firstNodeInserted)
+                m_firstNodeInserted = element->traverseNextNode();
+            if (element == m_lastNodeInserted)
+                m_lastNodeInserted = element->traverseNextNode();
+            removeNodePreservingChildren(element);
+            continue;
         }
-        
+
         // Clear redundant styles from elements.
-        HTMLElement* elem = static_cast<HTMLElement*>(node);
-        CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
+        CSSMutableStyleDeclaration* inlineStyleDecl = element->inlineStyleDecl();
         if (inlineStyleDecl) {
             inlineStyleDecl->removeInheritableProperties();
-            inlineStyleDecl->merge(style.get(), true);
-            setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
+            inlineStyleDecl->merge(style, true);
+            setNodeAttribute(element, styleAttr, inlineStyleDecl->cssText());
         }
     }
 }

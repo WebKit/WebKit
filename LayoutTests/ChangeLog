@@ -1,5 +1,15 @@
 2006-10-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - removed non-deterministic behavior in editing that was causing
+          give inconsistent results for editing/pasteboard/copy-paste-bidi.html
+
+        * editing/pasteboard/copy-paste-bidi-expected.txt: New results, without the
+        anonymous block that sometimes appeared and sometimes did not.
+
+2006-10-26  Darin Adler  <darin@apple.com>
+
         - oops, checked in failure results, not success
 
         * fast/js/string-property-iteration-expected.txt:
