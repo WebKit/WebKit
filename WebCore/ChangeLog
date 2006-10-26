@@ -1,3 +1,21 @@
+2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fix Qt/Linux build.
+
+        * platform/network/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::slotData):
+        (WebCore::ResourceLoaderManager::slotMimetype):
+        (WebCore::ResourceLoaderManager::remove):
+        (WebCore::ResourceLoaderManager::add):
+        * platform/network/qt/ResourceLoaderQt.cpp:
+        (WebCore::ResourceLoader::receivedResponse):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+        * platform/qt/LoaderFunctionsQt.cpp:
+        (WebCore::ServeSynchronousRequest):
+
 2006-10-26  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

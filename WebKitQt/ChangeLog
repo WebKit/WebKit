@@ -1,3 +1,14 @@
+2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fix Qt/Linux build.
+
+        * QtLauncher/main.cpp:
+        (main):
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::openUrl):
+
 2006-10-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.

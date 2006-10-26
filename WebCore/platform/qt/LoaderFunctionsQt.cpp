@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader* docLoader, ResourceLoader*, KURL& url, DeprecatedString&)
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const ResourceRequest&, KURL& url, DeprecatedString&)
 {
     // FIXME: Handle last paremeter: "responseHeaders"
     FrameQt* frame = QtFrame(docLoader->frame());

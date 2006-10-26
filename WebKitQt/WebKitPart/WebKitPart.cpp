@@ -66,8 +66,12 @@ bool WebKitPart::openFile()
 
 bool WebKitPart::openUrl(const KUrl& url)
 {
+    if (!m_client)
+        return false;
+
     emit started(0);
-    return m_frame->openURL(KURL(url.toEncoded()));
+    m_client->openURL(KURL(url.toEncoded()));
+    return true;
 }
 
 bool WebKitPart::closeUrl()

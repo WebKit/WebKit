@@ -1,3 +1,12 @@
+2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fix Qt/Linux build.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2006-10-24  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Maciej.

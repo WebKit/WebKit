@@ -111,7 +111,7 @@ void DumpRenderTree::open(const KURL& url)
         return;
     }
 
-    m_frame->openURL(url);
+    m_frame->client()->openURL(url);
 
     // Simple poll mechanism, to find out when the page is loaded...
     checkLoaded();

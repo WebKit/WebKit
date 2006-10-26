@@ -66,7 +66,7 @@ void FrameQtClientDefault::openURL(const KURL& url)
     m_frame->didOpenURL(url);
     m_assignedMimetype = false;
 
-    RequestRequest request(url);
+    ResourceRequest request(url);
     RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, m_frame->document() ? m_frame->document()->docLoader() : 0);
 }
 

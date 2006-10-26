@@ -94,8 +94,8 @@ void ResourceLoader::receivedResponse(PlatformResponse response)
     d->m_retrievedResponseEncoding = false;
     d->m_response = response;
 
-    if (d->client)
-        d->client->receivedResponse(const_cast<ResourceLoader*>(this), response);
+    if (d->m_client)
+        d->m_client->receivedResponse(const_cast<ResourceLoader*>(this), response);
 }
 
 QString ResourceLoader::extractCharsetFromHeaders(QString headers) const

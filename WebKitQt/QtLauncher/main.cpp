@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     else
         url = args->arg(0);
 
-    frame->openURL(KURL(url.toLatin1()));
+    QtFrame(frame)->client()->openURL(KURL(url.toLatin1()));
     
     app.exec();
     delete frame;
