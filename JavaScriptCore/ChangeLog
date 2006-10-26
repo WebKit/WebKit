@@ -1,3 +1,12 @@
+2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fix build with older gcc 3.3.4.
+
+        * kjs/DateMath.cpp: Remove inline prefix.
+        (KJS::equivalentYearForDST):
+
 2006-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
