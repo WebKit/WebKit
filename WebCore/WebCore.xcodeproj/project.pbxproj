@@ -1745,7 +1745,7 @@
 		A8185F3D09765766005826D9 /* DocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3509765765005826D9 /* DocumentFragment.h */; };
 		A8185F3E09765766005826D9 /* DOMImplementation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8185F3609765765005826D9 /* DOMImplementation.cpp */; };
 		A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8185F3709765765005826D9 /* DocumentFragment.cpp */; };
-		A8185F4009765766005826D9 /* Document.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3809765765005826D9 /* Document.h */; };
+		A8185F4009765766005826D9 /* Document.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3809765765005826D9 /* Document.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A818721B0977D3C0005826D9 /* NodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872100977D3C0005826D9 /* NodeList.h */; };
 		A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872110977D3C0005826D9 /* ContainerNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872130977D3C0005826D9 /* NameNodeList.h */; };
@@ -2167,7 +2167,7 @@
 		A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D06B380A265DCD005E7203 /* HTMLNames.cpp */; };
 		A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */; };
 		A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */; };
-		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; };
+		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */; };
 		A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */; };
 		A8DF3FD3097FA0FC0052981B /* HTMLBaseFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */; };
@@ -2701,7 +2701,7 @@
 		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
 		E1F0424709839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
-		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; };
+		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };

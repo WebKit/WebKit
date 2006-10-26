@@ -1098,15 +1098,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->advanceToNextMisspelling(true);
 }
 
-- (void)unmarkAllMisspellings
-{
-    Document *doc = m_frame->document();
-    if (!doc) {
-        return;
-    }
-    doc->removeMarkers(DocumentMarker::Spelling);
-}
-
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     int newZoomFactor = (int)rint(multiplier * 100);

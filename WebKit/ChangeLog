@@ -1,5 +1,16 @@
 2006-10-26  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Anders
+
+        * WebView/WebFrame.mm:
+        now includes <WebCore/Document.h> and <WebCore/DocumentMarker.h>
+        (-[WebFrame _unmarkAllBadGrammar]):
+        filled in guts
+        (-[WebFrame _unmarkAllMisspellings]):
+        rewrote to call Document directly, bypassing bridge
+
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
         * English.lproj/WebViewEditingContextMenu.nib/info.nib:
         * English.lproj/WebViewEditingContextMenu.nib/objects.nib:
         

@@ -1,3 +1,20 @@
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders.
+
+        Some changes to support new grammar checking code in WebKit.
+
+        * WebCore.exp:
+        added mangled symbol for Document->removeMarkers() so I can call it from WebKit
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Made Document.h and DocumentMarker.h private so I can include them from WebKit.
+        Made HTMLCollection.h private because Document.h uses it.
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        removed unmarkAllMisspellings(); WebKit now calls through to the Document directly
+
 2006-10-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

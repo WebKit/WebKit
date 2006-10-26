@@ -65,6 +65,8 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Document.h>
+#import <WebCore/DocumentMarker.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
@@ -967,15 +969,27 @@ DOMRange *kit(Range* range)
 #if !BUILDING_ON_TIGER
 - (void)_unmarkAllBadGrammar
 {
-    // FIXME: Implement this across the bridge a la _unmarkAllMisspellings
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        Document *doc = frame->document();
+        if (!doc)
+            return;
+
+        doc->removeMarkers(DocumentMarker::Grammar);
+    }
 }
 #endif
 
 - (void)_unmarkAllMisspellings
 {
     Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-        [Mac(frame)->bridge() unmarkAllMisspellings];
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        Document *doc = frame->document();
+        if (!doc)
+            return;
+
+        doc->removeMarkers(DocumentMarker::Spelling);
+    }
 }
 
 - (BOOL)_hasSelection
