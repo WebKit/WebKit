@@ -1,5 +1,14 @@
 2006-10-26  Darin Adler  <darin@apple.com>
 
+        - checked in some missing results
+          (if these are wrong we could remove or disable the test)
+
+        * svg/hixie/cascade/002-expected.checksum: Added.
+        * svg/hixie/cascade/002-expected.png: Added.
+        * svg/hixie/cascade/002-expected.txt: Added.
+
+2006-10-26  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - add a test for iteration of properties of string objects
