@@ -1,3 +1,14 @@
+2006-10-26  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Geoff.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11419
+        REGRESSION (r17299): Assertion failure in -[WebHTMLView(WebPrivate) _topHTMLView]
+        ([view isKindOfClass:[WebHTMLView class]]) when running the layout tests
+
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController mouseMoveToX:Y:]):
+
 2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

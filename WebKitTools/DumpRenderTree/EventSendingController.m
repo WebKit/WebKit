@@ -217,10 +217,11 @@ NSArray *webkitDomEventNames;
     if (subView) {
         if (down) {
             [subView mouseDragged:event];
-            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
-            [[frame webView] draggingUpdated:draggingInfo];
-        }
-        else
+            if (draggingInfo) {
+                [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
+                [[frame webView] draggingUpdated:draggingInfo];
+            }
+        } else
             [subView mouseMoved:event];
     }
 }
