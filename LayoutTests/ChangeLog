@@ -1,3 +1,11 @@
+2006-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * editing/execCommand/remove-formatting-expected.txt: Roll back results.
+        The ones just checked in showed the same kind of intermittent failure that
+        copy-paste-bidi.html used to show -- now we consistently get these results.
+
 2006-10-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
