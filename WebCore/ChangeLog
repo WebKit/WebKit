@@ -3,7 +3,7 @@
         Reviewed by Anders.
 
         - removed non-deterministic behavior in editing that was causing
-          give inconsistent results for editing/pasteboard/copy-paste-bidi.html
+          inconsistent results for editing/pasteboard/copy-paste-bidi.html
 
         * editing/ReplaceSelectionCommand.cpp:
         (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
