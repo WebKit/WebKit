@@ -1,5 +1,12 @@
 2006-10-26  Darin Adler  <darin@apple.com>
 
+        - oops, checked in failure results, not success
+
+        * fast/js/string-property-iteration-expected.txt:
+        Successful results.
+
+2006-10-26  Darin Adler  <darin@apple.com>
+
         - checked in some missing results
           (if these are wrong we could remove or disable the test)
 
