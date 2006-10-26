@@ -413,9 +413,7 @@ bool execRedo(Frame* frame, bool, const String&)
 
 bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 {
-    applyCommand(new ReplaceSelectionCommand(frame->document(),
-        createFragmentFromText(frame->selectionController()->toRange().get(), frame->selectionController()->toString()),
-        false, false, false, true, EditActionUnspecified));
+    frame->editor()->removeFormattingAndStyle();
     return true;
 }
 

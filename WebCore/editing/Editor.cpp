@@ -26,12 +26,19 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "ApplyStyleCommand.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "DeleteButtonController.h"
+#include "Document.h"
+#include "DocumentFragment.h"
 #include "EditorClient.h"
+#include "EditCommand.h"
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "markup.h"
 #include "Range.h"
+#include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Sound.h"
 
@@ -196,6 +203,33 @@ Frame::TriState Editor::selectionOrderedListState() const
     }
 
     return Frame::falseTriState;
+}
+
+void Editor::removeFormattingAndStyle()
+{
+    Document* document = frame()->document();
+    
+    // Make a plain text string from the selection to remove formatting like tables and lists.
+    RefPtr<DocumentFragment> text = createFragmentFromText(frame()->selectionController()->toRange().get(), frame()->selectionController()->toString());
+    
+    // Put the fragment made from that string into a style span with the document's
+    // default style to make sure that it is unstyled regardless of where it is inserted.
+    Position pos(document->documentElement(), 0);
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
+    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
+    
+    RefPtr<Element> span = createStyleSpanElement(document);
+    span->setAttribute(styleAttr, defaultStyle->cssText());
+    
+    ExceptionCode ec;
+    
+    while (text->lastChild())
+        span->appendChild(text->lastChild(), ec);
+    
+    RefPtr<DocumentFragment> fragment = new DocumentFragment(document);
+    fragment->appendChild(span, ec);
+    
+    applyCommand(new ReplaceSelectionCommand(document, fragment, false, false, false, true, EditActionUnspecified));
 }
 
 // =============================================================================

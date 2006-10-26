@@ -1,3 +1,21 @@
+2006-10-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <http://bugs.webkit.org/show_bug.cgi?id=11329>
+        Gmail Editor: Can't remove styling applied to selection after clicking "Remove Formatting" toolbar icon.
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::removeFormattingAndStyle): Moved from JSEditor.
+        Wrapped the plain text fragment in a style span with the document 
+        default style so that it will appear unstyled regardless of where
+        it is inserted.  Could have also inserted the plain text fragment 
+        and then applied the document default style to it, but there is not 
+        yet any redundant style prevention in ApplyStyleCommand, so this
+        is cleaner.
+        * editing/Editor.h:
+        * editing/JSEditor.cpp:
+
 2006-10-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.

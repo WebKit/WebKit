@@ -1,3 +1,16 @@
+2006-10-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=11329>
+        Gmail Editor: Can't remove styling applied to selection after clicking "Remove Formatting" toolbar icon.
+
+        * editing/execCommand/remove-formatting-2-expected.checksum: Added.
+        * editing/execCommand/remove-formatting-2-expected.png: Added.
+        * editing/execCommand/remove-formatting-2-expected.txt: Added.
+        * editing/execCommand/remove-formatting-2.html: Added.
+        * editing/execCommand/remove-formatting-expected.txt:
+
 2006-10-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.
