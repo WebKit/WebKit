@@ -2190,7 +2190,7 @@ static WebHTMLView *lastHitView = nil;
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
-            [menuItem setTitle:panelShowing ? UI_STRING("Hide Spelling", "menu item title") : UI_STRING("Show Spelling", "menu item title")];
+            [menuItem setTitle:panelShowing ? UI_STRING("Hide Spelling and Grammar", "menu item title") : UI_STRING("Show Spelling and Grammar", "menu item title")];
         }
 #endif
         return [self _canEdit];

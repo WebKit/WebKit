@@ -1,3 +1,14 @@
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
+        No review, just two localized string changes.
+        
+        * WebView/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
+        changed "Show/Hide Spelling" to "Show/Hide Spelling and Grammar" post-Tiger to match framework change
+
+        * English.lproj/Localizable.strings:
+        updated for these changes
+
 2006-10-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
