@@ -163,12 +163,12 @@
 
         Reviewed by Anders.
 
-        - removed non-deterministic behavior in editing that was causing
-          inconsistent results for editing/pasteboard/copy-paste-bidi.html
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11360
+          editing/pasteboard/copy-paste-bidi intermittently fails due to disappearance of anonymous RenderBlock
 
         * editing/ReplaceSelectionCommand.cpp:
         (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
-        Use two vectors instead of a map: more efficient, deterministic. There was no
+        Use two vectors instead of a hash map: more efficient, deterministic. There was no
         reason to use a hash table.
 
 2006-10-26  Maciej Stachowiak  <mjs@apple.com>
