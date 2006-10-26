@@ -150,7 +150,7 @@
 				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitOutputDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitSDKDir)\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
