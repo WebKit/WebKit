@@ -1,3 +1,32 @@
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        More plumbing for grammar checking. Still no grammars is checked.
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::):
+        added Grammar to enum of marker types; removed explicit enum values; removed unnecessary "enum"
+        
+        * platform/GraphicsContext.h:
+        renamed method drawLineForMisspelling to drawLineForMisspellingOrBadGrammar;
+        now takes a bool parameter for whether it represents bad grammar or a misspelling 
+        
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        Renamed from drawLineForMisspelling; uses green dot instead of red dot for grammar case. Changed
+        an existing "assert" to "ASSERT".
+        
+        * rendering/InlineTextBox.h:
+        renamed function paintSpellingMarker to paintSpellingOrGrammarMarker;
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        Renamed from paintSpellingMarker; now takes a bool parameter for whether it represents
+        bad grammar or a misspelling
+        (WebCore::InlineTextBox::paintAllMarkersOfType):
+        now handles markers of type Grammar
+
 === Safari-521.29 ===
         
 2006-10-26  Sam Weinig  <sam.weinig@gmail.com>

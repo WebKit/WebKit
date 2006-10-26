@@ -128,7 +128,7 @@ namespace WebCore {
         FloatRect roundToDevicePixels(const FloatRect&);
         
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
-        void drawLineForMisspelling(const IntPoint&, int width);
+        void drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar);
         
         bool paintingDisabled() const;
         void setPaintingDisabled(bool);

@@ -99,27 +99,54 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     [pool release];
 }
 
-void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
+void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
 {
     if (paintingDisabled())
         return;
         
-    // Constants for pattern color
+    // Constants for spelling pattern color
     static NSColor *spellingPatternColor = nil;
-    static bool usingDot = false;
+    static bool usingDotForSpelling = false;
+
+    // Constants for grammar pattern color
+    static NSColor *grammarPatternColor = nil;
+    static bool usingDotForGrammar = false;
+    
+    // These are the same for misspelling or bad grammar
     int patternHeight = cMisspellingLineThickness;
     int patternWidth = cMisspellingLinePatternWidth;
  
     // Initialize pattern color if needed
-    if (!spellingPatternColor) {
+    if (!grammar && !spellingPatternColor) {
         NSImage *image = [NSImage imageNamed:@"SpellingDot"];
-        assert(image); // if image is not available, we want to know
+        ASSERT(image); // if image is not available, we want to know
         NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
         if (color)
-            usingDot = true;
+            usingDotForSpelling = true;
         else
             color = [NSColor redColor];
         spellingPatternColor = [color retain];
+    }
+    
+    if (grammar && !grammarPatternColor) {
+        NSImage *image = [NSImage imageNamed:@"GrammarDot"];
+        ASSERT(image); // if image is not available, we want to know
+        NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
+        if (color)
+            usingDotForGrammar = true;
+        else
+            color = [NSColor greenColor];
+        grammarPatternColor = [color retain];
+    }
+    
+    bool usingDot;
+    NSColor *patternColor;
+    if (grammar) {
+        usingDot = usingDotForGrammar;
+        patternColor = grammarPatternColor;
+    } else {
+        usingDot = usingDotForSpelling;
+        patternColor = spellingPatternColor;
     }
 
     // Make sure to draw only complete dots.
@@ -142,7 +169,7 @@ void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];
     CGContextSaveGState(context);
 
-    [spellingPatternColor set];
+    [patternColor set];
 
     wkSetPatternPhaseInUserSpace(context, point);
 
