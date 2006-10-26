@@ -168,7 +168,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
         WebCoreFrameBridge *bridge = frame->bridge();
         
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().deprecatedString()).getNSURL()
+        [bridge objectLoadedFromCacheWithURL:(NSURL *)cachedObject->getCFURL()
                                     response:(NSURLResponse *)cachedObject->response()
                                         data:(NSData *)cachedObject->allData()];
         END_BLOCK_OBJC_EXCEPTIONS;

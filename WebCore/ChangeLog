@@ -1,3 +1,16 @@
+2006-10-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - .5% speed improvement by avoiding excess CFURLRef allocation
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::getCFURL): New method. For Mac only (for now), cache the CFURL
+        here for later reuse.
+        * loader/CachedResource.h:
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus): Use the cached CFURL, don't make a whole new one.
+
 2006-10-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
