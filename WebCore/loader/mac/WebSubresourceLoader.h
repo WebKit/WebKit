@@ -48,7 +48,7 @@ namespace WebCore {
 
     private:
         static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            NSMutableURLRequest *, NSString *method, NSDictionary *customHeaders, NSString *referrer);
+            NSMutableURLRequest *, NSDictionary *customHeaders, NSString *referrer);
 
         SubresourceLoader(Frame*, id <WebCoreResourceLoader>);
         id <WebCoreResourceHandle> handle();

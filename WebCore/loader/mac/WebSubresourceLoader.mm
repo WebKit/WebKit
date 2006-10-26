@@ -64,13 +64,11 @@ SubresourceLoader::~SubresourceLoader()
 }
 
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
-    NSMutableURLRequest *newRequest, NSString *method, NSDictionary *customHeaders, NSString *referrer)
+    NSMutableURLRequest *newRequest, NSDictionary *customHeaders, NSString *referrer)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == WebFrameStateProvisional)
         return nil;
-
-    [newRequest setHTTPMethod:method];
 
     wkSupportsMultipartXMixedReplace(newRequest);
 
@@ -102,8 +100,9 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
     NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer)
 {
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, method, customHeaders, referrer);
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];    
+    [newRequest setHTTPMethod:method];
+    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, customHeaders, referrer);
     [newRequest release];
     return handle;
 }
@@ -112,8 +111,11 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
     NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer)
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
+    // Once this is fixed we can pass the method to create like we used to.
+    [newRequest setHTTPMethod:method];
     webSetHTTPBody(newRequest, postData);
-    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, method, customHeaders, referrer);
+    id <WebCoreResourceHandle> handle = create(frame, rLoader, newRequest, customHeaders, referrer);
     [newRequest release];
     return handle;
 }

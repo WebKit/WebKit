@@ -1,3 +1,15 @@
+2006-10-25  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4799088>
+        REGRESSION: Translation widget fails to convert data and reports a "Data unavailable" error.
+
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        (-[WebCoreSubresourceHandle initWithLoader:]):
+        Set the HTTP method before the HTTP body.
+
 2006-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam.
