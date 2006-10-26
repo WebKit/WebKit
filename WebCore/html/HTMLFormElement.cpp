@@ -240,16 +240,16 @@ bool HTMLFormElement::formData(FormData& result) const
                     // include the filename
                     if (current->hasLocalName(inputTag) &&
                         static_cast<HTMLInputElement*>(current)->inputType() == HTMLInputElement::FILE) {
-                        DeprecatedString path = static_cast<HTMLInputElement*>(current)->value().deprecatedString();
+                        String path = static_cast<HTMLInputElement*>(current)->value();
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF. This also does strange
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        int start = path.findRev('/') + 1;
+                        int start = path.reverseFind('/') + 1;
                         int length = path.length() - start;
-                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.unicode() + start), length, true);
+                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.characters() + start), length, true);
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {

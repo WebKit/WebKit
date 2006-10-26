@@ -800,6 +800,81 @@ int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
     }
 }
 
+int StringImpl::reverseFind(const UChar c, int index) const
+{
+    if (index >= (int)m_length)
+        return -1;
+
+    if (index < 0)
+        index += m_length;
+    while (1) {
+        if (m_data[index] == c)
+            return index;
+        if (index == 0)
+            return -1;
+        index--;
+    }
+}
+
+int StringImpl::reverseFind(const StringImpl* str, int index, bool caseSensitive) const
+{
+    // FIXME, use the first character algorithm
+    /*
+     See StringImpl::find() for explanations.
+     */
+    ASSERT(str);
+    int lthis = m_length;
+    if (index < 0)
+        index += lthis;
+    
+    int lstr = str->m_length;
+    int delta = lthis - lstr;
+    if ( index < 0 || index > lthis || delta < 0 )
+        return -1;
+    if ( index > delta )
+        index = delta;
+    
+    const UChar *uthis = m_data;
+    const UChar *ustr = str->m_data;
+    unsigned hthis = 0;
+    unsigned hstr = 0;
+    int i;
+    if (caseSensitive) {
+        for ( i = 0; i < lstr; i++ ) {
+            hthis += uthis[index + i];
+            hstr += ustr[i];
+        }
+        i = index;
+        while (1) {
+            if (hthis == hstr && memcmp(uthis + i, ustr, lstr * sizeof(UChar)) == 0)
+                return i;
+            if (i == 0)
+                return -1;
+            i--;
+            hthis -= uthis[i + lstr];
+            hthis += uthis[i];
+        }
+    } else {
+        for (i = 0; i < lstr; i++) {
+            hthis += tolower(uthis[index + i]);
+            hstr += tolower(ustr[i]);
+        }
+        i = index;
+        while (1) {
+            if (hthis == hstr && equalIgnoringCase(uthis + i, ustr, lstr) )
+                return i;
+            if (i == 0)
+                return -1;
+            i--;
+            hthis -= tolower(uthis[i + lstr]);
+            hthis += tolower(uthis[i]);
+        }
+    }
+    
+    // Should never get here.
+    return -1;
+}
+
 bool StringImpl::endsWith(const StringImpl* m_data, bool caseSensitive) const
 {
     ASSERT(m_data);

@@ -414,7 +414,7 @@ bool Decoder::checkForCSSCharset(const char* data, size_t len, bool& movedDataTo
                 if (pos == dataEnd)
                     return false;
 
-                DeprecatedCString encodingName(dataStart, pos - dataStart + 1);
+                CString encodingName(dataStart, pos - dataStart + 1);
                 
                 ++pos;
                 if (!skipWhitespace(pos, dataEnd))

@@ -1,3 +1,22 @@
+2006-10-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Add reverseFind to String and use it instead of findRev.
+        Use CString instead of DeprecatedCString in one place.
+        
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * ksvg2/svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::getTarget):
+        * loader/Decoder.cpp:
+        (WebCore::Decoder::checkForCSSCharset):
+        * platform/PlatformString.h:
+        (WebCore::String::reverseFind):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::reverseFind):
+        * platform/StringImpl.h:
+
 2006-10-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

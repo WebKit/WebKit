@@ -81,6 +81,11 @@ public:
         { return m_impl ? m_impl->find(str, start, caseSensitive) : -1; }
     int find(const String& str, int start = 0, bool caseSensitive = true) const
         { return m_impl ? m_impl->find(str.impl(), start, caseSensitive) : -1; }
+
+    int reverseFind(UChar c, int start = -1) const
+        { return m_impl ? m_impl->reverseFind(c, start) : -1; }
+    int reverseFind(const String& str, int start = -1, bool caseSensitive = true) const
+        { return m_impl ? m_impl->reverseFind(str.impl(), start, caseSensitive) : -1; }
     
     bool startsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->startsWith(s.impl(), caseSensitive) : s.isEmpty(); }
