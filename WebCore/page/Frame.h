@@ -597,6 +597,8 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
   virtual void redirectDataToPlugin(Widget* pluginWidget) { }
+  virtual void setupRootForPrinting(bool onOrOff) { }
+  virtual Vector<IntRect> computePageRects(const IntRect& printRect, float userScaleFactor) { return Vector<IntRect>(); }
 protected:
   virtual Plugin* createPlugin(Element* node, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
