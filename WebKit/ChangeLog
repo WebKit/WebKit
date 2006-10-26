@@ -1,3 +1,10 @@
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
+        * English.lproj/WebViewEditingContextMenu.nib/info.nib:
+        * English.lproj/WebViewEditingContextMenu.nib/objects.nib:
+        
+        Changed "Spelling" to "Spelling and Grammar" in context menu for post-Tiger.
+
 === Safari-521.29 ===
 
 2006-10-26  John Sullivan  <sullivan@apple.com>
