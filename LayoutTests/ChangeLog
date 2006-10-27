@@ -1,3 +1,22 @@
+2006-10-27  Darin Adler  <darin@apple.com>
+
+        - new test results for a couple of tests
+
+        * fast/js/kde/RegExp-expected.txt: Affected by the change to decode \u
+        sequences in JavaScript regular expression at the lexer level.
+
+        * http/tests/navigation/success200-reload-expected.txt: For some reason,
+        this is consistently not dumping the "scrolled" line any more -- since the
+        purpose of the test has nothing to do with that, landing new results.
+
+2006-10-26  W. Andy Carrel  <wac@google.com>
+
+        Reviewed by Maciej.
+
+        * tests/mozilla/ecma_2/RegExp/properties-001.js: Changed test to look
+        for Unicode character rather than the '\u' escaped equivalent for
+        .source and .toString().
+
 2006-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
