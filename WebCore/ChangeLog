@@ -1,3 +1,19 @@
+2006-10-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej,
+
+        <rdar://problem/4003820> Expose blockquotes in AXAttributedStringForTextMarkerRange
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (blockquoteLevel):
+        Calculate and return the blockquote level of the element.
+        
+        (AXAttributeStringSetBlockquoteLevel):
+        Add, if non-zero, or clear the block quote level attribute.
+        
+        (AXAttributedStringAppendText):
+        Send AXAttributeStringSetBlockquoteLevel.
+
 2006-10-27  Darin Adler  <darin@apple.com>
 
         - fix one error in the Qt build

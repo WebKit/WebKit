@@ -325,6 +325,17 @@ using namespace HTMLNames;
     return nil;
 }
 
+static int blockquoteLevel(RenderObject* renderer)
+{
+    int result = 0;
+    for (Node* node = renderer->element(); node; node = node->parent()) {
+        if (node->hasTagName(blockquoteTag))
+            result += 1;
+    }
+    
+    return result;
+}
+
 static int headingLevel(RenderObject* renderer)
 {
     if (!renderer->isBlockFlow())
@@ -1456,6 +1467,16 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
         [attrString removeAttribute:@"AXHeadingLevel" range:range];
 }
 
+static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
+{
+    int quoteLevel = blockquoteLevel(renderer);
+    
+    if (quoteLevel)
+        [attrString addAttribute:@"AXBlockQuoteLevel" value:[NSNumber numberWithInt:quoteLevel] range:range];
+    else
+        [attrString removeAttribute:@"AXBlockQuoteLevel" range:range];
+}
+
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, id element, NSRange range)
 {
     if (element != nil) {
@@ -1535,6 +1556,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
+    AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
