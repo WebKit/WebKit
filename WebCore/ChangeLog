@@ -1,3 +1,21 @@
+2006-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady.
+
+        Fixed semantic inaccuracy in String::operator NSString *(), where a NULL
+        String became an empty NSString *, instead of nil. This will become important
+        as we start using this conversion more.
+        
+        Added work-around for AppKit crash that semantic accuracy revealed.
+        
+        No testcase because I don't think there's a way to reflect this change
+        in a webpage yet.
+
+        * platform/PlatformString.h:
+        (WebCore::String::operator NSString*):
+        * platform/mac/TextFieldMac.mm:
+        (-[NSSearchFieldCell _addStringToRecentSearches:]):
+
 2006-10-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej,

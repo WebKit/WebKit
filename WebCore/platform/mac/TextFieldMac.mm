@@ -133,9 +133,12 @@ void TextField::setColors(const Color& background, const Color& foreground)
 
 void TextField::setText(const String& s)
 {
+    // Work around <rdar://problem/4806786> -[NSCell setStringValue:nil] throws an exception
+    String nullSafeStringValue = s.isNull() ? "" : s;
+
     NSTextField *textField = (NSTextField *)getView();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [textField setStringValue:s];
+    [textField setStringValue:nullSafeStringValue];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

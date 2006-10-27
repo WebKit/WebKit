@@ -156,7 +156,7 @@ public:
 
 #ifdef __OBJC__
     String(NSString*);
-    operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
+    operator NSString*() const { if (!m_impl) return nil; return *m_impl; }
 #endif
 
 #if PLATFORM(QT)
