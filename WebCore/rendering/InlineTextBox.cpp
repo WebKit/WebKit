@@ -278,7 +278,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (haveMarkedText  && !markedTextUsesUnderlines)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
 
-        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
+        paintDocumentMarkers(i.p, tx, ty, styleToUse, font, true);
 
         if (haveSelection)
             paintSelection(i.p, tx, ty, styleToUse, font);
@@ -390,7 +390,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     }
 
     if (i.phase != PaintPhaseSelection) {
-        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::Spelling, styleToUse, font);
+        paintDocumentMarkers(i.p, tx, ty, styleToUse, font, false);
 
         for (size_t index = 0; index < numUnderlines; ++index) {
             const MarkedTextUnderline& underline = (*underlines)[index];
@@ -608,7 +608,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
     }
 }
 
-void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty, DocumentMarker::MarkerType markerType, RenderStyle* style, const Font* f)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int _tx, int _ty, RenderStyle* style, const Font* f, bool background)
 {
     Vector<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
     Vector<DocumentMarker>::iterator markerIt = markers.begin();
@@ -618,9 +618,23 @@ void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty,
     for ( ; markerIt != markers.end(); markerIt++) {
         DocumentMarker marker = *markerIt;
         
-        if (marker.type != markerType)
-            continue;
-        
+        // Paint either the background markers or the foreground markers, but not both
+        switch (marker.type) {
+            case DocumentMarker::Grammar:
+            case DocumentMarker::Spelling:
+                if (background)
+                    continue;
+                break;
+                
+            case DocumentMarker::TextMatch:
+                if (!background)
+                    continue;
+                break;
+            
+            default:
+                ASSERT_NOT_REACHED();
+        }
+
         if (marker.endOffset <= start())
             // marker is completely before this run.  This might be a marker that sits before the
             // first run we draw, or markers that were within runs we skipped due to truncation.
@@ -631,15 +645,18 @@ void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty,
             break;
         
         // marker intersects this run.  Paint it.
-        switch (markerType) {
+        switch (marker.type) {
             case DocumentMarker::Spelling:
                 paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, false);
+                break;
+            case DocumentMarker::Grammar:
+                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, true);
                 break;
             case DocumentMarker::TextMatch:
                 paintTextMatchMarker(pt, _tx, _ty, marker, style, f);
                 break;
             default:
-                assert(false);
+                ASSERT_NOT_REACHED();
         }
 
         if (marker.endOffset > end() + 1)

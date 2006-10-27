@@ -1,3 +1,20 @@
+2006-10-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        Some more grammar-checking plumbing. No additional grammar jokes will have been made by the time
+        you haven't not finished reading this.
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        Updated for changed signature of paintDocumentMarkers, which causes grammar markers to be
+        considered also.
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        Renamed from paintAllMarkersOfType; now takes a bool for whether background or foreground
+        markers should be painted, instead of a marker type. This avoids walking the collection of
+        markers multiple times back to back. Now handles grammar markers.
+
 2006-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Beth.
