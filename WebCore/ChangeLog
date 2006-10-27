@@ -1,3 +1,43 @@
+2006-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, Maciej.
+
+        Removed many uses of NSString *.
+        Moved a few methods from WebCoreFrameBridge to FrameLoader, replacing 
+        stringByCollapsingNonPrintingCharacters with a c++ equivalent.
+        
+        PLT says no performance regression.
+        
+        * WebCore.exp:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        * loader/mac/FrameLoader.h:
+        * loader/mac/FrameLoader.mm:
+        (WebCore::FrameLoader::setupForReplaceByMIMEType):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::canShowMIMEType):
+        (WebCore::FrameLoader::representationExistsForURLScheme):
+        (WebCore::FrameLoader::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::invalidatePendingPolicyDecision):
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::continueLoadRequestAfterNewWindowPolicy):
+        (WebCore::FrameLoader::post):
+        * loader/mac/WebDocumentLoader.h:
+        * loader/mac/WebDocumentLoader.mm:
+        (WebCore::DocumentLoader::doesProgressiveLoad):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::title):
+        (WebCore::DocumentLoader::setOverrideEncoding):
+        (WebCore::DocumentLoader::overrideEncoding):
+        (WebCore::DocumentLoader::setTitle):
+        * loader/mac/WebFrameLoaderClient.h:
+        * loader/mac/WebMainResourceLoader.mm:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+
 2006-10-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

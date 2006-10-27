@@ -30,6 +30,7 @@
 
 #import "WebFrameInternal.h"
 #import <WebCore/FrameMac.h>
+#import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebKit/DOMElement.h>
@@ -280,7 +281,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     [m_webFrame.get() _dispatchDidStartProvisionalLoadForFrame];
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveTitle(NSString *title)
+void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 {
     [m_webFrame.get() _dispatchDidReceiveTitle:title];
 }
@@ -320,14 +321,12 @@ void WebFrameLoaderClient::dispatchShow()
     [m_webFrame.get() _dispatchShow];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(WebPolicyDecider *decider, NSString *MIMEType,
-    NSURLRequest *request)
+void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(WebPolicyDecider *decider, const String& MIMEType, NSURLRequest *request)
 {
     [m_webFrame.get() _dispatchDecidePolicyForMIMEType:MIMEType request:request decider:decider];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *decider, NSDictionary *action,
-    NSURLRequest *request, NSString *frameName)
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *decider, NSDictionary *action, NSURLRequest *request, const String& frameName)
 {
     [m_webFrame.get() _dispatchDecidePolicyForNewWindowAction:action request:request newFrameName:frameName
         decider:decider];
@@ -506,17 +505,17 @@ bool WebFrameLoaderClient::canHandleRequest(NSURLRequest *request) const
     return [m_webFrame.get() _canHandleRequest:request];
 }
 
-bool WebFrameLoaderClient::canShowMIMEType(NSString *MIMEType) const
+bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const
 {
     return [m_webFrame.get() _canShowMIMEType:MIMEType];
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(NSString *URLScheme) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
 {
     return [m_webFrame.get() _representationExistsForURLScheme:URLScheme];
 }
 
-NSString *WebFrameLoaderClient::generatedMIMETypeForURLScheme(NSString *URLScheme) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLScheme) const
 {
     return [m_webFrame.get() _generatedMIMETypeForURLScheme:URLScheme];
 }

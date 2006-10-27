@@ -57,9 +57,8 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     
     const KURL& url = request.m_request.url();
 
-    NSString *frameName = request.m_frameName.isEmpty() ? nil : (NSString*)request.m_frameName;
-    if (frameName) {
-        if (Frame* frame = m_frame->tree()->find(frameName)) {
+    if (!request.m_frameName.isEmpty()) {
+        if (Frame* frame = m_frame->tree()->find(request.m_frameName)) {
             if (!url.isEmpty())
                 Mac(frame)->loadRequest(request, true, nil, nil, nil);
             [Mac(frame)->bridge() activateWindow];

@@ -36,6 +36,7 @@ namespace WebCore {
     class DocumentLoader;
     class Element;
     class Frame;
+    class String;
     class WebResourceLoader;
 
     struct LoadErrorResetToken;
@@ -103,7 +104,7 @@ namespace WebCore {
         virtual void dispatchWillClose() = 0;
         virtual void dispatchDidReceiveIcon(NSImage *) = 0;
         virtual void dispatchDidStartProvisionalLoad() = 0;
-        virtual void dispatchDidReceiveTitle(NSString *title) = 0;
+        virtual void dispatchDidReceiveTitle(const String& title) = 0;
         virtual void dispatchDidCommitLoad() = 0;
         virtual void dispatchDidFailProvisionalLoad(NSError *) = 0;
         virtual void dispatchDidFailLoad(NSError *) = 0;
@@ -113,8 +114,8 @@ namespace WebCore {
         virtual Frame* dispatchCreatePage(NSURLRequest *) = 0;
         virtual void dispatchShow() = 0;
 
-        virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, NSString *MIMEType, NSURLRequest *) = 0;
-        virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, NSString *frameName) = 0;
+        virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, const String& MIMEType, NSURLRequest *) = 0;
+        virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, const String& frameName) = 0;
         virtual void dispatchDecidePolicyForNavigationAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *) = 0;
         virtual void dispatchUnableToImplementPolicy(NSError *) = 0;
 
@@ -164,9 +165,9 @@ namespace WebCore {
         virtual void clearArchivedResources() = 0;
 
         virtual bool canHandleRequest(NSURLRequest *) const = 0;
-        virtual bool canShowMIMEType(NSString *MIMEType) const = 0;
-        virtual bool representationExistsForURLScheme(NSString *URLScheme) const = 0;
-        virtual NSString *generatedMIMETypeForURLScheme(NSString *URLScheme) const = 0;
+        virtual bool canShowMIMEType(const String& MIMEType) const = 0;
+        virtual bool representationExistsForURLScheme(const String& URLScheme) const = 0;
+        virtual String generatedMIMETypeForURLScheme(const String& URLScheme) const = 0;
 
         virtual NSDictionary *elementForEvent(NSEvent *) const = 0;
 

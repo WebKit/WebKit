@@ -27,6 +27,7 @@
  */
 
 #import "FrameLoaderTypes.h"
+#import <WebCore/PlatformString.h>
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
@@ -50,6 +51,7 @@ namespace WebCore {
     class Frame;
     class FrameLoaderClient;
     class MainResourceLoader;
+    class String;
     class WebResourceLoader;
 
     bool isBackForwardLoadType(FrameLoadType);
@@ -65,15 +67,18 @@ namespace WebCore {
         // FIXME: This is not cool, people.
         void prepareForLoadStart();
         void setupForReplace();
-        void setupForReplaceByMIMEType(NSString *newMIMEType);
+        void setupForReplaceByMIMEType(const String& newMIMEType);
         void finalSetupForReplace(DocumentLoader*);
         void safeLoad(NSURL *);
         void load(NSURLRequest *);
-        void load(NSURLRequest *, NSString *frameName);
+        void load(NSURLRequest *, const String& frameName);
         void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
-        void load(NSURL *, NSString *referrer, FrameLoadType, NSString *target, NSEvent *event, Element* form, NSDictionary *formValues);
+        void load(NSURL *, const String& referrer, FrameLoadType, const String& target, 
+                  NSEvent *event, Element* form, NSDictionary *formValues);
+
+        bool canLoad(NSURL *, const String& referrer, bool& hideReferrer);
 
         // Also not cool.
         void stopLoadingPlugIns();
@@ -82,7 +87,7 @@ namespace WebCore {
         void stopLoading();
         void cancelMainResourceLoad();
         void cancelPendingArchiveLoad(WebResourceLoader*);
-            
+
         void addPlugInStreamLoader(WebResourceLoader*);
         void removePlugInStreamLoader(WebResourceLoader*);
         bool isLoadingMainResource() const;
@@ -131,15 +136,15 @@ namespace WebCore {
         NSError *interruptionForPolicyChangeError(NSURLRequest *);
         bool isHostedByObjectElement() const;
         bool isLoadingMainFrame() const;
-        bool canShowMIMEType(NSString *MIMEType) const;
-        bool representationExistsForURLScheme(NSString *URLScheme);
-        NSString *generatedMIMETypeForURLScheme(NSString *URLScheme);
+        bool canShowMIMEType(const String& MIMEType) const;
+        bool representationExistsForURLScheme(const String& URLScheme);
+        String generatedMIMETypeForURLScheme(const String& URLScheme);
         void notifyIconChanged(NSURL *iconURL);
         void checkNavigationPolicy(NSURLRequest *newRequest, id continuationObject, SEL continuationSelector);
-        void checkContentPolicy(NSString *MIMEType, id continuationObject, SEL continuationSelector);
+        void checkContentPolicy(const String& MIMEType, id continuationObject, SEL continuationSelector);
         void cancelContentPolicyCheck();
         void reload();
-        void reloadAllowingStaleData(NSString *overrideEncoding);
+        void reloadAllowingStaleData(const String& overrideEncoding);
 
         void didReceiveServerRedirectForProvisionalLoadForFrame();
         void finishedLoadingDocument(DocumentLoader*);
@@ -166,7 +171,7 @@ namespace WebCore {
 
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
-        void post(NSURL *, NSString *referrer, NSString *target, NSArray *postData, NSString *contentType, NSEvent *, Element* form, NSDictionary *formValues);
+        void post(NSURL *, const String& referrer, const String& target, NSArray *postData, const String& contentType, NSEvent *, Element* form, NSDictionary *formValues);
 
         void checkLoadComplete();
         void detachFromParent();
@@ -183,7 +188,7 @@ namespace WebCore {
         void continueAfterNavigationPolicy(PolicyAction);
         void continueLoadRequestAfterNavigationPolicy(NSURLRequest *, FormState*);
         void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
-        void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, NSString *frameName, FormState*);
+        void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, const String& frameName, FormState*);
 #endif
 
     private:
@@ -205,7 +210,7 @@ namespace WebCore {
         void setLoadType(FrameLoadType);
 
         void invalidatePendingPolicyDecision(bool callDefaultAction);
-        void checkNewWindowPolicy(NSURLRequest *, NSDictionary *, NSString *frameName, PassRefPtr<FormState>);
+        void checkNewWindowPolicy(NSURLRequest *, NSDictionary *, const String& frameName, PassRefPtr<FormState>);
         void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>, id continuationObject, SEL continuationSelector);
 
         void transitionToCommitted(NSDictionary *pageCache);
@@ -251,7 +256,7 @@ namespace WebCore {
         RetainPtr<WebPolicyDecider> m_policyDecider;    
 
         RetainPtr<NSURLRequest> m_policyRequest;
-        RetainPtr<NSString> m_policyFrameName;
+        String m_policyFrameName;
         RetainPtr<id> m_policyTarget;
         SEL m_policySelector;
         RefPtr<FormState> m_policyFormState;

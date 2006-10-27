@@ -34,6 +34,7 @@
 #import "Cache.h"
 #import "ClipboardEvent.h"
 #import "Cursor.h"
+#import "WebDocumentLoader.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
 #import "Decoder.h"
@@ -187,18 +188,18 @@ void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NS
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    NSString *referrer;
+    String referrer;
     String argsReferrer = request.m_request.httpReferrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
         referrer = FrameMac::referrer();
  
-    BOOL hideReferrer;
-    if (![_bridge canLoadURL:request.m_request.url().getNSURL() fromReferrer:referrer hideReferrer:&hideReferrer])
+    bool hideReferrer;
+    if (!loader()->canLoad(request.m_request.url().getNSURL(), referrer, hideReferrer))
         return;
     if (hideReferrer)
-        referrer = nil;
+        referrer = String();
            
     WebCoreFrameBridge *targetFrame = Mac(tree()->find(request.m_frameName))->bridge();
     if (![_bridge canTargetLoadInFrame:targetFrame])
@@ -626,14 +627,10 @@ void FrameMac::setView(FrameView *view)
     d->m_submittedFormURL = KURL();
 }
 
+// FIXME: Remove this method; it's superfluous.
 void FrameMac::setTitle(const String &title)
 {
-    String text = title;
-    text.replace('\\', backslashAsCurrencySymbol());
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge setTitle:text];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    loader()->documentLoader()->setTitle(title);
 }
 
 void FrameMac::setStatusBarText(const String& status)

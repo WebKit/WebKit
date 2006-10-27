@@ -28,6 +28,7 @@
 
 #include "RetainPtr.h"
 #include "Shared.h"
+#include "PlatformString.h"
 #include <wtf/Vector.h>
 
 @class WebCoreFrameBridge;
@@ -67,7 +68,7 @@ namespace WebCore {
         void setLoading(bool);
         void updateLoading();
         void receivedData(NSData *);
-        void setupForReplaceByMIMEType(NSString *newMIMEType);
+        void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
         NSURLResponse *response() const;
         NSError *mainDocumentError() const;
@@ -78,17 +79,17 @@ namespace WebCore {
         void setIsClientRedirect(bool);
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
-        void setTitle(NSString *);
-        NSString *overrideEncoding() const;
+        void setTitle(const String&);
+        String overrideEncoding() const;
         void addResponse(NSURLResponse *);
         const ResponseVector& responses() const;
         NSDictionary *triggeringAction() const;
         void setTriggeringAction(NSDictionary *);
-        void setOverrideEncoding(NSString *);
+        void setOverrideEncoding(const String&);
         void setLastCheckedRequest(NSURLRequest *request);
         NSURLRequest *lastCheckedRequest() const;
         void stopRecordingResponses();
-        NSString *title() const;
+        String title() const;
         NSURL *URLForHistory() const;
 
     private:
@@ -100,7 +101,7 @@ namespace WebCore {
         WebCoreFrameBridge *bridge() const;
         void setMainDocumentError(NSError *);
         void commitLoad(NSData *);
-        bool doesProgressiveLoad(NSString *MIMEType) const;
+        bool doesProgressiveLoad(const String& MIMEType) const;
 
         Frame* m_frame;
 
@@ -135,10 +136,9 @@ namespace WebCore {
         bool m_primaryLoadComplete;
         bool m_isClientRedirect;
 
-        RetainPtr<NSString> m_pageTitle;
+        String m_pageTitle;
 
-        RetainPtr<NSString> m_encoding;
-        RetainPtr<NSString> m_overrideEncoding;
+        String m_overrideEncoding;
 
         // The action that triggered loading - we keep this around for the
         // benefit of the various policy handlers.

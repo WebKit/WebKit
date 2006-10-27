@@ -31,6 +31,10 @@
 
 @class WebFrame;
 
+namespace WebCore {
+    class String;
+}
+
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient(WebFrame*);
@@ -97,7 +101,7 @@ public:
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon(NSImage *);
     virtual void dispatchDidStartProvisionalLoad();
-    virtual void dispatchDidReceiveTitle(NSString *title);
+    virtual void dispatchDidReceiveTitle(const WebCore::String& title);
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFailProvisionalLoad(NSError *);
     virtual void dispatchDidFailLoad(NSError *);
@@ -107,8 +111,8 @@ public:
     virtual WebCore::Frame* dispatchCreatePage(NSURLRequest *);
     virtual void dispatchShow();
 
-    virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, NSString *MIMEType, NSURLRequest *);
-    virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, NSString *frameName);
+    virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, const WebCore::String& MIMEType, NSURLRequest *);
+    virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *);
     virtual void dispatchUnableToImplementPolicy(NSError *);
 
@@ -158,9 +162,9 @@ public:
     virtual void clearArchivedResources();
 
     virtual bool canHandleRequest(NSURLRequest *) const;
-    virtual bool canShowMIMEType(NSString *MIMEType) const;
-    virtual bool representationExistsForURLScheme(NSString *URLScheme) const;
-    virtual NSString *generatedMIMETypeForURLScheme(NSString *URLScheme) const;
+    virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
+    virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
+    virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String& URLScheme) const;
 
     virtual NSDictionary *elementForEvent(NSEvent *) const;
 

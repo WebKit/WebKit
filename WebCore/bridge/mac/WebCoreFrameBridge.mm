@@ -155,12 +155,6 @@ static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
         doc->updateRendering();
 }
 
-static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
-{
-    return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location !=
-        NSNotFound;
-}
-
 static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
@@ -519,19 +513,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     ASSERT(!state || ([state document] == doc));
     if ([state document] == doc)
         [state invalidate];
-}
-
-- (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer
-{
-    BOOL referrerIsWebURL = hasCaseInsensitivePrefix(referrer, @"http:") || hasCaseInsensitivePrefix(referrer, @"https:");
-    BOOL referrerIsLocalURL = hasCaseInsensitivePrefix(referrer, @"file:") || hasCaseInsensitivePrefix(referrer, @"applewebdata:");
-    BOOL URLIsFileURL = [URL scheme] != NULL && [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
-    BOOL referrerIsSecureURL = hasCaseInsensitivePrefix(referrer, @"https:");
-    BOOL URLIsSecureURL = [URL scheme] != NULL && [[URL scheme] compare:@"https" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
-
-    
-    *hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
-    return !URLIsFileURL || referrerIsLocalURL;
 }
 
 - (void)saveDocumentState
@@ -2165,54 +2146,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [self canProvideDocumentSource];
 }
 
-static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
-{
-    NSMutableString *result = [NSMutableString string];
-    static NSCharacterSet *charactersToTurnIntoSpaces = nil;
-    static NSCharacterSet *charactersToNotTurnIntoSpaces = nil;
-    
-    if (charactersToTurnIntoSpaces == nil) {
-        NSMutableCharacterSet *set = [[NSMutableCharacterSet alloc] init];
-        [set addCharactersInRange:NSMakeRange(0x00, 0x21)];
-        [set addCharactersInRange:NSMakeRange(0x7F, 0x01)];
-        charactersToTurnIntoSpaces = [set copy];
-        [set release];
-        charactersToNotTurnIntoSpaces = [[charactersToTurnIntoSpaces invertedSet] retain];
-    }
-    
-    unsigned length = [string length];
-    unsigned position = 0;
-    while (position != length) {
-        NSRange nonSpace = [string rangeOfCharacterFromSet:charactersToNotTurnIntoSpaces
-                                                 options:0 range:NSMakeRange(position, length - position)];
-        if (nonSpace.location == NSNotFound)
-            break;
-        
-        NSRange space = [string rangeOfCharacterFromSet:charactersToTurnIntoSpaces
-                                              options:0 range:NSMakeRange(nonSpace.location, length - nonSpace.location)];
-        if (space.location == NSNotFound)
-            space.location = length;
-        
-        if (space.location > nonSpace.location) {
-            if (position != 0)
-                [result appendString:@" "];
-            [result appendString:[string substringWithRange:
-                NSMakeRange(nonSpace.location, space.location - nonSpace.location)]];
-        }
-        
-        position = space.location;
-    }
-    
-    return result;
-}
-
-- (void)setTitle:(NSString *)title
-{
-    if (!m_frame)
-        return;
-    m_frame->loader()->documentLoader()->setTitle(stringByCollapsingNonPrintingCharacters(title));
-}
-
 - (NSURL*)originalRequestURL
 {
     return [m_frame->loader()->activeDocumentLoader()->initialRequest() URL];
@@ -2232,9 +2165,11 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = m_frame ? m_frame->loader()->documentLoader()->overrideEncoding() : nil;
-    bool userChosen = encoding != nil;
-    if (!encoding)
+    String encoding;
+    if (m_frame)
+        encoding = m_frame->loader()->documentLoader()->overrideEncoding();
+    bool userChosen = !encoding.isNull();
+    if (encoding.isNull())
         encoding = textEncodingName;
     m_frame->setEncoding(encoding, userChosen);
     [self addData:data];
@@ -2249,11 +2184,11 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    NSString *referrer = m_frame->referrer();
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    m_frame->loader()->canLoad(URL, referrer, hideReferrer);
     if (hideReferrer)
-        referrer = nil;
+        referrer = String();
     
     return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, referrer);
 }
@@ -2282,11 +2217,11 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    NSString *referrer = m_frame->referrer();
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    m_frame->loader()->canLoad(URL, referrer, hideReferrer);
     if (hideReferrer)
-        referrer = nil;
+        referrer = String();
     
     return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, postData, referrer);
 }
@@ -2295,11 +2230,11 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    NSString *referrer = m_frame->referrer();
-    BOOL hideReferrer;
-    [self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer];
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    m_frame->loader()->canLoad(URL, referrer, hideReferrer);
     if (hideReferrer)
-        referrer = nil;
+        referrer = String();
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setTimeoutInterval:10];
@@ -2322,7 +2257,7 @@ static NSString *stringByCollapsingNonPrintingCharacters(NSString *string)
     else
         [request setCachePolicy:[m_frame->loader()->documentLoader()->request() cachePolicy]];
     
-    if (referrer)
+    if (!referrer.isNull())
         setHTTPReferrer(request, referrer);
     
     [request setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];

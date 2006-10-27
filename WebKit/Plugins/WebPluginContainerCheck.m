@@ -41,7 +41,9 @@
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/FrameMac.h>
 #import <objc/objc-runtime.h>
 
 using namespace WebCore;
@@ -93,10 +95,10 @@ using namespace WebCore;
 
 - (BOOL)_isForbiddenFileLoad
 {
-   BOOL ignore;
+   bool ignore;
    WebFrameBridge *bridge = [_controller bridge];
    ASSERT(bridge);
-   if (![bridge canLoadURL:[_request URL] fromReferrer:[_controller URLPolicyCheckReferrer] hideReferrer:&ignore]) {
+   if (![bridge _frame]->loader()->canLoad([_request URL], [_controller URLPolicyCheckReferrer], ignore)) {
        [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }

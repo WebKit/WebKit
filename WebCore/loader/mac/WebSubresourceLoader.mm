@@ -64,7 +64,7 @@ SubresourceLoader::~SubresourceLoader()
 }
 
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
-    NSMutableURLRequest *newRequest, NSDictionary *customHeaders, NSString *referrer)
+    NSMutableURLRequest *newRequest, NSDictionary *customHeaders, const String& referrer)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)
@@ -98,7 +98,7 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
 }
 
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
-    NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer)
+    const String& method, NSURL *URL, NSDictionary *customHeaders, const String& referrer)
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];    
     [newRequest setHTTPMethod:method];
@@ -108,7 +108,7 @@ id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreRe
 }
 
 id <WebCoreResourceHandle> SubresourceLoader::create(Frame* frame, id <WebCoreResourceLoader> rLoader,
-    NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer)
+    const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, const String& referrer)
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.

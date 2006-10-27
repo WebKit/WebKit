@@ -31,12 +31,14 @@
 
 namespace WebCore {
 
+    class String;
+    
     class SubresourceLoader : public WebResourceLoader {
     public:
         static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            NSString *method, NSURL *URL, NSDictionary *customHeaders, NSString *referrer);
+            const String& method, NSURL *URL, NSDictionary *customHeaders, const String& referrer);
         static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            NSString *method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, NSString *referrer);
+            const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, const String& referrer);
 
         virtual ~SubresourceLoader();
 
@@ -48,7 +50,7 @@ namespace WebCore {
 
     private:
         static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            NSMutableURLRequest *, NSDictionary *customHeaders, NSString *referrer);
+            NSMutableURLRequest *, NSDictionary *customHeaders, const String& referrer);
 
         SubresourceLoader(Frame*, id <WebCoreResourceLoader>);
         id <WebCoreResourceHandle> handle();

@@ -1,3 +1,14 @@
+2006-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, Maciej.
+
+        Removed many uses of NSString * from WebCore.
+        
+        Changed a few files to ObjC++ for compatiblity with new WebCore methods
+        taking WebCore::Strings as arguments.
+        
+        Added a static_cast to make the c++ compiler happy.
+
 2006-10-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders
@@ -1845,7 +1856,6 @@
 
 2006-10-09  Maciej Stachowiak  <mjs@apple.com>
 
->>>>>>> .r16935
         Reviewed by Alice.
 
         - moved WebFormState into Loader directory and tweaked to avoid WebKit dependencies

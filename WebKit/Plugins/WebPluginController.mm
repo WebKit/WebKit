@@ -31,6 +31,7 @@
 
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebKit/WebDataSourceInternal.h>

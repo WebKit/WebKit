@@ -542,14 +542,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
                                       withURL:(NSURL *)URL
-                                     referrer:(NSString *)referrer
+                                     referrer:(const String&)referrer
                                    ownerElement:(WebCoreElement *)ownerElement
                               allowsScrolling:(BOOL)allowsScrolling 
                                   marginWidth:(int)width
                                  marginHeight:(int)height
 {
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
+    bool hideReferrer;
+    if (!m_frame->loader()->canLoad(URL, referrer, hideReferrer))
         return nil;
 
     ASSERT(_frame);
@@ -568,7 +568,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if (!newBridge)
         return nil;
 
-    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) intoChild:[newBridge webFrame]];
+    [_frame _loadURL:URL referrer:(hideReferrer ? String() : referrer) intoChild:[newBridge webFrame]];
 
     return newBridge;
 }
@@ -732,8 +732,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                       DOMElement:(DOMElement *)element
                     loadManually:(BOOL)loadManually
 {
-    BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:m_frame->referrer() hideReferrer:&hideReferrer])
+    bool hideReferrer;
+    if (!m_frame->loader()->canLoad(URL, m_frame->referrer(), hideReferrer))
         return nil;
 
     ASSERT([attributeNames count] == [attributeValues count]);

@@ -137,7 +137,7 @@ void FrameLoader::setupForReplace()
     detachChildren();
 }
 
-void FrameLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
+void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
 {
     activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
 }
@@ -164,9 +164,9 @@ void FrameLoader::load(NSURLRequest *request)
     load(m_client->createDocumentLoader(request).get());
 }
 
-void FrameLoader::load(NSURLRequest *request, NSString *frameName)
+void FrameLoader::load(NSURLRequest *request, const String& frameName)
 {
-    if (!frameName) {
+    if (frameName.isNull()) {
         load(request);
         return;
     }
@@ -193,7 +193,7 @@ void FrameLoader::load(NSURLRequest *request, NSDictionary *action, FrameLoadTyp
     load(loader.get(), type, formState);
 }
 
-void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType, NSString *target, NSEvent *event, Element* form, NSDictionary *values)
+void FrameLoader::load(NSURL *URL, const String& referrer, FrameLoadType newLoadType, const String& target, NSEvent *event, Element* form, NSDictionary *values)
 {
     bool isFormSubmission = values != nil;
     
@@ -210,10 +210,10 @@ void FrameLoader::load(NSURL *URL, NSString *referrer, FrameLoadType newLoadType
     if (form && values)
         formState = FormState::create(form, values, bridge());
     
-    if (target) {
+    if (!target.isNull()) {
         Frame* targetFrame = m_frame->tree()->find(target);
         if (targetFrame)
-            targetFrame->loader()->load(URL, referrer, newLoadType, nil, event, form, values);
+            targetFrame->loader()->load(URL, referrer, newLoadType, String(), event, form, values);
         else
             checkNewWindowPolicy(request, action, target, formState.release());
         [request release];
@@ -312,6 +312,18 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
 
     checkNavigationPolicy(loader->request(), loader, formState,
         asDelegate(), @selector(continueLoadRequestAfterNavigationPolicy:formState:));
+}
+
+bool FrameLoader::canLoad(NSURL *URL, const String& referrer, bool& hideReferrer)
+{
+    bool referrerIsWebURL = referrer.startsWith("http:", false) || referrer.startsWith("https:", false);
+    bool referrerIsLocalURL = referrer.startsWith("file:", false) || referrer.startsWith("applewebdata:");
+    bool URLIsFileURL = [URL scheme] && [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    bool referrerIsSecureURL = referrer.startsWith("https:", false);
+    bool URLIsSecureURL = [URL scheme] && [[URL scheme] compare:@"https" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    
+    hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
+    return !URLIsFileURL || referrerIsLocalURL;
 }
 
 bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)
@@ -971,17 +983,17 @@ bool FrameLoader::isLoadingMainFrame() const
     return page && m_frame == page->mainFrame();
 }
 
-bool FrameLoader::canShowMIMEType(NSString *MIMEType) const
+bool FrameLoader::canShowMIMEType(const String& MIMEType) const
 {
     return m_client->canShowMIMEType(MIMEType);
 }
 
-bool FrameLoader::representationExistsForURLScheme(NSString *URLScheme)
+bool FrameLoader::representationExistsForURLScheme(const String& URLScheme)
 {
     return m_client->representationExistsForURLScheme(URLScheme);
 }
 
-NSString *FrameLoader::generatedMIMETypeForURLScheme(NSString *URLScheme)
+String FrameLoader::generatedMIMETypeForURLScheme(const String& URLScheme)
 {
     return m_client->generatedMIMETypeForURLScheme(URLScheme);
 }
@@ -991,7 +1003,7 @@ void FrameLoader::checkNavigationPolicy(NSURLRequest *newRequest, id obj, SEL se
     checkNavigationPolicy(newRequest, activeDocumentLoader(), 0, obj, sel);
 }
 
-void FrameLoader::checkContentPolicy(NSString *MIMEType, id obj, SEL sel)
+void FrameLoader::checkContentPolicy(const String& MIMEType, id obj, SEL sel)
 {
     WebPolicyDecider *d = m_client->createPolicyDecider(obj, sel);
     m_policyDecider = d;
@@ -1028,7 +1040,7 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(NSURLRequest *request)
     return compareDocumentLoader && [unreachableURL isEqual:[compareDocumentLoader->request() URL]];
 }
 
-void FrameLoader::reloadAllowingStaleData(NSString *encoding)
+void FrameLoader::reloadAllowingStaleData(const String& encoding)
 {
     if (!m_documentLoader)
         return;
@@ -1170,12 +1182,12 @@ void FrameLoader::invalidatePendingPolicyDecision(bool callDefaultAction)
     [m_policyDecider.get() invalidate];
     m_policyDecider = nil;
 
-    bool hadFrameName = m_policyFrameName;
+    bool hadFrameName = !m_policyFrameName.isNull();
     RetainPtr<id> target = m_policyTarget;
     SEL selector = m_policySelector;
 
     m_policyRequest = nil;
-    m_policyFrameName = nil;
+    m_policyFrameName = String();
     m_policyTarget = nil;
     m_policyFormState = 0;
 
@@ -1187,8 +1199,7 @@ void FrameLoader::invalidatePendingPolicyDecision(bool callDefaultAction)
     }
 }
 
-void FrameLoader::checkNewWindowPolicy(NSURLRequest *request, NSDictionary *action,
-    NSString *frameName, PassRefPtr<FormState> formState)
+void FrameLoader::checkNewWindowPolicy(NSURLRequest *request, NSDictionary *action, const String& frameName, PassRefPtr<FormState> formState)
 {
     WebPolicyDecider *decider = m_client->createPolicyDecider(asDelegate(),
         @selector(continueAfterNewWindowPolicy:));
@@ -1208,7 +1219,7 @@ void FrameLoader::checkNewWindowPolicy(NSURLRequest *request, NSDictionary *acti
 void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
 {
     RetainPtr<NSURLRequest> request = m_policyRequest;
-    RetainPtr<NSString> frameName = m_policyFrameName;
+    String frameName = m_policyFrameName;
     RetainPtr<id> target = m_policyTarget;
     SEL selector = m_policySelector;
     RefPtr<FormState> formState = m_policyFormState;
@@ -1227,7 +1238,8 @@ void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
             break;
     }
 
-    objc_msgSend(target.get(), selector, request.get(), frameName.get(), formState.get());
+    NSString *frameNameAsNSString = frameName;
+    objc_msgSend(target.get(), selector, request.get(), frameNameAsNSString, formState.get());
 }
 
 void FrameLoader::checkNavigationPolicy(NSURLRequest *request, DocumentLoader* loader,
@@ -1417,7 +1429,7 @@ void FrameLoader::transitionToCommitted(NSDictionary *pageCache)
 
     // Handle adding the URL to the back/forward list.
     DocumentLoader* dl = m_documentLoader.get();
-    NSString *ptitle = dl->title();
+    String ptitle = dl->title();
 
     switch (m_loadType) {
     case FrameLoadTypeForward:
@@ -1467,7 +1479,7 @@ void FrameLoader::transitionToCommitted(NSDictionary *pageCache)
     m_client->dispatchDidCommitLoad();
     
     // If we have a title let the WebView know about it.
-    if (ptitle)
+    if (!ptitle.isNull())
         m_client->dispatchDidReceiveTitle(ptitle);
 }
 
@@ -1556,7 +1568,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     ASSERT_NOT_REACHED();
 }
 
-void FrameLoader::continueLoadRequestAfterNewWindowPolicy(NSURLRequest *request, NSString *frameName, FormState* formState)
+void FrameLoader::continueLoadRequestAfterNewWindowPolicy(NSURLRequest *request, const String& frameName, FormState* formState)
 {
     if (!request)
         return;
@@ -1601,8 +1613,8 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
     return newRequest;
 }
 
-void FrameLoader::post(NSURL *URL, NSString *referrer, NSString *target, NSArray *postData,
-    NSString *contentType, NSEvent *event, Element* form, NSDictionary *formValues)
+void FrameLoader::post(NSURL *URL, const String& referrer, const String& target, NSArray *postData, 
+                       const String& contentType, NSEvent *event, Element* form, NSDictionary *formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself

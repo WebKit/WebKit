@@ -734,7 +734,7 @@ DOMRange *kit(Range* range)
     if (archive)
         [childFrame loadArchive:archive];
     else
-        [childFrame _frameLoader]->load(URL, referrer, childLoadType, nil, nil, nil, nil);
+        [childFrame _frameLoader]->load(URL, referrer, childLoadType, String(), nil, nil, nil);
 }
 
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item

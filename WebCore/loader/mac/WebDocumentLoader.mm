@@ -31,12 +31,70 @@
 
 #import "FrameLoader.h"
 #import "FrameMac.h"
+#import "PlatformString.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <wtf/Assertions.h>
 
 namespace WebCore {
+
+/*
+ * Performs three operations:
+ *  1. Convert backslashes to currency symbols
+ *  2. Convert control characters to spaces
+ *  3. Trim leading and trailing spaces
+ */
+static inline String canonicalizedTitle(const String& title, Frame* frame)
+{
+    ASSERT(!title.isEmpty());
+    
+    const UChar* characters = title.characters();
+    unsigned length = title.length();
+    unsigned i;
+    
+    // Find the first non-canonical character
+    for (i = 0; i < length; ++i) {
+        UChar c = characters[i];
+        if (c < 0x20 || c == 0x7F || c == '\\')
+            break;
+    }
+
+    // Optimization for titles that have no non-canonical characters and no leading or trailing spaces
+    if (i == length && characters[0] != ' ' && characters[length - 1] != ' ')
+        return title;
+
+    Vector<UChar> stringBuilder(length);
+    unsigned builderIndex = 0;
+    
+    // Skip leading spaces and leading characters that would convert to spaces
+    for (i = 0; i < length; ++i) {
+        UChar c = characters[i];
+        if (!(c <= 0x20 || c == 0x7F))
+            break;
+    }
+    
+    // Replace control characters with spaces, and backslashes with currency symbols
+    for (; i < length; ++i) {
+        UChar c = characters[i];
+        if (c < 0x20 || c == 0x7F)
+            c = ' ';
+        else if (c == '\\')
+            c = frame->backslashAsCurrencySymbol();
+        stringBuilder[builderIndex++] = c;
+    }
+
+    // Strip trailing spaces
+    while (--builderIndex > 0)
+        if (stringBuilder[builderIndex] != ' ')
+            break;
+    
+    if (builderIndex == 0 && stringBuilder[builderIndex] == ' ')
+        return "";
+    
+    stringBuilder.resize(builderIndex + 1);
+    return String::adopt(stringBuilder);
+}
 
 DocumentLoader::DocumentLoader(NSURLRequest *req)
     : m_frame(0)
@@ -298,9 +356,9 @@ void DocumentLoader::commitLoad(NSData *data)
         frameLoader->committedLoad(this, data);
 }
 
-bool DocumentLoader::doesProgressiveLoad(NSString *MIMEType) const
+bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
 {
-    return !frameLoader()->isReplacing() || [MIMEType isEqualToString:@"text/html"];
+    return !frameLoader()->isReplacing() || MIMEType == "text/html";
 }
 
 void DocumentLoader::receivedData(NSData *data)
@@ -310,12 +368,12 @@ void DocumentLoader::receivedData(NSData *data)
         commitLoad(data);
 }
 
-void DocumentLoader::setupForReplaceByMIMEType(NSString *newMIMEType)
+void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
 {
     if (!m_gotFirstByte)
         return;
     
-    NSString *oldMIMEType = [m_response.get() MIMEType];
+    String oldMIMEType = [m_response.get() MIMEType];
     
     if (!doesProgressiveLoad(oldMIMEType)) {
         frameLoader()->revertToProvisional(this);
@@ -439,9 +497,9 @@ void DocumentLoader::stopRecordingResponses()
     m_stopRecordingResponses = true;
 }
 
-NSString *DocumentLoader::title() const
+String DocumentLoader::title() const
 {
-    return [[m_pageTitle.get() retain] autorelease];
+    return m_pageTitle;
 }
 
 void DocumentLoader::setLastCheckedRequest(NSURLRequest *req)
@@ -473,35 +531,27 @@ const ResponseVector& DocumentLoader::responses() const
     return m_responses;
 }
 
-void DocumentLoader::setOverrideEncoding(NSString *enc)
+void DocumentLoader::setOverrideEncoding(const String& enc)
 {
-    NSString *copy = [enc copy];
-    m_overrideEncoding = copy;
-    [copy release];
+    m_overrideEncoding = enc;
 }
 
-NSString *DocumentLoader::overrideEncoding() const
+String DocumentLoader::overrideEncoding() const
 {
-    return [[m_overrideEncoding.get() copy] autorelease];
+    return m_overrideEncoding;
 }
 
-void DocumentLoader::setTitle(NSString *title)
+void DocumentLoader::setTitle(const String& title)
 {
-    if (!title)
+    if (title.isEmpty())
         return;
 
-    NSString *trimmed = [title mutableCopy];
-    CFStringTrimWhitespace((CFMutableStringRef)trimmed);
-
-    if ([trimmed length] != 0 && ![m_pageTitle.get() isEqualToString:trimmed]) {
-        NSString *copy = [trimmed copy];
+    String trimmed = canonicalizedTitle(title, m_frame);
+    if (!trimmed.isEmpty() && m_pageTitle != trimmed) {
         frameLoader()->willChangeTitle(this);
-        m_pageTitle = copy;
+        m_pageTitle = trimmed;
         frameLoader()->didChangeTitle(this);
-        [copy release];
     }
-
-    [trimmed release];
 }
 
 NSURL *DocumentLoader::URLForHistory() const

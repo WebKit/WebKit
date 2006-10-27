@@ -44,17 +44,17 @@ BOOL isConditionalRequest(NSURLRequest *request)
 
 #define WebReferrer     (@"Referer")
 
-void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
+void setHTTPReferrer(NSMutableURLRequest *request, NSString *referrer)
 {
     // Do not set the referrer to a string that refers to a file URL.
     // That is a potential security hole.
-    if (stringIsFileURL(theReferrer))
+    if (stringIsFileURL(referrer))
         return;
     
     // Don't allow empty Referer: headers; some servers refuse them
-    if([theReferrer length] == 0)
-        theReferrer = nil;
+    if([referrer length] == 0)
+        referrer = nil;
     
-    [request setValue:theReferrer forHTTPHeaderField:WebReferrer];
+    [request setValue:referrer forHTTPHeaderField:WebReferrer];
 }
 

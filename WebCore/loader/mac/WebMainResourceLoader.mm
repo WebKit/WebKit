@@ -30,6 +30,7 @@
 #import "WebMainResourceLoader.h"
 
 #import "FrameLoader.h"
+#import "PlatformString.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSHTTPCookie.h>
@@ -195,11 +196,6 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     return newRequest;
 }
 
-static bool isCaseInsensitiveEqual(NSString *a, NSString *b)
-{
-    return [a caseInsensitiveCompare:b] == NSOrderedSame;
-}
-
 static bool shouldLoadAsEmptyDocument(NSURL *url)
 {
     Vector<UInt8, URLBufferLength> buffer(URLBufferLength);
@@ -217,13 +213,13 @@ static bool shouldLoadAsEmptyDocument(NSURL *url)
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, NSURLResponse *r)
 {
     NSURL *URL = [request() URL];
-    NSString *MIMEType = [r MIMEType]; 
+    String MIMEType = [r MIMEType]; 
     
     switch (contentPolicy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
-        bool isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
+        bool isRemoteWebArchive = isRemote && equalIgnoringCase("application/x-webarchive", MIMEType);
         if (!frameLoader()->canShowMIMEType(MIMEType) || isRemoteWebArchive) {
             frameLoader()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.

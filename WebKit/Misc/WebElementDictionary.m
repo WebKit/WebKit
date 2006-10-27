@@ -54,7 +54,7 @@ static CFMutableDictionaryRef lookupTable = NULL;
 
 static void addLookupKey(NSString *key, SEL selector, WebElementTargetObject target)
 {
-    WebElementMethod *elementMethod = malloc(sizeof(WebElementMethod));
+    WebElementMethod *elementMethod = static_cast<WebElementMethod*>(malloc(sizeof(WebElementMethod)));
     elementMethod->target = target;
     elementMethod->selector = selector;
     CFDictionaryAddValue(lookupTable, key, elementMethod);

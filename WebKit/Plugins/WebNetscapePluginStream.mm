@@ -54,9 +54,8 @@ using namespace WebCore;
 {   
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePluginPointer->ndata;
 
-    WebFrameBridge *bridge = [[view webFrame] _bridge];
-    BOOL hideReferrer;
-    if (![bridge canLoadURL:[theRequest URL] fromReferrer:core([view webFrame])->referrer() hideReferrer:&hideReferrer])
+    bool hideReferrer;
+    if (!core([view webFrame])->loader()->canLoad([theRequest URL], core([view webFrame])->referrer(), hideReferrer))
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]

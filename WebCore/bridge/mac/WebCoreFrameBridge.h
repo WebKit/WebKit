@@ -34,6 +34,7 @@ namespace WebCore {
     class EditorClient;
     class Element;
     class FrameMac;
+    class String;
 }
 
 typedef WebCore::EditorClient WebCoreEditorClient;
@@ -210,7 +211,6 @@ typedef enum {
 
 - (void)invalidatePageCache:(NSDictionary *)pageCache;
 
-- (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer;
 - (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame;
 
 - (void)saveDocumentState;
@@ -405,7 +405,6 @@ typedef enum {
 - (BOOL)canProvideDocumentSource;
 - (BOOL)canSaveAsWebArchive;
 
-- (void)setTitle:(NSString *)title;
 - (NSURL*)originalRequestURL;
 - (void)frameDetached;
 - (void)tokenizerProcessedData;
@@ -436,10 +435,7 @@ typedef enum {
 
 - (void)setStatusText:(NSString *)status;
 
-- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
-    referrer:(NSString *)referrer
-    ownerElement:(WebCoreElement *)ownerElement
-    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
+- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer ownerElement:(WebCoreElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;
