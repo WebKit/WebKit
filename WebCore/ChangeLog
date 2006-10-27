@@ -18,11 +18,11 @@
         
         The regression is that foo, return, bar in a textarea serializes as 'foobar'.
         
-        Before my change in r11423, return (an InsertLineBreak) would insert a '\n' 
+        Before my change in r17223, return (an InsertLineBreak) would insert a '\n' 
         (the line break) then a br to prevent the '\n' from collapsing, since the 
         insertion is being done at the end of a block (the textarea's shadow div).  Then, 
         inserting "bar" would displace the br, and "foo\nbar" would serialize as "foo\nbar".  
-        After my change in r11423, InsertLineBreak would insert a br then a '\n' (reversed 
+        After my change in r17223, InsertLineBreak would insert a br then a '\n' (reversed 
         the order).  Then inserting "bar" would displace the '\n' and "foo"<br>"bar" would 
         serialize as "foobar" because when serializing RenderTextControl intentionally asks 
         textContent to not convert brs to newlines.  It seems to think that the only brs in 
