@@ -1,3 +1,24 @@
+2006-10-26  W. Andy Carrel  <wac@google.com>
+
+        Reviewed by Maciej.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=7445 /
+          <rdar://problem/4614195> (and 7253 / <rdar://4694011>) by changing
+          inline regexps so that they can have \u escaped Unicode sequences and
+          still work properly.
+
+        * kjs/lexer.cpp:
+        (Lexer::Lexer): 
+        (Lexer::setCode):
+        (Lexer::shift): Looking ahead one additional character for the benefit
+        of scanRegExp
+        (Lexer::scanRegExp): Change code to support unicode escapes in inline 
+        regexps.
+        * kjs/lexer.h: Extra lookahead added.
+        * tests/mozilla/ecma_2/RegExp/properties-001.js: Changed test to look
+        for Unicode character rather than the '\u' escaped equivalent for
+        .source and .toString().
+
 === Safari-521.29 ===
 
 2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
