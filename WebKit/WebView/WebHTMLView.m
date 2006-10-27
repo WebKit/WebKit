@@ -4514,7 +4514,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         LOG_ERROR("No NSSpellChecker");
         return;
     }
-    NSString *badWord = [[self _bridge] advanceToNextMisspelling];
+    
+    NSString *badWord = core([self _frame])->advanceToNextMisspelling();
     if (badWord)
         [checker updateSpellingPanelWithMisspelledWord:badWord];
 }
@@ -4538,7 +4539,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 #endif
     
-    NSString *badWord = [[self _bridge] advanceToNextMisspellingStartingJustBeforeSelection];
+    NSString *badWord = core([self _frame])->advanceToNextMisspelling(true);
     if (badWord)
         [checker updateSpellingPanelWithMisspelledWord:badWord];
     [spellingPanel orderFront:sender];

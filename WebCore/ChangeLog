@@ -1,4 +1,15 @@
-2006-10-26  Justin Garcia  <justin.garcia@apple.com>
+2006-10-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        * WebCore.exp:
+        exported symbol for FrameMac->advanceToNextSpelling()
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        removed advanceToNextMisspelling callers. Clients in WebKit must now call FrameMac directly.
+
+2006-10-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
         

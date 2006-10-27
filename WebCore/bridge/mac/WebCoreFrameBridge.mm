@@ -1070,16 +1070,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return result;
 }
 
-- (NSString *)advanceToNextMisspelling
-{
-    return m_frame->advanceToNextMisspelling();
-}
-
-- (NSString *)advanceToNextMisspellingStartingJustBeforeSelection
-{
-    return m_frame->advanceToNextMisspelling(true);
-}
-
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     int newZoomFactor = (int)rint(multiplier * 100);

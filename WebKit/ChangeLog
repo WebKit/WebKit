@@ -1,3 +1,13 @@
+2006-10-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray checkSpelling:]):
+        call advanceToNextMisspelling directly on FrameMac, bypassing bridge
+        (-[NSArray showGuessPanel:]):
+        ditto
+
 2006-10-27  Darin Adler  <darin@apple.com>
 
         - build fix
