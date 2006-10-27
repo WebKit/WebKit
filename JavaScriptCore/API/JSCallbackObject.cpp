@@ -58,7 +58,7 @@ void JSCallbackObject::init(ExecState* exec, JSClassRef jsClass, void* data)
     } while ((jsClass = jsClass->parentClass));
     
     // initialize from base to derived
-    for (int i = initRoutines.size() - 1; i >= 0; i--) {
+    for (int i = static_cast<int>(initRoutines.size()) - 1; i >= 0; i--) {
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
@@ -225,9 +225,9 @@ JSObject* JSCallbackObject::construct(ExecState* exec, const List& args)
     
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsConstructorCallback callAsConstructor = jsClass->callAsConstructor) {
-            size_t argumentCount = args.size();
+            int argumentCount = static_cast<int>(args.size());
             Vector<JSValueRef, 16> arguments(argumentCount);
-            for (size_t i = 0; i < argumentCount; i++)
+            for (int i = 0; i < argumentCount; i++)
                 arguments[i] = toRef(args[i]);
             return toJS(callAsConstructor(execRef, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
         }
@@ -277,9 +277,9 @@ JSValue* JSCallbackObject::callAsFunction(ExecState* exec, JSObject* thisObj, co
 
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
-            size_t argumentCount = args.size();
+            int argumentCount = static_cast<int>(args.size());
             Vector<JSValueRef, 16> arguments(argumentCount);
-            for (size_t i = 0; i < argumentCount; i++)
+            for (int i = 0; i < argumentCount; i++)
                 arguments[i] = toRef(args[i]);
             return toJS(callAsFunction(execRef, thisRef, thisObjRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
         }

@@ -49,9 +49,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="false"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

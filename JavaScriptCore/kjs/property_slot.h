@@ -29,9 +29,10 @@
 
 namespace KJS {
 
-class HashEntry;
 class ExecState;
 class JSObject;
+
+struct HashEntry;
 
 #define VALUE_SLOT_MARKER ((GetValueFunc)1)
 class PropertySlot

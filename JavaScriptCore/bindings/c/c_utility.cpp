@@ -50,7 +50,7 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
     assert(UTF16Chars);
     
     if (UTF8Length == -1)
-        UTF8Length = strlen(UTF8Chars);
+        UTF8Length = static_cast<int>(strlen(UTF8Chars));
         
     // UTF16Length maximum length is the length of the UTF8 string, plus one to include terminator
     // Without the plus one, it will convert ok, but a warning is generated from the converter as
@@ -87,7 +87,7 @@ void coerceValueToNPVariantStringType(ExecState *exec, JSValue *value, NPVariant
 {
     UString ustring = value->toString(exec);
     CString cstring = ustring.UTF8String();
-    NPString string = { (const NPUTF8 *)cstring.c_str(), cstring.size() };
+    NPString string = { (const NPUTF8 *)cstring.c_str(), static_cast<uint32_t>(cstring.size()) };
     NPN_InitializeVariantWithStringCopy(result, &string);
 }
 
@@ -99,7 +99,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
     if (type == StringType) {
         UString ustring = value->toString(exec);
         CString cstring = ustring.UTF8String();
-        NPString string = { (const NPUTF8 *)cstring.c_str(), cstring.size() };
+        NPString string = { (const NPUTF8 *)cstring.c_str(), static_cast<uint32_t>(cstring.size()) };
         NPN_InitializeVariantWithStringCopy(result, &string);
     } else if (type == NumberType) {
         DOUBLE_TO_NPVARIANT(value->toNumber(exec), *result);

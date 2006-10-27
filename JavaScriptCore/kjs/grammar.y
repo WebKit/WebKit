@@ -63,6 +63,12 @@ static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
 static Node *makeTypeOfNode(Node *expr);
 static Node *makeDeleteNode(Node *expr);
 
+#if COMPILER(MSVC)
+#pragma warning(disable: 4065)
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4702)
+#endif
+
 %}
 
 %union {

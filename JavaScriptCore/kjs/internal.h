@@ -129,7 +129,7 @@ namespace KJS {
                   FunctionCode,
                   AnonymousCode };
 
-  class AttachedInterpreter;
+  struct AttachedInterpreter;
   class DebuggerImp {
   public:
 

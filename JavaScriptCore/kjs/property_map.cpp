@@ -105,7 +105,7 @@ static inline UString::Rep* deletedSentinel() { return reinterpret_cast<UString:
 // Returns true if the key is not null or the deleted sentinel, false otherwise
 static inline bool isValid(UString::Rep* key)
 {
-    return reinterpret_cast<uintptr_t>(key) & ~0x1;
+    return !!(reinterpret_cast<uintptr_t>(key) & ~0x1);
 }
 
 PropertyMap::~PropertyMap()
@@ -321,7 +321,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
             rep->ref();
             _singleEntry.key = rep;
             _singleEntry.value = value;
-            _singleEntry.attributes = attributes;
+            _singleEntry.attributes = static_cast<short>(attributes);
             checkConsistency();
             return;
         }
@@ -374,7 +374,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
     rep->ref();
     entries[i].key = rep;
     entries[i].value = value;
-    entries[i].attributes = attributes;
+    entries[i].attributes = static_cast<short>(attributes);
     entries[i].index = ++_table->lastIndexUsed;
     ++_table->keyCount;
 
@@ -406,7 +406,7 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
     
     entries[i].key = key;
     entries[i].value = value;
-    entries[i].attributes = attributes;
+    entries[i].attributes = static_cast<short>(attributes);
     entries[i].index = index;
 }
 
@@ -570,9 +570,10 @@ bool PropertyMap::containsGettersOrSetters() const
 {
     if (!_table) {
 #if USE_SINGLE_ENTRY
-        return _singleEntry.attributes & GetterSetter;
-#endif
+        return !!(_singleEntry.attributes & GetterSetter);
+#else
         return false;
+#endif
     }
 
     for (int i = 0; i != _table->size; ++i) {

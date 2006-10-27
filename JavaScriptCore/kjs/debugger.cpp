@@ -96,37 +96,37 @@ bool Debugger::hasHandledException(ExecState *exec, JSValue *exception)
     return false;
 }
 
-bool Debugger::sourceParsed(ExecState */*exec*/, int /*sourceId*/, const UString &/*sourceURL*/, 
+bool Debugger::sourceParsed(ExecState*, int /*sourceId*/, const UString &/*sourceURL*/, 
                            const UString &/*source*/, int /*startingLineNumber*/, int /*errorLine*/, const UString & /*errorMsg*/)
 {
   return true;
 }
 
-bool Debugger::sourceUnused(ExecState */*exec*/, int /*sourceId*/)
+bool Debugger::sourceUnused(ExecState*, int /*sourceId*/)
 {
   return true;
 }
 
-bool Debugger::exception(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                         JSValue */*exception*/)
+bool Debugger::exception(ExecState*, int /*sourceId*/, int /*lineno*/,
+                         JSValue* /*exception */)
 {
   return true;
 }
 
-bool Debugger::atStatement(ExecState */*exec*/, int /*sourceId*/, int /*firstLine*/,
+bool Debugger::atStatement(ExecState*, int /*sourceId*/, int /*firstLine*/,
                            int /*lastLine*/)
 {
   return true;
 }
 
-bool Debugger::callEvent(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                         JSObject */*function*/, const List &/*args*/)
+bool Debugger::callEvent(ExecState*, int /*sourceId*/, int /*lineno*/,
+                         JSObject* /*function*/, const List &/*args*/)
 {
   return true;
 }
 
-bool Debugger::returnEvent(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                           JSObject */*function*/)
+bool Debugger::returnEvent(ExecState*, int /*sourceId*/, int /*lineno*/,
+                           JSObject* /*function*/)
 {
   return true;
 }

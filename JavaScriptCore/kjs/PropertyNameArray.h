@@ -40,7 +40,7 @@ namespace KJS {
         void add(const Identifier&);
         iterator begin() const { return m_vector.begin(); }
         iterator end() const { return m_vector.end(); }
-        int size() const { return m_vector.size(); }
+        size_t size() const { return m_vector.size(); }
 
         Identifier& operator[](unsigned i) { return m_vector[i]; }
         const Identifier& operator[](unsigned i) const { return m_vector[i]; }

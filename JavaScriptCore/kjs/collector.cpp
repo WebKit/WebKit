@@ -187,7 +187,7 @@ allocateNewBlock:
   // could avoid the casts by using a cell offset, but this avoids a relatively-slow multiply
   targetBlock->freeList = reinterpret_cast<CollectorCell *>(reinterpret_cast<char *>(newCell + 1) + newCell->u.freeCell.next);
 
-  targetBlock->usedCells = targetBlockUsedCells + 1;
+  targetBlock->usedCells = static_cast<uint32_t>(targetBlockUsedCells + 1);
   heap.numLiveObjects = numLiveObjects + 1;
 
   return newCell;
@@ -300,7 +300,14 @@ gotGoodPointer:
 void Collector::markCurrentThreadConservatively()
 {
     jmp_buf registers;
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4611)
+#endif
     setjmp(registers);
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 #if PLATFORM(DARWIN)
     pthread_t thread = pthread_self();
@@ -532,7 +539,7 @@ bool Collector::collect()
       }
     }
     
-    curBlock->usedCells = usedCells;
+    curBlock->usedCells = static_cast<uint32_t>(usedCells);
     curBlock->freeList = freeList;
 
     if (usedCells == 0) {

@@ -53,7 +53,7 @@ FunctionPrototype::~FunctionPrototype()
 }
 
 // ECMA 15.3.4
-JSValue *FunctionPrototype::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
+JSValue *FunctionPrototype::callAsFunction(ExecState*, JSObject* /*thisObj*/, const List &/*args*/)
 {
   return jsUndefined();
 }

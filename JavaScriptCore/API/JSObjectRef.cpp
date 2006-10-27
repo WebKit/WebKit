@@ -348,7 +348,7 @@ size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array)
 
 JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size_t index)
 {
-    return toRef(array->array[index].ustring().rep());
+    return toRef(array->array[static_cast<unsigned>(index)].ustring().rep());
 }
 
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)

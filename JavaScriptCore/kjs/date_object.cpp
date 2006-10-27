@@ -173,7 +173,7 @@ static JSCell* formatLocaleDate(GregorianDateTime gdt, const LocaleDateTimeForma
     // Do the formatting
     const int bufsize=128;
     char timebuffer[bufsize];
-    int ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
+    size_t ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
  
     if ( ret == 0 )
         return jsString("");
@@ -452,8 +452,6 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   JSValue *result = 0;
   UString s;
 #if !PLATFORM(DARWIN)
-  const int bufsize=100;
-  char timebuffer[bufsize];
   CString oldlocale = setlocale(LC_TIME, 0);
   if (!oldlocale.size())
     oldlocale = setlocale(LC_ALL, 0);
@@ -792,13 +790,13 @@ static int findMonth(const char *monthStr)
     for (int i = 0; i < 3; ++i) {
         if (!*monthStr)
             return -1;
-        needle[i] = tolower(*monthStr++);
+        needle[i] = static_cast<char>(tolower(*monthStr++));
     }
     needle[3] = '\0';
     const char *haystack = "janfebmaraprmayjunjulaugsepoctnovdec";
     const char *str = strstr(haystack, needle);
     if (str) {
-        int position = str - haystack;
+        int position = static_cast<int>(str - haystack);
         if (position % 3 == 0)
             return position / 3;
     }

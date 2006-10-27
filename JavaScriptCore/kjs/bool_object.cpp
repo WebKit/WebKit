@@ -114,7 +114,7 @@ JSObject *BooleanObjectImp::construct(ExecState *exec, const List &args)
 }
 
 // ECMA 15.6.1
-JSValue *BooleanObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue *BooleanObjectImp::callAsFunction(ExecState *exec, JSObject *, const List &args)
 {
   if (args.isEmpty())
     return jsBoolean(false);

@@ -54,10 +54,11 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="false"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4138; 4996; 4355"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -127,10 +128,11 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="false"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4138; 4996; 4355"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
 				ForcedIncludeFiles=""
 			/>
 			<Tool

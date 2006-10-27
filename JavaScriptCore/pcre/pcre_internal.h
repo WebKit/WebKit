@@ -49,6 +49,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #define INT_CAST(i) (i)
 #endif
 
+#if COMPILER(MSVC)
+#pragma warning(disable: 4232)
+#pragma warning(disable: 4244)
+#endif
+
 /* This header contains definitions that are shared between the different
 modules, but which are not relevant to the exported API. This includes some
 functions whose names all begin with "_pcre_". */

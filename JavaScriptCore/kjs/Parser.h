@@ -31,8 +31,9 @@ namespace KJS {
 
     class Node;
     class ProgramNode;
-    class UChar;
     class UString;
+
+    struct UChar;
 
     /**
      * @internal

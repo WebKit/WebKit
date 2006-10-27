@@ -1,3 +1,146 @@
+2006-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - made changes so the code compiles with the highest warning level
+          under MSVC (disabling some warnings, making some code fixes)
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::init):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::callAsFunction):
+        * API/JSObjectRef.cpp:
+        (JSPropertyNameArrayGetNameAtIndex):
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16):
+        (KJS::Bindings::coerceValueToNPVariantStringType):
+        (KJS::Bindings::convertValueToNPVariant):
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::GregorianDateTime):
+        * kjs/ExecState.h:
+        (KJS::ExecState::hadException):
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::fromDouble):
+        (KJS::JSImmediate::toDouble):
+        (KJS::JSImmediate::NanAsBits):
+        (KJS::JSImmediate::oneAsBits):
+        * kjs/Parser.h:
+        * kjs/PropertyNameArray.h:
+        (KJS::PropertyNameArray::size):
+        * kjs/array_object.cpp:
+        (ArrayObjectImp::callAsFunction):
+        * kjs/bool_object.cpp:
+        (BooleanObjectImp::callAsFunction):
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::markCurrentThreadConservatively):
+        (KJS::Collector::collect):
+        * kjs/completion.h:
+        (KJS::Completion::isValueCompletion):
+        * kjs/date_object.cpp:
+        (KJS::findMonth):
+        * kjs/debugger.cpp:
+        (Debugger::sourceParsed):
+        (Debugger::sourceUnused):
+        (Debugger::exception):
+        (Debugger::atStatement):
+        (Debugger::callEvent):
+        (Debugger::returnEvent):
+        * kjs/dtoa.cpp:
+        * kjs/error_object.cpp:
+        (ErrorObjectImp::callAsFunction):
+        (NativeErrorImp::callAsFunction):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::processVarDecls):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionPrototype::callAsFunction):
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        (KJS::CStringTranslator::translate):
+        (KJS::Identifier::add):
+        * kjs/internal.h:
+        * kjs/lexer.cpp:
+        (Lexer::lex):
+        (Lexer::isIdentStart):
+        (Lexer::isIdentPart):
+        (isDecimalDigit):
+        (Lexer::isHexDigit):
+        (Lexer::isOctalDigit):
+        (Lexer::matchPunctuator):
+        (Lexer::singleEscape):
+        (Lexer::convertOctal):
+        (Lexer::convertHex):
+        (Lexer::convertUnicode):
+        (Lexer::record8):
+        * kjs/lexer.h:
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction):
+        * kjs/number_object.cpp:
+        (integer_part_noexp):
+        (intPow10):
+        (NumberProtoFunc::callAsFunction):
+        (NumberObjectImp::callAsFunction):
+        * kjs/object.cpp:
+        (KJS::JSObject::deleteProperty):
+        (KJS::JSObject::callAsFunction):
+        (KJS::JSObject::toBoolean):
+        (KJS::JSObject::toObject):
+        * kjs/object.h:
+        (KJS::JSObject::getPropertySlot):
+        * kjs/property_map.cpp:
+        (KJS::isValid):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::containsGettersOrSetters):
+        * kjs/property_map.h:
+        (KJS::PropertyMap::hasGetterSetterProperties):
+        * kjs/property_slot.h:
+        * kjs/string_object.cpp:
+        (StringInstance::getPropertyNames):
+        (StringObjectImp::callAsFunction):
+        (StringObjectFuncImp::callAsFunction):
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::computeHash):
+        (KJS::UString::UString):
+        (KJS::UString::from):
+        (KJS::UString::append):
+        (KJS::UString::ascii):
+        (KJS::UString::operator=):
+        (KJS::UString::find):
+        (KJS::UString::rfind):
+        * kjs/ustring.h:
+        (KJS::UChar::high):
+        (KJS::UChar::low):
+        (KJS::UCharReference::low):
+        (KJS::UCharReference::high):
+        * kjs/value.cpp:
+        (KJS::JSValue::toUInt16):
+        * kjs/value.h:
+        * pcre/pcre_compile.c:
+        (get_othercase_range):
+        * pcre/pcre_exec.c:
+        (match):
+        * pcre/pcre_internal.h:
+        * wtf/HashFunctions.h:
+        (WTF::intHash):
+        (WTF::PtrHash::hash):
+        * wtf/MathExtras.h:
+        (isnan):
+        (lround):
+        (lroundf):
+        * wtf/StringExtras.h:
+        (strncasecmp):
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::isPrintableChar):
+
 2006-10-26  W. Andy Carrel  <wac@google.com>
 
         Reviewed by Maciej.

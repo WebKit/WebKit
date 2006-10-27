@@ -84,7 +84,7 @@ namespace WTF {
 
     inline bool isPrintableChar(int32_t c)
     {
-      return u_isprint(c);
+      return !!u_isprint(c);
     }
     
     inline CharCategory category(int32_t c)

@@ -27,6 +27,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4127)
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4305)
+#pragma warning(disable: 4307)
+#pragma warning(disable: 4309)
+#endif
+
 namespace KJS {
 
 class ExecState;
@@ -201,9 +210,9 @@ private:
         const uint32_t NaN32AsBits = 0x7fc00000;
         const uint64_t NaN64AsBits = 0x7ff80000ULL << 32;
 
-        if (JSImmediate::is32bit())
+        if (is32bit())
             return NaN32AsBits;
-        else if (JSImmediate::is64bit())
+        else if (is64bit())
             return NaN64AsBits;
         else {
             abort();
@@ -221,9 +230,9 @@ private:
         const uint32_t One32AsBits = 0x3f800000;
         const uint64_t One64AsBits = 0x3ff00000ULL << 32;
 
-        if (JSImmediate::is32bit())
+        if (is32bit())
             return One32AsBits;
-        else if (JSImmediate::is64bit())
+        else if (is64bit())
             return One64AsBits;
         else {
             abort();
@@ -233,5 +242,9 @@ private:
 };
 
 } // namespace KJS
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 #endif

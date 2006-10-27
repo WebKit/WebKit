@@ -297,7 +297,7 @@ bool JSObject::hasProperty(ExecState *exec, unsigned propertyName) const
 }
 
 // ECMA 8.6.2.5
-bool JSObject::deleteProperty(ExecState */*exec*/, const Identifier &propertyName)
+bool JSObject::deleteProperty(ExecState* /*exec*/, const Identifier &propertyName)
 {
   unsigned attributes;
   JSValue *v = _prop.get(propertyName, attributes);
@@ -428,7 +428,7 @@ bool JSObject::implementsCall() const
   return false;
 }
 
-JSValue *JSObject::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
+JSValue *JSObject::callAsFunction(ExecState* /*exec*/, JSObject* /*thisObj*/, const List &/*args*/)
 {
   assert(false);
   return NULL;
@@ -504,7 +504,7 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
      static_cast<JSObject*>(_proto)->getPropertyNames(exec, propertyNames);
 }
 
-bool JSObject::toBoolean(ExecState */*exec*/) const
+bool JSObject::toBoolean(ExecState*) const
 {
   return true;
 }
@@ -525,7 +525,7 @@ UString JSObject::toString(ExecState *exec) const
   return prim->toString(exec);
 }
 
-JSObject *JSObject::toObject(ExecState */*exec*/) const
+JSObject *JSObject::toObject(ExecState*) const
 {
   return const_cast<JSObject*>(this);
 }

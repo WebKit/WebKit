@@ -111,7 +111,7 @@ JSObject *ErrorObjectImp::construct(ExecState *exec, const List &args)
 }
 
 // ECMA 15.9.2
-JSValue *ErrorObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue *ErrorObjectImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)
 {
   // "Error()" gives the sames result as "new Error()"
   return construct(exec,args);
@@ -153,7 +153,7 @@ JSObject *NativeErrorImp::construct(ExecState *exec, const List &args)
   return obj;
 }
 
-JSValue *NativeErrorImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue *NativeErrorImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)
 {
   return construct(exec,args);
 }

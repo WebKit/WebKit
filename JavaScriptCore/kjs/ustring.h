@@ -73,11 +73,11 @@ namespace KJS {
     /**
      * @return The higher byte of the character.
      */
-    unsigned char high() const { return uc >> 8; }
+    unsigned char high() const { return static_cast<unsigned char>(uc >> 8); }
     /**
      * @return The lower byte of the character.
      */
-    unsigned char low() const { return uc; }
+    unsigned char low() const { return static_cast<unsigned char>(uc); }
     /**
      * @return the 16 bit Unicode value of the character
      */
@@ -125,11 +125,11 @@ namespace KJS {
     /**
      * @return Lower byte.
      */
-    unsigned char low() const { return ref().uc; }
+    unsigned char low() const { return static_cast<unsigned char>(ref().uc); }
     /**
      * @return Higher byte.
      */
-    unsigned char high() const { return ref().uc >> 8; }
+    unsigned char high() const { return static_cast<unsigned char>(ref().uc >> 8); }
 
   private:
     // not implemented, can only be constructed from UString

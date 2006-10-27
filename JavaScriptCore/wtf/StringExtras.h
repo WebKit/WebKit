@@ -38,7 +38,7 @@ inline int snprintf(char *str, size_t size, const char* format, ...)
     return _vsnprintf(str, size, format, args);
 }
 
-inline int strncasecmp(const char* s1, const char* s2, int len) { return strnicmp(s1, s2, len); }
+inline int strncasecmp(const char* s1, const char* s2, size_t len) { return strnicmp(s1, s2, len); }
 
 #endif
 

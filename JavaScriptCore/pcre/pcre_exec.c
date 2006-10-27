@@ -42,9 +42,11 @@ POSSIBILITY OF SUCH DAMAGE.
 pattern matching using an NFA algorithm, trying to mimic Perl as closely as
 possible. There are also some static supporting functions. */
 
-
 #include "pcre_internal.h"
 
+/* Avoid warnings on Windows. */
+#undef min
+#undef max
 
 /* Structure for building a chain of data that actually lives on the
 stack, for holding the values of the subject pointer at the start of each
@@ -2146,6 +2148,7 @@ for (;;)
 #endif
 #endif  /* SUPPORT_UTF8 */
 
+#if !PCRE_UTF16
     /* When not in UTF-8 mode, load a single-byte character. */
       {
       if (min > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
@@ -2161,12 +2164,8 @@ for (;;)
     matching character if failing, up to the maximum. Alternatively, if
     maximizing, find the maximum number of characters and work backwards. */
 
-#if PCRE_UTF16
-    DPRINTF(("matching %c{%d,%d}\n", fc, min, max));
-#else
     DPRINTF(("matching %c{%d,%d} against subject %.*s\n", fc, min, max,
       max, eptr));
-#endif
 
     if ((ims & PCRE_CASELESS) != 0)
       {
@@ -2240,6 +2239,7 @@ for (;;)
         }
       }
     /* Control never gets here */
+#endif
 
     /* Match a negated single one-byte character. The character we are
     checking can be multibyte. */

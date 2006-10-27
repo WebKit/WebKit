@@ -86,7 +86,7 @@ namespace KJS {
         void save(SavedProperties &) const;
         void restore(const SavedProperties &p);
 
-        bool hasGetterSetterProperties() const { return _singleEntry.globalGetterSetterFlag; }
+        bool hasGetterSetterProperties() const { return !!_singleEntry.globalGetterSetterFlag; }
         void setHasGetterSetterProperties(bool f) { _singleEntry.globalGetterSetterFlag = f; }
 
         bool containsGettersOrSetters() const;

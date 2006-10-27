@@ -172,6 +172,12 @@
 #include "config.h"
 #include "dtoa.h"
 
+#if COMPILER(MSVC)
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4245)
+#pragma warning(disable: 4554)
+#endif
+
 #if PLATFORM(BIG_ENDIAN)
 #define IEEE_MC68k
 #else

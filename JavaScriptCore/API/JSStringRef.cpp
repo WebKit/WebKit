@@ -40,7 +40,7 @@ using namespace KJS;
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSLock lock;
-    return toRef(UString(reinterpret_cast<const UChar*>(chars), numChars).rep()->ref());
+    return toRef(UString(reinterpret_cast<const UChar*>(chars), static_cast<int>(numChars)).rep()->ref());
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)

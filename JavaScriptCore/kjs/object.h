@@ -34,11 +34,11 @@
 
 namespace KJS {
 
-  class HashTable;
-  class HashEntry;
-  class ListImp;
   class InternalFunctionImp;
   class PropertyNameArray;
+
+  struct HashEntry;
+  struct HashTable;
 
   // ECMA 262-3 8.6.1
   // Property attributes
