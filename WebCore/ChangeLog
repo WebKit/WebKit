@@ -1,3 +1,21 @@
+2006-10-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4796941> Table deletion outline is misplaced at nytimes.com
+
+        The main table at nytimes.com has a fixed width of 874px, but the table ends
+        up overflowing to 963px. We now use overflowWidth() and overflowHeight() to correct
+        this. The other bug was a missing top and left of 0px on the container element,
+        causing the deletion UI to sometimes be offset below the table.
+
+        Now check for the element's renderer at the beginning of show() and
+        return early if it is null.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::updateOutlineStyle):
+        (WebCore::DeleteButtonController::show):
+
 2006-10-26  Anders Carlsson  <acarlsson@apple.com>
 
         Build fix.
