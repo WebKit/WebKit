@@ -1,6 +1,17 @@
 2006-10-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders
+        
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=11439 
+          REGRESSION: Another page loading crash
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _createItem:]):
+        Handle nil documentLoader the way we did before ObjC->C++ changes
+
+2006-10-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
 
         * WebView/WebHTMLView.m:
         (-[NSArray checkSpelling:]):

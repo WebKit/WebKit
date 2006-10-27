@@ -248,9 +248,10 @@ DOMRange *kit(Range* range)
     NSURL *URL;
     NSURL *originalURL;
     WebHistoryItem *bfItem;
+    WebCoreDocumentLoader *documentLoader = [dataSrc _documentLoader];
 
     if (useOriginal)
-        request = [dataSrc _documentLoader]->originalRequestCopy();
+        request = documentLoader ? documentLoader->originalRequestCopy() : nil;
     else
         request = [dataSrc request];
 
@@ -259,7 +260,7 @@ DOMRange *kit(Range* range)
         originalURL = unreachableURL;
     } else {
         URL = [request URL];
-        originalURL = [[dataSrc _documentLoader]->originalRequestCopy() URL];
+        originalURL = documentLoader ? [documentLoader->originalRequestCopy() URL] : nil;
     }
 
     LOG (History, "creating item for %@", request);
