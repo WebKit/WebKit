@@ -15,9 +15,6 @@
         (Lexer::scanRegExp): Change code to support unicode escapes in inline 
         regexps.
         * kjs/lexer.h: Extra lookahead added.
-        * tests/mozilla/ecma_2/RegExp/properties-001.js: Changed test to look
-        for Unicode character rather than the '\u' escaped equivalent for
-        .source and .toString().
 
 === Safari-521.29 ===
 
