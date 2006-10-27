@@ -57,13 +57,13 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebDocumentLoader.h>
-#import <WebCore/WebFrameLoader.h>
 #import <WebCore/WebLoader.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassRefPtr.h>

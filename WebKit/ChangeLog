@@ -1,5 +1,11 @@
 2006-10-27  Darin Adler  <darin@apple.com>
 
+        - build fix
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Corrected header file name.
+
+2006-10-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - moved methods that are there just to be called by the frame loader client into the client
