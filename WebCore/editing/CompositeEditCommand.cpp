@@ -484,14 +484,24 @@ Node* CompositeEditCommand::addBlockPlaceholderIfNeeded(Node* node)
     return 0;
 }
 
-void CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visiblePosition)
+// Removes '\n's and brs that will collapse when content is inserted just before them.
+// FIXME: We shouldn't really have to remove placeholders, but removing them is a workaround for 9661.
+void CompositeEditCommand::removePlaceholderAt(const VisiblePosition& visiblePosition)
 {
     if (visiblePosition.isNull())
         return;
         
     Position p = visiblePosition.deepEquivalent().downstream();
-    if (p.node()->hasTagName(brTag) && p.offset() == 0 && isEndOfBlock(visiblePosition) && isStartOfBlock(visiblePosition))
-        removeNode(p.node());
+    // If a br or '\n' is at the end of a block and not at the start of a paragraph,
+    // then it is superfluous, so adding content before a br or '\n' that is at
+    // the start of a paragraph will render it superfluous.
+    // FIXME: This doesn't remove placeholders at the end of anonymous blocks.
+    if (isEndOfBlock(visiblePosition) && isStartOfParagraph(visiblePosition)) {
+        if (p.node()->hasTagName(brTag) && p.offset() == 0)
+            removeNode(p.node());
+        else if (p.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n')
+            deleteTextFromNode(static_cast<Text*>(p.node()), p.offset(), 1);
+    }
 }
 
 void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)

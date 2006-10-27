@@ -106,12 +106,12 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     if (text == "\t") {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
-        removeBlockPlaceholder(VisiblePosition(startPosition));
+        removePlaceholderAt(VisiblePosition(startPosition));
         m_charactersAdded += 1;
     } else {
         // Make sure the document is set up to receive text
         startPosition = prepareForTextInsertion(startPosition);
-        removeBlockPlaceholder(VisiblePosition(startPosition));
+        removePlaceholderAt(VisiblePosition(startPosition));
         Text *textNode = static_cast<Text *>(startPosition.node());
         int offset = startPosition.offset();
 

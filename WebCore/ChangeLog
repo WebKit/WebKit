@@ -1,3 +1,41 @@
+2006-10-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=11423>
+        REGRESSION: First newline missing from textarea's value
+        
+        The regression is that foo, return, bar in a textarea serializes as 'foobar'.
+        
+        Before my change in r11423, return (an InsertLineBreak) would insert a '\n' 
+        (the line break) then a br to prevent the '\n' from collapsing, since the 
+        insertion is being done at the end of a block (the textarea's shadow div).  Then, 
+        inserting "bar" would displace the br, and "foo\nbar" would serialize as "foo\nbar".  
+        After my change in r11423, InsertLineBreak would insert a br then a '\n' (reversed 
+        the order).  Then inserting "bar" would displace the '\n' and "foo"<br>"bar" would 
+        serialize as "foobar" because when serializing RenderTextControl intentionally asks 
+        textContent to not convert brs to newlines.  It seems to think that the only brs in 
+        the shadow div will be placeholders or collapsed.
+        
+        We could remove this assumption, but, for consistancy's sake, I changed InsertLineBreak 
+        to insert two '\n's when at the end of a block in white-space:pre text.  This alone 
+        would have fixed the bug, but introduced a new one, because foo, return, bar would 
+        produce "foo\nbar\n" which would serialize as "foo\nbar\n" (even though the second 
+        '\n' is collapsed, because of 9661).  So, then I changed placeholder displacement to 
+        displace a '\n' if it's acting as a placeholder.  A "placeholder" is now defined as 
+        a br or '\n' that will collapse (become superfluous) when content is inserted just 
+        before it.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removePlaceholderAt): Renamed.  Remove
+        a br or '\n' if content inserted just before it will cause it to collapse.
+        * editing/CompositeEditCommand.h:
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Insert the same type of node
+        to prevent a collapse as was used for the line break.  Fixed comments.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Call the renamed function.
+        
 2006-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady.

@@ -110,9 +110,9 @@ void InsertLineBreakCommand::doApply()
                canonicalPos.node()->hasTagName(hrTag)) {
         if (canonicalPos.offset() == 0) {
             insertNodeBefore(nodeToInsert.get(), canonicalPos.node());
-            // Insert an extra br if the just inserted one collapsed.
+            // Insert an extra br or '\n' if the just inserted one collapsed.
             if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
-                insertNodeBefore(createBreakElement(document()).get(), nodeToInsert.get());
+                insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
             // Leave the selection where it was, just before the table/horizontal rule.
         } else if (canonicalPos.offset() == maxDeepOffset(canonicalPos.node())) {
             insertNodeAfter(nodeToInsert.get(), canonicalPos.node());
@@ -126,9 +126,9 @@ void InsertLineBreakCommand::doApply()
         insertNodeAt(nodeToInsert.get(), pos.node(), pos.offset());
         VisiblePosition endingPosition(endOfBlock(VisiblePosition(pos)));
         
-        // Insert an extra br if the inserted one collapsed.
+        // Insert an extra br or '\n' if the inserted one collapsed.
         if (!isStartOfParagraph(endingPosition))
-            insertNodeBefore(createBreakElement(document()).get(), nodeToInsert.get());
+            insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
         setEndingSelection(Selection(endingPosition));
     } else if (pos.offset() <= pos.node()->caretMinOffset()) {

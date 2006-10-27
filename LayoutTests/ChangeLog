@@ -1,3 +1,25 @@
+2006-10-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=11423>
+        REGRESSION: First newline missing from textarea's value
+
+        Changes reflect the removal of more brs that were about 
+        to collapse:
+        * editing/deleting/delete-4038408-fix-expected.txt:
+        * editing/inserting/insert-3654864-fix-expected.txt:
+        * editing/inserting/insert-3659587-fix-expected.txt:
+        * editing/inserting/insert-3775316-fix-expected.txt:
+        * editing/inserting/insert-at-end-01-expected.txt:
+        * editing/inserting/insert-at-end-02-expected.txt:
+        * editing/inserting/insert-br-001-expected.txt:
+        * editing/inserting/insert-br-005-expected.txt:
+
+        Added to demonstrate fix:
+        * fast/forms/11423-expected.txt: Added.
+        * fast/forms/11423.html: Added.
+        
 2006-10-27  Darin Adler  <darin@apple.com>
 
         - new test results for a couple of tests

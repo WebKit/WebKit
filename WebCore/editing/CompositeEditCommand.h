@@ -87,7 +87,7 @@ protected:
     Node *appendBlockPlaceholder(Node*);
     Node *insertBlockPlaceholder(const Position&);
     Node *addBlockPlaceholderIfNeeded(Node*);
-    void removeBlockPlaceholder(const VisiblePosition&);
+    void removePlaceholderAt(const VisiblePosition&);
 
     void moveParagraphContentsToNewBlockIfNecessary(const Position&);
     
