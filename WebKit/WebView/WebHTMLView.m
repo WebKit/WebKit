@@ -943,6 +943,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 - (WebHTMLView *)_topHTMLView
 {
     WebHTMLView *view = (WebHTMLView *)[[[[_private->dataSource _webView] mainFrame] frameView] documentView];
+    ASSERT(view);
     ASSERT([view isKindOfClass:[WebHTMLView class]]);
     return view;
 }

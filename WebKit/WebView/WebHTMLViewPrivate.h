@@ -29,6 +29,7 @@
 #import <WebKit/WebHTMLView.h>
 
 @class DOMDocumentFragment;
+@class DOMNode;
 @class DOMRange;
 @class WebArchive;
 @class WebFrameBridge;

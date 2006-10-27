@@ -27,19 +27,27 @@
  */
 
 #import <WebCore/RetainPtr.h>
+#import <WebCore/Timer.h>
 #import <WebCore/WebFrameLoaderClient.h>
+#import <wtf/HashMap.h>
 
 @class WebFrame;
+@class WebHistoryItem;
+@class WebResource;
 
 namespace WebCore {
     class String;
+    class WebResourceLoader;
 }
+
+typedef HashMap<RefPtr<WebCore::WebResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient(WebFrame*);
     WebFrame* webFrame() const { return m_webFrame.get(); }
 
+private:
     virtual void detachFrameLoader();
 
     virtual bool hasWebView() const; // mainly for assertions
@@ -180,6 +188,14 @@ public:
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(NSURLRequest *);
     virtual void setTitle(NSString *title, NSURL *);
 
-private:
+    void deliverArchivedResourcesAfterDelay() const;
+    bool canUseArchivedResource(NSURLRequest *) const;
+    bool canUseArchivedResource(NSURLResponse *) const;
+    void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
+
+    bool createPageCache(WebHistoryItem *);
+
     WebCore::RetainPtr<WebFrame> m_webFrame;
+    mutable ResourceMap m_pendingArchivedResources;
+    mutable WebCore::Timer<WebFrameLoaderClient> m_archivedResourcesDeliveryTimer;
 };

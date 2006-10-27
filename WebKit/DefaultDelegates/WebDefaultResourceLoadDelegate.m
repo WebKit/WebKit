@@ -65,13 +65,10 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
-    NSWindow *window = [wv hostWindow] ? [wv hostWindow] : [wv window];
-    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
 }
 
 - (void)webView:(WebView *)wv resource:(id)identifier didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
-    [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
 }
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource
