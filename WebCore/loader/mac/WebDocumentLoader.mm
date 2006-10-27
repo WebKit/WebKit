@@ -85,9 +85,11 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     }
 
     // Strip trailing spaces
-    while (--builderIndex > 0)
+    while (builderIndex > 0) {
+        --builderIndex;
         if (stringBuilder[builderIndex] != ' ')
             break;
+    }
     
     if (builderIndex == 0 && stringBuilder[builderIndex] == ' ')
         return "";
