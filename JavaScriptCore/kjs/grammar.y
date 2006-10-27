@@ -64,9 +64,17 @@ static Node *makeTypeOfNode(Node *expr);
 static Node *makeDeleteNode(Node *expr);
 
 #if COMPILER(MSVC)
+
 #pragma warning(disable: 4065)
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4702)
+
+// At least some of the time, the declarations of malloc and free that bison
+// generates are causing warnings. A way to avoid this is to explicitly define
+// the macros so that bison doesn't try to declare malloc and free.
+#define YYMALLOC malloc
+#define YYFREE free
+
 #endif
 
 %}

@@ -1,5 +1,15 @@
 2006-10-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Steve.
+
+        * kjs/grammar.y: Add definitions of YYMALLOC and YYFREE to fix
+        a warning some people see (not sure why others don't see it).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/grammarWrapper.cpp: Touch
+        this file to force it to re-build grammar.cpp.
+
+2006-10-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - made changes so the code compiles with the highest warning level
