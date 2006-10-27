@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <AppKit/NSScrollView.h>
+
 #import <WebCore/WebCoreFrameView.h>
 
 // FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
