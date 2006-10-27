@@ -27,6 +27,7 @@
 
 VPATH = $(WEBCORE_PRIVATE_HEADERS_DIR) $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)
 
+INTERNAL_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit
 PUBLIC_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
 PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 
@@ -57,10 +58,12 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMCounter.h \
     $(PUBLIC_HEADERS_DIR)/DOMImplementation.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocument.h \
+    $(INTERNAL_HEADERS_DIR)/DOMDocumentInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocumentFragment.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocumentType.h \
     $(PUBLIC_HEADERS_DIR)/DOMElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
@@ -90,6 +93,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDivElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDocument.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMHTMLElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLEmbedElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
@@ -164,6 +168,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMProcessingInstructionPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMRGBColor.h \
     $(PUBLIC_HEADERS_DIR)/DOMRange.h \
+    $(INTERNAL_HEADERS_DIR)/DOMRangeInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMRangePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMRangeException.h \
     $(PUBLIC_HEADERS_DIR)/DOMRanges.h \
@@ -190,7 +195,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/npruntime.h \
 #
 
-REPLACE_RULES = -e s/WebCore/WebKit/ -e s/JavaScriptCore/WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
+REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/\<JavaScriptCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
 HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< $(PROCESS_HEADER_FOR_MACOSX_TARGET_CMD) > $@
 
 ifeq ($(MACOSX_DEPLOYMENT_TARGET),10.4)
@@ -209,4 +214,7 @@ $(PUBLIC_HEADERS_DIR)/% : %
 	$(HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/% : %
+	$(HEADER_MIGRATE_CMD)
+
+$(INTERNAL_HEADERS_DIR)/% : %
 	$(HEADER_MIGRATE_CMD)

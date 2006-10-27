@@ -28,6 +28,10 @@
 
 #import "WebFrameInternal.h"
 
+#import "DOMDocumentInternal.h"
+#import "DOMElementInternal.h"
+#import "DOMHTMLElementInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
@@ -61,29 +65,6 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLElement.h>
 #import <WebKit/DOMRange.h>
-
-// FIXME: We should have a way to get the following DOM interface from the WebCore internal headers, but we
-// can't make the internal DOM headers private since they are not generated at the time installhdrs is called.
-
-@interface DOMDocument (WebCoreInternal)
-- (WebCore::Document *)_document;
-+ (DOMDocument *)_documentWith:(WebCore::Document *)impl;
-@end
-
-@interface DOMElement (WebCoreInternal)
-- (WebCore::Element *)_element;
-+ (DOMElement *)_elementWith:(WebCore::Element *)impl;
-@end
-
-@interface DOMHTMLElement (WebCoreInternal)
-- (WebCore::HTMLElement *)_HTMLElement;
-+ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
-@end
-
-@interface DOMRange (WebCoreInternal)
-- (WebCore::Range *)_range;
-+ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
-@end
 
 /*
 Here is the current behavior matrix for four types of navigations:

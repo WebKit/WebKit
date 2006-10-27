@@ -1,3 +1,14 @@
+2006-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Beth.
+
+        Make a DerivedSource/Webkit directory to store migrated
+        internal headers from WebCore.
+
+        * MigrateHeaders.make:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrame.mm: import the new migrated DOM*Internal.h headers
+
 2006-10-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

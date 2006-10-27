@@ -1,3 +1,13 @@
+2006-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Beth.
+
+        Renamed Copy Files to Copy Generated Headers.
+        Copy 4 DOM*Internal.h headers.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-10-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

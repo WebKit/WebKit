@@ -1239,9 +1239,9 @@ sub GenerateImplementation
 
     # Generate interface definitions. 
     @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
-    push(@intenalHeaderContent, "\n#import \"$className.h\"\n");
+    push(@intenalHeaderContent, "\n#import <WebCore/$className.h>\n");
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-        push(@intenalHeaderContent, "#import \"SVGAnimatedTemplate.h\"\n\n");
+        push(@intenalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
     } else {
         push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
     }
