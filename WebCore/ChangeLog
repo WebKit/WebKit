@@ -1,3 +1,9 @@
+2006-10-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * WebCore.exp: Export more symbols needed by WebKit.
+
 2006-10-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by the Baroness Esmeralda Von Scratch N' Purr XIV.
