@@ -297,8 +297,10 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // This method prevents this exploit:
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
     
+    Frame *target = [targetFrame _frame];
+
     // don't mess with navigation within the same page/frameset
-    if (m_frame->page() == [targetFrame _frame]->page())
+    if (m_frame->page() == (target ? target->page() : nil))
         return YES;
 
     // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
@@ -308,7 +310,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         // Allow if the request is made from a local file.
         return YES;
     
-    Frame *target = [targetFrame _frame];
     WebCoreFrameBridge *parentBridge = target ? Mac(target->tree()->parent())->bridge() : nil;
     // Allow if target is an entire window.
     if (!parentBridge)

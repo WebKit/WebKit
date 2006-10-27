@@ -1,3 +1,20 @@
+2006-10-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady
+        
+        - fixed <rdar://problem/4806064> Repro crash in FrameMac::loadRequest following iTunes music store link from salon.com
+        
+        This restores some of the nil-handling that was implicit before some of the code was converted from
+        Objective-C to C++.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest):
+        handle nil FrameMac
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canTargetLoadInFrame:]):
+        handle nil Frame
+
 2006-10-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, Maciej.
