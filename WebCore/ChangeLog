@@ -1,5 +1,13 @@
 2006-10-27  Darin Adler  <darin@apple.com>
 
+        - fix one error in the Qt build
+
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        Updated.
+
+2006-10-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * WebCore.exp: Export more symbols needed by WebKit.
