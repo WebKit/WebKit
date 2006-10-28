@@ -31,6 +31,7 @@
 #import "DOMDocumentInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLElementInternal.h"
+#import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebDataSourceInternal.h"
@@ -71,6 +72,7 @@
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLElement.h>
+#import <WebKit/DOMNode.h>
 #import <WebKit/DOMRange.h>
 
 /*
@@ -157,6 +159,16 @@ Element* core(DOMElement *element)
 DOMElement *kit(Element* element)
 {
     return [DOMElement _elementWith:element];
+}
+
+Node* core(DOMNode *node)
+{
+    return [node _node];
+}
+
+DOMNode *kit(Node* node)
+{
+    return [DOMNode _nodeWith:node];
 }
 
 Document* core(DOMDocument *document)

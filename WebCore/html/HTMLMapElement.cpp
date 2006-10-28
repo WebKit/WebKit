@@ -27,6 +27,8 @@
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
+#include "IntSize.h"
+#include "HitTestResult.h"
 
 using namespace std;
 
@@ -50,7 +52,7 @@ bool HTMLMapElement::checkDTD(const Node* newChild)
     return newChild->hasTagName(areaTag) || newChild->hasTagName(scriptTag) || inBlockTagList(newChild);
 }
 
-bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, RenderObject::NodeInfo& info)
+bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& info)
 {
     HTMLAreaElement* defaultArea = 0;
     Node *node = this;

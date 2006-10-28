@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
+#include "HitTestResult.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "SelectionController.h"
@@ -2498,7 +2499,7 @@ int RenderBlock::getClearDelta(RenderObject *child)
     return result;
 }
 
-bool RenderBlock::isPointInScrollbar(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool RenderBlock::isPointInScrollbar(HitTestResult& info, int _x, int _y, int _tx, int _ty)
 {
     if (!scrollsOverflow())
         return false;
@@ -2528,7 +2529,7 @@ bool RenderBlock::isPointInScrollbar(NodeInfo& info, int _x, int _y, int _tx, in
     return false;    
 }
 
-bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     bool inlineFlow = isInlineFlow();
 

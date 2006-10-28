@@ -59,7 +59,7 @@ public:
     
     virtual void paint(PaintInfo& i, int tx, int ty);
 
-    virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+    virtual bool nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
                              HitTestAction hitTestAction);
     
     virtual void calcMinMaxWidth();

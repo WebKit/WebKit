@@ -40,6 +40,7 @@
 #include "Image.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "HitTestResult.h"
 #include "OverflowEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
@@ -1238,7 +1239,7 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
         if (docRenderer) {
             IntPoint vPoint = windowToContents(e.pos());
 
-            RenderObject::NodeInfo hitTestResult(true, false);
+            HitTestResult hitTestResult(true, false);
             doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 
             Node *node = hitTestResult.innerNode();
             Frame* subframe = subframeForTargetNode(node);

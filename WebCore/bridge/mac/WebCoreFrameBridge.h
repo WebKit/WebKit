@@ -252,7 +252,6 @@ typedef enum {
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 - (NSString *)renderTreeAsExternalRepresentation;
 
-- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 - (BOOL)isPointInsideSelection:(NSPoint)point;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string;

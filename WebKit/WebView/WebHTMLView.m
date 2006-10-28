@@ -68,6 +68,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/HitTestResult.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebDataProtocol.h>
@@ -6042,13 +6043,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 {
-    DOMNode *innerNode = nil;
-    DOMNode *innerNonSharedNode = nil;
-    DOMElement *URLElement = nil;
-    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point allowShadowContent:allow];
-    NSView *innerView = [[[[innerNonSharedNode ownerDocument] webFrame] frameView] documentView];
-    NSPoint innerPoint = innerView ? [self convertPoint:point toView:innerView] : point;
-    return [[[WebElementDictionary alloc] initWithInnerNonSharedNode:innerNonSharedNode innerNode:innerNode URLElement:URLElement andPoint:innerPoint] autorelease];
+    Frame* frame = core([self _frame]);
+    HitTestResult result(true, false);
+    if (frame->renderer())
+        result = frame->hitTestResultAtPoint(IntPoint(point), allow);
+    return [[[WebElementDictionary alloc] initWithHitTestResult:result] autorelease];
 }
 
 @end

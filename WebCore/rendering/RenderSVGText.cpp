@@ -95,7 +95,7 @@ InlineBox* RenderSVGText::createInlineBox(bool makePlaceHolderBox, bool isRootLi
     return flowBox;
 }
 
-bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderSVGText::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     AffineTransform totalTransform = absoluteTransform();
     double localX, localY;

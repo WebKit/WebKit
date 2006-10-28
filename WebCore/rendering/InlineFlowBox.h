@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+class HitTestResult;
+
 class InlineFlowBox : public InlineRunBox {
 public:
     InlineFlowBox(RenderObject* obj)
@@ -70,14 +72,14 @@ public:
 
     virtual void clearTruncation();
 
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo&, int tx, int ty);
-    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*,
-                          int my, int mh, int tx, int ty, int w, int h);
-    void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*,
-                         int my, int mh, int tx, int ty, int w, int h);
-    virtual void paintDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
-    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
-    virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
+    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty);
+    void paintBackgrounds(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
+                          int my, int mh, int _tx, int _ty, int w, int h);
+    void paintBackground(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
+                         int my, int mh, int _tx, int _ty, int w, int h);
+    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
+    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    virtual bool nodeAtPoint(HitTestResult&, int, int, int, int);
 
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();

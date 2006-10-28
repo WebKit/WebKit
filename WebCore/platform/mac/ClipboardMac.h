@@ -31,6 +31,7 @@
 #include "Image.h"
 #include "IntPoint.h"
 #include "Clipboard.h"
+#include "ClipboardAccessPolicy.h"
 #include "CachedResourceClient.h"
 
 #ifdef __OBJC__
@@ -48,12 +49,7 @@ class FrameMac;
 
 class ClipboardMac : public Clipboard, public CachedResourceClient {
 public:
-    // security mechanisms
-    typedef enum {
-        Numb, ImageWritable, Writable, TypesReadable, Readable
-    } AccessPolicy;
-
-    ClipboardMac(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, FrameMac *frame = 0);
+    ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, FrameMac *frame = 0);
     virtual ~ClipboardMac();
 
     bool isForDragging() const;
@@ -86,8 +82,7 @@ public:
     void setDestinationOperation(NSDragOperation op);
 #endif
 
-    void setAccessPolicy(AccessPolicy policy);
-    AccessPolicy accessPolicy() const;
+    void setAccessPolicy(ClipboardAccessPolicy);
     void setDragHasStarted() { m_dragStarted = true; }
     
 private:
@@ -100,7 +95,7 @@ private:
     IntPoint m_dragLoc;
     CachedImage* m_dragImage;
     RefPtr<Node> m_dragImageElement;
-    AccessPolicy m_policy;
+    ClipboardAccessPolicy m_policy;
     int m_changeCount;
     bool m_dragStarted;
     FrameMac *m_frame;   // used on the source side to generate dragging images

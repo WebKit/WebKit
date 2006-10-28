@@ -26,7 +26,7 @@
 #ifndef FrameMac_h
 #define FrameMac_h
 
-#import "ClipboardMac.h"
+#import "ClipboardAccessPolicy.h"
 #import "Frame.h"
 #import "IntRect.h"
 #import "PlatformMouseEvent.h"
@@ -84,12 +84,14 @@ class NSView;
 class WebCoreFrameBridge;
 class WebScriptObject;
 
+typedef unsigned int NSDragOperation;
 typedef int NSWritingDirection;
 
 #endif
 
 namespace WebCore {
 
+class ClipboardMac;
 class DocumentFragment;
 class EditorClient;
 class FramePrivate;
@@ -337,7 +339,7 @@ private:
     NSView* nextKeyViewInFrame(Node* startingPoint, SelectionDirection, bool* focusCallResultedInViewBeingCreated = 0);
     static NSView* documentViewForNode(Node*);
     
-    bool dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy);
+    bool dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy);
 
     NSImage* imageFromRect(NSRect) const;
 

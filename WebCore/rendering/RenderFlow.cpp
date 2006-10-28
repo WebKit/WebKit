@@ -416,7 +416,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     }
 }
 
-bool RenderFlow::hitTestLines(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderFlow::hitTestLines(HitTestResult& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)
         return false;

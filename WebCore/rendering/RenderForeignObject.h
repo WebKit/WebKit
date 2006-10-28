@@ -46,7 +46,7 @@ public:
     virtual bool requiresLayer();
     virtual void layout();
 
-    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
  private:
     AffineTransform translationForAttributes();

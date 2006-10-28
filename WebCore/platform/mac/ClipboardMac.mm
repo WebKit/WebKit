@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, FrameMac *frame)
+ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, FrameMac *frame)
   : m_pasteboard(HardRetain(pasteboard)), m_forDragging(forDragging), m_dragImage(0),
     m_policy(policy), m_dragStarted(false), m_frame(frame)
 {
@@ -50,16 +50,11 @@ bool ClipboardMac::isForDragging() const
     return m_forDragging;
 }
 
-void ClipboardMac::setAccessPolicy(AccessPolicy policy)
+void ClipboardMac::setAccessPolicy(ClipboardAccessPolicy policy)
 {
     // once you go numb, can never go back
-    ASSERT(m_policy != Numb || policy == Numb);
+    ASSERT(m_policy != ClipboardNumb || policy == ClipboardNumb);
     m_policy = policy;
-}
-
-ClipboardMac::AccessPolicy ClipboardMac::accessPolicy() const
-{
-    return m_policy;
 }
 
 static NSString *cocoaTypeFromMIMEType(const String &type)
@@ -121,7 +116,7 @@ static DeprecatedString MIMETypeFromCocoaType(NSString *type)
 
 void ClipboardMac::clearData(const String &type)
 {
-    if (m_policy != Writable) {
+    if (m_policy != ClipboardWritable) {
         return;
     }
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
@@ -134,7 +129,7 @@ void ClipboardMac::clearData(const String &type)
 
 void ClipboardMac::clearAllData()
 {
-    if (m_policy != Writable) {
+    if (m_policy != ClipboardWritable) {
         return;
     }
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
@@ -145,7 +140,7 @@ void ClipboardMac::clearAllData()
 String ClipboardMac::getData(const String &type, bool &success) const
 {
     success = false;
-    if (m_policy != Readable) {
+    if (m_policy != ClipboardReadable) {
         return String();
     }
     
@@ -207,7 +202,7 @@ String ClipboardMac::getData(const String &type, bool &success) const
 
 bool ClipboardMac::setData(const String &type, const String &data)
 {
-    if (m_policy != Writable)
+    if (m_policy != ClipboardWritable)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
@@ -240,7 +235,7 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
 HashSet<String> ClipboardMac::types() const
 {
-    if (m_policy != Readable && m_policy != TypesReadable)
+    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
         return HashSet<String>();
 
     NSArray *types = [m_pasteboard types];
@@ -296,7 +291,7 @@ void ClipboardMac::setDragImageElement(Node *node, const IntPoint &loc)
 
 void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
 {
-    if (m_policy == ImageWritable || m_policy == Writable) {
+    if (m_policy == ClipboardImageWritable || m_policy == ClipboardWritable) {
         if (m_dragImage)
             m_dragImage->deref(this);
         m_dragImage = image;
@@ -362,7 +357,7 @@ String ClipboardMac::dropEffect() const
 
 void ClipboardMac::setDropEffect(const String &s)
 {
-    if (m_policy == Readable || m_policy == TypesReadable) {
+    if (m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable) {
         m_dropEffect = s;
     }
 }
@@ -374,7 +369,7 @@ String ClipboardMac::effectAllowed() const
 
 void ClipboardMac::setEffectAllowed(const String &s)
 {
-    if (m_policy == Writable)
+    if (m_policy == ClipboardWritable)
         m_effectAllowed = s;
 }
 

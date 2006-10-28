@@ -64,6 +64,7 @@
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NodeFilter.h"
+#include "HitTestResult.h"
 #include "NodeIterator.h"
 #include "PlatformKeyboardEvent.h"
 #include "ProcessingInstruction.h"
@@ -676,10 +677,10 @@ Element* Document::elementFromPoint(int x, int y) const
     if (!renderer())
         return 0;
 
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer()->layer()->hitTest(nodeInfo, IntPoint(x, y)); 
+    HitTestResult result(true, true);
+    renderer()->layer()->hitTest(result, IntPoint(x, y)); 
 
-    Node* n = nodeInfo.innerNode();
+    Node* n = result.innerNode();
     while (n && !n->isElementNode())
         n = n->parentNode();
     if (n)
@@ -1673,7 +1674,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
         return MouseEventWithHitTestResults(event, 0, 0, false);
 
     assert(renderer()->isRenderView());
-    RenderObject::NodeInfo renderInfo(readonly, active, mouseMove);
+    HitTestResult renderInfo(readonly, active, mouseMove);
     renderer()->layer()->hitTest(renderInfo, point);
 
     if (!readonly)

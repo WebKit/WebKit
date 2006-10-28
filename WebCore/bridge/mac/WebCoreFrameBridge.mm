@@ -30,6 +30,7 @@
 
 #import "AXObjectCache.h"
 #import "Cache.h"
+#import "ClipboardMac.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
 #import "Decoder.h"
@@ -54,6 +55,7 @@
 #import "LoaderNSURLRequestExtras.h"
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
+#import "HitTestResult.h"
 #import "Page.h"
 #import "PlugInInfoStore.h"
 #import "RenderImage.h"
@@ -995,22 +997,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->matchLabelsAgainstElement(labels, [element _element]);
 }
 
-- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point allowShadowContent:(BOOL) allow
-{
-    RenderObject *renderer = m_frame->renderer();
-    if (!renderer) {
-        *innerNonSharedNode = nil;
-        *innerNode = nil;
-        *URLElement = nil;
-        return;
-    }
-
-    RenderObject::NodeInfo nodeInfo = m_frame->nodeInfoAtPoint(IntPoint(point), allow);
-    *innerNonSharedNode = [DOMNode _nodeWith:nodeInfo.innerNonSharedNode()];
-    *innerNode = [DOMNode _nodeWith:nodeInfo.innerNode()];
-    *URLElement = [DOMElement _elementWith:nodeInfo.URLElement()];
-}
-
 - (BOOL)isPointInsideSelection:(NSPoint)point
 {
     return m_frame->isPointInsideSelection(IntPoint(point));
@@ -1743,7 +1729,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
     IntPoint outerPoint(point);
-    Node* node = m_frame->nodeInfoAtPoint(outerPoint, true).innerNode();
+    Node* node = m_frame->hitTestResultAtPoint(outerPoint, true).innerNode();
     if (!node)
         return VisiblePosition();
     RenderObject* renderer = node->renderer();
@@ -1913,7 +1899,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     if (m_frame) {
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
-            ClipboardMac::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardMac::Readable : ClipboardMac::TypesReadable;
+            ClipboardAccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
@@ -1938,7 +1924,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
                     op = NSDragOperationNone;
                 }
             }
-            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
             return op;
         }
     }
@@ -1951,11 +1937,11 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            ClipboardMac::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardMac::Readable : ClipboardMac::TypesReadable;
+            ClipboardAccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);            
             v->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
-            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
         }
     }
 }
@@ -1966,10 +1952,10 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], ClipboardMac::Readable);
+            RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], ClipboardReadable);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
             BOOL result = v->performDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
-            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
             return result;
         }
     }

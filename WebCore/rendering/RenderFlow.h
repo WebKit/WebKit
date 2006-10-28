@@ -76,7 +76,7 @@ public:
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
     
     void paintLines(PaintInfo& i, int _tx, int _ty);
-    bool hitTestLines(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction);
+    bool hitTestLines(HitTestResult& i, int x, int y, int tx, int ty, HitTestAction hitTestAction);
 
     virtual IntRect getAbsoluteRepaintRect();
     

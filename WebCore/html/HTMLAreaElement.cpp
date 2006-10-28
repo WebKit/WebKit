@@ -26,7 +26,8 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "FloatRect.h"
-#include "IntSize.h"
+#include "HitTestResult.h"
+#include "RenderObject.h"
 
 using namespace std;
 
@@ -68,7 +69,7 @@ void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLAnchorElement::parseMappedAttribute(attr);
 }
 
-bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, RenderObject::NodeInfo& info)
+bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& info)
 {
     if (m_lastSize != size) {
         region = getRegion(size);

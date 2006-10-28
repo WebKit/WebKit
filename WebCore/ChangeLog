@@ -1,3 +1,198 @@
+2006-10-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        This is the WebCore half of pushing elementAtPoint and the backend 
+        of WebElementDictionary into WebCore. Most of the changes below are 
+        to accommodate one of the following:
+                
+        -NodeInfo is now a stand-alone class called HitTestResult. 
+                Previously it was defined in RenderObject.h, but not for 
+                any particular reason. The WebElementDictionary 
+                functionality that was pushed into WebCore has been pushed 
+                specifically into the this class. In fact, 
+                WebElementDictionary now keeps a HitTestResult as a member 
+                varibale.
+                
+        -The enumeration AccessPolicy is now called 
+                ClipboardAccessPolicy and is defined in its own header. It 
+                was previously defined in ClipboardMac.h, but is now 
+                defined independently to avoid including ClipboardMac.h 
+                from within FrameMac.h since FrameMac.h is now included in 
+                WebElementDictionary.m in WebKit.
+                
+        -Element now has a virtual target() for the sake of 
+                NodeInfo::targetFrame() 
+
+        * WebCore.exp: Several WebCore functions are newly called from 
+        WebKit, so they have been added here. 
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm: Must include Image.h because of adjustments 
+        to ClipboardMac.
+        * bridge/mac/FrameMac.h: Adjust to HitTestResult changes.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::freeClipboard): Adjust to ClipboardAccessPolicy 
+        and HitTestResult changes.
+        (WebCore::FrameMac::eventMayStartDrag): Same.
+        (WebCore::FrameMac::handleMouseMoveEvent): Same.
+        (WebCore::FrameMac::dispatchCPPEvent): Same.
+        (WebCore::FrameMac::mayDHTMLCut): Same.
+        (WebCore::FrameMac::mayDHTMLCopy): Same.
+        (WebCore::FrameMac::mayDHTMLPaste): Same.
+        (WebCore::FrameMac::tryDHTMLCut): Same
+        (WebCore::FrameMac::tryDHTMLCopy): Same.
+        (WebCore::FrameMac::tryDHTMLPaste): Same.
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]): Adjust to 
+        HitTestResult changes.
+        (-[WebCoreAXObject accessibilityHitTest:]): Same.
+        * bridge/mac/WebCoreFrameBridge.h: Same.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]): Adjust for 
+        ClipboardAccessPolicy changes.
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]): Same.
+        (-[WebCoreFrameBridge concludeDragForDraggingInfo:]): Same.
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint): Adjust for HitTestResult 
+        changes.
+        (WebCore::Document::prepareMouseEvent): Same.
+        * dom/Element.h:
+        (WebCore::Element::target): Now has a virtual target()
+        * html/HTMLAnchorElement.h: Same.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::mapMouseEvent): Adjust for HitTestResult 
+        changes.
+        * html/HTMLAreaElement.h: Virtual target()
+        * html/HTMLBaseElement.h:
+        (WebCore::HTMLBaseElement::target): Same.
+        * html/HTMLFormElement.h: Same.
+        * html/HTMLLinkElement.h: Same.
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent): Adjust for HitTestResult 
+        changes.
+        * html/HTMLMapElement.h: Same.
+        * page/Frame.cpp:
+        (WebCore::Frame::isPointInsideSelection): Same.
+        (WebCore::Frame::hitTestResultAtPoint): Same. 
+        * page/Frame.h: Same.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleWheelEvent): Same.
+        * platform/mac/ClipboardAccessPolicy.h: Added.
+        (WebCore::):
+        * platform/mac/ClipboardMac.h: Remove definition of AccessPolicy, 
+        include ClipboardAccessPolicy.h, and rename AccessPolicy to 
+        ClipboardAccessPolicy.
+        * platform/mac/ClipboardMac.mm: Rename ClipboardAccessPolicy.
+        (WebCore::ClipboardMac::ClipboardMac):
+        (WebCore::ClipboardMac::setAccessPolicy):
+        (WebCore::ClipboardMac::clearData):
+        (WebCore::ClipboardMac::clearAllData):
+        (WebCore::ClipboardMac::getData):
+        (WebCore::ClipboardMac::setData):
+        (WebCore::ClipboardMac::types):
+        (WebCore::ClipboardMac::setDragImage):
+        (WebCore::ClipboardMac::setDropEffect):
+        (WebCore::ClipboardMac::setEffectAllowed):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint): Adjust for HitTestResult 
+        changes.
+        * rendering/EllipsisBox.h:
+        * rendering/HitTestResult.cpp: Added.
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::~HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        (WebCore::HitTestResult::setInnerNode):
+        (WebCore::HitTestResult::setInnerNonSharedNode):
+        (WebCore::HitTestResult::setURLElement):
+        (WebCore::HitTestResult::setScrollbar):
+        (WebCore::HitTestResult::targetFrame):
+        (WebCore::HitTestResult::boundingBox):
+        (WebCore::HitTestResult::isSelected):
+        (WebCore::HitTestResult::title):
+        * rendering/HitTestResult.h: Added.
+        (WebCore::HitTestResult::readonly):
+        (WebCore::HitTestResult::active):
+        (WebCore::HitTestResult::mouseMove):
+        (WebCore::HitTestResult::innerNode):
+        (WebCore::HitTestResult::innerNonSharedNode):
+        (WebCore::HitTestResult::point):
+        (WebCore::HitTestResult::URLElement):
+        (WebCore::HitTestResult::scrollbar):
+        (WebCore::HitTestResult::setPoint):
+        (WebCore::HitTestResult::setReadonly):
+        (WebCore::HitTestResult::setActive):
+        (WebCore::HitTestResult::setMouseMove):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint): Adjust to HitTestResult changes.
+        * rendering/InlineBox.h: Same.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint): Same.
+        * rendering/InlineFlowBox.h: Same.
+        * rendering/InlineTextBox.cpp: 
+        (WebCore::InlineTextBox::nodeAtPoint): Same.
+        * rendering/InlineTextBox.h: Same.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInScrollbar): Same.
+        (WebCore::RenderBlock::nodeAtPoint): Same.
+        * rendering/RenderBlock.h: Same.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint): Same.
+        * rendering/RenderBox.h: Same.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::hitTestLines): Same.
+        * rendering/RenderFlow.h: Same.
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::nodeAtPoint): Same.
+        * rendering/RenderForeignObject.h: Same.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint): Same.
+        * rendering/RenderFrameSet.h: Same.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint): Same.
+        * rendering/RenderImage.h: Same.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint): Same.
+        * rendering/RenderInline.h: Same.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll): Same.
+        (WebCore::RenderLayer::hitTest): Same.
+        (WebCore::RenderLayer::hitTestLayer): Same.
+        (WebCore::RenderLayer::updateHoverActiveState): Same.
+        * rendering/RenderLayer.h: Same.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInScrollbar): Same.
+        * rendering/RenderListBox.h: Same.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest): Same.
+        (WebCore::RenderObject::setInnerNode): Same.
+        (WebCore::RenderObject::nodeAtPoint): Same.
+        * rendering/RenderObject.h: Remove NodeInfo class and forward 
+        declare HitTestResult.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint): Adjust to HitTestResult 
+        changes.
+        * rendering/RenderPath.h: Same.
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint): Same.
+        * rendering/RenderSVGImage.h: Same
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint): Same.
+        * rendering/RenderSVGText.h: Same.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint): Same.
+        * rendering/RenderTableRow.h: Same.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint): Same.
+        * rendering/RenderTableSection.h: Same.
+        * rendering/RenderText.h: Same.
+        (WebCore::RenderText::nodeAtPoint): Same.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::nodeAtPoint): Same.
+        * rendering/RenderTextControl.h: Same.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint): Same.
+        * rendering/RootInlineBox.h: Same.
+
 2006-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

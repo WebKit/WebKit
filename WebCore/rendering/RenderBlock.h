@@ -198,10 +198,10 @@ public:
                       int *heightRemaining = 0) const;
     int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
 
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
+    virtual bool nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction);
 
-    virtual bool isPointInScrollbar(NodeInfo& info, int x, int y, int tx, int ty);
+    virtual bool isPointInScrollbar(HitTestResult& info, int x, int y, int tx, int ty);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     

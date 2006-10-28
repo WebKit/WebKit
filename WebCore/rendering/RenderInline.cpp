@@ -335,7 +335,7 @@ const char *RenderInline::renderName() const
     return "RenderInline";
 }
 
-bool RenderInline::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+bool RenderInline::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
                                HitTestAction hitTestAction)
 {
     return hitTestLines(info, _x, _y, _tx, _ty, hitTestAction);

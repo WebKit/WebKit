@@ -53,6 +53,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "OverflowEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
@@ -864,7 +865,7 @@ void RenderLayer::autoscroll()
     IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->view()->currentMousePosition());
     
     if (currentFrame->mouseDownMayStartSelect()) {
-        RenderObject::NodeInfo renderInfo(true, false, true);
+        HitTestResult renderInfo(true, false, true);
         if (hitTest(renderInfo, currentPos)) {
             VisiblePosition pos(renderInfo.innerNode()->renderer()->positionForPoint(currentPos));
             currentFrame->updateSelectionForMouseDragOverPosition(pos);
@@ -1470,7 +1471,7 @@ static inline IntRect frameVisibleRect(RenderObject* renderer)
     return enclosingIntRect(renderer->document()->frame()->view()->visibleContentRect());
 }
 
-bool RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
+bool RenderLayer::hitTest(HitTestResult& info, const IntPoint& point)
 {
     renderer()->document()->updateLayout();
     
@@ -1496,8 +1497,7 @@ bool RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
     return insideLayer;
 }
 
-RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                                       const IntPoint& mousePos, const IntRect& hitTestRect)
+RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, HitTestResult& info, const IntPoint& mousePos, const IntRect& hitTestRect)
 {
     // Calculate the clip rects we should use.
     IntRect layerBounds;
@@ -1829,7 +1829,7 @@ static RenderObject* commonAncestor(RenderObject* obj1, RenderObject* obj2)
     return 0;
 }
 
-void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
+void RenderLayer::updateHoverActiveState(HitTestResult& info)
 {
     // We don't update :hover/:active state when the info is marked as readonly.
     if (info.readonly())

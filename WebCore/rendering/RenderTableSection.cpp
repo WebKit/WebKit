@@ -986,7 +986,7 @@ RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
 }
 
 // Hit Testing
-bool RenderTableSection::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderTableSection::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action)
 {
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.

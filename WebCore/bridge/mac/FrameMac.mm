@@ -33,6 +33,7 @@
 #import "CSSComputedStyleDeclaration.h"
 #import "Cache.h"
 #import "ClipboardEvent.h"
+#import "ClipboardMac.h"
 #import "Cursor.h"
 #import "WebDocumentLoader.h"
 #import "DOMInternal.h"
@@ -58,6 +59,7 @@
 #import "HTMLTableCellElement.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
+#import "HitTestResult.h"
 #import "PlatformKeyboardEvent.h"
 #import "PlatformScrollBar.h"
 #import "PlatformWheelEvent.h"
@@ -382,7 +384,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* owner
 void FrameMac::freeClipboard()
 {
     if (_dragClipboard)
-        _dragClipboard->setAccessPolicy(ClipboardMac::Numb);
+        _dragClipboard->setAccessPolicy(ClipboardNumb);
 }
 
 // Either get cached regexp or build one that matches any of the labels.
@@ -1556,10 +1558,10 @@ bool FrameMac::eventMayStartDrag(NSEvent *event) const
 
     NSPoint loc = [event locationInWindow];
     IntPoint mouseDownPos = d->m_view->windowToContents(IntPoint(loc));
-    RenderObject::NodeInfo nodeInfo(true, false);
-    renderer()->layer()->hitTest(nodeInfo, mouseDownPos);
+    HitTestResult result(true, false);
+    renderer()->layer()->hitTest(result, mouseDownPos);
     bool srcIsDHTML;
-    return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
+    return result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
 }
 
 // The link drag hysteresis is much larger than the others because there
@@ -1616,18 +1618,18 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         
         if (mouseDownMayStartDrag() && !_dragSrc) {
             // try to find an element that wants to be dragged
-            RenderObject::NodeInfo nodeInfo(true, false);
-            renderer()->layer()->hitTest(nodeInfo, m_mouseDownPos);
-            Node *node = nodeInfo.innerNode();
+            HitTestResult result(true, false);
+            renderer()->layer()->hitTest(result, m_mouseDownPos);
+            Node *node = result.innerNode();
             _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), _dragSrcIsDHTML) : 0;
             if (!_dragSrc) {
                 setMouseDownMayStartDrag(false);     // no element is draggable
             } else {
-                // remember some facts about this source, while we have a NodeInfo handy
-                node = nodeInfo.URLElement();
+                // remember some facts about this source, while we have a HitTestResult handy
+                node = result.URLElement();
                 _dragSrcIsLink = node && node->isLink();
 
-                node = nodeInfo.innerNonSharedNode();
+                node = result.innerNonSharedNode();
                 _dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
                 
                 _dragSrcInSelection = isPointInsideSelection(m_mouseDownPos);
@@ -1666,7 +1668,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     
                     freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
                                         // to make sure it gets numbified
-                    _dragClipboard = new ClipboardMac(true, pasteboard, ClipboardMac::Writable, this);
+                    _dragClipboard = new ClipboardMac(true, pasteboard, ClipboardWritable, this);
                     
                     // If this is drag of an element, get set up to generate a default image.  Otherwise
                     // WebKit will generate the default, the element doesn't override.
@@ -1680,7 +1682,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     setMouseDownMayStartDrag(dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && mayCopy());
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
-                    _dragClipboard->setAccessPolicy(ClipboardMac::ImageWritable);
+                    _dragClipboard->setAccessPolicy(ClipboardImageWritable);
                     
                     if (mouseDownMayStartDrag()) {
                         // gather values from DHTML element, if it set any
@@ -1738,7 +1740,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
 
 // Returns whether caller should continue with "the default processing", which is the same as 
 // the event handler NOT setting the return value to false
-bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy)
+bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy)
 {
     Node* target = selectionController()->start().element();
     if (!target && document())
@@ -1748,7 +1750,7 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::Acc
     if (target->isShadowNode())
         target = target->shadowParentNode();
     
-    RefPtr<ClipboardMac> clipboard = new ClipboardMac(false, [NSPasteboard generalPasteboard], (ClipboardMac::AccessPolicy)policy);
+    RefPtr<ClipboardMac> clipboard = new ClipboardMac(false, [NSPasteboard generalPasteboard], (ClipboardAccessPolicy)policy);
 
     ExceptionCode ec = 0;
     RefPtr<Event> evt = new ClipboardEvent(eventType, true, true, clipboard.get());
@@ -1756,7 +1758,7 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::Acc
     bool noDefaultProcessing = evt->defaultPrevented();
 
     // invalidate clipboard here for security
-    clipboard->setAccessPolicy(ClipboardMac::Numb);
+    clipboard->setAccessPolicy(ClipboardNumb);
 
     return !noDefaultProcessing;
 }
@@ -1768,17 +1770,17 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::Acc
 
 bool FrameMac::mayDHTMLCut()
 {
-    return mayCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardMac::Numb);
+    return mayCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
 }
 
 bool FrameMac::mayDHTMLCopy()
 {
-    return mayCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardMac::Numb);
+    return mayCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
 }
 
 bool FrameMac::mayDHTMLPaste()
 {
-    return !dispatchCPPEvent(beforepasteEvent, ClipboardMac::Numb);
+    return !dispatchCPPEvent(beforepasteEvent, ClipboardNumb);
 }
 
 bool FrameMac::tryDHTMLCut()
@@ -1790,7 +1792,7 @@ bool FrameMac::tryDHTMLCut()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    return !dispatchCPPEvent(cutEvent, ClipboardMac::Writable);
+    return !dispatchCPPEvent(cutEvent, ClipboardWritable);
 }
 
 bool FrameMac::tryDHTMLCopy()
@@ -1802,12 +1804,12 @@ bool FrameMac::tryDHTMLCopy()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    return !dispatchCPPEvent(copyEvent, ClipboardMac::Writable);
+    return !dispatchCPPEvent(copyEvent, ClipboardWritable);
 }
 
 bool FrameMac::tryDHTMLPaste()
 {
-    return !dispatchCPPEvent(pasteEvent, ClipboardMac::Readable);
+    return !dispatchCPPEvent(pasteEvent, ClipboardReadable);
 }
 
 void FrameMac::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)

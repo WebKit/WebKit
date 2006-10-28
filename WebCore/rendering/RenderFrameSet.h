@@ -54,7 +54,7 @@ public:
     bool canResize(int x, int y);
     void setResizing(bool);
 
-    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     HTMLFrameSetElement* element() const
         { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }

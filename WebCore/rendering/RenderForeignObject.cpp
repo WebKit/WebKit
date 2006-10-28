@@ -118,7 +118,7 @@ void RenderForeignObject::layout()
     setNeedsLayout(false);
 }
 
-bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderForeignObject::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     AffineTransform totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();

@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFieldInnerElement.h"
+#include "HitTestResult.h"
 #include "RenderTheme.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
@@ -344,7 +345,7 @@ short RenderTextControl::baselinePosition(bool b, bool isRootLineBox) const
     return RenderFlexibleBox::baselinePosition(b, isRootLineBox);
 }
 
-bool RenderTextControl::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderTextControl::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     // If we're within the text control, we want to act as if we've hit the inner div, incase the point 
     // was on the control but not on the div (see Radar 4617841).

@@ -30,6 +30,7 @@
 #if PLATFORM(MAC)
 #include "FrameMac.h"
 #endif
+#include "HitTestResult.h"
 
 using namespace std;
 
@@ -141,7 +142,7 @@ void RootInlineBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 #endif
 }
 
-bool RootInlineBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty)
+bool RootInlineBox::nodeAtPoint(HitTestResult& i, int x, int y, int tx, int ty)
 {
     if (m_ellipsisBox && object()->style()->visibility() == VISIBLE) {
         if (m_ellipsisBox->nodeAtPoint(i, x, y, tx, ty)) {

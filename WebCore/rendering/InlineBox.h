@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class HitTestResult;
 class RootInlineBox;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
@@ -81,7 +82,7 @@ public:
     virtual void adjustPosition(int dx, int dy);
 
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
-    virtual bool nodeAtPoint(RenderObject::NodeInfo&, int x, int y, int tx, int ty);
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty);
 
     // Overloaded new operator.
     void* operator new(size_t, RenderArena*) throw();

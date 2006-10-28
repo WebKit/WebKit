@@ -24,6 +24,7 @@
 
 #include "Document.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "TextStyle.h"
 
 namespace WebCore {
@@ -60,7 +61,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     }
 }
 
-bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y, int tx, int ty)
+bool EllipsisBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty)
 {
     tx += m_x;
     ty += m_y;

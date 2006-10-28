@@ -45,7 +45,7 @@ public:
     virtual void position(InlineBox*) { }
     virtual void layout();
     virtual IntRect getAbsoluteRepaintRect();
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);
+    virtual bool nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action);
 
     // The only time rows get a layer is when they have transparency.
     virtual bool requiresLayer() { return isTransparent() || hasOverflowClip(); }

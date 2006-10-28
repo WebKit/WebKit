@@ -57,6 +57,7 @@ class FrameView;
 class HTMLAreaElement;
 class InlineBox;
 class InlineFlowBox;
+class HitTestResult;
 class PlatformScrollbar;
 class Position;
 class RenderArena;
@@ -490,39 +491,6 @@ public:
     void addDashboardRegions(Vector<DashboardRegionValue>&);
     void collectDashboardRegions(Vector<DashboardRegionValue>&);
 
-    // does a query on the rendertree and finds the innernode
-    // and overURL for the given position
-    // if readonly == false, it will recalc hover styles accordingly
-    class NodeInfo {
-    public:
-        NodeInfo(bool readonly, bool active, bool mouseMove = false)
-            : m_innerNode(0), m_innerNonSharedNode(0), m_innerURLElement(0), 
-              m_scrollbar(0), m_readonly(readonly), m_active(active), m_mouseMove(mouseMove)
-            { }
-
-        Node* innerNode() const { return m_innerNode; }
-        Node* innerNonSharedNode() const { return m_innerNonSharedNode; }
-        Element* URLElement() const { return m_innerURLElement; }
-        PlatformScrollbar* scrollbar() const { return m_scrollbar; }
-        bool readonly() const { return m_readonly; }
-        bool active() const { return m_active; }
-        bool mouseMove() const { return m_mouseMove; }
-        
-        void setInnerNode(Node* n) { m_innerNode = n; }
-        void setInnerNonSharedNode(Node* n) { m_innerNonSharedNode = n; }
-        void setURLElement(Element* n) { m_innerURLElement = n; }
-        void setScrollbar(PlatformScrollbar* s) { m_scrollbar = s; }
-
-    private:
-        Node* m_innerNode;
-        Node* m_innerNonSharedNode;
-        Element* m_innerURLElement;
-        PlatformScrollbar* m_scrollbar;
-        bool m_readonly;
-        bool m_active;
-        bool m_mouseMove;
-    };
-
     // Used to signal a specific subrect within an object that must be repainted after
     // layout is complete.
     struct RepaintInfo {
@@ -532,10 +500,10 @@ public:
         RepaintInfo(RenderObject* o, const IntRect& r) :m_object(o), m_repaintRect(r) {}
     };
     
-    bool hitTest(NodeInfo& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
+    bool hitTest(HitTestResult& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
+    virtual bool nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction);
-    void setInnerNode(NodeInfo& info);
+    void setInnerNode(HitTestResult& info);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     VisiblePosition positionForPoint(const IntPoint& point) { return positionForCoordinates(point.x(), point.y()); }

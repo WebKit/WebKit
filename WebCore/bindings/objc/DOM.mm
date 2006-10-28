@@ -47,6 +47,7 @@
 #import "HTMLDocument.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInElement.h"
+#import "Image.h"
 #import "IntRect.h"
 #import "NodeFilter.h"
 #import "NodeFilterCondition.h"

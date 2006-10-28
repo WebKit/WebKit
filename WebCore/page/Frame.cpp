@@ -60,6 +60,7 @@
 #include "loader/icon/IconLoader.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
+#include "HitTestResult.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
@@ -67,6 +68,7 @@
 #include "Plugin.h"
 #include "PluginDocument.h"
 #include "RenderListBox.h"
+#include "RenderObject.h"
 #include "RenderPart.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -1789,9 +1791,9 @@ bool Frame::isPointInsideSelection(const IntPoint& point)
     if (!document()->renderer()) 
         return false;
     
-    RenderObject::NodeInfo nodeInfo(true, true);
-    document()->renderer()->layer()->hitTest(nodeInfo, point);
-    Node *innerNode = nodeInfo.innerNode();
+    HitTestResult result(true, true);
+    document()->renderer()->layer()->hitTest(result, point);
+    Node *innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
     
@@ -2922,17 +2924,17 @@ void Frame::setAutoscrollRenderer(RenderObject* renderer)
     d->m_autoscrollRenderer = renderer;
 }
 
-RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowShadowContent)
+HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer()->layer()->hitTest(nodeInfo, point);
+    HitTestResult result(true, true);
+    renderer()->layer()->hitTest(result, point);
 
     Node *n;
     Widget *widget = 0;
     IntPoint widgetPoint(point);
     
     while (true) {
-        n = nodeInfo.innerNode();
+        n = result.innerNode();
         if (!n || !n->renderer() || !n->renderer()->isWidget())
             break;
         widget = static_cast<RenderWidget*>(n->renderer())->widget();
@@ -2947,22 +2949,23 @@ RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowS
         widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
-        RenderObject::NodeInfo widgetNodeInfo(true, true);
-        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint);
-        nodeInfo = widgetNodeInfo;
+        HitTestResult widgetHitTestResult(true, true);
+        frame->renderer()->layer()->hitTest(widgetHitTestResult, widgetPoint);
+        result = widgetHitTestResult;
+        result.setPoint(widgetPoint);
     }
     
     if (!allowShadowContent) {
-        Node* node = nodeInfo.innerNode();
+        Node* node = result.innerNode();
         if (node)
             node = node->shadowAncestorNode();
-        nodeInfo.setInnerNode(node);
-        node = nodeInfo.innerNonSharedNode();
+        result.setInnerNode(node);
+        node = result.innerNonSharedNode();
         if (node)
             node = node->shadowAncestorNode();
-        nodeInfo.setInnerNonSharedNode(node); 
+        result.setInnerNonSharedNode(node); 
     }
-    return nodeInfo;
+    return result;
 }
 
 bool Frame::hasSelection()

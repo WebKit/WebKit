@@ -26,9 +26,11 @@
 #define HTMLMapElement_H
 
 #include "HTMLElement.h"
-#include "RenderObject.h" // for RenderObject::NodeInfo
 
 namespace WebCore {
+
+class IntSize;
+class HitTestResult;
 
 class HTMLMapElement : public HTMLElement {
 public:
@@ -43,7 +45,7 @@ public:
 
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    bool mapMouseEvent(int x, int y, const IntSize&, RenderObject::NodeInfo&);
+    bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
 
     PassRefPtr<HTMLCollection> areas();
 

@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "TextStream.h"
 #include "MouseEvent.h"
+#include "HitTestResult.h"
 #include "RenderFrame.h"
 #include "RenderView.h"
 
@@ -74,7 +75,7 @@ RenderFrameSet::~RenderFrameSet()
       delete [] m_vSplitVar;
 }
 
-bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+bool RenderFrameSet::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
                                  HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)

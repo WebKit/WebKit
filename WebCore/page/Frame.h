@@ -33,7 +33,6 @@
 #include "FrameView.h"
 #include "KURL.h"
 #include "Node.h"
-#include "RenderObject.h"
 #include "RenderLayer.h"
 #include "ScrollBar.h"
 #include "TextAffinity.h"
@@ -73,8 +72,10 @@ class KJSProxy;
 class Page;
 class Plugin;
 class MouseEventWithHitTestResults;
+class HitTestResult;
 class Range;
 class RenderLayer;
+class RenderObject;
 class ResourceRequest;
 class Selection;
 class SelectionController;
@@ -800,7 +801,7 @@ public:
   friend class FrameQt;
 #endif
 
-  RenderObject::NodeInfo nodeInfoAtPoint(const IntPoint&, bool allowShadowContent);
+  HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent);
   bool hasSelection();
   String documentTypeString() const;
 

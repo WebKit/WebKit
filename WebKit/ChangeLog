@@ -1,3 +1,38 @@
+2006-10-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        This is the WebKit half of pushing the guts of elementAtPoint and 
+        WebElementDictionary into WebCore. Among other things, this patch 
+        makes WebElementDictionary.m and WebHTMLView.m Objective-C++
+
+        * MigrateHeaders.make: Add DOMElementInternal.h to the list of 
+        headers to migrate.
+        * Misc/WebElementDictionary.h: Replaced DOMNode, DOMElement, and 
+        NSPoint member variables with a HitTestResult member variable.
+        * Misc/WebElementDictionary.m:
+        (addLookupKey): Formatting.
+        (-[WebElementDictionary initWithHitTestResult:]): Constructor just 
+        takes a HitTestResult now and sets the member variable.
+        (-[WebElementDictionary dealloc]): delete HitTestResult.
+        (-[WebElementDictionary finalize]): Address HitTestResult.
+        (-[WebElementDictionary _domNode]): Use HitTestResult and call into 
+        WebCore.
+        (-[WebElementDictionary objectForKey:]): Same.
+        (-[WebElementDictionary _webFrame]): Same.
+        (-[WebElementDictionary _targetWebFrame]): Same.
+        (-[WebElementDictionary _title]): Same.
+        (-[WebElementDictionary _imageRect]): Same.
+        (-[WebElementDictionary _isSelected]): Same.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrame.mm:
+        (core): Convert from DOMNode* to Node*
+        (kit): Convert from Node* to DOMNode*
+        * WebView/WebFrameInternal.h: Support for the above.
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]): Call directly 
+        into Frame.cpp to get HitTestResult.
+
 2006-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John & Adam.

@@ -26,10 +26,12 @@
 #define HTMLAreaElement_H
 
 #include "HTMLAnchorElement.h"
+#include "IntSize.h"
 #include "Path.h"
-#include "RenderObject.h" // for RenderObject::NodeInfo
 
 namespace WebCore {
+
+class HitTestResult;
 
 class HTMLAreaElement : public HTMLAnchorElement {
 public:
@@ -45,7 +47,7 @@ public:
 
     bool isDefault() const { return m_shape == Default; }
 
-    bool mapMouseEvent(int x, int y, const IntSize&, RenderObject::NodeInfo&);
+    bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
 
     virtual IntRect getRect(RenderObject*) const;
 
@@ -70,7 +72,7 @@ public:
     int tabIndex() const;
     void setTabIndex(int);
 
-    String target() const;
+    virtual String target() const;
     void setTarget(const String&);
 
 protected:

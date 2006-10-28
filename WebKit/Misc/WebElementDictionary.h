@@ -28,17 +28,15 @@
 
 #import <Foundation/NSDictionary.h>
 
-@class DOMNode;
-@class DOMElement;
+namespace WebCore { 
+    class HitTestResult;
+}
 
 @interface WebElementDictionary : NSDictionary {
-    DOMNode *_innerNode;
-    DOMNode *_innerNonSharedNode;
-    DOMElement *_URLElement;
+    WebCore::HitTestResult* _result;
     NSMutableDictionary *_cache;
     NSMutableSet *_nilValues;
-    NSPoint _point;
     BOOL _cacheComplete;
 }
-- (id)initWithInnerNonSharedNode:(DOMNode *)innerNonSharedNode innerNode:(DOMNode *)innerNode URLElement:(DOMElement *)URLElement andPoint:(NSPoint)point;
+- (id)initWithHitTestResult:(const WebCore::HitTestResult&)result;
 @end

@@ -42,6 +42,7 @@
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
+#import "HitTestResult.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderMenuList.h"
@@ -1262,9 +1263,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
         NSPoint windowCoord = [[view window] convertScreenToBase: point];
         ourpoint = [view convertPoint:windowCoord fromView:nil];
         
-        RenderObject::NodeInfo nodeInfo(true, true);
-        renderer->layer()->hitTest(nodeInfo, IntPoint(ourpoint));
-        innerNode = nodeInfo.innerNode();
+        HitTestResult result(true, true);
+        renderer->layer()->hitTest(result, IntPoint(ourpoint));
+        innerNode = result.innerNode();
         if (!innerNode || !innerNode->renderer())
             return nil;
 
@@ -2302,11 +2303,11 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     if (!m_renderer)
         return NSAccessibilityUnignoredAncestor(self);
     
-    RenderObject::NodeInfo nodeInfo(true, true);
-    m_renderer->layer()->hitTest(nodeInfo, IntPoint(point));
-    if (!nodeInfo.innerNode())
+    HitTestResult result(true, true);
+    m_renderer->layer()->hitTest(result, IntPoint(point));
+    if (!result.innerNode())
         return NSAccessibilityUnignoredAncestor(self);
-    Node* node = nodeInfo.innerNode()->shadowAncestorNode();
+    Node* node = result.innerNode()->shadowAncestorNode();
     RenderObject* obj = node->renderer();
     if (!obj)
         return NSAccessibilityUnignoredAncestor(self);

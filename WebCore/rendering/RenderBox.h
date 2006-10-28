@@ -43,7 +43,7 @@ public:
 
     virtual void setStyle(RenderStyle*);
     virtual void paint(PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(NodeInfo& i, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
+    virtual bool nodeAtPoint(HitTestResult& i, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
 
     virtual void destroy();
     

@@ -97,7 +97,7 @@ public:
     String method() const;
     void setMethod(const String&);
 
-    String target() const;
+    virtual String target() const;
     void setTarget(const String&);
 
     friend class HTMLFormCollection;

@@ -37,6 +37,10 @@
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/HitTestResult.h>
+
+using namespace WebCore;
 
 typedef enum {
     WebElementSelf,
@@ -54,7 +58,7 @@ static CFMutableDictionaryRef lookupTable = NULL;
 
 static void addLookupKey(NSString *key, SEL selector, WebElementTargetObject target)
 {
-    WebElementMethod *elementMethod = static_cast<WebElementMethod*>(malloc(sizeof(WebElementMethod)));
+    WebElementMethod* elementMethod = static_cast<WebElementMethod*>(malloc(sizeof(WebElementMethod)));
     elementMethod->target = target;
     elementMethod->selector = selector;
     CFDictionaryAddValue(lookupTable, key, elementMethod);
@@ -88,25 +92,26 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementLinkLabelKey, @selector(textContent), WebElementURLElement);
 }
 
-- (id)initWithInnerNonSharedNode:(DOMNode *)innerNonSharedNode innerNode:(DOMNode *)innerNode URLElement:(DOMElement *)URLElement andPoint:(NSPoint)point
+- (id)initWithHitTestResult:(const HitTestResult&)result
 {
     [[self class] initializeLookupTable];
     [super init];
-    _point = point;
-    _innerNode = [innerNode retain];
-    _innerNonSharedNode = [innerNonSharedNode retain];
-    _URLElement = [URLElement retain];
+    _result = new HitTestResult(result);
     return self;
 }
 
 - (void)dealloc
 {
-    [_innerNode release];
-    [_innerNonSharedNode release];
-    [_URLElement release];
+    delete _result;
     [_cache release];
     [_nilValues release];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete _result;
+    [super finalize];
 }
 
 - (void)_fillCache
@@ -129,6 +134,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return [_cache keyEnumerator];
 }
 
+- (DOMNode *)_domNode
+{
+    return kit(_result->innerNonSharedNode());
+}
+
 - (id)objectForKey:(id)key
 {
     id value = [_cache objectForKey:key];
@@ -145,13 +155,13 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
             target = self;
             break;
         case WebElementInnerNonSharedNode:
-            target = _innerNonSharedNode;
+            target = [self _domNode];
             break;
         case WebElementInnerNode:
-            target = _innerNode;
+            target = kit(_result->innerNode());
             break;
         case WebElementURLElement:
-            target = _URLElement;
+            target = kit(_result->URLElement());
             break;
     }
 
@@ -175,50 +185,31 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return value;
 }
 
-- (DOMNode *)_domNode
-{
-    return [[_innerNonSharedNode retain] autorelease];
-}
-
 - (WebFrame *)_webFrame
 {
-    return [[_innerNonSharedNode ownerDocument] webFrame];
+    return [[[self _domNode] ownerDocument] webFrame];
 }
 
 - (WebFrame *)_targetWebFrame
 {
-    if (!_URLElement || ![_URLElement respondsToSelector:@selector(target)])
-        return nil;
-    WebFrame *webFrame = [[_innerNonSharedNode ownerDocument] webFrame];
-    NSString *targetName = [_URLElement performSelector:@selector(target)];
-    if ([targetName length])
-        return [webFrame findFrameNamed:targetName];
-    return webFrame;
+    FrameMac* webCoreFrame = Mac(_result->targetFrame());
+    return kit(webCoreFrame);
 }
 
 - (NSString *)_title
 {
-    // Find the title in the nearest enclosing DOM node.
-    // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
-    for (DOMNode *titleNode = _innerNode; titleNode; titleNode = [titleNode parentNode]) {
-        if ([titleNode isKindOfClass:[DOMHTMLElement class]]) {
-            NSString *title = [(DOMHTMLElement *)titleNode titleDisplayString];
-            if ([title length])
-                return title;
-        }
-    }
-    return nil;
+    return _result->title();
 }
 
 - (NSValue *)_imageRect
 {
     if ([self objectForKey:WebElementImageURLKey])
-        return [NSValue valueWithRect:[_innerNonSharedNode boundingBox]];
+        return [NSValue valueWithRect:_result->boundingBox()];
     return nil;
 }
 
 - (NSNumber *)_isSelected
 {
-    return [NSNumber numberWithBool:[[[[_innerNonSharedNode ownerDocument] webFrame] _bridge] isPointInsideSelection:_point]];
+    return [NSNumber numberWithBool:_result->isSelected()];
 }
 @end

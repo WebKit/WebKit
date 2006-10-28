@@ -62,7 +62,7 @@ public:
     String rev() const;
     void setRev(const String&);
 
-    String target() const;
+    virtual String target() const;
     void setTarget(const String&);
 
     String type() const;

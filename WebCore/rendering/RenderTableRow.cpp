@@ -138,7 +138,7 @@ IntRect RenderTableRow::getAbsoluteRepaintRect()
 }
 
 // Hit Testing
-bool RenderTableRow::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderTableRow::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action)
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
