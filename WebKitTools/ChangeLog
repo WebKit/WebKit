@@ -1,3 +1,12 @@
+2006-10-27  Brady Eidson  <beidson@apple.com>
+
+        Rubber stamped by Tim Hatcher
+
+        Added "make universal" to build universal binaries
+
+        * Makefile:
+        * Makefile.shared:
+
 2006-10-26  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Geoff.

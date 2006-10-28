@@ -9,5 +9,8 @@ debug d development dev develop:
 release r deployment dep deploy:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; if [ $$? -ne 0 ]; then break; fi; done
 
+universal u:
+	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; if [ $$? -ne 0 ]; then break; fi; done
+
 clean:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; if [ $$? -ne 0 ]; then break; fi; done

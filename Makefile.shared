@@ -11,6 +11,9 @@ release r deployment dep deploy: force
 	../WebKitTools/Scripts/set-webkit-configuration --release
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
+universal u: force
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386'
+
 clean:
 	xcodebuild -alltargets clean $(XCODE_OPTIONS)
 
