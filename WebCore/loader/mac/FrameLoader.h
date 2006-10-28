@@ -221,6 +221,7 @@ namespace WebCore {
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
         void post(NSURL *, const String& referrer, const String& target, NSArray *postData, const String& contentType, NSEvent *, Element* form, NSDictionary *formValues);
+        void loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResponse *response, int length);
 
         void checkLoadComplete();
         void detachFromParent();

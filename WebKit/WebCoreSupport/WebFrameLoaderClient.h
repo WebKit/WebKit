@@ -132,6 +132,7 @@ private:
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
     virtual void setMainDocumentError(WebCore::DocumentLoader*, NSError *);
     virtual void clearUnarchivingState(WebCore::DocumentLoader*);
+    virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, NSURLRequest *, NSURLResponse *, int length);
 
     virtual void progressStarted();
     virtual void progressCompleted();

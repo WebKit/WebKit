@@ -47,6 +47,13 @@
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
+#import "WebPageBridge.h"
+#import "WebPolicyDelegatePrivate.h"
+#import "WebNetscapePluginEmbeddedView.h"
+#import "WebNullPluginView.h"
+#import "WebPlugin.h"
+#import "WebPluginController.h"
+#import "WebPolicyDeciderMac.h"
 #import "WebPolicyDelegatePrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegatePrivate.h"
@@ -142,21 +149,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
-static inline WebFrame *frame(WebCoreFrameBridge *bridge)
-{
-    return [(WebFrameBridge *)bridge webFrame];
-}
-
-FrameMac* core(WebFrame *frame)
-{
-    return [[frame _bridge] _frame];
-}
-
-WebFrame *kit(Frame* frame)
-{
-    return frame ? [(WebFrameBridge *)Mac(frame)->bridge() webFrame] : nil;
-}
-
 Element* core(DOMElement *element)
 {
     return [element _element];
@@ -199,6 +191,31 @@ DOMRange *kit(Range* range)
 
 @implementation WebFrame (WebInternal)
 
+
+static inline WebFrame *frame(WebCoreFrameBridge *bridge)
+{
+    return ((WebFrameBridge *)bridge)->_frame;
+}
+
+FrameMac* core(WebFrame *frame)
+{
+    if (!frame)
+        return 0;
+
+    return frame->_private->bridge->m_frame;
+}
+
+WebFrame *kit(Frame* frame)
+{
+    return frame ? ((WebFrameBridge *)Mac(frame)->bridge())->_frame : nil;
+}
+
+static inline WebView *getWebView(WebFrame *webFrame)
+{
+   Frame* coreFrame = core(webFrame);
+   return coreFrame ? ((WebPageBridge *)coreFrame->page()->bridge())->_webView : nil;
+}
+
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     NSURL *fakeURL = [NSURL _web_uniqueWebDataURL];
@@ -215,9 +232,9 @@ DOMRange *kit(Range* range)
 - (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
     if ([[self dataSource] _URLForHistory] != nil) {
-        WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
+        WebHistoryItem *bfItem = [[getWebView(self) mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
         LOG (BackForward, "for frame %@, adding item  %@\n", [self name], bfItem);
-        [[[self webView] backForwardList] addItem:bfItem];
+        [[getWebView(self) backForwardList] addItem:bfItem];
     }
 }
 
@@ -297,15 +314,15 @@ DOMRange *kit(Range* range)
 
 - (BOOL)_canCachePage
 {
-    return [[[self webView] backForwardList] _usesPageCache] && core(self)->canCachePage();
+    return [[getWebView(self) backForwardList] _usesPageCache] && core(self)->canCachePage();
 }
 
 - (void)_purgePageCache
 {
     // This method implements the rule for purging the page cache.
-    unsigned sizeLimit = [[[self webView] backForwardList] pageCacheSize];
+    unsigned sizeLimit = [[getWebView(self) backForwardList] pageCacheSize];
     unsigned pagesCached = 0;
-    WebBackForwardList *backForwardList = [[self webView] backForwardList];
+    WebBackForwardList *backForwardList = [getWebView(self) backForwardList];
     NSArray *backList = [backForwardList backListWithLimit: 999999];
     WebHistoryItem *oldestNonSnapbackItem = nil;
     
@@ -419,7 +436,7 @@ DOMRange *kit(Range* range)
         // be necessary if we do the better fix described above.
         [self _frameLoader]->documentLoader()->replaceRequestURLForAnchorScroll(itemURL);
         
-        [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
+        [[getWebView(self) _frameLoadDelegateForwarder] webView:getWebView(self)
                                didChangeLocationWithinPageForFrame:self];
         [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
     } else {
@@ -436,12 +453,12 @@ DOMRange *kit(Range* range)
             NSDictionary *pageCache = [item pageCache];
             NSDate *cacheDate = [pageCache objectForKey: WebPageCacheEntryDateKey];
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
-            if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]) {
+            if (delta <= [[getWebView(self) preferences] _backForwardCacheExpirationInterval]) {
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
                 [self _frameLoader]->load([newDataSource _documentLoader], loadType, 0);   
                 inPageCache = YES;
             } else {
-                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
+                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [_private->provisionalItem URL], delta, [[getWebView(self) preferences] _backForwardCacheExpirationInterval]);
                 [item setHasPageCache: NO];
             }
         }
@@ -567,8 +584,8 @@ DOMRange *kit(Range* range)
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
-    if ([[[self webView] _policyDelegateForwarder] webView:[self webView] shouldGoToHistoryItem:item]) {    
-        WebBackForwardList *backForwardList = [[self webView] backForwardList];
+    if ([[getWebView(self) _policyDelegateForwarder] webView:getWebView(self) shouldGoToHistoryItem:item]) {    
+        WebBackForwardList *backForwardList = [getWebView(self) backForwardList];
         WebHistoryItem *currItem = [backForwardList currentItem];
         // Set the BF cursor before commit, which lets the user quickly click back/forward again.
         // - plus, it only makes sense for the top level of the operation through the frametree,
@@ -808,8 +825,8 @@ DOMRange *kit(Range* range)
 
 - (void)_updateBackground
 {
-    BOOL drawsBackground = [[self webView] drawsBackground];
-    NSColor *backgroundColor = [[self webView] backgroundColor];
+    BOOL drawsBackground = [getWebView(self) drawsBackground];
+    NSColor *backgroundColor = [getWebView(self) backgroundColor];
 
     Frame* coreFrame = core(self);
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
@@ -919,12 +936,12 @@ DOMRange *kit(Range* range)
     // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
     // responder. It would be nicer to just notice first responder changes here instead, but there's no 
     // notification sent when the first responder changes in general (Radar 2573089).
-    WebFrame *frameWithSelection = [[[self webView] mainFrame] _findFrameWithSelection];
+    WebFrame *frameWithSelection = [[getWebView(self) mainFrame] _findFrameWithSelection];
     if (frameWithSelection != self)
         [frameWithSelection _clearSelection];
 
     // While we're in the general area of selection and frames, check that there is only one now.
-    ASSERT([[[self webView] mainFrame] _atMostOneFrameHasSelection]);
+    ASSERT([[getWebView(self) mainFrame] _atMostOneFrameHasSelection]);
 }
 
 - (void)_addPlugInView:(NSView *)plugInView
@@ -957,7 +974,10 @@ DOMRange *kit(Range* range)
 
 - (BOOL)_isMainFrame
 {
-    return self == [[self webView] mainFrame];
+   Frame* coreFrame = core(self);
+   if (!coreFrame)
+       return NO;
+   return coreFrame == coreFrame->page()->mainFrame() ;
 }
 
 - (void)_addInspector:(WebInspector *)inspector
@@ -1097,8 +1117,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebView *)webView
 {
-    Frame* coreFrame = core(self);
-    return coreFrame ? [coreFrame->page()->bridge() webView] : nil;
+    return getWebView(self);
 }
 
 - (DOMDocument *)DOMDocument

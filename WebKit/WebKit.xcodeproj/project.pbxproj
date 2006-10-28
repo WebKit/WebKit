@@ -48,6 +48,7 @@
 		65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */; };
 		6550B7C7099EFAE90090D781 /* WebArchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B7C5099EFAE90090D781 /* WebArchiver.h */; };
 		6550B7C8099EFAE90090D781 /* WebArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 6550B7C6099EFAE90090D781 /* WebArchiver.m */; };
+		656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 658A40950A14853B005E6987 /* WebDataSourceInternal.h */; };
 		658BA6FC0ADB39DE00AEB387 /* WebPolicyDeciderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 658BA6FA0ADB39DE00AEB387 /* WebPolicyDeciderMac.h */; };
 		658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */ = {isa = PBXBuildFile; fileRef = 658BA6FB0ADB39DE00AEB387 /* WebPolicyDeciderMac.m */; };
@@ -370,6 +371,7 @@
 		65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDictionaryExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6550B7C5099EFAE90090D781 /* WebArchiver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebArchiver.h; sourceTree = "<group>"; };
 		6550B7C6099EFAE90090D781 /* WebArchiver.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebArchiver.m; sourceTree = "<group>"; };
+		656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		6578F5DE045F817400000128 /* WebDownload.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownload.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6578F5DF045F817400000128 /* WebDownload.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDownload.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -833,6 +835,7 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
@@ -1191,6 +1194,7 @@
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 				1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */,
+				656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */,
 				931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

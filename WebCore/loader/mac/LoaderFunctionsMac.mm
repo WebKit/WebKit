@@ -35,6 +35,7 @@
 #import "FrameMac.h"
 #import "FormData.h"
 #import "FormDataMac.h"
+#import "FrameLoader.h"
 #import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"
 #import "Request.h"
@@ -157,17 +158,17 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
     // Notify the caller that we "loaded".
     FrameMac *frame = static_cast<FrameMac *>(loader->frame());
 
-    if (frame && !frame->haveToldBridgeAboutLoad(cachedObject->url())) {
-        WebCoreFrameBridge *bridge = frame->bridge();
+    if (!frame || frame->haveToldBridgeAboutLoad(cachedObject->url()))
+        return;
         
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [bridge objectLoadedFromCacheWithURL:(NSURL *)cachedObject->getCFURL()
-                                    response:(NSURLResponse *)cachedObject->response()
-                                        data:(NSData *)cachedObject->allData()];
-        END_BLOCK_OBJC_EXCEPTIONS;
-
-        frame->didTellBridgeAboutLoad(cachedObject->url());
-    }
+    NSURLRequest *request = cachedObject->getNSURLRequest();
+    NSURLResponse *response = cachedObject->response();
+    NSData *data = cachedObject->allData();
+    
+    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
+    frame->loader()->loadedResourceFromMemoryCache(request, response, [data length]);
+    
+    frame->didTellBridgeAboutLoad(cachedObject->url());
 }
 
 bool IsResponseURLEqualToURL(PlatformResponse response, const String& m_url)

@@ -26,18 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebCorePageBridge.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSInteger int
+#else
+#define WebNSInteger NSInteger
+#endif
 
-@class WebFrameView;
 @class WebView;
+@class WebDataSource;
+@class NSURLAuthenticationChallenge;
+@class NSURLResponse;
+@class NSURLRequest;
 
-@interface WebPageBridge : WebCorePageBridge <WebCorePageBridge>
-{
-@public
-    WebView *_webView;
-}
+@interface NSObject (WebResourceLoadDelegatePrivate)
 
-- (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView;
-- (WebView *)webView;
+- (void)webView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
 
 @end
+
+#undef WebNSInteger

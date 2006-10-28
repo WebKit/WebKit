@@ -51,6 +51,9 @@
 - (WebPageBridge *)_pageBridge;
 @end
 
+id WebViewGetResourceLoadDelegate(WebView *webView);
+WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView);
+
 @interface WebView (WebViewMiscInternal)
 - (BOOL)defersCallbacks;
 - (void)setDefersCallbacks:(BOOL)defers;
@@ -58,7 +61,6 @@
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag;
 - (id)_UIDelegateForwarder;
 - (id)_resourceLoadDelegateForwarder;
-- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
 - (id)_frameLoadDelegateForwarder;
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;

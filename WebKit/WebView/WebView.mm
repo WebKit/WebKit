@@ -928,6 +928,7 @@ static bool debugWidget = true;
 {
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
     id delegate = [self resourceLoadDelegate];
+    Class delegateClass = [delegate class];
 
     cache->delegateImplementsDidCancelAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)];
     cache->delegateImplementsDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)];
@@ -936,11 +937,34 @@ static bool debugWidget = true;
     cache->delegateImplementsDidReceiveResponse = [delegate respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)];
     cache->delegateImplementsWillSendRequest = [delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)];
     cache->delegateImplementsIdentifierForRequest = [delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)];
+    cache->delegateImplementsDidLoadResourceFromMemoryCache = [delegate respondsToSelector:@selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:)];
+
+    if (cache->delegateImplementsDidCancelAuthenticationChallenge)
+        cache->didCancelAuthenticationChallengeFunc = (WebDidCancelAuthenticationChallengeFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsDidReceiveAuthenticationChallenge)
+        cache->didReceiveAuthenticationChallengeFunc = (WebDidReceiveAuthenticationChallengeFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsDidFinishLoadingFromDataSource)
+        cache->didFinishLoadingFromDataSourceFunc = (WebDidFinishLoadingFromDataSourceFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:didFinishLoadingFromDataSource:))->method_imp;
+    if (cache->delegateImplementsDidReceiveContentLength)
+        cache->didReceiveContentLengthFunc = (WebDidReceiveContentLengthFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:didReceiveContentLength:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsDidReceiveResponse)
+        cache->didReceiveResponseFunc = (WebDidReceiveResponseFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:didReceiveResponse:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsWillSendRequest)
+        cache->willSendRequestFunc = (WebWillSendRequestFunc)class_getInstanceMethod(delegateClass, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsIdentifierForRequest)
+        cache->identifierForRequestFunc = (WebIdentifierForRequestFunc)class_getInstanceMethod(delegateClass, @selector(webView:identifierForInitialRequest:fromDataSource:))->method_imp;
+    if (cache->delegateImplementsDidLoadResourceFromMemoryCache)
+        cache->didLoadResourceFromMemoryCacheFunc = (WebDidLoadResourceFromMemoryCacheFunc)class_getInstanceMethod(delegateClass, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:))->method_imp;
 }
 
-- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations
+id WebViewGetResourceLoadDelegate(WebView *webView)
 {
-    return _private->resourceLoadDelegateImplementations;
+    return webView->_private->resourceProgressDelegate;
+}
+
+WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
+{
+    return webView->_private->resourceLoadDelegateImplementations;
 }
 
 - _policyDelegateForwarder
@@ -2030,7 +2054,6 @@ NS_ENDHANDLER
 {
     return _private->resourceProgressDelegate;
 }
-
 
 - (void)setDownloadDelegate: delegate
 {

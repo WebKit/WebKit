@@ -2153,20 +2153,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     [self addData:data];
 }
 
-- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
-{
-    if (!m_frame)
-        return;
-        
-    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    NSError *error;
-    id identifier;
-    m_frame->loader()->requestFromDelegate(request, identifier, error);    
-    m_frame->loader()->sendRemainingDelegateMessages(identifier, response, [data length], error);
-    [request release];
-}
-
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).

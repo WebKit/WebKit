@@ -95,6 +95,7 @@ namespace WebCore {
         virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
         virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
         virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, NSError *) = 0;
+        virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, NSURLResponse *, int length) = 0;
 
         virtual void dispatchDidHandleOnloadEvents() = 0;
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;

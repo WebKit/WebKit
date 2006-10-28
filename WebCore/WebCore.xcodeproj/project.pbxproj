@@ -282,6 +282,7 @@
 		6522BCDF09C9DAA800C9BA7A /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */; };
+		654F68880AF1B7C50065BDD6 /* CachedResourceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654F68870AF1B7C50065BDD6 /* CachedResourceMac.mm */; };
 		6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B693099DF0270090D781 /* CDATASection.cpp */; };
 		6550B69E099DF0270090D781 /* CDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B694099DF0270090D781 /* CDATASection.h */; };
 		6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B695099DF0270090D781 /* CharacterData.cpp */; };
@@ -3176,6 +3177,7 @@
 		6548E24809E1E04D00AF8020 /* Document.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Document.idl; sourceTree = "<group>"; };
 		654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameBridge.h; sourceTree = "<group>"; };
 		654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameBridge.mm; sourceTree = "<group>"; };
+		654F68870AF1B7C50065BDD6 /* CachedResourceMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = CachedResourceMac.mm; sourceTree = "<group>"; };
 		6550B693099DF0270090D781 /* CDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CDATASection.cpp; sourceTree = "<group>"; };
 		6550B694099DF0270090D781 /* CDATASection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CDATASection.h; sourceTree = "<group>"; };
 		6550B695099DF0270090D781 /* CharacterData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterData.cpp; sourceTree = "<group>"; };
@@ -7501,6 +7503,7 @@
 			isa = PBXGroup;
 			children = (
 				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
+				654F68870AF1B7C50065BDD6 /* CachedResourceMac.mm */,
 				93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */,
 				F587850302DE375901EA4122 /* LoaderFunctionsMac.mm */,
 				51A1D2C50AB69120000D732C /* IconLoaderMac.mm */,
@@ -11699,6 +11702,7 @@
 				853CA9E80AEEC608002372DC /* SVGRootInlineBox.cpp in Sources */,
 				853CA9EC0AEEC63C002372DC /* RenderForeignObject.cpp in Sources */,
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
+				654F68880AF1B7C50065BDD6 /* CachedResourceMac.mm in Sources */,
 				655A81BC0AEF67D4000975F0 /* WebCoreResourceLoaderImp.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

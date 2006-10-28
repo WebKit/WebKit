@@ -1623,6 +1623,17 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
     return newRequest;
 }
 
+void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResponse *response, int length)
+{
+    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length))
+        return;
+
+    id identifier;
+    NSError *error;
+    requestFromDelegate(request, identifier, error);
+    sendRemainingDelegateMessages(identifier, response, length, error);
+}
+
 void FrameLoader::post(NSURL *URL, const String& referrer, const String& target, NSArray *postData, 
                        const String& contentType, NSEvent *event, Element* form, NSDictionary *formValues)
 {

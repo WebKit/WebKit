@@ -29,12 +29,29 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSInteger int
+#else
+#define WebNSInteger NSInteger
+#endif
+
 @class NSError;
 @class WebFrame;
 @class WebPreferences;
 @class WebCoreSettings;
 
 @protocol WebFormDelegate;
+
+
+
+typedef void (*WebDidCancelAuthenticationChallengeFunc)(id, SEL, WebView *, id, NSURLAuthenticationChallenge *, WebDataSource *);
+typedef void (*WebDidReceiveAuthenticationChallengeFunc)(id, SEL, WebView *, id, NSURLAuthenticationChallenge *, WebDataSource *);
+typedef id (*WebIdentifierForRequestFunc)(id, SEL, WebView *, NSURLRequest *, WebDataSource *);
+typedef NSURLRequest *(*WebWillSendRequestFunc)(id, SEL, WebView *, id, NSURLRequest *, NSURLResponse *, WebDataSource *);
+typedef void (*WebDidReceiveResponseFunc)(id, SEL, WebView *, id, NSURLResponse *, WebDataSource *);
+typedef void (*WebDidReceiveContentLengthFunc)(id, SEL, WebView *, id, WebNSInteger, WebDataSource *);
+typedef void (*WebDidFinishLoadingFromDataSourceFunc)(id, SEL, WebView *, id, WebDataSource *);
+typedef void (*WebDidLoadResourceFromMemoryCacheFunc)(id, SEL, WebView *, NSURLRequest *, NSURLResponse *, WebNSInteger, WebDataSource *);
 
 typedef struct _WebResourceDelegateImplementationCache {
     uint delegateImplementsDidCancelAuthenticationChallenge:1;
@@ -44,6 +61,16 @@ typedef struct _WebResourceDelegateImplementationCache {
     uint delegateImplementsDidFinishLoadingFromDataSource:1;
     uint delegateImplementsWillSendRequest:1;
     uint delegateImplementsIdentifierForRequest:1;
+    uint delegateImplementsDidLoadResourceFromMemoryCache:1;
+
+    WebDidCancelAuthenticationChallengeFunc didCancelAuthenticationChallengeFunc;
+    WebDidReceiveAuthenticationChallengeFunc didReceiveAuthenticationChallengeFunc;
+    WebIdentifierForRequestFunc identifierForRequestFunc;
+    WebWillSendRequestFunc willSendRequestFunc;
+    WebDidReceiveResponseFunc didReceiveResponseFunc;
+    WebDidReceiveContentLengthFunc didReceiveContentLengthFunc;
+    WebDidFinishLoadingFromDataSourceFunc didFinishLoadingFromDataSourceFunc;
+    WebDidLoadResourceFromMemoryCacheFunc didLoadResourceFromMemoryCacheFunc;
 } WebResourceDelegateImplementationCache;
 
 extern NSString *_WebCanGoBackKey;
@@ -333,3 +360,5 @@ Could be worth adding to the API.
 // Addresses 4192534.  Private API for now.
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 @end
+
+#undef WebNSInteger

@@ -48,27 +48,46 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebPageBridge.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPolicyDeciderMac.h"
 #import "WebPolicyDelegatePrivate.h"
 #import "WebPreferences.h"
-#import "WebResourcePrivate.h"
 #import "WebResourceLoadDelegate.h"
+#import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebCore/WebLoader.h>
+#import <WebKit/DOMElement.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebDocumentLoaderMac.h>
+#import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
+
+static inline WebView* getWebView(DocumentLoader* loader)
+{
+    return ((WebPageBridge *)loader->frameLoader()->frame()->page()->bridge())->_webView;
+}
+
+static inline WebView *getWebView(WebFrame *webFrame)
+{
+   Frame* coreFrame = core(webFrame);
+   return coreFrame ? ((WebPageBridge *)coreFrame->page()->bridge())->_webView : nil;
+}
 
 static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
@@ -103,17 +122,17 @@ bool WebFrameLoaderClient::hasFrameView() const
 
 bool WebFrameLoaderClient::hasBackForwardList() const
 {
-    return [[m_webFrame.get() webView] backForwardList] != nil;
+    return [getWebView(m_webFrame.get()) backForwardList] != nil;
 }
 
 void WebFrameLoaderClient::resetBackForwardList()
 {
     // Note this doesn't verify the current load type as a b/f operation because it is called from
     // a subframe in the case of a delegate bailing out of the nav before it even gets to provisional state.
-    WebFrame *mainFrame = [[m_webFrame.get() webView] mainFrame];
+    WebFrame *mainFrame = [getWebView(m_webFrame.get()) mainFrame];
     WebHistoryItem *resetItem = mainFrame->_private->currentItem;
     if (resetItem)
-        [[[m_webFrame.get() webView] backForwardList] goToItem:resetItem];
+        [[getWebView(m_webFrame.get()) backForwardList] goToItem:resetItem];
 }
 
 bool WebFrameLoaderClient::provisionalItemIsTarget() const
@@ -145,7 +164,7 @@ void WebFrameLoaderClient::invalidateCurrentItemPageCache()
 
 bool WebFrameLoaderClient::privateBrowsingEnabled() const
 {
-    return [[[m_webFrame.get() webView] preferences] privateBrowsingEnabled];
+    return [[getWebView(m_webFrame.get()) preferences] privateBrowsingEnabled];
 }
 
 void WebFrameLoaderClient::makeDocumentView()
@@ -252,8 +271,8 @@ void WebFrameLoaderClient::updateHistoryForStandardLoad()
     if (![dataSource _documentLoader]->isClientRedirect()) {
         NSURL *URL = [dataSource _URLForHistory];
         if (URL && ![URL _web_isEmpty]) {
-            ASSERT([m_webFrame.get() webView]);
-            if (![[[m_webFrame.get() webView] preferences] privateBrowsingEnabled]) {
+            ASSERT(getWebView(m_webFrame.get()));
+            if (![[getWebView(m_webFrame.get()) preferences] privateBrowsingEnabled]) {
                 WebHistoryItem *entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
                 if ([dataSource pageTitle])
                     [entry setTitle:[dataSource pageTitle]];                            
@@ -325,7 +344,7 @@ void WebFrameLoaderClient::resetAfterLoadError(LoadErrorResetToken* token)
     WebHistoryItem *item = (WebHistoryItem *)token;
     if (!item)
         return;
-    [[[m_webFrame.get() webView] backForwardList] goToItem:item];
+    [[getWebView(m_webFrame.get()) backForwardList] goToItem:item];
     [item release];
 }
 
@@ -372,28 +391,44 @@ void WebFrameLoaderClient::download(NSURLConnection *connection, NSURLRequest *r
     [WebDownload _downloadWithLoadingConnection:connection
                                         request:request
                                        response:response
-                                       delegate:[[m_webFrame.get() webView] downloadDelegate]
+                                       delegate:[getWebView(m_webFrame.get()) downloadDelegate]
                                           proxy:proxy];
+}
+
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, NSURLRequest *request, NSURLResponse *response, int length)
+{
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+
+    if (!implementations.delegateImplementsDidLoadResourceFromMemoryCache)
+        return false;
+
+    implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request, response, length, dataSource(loader));
+    return true;
 }
 
 id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loader, NSURLRequest *request)
 {
-    WebView *webView = [m_webFrame.get() webView];
-    id resourceLoadDelegate = [webView resourceLoadDelegate];
-    
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
-        return [resourceLoadDelegate webView:webView identifierForInitialRequest:request fromDataSource:dataSource(loader)];
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+
+    if (implementations.delegateImplementsIdentifierForRequest)
+        return implementations.identifierForRequestFunc(resourceLoadDelegate, @selector(webView:identifierForInitialRequest:fromDataSource:), webView, request, dataSource(loader));
+
     return [[[NSObject alloc] init] autorelease];
 }
 
 NSURLRequest *WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id identifier,
     NSURLRequest *request, NSURLResponse *redirectResponse)
 {
-    WebView *webView = [m_webFrame.get() webView];
-    id resourceLoadDelegate = [webView resourceLoadDelegate];
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
-        return [resourceLoadDelegate webView:webView resource:identifier willSendRequest:request redirectResponse:redirectResponse fromDataSource:dataSource(loader)];
+    if (implementations.delegateImplementsWillSendRequest)
+        return implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request, redirectResponse, dataSource(loader));
 
     return request;
 }
@@ -401,10 +436,11 @@ NSURLRequest *WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* load
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, id identifier,
     NSURLAuthenticationChallenge *challenge)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = [webView resourceLoadDelegate];
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge) {
+    if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
         [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource(loader)];
         return;
     }
@@ -416,10 +452,11 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
 void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, id identifier,
     NSURLAuthenticationChallenge *challenge)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = [webView resourceLoadDelegate];
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge) {
+    if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
         [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource(loader)];
         return;
     }
@@ -429,56 +466,62 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
 
 void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, id identifier, NSURLResponse *response)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:response fromDataSource:dataSource(loader)];
+    if (implementations.delegateImplementsDidReceiveResponse)
+        implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, identifier, response, dataSource(loader));
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, id identifier, int lengthReceived)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:dataSource(loader)];
+    if (implementations.delegateImplementsDidReceiveContentLength)
+        implementations.didReceiveContentLengthFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:), webView, identifier, (WebNSUInteger)lengthReceived, dataSource(loader));
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, id identifier)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(loader);
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
     
-    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource(loader)];
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+        implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, identifier, dataSource(loader));
 }
 
 void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, id identifier, NSError *error)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource(loader)];
 }
 
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView didHandleOnloadEventsForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView
        didReceiveServerRedirectForProvisionalLoadForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView didCancelClientRedirectForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchWillPerformClientRedirect(NSURL *URL, NSTimeInterval delay, NSDate *fireDate)
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [[webView _frameLoadDelegateForwarder] webView:webView
                          willPerformClientRedirectToURL:URL
                                                   delay:delay
@@ -488,19 +531,19 @@ void WebFrameLoaderClient::dispatchWillPerformClientRedirect(NSURL *URL, NSTimeI
 
 void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [[webView _frameLoadDelegateForwarder] webView:webView didChangeLocationWithinPageForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchWillClose()
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [[webView _frameLoadDelegateForwarder] webView:webView willCloseFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveIcon(NSImage *icon)
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     ASSERT([m_webFrame.get() _isMainFrame]);
     [webView _willChangeValueForKey:_WebMainFrameIconKey];
     [[webView _frameLoadDelegateForwarder] webView:webView didReceiveIcon:icon forFrame:m_webFrame.get()];
@@ -509,14 +552,14 @@ void WebFrameLoaderClient::dispatchDidReceiveIcon(NSImage *icon)
 
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [webView _didStartProvisionalLoadForFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didStartProvisionalLoadForFrame:m_webFrame.get()];    
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [[webView _frameLoadDelegateForwarder] webView:webView didReceiveTitle:title forFrame:m_webFrame.get()];
 }
 
@@ -525,14 +568,14 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     // Tell the client we've committed this URL.
     ASSERT([m_webFrame->_private->webFrameView documentView] != nil);
 
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [webView _didCommitLoadForFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(NSError *error)
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
@@ -540,7 +583,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(NSError *error)
 
 void WebFrameLoaderClient::dispatchDidFailLoad(NSError *error)
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailLoadWithError:error forFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didFailLoadWithError:error forFrame:m_webFrame.get()];
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
@@ -548,7 +591,7 @@ void WebFrameLoaderClient::dispatchDidFailLoad(NSError *error)
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
 {
-    WebView *webView = [m_webFrame.get() webView];   
+    WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFinishLoadForFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didFinishLoadForFrame:m_webFrame.get()];
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:nil];
@@ -556,13 +599,13 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
 
 void WebFrameLoaderClient::dispatchDidFirstLayout()
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:m_webFrame.get()];
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(NSURLRequest *request)
 {
-    WebView *currentWebView = [m_webFrame.get() webView];
+    WebView *currentWebView = getWebView(m_webFrame.get());
     id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
         return core([[wd webView:currentWebView createWebViewWithRequest:request] mainFrame]);
@@ -571,20 +614,20 @@ Frame* WebFrameLoaderClient::dispatchCreatePage(NSURLRequest *request)
 
 void WebFrameLoaderClient::dispatchShow()
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _UIDelegateForwarder] webViewShow:webView];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(WebPolicyDecider *decider, const String& MIMEType, NSURLRequest *request)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
 
     [[webView _policyDelegateForwarder] webView:webView decidePolicyForMIMEType:MIMEType request:request frame:m_webFrame.get() decisionListener:decisionListener(decider)];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *decider, NSDictionary *action, NSURLRequest *request, const String& frameName)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:action
                                    request:request
@@ -595,7 +638,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebPolicyDecid
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebPolicyDecider *decider, NSDictionary *action,
     NSURLRequest *request)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:action
                                         request:request
@@ -605,20 +648,20 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebPolicyDeci
 
 void WebFrameLoaderClient::dispatchUnableToImplementPolicy(NSError *error)
 {
-    WebView *webView = [m_webFrame.get() webView];
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:m_webFrame.get()];    
 }
 
 void WebFrameLoaderClient::dispatchWillSubmitForm(WebPolicyDecider *decider, Frame* sourceFrame,
     Element* form, NSDictionary *values)
 {
-    [[[m_webFrame.get() webView] _formDelegate] frame:m_webFrame.get() sourceFrame:kit(sourceFrame) willSubmitForm:kit(form) withValues:values submissionListener:decisionListener(decider)];
+    [[getWebView(m_webFrame.get()) _formDelegate] frame:m_webFrame.get() sourceFrame:kit(sourceFrame) willSubmitForm:kit(form) withValues:values submissionListener:decisionListener(decider)];
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
 {
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:[m_webFrame.get() webView]
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:getWebView(m_webFrame.get())
             didLoadMainResourceForDataSource:dataSource(loader)];
 }
 
@@ -649,50 +692,50 @@ void WebFrameLoaderClient::clearUnarchivingState(DocumentLoader* loader)
 
 void WebFrameLoaderClient::progressStarted()
 {
-    [[m_webFrame.get() webView] _progressStarted:m_webFrame.get()];
+    [getWebView(m_webFrame.get()) _progressStarted:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::progressCompleted()
 {
-    [[m_webFrame.get() webView] _progressCompleted:m_webFrame.get()];
+    [getWebView(m_webFrame.get()) _progressCompleted:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::incrementProgress(id identifier, NSURLResponse *response)
 {
-    [[m_webFrame.get() webView] _incrementProgressForIdentifier:identifier response:response];
+    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier response:response];
 }
 
 void WebFrameLoaderClient::incrementProgress(id identifier, NSData *data)
 {
-    [[m_webFrame.get() webView] _incrementProgressForIdentifier:identifier data:data];
+    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier data:data];
 }
 
 void WebFrameLoaderClient::completeProgress(id identifier)
 {
-    [[m_webFrame.get() webView] _completeProgressForIdentifier:identifier];
+    [getWebView(m_webFrame.get()) _completeProgressForIdentifier:identifier];
 }
 
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
 {
-    [[m_webFrame.get() webView] setMainFrameDocumentReady:ready];
+    [getWebView(m_webFrame.get()) setMainFrameDocumentReady:ready];
 }
 
 void WebFrameLoaderClient::startDownload(NSURLRequest *request)
 {
     // FIXME: Should download full request.
-    [[m_webFrame.get() webView] _downloadURL:[request URL]];
+    [getWebView(m_webFrame.get()) _downloadURL:[request URL]];
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader* loader)
 {
     // FIXME: Should do this only in main frame case, right?
-    [[m_webFrame.get() webView] _willChangeValueForKey:_WebMainFrameTitleKey];
+    [getWebView(m_webFrame.get()) _willChangeValueForKey:_WebMainFrameTitleKey];
 }
 
 void WebFrameLoaderClient::didChangeTitle(DocumentLoader* loader)
 {
     // FIXME: Should do this only in main frame case, right?
-    [[m_webFrame.get() webView] _didChangeValueForKey:_WebMainFrameTitleKey];
+    [getWebView(m_webFrame.get()) _didChangeValueForKey:_WebMainFrameTitleKey];
 }
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, NSData *data)
@@ -745,7 +788,7 @@ bool WebFrameLoaderClient::shouldFallBack(NSError *error)
 
 NSURL *WebFrameLoaderClient::mainFrameURL()
 {
-    return [[[[m_webFrame.get() webView] mainFrame] dataSource] _URL];
+    return [[[getWebView(m_webFrame.get()) mainFrame] dataSource] _URL];
 }
 
 void WebFrameLoaderClient::setDefersCallbacks(bool defers)
@@ -848,7 +891,7 @@ void WebFrameLoaderClient::frameLoadCompleted()
     // Even if already complete, we might have set a previous item on a frame that
     // didn't do any data loading on the past transaction. Make sure to clear these out.
     NSScrollView *sv = [m_webFrame->_private->webFrameView _scrollView];
-    if ([[m_webFrame.get() webView] drawsBackground])
+    if ([getWebView(m_webFrame.get()) drawsBackground])
         [sv setDrawsBackground:YES];
     [m_webFrame.get() _setPreviousItem:nil];
 }

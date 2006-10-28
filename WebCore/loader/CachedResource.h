@@ -37,7 +37,14 @@
 
 #if PLATFORM(MAC)
 #include "RetainPtr.h"
+
+#ifdef __OBJC__
+@class NSURLRequest;
+#else
+class NSURLRequest;
 #endif
+
+#endif // PLATFORM(MAC)
 
 namespace WebCore {
 
@@ -132,7 +139,7 @@ public:
     void setAccept(const String& accept) { m_accept = accept; }
 
 #if PLATFORM(MAC)
-    CFURLRef getCFURL();
+    NSURLRequest* getNSURLRequest();
 #endif
 
 protected:
@@ -145,7 +152,7 @@ protected:
     Request* m_request;
 
 #if PLATFORM(MAC)
-    RetainPtr<CFURLRef> m_cfURL;
+    RetainPtr<NSURLRequest> m_nsURLRequest;
 #endif
 
     PlatformResponse m_response;
