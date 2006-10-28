@@ -757,8 +757,8 @@
 
         Fix: <rdar://problem/3951815> add "type-to-select" feature for list
         boxes (<select> elements)
-
-        This also adds type-ahead find for closed menulists (popups).
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=9764 New popup menus
+        should have type-ahead selection without popping up menu
 
         * WebCore.xcodeproj/project.pbxproj: Version wars.
         * html/HTMLSelectElement.h: Add new instance variables for type-ahead
