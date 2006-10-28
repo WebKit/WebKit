@@ -36,7 +36,7 @@ class String;
 
 class HitTestResult {
 public:
-    HitTestResult(bool readonly, bool active, bool mouseMove = false);
+    HitTestResult(const IntPoint&, bool readonly, bool active, bool mouseMove = false);
     HitTestResult(const HitTestResult&);
     ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);

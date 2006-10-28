@@ -1791,8 +1791,8 @@ bool Frame::isPointInsideSelection(const IntPoint& point)
     if (!document()->renderer()) 
         return false;
     
-    HitTestResult result(true, true);
-    document()->renderer()->layer()->hitTest(result, point);
+    HitTestResult result(point, true, true);
+    document()->renderer()->layer()->hitTest(result);
     Node *innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
@@ -2926,8 +2926,8 @@ void Frame::setAutoscrollRenderer(RenderObject* renderer)
 
 HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
-    HitTestResult result(true, true);
-    renderer()->layer()->hitTest(result, point);
+    HitTestResult result(point, true, true);
+    renderer()->layer()->hitTest(result);
 
     Node *n;
     Widget *widget = 0;
@@ -2949,10 +2949,9 @@ HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShado
         widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
-        HitTestResult widgetHitTestResult(true, true);
-        frame->renderer()->layer()->hitTest(widgetHitTestResult, widgetPoint);
+        HitTestResult widgetHitTestResult(widgetPoint, true, true);
+        frame->renderer()->layer()->hitTest(widgetHitTestResult);
         result = widgetHitTestResult;
-        result.setPoint(widgetPoint);
     }
     
     if (!allowShadowContent) {

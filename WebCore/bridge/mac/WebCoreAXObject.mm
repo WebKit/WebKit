@@ -1263,8 +1263,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         NSPoint windowCoord = [[view window] convertScreenToBase: point];
         ourpoint = [view convertPoint:windowCoord fromView:nil];
         
-        HitTestResult result(true, true);
-        renderer->layer()->hitTest(result, IntPoint(ourpoint));
+        HitTestResult result(IntPoint(ourpoint), true, true);
+        renderer->layer()->hitTest(result);
         innerNode = result.innerNode();
         if (!innerNode || !innerNode->renderer())
             return nil;
@@ -2303,8 +2303,8 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     if (!m_renderer)
         return NSAccessibilityUnignoredAncestor(self);
     
-    HitTestResult result(true, true);
-    m_renderer->layer()->hitTest(result, IntPoint(point));
+    HitTestResult result(IntPoint(point), true, true);
+    m_renderer->layer()->hitTest(result);
     if (!result.innerNode())
         return NSAccessibilityUnignoredAncestor(self);
     Node* node = result.innerNode()->shadowAncestorNode();

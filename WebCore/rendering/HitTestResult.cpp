@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
-HitTestResult::HitTestResult(bool readonly, bool active, bool mouseMove)
-    : m_readonly(readonly)
+HitTestResult::HitTestResult(const IntPoint& point, bool readonly, bool active, bool mouseMove)
+    : m_point(point)
+    , m_readonly(readonly)
     , m_active(active)
     , m_mouseMove(mouseMove)
 {

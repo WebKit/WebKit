@@ -677,8 +677,8 @@ Element* Document::elementFromPoint(int x, int y) const
     if (!renderer())
         return 0;
 
-    HitTestResult result(true, true);
-    renderer()->layer()->hitTest(result, IntPoint(x, y)); 
+    HitTestResult result(IntPoint(x, y), true, true);
+    renderer()->layer()->hitTest(result); 
 
     Node* n = result.innerNode();
     while (n && !n->isElementNode())
@@ -1674,8 +1674,8 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
         return MouseEventWithHitTestResults(event, 0, 0, false);
 
     assert(renderer()->isRenderView());
-    HitTestResult renderInfo(readonly, active, mouseMove);
-    renderer()->layer()->hitTest(renderInfo, point);
+    HitTestResult renderInfo(point, readonly, active, mouseMove);
+    renderer()->layer()->hitTest(renderInfo);
 
     if (!readonly)
         updateRendering();

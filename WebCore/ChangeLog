@@ -1,3 +1,41 @@
+2006-10-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix layout tests that broke after r17933. Mitz discovered that the
+        failures were caused by HitTestResult::m_point being uninitialized
+        much of the time. HitTestResults are now always constructed with a
+        point, and RenderLayer::hitTest and RenderLayer::hitTestLayer use that
+        point instead of being passed one explicitly.
+
+        * WebCore.exp: Change constructor symbol.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::eventMayStartDrag): Update to new constructor and
+        hitTest().
+        (WebCore::FrameMac::handleMouseMoveEvent): Ditto.
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]): Ditto.
+        (-[WebCoreAXObject accessibilityHitTest:]): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint): Ditto.
+        (WebCore::Document::prepareMouseEvent): Ditto.
+        * page/Frame.cpp:
+        (WebCore::Frame::isPointInsideSelection): Ditto.
+        (WebCore::Frame::hitTestResultAtPoint): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleWheelEvent): Ditto.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult): Initalize m_point with the
+        passed point.
+        * rendering/HitTestResult.h: Update constructor declaration.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll): Update to new constructor and
+        hitTest().
+        (WebCore::RenderLayer::hitTest): Use the IntPoint stored in the
+        HitTestResult instead of being passed one.
+        (WebCore::RenderLayer::hitTestLayer): Ditto.
+        * rendering/RenderLayer.h: Update declarations.
+
 2006-10-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.

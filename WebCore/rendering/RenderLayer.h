@@ -292,7 +292,7 @@ public:
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
     void paint(GraphicsContext*, const IntRect& damageRect, PaintRestriction = PaintRestrictionNone, RenderObject* paintingRoot = 0);
-    bool hitTest(HitTestResult&, const IntPoint&);
+    bool hitTest(HitTestResult&);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
@@ -337,7 +337,7 @@ private:
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
         bool haveTransparency, PaintRestriction, RenderObject* paintingRoot);
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, HitTestResult&, const IntPoint&, const IntRect& hitTestRect);
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, HitTestResult&, const IntRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
     bool shouldBeOverflowOnly() const;

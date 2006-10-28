@@ -1239,8 +1239,8 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
         if (docRenderer) {
             IntPoint vPoint = windowToContents(e.pos());
 
-            HitTestResult hitTestResult(true, false);
-            doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 
+            HitTestResult hitTestResult(vPoint, true, false);
+            doc->renderer()->layer()->hitTest(hitTestResult); 
             Node *node = hitTestResult.innerNode();
             Frame* subframe = subframeForTargetNode(node);
             if (subframe && passWheelEventToSubframe(e, subframe)) {
