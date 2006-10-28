@@ -2,7 +2,7 @@
 
         Reviewed by Maciej.
 
-        Fix layout tests that broke after r17933. Mitz discovered that the
+        Fix layout tests that broke after r17399. Mitz discovered that the
         failures were caused by HitTestResult::m_point being uninitialized
         much of the time. HitTestResults are now always constructed with a
         point, and RenderLayer::hitTest and RenderLayer::hitTestLayer use that
