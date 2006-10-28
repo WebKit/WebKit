@@ -42,6 +42,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
@@ -1652,8 +1653,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
     } else if (equalIgnoringCase(equiv, "expires")) {
         String str = content.stripWhiteSpace();
         time_t expire_date = str.toInt();
-        if (m_docLoader)
-            m_docLoader->setExpireDate(expire_date);
+        m_docLoader->setExpireDate(expire_date);
     } else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && frame) {
         DeprecatedString str = content.deprecatedString().lower().stripWhiteSpace();
         KURL url = frame->url();
@@ -2374,7 +2374,7 @@ Element *Document::ownerElement() const
 String Document::referrer() const
 {
     if (frame())
-        return frame()->incomingReferrer();
+        return frame()->loader()->referrer();
     
     return String();
 }

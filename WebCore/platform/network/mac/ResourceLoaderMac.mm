@@ -30,6 +30,7 @@
 #import "BlockExceptions.h"
 #import "DocLoader.h"
 #import "FoundationExtras.h"
+#import "FrameLoader.h"
 #import "FrameMac.h"
 #import "KURL.h"
 #import "FormDataMac.h"
@@ -68,8 +69,6 @@ bool ResourceLoader::start(DocLoader* docLoader)
         return false;
     }
 
-    WebCoreFrameBridge* bridge = frame->bridge();
-
     frame->didTellBridgeAboutLoad(url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -84,9 +83,9 @@ bool ResourceLoader::start(DocLoader* docLoader)
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:d->m_request.httpHeaderFields()];
 
     if (!postData().elements().isEmpty())
-        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict postData:arrayFromFormData(postData())];
+        handle = frame->loader()->startLoadingResource(resourceLoader, method(), url().getNSURL(), headerDict, arrayFromFormData(postData()));
     else
-        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];
+        handle = frame->loader()->startLoadingResource(resourceLoader, method(), url().getNSURL(), headerDict);
     [resourceLoader setHandle:handle];
     [resourceLoader release];
 

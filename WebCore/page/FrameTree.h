@@ -50,8 +50,8 @@ namespace WebCore {
         Frame* lastChild() const { return m_lastChild; }
         unsigned childCount() const { return m_childCount; }
 
-        bool isDescendantOf(Frame* ancestor) const;
-        Frame* traverseNext(Frame* stayWithin = 0) const;
+        bool isDescendantOf(const Frame* ancestor) const;
+        Frame* traverseNext(const Frame* stayWithin = 0) const;
         Frame* traverseNextWithWrap(bool) const;
         Frame* traversePreviousWithWrap(bool) const;
         

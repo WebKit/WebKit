@@ -36,12 +36,50 @@
 #if PLATFORM(MAC)
 
 #import "RetainPtr.h"
+#import <objc/objc.h>
 
+#ifdef __OBJC__
 @class WebCoreFrameBridge;
 @class WebCoreFrameLoaderAsDelegate;
 @class WebPolicyDecider;
 
-#endif
+@class NSArray;
+@class NSDate;
+@class NSURL;
+@class NSURLConnection;
+@class NSURLRequest;
+@class NSURLResponse;
+@class NSDictionary;
+@class NSEvent;
+@class NSError;
+@class NSData;
+@class NSMutableURLRequest;
+@class NSURLAuthenticationChallenge;
+
+@protocol WebCoreResourceLoader;
+@protocol WebCoreResourceHandle;
+
+#else
+
+class WebCoreFrameBridge;
+class WebCoreFrameLoaderAsDelegate;
+class WebPolicyDecider;
+
+class NSArray;
+class NSDate;
+class NSURL;
+class NSURLConnection;
+class NSURLRequest;
+class NSURLResponse;
+class NSDictionary;
+class NSEvent;
+class NSError;
+class NSData;
+class NSMutableURLRequest;
+class NSURLAuthenticationChallenge;
+#endif // __OBJC__
+
+#endif // PLATFORM(MAC)
 
 namespace WebCore {
 
@@ -52,6 +90,7 @@ namespace WebCore {
     class FrameLoaderClient;
     class MainResourceLoader;
     class String;
+    class SubresourceLoader;
     class WebResourceLoader;
 
     bool isBackForwardLoadType(FrameLoadType);
@@ -98,6 +137,16 @@ namespace WebCore {
         NSData *mainResourceData() const;
         void releaseMainResourceLoader();
 
+        int numPendingOrLoadingRequests(bool recurse) const;
+        bool isReloading() const;
+        String referrer() const;
+        void loadEmptyDocumentSynchronously();
+
+#ifdef __OBJC__
+        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders);
+        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData);
+#endif
+        
         DocumentLoader* activeDocumentLoader() const;
         DocumentLoader* documentLoader() const;
         DocumentLoader* provisionalDocumentLoader();

@@ -553,7 +553,6 @@ public:
   virtual void setTitle(const String&) = 0;
   virtual void handledOnloadEvents() = 0;
   virtual String userAgent() const = 0;
-  virtual String incomingReferrer() const = 0;
   virtual String mimeTypeForFileName(const String&) const = 0;
   virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;

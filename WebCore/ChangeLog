@@ -1,3 +1,41 @@
+2006-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved some WebCoreFrameBridge functions into FrameLoader.
+        
+        I had to make FrameLoader.h capable of compiling in C++-only source files
+        by adding some forward declarations and __OBJC__ #ifdefs.
+
+        * WebCore.exp:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::createEmptyDocument):
+        (WebCore::FrameMac::tokenizerProcessedData):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::referrer):
+        * loader/LoaderFunctions.h:
+        * loader/mac/FrameLoader.h:
+        * loader/mac/FrameLoader.mm:
+        (WebCore::numRequests):
+        (WebCore::FrameLoader::numPendingOrLoadingRequests):
+        (WebCore::FrameLoader::isReloading):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::loadEmptyDocumentSynchronously):
+        (WebCore::FrameLoader::startLoadingResource):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckIfReloading):
+        * page/Frame.h:
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::isDescendantOf):
+        (WebCore::FrameTree::traverseNext):
+        * page/FrameTree.h:
+        * platform/network/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):
+
 2006-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

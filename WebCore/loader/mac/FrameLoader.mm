@@ -29,6 +29,8 @@
 #import "config.h"
 #import "FrameLoader.h"
 
+#import "Cache.h"
+#import "Document.h"
 #import "DOMElementInternal.h"
 #import "Element.h"
 #import "FrameLoadRequest.h"
@@ -48,6 +50,7 @@
 #import "WebFrameLoaderClient.h"
 #import "WebMainResourceLoader.h"
 #import "WebPolicyDecider.h"
+#import "WebSubresourceLoader.h"
 #import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 
@@ -99,6 +102,13 @@ bool isBackForwardLoadType(FrameLoadType type)
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+static int numRequests(Document* document)
+{
+    if (document)
+        return cache()->loader()->numRequests(document->docLoader());
+    return 0;
 }
 
 FrameLoader::FrameLoader(Frame* frame)
@@ -1739,6 +1749,75 @@ void FrameLoader::checkLoadComplete()
 
     for (RefPtr<Frame> frame = m_frame; frame; frame = frame->tree()->parent())
         frame->loader()->checkLoadCompleteForThisFrame();
+}
+
+int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
+{
+    int count = 0;
+    const Frame* frame = m_frame;
+
+    count += numRequests(frame->document());
+
+    if (recurse)
+        while ((frame = frame->tree()->traverseNext(frame)))
+            count += numRequests(frame->document());
+
+    return count;
+}
+
+bool FrameLoader::isReloading() const
+{
+    return [documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+}
+
+String FrameLoader::referrer() const
+{
+    return [documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
+}
+
+void FrameLoader::loadEmptyDocumentSynchronously()
+{
+    NSURL *url = [[NSURL alloc] initWithString:@""];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+    m_frame->loader()->load(request);
+    [request release];
+    [url release];
+}
+
+id <WebCoreResourceHandle> FrameLoader::startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders)
+{
+    // If we are no longer attached to a page, this must be an attempted load from an
+    // onunload handler, so let's just block it.
+    if (!m_frame->page())
+        return nil;
+    
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    canLoad(URL, referrer, hideReferrer);
+    if (hideReferrer)
+        referrer = String();
+    
+    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, referrer);
+}
+
+id <WebCoreResourceHandle> FrameLoader::startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData)
+{
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onunload handler, so let's just block it.
+    if (!m_frame->page())
+        return nil;
+    
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    canLoad(URL, referrer, hideReferrer);
+    if (hideReferrer)
+        referrer = String();
+    
+    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, postData, referrer);
 }
 
 void FrameLoader::setClient(FrameLoaderClient* client)

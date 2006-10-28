@@ -59,7 +59,6 @@ bool IsResponseURLEqualToURL(PlatformResponse , const String& URL);
 DeprecatedString ResponseURL(PlatformResponse);
 DeprecatedString ResponseMIMEType(PlatformResponse);
 bool ResponseIsMultipart(PlatformResponse);
-int NumberOfPendingOrLoadingRequests(DocLoader*);
 time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse);
 NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
 

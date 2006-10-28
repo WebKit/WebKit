@@ -31,6 +31,7 @@
 #import "CachedImage.h"
 #import "DocLoader.h"
 #import "FoundationExtras.h"
+#import "FrameLoader.h"
 #import "FrameMac.h"
 #import "FormData.h"
 #import "FormDataMac.h"
@@ -129,18 +130,10 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const
     return Vector<char>();
 }
 
-int NumberOfPendingOrLoadingRequests(DocLoader *dl)
-{
-    return cache()->loader()->numRequests(dl);
-}
-
 bool CheckIfReloading(DocLoader *loader)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (FrameMac *frame = static_cast<FrameMac *>(loader->frame()))
-        return [frame->bridge() isReloading];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
+    if (Frame* frame = loader->frame())
+        return frame->loader()->isReloading();
     return false;
 }
 

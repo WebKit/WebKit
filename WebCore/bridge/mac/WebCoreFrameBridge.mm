@@ -1236,14 +1236,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return _shouldCreateRenderers;
 }
 
-- (int)numPendingOrLoadingRequests
-{
-    Document *doc = m_frame->document();
-    if (doc)
-        return NumberOfPendingOrLoadingRequests(doc->docLoader());
-    return 0;
-}
-
 - (BOOL)doneProcessingData
 {
     Document *doc = m_frame->document();
@@ -2148,11 +2140,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     m_frame->loader()->detachFromParent();
 }
 
-- (void)tokenizerProcessedData
-{
-    m_frame->loader()->checkLoadComplete();
-}
-
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
@@ -2164,24 +2151,6 @@ static NSCharacterSet *_getPostSmartSet(void)
         encoding = textEncodingName;
     m_frame->setEncoding(encoding, userChosen);
     [self addData:data];
-}
-
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
-{
-    // If we are no longer attached to a page, this must be an attempted load from an
-    // onunload handler, so let's just block it.
-    if (!m_frame->page())
-        return nil;
-    
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = m_frame->referrer();
-    bool hideReferrer;
-    m_frame->loader()->canLoad(URL, referrer, hideReferrer);
-    if (hideReferrer)
-        referrer = String();
-    
-    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, referrer);
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
@@ -2196,25 +2165,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     m_frame->loader()->requestFromDelegate(request, identifier, error);    
     m_frame->loader()->sendRemainingDelegateMessages(identifier, response, [data length], error);
     [request release];
-}
-
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL
-    customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
-{
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onunload handler, so let's just block it.
-    if (!m_frame->page())
-        return nil;
-    
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = m_frame->referrer();
-    bool hideReferrer;
-    m_frame->loader()->canLoad(URL, referrer, hideReferrer);
-    if (hideReferrer)
-        referrer = String();
-    
-    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, postData, referrer);
 }
 
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
@@ -2291,28 +2241,6 @@ static NSCharacterSet *_getPostSmartSet(void)
 }
 
 // -------------------
-
-- (NSString *)incomingReferrer
-{
-    return [m_frame->loader()->documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
-}
-
-- (BOOL)isReloading
-{
-    return [m_frame->loader()->documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
-}
-
-- (void)loadEmptyDocumentSynchronously
-{
-    if (!m_frame)
-        return;
-        
-    NSURL *url = [[NSURL alloc] initWithString:@""];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    m_frame->loader()->load(request);
-    [request release];
-    [url release];
-}
 
 - (FrameMac*)_frame
 {

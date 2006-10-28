@@ -724,15 +724,7 @@ DOMRange *kit(Range* range)
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
 {
-    if (!recurse)
-        return [_private->bridge numPendingOrLoadingRequests];
-
-    int num = 0;
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-        num += [Mac(frame)->bridge() numPendingOrLoadingRequests];
-
-    return num;
+    return core(self)->loader()->numPendingOrLoadingRequests(recurse);
 }
 
 - (void)_reloadForPluginChanges

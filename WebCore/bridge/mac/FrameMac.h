@@ -172,7 +172,6 @@ public:
 
     static WebCoreFrameBridge* bridgeForWidget(const Widget*);
     
-    virtual String incomingReferrer() const;
     virtual String userAgent() const;
 
     virtual String mimeTypeForFileName(const String&) const;

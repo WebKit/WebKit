@@ -320,7 +320,6 @@ typedef enum {
 - (void)setShouldCreateRenderers:(BOOL)f;
 - (BOOL)shouldCreateRenderers;
 
-- (int)numPendingOrLoadingRequests;
 - (BOOL)doneProcessingData;
 
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor;
@@ -404,15 +403,9 @@ typedef enum {
 
 - (NSURL*)originalRequestURL;
 - (void)frameDetached;
-- (void)tokenizerProcessedData;
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)data;
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data;
 - (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
-- (BOOL)isReloading;
-- (NSString *)incomingReferrer;
-- (void)loadEmptyDocumentSynchronously;
 
 @end
 

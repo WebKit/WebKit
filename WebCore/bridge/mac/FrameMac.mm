@@ -1200,15 +1200,6 @@ void FrameMac::restoreDocumentState()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-String FrameMac::incomingReferrer() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [_bridge incomingReferrer];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return String();
-}
-
 void FrameMac::runJavaScriptAlert(const String& message)
 {
     String text = message;
@@ -1306,10 +1297,7 @@ void FrameMac::createEmptyDocument()
     // it does nothing if we already have a document, and just creates an
     // empty one if we have no document at all.
     if (!d->m_doc) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [_bridge loadEmptyDocumentSynchronously];
-        END_BLOCK_OBJC_EXCEPTIONS;
-
+        loader()->loadEmptyDocumentSynchronously();
         updateBaseURLForEmptyDocument();
     }
 }
@@ -2839,7 +2827,7 @@ void FrameMac::tokenizerProcessedData()
 {
     if (d->m_doc)
         checkCompleted();
-    [_bridge tokenizerProcessedData];
+    loader()->checkLoadComplete();
 }
 
 void FrameMac::setBridge(WebCoreFrameBridge *bridge)
