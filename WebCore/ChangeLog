@@ -1,5 +1,15 @@
 2006-10-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+
+        - reverted fix for http://bugs.webkit.org/show_bug.cgi?id=11212, later we will address the performance
+        impact of fixing it again.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::clear):
+
+2006-10-27  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John & Adam.
 
         - assorted speedups to fix perf regression from fixing correctness regression

@@ -2879,7 +2879,9 @@ bool FrameMac::haveToldBridgeAboutLoad(const String& URL)
 
 void FrameMac::clear(bool clearWindowProperties)
 {
-    urlsBridgeKnowsAbout.clear();
+    // FIXME: commenting the below line causes <http://bugs.webkit.org/show_bug.cgi?id=11212>, but putting it
+    // back causes a measurable performance regression which we will need to fix to restore the correct behavior
+    // urlsBridgeKnowsAbout.clear();
     setMarkedTextRange(0, nil, nil);
     Frame::clear();
 }
