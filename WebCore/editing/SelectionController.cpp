@@ -46,6 +46,7 @@ using namespace EventNames;
 
 SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_needsLayout(true)
+    , m_modifyBiasSet(false)
     , m_frame(frame)
     , m_isDragCaretController(isDragCaretController)
 {

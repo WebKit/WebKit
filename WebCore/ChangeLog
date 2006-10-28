@@ -1,3 +1,14 @@
+2006-10-28  David Carson  <dacarson@gmail.com>
+
+        Tweaked by Sam. Reviewed by Brady.
+
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=11437
+        Initialize m_modifyBiasSet to false, as it sometimes gets 
+        used before it has been initalized.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+
 2006-10-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
