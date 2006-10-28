@@ -60,7 +60,32 @@ DeleteButtonController::DeleteButtonController(Frame* frame)
 {
 }
 
-static HTMLElement* enclosingDeletableTable(const Selection& selection)
+static bool isDeletableElement(Node* node)
+{
+    if (!node || !node->isHTMLElement() || !node->isContentEditable())
+        return false;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer || renderer->width() < 25 || renderer->height() < 25)
+        return false;
+
+    if (node->hasTagName(tableTag) || node->hasTagName(ulTag) || node->hasTagName(olTag))
+        return true;
+
+    if (renderer->isRenderBlock()) {
+        RenderStyle* style = renderer->style();
+        if (!style)
+            return false;
+        if (style->position() == AbsolutePosition || style->position() == FixedPosition)
+            return true;
+        if (style->border().hasBorder())
+            return true;
+    }
+
+    return false;
+}
+
+static HTMLElement* enclosingDeletableElement(const Selection& selection)
 {
     if (!selection.isContentEditable())
         return 0;
@@ -74,33 +99,29 @@ static HTMLElement* enclosingDeletableTable(const Selection& selection)
     ASSERT(container);
     ASSERT(ec == 0);
 
-    // The enclosingNodeWithTag function only works on nodes that are editable
+    // The enclosingNodeOfType function only works on nodes that are editable
     // (which is strange, given its name).
     if (!container->isContentEditable())
         return 0;
 
-    Node* table = enclosingNodeWithTag(container, tableTag);
-    if (!table)
+    Node* element = enclosingNodeOfType(container, &isDeletableElement);
+    if (!element)
         return 0;
 
-    // The table must be editable too.
-    if (!table->isContentEditable())
-        return 0;
-
-    ASSERT(table->isHTMLElement());
-    return static_cast<HTMLElement*>(table);
+    ASSERT(element->isHTMLElement());
+    return static_cast<HTMLElement*>(element);
 }
 
 void DeleteButtonController::respondToChangedSelection(const Selection& oldSelection)
 {
-    HTMLElement* oldTable = enclosingDeletableTable(oldSelection);
-    HTMLElement* newTable = enclosingDeletableTable(m_frame->selectionController()->selection());
-    if (oldTable == newTable)
+    HTMLElement* oldElement = enclosingDeletableElement(oldSelection);
+    HTMLElement* newElement = enclosingDeletableElement(m_frame->selectionController()->selection());
+    if (oldElement == newElement)
         return;
 
-    // If the base is inside an editable table, give the table a close widget.
-    if (newTable)
-        show(newTable);
+    // If the base is inside a deletable element, give the element a delete widget.
+    if (newElement)
+        show(newElement);
     else
         hide();
 }

@@ -1,3 +1,16 @@
+2006-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4478625> HTML Editing: Basic table editing and culling
+
+        Expanded the Deletion UI to lists, positioned block element and block elementss with borders.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        (WebCore::enclosingDeletableElement):
+        (WebCore::DeleteButtonController::respondToChangedSelection):
+
 2006-10-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker
