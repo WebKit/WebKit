@@ -28,6 +28,7 @@
 #include "config.h"
 #include "FrameQtClient.h"
 
+#include "Cache.h"
 #include "FrameQt.h"
 #include "Document.h"
 #include "FrameTree.h"
@@ -173,14 +174,22 @@ FrameQt* FrameQtClientDefault::traverseNextFrameStayWithin(FrameQt* frame) const
     return QtFrame(m_frame->tree()->traverseNext(frame));
 }
 
+static int numRequests(Document* document)
+{
+    if (document)
+        return cache()->loader()->numRequests(document->docLoader());
+
+    return 0;
+}
+
 int FrameQtClientDefault::numPendingOrLoadingRequests(bool recurse) const
 {
     if (!recurse)
-        return NumberOfPendingOrLoadingRequests(m_frame->document()->docLoader());
+        return numRequests(m_frame->document());
 
     int num = 0;
     for (FrameQt* frame = m_frame; frame != 0; frame = traverseNextFrameStayWithin(frame))
-        num += NumberOfPendingOrLoadingRequests(frame->document()->docLoader());
+        num += numRequests(frame->document());
 
     return num;
 }

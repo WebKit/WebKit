@@ -1,3 +1,16 @@
+2006-10-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::numRequests):
+        (WebCore::FrameQtClientDefault::numPendingOrLoadingRequests):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::updateFromElement):
+
 2006-10-28  David Carson  <dacarson@gmail.com>
 
         Tweaked by Sam. Reviewed by Brady.

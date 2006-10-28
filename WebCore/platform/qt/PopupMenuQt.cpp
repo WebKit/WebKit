@@ -49,6 +49,11 @@ void PopupMenu::hide()
     notImplemented();
 }
 
+void PopupMenu::updateFromElement()
+{
+    notImplemented();
+}
+
 }
 
 // vim: ts=4 sw=4 et
