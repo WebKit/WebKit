@@ -41,13 +41,11 @@
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 
-using namespace WebCore;
-
 namespace WebCore {
 
-SubresourceLoader::SubresourceLoader(Frame* frame, ResourceHandle* loader)
+SubresourceLoader::SubresourceLoader(Frame* frame, ResourceHandle* handle)
     : WebResourceLoader(frame)
-    , m_loader(loader)
+    , m_handle(handle)
     , m_loadingMultipartContent(false)
 {
     frameLoader()->addSubresourceLoader(this);
@@ -57,7 +55,7 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHandle* loader, ResourceRequest& request)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHandle* handle, ResourceRequest& request)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)
@@ -101,7 +99,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
     
     fl->addExtraFieldsToRequest(newRequest, false, false);
 
-    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, loader));
+    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, handle));
     if (!subloader->load(newRequest))
         return 0;
 
@@ -113,7 +111,7 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     NSURL *oldURL = [request() URL];
     NSURLRequest *clientRequest = WebResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
-        m_loader->redirectedToURL([clientRequest URL]);
+        m_handle->redirectedToURL([clientRequest URL]);
     return clientRequest;
 }
 
@@ -128,7 +126,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_loader->receivedResponse(r);
+    m_handle->receivedResponse(r);
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
         return;
@@ -138,7 +136,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
         // Since a subresource loader does not load multipart sections progressively,
         // deliver the previously received data to the loader all at once now.
         // Then clear the data to make way for the next multipart section.
-        m_loader->addData(resourceData());
+        m_handle->addData(resourceData());
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -155,7 +153,7 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent)
-        m_loader->addData(data);
+        m_handle->addData(data);
     WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
@@ -168,9 +166,8 @@ void SubresourceLoader::didFinishLoading()
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (m_loader)
-        m_loader->finishJobAndHandle(resourceData());
-    m_loader = 0;
+    if (RefPtr<ResourceHandle> handle = m_handle.release())
+        handle->finishJobAndHandle(resourceData());
 
     if (cancelled())
         return;
@@ -187,9 +184,8 @@ void SubresourceLoader::didFail(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (m_loader)
-        m_loader->reportError();
-    m_loader = 0;
+    if (RefPtr<ResourceHandle> handle = m_handle.release())
+        handle->reportError();
 
     if (cancelled())
         return;
@@ -204,9 +200,8 @@ void SubresourceLoader::didCancel(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
     
-    if (m_loader)
-        m_loader->reportError();
-    m_loader = 0;
+    if (RefPtr<ResourceHandle> handle = m_handle.release())
+        handle->reportError();
 
     if (cancelled())
         return;
@@ -215,4 +210,3 @@ void SubresourceLoader::didCancel(NSError *error)
 }
 
 }
-

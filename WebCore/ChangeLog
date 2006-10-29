@@ -1,6 +1,21 @@
-2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+2006-10-29  Darin Adler  <darin@apple.com>
 
-        Not reviewed.
+        Reviewed by Mitz.
+
+        - fix crash visible on buildbot and also when running the test
+          anchor-image-scrolled-x-y.html under libgmalloc
+
+        * loader/mac/WebSubresourceLoader.h: Renamed m_loader to m_handle
+        now that the class is named ResourceHandle.
+        * loader/mac/WebSubresourceLoader.mm: Renaming, plus:
+        (WebCore::SubresourceLoader::didFinishLoading): Get the handle into
+        a local RefPtr before calling finishJobAndHandle, since we might get
+        cancelled inside that function, so we should not rely on m_handle to
+        keep the ResourceHandle alive.
+        (WebCore::SubresourceLoader::didFail): Ditto.
+        (WebCore::SubresourceLoader::didCancel): Ditto.
+
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         - build fix
 
@@ -2721,8 +2736,6 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::leakNamedCursor):
 
 2006-10-23  Maciej Stachowiak  <mjs@apple.com>
-
-        Not reviewed.
 
         - fixed build from last change.
 
@@ -6444,8 +6457,6 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         Add back a mistakenly removed retain.
 
 2006-10-10  Maciej Stachowiak  <mjs@apple.com>
-
-        Not reviewed, build fix.
 
         - fixed release build
 
@@ -27900,8 +27911,6 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         Do not special quote content of XMP nodes.
 
 2006-07-06  Maciej Stachowiak  <mjs@apple.com>
-
-        Not reviewed - build fix.
 
         - back out earlier leak fix, as it caused a crash on one of the fast/invalid layout tests
 
