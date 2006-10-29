@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class NSArray;
 @class NSMutableURLRequest;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData);
-
-#ifdef __cplusplus
+namespace WebCore {
+    class FormData;
+    void setHTTPBody(NSMutableURLRequest *, const FormData&);
 }
-#endif

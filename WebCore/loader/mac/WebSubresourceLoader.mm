@@ -34,7 +34,6 @@
 #import "LoaderFunctions.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
-#import "FormDataMac.h"
 #import "ResourceLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
@@ -82,8 +81,8 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLo
 
     // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
     [newRequest setHTTPMethod:request.httpMethod()];
-    if (!request.httpBody().elements().isEmpty())
-        webSetHTTPBody(newRequest, arrayFromFormData(request.httpBody()));
+    if (!request.httpBody().isEmpty())
+        setHTTPBody(newRequest, request.httpBody());
 
     wkSupportsMultipartXMixedReplace(newRequest);
 

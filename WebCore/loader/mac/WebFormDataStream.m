@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,60 +31,63 @@
 #import "config.h"
 #import "WebFormDataStream.h"
 
-#import <sys/types.h>
-#import <sys/stat.h>
-
-#import <wtf/Assertions.h>
+#import "CString.h"
+#import "FormData.h"
 #import "WebCoreSystemInterface.h"
+#import <sys/stat.h>
+#import <sys/types.h>
+#import <wtf/Assertions.h>
 
-static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void *context);
+namespace WebCore {
 
-typedef struct {
+static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
+
+struct FormStreamFields {
     CFMutableSetRef scheduledRunLoopPairs;
-    CFMutableArrayRef formDataArray;
+    Vector<FormDataElement> remainingElements; // in reverse order
     CFReadStreamRef currentStream;
-    CFDataRef currentData;
+    char* currentData;
     CFReadStreamRef formStream;
-} FormStreamFields;
+};
 
-typedef struct {
+struct SchedulePair {
     CFRunLoopRef runLoop;
     CFStringRef mode;
-} SchedulePair;
+};
 
-static const void *pairRetain(CFAllocatorRef alloc, const void *value)
+static const void* pairRetain(CFAllocatorRef alloc, const void* value)
 {
-    const SchedulePair *pair = (const SchedulePair *)value;
+    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
 
-    SchedulePair *result = CFAllocatorAllocate(alloc, sizeof(SchedulePair), 0);
+    SchedulePair* result = new SchedulePair;
     CFRetain(pair->runLoop);
     result->runLoop = pair->runLoop;
     result->mode = CFStringCreateCopy(alloc, pair->mode);
     return result;
 }
 
-static void pairRelease(CFAllocatorRef alloc, const void *value)
+static void pairRelease(CFAllocatorRef alloc, const void* value)
 {
-    const SchedulePair *pair = (const SchedulePair *)value;
+    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
 
     CFRelease(pair->runLoop);
     CFRelease(pair->mode);
-    CFAllocatorDeallocate(alloc, (void *)pair);
+    delete pair;
 }
 
-static Boolean pairEqual(const void *a, const void *b)
+static Boolean pairEqual(const void* a, const void* b)
 {
-    const SchedulePair *pairA = (const SchedulePair *)a;
-    const SchedulePair *pairB = (const SchedulePair *)b;
+    const SchedulePair* pairA = static_cast<const SchedulePair*>(a);
+    const SchedulePair* pairB = static_cast<const SchedulePair*>(b);
 
     return pairA->runLoop == pairB->runLoop && CFEqual(pairA->mode, pairB->mode);
 }
 
-static CFHashCode pairHash(const void *value)
+static CFHashCode pairHash(const void* value)
 {
-    const SchedulePair *pair = (const SchedulePair *)value;
+    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
 
-    return ((CFHashCode)pair->runLoop) ^ CFHash(pair->mode);
+    return (CFHashCode)pair->runLoop ^ CFHash(pair->mode);
 }
 
 static void closeCurrentStream(FormStreamFields *form)
@@ -96,14 +99,14 @@ static void closeCurrentStream(FormStreamFields *form)
         form->currentStream = NULL;
     }
     if (form->currentData) {
-        CFRelease(form->currentData);
-        form->currentData = NULL;
+        fastFree(form->currentData);
+        form->currentData = 0;
     }
 }
 
-static void scheduleWithPair(const void *value, void *context)
+static void scheduleWithPair(const void* value, void* context)
 {
-    const SchedulePair *pair = (const SchedulePair *)value;
+    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
     CFReadStreamRef stream = (CFReadStreamRef)context;
 
     CFReadStreamScheduleWithRunLoop(stream, pair->runLoop, pair->mode);
@@ -113,28 +116,24 @@ static void advanceCurrentStream(FormStreamFields *form)
 {
     closeCurrentStream(form);
 
-    // Handle the case where we're at the end of the array.
-    if (CFArrayGetCount(form->formDataArray) == 0) {
+    if (form->remainingElements.isEmpty())
         return;
-    }
 
     // Create the new stream.
-    CFAllocatorRef alloc = CFGetAllocator(form->formDataArray);
-    CFTypeRef nextInput = CFArrayGetValueAtIndex(form->formDataArray, 0);
-    if (CFGetTypeID(nextInput) == CFDataGetTypeID()) {
-        // nextInput is a CFData containing an absolute path
-        CFDataRef data = (CFDataRef)nextInput;
-        form->currentStream = CFReadStreamCreateWithBytesNoCopy(alloc, CFDataGetBytePtr(data), CFDataGetLength(data), kCFAllocatorNull);
+    FormDataElement& nextInput = form->remainingElements.last();
+    if (nextInput.m_type == FormDataElement::data) {
+        size_t size = nextInput.m_data.size();
+        char* data = nextInput.m_data.releaseBuffer();
+        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
         form->currentData = data;
-        CFRetain(data);
     } else {
-        // nextInput is a CFString containing an absolute path
-        CFStringRef path = (CFStringRef)nextInput;
-        CFURLRef fileURL = CFURLCreateWithFileSystemPath(alloc, path, kCFURLPOSIXPathStyle, FALSE);
-        form->currentStream = CFReadStreamCreateWithFile(alloc, fileURL);
+        CFStringRef filename = nextInput.m_filename.createCFString();
+        CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLPOSIXPathStyle, FALSE);
+        CFRelease(filename);
+        form->currentStream = CFReadStreamCreateWithFile(0, fileURL);
         CFRelease(fileURL);
     }
-    CFArrayRemoveValueAtIndex(form->formDataArray, 0);
+    form->remainingElements.removeLast();
 
     // Set up the callback.
     CFStreamClientContext context = { 0, form, NULL, NULL, NULL };
@@ -145,46 +144,49 @@ static void advanceCurrentStream(FormStreamFields *form)
     CFSetApplyFunction(form->scheduledRunLoopPairs, scheduleWithPair, form->currentStream);
 }
 
-static void openNextStream(FormStreamFields *form)
+static void openNextStream(FormStreamFields* form)
 {
     // Skip over any streams we can't open.
     // For some purposes we might want to return an error, but the current NSURLConnection
     // can't really do anything useful with an error at this point, so this is better.
     advanceCurrentStream(form);
-    while (form->currentStream && !CFReadStreamOpen(form->currentStream)) {
+    while (form->currentStream && !CFReadStreamOpen(form->currentStream))
         advanceCurrentStream(form);
-    }
 }
 
-static void *formCreate(CFReadStreamRef stream, void *context)
+static void* formCreate(CFReadStreamRef stream, void* context)
 {
-    CFArrayRef formDataArray = (CFArrayRef)context;
+    const FormData* formData = static_cast<const FormData*>(context);
 
     CFSetCallBacks runLoopAndModeCallBacks = { 0, pairRetain, pairRelease, NULL, pairEqual, pairHash };
 
-    CFAllocatorRef alloc = CFGetAllocator(stream);
-    FormStreamFields *newInfo = CFAllocatorAllocate(alloc, sizeof(FormStreamFields), 0);
-    newInfo->scheduledRunLoopPairs = CFSetCreateMutable(alloc, 0, &runLoopAndModeCallBacks);
-    newInfo->formDataArray = CFArrayCreateMutableCopy(alloc, CFArrayGetCount(formDataArray), formDataArray);
+    FormStreamFields* newInfo = new FormStreamFields;
+    newInfo->scheduledRunLoopPairs = CFSetCreateMutable(0, 0, &runLoopAndModeCallBacks);
     newInfo->currentStream = NULL;
-    newInfo->currentData = NULL;
+    newInfo->currentData = 0;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
+
+    // Append in reverse order since we remove elements from the end.
+    size_t size = formData->elements().size();
+    newInfo->remainingElements.reserveCapacity(size);
+    for (size_t i = 0; i < size; ++i)
+        newInfo->remainingElements.append(formData->elements()[size - i - 1]);
+
     return newInfo;
 }
 
-static void formFinalize(CFReadStreamRef stream, void *context)
+static void formFinalize(CFReadStreamRef stream, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    closeCurrentStream(context);
+    closeCurrentStream(form);
     CFRelease(form->scheduledRunLoopPairs);
-    CFRelease(form->formDataArray);
-    CFAllocatorDeallocate(CFGetAllocator(stream), context);
+    delete form;
 }
 
-static Boolean formOpen(CFReadStreamRef stream, CFStreamError *error, Boolean *openComplete, void *context)
+static Boolean formOpen(CFReadStreamRef stream, CFStreamError* error, Boolean* openComplete, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     openNextStream(form);
 
@@ -193,9 +195,9 @@ static Boolean formOpen(CFReadStreamRef stream, CFStreamError *error, Boolean *o
     return TRUE;
 }
 
-static CFIndex formRead(CFReadStreamRef stream, UInt8 *buffer, CFIndex bufferLength, CFStreamError *error, Boolean *atEOF, void *context)
+static CFIndex formRead(CFReadStreamRef stream, UInt8* buffer, CFIndex bufferLength, CFStreamError* error, Boolean* atEOF, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     while (form->currentStream) {
         CFIndex bytesRead = CFReadStreamRead(form->currentStream, buffer, bufferLength);
@@ -216,9 +218,9 @@ static CFIndex formRead(CFReadStreamRef stream, UInt8 *buffer, CFIndex bufferLen
     return 0;
 }
 
-static Boolean formCanRead(CFReadStreamRef stream, void *context)
+static Boolean formCanRead(CFReadStreamRef stream, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     while (form->currentStream && CFReadStreamGetStatus(form->currentStream) == kCFStreamStatusAtEnd) {
         openNextStream(form);
@@ -230,38 +232,36 @@ static Boolean formCanRead(CFReadStreamRef stream, void *context)
     return CFReadStreamHasBytesAvailable(form->currentStream);
 }
 
-static void formClose(CFReadStreamRef stream, void *context)
+static void formClose(CFReadStreamRef stream, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     closeCurrentStream(form);
 }
 
-static void formSchedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void *context)
+static void formSchedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    if (form->currentStream) {
+    if (form->currentStream)
         CFReadStreamScheduleWithRunLoop(form->currentStream, runLoop, runLoopMode);
-    }
     SchedulePair pair = { runLoop, runLoopMode };
     CFSetAddValue(form->scheduledRunLoopPairs, &pair);
 }
 
-static void formUnschedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void *context)
+static void formUnschedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    if (form->currentStream) {
+    if (form->currentStream)
         CFReadStreamUnscheduleFromRunLoop(form->currentStream, runLoop, runLoopMode);
-    }
     SchedulePair pair = { runLoop, runLoopMode };
     CFSetRemoveValue(form->scheduledRunLoopPairs, &pair);
 }
 
-static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void *context)
+static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context)
 {
-    FormStreamFields *form = (FormStreamFields *)context;
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     switch (type) {
     case kCFStreamEventHasBytesAvailable:
@@ -290,37 +290,32 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
+void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
 {
-    size_t count = [formData count];
+    size_t count = formData.elements().size();
 
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1) {
-        id d = [formData objectAtIndex:0];
-        if ([d isKindOfClass:[NSData class]]) {
-            [request setHTTPBody:(NSData *)d];
+        const FormDataElement& element = formData.elements()[0];
+        if (element.m_type == FormDataElement::data) {
+            NSData *data = [[NSData alloc] initWithBytes:element.m_data.data() length:element.m_data.size()];
+            [request setHTTPBody:data];
+            [data release];
             return;
         }
     }
 
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
     long long length = 0;
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        id data = [formData objectAtIndex:i];
-        if ([data isKindOfClass:[NSData class]]) {
-            NSData *d = data;
-            length += [d length];
-        } else if ([data isKindOfClass:[NSString class]]) {
-            NSString *s = data;
+    for (size_t i = 0; i < count; ++i) {
+        const FormDataElement& element = formData.elements()[i];
+        if (element.m_type == FormDataElement::data)
+            length += element.m_data.size();
+        else {
             struct stat sb;
-            int statResult = stat([s fileSystemRepresentation], &sb);
-            if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG) {
+            int statResult = stat(element.m_filename.utf8(), &sb);
+            if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
                 length += sb.st_size;
-            }
-        } else {
-            LOG_ERROR("item in form data array is neither NSData nor NSString");
-            return;
         }
     }
 
@@ -328,7 +323,11 @@ void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
     [request setValue:[NSString stringWithFormat:@"%lld", length] forHTTPHeaderField:@"Content-Length"];
 
     // Create and set the stream.
-    CFReadStreamRef stream = wkCreateCustomCFReadStream(formCreate, formFinalize, formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule, formData);
+    CFReadStreamRef stream = wkCreateCustomCFReadStream(formCreate, formFinalize,
+        formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,
+        const_cast<FormData*>(&formData));
     [request setHTTPBodyStream:(NSInputStream *)stream];
     CFRelease(stream);
+}
+
 }

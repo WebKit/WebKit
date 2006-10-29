@@ -40,6 +40,7 @@ class NSMutableURLRequest;
  
 namespace WebCore {
 
+    class FormData;
     class String;
     class ResourceLoader;
     class ResourceRequest;

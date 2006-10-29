@@ -301,7 +301,6 @@ _urlOriginalData
 _urlOriginalDataAsString
 _urlWithData
 _urlWithDataRelativeToURL
-_webSetHTTPBody
 _wkCGContextGetShouldSmoothFonts
 _wkClearGlyphVector
 _wkConvertCharToGlyphs

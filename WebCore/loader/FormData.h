@@ -49,6 +49,7 @@ public:
     void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files
 
+    bool isEmpty() const { return m_elements.isEmpty(); }
     const Vector<FormDataElement>& elements() const { return m_elements; }
 
 private:

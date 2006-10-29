@@ -413,7 +413,7 @@ static inline WebView *getWebView(WebFrame *webFrame)
     NSURL *itemURL = [item URL];
     NSURL *itemOriginalURL = [NSURL _web_URLWithDataAsString:[item originalURLString]];
     NSURL *currentURL = [[[self dataSource] request] URL];
-    NSArray *formData = [item formData];
+    NSData *formData = [item formData];
 
     // Are we navigating to an anchor within the page?
     // Note if we have child frames we do a real reload, since the child frames might not
@@ -483,7 +483,7 @@ static inline WebView *getWebView(WebFrame *webFrame)
             if (formData) {
                 [request setHTTPMethod:@"POST"];
                 [request _web_setHTTPReferrer:[item formReferrer]];
-                webSetHTTPBody(request, formData);
+                [request setHTTPBody:formData];
                 [request _web_setHTTPContentType:[item formContentType]];
 
                 // Slight hack to test if the NSURL cache contains the page we're going to.  We want

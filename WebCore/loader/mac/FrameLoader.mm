@@ -33,7 +33,6 @@
 #import "Document.h"
 #import "DOMElementInternal.h"
 #import "Element.h"
-#import "FormDataMac.h"
 #import "FrameLoadRequest.h"
 #import "FrameMac.h"
 #import "FramePrivate.h"
@@ -197,7 +196,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, NSEven
             (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), triggeringEvent, submitForm, formValues);
     } else
         post(request.m_request.url().getNSURL(), referrer, (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
-            arrayFromFormData(request.m_request.httpBody()), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
+            request.m_request.httpBody(), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
 
     if (targetFrame && targetFrame != m_frame)
         [Mac(targetFrame)->bridge() activateWindow];
@@ -1759,7 +1758,7 @@ void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResp
     sendRemainingDelegateMessages(identifier, response, length, error);
 }
 
-void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameName, NSArray *postData, 
+void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameName, const FormData& formData, 
     const String& contentType, NSEvent *event, Element* form, const HashMap<String, String>& formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
@@ -1773,7 +1772,7 @@ void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameNa
 
     setHTTPReferrer(request, referrer);
     [request setHTTPMethod:@"POST"];
-    webSetHTTPBody(request, postData);
+    setHTTPBody(request, formData);
     [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
 
     NSDictionary *action = actionInformation(FrameLoadTypeStandard, true, event, URL);
@@ -1914,9 +1913,98 @@ void FrameLoader::loadEmptyDocumentSynchronously()
 {
     NSURL *url = [[NSURL alloc] initWithString:@""];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    m_frame->loader()->load(request);
+    load(request);
     [request release];
     [url release];
+}
+
+void FrameLoader::loadResourceSynchronously(const ResourceRequest& request,
+            KURL& finalURL, NSDictionary *& responseHeaders, int& statusCode, Vector<char>& data)
+{
+#if 0
+    NSDictionary *headerDict = nil;
+    const HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
+
+    if (!requestHeaders.isEmpty())
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];
+    
+    FormData postData;
+    if (!request.httpBody().elements().isEmpty())
+        postData = request.httpBody();
+    Vector<char> results([resultData length]);
+
+    memcpy(results.data(), [resultData bytes], [resultData length]);
+#endif
+
+    NSURL *URL = request.url().getNSURL();
+
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    String referrer = m_frame->referrer();
+    bool hideReferrer;
+    canLoad(URL, referrer, hideReferrer);
+    if (hideReferrer)
+        referrer = String();
+    
+    NSMutableURLRequest *initialRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [initialRequest setTimeoutInterval:10];
+    
+    [initialRequest setHTTPMethod:request.httpMethod()];
+    
+    if (!request.httpBody().isEmpty())        
+        setHTTPBody(initialRequest, request.httpBody());
+    
+    HTTPHeaderMap::const_iterator end = request.httpHeaderFields().end();
+    for (HTTPHeaderMap::const_iterator it = request.httpHeaderFields().begin(); it != end; ++it)
+        [initialRequest addValue:it->second forHTTPHeaderField:it->first];
+    
+    if (isConditionalRequest(initialRequest))
+        [initialRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    else
+        [initialRequest setCachePolicy:[documentLoader()->request() cachePolicy]];
+    
+    if (!referrer.isNull())
+        setHTTPReferrer(initialRequest, referrer);
+    
+    [initialRequest setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];
+    [initialRequest setValue:client()->userAgent(URL) forHTTPHeaderField:@"User-Agent"];
+    
+    NSError *error = nil;
+    id identifier = nil;    
+    NSURLRequest *newRequest = requestFromDelegate(initialRequest, identifier, error);
+    
+    NSURLResponse *response = nil;
+    NSData *result = nil;
+    if (error == nil) {
+        ASSERT(newRequest != nil);
+        result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
+    }
+    
+    [initialRequest release];
+
+    if (error == nil) {
+        finalURL = [response URL];
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
+            responseHeaders = [httpResponse allHeaderFields];
+            statusCode = [httpResponse statusCode];
+        } else {
+            responseHeaders = [NSDictionary dictionary];
+            statusCode = 200;
+        }
+    } else {
+        finalURL = URL;
+        responseHeaders = [NSDictionary dictionary];
+        if ([error domain] == NSURLErrorDomain)
+            statusCode = [error code];
+        else
+            statusCode = 404;
+    }
+    
+    sendRemainingDelegateMessages(identifier, response, [result length], error);
+    
+    data.resize([result length]);
+    memcpy(data.data(), [result bytes], [result length]);
 }
 
 void FrameLoader::setClient(FrameLoaderClient* client)

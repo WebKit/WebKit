@@ -1,3 +1,20 @@
+2006-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminate use of NSArray to carry form data around
+          (the code in this framework was actually using the NSArray to hold a single
+           NSData anyway, so I just went back to an NSData for now)
+
+        * History/WebHistoryItem.m:
+        (-[WebHistoryItem _setFormInfoFromRequest:]):
+        (-[WebHistoryItem formData]):
+        * History/WebHistoryItemPrivate.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadItem:withLoadType:]):
+
 2006-10-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

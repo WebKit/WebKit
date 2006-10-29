@@ -325,7 +325,7 @@ bool HTMLFormElement::prepareSubmit()
     return m_doingsubmit;
 }
 
-void HTMLFormElement::submit( bool activateSubmitButton )
+void HTMLFormElement::submit(bool activateSubmitButton)
 {
     FrameView *view = document()->view();
     Frame *frame = document()->frame();
@@ -345,17 +345,14 @@ void HTMLFormElement::submit( bool activateSubmitButton )
     frame->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElement* current = formElements[i];
-        // Our app needs to get form values for password fields for doing password autocomplete,
-        // so we are more lenient in pushing values, and let the app decide what to save when.
         if (current->hasLocalName(inputTag)) {
-            HTMLInputElement *input = static_cast<HTMLInputElement*>(current);
+            HTMLInputElement* input = static_cast<HTMLInputElement*>(current);
             if (input->isTextField()) {
-                frame->recordFormValue(input->name().deprecatedString(), input->value().deprecatedString(), this);
+                frame->recordFormValue(input->name(), input->value(), this);
                 if (input->renderer() && input->inputType() == HTMLInputElement::SEARCH)
                     static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
             }
         }
-
         if (needButtonActivation) {
             if (current->isActivatedSubmit())
                 needButtonActivation = false;

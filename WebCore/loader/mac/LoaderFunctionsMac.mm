@@ -34,7 +34,6 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "FormData.h"
-#import "FormDataMac.h"
 #import "FrameLoader.h"
 #import "Logging.h"
 #import "Request.h"
@@ -95,35 +94,18 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const
     if (!frame)
         return Vector<char>();
     
-    WebCoreFrameBridge *bridge = frame->bridge();
-
     frame->didTellBridgeAboutLoad(request.url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSDictionary *headerDict = nil;
-    const HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
-
-    if (!requestHeaders.isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];
-    
-    NSArray *postData = nil;
-    if (!request.httpBody().elements().isEmpty())
-        postData = arrayFromFormData(request.httpBody());
-
-    NSURL *finalNSURL = nil;
     NSDictionary *responseHeaderDict = nil;
     int statusCode = 0;
-    NSData *resultData = [bridge syncLoadResourceWithMethod:request.httpMethod() URL:request.url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
+    Vector<char> result;
+    frame->loader()->loadResourceSynchronously(request, finalURL, responseHeaderDict, statusCode, result);
     
-    finalURL = finalNSURL;
     responseHeaders = DeprecatedString::fromNSString(HeaderStringFromDictionary(responseHeaderDict, statusCode));
 
-    Vector<char> results([resultData length]);
-
-    memcpy(results.data(), [resultData bytes], [resultData length]);
-
-    return results;
+    return result;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 

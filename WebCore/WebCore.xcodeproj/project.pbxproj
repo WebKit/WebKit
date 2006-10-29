@@ -1560,7 +1560,6 @@
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
 		93F199EE08245E59001E9ABC /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199EF08245E59001E9ABC /* FormDataMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B641F206E28C5C0055F610 /* FormDataMac.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F19A1808245E59001E9ABC /* DeprecatedCString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784D502DE375901EA4122 /* DeprecatedCString.cpp */; };
@@ -1602,7 +1601,6 @@
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0508245E59001E9ABC /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABCE5D06E1A42E0085925B /* FormData.cpp */; };
-		93F19B0608245E59001E9ABC /* FormDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B641F106E28C5C0055F610 /* FormDataMac.mm */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
@@ -3244,7 +3242,7 @@
 		656D371E0ADBA5DE00A4554D /* WebDocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoader.h; sourceTree = "<group>"; };
 		656D371F0ADBA5DE00A4554D /* WebDocumentLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebDocumentLoader.mm; sourceTree = "<group>"; };
 		656D37200ADBA5DE00A4554D /* WebFormDataStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormDataStream.h; sourceTree = "<group>"; };
-		656D37210ADBA5DE00A4554D /* WebFormDataStream.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebFormDataStream.m; sourceTree = "<group>"; };
+		656D37210ADBA5DE00A4554D /* WebFormDataStream.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFormDataStream.m; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* WebFormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* WebFormState.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFormState.mm; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
@@ -4336,8 +4334,6 @@
 		93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
 		93B0FD880A759BED0080AD44 /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
 		93B0FD890A759BED0080AD44 /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringMac.mm; sourceTree = "<group>"; };
-		93B641F106E28C5C0055F610 /* FormDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FormDataMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		93B641F206E28C5C0055F610 /* FormDataMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormDataMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
 		93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessor.cpp; sourceTree = "<group>"; };
@@ -6484,8 +6480,6 @@
 				55998A5D052B59CC0017A6C1 /* AXObjectCacheMac.mm */,
 				BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */,
 				BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */,
-				93B641F206E28C5C0055F610 /* FormDataMac.h */,
-				93B641F106E28C5C0055F610 /* FormDataMac.mm */,
 				65BF023B0974819000C43196 /* FrameMac.h */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				9380F68609A143B2001FDB34 /* FrameViewMac.mm */,
@@ -9104,7 +9098,6 @@
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				93F199EE08245E59001E9ABC /* FormData.h in Headers */,
-				93F199EF08245E59001E9ABC /* FormDataMac.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
@@ -10636,7 +10629,6 @@
 				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
 				93F19B0508245E59001E9ABC /* FormData.cpp in Sources */,
-				93F19B0608245E59001E9ABC /* FormDataMac.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,

@@ -74,7 +74,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     BOOL alwaysAttemptToUsePageCache;
     int visitCount;
     // info used to repost form data
-    NSArray *formData;
+    NSData *formData;
     NSString *formContentType;
     NSString *formReferrer;
     // info used to support RSS feeds
@@ -484,7 +484,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (void)_setFormInfoFromRequest:(NSURLRequest *)request
 {
-    NSArray *newData = nil;
+    NSData *newData = nil;
     NSString *newContentType = nil;
     NSString *newReferrer = nil;
     if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
@@ -492,13 +492,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
         // FIXME: Eventually we have to make this smart enough to handle the case where
         // we have a stream for the body to handle the "data interspersed with files" feature.
-        NSData *body = [request HTTPBody];
-        if (body) {
-            body = [body copy];
-            newData = [[NSArray alloc] initWithObjects:body, nil];
-            [body release];
-        }
-
+        newData = [[request HTTPBody] copy];
         newContentType = [[request _web_HTTPContentType] copy];
         newReferrer = [[request _web_HTTPReferrer] copy];
     }
@@ -513,7 +507,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     _private->formReferrer = newReferrer;
 }
 
-- (NSArray *)formData
+- (NSData *)formData
 {
     return _private->formData;
 }

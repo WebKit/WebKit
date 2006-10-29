@@ -1,3 +1,53 @@
+t2006-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminate use of NSArray to carry form data around
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/FormDataMac.h: Removed.
+        * bridge/mac/FormDataMac.mm: Removed.
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * loader/FormData.h:
+        (WebCore::FormData::isEmpty):
+        * loader/mac/FrameLoader.h:
+        * loader/mac/FrameLoader.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::loadEmptyDocumentSynchronously):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * loader/mac/WebFormDataStream.h:
+        * loader/mac/WebFormDataStream.m:
+        (WebCore::pairRetain):
+        (WebCore::pairRelease):
+        (WebCore::pairEqual):
+        (WebCore::pairHash):
+        (WebCore::closeCurrentStream):
+        (WebCore::scheduleWithPair):
+        (WebCore::advanceCurrentStream):
+        (WebCore::openNextStream):
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        (WebCore::formOpen):
+        (WebCore::formRead):
+        (WebCore::formCanRead):
+        (WebCore::formClose):
+        (WebCore::formSchedule):
+        (WebCore::formUnschedule):
+        (WebCore::formEventCallback):
+        (WebCore::setHTTPBody):
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        (WebCore::SubresourceLoader::create):
+        * platform/network/mac/ResourceLoaderMac.mm:
+
 2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -121,10 +121,11 @@ public:
     virtual Plugin* createPlugin(Element*, const KURL&,
         const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
 
-    void clear(bool clearWindowProperties = true);
+    virtual void clear(bool clearWindowProperties = true);
 
     void setBridge(WebCoreFrameBridge* p);
     WebCoreFrameBridge* bridge() const { return _bridge; }
+
     virtual void setView(FrameView*);
     virtual void frameDetached();
 
@@ -225,7 +226,7 @@ public:
     bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart);
     bool passWheelEventToWidget(Widget*);
     
-    NSString* searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell);
+    NSString* searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*);
     NSString* searchForLabelsBeforeElement(NSArray* labels, Element* element);
     NSString* matchLabelsAgainstElement(NSArray* labels, Element* element);
 
