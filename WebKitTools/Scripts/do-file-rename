@@ -65,15 +65,13 @@ sub wanted
 }
 
 my %renames = (
-    "WebFormState.m" => "WebFormState.mm",
-    "WebNetscapePlugInStreamLoader.m" => "WebNetscapePlugInStreamLoader.mm",
-    "WebDataProtocol.m" => "WebDataProtocol.mm",
-    "WebFrameLoader.m" => "WebFrameLoader.mm",
-    "WebPolicyDecider.m" => "WebPolicyDecider.mm",
-    "WebDocumentLoader.m" => "WebDocumentLoader.mm",
-    "WebLoader.m" => "WebLoader.mm",
-    "WebSubresourceLoader.m" => "WebSubresourceLoader.mm",
-    "WebMainResourceLoader.m" => "WebMainResourceLoader.mm",
+    "FrameLoader.mm" => "FrameLoaderMac.mm",
+    "WebDocumentLoader.mm" => "DocumentLoaderMac.mm",
+    "WebFormState.mm" => "FormState.cpp",
+    "WebLoader.mm" => "ResourceLoaderMac.mm",
+    "WebMainResourceLoader.mm" => "MainResourceLoaderMac.mm",
+    "WebNetscapePlugInStreamLoader.mm" => "NetscapePlugInStreamLoaderMac.mm",
+    "WebSubresourceLoader.mm" => "SubresourceLoaderMac.mm",
 );
 
 # rename files
