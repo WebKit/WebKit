@@ -71,11 +71,6 @@ bool ResourceLoader::start(DocLoader* docLoader)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSDictionary* headerDict = nil;
-    
-    if (!d->m_request.httpHeaderFields().isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:d->m_request.httpHeaderFields()];
-
     // If we are no longer attached to a Page, this must be an attempted load from an
     // onUnload handler, so let's just block it.
     if (!frame->page()) {
@@ -83,19 +78,7 @@ bool ResourceLoader::start(DocLoader* docLoader)
         return false;
     }
     
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    // FIXME: is that really the rule we want for subresources? also, this is the wrong level to do this check.
-    bool hideReferrer;
-    frame->loader()->canLoad(url().getNSURL(), frame->loader()->referrer(), hideReferrer);
-    
-    if (!postData().elements().isEmpty())
-        d->m_subresourceLoader = SubresourceLoader::create(frame, this,
-                                                           method(), url().getNSURL(), headerDict, arrayFromFormData(postData()), hideReferrer ? String() : frame->loader()->referrer());
-    else
-        d->m_subresourceLoader = SubresourceLoader::create(frame, this, 
-                                                            method(), url().getNSURL(), headerDict, hideReferrer ? String() : frame->loader()->referrer());
- 
+    d->m_subresourceLoader = SubresourceLoader::create(frame, this, d->m_request);
 
     if (d->m_subresourceLoader)
         return true;

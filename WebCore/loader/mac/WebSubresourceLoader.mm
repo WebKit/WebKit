@@ -31,8 +31,10 @@
 
 #import "FrameLoader.h"
 #import "FrameMac.h"
+#import "LoaderFunctions.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "FormDataMac.h"
 #import "ResourceLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
@@ -56,19 +58,36 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLoader* loader,
-    NSMutableURLRequest *newRequest, NSDictionary *customHeaders, const String& referrer)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLoader* loader, ResourceRequest& request)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)
         return nil;
 
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    // FIXME: is that really the rule we want for subresources?
+    bool hideReferrer;
+    fl->canLoad(request.url().getNSURL(), frame->loader()->referrer(), hideReferrer);
+
+    if (!hideReferrer && !request.httpReferrer())
+        request.setHTTPReferrer(fl->referrer());
+
+    NSDictionary* headerDict = nil;
+    
+    if (!request.httpHeaderFields().isEmpty())
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:request.httpHeaderFields()];
+
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
+
+    // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
+    [newRequest setHTTPMethod:request.httpMethod()];
+    if (!request.httpBody().elements().isEmpty())
+        webSetHTTPBody(newRequest, arrayFromFormData(request.httpBody()));
+
     wkSupportsMultipartXMixedReplace(newRequest);
 
-    NSEnumerator *e = [customHeaders keyEnumerator];
-    NSString *key;
-    while ((key = [e nextObject]))
-        [newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
+    [newRequest setAllHTTPHeaderFields:headerDict];
 
     // Use the original request's cache policy for two reasons:
     // 1. For POST requests, we mutate the cache policy for the main resource,
@@ -80,7 +99,6 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLo
         [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
         [newRequest setCachePolicy:[fl->originalRequest() cachePolicy]];
-    setHTTPReferrer(newRequest, referrer);
     
     fl->addExtraFieldsToRequest(newRequest, false, false);
 
@@ -88,29 +106,6 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLo
     if (!subloader->load(newRequest))
         return 0;
 
-    return subloader.release();
-}
-
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLoader* loader,
-                   const String& method, NSURL *URL, NSDictionary *customHeaders, const String& referrer)
-{
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];    
-    [newRequest setHTTPMethod:method];
-    RefPtr<SubresourceLoader> subloader = create(frame, loader, newRequest, customHeaders, referrer);
-    [newRequest release];
-    return subloader.release();
-}
-
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLoader* loader,
-    const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, const String& referrer)
-{
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
-    // Once this is fixed we can pass the method to create like we used to.
-    [newRequest setHTTPMethod:method];
-    webSetHTTPBody(newRequest, postData);
-    RefPtr<SubresourceLoader> subloader = create(frame, loader, newRequest, customHeaders, referrer);
-    [newRequest release];
     return subloader.release();
 }
 
