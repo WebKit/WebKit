@@ -1,5 +1,13 @@
 2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+
+        - build fix
+
+        * platform/network/mac/ResourceHandleMac.mm:
+
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Darin.
 
         - renamed ResourceLoader to ResourceHandle (and same for related classes)
