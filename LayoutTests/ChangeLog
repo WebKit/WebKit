@@ -1,3 +1,12 @@
+2006-10-29  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Fix failure in editing/inserting/insert-3851164-fix if Gill Sans font is present.
+
+        * editing/inserting/insert-3851164-fix.html: Specify sans-serif to match expected results
+        generated without Gill Sans present.
+
 2006-10-29  Darin Adler  <darin@apple.com>
 
         * fast/events/js-keyboard-event-creation-expected.txt: Update test that
