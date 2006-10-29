@@ -1,5 +1,13 @@
 2006-10-29  Adam Roben  <aroben@apple.com>
 
+        More semi-fixes.
+
+        * page/Page.cpp: Forgot to wrap the actual definition of
+        setDefersLoading() in PLATFORM(MAC).
+        * platform/PlatformWheelEvent.h: Fix up preprocessor directives.
+
+2006-10-29  Adam Roben  <aroben@apple.com>
+
         Build semi-fix.
 
         Move all FrameLoader-related code in Page.{cpp,h} within #if

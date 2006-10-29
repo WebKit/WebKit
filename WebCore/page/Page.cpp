@@ -136,6 +136,7 @@ SelectionController* Page::dragCaretController() const
     return &m_dragCaretController;
 }
 
+#if PLATFORM(MAC)
 void Page::setDefersLoading(bool defers)
 {
     if (defers == m_defersLoading)
@@ -145,5 +146,6 @@ void Page::setDefersLoading(bool defers)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->loader()->setDefersLoading(defers);
 }
+#endif
 
 }
