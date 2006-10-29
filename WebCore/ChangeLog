@@ -1,3 +1,42 @@
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - removed ObjC glue between ResourceLoader and SubresourceLoader, then now talk to each other directly
+
+        Removed WebCoreResourceLoader, WebCoreResourceHandle and WebCoreResourceLoaderImp
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * loader/mac/FrameLoader.h:
+        * loader/mac/FrameLoader.mm:
+        * loader/mac/LoaderFunctionsMac.mm:
+        * loader/mac/WebLoader.h:
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * platform/network/ResourceLoader.h:
+        * platform/network/ResourceLoaderInternal.h:
+        * platform/network/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::receivedResponse):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::redirectedToURL):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::finishJobAndHandle):
+        (WebCore::ResourceLoader::reportError):
+        * platform/network/mac/WebCoreResourceLoader.h: Removed.
+        * platform/network/mac/WebCoreResourceLoaderImp.h: Removed.
+        * platform/network/mac/WebCoreResourceLoaderImp.mm: Removed.
+
 2006-10-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

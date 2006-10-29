@@ -49,6 +49,10 @@ typedef void CURL;
 #include <QString>
 #endif
 
+#if PLATFORM(MAC)
+#include "WebSubresourceLoader.h"
+#endif
+
 // The allocations and releases in ResourceLoaderInternal are
 // Cocoa-exception-free (either simple Foundation classes or
 // WebCoreResourceLoaderImp which avoids doing work in dealloc).
@@ -112,6 +116,7 @@ namespace WebCore {
         CFURLConnectionRef m_connection;
 #elif PLATFORM(MAC)
         WebCoreResourceLoaderImp* loader;
+        RefPtr<WebCore::SubresourceLoader> m_subresourceLoader;
         NSURLResponse* response;
 #endif
 #if USE(WININET)

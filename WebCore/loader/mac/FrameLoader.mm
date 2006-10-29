@@ -1919,42 +1919,6 @@ void FrameLoader::loadEmptyDocumentSynchronously()
     [url release];
 }
 
-id <WebCoreResourceHandle> FrameLoader::startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders)
-{
-    // If we are no longer attached to a page, this must be an attempted load from an
-    // onunload handler, so let's just block it.
-    if (!m_frame->page())
-        return nil;
-    
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = m_frame->referrer();
-    bool hideReferrer;
-    canLoad(URL, referrer, hideReferrer);
-    if (hideReferrer)
-        referrer = String();
-    
-    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, referrer);
-}
-
-id <WebCoreResourceHandle> FrameLoader::startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData)
-{
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onunload handler, so let's just block it.
-    if (!m_frame->page())
-        return nil;
-    
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = m_frame->referrer();
-    bool hideReferrer;
-    canLoad(URL, referrer, hideReferrer);
-    if (hideReferrer)
-        referrer = String();
-    
-    return SubresourceLoader::create(m_frame, resourceLoader, method, URL, customHeaders, postData, referrer);
-}
-
 void FrameLoader::setClient(FrameLoaderClient* client)
 {
     ASSERT(client);

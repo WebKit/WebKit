@@ -26,19 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SubresourceLoader_H_
+#define SubresourceLoader_H_
+ 
 #import "WebLoader.h"
-#import "WebCoreResourceLoader.h"
-
+#include <wtf/PassRefPtr.h>
+ 
+#ifndef __OBJC__
+class NSArray;
+class NSDictionary;
+class NSMutableURLRequest;
+#endif
+ 
 namespace WebCore {
 
     class String;
+    class ResourceLoader;
     
     class SubresourceLoader : public WebResourceLoader {
     public:
-        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            const String& method, NSURL *URL, NSDictionary *customHeaders, const String& referrer);
-        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
-            const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData, const String& referrer);
+        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceLoader*, const String& method, 
+                                                    NSURL *URL, NSDictionary *customHeaders, const String& referrer);
+        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceLoader*, const String& method, 
+                                                    NSURL *URL, NSDictionary *customHeaders, NSArray *postData, const String& referrer);
 
         virtual ~SubresourceLoader();
 
@@ -49,16 +59,17 @@ namespace WebCore {
         virtual void didFail(NSError *);
 
     private:
-        static id <WebCoreResourceHandle> create(Frame*, id <WebCoreResourceLoader>,
+        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceLoader*,
             NSMutableURLRequest *, NSDictionary *customHeaders, const String& referrer);
 
-        SubresourceLoader(Frame*, id <WebCoreResourceLoader>);
-        id <WebCoreResourceHandle> handle();
+        SubresourceLoader(Frame*, ResourceLoader*);
 
         virtual void didCancel(NSError *);
 
-        RetainPtr<id <WebCoreResourceLoader> > m_coreLoader;
+        RefPtr<ResourceLoader> m_loader;
         bool m_loadingMultipartContent;
     };
 
 }
+
+#endif // SubresourceLoader_H_

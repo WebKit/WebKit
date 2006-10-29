@@ -36,7 +36,6 @@
 #import "FormData.h"
 #import "FormDataMac.h"
 #import "FrameLoader.h"
-#import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"
 #import "Request.h"
 #import "ResourceLoader.h"

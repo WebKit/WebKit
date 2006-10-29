@@ -30,12 +30,27 @@
 #include "Shared.h"
 #include <wtf/RefPtr.h>
 
+#ifdef __OBJC__
 @class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
 @class WebCoreResourceLoaderAsDelegate;
+@class NSCachedURLResponse;
+#else
+class NSError;
+class NSURLAuthenticationChallenge;
+class NSURLConnection;
+class NSURLRequest;
+class NSURLResponse;
+class WebCoreResourceLoaderAsDelegate;
+class NSCachedURLResponse;
+class NSObject;
+class NSURLCredential;
+class NSMutableData;
+typedef NSObject* id;
+#endif
 
 namespace WebCore {
 

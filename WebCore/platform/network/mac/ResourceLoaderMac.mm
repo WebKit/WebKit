@@ -35,9 +35,9 @@
 #import "KURL.h"
 #import "FormDataMac.h"
 #import "LoaderFunctions.h"
-#import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"
 #import "WebCoreFrameBridge.h"
+#import "WebSubresourceLoader.h"
 
 namespace WebCore {
     
@@ -49,10 +49,8 @@ ResourceLoaderInternal::~ResourceLoaderInternal()
 
 ResourceLoader::~ResourceLoader()
 {
-    // This will cancel the handle, and who knows what that could do
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [d->loader jobWillBeDeallocated];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    if (d->m_subresourceLoader)
+        d->m_subresourceLoader->cancel();
     delete d;
 }
 
@@ -73,23 +71,33 @@ bool ResourceLoader::start(DocLoader* docLoader)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebCoreResourceLoaderImp* resourceLoader = [[WebCoreResourceLoaderImp alloc] initWithJob:this];
-
-    id <WebCoreResourceHandle> handle;
-
     NSDictionary* headerDict = nil;
     
     if (!d->m_request.httpHeaderFields().isEmpty())
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:d->m_request.httpHeaderFields()];
 
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if (!frame->page()) {
+        kill();
+        return false;
+    }
+    
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    // FIXME: is that really the rule we want for subresources? also, this is the wrong level to do this check.
+    bool hideReferrer;
+    frame->loader()->canLoad(url().getNSURL(), frame->loader()->referrer(), hideReferrer);
+    
     if (!postData().elements().isEmpty())
-        handle = frame->loader()->startLoadingResource(resourceLoader, method(), url().getNSURL(), headerDict, arrayFromFormData(postData()));
+        d->m_subresourceLoader = SubresourceLoader::create(frame, this,
+                                                           method(), url().getNSURL(), headerDict, arrayFromFormData(postData()), hideReferrer ? String() : frame->loader()->referrer());
     else
-        handle = frame->loader()->startLoadingResource(resourceLoader, method(), url().getNSURL(), headerDict);
-    [resourceLoader setHandle:handle];
-    [resourceLoader release];
+        d->m_subresourceLoader = SubresourceLoader::create(frame, this, 
+                                                            method(), url().getNSURL(), headerDict, hideReferrer ? String() : frame->loader()->referrer());
+ 
 
-    if (handle)
+    if (d->m_subresourceLoader)
         return true;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -120,15 +128,10 @@ void ResourceLoader::retrieveResponseEncoding() const
     }
 }
 
-void ResourceLoader::setLoader(WebCoreResourceLoaderImp *loader)
-{
-    HardRetain(loader);
-    HardRelease(d->loader);
-    d->loader = loader;
-}
-
 void ResourceLoader::receivedResponse(NSURLResponse* response)
 {
+    ASSERT(response);
+
     d->assembledResponseHeaders = false;
     d->m_retrievedResponseEncoding = false;
     d->response = response;
@@ -139,7 +142,36 @@ void ResourceLoader::receivedResponse(NSURLResponse* response)
 
 void ResourceLoader::cancel()
 {
-    [d->loader jobCanceledLoad];
+    d->m_subresourceLoader->cancel();
+}
+
+void ResourceLoader::redirectedToURL(NSURL *url)
+{
+    ASSERT(url);
+    if (ResourceLoaderClient* c = client())
+        c->receivedRedirect(this, KURL(url));
+}
+
+void ResourceLoader::addData(NSData *data)
+{
+    ASSERT(data);
+    if (ResourceLoaderClient* c = client())
+        c->didReceiveData(this, (const char *)[data bytes], [data length]);
+}
+
+void ResourceLoader::finishJobAndHandle(NSData *data)
+{
+    if (ResourceLoaderClient* c = client()) {
+        c->receivedAllData(this, data);
+        c->didFinishLoading(this);
+    }
+    kill();
+}
+
+void ResourceLoader::reportError()
+{
+    setError(1);
+    finishJobAndHandle(nil);
 }
 
 } // namespace WebCore

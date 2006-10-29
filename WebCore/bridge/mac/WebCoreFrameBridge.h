@@ -67,8 +67,6 @@ typedef WebCore::FrameMac WebCoreFrameMac;
 @class WebView;
 
 @protocol WebCoreRenderTreeCopier;
-@protocol WebCoreResourceHandle;
-@protocol WebCoreResourceLoader;
 
 extern NSString *WebCorePageCacheStateKey;
 
