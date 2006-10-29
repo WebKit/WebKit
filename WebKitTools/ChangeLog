@@ -1,3 +1,12 @@
+2006-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        * DumpRenderTree/DumpRenderTree.m: (-[DumpRenderTreeWindow keyDown:]):
+        Added. Does nothing, which prevents a beep.
+
+        * Scripts/do-webcore-rename: Tweaked plans for renaming a bit.
+
 2006-10-27  Brady Eidson  <beidson@apple.com>
 
         Rubber stamped by Tim Hatcher

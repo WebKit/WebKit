@@ -1053,6 +1053,12 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
     return windowIsKey;
 }
 
+- (void)keyDown:(id)sender
+{
+    // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
+    // once we get to the end of the responder chain.
+}
+
 @end
 
 @implementation DumpRenderTreeEvent

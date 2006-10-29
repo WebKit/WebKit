@@ -1,3 +1,8 @@
+2006-10-29  Darin Adler  <darin@apple.com>
+
+        * fast/events/js-keyboard-event-creation-expected.txt: Update test that
+        is affected in a minor way by the change to DumpRenderTree.
+
 2006-10-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
