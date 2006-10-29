@@ -1,3 +1,12 @@
+2006-10-29  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Finish Darin's clean up of the use of __APPLE__ in WebCore, begun in
+        r17405.
+
+        * platform/DeprecatedString.h:
+
 2006-10-29  Beth Dakin  <bdakin@apple.com>
 
         Rubber stamped by Geoff.
