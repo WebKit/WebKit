@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- *
- * All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,45 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceLoaderManager_H
-#define ResourceLoaderManager_H
+#ifndef ResourceHandleWin_H
+#define ResourceHandleWin_H
 
-#include <QMap>
-#include <QObject>
-
-#include "ResourceLoader.h"
+#include <windows.h>
 
 namespace WebCore {
 
-class FrameQtClient;
+struct PlatformDataStruct
+{
+    DWORD   error;
+    BOOL    loaded;
+    LPTSTR  errorString;
+};
 
-class ResourceLoaderManager : public QObject {
-Q_OBJECT
-public:
-    static ResourceLoaderManager* self();
-
-    void add(ResourceLoader*, FrameQtClient*);
-    void cancel(ResourceLoader*);
-
-public Q_SLOTS:
-    void slotData(KIO::Job*, const QByteArray& data);
-    void slotMimetype(KIO::Job*, const QString& type);
-    void slotResult(KJob*);
-    
-private:
-    ResourceLoaderManager();
-    ~ResourceLoaderManager();
-
-    void remove(ResourceLoader*);
-
-    // KIO Job <-> WebKit Job mapping
-    QMap<ResourceLoader*, KIO::Job*> m_jobToKioMap;
-    QMap<KIO::Job*, ResourceLoader*> m_kioToJobMap;
-
-    FrameQtClient* m_frameClient;
+struct PlatformResponseStruct
+{
 };
 
 }

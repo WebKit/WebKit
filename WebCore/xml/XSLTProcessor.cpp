@@ -35,7 +35,7 @@
 #include "HTMLDocument.h"
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 #include "Text.h"
 #include "loader.h"
 #include "markup.h"

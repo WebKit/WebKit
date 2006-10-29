@@ -26,7 +26,7 @@
 #include <wtf/Vector.h>
 #include <wtf/HashMap.h>
 #include "PlatformString.h"
-#include "ResourceLoaderClient.h"  // Defines PlatformResponse
+#include "ResourceHandleClient.h"  // Defines PlatformResponse
 #include "HTTPHeaderMap.h"
 
 #ifdef __OBJC__

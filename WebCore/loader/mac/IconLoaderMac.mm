@@ -31,7 +31,7 @@
 
 using namespace WebCore;
 
-void IconLoader::receivedResponse(ResourceLoader* resourceLoader, NSURLResponse* responsePtr)
+void IconLoader::receivedResponse(ResourceHandle* resourceLoader, NSURLResponse* responsePtr)
 {
     ASSERT(resourceLoader);
     ASSERT(responsePtr);

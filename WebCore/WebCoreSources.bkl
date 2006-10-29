@@ -181,7 +181,7 @@
 		platform/TextEncodingRegistry.cpp
 		platform/TextStream.cpp
 		platform/Timer.cpp
-		platform/network/ResourceLoader.cpp
+		platform/network/ResourceHandle.cpp
 		platform/Widget.cpp
 
 	</set>
@@ -204,7 +204,7 @@
 		platform/win/SharedTimerWin.cpp
 		platform/win/SystemTimeWin.cpp
 		platform/win/TemporaryLinkStubs.cpp
-		platform/network/win/ResourceLoaderWin.cpp
+		platform/network/win/ResourceHandleWin.cpp
 		platform/win/WidgetWin.cpp
 
 	</set>

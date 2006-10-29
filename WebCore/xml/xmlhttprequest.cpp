@@ -34,7 +34,7 @@
 #include "LoaderFunctions.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 #include "TextEncoding.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
@@ -352,7 +352,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     // create can return null here, for example if we're no longer attached to a page.
     // this is true while running onunload handlers
     // FIXME: Maybe create can return false for other reasons too?
-    m_loader = ResourceLoader::create(request, this, m_doc->docLoader());
+    m_loader = ResourceHandle::create(request, this, m_doc->docLoader());
 }
 
 void XMLHttpRequest::abort()
@@ -519,7 +519,7 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL
     didFinishLoading(0);
 }
 
-void XMLHttpRequest::didFinishLoading(ResourceLoader* loader)
+void XMLHttpRequest::didFinishLoading(ResourceHandle* loader)
 {
     ASSERT(loader == m_loader);
 
@@ -547,13 +547,13 @@ void XMLHttpRequest::didFinishLoading(ResourceLoader* loader)
     }
 }
 
-void XMLHttpRequest::receivedRedirect(ResourceLoader*, const KURL& m_url)
+void XMLHttpRequest::receivedRedirect(ResourceHandle*, const KURL& m_url)
 {
     if (!urlMatchesDocumentDomain(m_url))
         abort();
 }
 
-void XMLHttpRequest::didReceiveData(ResourceLoader*, const char* data, int len)
+void XMLHttpRequest::didReceiveData(ResourceHandle*, const char* data, int len)
 {
     if (m_responseHeaders.isEmpty() && m_loader)
         m_responseHeaders = m_loader->responseHTTPHeadersAsString();

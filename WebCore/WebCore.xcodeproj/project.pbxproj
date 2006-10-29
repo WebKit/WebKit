@@ -315,11 +315,11 @@
 		6565820009D1508D000E61D7 /* SVGNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		6565820209D1508D000E61D7 /* XLinkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581EB09D1508D000E61D7 /* XLinkNames.h */; };
 		6565821309D15111000E61D7 /* ksvgcssvalues.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565820F09D15111000E61D7 /* ksvgcssvalues.h */; };
-		656B84E00AEA1D3100A095B4 /* ResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656B84DC0AEA1D3100A095B4 /* ResourceLoader.cpp */; };
-		656B84E20AEA1D3100A095B4 /* ResourceLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DE0AEA1D3100A095B4 /* ResourceLoaderClient.h */; };
-		656B84E30AEA1D3100A095B4 /* ResourceLoaderInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DF0AEA1D3100A095B4 /* ResourceLoaderInternal.h */; };
-		656B84EB0AEA1DDA00A095B4 /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656B84EA0AEA1DDA00A095B4 /* ResourceLoaderMac.mm */; };
-		656B85380AEA1F9A00A095B4 /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B85370AEA1F9A00A095B4 /* ResourceLoader.h */; };
+		656B84E00AEA1D3100A095B4 /* ResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */; };
+		656B84E20AEA1D3100A095B4 /* ResourceHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */; };
+		656B84E30AEA1D3100A095B4 /* ResourceHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */; };
+		656B84EB0AEA1DDA00A095B4 /* ResourceHandleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */; };
+		656B85380AEA1F9A00A095B4 /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B85370AEA1F9A00A095B4 /* ResourceHandle.h */; };
 		656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */; };
 		656D37340ADBA5DE00A4554D /* WebDataProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371C0ADBA5DE00A4554D /* WebDataProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3230,11 +3230,11 @@
 		6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.gperf; sourceTree = "<group>"; };
 		6565820F09D15111000E61D7 /* ksvgcssvalues.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ksvgcssvalues.h; sourceTree = "<group>"; };
 		6565821009D15111000E61D7 /* ksvgcssvalues.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.in; sourceTree = "<group>"; };
-		656B84DC0AEA1D3100A095B4 /* ResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoader.cpp; sourceTree = "<group>"; };
-		656B84DE0AEA1D3100A095B4 /* ResourceLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderClient.h; sourceTree = "<group>"; };
-		656B84DF0AEA1D3100A095B4 /* ResourceLoaderInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderInternal.h; sourceTree = "<group>"; };
-		656B84EA0AEA1DDA00A095B4 /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
-		656B85370AEA1F9A00A095B4 /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
+		656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandle.cpp; sourceTree = "<group>"; };
+		656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceHandleClient.h; sourceTree = "<group>"; };
+		656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceHandleInternal.h; sourceTree = "<group>"; };
+		656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleMac.mm; sourceTree = "<group>"; };
+		656B85370AEA1F9A00A095B4 /* ResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceHandle.h; sourceTree = "<group>"; };
 		656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLExtras.h; sourceTree = "<group>"; };
 		656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LoaderNSURLExtras.m; sourceTree = "<group>"; };
 		656D371C0ADBA5DE00A4554D /* WebDataProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDataProtocol.h; sourceTree = "<group>"; };
@@ -6345,10 +6345,10 @@
 				656B84E70AEA1DAE00A095B4 /* mac */,
 				6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */,
 				655A81BD0AEF67E6000975F0 /* HTTPHeaderMap.h */,
-				656B85370AEA1F9A00A095B4 /* ResourceLoader.h */,
-				656B84DC0AEA1D3100A095B4 /* ResourceLoader.cpp */,
-				656B84DE0AEA1D3100A095B4 /* ResourceLoaderClient.h */,
-				656B84DF0AEA1D3100A095B4 /* ResourceLoaderInternal.h */,
+				656B85370AEA1F9A00A095B4 /* ResourceHandle.h */,
+				656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */,
+				656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */,
+				656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -6356,7 +6356,7 @@
 		656B84E70AEA1DAE00A095B4 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				656B84EA0AEA1DDA00A095B4 /* ResourceLoaderMac.mm */,
+				656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -10438,9 +10438,9 @@
 				8542A7970AE5C94300DF58DF /* JSSVGNumber.h in Headers */,
 				8542A7990AE5C94400DF58DF /* JSSVGElementWrapperFactory.h in Headers */,
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
-				656B84E20AEA1D3100A095B4 /* ResourceLoaderClient.h in Headers */,
-				656B84E30AEA1D3100A095B4 /* ResourceLoaderInternal.h in Headers */,
-				656B85380AEA1F9A00A095B4 /* ResourceLoader.h in Headers */,
+				656B84E20AEA1D3100A095B4 /* ResourceHandleClient.h in Headers */,
+				656B84E30AEA1D3100A095B4 /* ResourceHandleInternal.h in Headers */,
+				656B85380AEA1F9A00A095B4 /* ResourceHandle.h in Headers */,
 				85B916840AEBDB47008DD727 /* DOMHTMLFormElementPrivate.h in Headers */,
 				853CA9D70AEEC5E9002372DC /* RenderSVGContainer.h in Headers */,
 				853CA9D90AEEC5E9002372DC /* RenderSVGImage.h in Headers */,
@@ -11674,8 +11674,8 @@
 				8542A7960AE5C94200DF58DF /* JSSVGPoint.cpp in Sources */,
 				8542A7980AE5C94300DF58DF /* JSSVGNumber.cpp in Sources */,
 				8542A79A0AE5C94400DF58DF /* JSSVGElementWrapperFactory.cpp in Sources */,
-				656B84E00AEA1D3100A095B4 /* ResourceLoader.cpp in Sources */,
-				656B84EB0AEA1DDA00A095B4 /* ResourceLoaderMac.mm in Sources */,
+				656B84E00AEA1D3100A095B4 /* ResourceHandle.cpp in Sources */,
+				656B84EB0AEA1DDA00A095B4 /* ResourceHandleMac.mm in Sources */,
 				853CA9D60AEEC5E9002372DC /* RenderSVGContainer.cpp in Sources */,
 				853CA9D80AEEC5E9002372DC /* RenderSVGImage.cpp in Sources */,
 				853CA9DA0AEEC5E9002372DC /* RenderSVGInline.cpp in Sources */,

@@ -57,7 +57,7 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
 
-    // FIXME: Rename to ResourceLoader after resolving conflict with existing class of that name.
+    // FIXME: Rename to ResourceHandle after resolving conflict with existing class of that name.
     class WebResourceLoader : public Shared<WebResourceLoader> {
     public:
         virtual ~WebResourceLoader();

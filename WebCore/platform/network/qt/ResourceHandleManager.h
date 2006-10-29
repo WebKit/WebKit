@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ *
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +22,45 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoaderWin_H
-#define ResourceLoaderWin_H
+#ifndef ResourceHandleManager_H
+#define ResourceHandleManager_H
 
-#include <windows.h>
+#include <QMap>
+#include <QObject>
+
+#include "ResourceHandle.h"
 
 namespace WebCore {
 
-struct PlatformDataStruct
-{
-    DWORD   error;
-    BOOL    loaded;
-    LPTSTR  errorString;
-};
+class FrameQtClient;
 
-struct PlatformResponseStruct
-{
+class ResourceHandleManager : public QObject {
+Q_OBJECT
+public:
+    static ResourceHandleManager* self();
+
+    void add(ResourceHandle*, FrameQtClient*);
+    void cancel(ResourceHandle*);
+
+public Q_SLOTS:
+    void slotData(KIO::Job*, const QByteArray& data);
+    void slotMimetype(KIO::Job*, const QString& type);
+    void slotResult(KJob*);
+    
+private:
+    ResourceHandleManager();
+    ~ResourceHandleManager();
+
+    void remove(ResourceHandle*);
+
+    // KIO Job <-> WebKit Job mapping
+    QMap<ResourceHandle*, KIO::Job*> m_jobToKioMap;
+    QMap<KIO::Job*, ResourceHandle*> m_kioToJobMap;
+
+    FrameQtClient* m_frameClient;
 };
 
 }

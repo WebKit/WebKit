@@ -26,42 +26,42 @@
  */
 
 #include "config.h"
-#include "ResourceLoaderManager.h"
+#include "ResourceHandleManager.h"
 
-#include "ResourceLoader.h"
-#include "ResourceLoaderInternal.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleInternal.h"
 
 namespace WebCore {
 
 const int selectTimeoutMS = 5;
 const double pollTimeSeconds = 0.05;
 
-ResourceLoaderManager::ResourceLoaderManager()
+ResourceHandleManager::ResourceHandleManager()
     : m_useSimple(false)
-    , jobs(new HashSet<ResourceLoader*>)
-    , m_downloadTimer(this, &ResourceLoaderManager::downloadTimerCallback)
+    , jobs(new HashSet<ResourceHandle*>)
+    , m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     curlMultiHandle = curl_multi_init();
 }
 
-ResourceLoaderManager* ResourceLoaderManager::get()
+ResourceHandleManager* ResourceHandleManager::get()
 {
-    static ResourceLoaderManager* singleton;
+    static ResourceHandleManager* singleton;
     if (!singleton)
-        singleton = new ResourceLoaderManager;
+        singleton = new ResourceHandleManager;
     return singleton;
 }
 
-void ResourceLoaderManager::useSimpleTransfer(bool useSimple)
+void ResourceHandleManager::useSimpleTransfer(bool useSimple)
 {
     m_useSimple = useSimple;
 }
 
 static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
 {
-    ResourceLoader* job = static_cast<ResourceLoader*>(obj);
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandle* job = static_cast<ResourceHandle*>(obj);
+    ResourceHandleInternal* d = job->getInternal();
     int totalSize = size * nmemb;
     d->client->didReceiveData(job, static_cast<char*>(ptr), totalSize);
     return totalSize;
@@ -73,16 +73,16 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     return totalSize;
 }
 
-void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* timer)
+void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* timer)
 {
     if (jobs->isEmpty()) {
         m_downloadTimer.stop();
         return;
     }
     if (m_useSimple) {
-        for (HashSet<ResourceLoader*>::iterator it = jobs->begin(); it != jobs->end(); ++it) {
-            ResourceLoader* job = *it;
-            ResourceLoaderInternal* d = job->getInternal();
+        for (HashSet<ResourceHandle*>::iterator it = jobs->begin(); it != jobs->end(); ++it) {
+            ResourceHandle* job = *it;
+            ResourceHandleInternal* d = job->getInternal();
             CURLcode res = curl_easy_perform(d->m_handle);
             if (res != CURLE_OK)
                 printf("Error WITH JOB %d\n", res);
@@ -128,12 +128,12 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
                 // find the node which has same d->m_handle as completed transfer
                 CURL* chandle = msg->easy_handle;
                 assert(chandle);
-                ResourceLoader *job;
+                ResourceHandle *job;
                 curl_easy_getinfo(chandle, CURLINFO_PRIVATE, &job);
                 assert(job); //fixme: assert->if ?
                 // if found, delete it
                 if (job) {
-                    ResourceLoaderInternal *d = job->getInternal();
+                    ResourceHandleInternal *d = job->getInternal();
                     switch (msg->data.result) {
                         case CURLE_OK: {
                             // use this to authenticate
@@ -160,9 +160,9 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
-void ResourceLoaderManager::remove(ResourceLoader* job)
+void ResourceHandleManager::remove(ResourceHandle* job)
 {
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     if (!d->m_handle)
         return;
     if (jobs->contains(job))
@@ -178,10 +178,10 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     }
 }
 
-void ResourceLoaderManager::add(ResourceLoader* job)
+void ResourceHandleManager::add(ResourceHandle* job)
 {
     bool startTimer = jobs->isEmpty();
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     DeprecatedString url = d->URL.url();
     d->m_handle = curl_easy_init();
     curl_easy_setopt(d->m_handle, CURLOPT_PRIVATE, job);
@@ -213,7 +213,7 @@ void ResourceLoaderManager::add(ResourceLoader* job)
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
-void ResourceLoaderManager::cancel(ResourceLoader* job)
+void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     remove(job);
     job->setError(1);

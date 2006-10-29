@@ -1431,19 +1431,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ResourceLoader.cpp"
+				RelativePath="..\..\platform\ResourceHandle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ResourceLoader.h"
+				RelativePath="..\..\platform\ResourceHandle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ResourceLoaderClient.h"
+				RelativePath="..\..\platform\ResourceHandleClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ResourceLoaderInternal.h"
+				RelativePath="..\..\platform\ResourceHandleInternal.h"
 				>
 			</File>
 			<File
@@ -1666,11 +1666,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\ResourceLoaderWin.cpp"
+					RelativePath="..\..\platform\win\ResourceHandleWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\ResourceLoaderWin.h"
+					RelativePath="..\..\platform\win\ResourceHandleWin.h"
 					>
 				</File>
 				<File

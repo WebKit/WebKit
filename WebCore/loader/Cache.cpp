@@ -35,7 +35,7 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Image.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 
 using namespace std;
 

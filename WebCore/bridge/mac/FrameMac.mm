@@ -71,7 +71,7 @@
 #import "RenderTableCell.h"
 #import "RenderTheme.h"
 #import "RenderView.h"
-#import "ResourceLoader.h"
+#import "ResourceHandle.h"
 #import "TextIterator.h"
 #import "WebCoreEditCommand.h"
 #import "WebCoreFrameBridge.h"

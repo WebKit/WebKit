@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceLoaderClient_h
-#define ResourceLoaderClient_h
+#ifndef ResourceHandleClient_h
+#define ResourceHandleClient_h
 
 #include <wtf/Platform.h>
 #if USE(CFNETWORK)
@@ -73,30 +73,30 @@ namespace WebCore {
 #endif
 
     class KURL;
-    class ResourceLoader;
+    class ResourceHandle;
 
-    class ResourceLoaderClient {
+    class ResourceHandleClient {
     public:
-        virtual ~ResourceLoaderClient() { }
+        virtual ~ResourceHandleClient() { }
 
         // request may be modified
-        // void willSendRequest(ResourceLoader*, Request&, const ResourceResonse& redirectResponse) { }
+        // void willSendRequest(ResourceHandle*, Request&, const ResourceResonse& redirectResponse) { }
     
-        // void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&) { }
-        // void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&) { }
+        // void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
+        // void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
 
-        // void didReceiveResponse(ResourceLoader*, const ResourceResponse&) { }
-        virtual void didReceiveData(ResourceLoader*, const char*, int) { }
-        virtual void didFinishLoading(ResourceLoader*) { }
+        // void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
+        virtual void didReceiveData(ResourceHandle*, const char*, int) { }
+        virtual void didFinishLoading(ResourceHandle*) { }
         // void didFailWithError(ResourceError*) { }
 
         // cached response may be modified
-        // void willCacheResponse(ResourceLoader*, CachedResourceResponse&) { }
+        // void willCacheResponse(ResourceHandle*, CachedResourceResponse&) { }
 
         // old-style methods
-        virtual void receivedRedirect(ResourceLoader*, const KURL&) { }
-        virtual void receivedResponse(ResourceLoader*, PlatformResponse) { }
-        virtual void receivedAllData(ResourceLoader*, PlatformData) { }
+        virtual void receivedRedirect(ResourceHandle*, const KURL&) { }
+        virtual void receivedResponse(ResourceHandle*, PlatformResponse) { }
+        virtual void receivedAllData(ResourceHandle*, PlatformData) { }
     };
 
 }

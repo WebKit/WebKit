@@ -24,8 +24,8 @@
  */
 
 #import "config.h"
-#import "ResourceLoader.h"
-#import "ResourceLoaderInternal.h"
+#import "ResourceHandle.h"
+#import "ResourceHandleInternal.h"
 
 #import "BlockExceptions.h"
 #import "DocLoader.h"
@@ -33,6 +33,7 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "KURL.h"
+#import "FormDataMac.h"
 #import "LoaderFunctions.h"
 #import "Logging.h"
 #import "WebCoreFrameBridge.h"
@@ -40,20 +41,20 @@
 
 namespace WebCore {
     
-ResourceLoaderInternal::~ResourceLoaderInternal()
+ResourceHandleInternal::~ResourceHandleInternal()
 {
     HardRelease(response);
     HardRelease(loader);
 }
 
-ResourceLoader::~ResourceLoader()
+ResourceHandle::~ResourceHandle()
 {
     if (d->m_subresourceLoader)
         d->m_subresourceLoader->cancel();
     delete d;
 }
 
-bool ResourceLoader::start(DocLoader* docLoader)
+bool ResourceHandle::start(DocLoader* docLoader)
 {
     ref();
     d->m_loading = true;
@@ -88,7 +89,7 @@ bool ResourceLoader::start(DocLoader* docLoader)
     return false;
 }
 
-void ResourceLoader::assembleResponseHeaders() const
+void ResourceHandle::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
         if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -100,7 +101,7 @@ void ResourceLoader::assembleResponseHeaders() const
     }
 }
 
-void ResourceLoader::retrieveResponseEncoding() const
+void ResourceHandle::retrieveResponseEncoding() const
 {
     if (!d->m_retrievedResponseEncoding) {
         NSString *textEncodingName = [d->response textEncodingName];
@@ -110,7 +111,7 @@ void ResourceLoader::retrieveResponseEncoding() const
     }
 }
 
-void ResourceLoader::receivedResponse(NSURLResponse* response)
+void ResourceHandle::receivedResponse(NSURLResponse* response)
 {
     ASSERT(response);
 
@@ -122,35 +123,35 @@ void ResourceLoader::receivedResponse(NSURLResponse* response)
         client()->receivedResponse(this, response);
 }
 
-void ResourceLoader::cancel()
+void ResourceHandle::cancel()
 {
     d->m_subresourceLoader->cancel();
 }
 
-void ResourceLoader::redirectedToURL(NSURL *url)
+void ResourceHandle::redirectedToURL(NSURL *url)
 {
     ASSERT(url);
-    if (ResourceLoaderClient* c = client())
+    if (ResourceHandleClient* c = client())
         c->receivedRedirect(this, KURL(url));
 }
 
-void ResourceLoader::addData(NSData *data)
+void ResourceHandle::addData(NSData *data)
 {
     ASSERT(data);
-    if (ResourceLoaderClient* c = client())
+    if (ResourceHandleClient* c = client())
         c->didReceiveData(this, (const char *)[data bytes], [data length]);
 }
 
-void ResourceLoader::finishJobAndHandle(NSData *data)
+void ResourceHandle::finishJobAndHandle(NSData *data)
 {
-    if (ResourceLoaderClient* c = client()) {
+    if (ResourceHandleClient* c = client()) {
         c->receivedAllData(this, data);
         c->didFinishLoading(this);
     }
     kill();
 }
 
-void ResourceLoader::reportError()
+void ResourceHandle::reportError()
 {
     setError(1);
     finishJobAndHandle(nil);

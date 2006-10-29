@@ -37,7 +37,7 @@
 #include "HTMLDocument.h"
 #include "LoaderFunctions.h"
 #include "Request.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -82,13 +82,13 @@ void Loader::servePendingRequests()
             domain = static_cast<HTMLDocument*>(req->docLoader()->doc())->domain().deprecatedString();
     }
     
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, req->docLoader());
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, req->docLoader());
 
     if (loader)
         m_requestsLoading.add(loader.get(), req);
 }
 
-void Loader::receivedAllData(ResourceLoader* job, PlatformData allData)
+void Loader::receivedAllData(ResourceHandle* job, PlatformData allData)
 {
     RequestMap::iterator i = m_requestsLoading.find(job);
     if (i == m_requestsLoading.end())
@@ -118,7 +118,7 @@ void Loader::receivedAllData(ResourceLoader* job, PlatformData allData)
     servePendingRequests();
 }
 
-void Loader::receivedResponse(ResourceLoader* job, PlatformResponse response)
+void Loader::receivedResponse(ResourceHandle* job, PlatformResponse response)
 {
     Request* req = m_requestsLoading.get(job);
     ASSERT(req);
@@ -145,7 +145,7 @@ void Loader::receivedResponse(ResourceLoader* job, PlatformResponse response)
     }
 }
 
-void Loader::didReceiveData(ResourceLoader* job, const char* data, int size)
+void Loader::didReceiveData(ResourceHandle* job, const char* data, int size)
 {
     Request* request = m_requestsLoading.get(job);
     if (!request)
@@ -202,7 +202,7 @@ void Loader::cancelRequests(DocLoader* dl)
             ++pIt;
     }
 
-    Vector<ResourceLoader*, 256> jobsToCancel;
+    Vector<ResourceHandle*, 256> jobsToCancel;
 
     RequestMap::iterator end = m_requestsLoading.end();
     for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
@@ -212,7 +212,7 @@ void Loader::cancelRequests(DocLoader* dl)
     }
 
     for (unsigned i = 0; i < jobsToCancel.size(); ++i) {
-        ResourceLoader* job = jobsToCancel[i];
+        ResourceHandle* job = jobsToCancel[i];
         Request* r = m_requestsLoading.get(job);
         m_requestsLoading.remove(job);
         cache()->remove(r->cachedObject());
@@ -235,7 +235,7 @@ void Loader::removeBackgroundDecodingRequest(Request* r)
         m_requestsBackgroundDecoding.remove(r);
 }
 
-ResourceLoader* Loader::jobForRequest(const String& URL) const
+ResourceHandle* Loader::jobForRequest(const String& URL) const
 {
     RequestMap::const_iterator end = m_requestsLoading.end();
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {

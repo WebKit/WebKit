@@ -41,7 +41,7 @@
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
 #include "ProcessingInstruction.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/Platform.h>

@@ -64,7 +64,7 @@ ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
 
 kde4_automoc(WebCore platform/qt/SharedTimerQt.cpp)
 kde4_automoc(WebCore platform/qt/ScrollViewCanvasQt.cpp)
-kde4_automoc(WebCore platform/network/qt/ResourceLoaderManager.cpp)
+kde4_automoc(WebCore platform/network/qt/ResourceHandleManager.cpp)
 
 SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
 
@@ -1014,7 +1014,7 @@ set(WebCore_SRCS
     platform/KURL.cpp
     platform/StringImpl.cpp
     platform/FloatRect.cpp
-    platform/network/ResourceLoader.cpp
+    platform/network/ResourceHandle.cpp
     platform/Path.cpp
     platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
@@ -1037,8 +1037,8 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/PopupMenuQt.cpp
-    platform/network/qt/ResourceLoaderManager.cpp
-    platform/network/qt/ResourceLoaderQt.cpp
+    platform/network/qt/ResourceHandleManager.cpp
+    platform/network/qt/ResourceHandleQt.cpp
     platform/qt/FloatPointQt.cpp
     platform/qt/ListBoxQt.cpp
     platform/qt/FloatRectQt.cpp

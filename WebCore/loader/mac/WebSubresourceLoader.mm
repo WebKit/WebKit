@@ -34,7 +34,7 @@
 #import "LoaderFunctions.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
-#import "ResourceLoader.h"
+#import "ResourceHandle.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFormDataStream.h"
@@ -45,7 +45,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-SubresourceLoader::SubresourceLoader(Frame* frame, ResourceLoader* loader)
+SubresourceLoader::SubresourceLoader(Frame* frame, ResourceHandle* loader)
     : WebResourceLoader(frame)
     , m_loader(loader)
     , m_loadingMultipartContent(false)
@@ -57,7 +57,7 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceLoader* loader, ResourceRequest& request)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHandle* loader, ResourceRequest& request)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)

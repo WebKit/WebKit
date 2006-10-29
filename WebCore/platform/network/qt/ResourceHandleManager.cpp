@@ -30,80 +30,80 @@
 #include <kio/job.h>
 
 #include "FrameQt.h"
-#include "ResourceLoaderManager.h"
-#include "ResourceLoaderInternal.h"
+#include "ResourceHandleManager.h"
+#include "ResourceHandleInternal.h"
 
 namespace WebCore {
 
-static ResourceLoaderManager* s_self = 0;
+static ResourceHandleManager* s_self = 0;
 
-ResourceLoaderManager::ResourceLoaderManager()
+ResourceHandleManager::ResourceHandleManager()
     : m_jobToKioMap()
     , m_kioToJobMap()
     , m_frameClient(0)
 {
 }
 
-ResourceLoaderManager::~ResourceLoaderManager()
+ResourceHandleManager::~ResourceHandleManager()
 {
 }
 
-ResourceLoaderManager* ResourceLoaderManager::self()
+ResourceHandleManager* ResourceHandleManager::self()
 {
     if (!s_self)
-        s_self = new ResourceLoaderManager();
+        s_self = new ResourceHandleManager();
 
     return s_self;
 }
 
-void ResourceLoaderManager::slotData(KIO::Job* kioJob, const QByteArray& data)
+void ResourceHandleManager::slotData(KIO::Job* kioJob, const QByteArray& data)
 {
-    ResourceLoader* job = 0;
+    ResourceHandle* job = 0;
 
     // Check if we know about 'kioJob'...
-    QMap<KIO::Job*, ResourceLoader*>::const_iterator it = m_kioToJobMap.find(kioJob);
+    QMap<KIO::Job*, ResourceHandle*>::const_iterator it = m_kioToJobMap.find(kioJob);
     if (it != m_kioToJobMap.end())
         job = it.value();
 
     if (!job)
         return;
 
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     if (!d || !d->m_client)
         return;
 
     d->m_client->didReceiveData(job, data.data(), data.size());
 }
 
-void ResourceLoaderManager::slotMimetype(KIO::Job* kioJob, const QString& type)
+void ResourceHandleManager::slotMimetype(KIO::Job* kioJob, const QString& type)
 {
-    ResourceLoader* job = 0;
+    ResourceHandle* job = 0;
 
     // Check if we know about 'kioJob'...
-    QMap<KIO::Job*, ResourceLoader*>::const_iterator it = m_kioToJobMap.find(kioJob);
+    QMap<KIO::Job*, ResourceHandle*>::const_iterator it = m_kioToJobMap.find(kioJob);
     if (it != m_kioToJobMap.end())
         job = it.value();
 
     if (!job)
         return;
 
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     if (!d || !d->m_client)
         return;
 
     d->m_mimetype = type;
 }
 
-void ResourceLoaderManager::slotResult(KJob* kjob)
+void ResourceHandleManager::slotResult(KJob* kjob)
 {
     KIO::Job* kioJob = qobject_cast<KIO::Job*>(kjob);
     if (!kioJob)
         return;
 
-    ResourceLoader* job = 0;
+    ResourceHandle* job = 0;
 
     // Check if we know about 'kioJob'...
-    QMap<KIO::Job*, ResourceLoader*>::const_iterator it = m_kioToJobMap.find(kioJob);
+    QMap<KIO::Job*, ResourceHandle*>::const_iterator it = m_kioToJobMap.find(kioJob);
     if (it != m_kioToJobMap.end())
         job = it.value();
 
@@ -117,16 +117,16 @@ void ResourceLoaderManager::slotResult(KJob* kjob)
     m_frameClient->checkLoaded();
 }
 
-void ResourceLoaderManager::remove(ResourceLoader* job)
+void ResourceHandleManager::remove(ResourceHandle* job)
 {
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     if (!d || !d->m_client)
         return;
 
     KIO::Job* kioJob = 0;
 
     // Check if we know about 'job'...
-    QMap<ResourceLoader*, KIO::Job*>::const_iterator it = m_jobToKioMap.find(job);
+    QMap<ResourceHandle*, KIO::Job*>::const_iterator it = m_jobToKioMap.find(job);
     if (it != m_jobToKioMap.end())
         kioJob = it.value();
 
@@ -154,9 +154,9 @@ void ResourceLoaderManager::remove(ResourceLoader* job)
     m_kioToJobMap.remove(kioJob);
 }
 
-void ResourceLoaderManager::add(ResourceLoader* job, FrameQtClient* frameClient)
+void ResourceHandleManager::add(ResourceHandle* job, FrameQtClient* frameClient)
 {
-    ResourceLoaderInternal* d = job->getInternal();
+    ResourceHandleInternal* d = job->getInternal();
     DeprecatedString url = d->m_request.url().url();
 
     KIO::Job* kioJob = 0;
@@ -186,7 +186,7 @@ void ResourceLoaderManager::add(ResourceLoader* job, FrameQtClient* frameClient)
         ASSERT(m_frameClient == frameClient);
 }
 
-void ResourceLoaderManager::cancel(ResourceLoader* job)
+void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     remove(job);
     job->setError(1);
@@ -194,4 +194,4 @@ void ResourceLoaderManager::cancel(ResourceLoader* job)
 
 } // namespace WebCore
 
-#include "ResourceLoaderManager.moc"
+#include "ResourceHandleManager.moc"

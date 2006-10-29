@@ -24,22 +24,22 @@
  */
 
 #include "config.h"
-#include "ResourceLoader.h"
-#include "ResourceLoaderInternal.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleInternal.h"
 
 #include "LoaderFunctions.h"
 #include "Logging.h"
 
 namespace WebCore {
 
-ResourceLoader::ResourceLoader(const ResourceRequest& request, ResourceLoaderClient* client)
-    : d(new ResourceLoaderInternal(this, request, client))
+ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+    : d(new ResourceHandleInternal(this, request, client))
 {
 }
 
-PassRefPtr<ResourceLoader> ResourceLoader::create(const ResourceRequest& request, ResourceLoaderClient* client, DocLoader* dl)
+PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, DocLoader* dl)
 {
-    RefPtr<ResourceLoader> newLoader(new ResourceLoader(request, client));
+    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client));
     
     if (newLoader->start(dl))
         return newLoader.release();
@@ -47,35 +47,35 @@ PassRefPtr<ResourceLoader> ResourceLoader::create(const ResourceRequest& request
     return 0;
 }
 
-bool ResourceLoader::isErrorPage() const
+bool ResourceHandle::isErrorPage() const
 {
     return d->status != 0;
 }
 
-int ResourceLoader::error() const
+int ResourceHandle::error() const
 {
     return d->status;
 }
 
-void ResourceLoader::setError(int e)
+void ResourceHandle::setError(int e)
 {
     d->status = e;
 }
 
-String ResourceLoader::responseEncoding() const
+String ResourceHandle::responseEncoding() const
 {
     retrieveResponseEncoding();
     
     return d->m_responseEncoding;
 }
 
-String ResourceLoader::responseHTTPHeadersAsString() const
+String ResourceHandle::responseHTTPHeadersAsString() const
 {
     assembleResponseHeaders();
     return d->responseHeaders;
 }
 
-void ResourceLoader::kill()
+void ResourceHandle::kill()
 {
     if (d->m_loading){
         ASSERT(!d->m_cancelled);
@@ -85,27 +85,27 @@ void ResourceLoader::kill()
     }
 }
 
-const HTTPHeaderMap& ResourceLoader::requestHeaders() const
+const HTTPHeaderMap& ResourceHandle::requestHeaders() const
 {
     return d->m_request.httpHeaderFields();
 }
 
-const KURL& ResourceLoader::url() const
+const KURL& ResourceHandle::url() const
 {
     return d->m_request.url();
 }
 
-const FormData& ResourceLoader::postData() const
+const FormData& ResourceHandle::postData() const
 {
     return d->m_request.httpBody();
 }
 
-const String& ResourceLoader::method() const
+const String& ResourceHandle::method() const
 {
     return d->m_request.httpMethod();
 }
 
-ResourceLoaderClient* ResourceLoader::client() const
+ResourceHandleClient* ResourceHandle::client() const
 {
     return d->m_client;
 }

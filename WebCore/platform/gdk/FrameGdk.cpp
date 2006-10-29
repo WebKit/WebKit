@@ -42,8 +42,8 @@
 #include "FramePrivate.h"
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
-#include "ResourceLoader.h"
-#include "ResourceLoaderInternal.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleInternal.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -72,7 +72,7 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 namespace WebCore {
 
 FrameGdkClientDefault::FrameGdkClientDefault()
-    : ResourceLoaderClient()
+    : ResourceHandleClient()
     , m_frame(0)
     , m_beginCalled(false)
 {
@@ -93,7 +93,7 @@ void FrameGdkClientDefault::openURL(const KURL& url)
     m_beginCalled = false;
 
     ResourceRequest request(url);
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, 0);
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, 0);
 }
 
 void FrameGdkClientDefault::submitForm(const String& method, const KURL& url, const FormData* postData)
@@ -104,22 +104,22 @@ void FrameGdkClientDefault::submitForm(const String& method, const KURL& url, co
     request.setHTTPMethod(method);
     request.setHTTPBody(*postData);
 
-    RefPtr<ResourceLoader> loader = ResourceLoader::create(request, this, 0);
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, 0);
 }
 
-void FrameGdkClientDefault::receivedResponse(ResourceLoader*, PlatformResponse)
+void FrameGdkClientDefault::receivedResponse(ResourceHandle*, PlatformResponse)
 {
     // no-op
 }
 
-void FrameGdkClientDefault::didReceiveData(ResourceLoader* job, const char* data, int length)
+void FrameGdkClientDefault::didReceiveData(ResourceHandle* job, const char* data, int length)
 {
     if (!m_beginCalled) {
         m_beginCalled = true;
 
 #if 0  // FIXME: This is from Qt version, need to be removed or Gdk equivalent written
         // Assign correct mimetype _before_ calling begin()!
-        ResourceLoaderInternal* d = job->getInternal();
+        ResourceHandleInternal* d = job->getInternal();
         if (d) {
             ResourceRequest request(m_frame->resourceRequest());
             request.m_responseMIMEType = d->m_mimetype;
@@ -132,7 +132,7 @@ void FrameGdkClientDefault::didReceiveData(ResourceLoader* job, const char* data
     m_frame->write(data, length);
 }
 
-void FrameGdkClientDefault::receivedAllData(ResourceLoader* job, PlatformData data)
+void FrameGdkClientDefault::receivedAllData(ResourceHandle* job, PlatformData data)
 {
     m_frame->end();
     m_beginCalled = false;

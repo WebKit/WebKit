@@ -26,33 +26,33 @@
  */
 
 #include "config.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 
 #include "DocLoader.h"
-#include "ResourceLoaderInternal.h"
-#include "ResourceLoaderManager.h"
+#include "ResourceHandleInternal.h"
+#include "ResourceHandleManager.h"
 
 namespace WebCore {
 
-ResourceLoaderInternal::~ResourceLoaderInternal()
+ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
 
-ResourceLoader::~ResourceLoader()
+ResourceHandle::~ResourceHandle()
 {
     cancel();
 }
 
-bool ResourceLoader::start(DocLoader* docLoader)
+bool ResourceHandle::start(DocLoader* docLoader)
 {
     ref();
-    ResourceLoaderManager::get()->add(this);
+    ResourceHandleManager::get()->add(this);
     return true;
 }
 
-void ResourceLoader::cancel()
+void ResourceHandle::cancel()
 {
-    ResourceLoaderManager::get()->cancel(this);
+    ResourceHandleManager::get()->cancel(this);
 }
 
 } // namespace WebCore

@@ -1,3 +1,188 @@
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Darin.
+
+        - renamed ResourceLoader to ResourceHandle (and same for related classes)
+
+        * CMakeLists.txt:
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bridge/mac/FrameMac.mm:
+        * bridge/win/FrameWin.cpp:
+        * dom/XMLTokenizer.cpp:
+        * loader/Cache.cpp:
+        * loader/CachedResource.h:
+        * loader/LoaderFunctions.h:
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::startLoading):
+        (IconLoader::didReceiveData):
+        (IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        (WebCore::Loader::didReceiveData):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::jobForRequest):
+        * loader/loader.h:
+        * loader/mac/IconLoaderMac.mm:
+        (IconLoader::receivedResponse):
+        * loader/mac/LoaderFunctionsMac.mm:
+        * loader/mac/WebLoader.h:
+        * loader/mac/WebSubresourceLoader.h:
+        * loader/mac/WebSubresourceLoader.mm:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdkClientDefault::FrameGdkClientDefault):
+        (WebCore::FrameGdkClientDefault::openURL):
+        (WebCore::FrameGdkClientDefault::submitForm):
+        (WebCore::FrameGdkClientDefault::receivedResponse):
+        (WebCore::FrameGdkClientDefault::didReceiveData):
+        (WebCore::FrameGdkClientDefault::receivedAllData):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::ResourceHandle::assembleResponseHeaders):
+        (WebCore::ResourceHandle::retrieveCharset):
+        * platform/network/ResourceHandle.cpp: Added.
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::isErrorPage):
+        (WebCore::ResourceHandle::error):
+        (WebCore::ResourceHandle::setError):
+        (WebCore::ResourceHandle::responseEncoding):
+        (WebCore::ResourceHandle::responseHTTPHeadersAsString):
+        (WebCore::ResourceHandle::kill):
+        (WebCore::ResourceHandle::requestHeaders):
+        (WebCore::ResourceHandle::url):
+        (WebCore::ResourceHandle::postData):
+        (WebCore::ResourceHandle::method):
+        (WebCore::ResourceHandle::client):
+        * platform/network/ResourceHandle.h: Added.
+        (WebCore::ResourceHandle::getInternal):
+        * platform/network/ResourceHandleClient.h: Added.
+        (WebCore::ResourceHandleClient::~ResourceHandleClient):
+        (WebCore::ResourceHandleClient::didReceiveData):
+        (WebCore::ResourceHandleClient::didFinishLoading):
+        (WebCore::ResourceHandleClient::receivedRedirect):
+        (WebCore::ResourceHandleClient::receivedResponse):
+        (WebCore::ResourceHandleClient::receivedAllData):
+        * platform/network/ResourceHandleInternal.h: Added.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/ResourceLoader.cpp: Removed.
+        * platform/network/ResourceLoader.h: Removed.
+        * platform/network/ResourceLoaderClient.h: Removed.
+        * platform/network/ResourceLoaderInternal.h: Removed.
+        * platform/network/cf/ResourceHandleCFNet.cpp: Added.
+        (WebCore::willSendRequest):
+        (WebCore::didReceiveResponse):
+        (WebCore::didReceiveData):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::willCacheResponse):
+        (WebCore::didReceiveChallenge):
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        * platform/network/cf/ResourceLoaderCFNet.cpp: Removed.
+        * platform/network/gdk/ResourceHandleCurl.cpp: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        * platform/network/gdk/ResourceHandleManager.cpp: Added.
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::get):
+        (WebCore::ResourceHandleManager::useSimpleTransfer):
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::remove):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/network/gdk/ResourceHandleManager.h: Added.
+        * platform/network/gdk/ResourceLoaderCurl.cpp: Removed.
+        * platform/network/gdk/ResourceLoaderManager.cpp: Removed.
+        * platform/network/gdk/ResourceLoaderManager.h: Removed.
+        * platform/network/mac/ResourceHandleMac.mm: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::assembleResponseHeaders):
+        (WebCore::ResourceHandle::retrieveResponseEncoding):
+        (WebCore::ResourceHandle::receivedResponse):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::redirectedToURL):
+        (WebCore::ResourceHandle::addData):
+        (WebCore::ResourceHandle::finishJobAndHandle):
+        (WebCore::ResourceHandle::reportError):
+        * platform/network/mac/ResourceLoaderMac.mm: Removed.
+        * platform/network/qt/ResourceHandleManager.cpp: Added.
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::ResourceHandleManager::self):
+        (WebCore::ResourceHandleManager::slotData):
+        (WebCore::ResourceHandleManager::slotMimetype):
+        (WebCore::ResourceHandleManager::slotResult):
+        (WebCore::ResourceHandleManager::remove):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/network/qt/ResourceHandleManager.h: Added.
+        * platform/network/qt/ResourceHandleQt.cpp: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::assembleResponseHeaders):
+        (WebCore::ResourceHandle::retrieveResponseEncoding):
+        (WebCore::ResourceHandle::receivedResponse):
+        (WebCore::ResourceHandle::extractCharsetFromHeaders):
+        * platform/network/qt/ResourceLoaderManager.cpp: Removed.
+        * platform/network/qt/ResourceLoaderManager.h: Removed.
+        * platform/network/qt/ResourceLoaderQt.cpp: Removed.
+        * platform/network/win/ResourceHandleWin.cpp: Added.
+        (WebCore::):
+        (WebCore::addToOutstandingJobs):
+        (WebCore::lookupResourceHandle):
+        (WebCore::ResourceHandleWndProc):
+        (WebCore::initializeOffScreenResourceHandleWindow):
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::onHandleCreated):
+        (WebCore::ResourceHandle::onRequestRedirected):
+        (WebCore::ResourceHandle::onRequestComplete):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::fileLoadTimer):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::setHasReceivedResponse):
+        (WebCore::ResourceHandle::hasReceivedResponse):
+        * platform/network/win/ResourceHandleWin.h: Added.
+        * platform/network/win/ResourceLoaderWin.cpp: Removed.
+        * platform/network/win/ResourceLoaderWin.h: Removed.
+        * platform/qt/FrameQt.cpp:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        (WebCore::FrameQtClientDefault::receivedResponse):
+        (WebCore::FrameQtClientDefault::didReceiveData):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/FrameQtClient.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ResourceHandle::assembleResponseHeaders):
+        (WebCore::ResourceHandle::retrieveResponseEncoding):
+        (WebCore::ServeSynchronousRequest):
+        * xml/XSLTProcessor.cpp:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::receivedRedirect):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
 t2006-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

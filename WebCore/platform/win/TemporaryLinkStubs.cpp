@@ -59,8 +59,8 @@
 #include "PlugInInfoStore.h"
 #include "RenderTheme.h"
 #include "FrameWin.h"
-#include "ResourceLoader.h"
-#include "ResourceLoaderClient.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
@@ -240,11 +240,11 @@ unsigned PlugInInfoStore::pluginCount() const { return 0; }
 bool PlugInInfoStore::supportsMIMEType(const String&) { return false; }
 void refreshPlugins(bool) { }
 
-void ResourceLoader::assembleResponseHeaders() const { }
-void ResourceLoader::retrieveResponseEncoding() const {}
+void ResourceHandle::assembleResponseHeaders() const { }
+void ResourceHandle::retrieveResponseEncoding() const {}
 
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceHandle*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 bool CheckIfReloading(DocLoader*) { return false; }
