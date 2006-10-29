@@ -647,16 +647,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return previousKeyView;
 }
 
-- (BOOL)defersLoading
-{
-    return [[self webView] defersCallbacks];
-}
-
-- (void)setDefersLoading:(BOOL)defers
-{
-    [[self webView] setDefersCallbacks:defers];
-}
-
 - (void)setNeedsReapplyStyles
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];
@@ -1389,87 +1379,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         case WebUndoActionOutdent: return UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
     }
     return nil;
-}
-
-- (WebCorePageBridge *)createModalDialogWithURL:(NSURL *)URL
-{
-    ASSERT(_frame != nil);
-
-    NSMutableURLRequest *request = nil;
-
-    if (URL != nil && ![URL _web_isEmpty]) {
-        request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:m_frame->referrer()];
-    }
-
-    WebView *currentWebView = [self webView];
-    id UIDelegate = [currentWebView UIDelegate];
-
-    WebView *newWebView = nil;
-    if ([UIDelegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
-        newWebView = [UIDelegate webView:currentWebView createWebViewModalDialogWithRequest:request];
-    else if ([UIDelegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        newWebView = [UIDelegate webView:currentWebView createWebViewWithRequest:request];
-    else
-        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
-
-    return [newWebView _pageBridge];
-}
-
-- (BOOL)canRunModal
-{
-    WebView *webView = [self webView];
-    id UIDelegate = [webView UIDelegate];
-    return [UIDelegate respondsToSelector:@selector(webViewRunModal:)];
-}
-
-- (BOOL)canRunModalNow
-{
-    return [self canRunModal] && !WebResourceLoader::inConnectionCallback();
-}
-
-- (void)runModal
-{
-    if (![self canRunModal])
-        return;
-
-    WebView *webView = [self webView];
-    if ([webView defersCallbacks]) {
-        LOG_ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
-        return;
-    }
-
-    // Defer callbacks in all the other views in this group, so we don't try to run JavaScript
-    // in a way that could interact with this view.
-    NSMutableArray *deferredWebViews = [NSMutableArray array];
-    NSString *groupName = [webView groupName];
-    if (groupName) {
-        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:groupName];
-        WebView *otherWebView;
-        while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
-            if (otherWebView != webView && ![otherWebView defersCallbacks]) {
-                [otherWebView setDefersCallbacks:YES];
-                [deferredWebViews addObject:otherWebView];
-            }
-        }
-    }
-
-    // Go run the modal event loop.
-    [[webView UIDelegate] webViewRunModal:webView];
-
-    // Restore the callbacks for any views that we deferred them for.
-    unsigned count = [deferredWebViews count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        WebView *otherWebView = [deferredWebViews objectAtIndex:i];
-        [otherWebView setDefersCallbacks:NO];
-    }
-}
-
-- (void)closeURL
-{
-    [_frame _willCloseURL];
-    [super closeURL];
 }
 
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size

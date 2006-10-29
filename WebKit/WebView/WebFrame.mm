@@ -54,7 +54,6 @@
 #import "WebNullPluginView.h"
 #import "WebPlugin.h"
 #import "WebPluginController.h"
-#import "WebPolicyDeciderMac.h"
 #import "WebPolicyDelegatePrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegatePrivate.h"
@@ -645,7 +644,8 @@ static inline WebView *getWebView(WebFrame *webFrame)
     if (archive)
         [childFrame loadArchive:archive];
     else
-        [childFrame _frameLoader]->load(URL, referrer, childLoadType, String(), nil, nil, nil);
+        [childFrame _frameLoader]->load(URL, referrer, childLoadType,
+            String(), nil, 0, HashMap<String, String>());
 }
 
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item
@@ -968,22 +968,6 @@ static inline WebView *getWebView(WebFrame *webFrame)
     [_private->plugInViews addObject:plugInView];
 }
 
-- (void)_removeAllPlugInViews
-{
-    if (!_private->plugInViews)
-        return;
-    
-    [_private->plugInViews makeObjectsPerformSelector:@selector(setWebFrame:) withObject:nil];
-    [_private->plugInViews release];
-    _private->plugInViews = nil;
-}
-
-// This is called when leaving a page or closing the WebView
-- (void)_willCloseURL
-{
-    [self _removeAllPlugInViews];
-}
-
 - (BOOL)_isMainFrame
 {
    Frame* coreFrame = core(self);
@@ -1071,7 +1055,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)_isFrameSet
 {
-    return [_private->bridge isFrameSet];
+    return core(self)->isFrameSet();
 }
 
 - (BOOL)_firstLayoutDone

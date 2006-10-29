@@ -22,6 +22,7 @@
 #include "Page.h"
 
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "StringHash.h"
 #include "Widget.h"
@@ -130,6 +131,16 @@ void Page::setNeedsReapplyStylesForSettingsChange(Settings* settings)
 SelectionController* Page::dragCaretController() const
 {
     return &m_dragCaretController;
+}
+
+void Page::setDefersLoading(bool defers)
+{
+    if (defers == m_defersLoading)
+        return;
+
+    m_defersLoading = defers;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->loader()->setDefersLoading(defers);
 }
 
 }

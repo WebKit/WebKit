@@ -39,7 +39,7 @@ unsigned short CSSValueList::cssValueType() const
 
 void CSSValueList::append(PassRefPtr<CSSValue> val)
 {
-    m_values.append(val.release());
+    m_values.append(val.releaseRef());
 }
 
 String CSSValueList::cssText() const

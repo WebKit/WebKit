@@ -27,32 +27,32 @@ namespace WTF {
 
     template<typename T> class RefPtr;
     template<typename T> class PassRefPtr;
-    template <typename T> PassRefPtr<T> adoptRef(T *p);
+    template <typename T> PassRefPtr<T> adoptRef(T*);
 
     template<typename T> 
     class PassRefPtr
     {
     public:
         PassRefPtr() : m_ptr(0) {}
-        PassRefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
+        PassRefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         // It somewhat breaks the type system to allow transfer of ownership out of
         // a const PassRefPtr. However, it makes it much easier to work with PassRefPtr
         // temporaries, and we don't really have a need to use real const PassRefPtrs 
         // anyway.
-        PassRefPtr(const PassRefPtr& o) : m_ptr(o.release()) {}
-        template <typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.release()) { }
+        PassRefPtr(const PassRefPtr& o) : m_ptr(o.releaseRef()) {}
+        template <typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.releaseRef()) { }
 
-        ~PassRefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
+        ~PassRefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
         
         template <class U> 
-        PassRefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
+        PassRefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T* ptr = m_ptr) ptr->ref(); }
         
-        T *get() const { return m_ptr; }
+        T* get() const { return m_ptr; }
 
-        T *release() const { T *tmp = m_ptr; m_ptr = 0; return tmp; }
+        T* releaseRef() const { T* tmp = m_ptr; m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
-        T *operator->() const { return m_ptr; }
+        T* operator->() const { return m_ptr; }
         
         bool operator!() const { return !m_ptr; }
 
@@ -60,16 +60,16 @@ namespace WTF {
         typedef T* (PassRefPtr::*UnspecifiedBoolType)() const;
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::get : 0; }
         
-        PassRefPtr& operator=(T *);
+        PassRefPtr& operator=(T*);
         PassRefPtr& operator=(const PassRefPtr&);
         template <typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
         template <typename U> PassRefPtr& operator=(const RefPtr<U>&);
 
-        friend PassRefPtr adoptRef<T>(T *);
+        friend PassRefPtr adoptRef<T>(T*);
     private:
         // adopting constructor
-        PassRefPtr(T *ptr, bool) : m_ptr(ptr) {}
-        mutable T *m_ptr;
+        PassRefPtr(T* ptr, bool) : m_ptr(ptr) {}
+        mutable T* m_ptr;
     };
     
     template <typename T> template <typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<U>& o) 
@@ -98,7 +98,7 @@ namespace WTF {
     template <typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<T>& ref)
     {
         T* ptr = m_ptr;
-        m_ptr = ref.release();
+        m_ptr = ref.releaseRef();
         if (ptr)
             ptr->deref();
         return *this;
@@ -107,7 +107,7 @@ namespace WTF {
     template <typename T> template <typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<U>& ref)
     {
         T* ptr = m_ptr;
-        m_ptr = ref.release();
+        m_ptr = ref.releaseRef();
         if (ptr)
             ptr->deref();
         return *this;
@@ -163,19 +163,19 @@ namespace WTF {
         return a != b.get(); 
     }
     
-    template <typename T> inline PassRefPtr<T> adoptRef(T *p)
+    template <typename T> inline PassRefPtr<T> adoptRef(T* p)
     {
         return PassRefPtr<T>(p, true);
     }
 
     template <typename T, typename U> inline PassRefPtr<T> static_pointer_cast(const PassRefPtr<U>& p) 
     { 
-        return adoptRef(static_cast<T *>(p.release())); 
+        return adoptRef(static_cast<T*>(p.releaseRef())); 
     }
 
     template <typename T, typename U> inline PassRefPtr<T> const_pointer_cast(const PassRefPtr<U>& p) 
     { 
-        return adoptRef(const_cast<T *>(p.release())); 
+        return adoptRef(const_cast<T*>(p.releaseRef())); 
     }
 
     template <typename T> inline T* getPtr(const PassRefPtr<T>& p)

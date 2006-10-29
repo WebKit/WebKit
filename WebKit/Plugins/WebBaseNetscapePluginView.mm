@@ -53,10 +53,13 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameMac.h> 
 #import <WebCore/FrameTree.h> 
+#import <WebCore/Page.h> 
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
+
+using namespace WebCore;
 
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive         0.02
@@ -578,9 +581,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (inSetWindow)
         return NO;
 
-    BOOL defers = [[self webView] defersCallbacks];
-    if (!defers)
-        [[self webView] setDefersCallbacks:YES];
+    Page* page = core([self webFrame])->page();
+    bool wasDeferring = page->defersLoading();
+    if (!wasDeferring)
+        page->setDefersLoading(true);
 
     // Can only send updateEvt to CoreGraphics and OpenGL plugins when actually drawing
     ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || event->what != updateEvt || [NSView focusView] == self);
@@ -624,8 +628,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         free(portState);
     }
 
-    if (!defers)
-        [[self webView] setDefersCallbacks:NO];
+    if (!wasDeferring)
+        page->setDefersLoading(false);
             
     return acceptedEvent;
 }

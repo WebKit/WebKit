@@ -4109,7 +4109,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         style->setTextSecurity(textSecurity);
     }
-#if __APPLE__
+#if PLATFORM(MAC)
     case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)

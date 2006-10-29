@@ -37,6 +37,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebCore/WebLoader.h>
 
@@ -117,36 +118,32 @@ using namespace WebCore;
     if (![self canRunModal])
         return;
 
-    if ([_webView defersCallbacks]) {
-        LOG_ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
+    if (_page->defersLoading()) {
+        LOG_ERROR("tried to run modal in a view when it was deferring loading -- should never happen");
         return;
     }
 
-    // Defer callbacks in all the other views in this group, so we don't try to run JavaScript
+    // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
-    NSMutableArray *deferredWebViews = [NSMutableArray array];
-    NSString *groupName = [_webView groupName];
-    if (groupName) {
-        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:groupName];
-        WebView *otherWebView;
-        while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
-            if (otherWebView != _webView && ![otherWebView defersCallbacks]) {
-                [otherWebView setDefersCallbacks:YES];
-                [deferredWebViews addObject:otherWebView];
-            }
+    Vector<Page*> pagesToDefer;
+    if (const HashSet<Page*>* group = _page->frameNamespace()) {
+        HashSet<Page*>::const_iterator end = group->end();
+        for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
+            Page* otherPage = *it;
+            if (otherPage != _page && !otherPage->defersLoading())
+                pagesToDefer.append(otherPage);
         }
     }
+    size_t count = pagesToDefer.size();
+    for (size_t i = 0; i < count; ++i)
+        pagesToDefer[i]->setDefersLoading(true);
 
     // Go run the modal event loop.
     [[_webView UIDelegate] webViewRunModal:_webView];
 
-    // Restore the callbacks for any views that we deferred them for.
-    unsigned count = [deferredWebViews count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        WebView *otherWebView = [deferredWebViews objectAtIndex:i];
-        [otherWebView setDefersCallbacks:NO];
-    }
+    // Restore loading for any views that we shut down.
+    for (size_t i = 0; i < count; ++i)
+        pagesToDefer[i]->setDefersLoading(false);
 }
 
 @end

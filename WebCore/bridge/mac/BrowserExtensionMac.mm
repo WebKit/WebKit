@@ -28,6 +28,7 @@
 
 #import "BlockExceptions.h"
 #import "FloatRect.h"
+#import "FrameLoader.h"
 #import "FrameLoadRequest.h"
 #import "FrameMac.h"
 #import "FrameTree.h"
@@ -60,7 +61,7 @@ void BrowserExtensionMac::createNewWindow(const FrameLoadRequest& request,
     if (!request.m_frameName.isEmpty()) {
         if (Frame* frame = m_frame->tree()->find(request.m_frameName)) {
             if (!url.isEmpty())
-                Mac(frame)->loadRequest(request, true, nil, nil, nil);
+                frame->loader()->load(request, true, nil, 0, HashMap<String, String>());
             [Mac(frame)->bridge() activateWindow];
             newFrame = frame;
             return;

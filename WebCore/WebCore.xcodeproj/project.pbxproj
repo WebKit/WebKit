@@ -343,8 +343,6 @@
 		656D37430ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372B0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37440ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D372C0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm */; };
 		656D37450ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D37460ADBA5DE00A4554D /* WebPolicyDecider.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372E0ADBA5DE00A4554D /* WebPolicyDecider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D37470ADBA5DE00A4554D /* WebPolicyDecider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D372F0ADBA5DE00A4554D /* WebPolicyDecider.mm */; };
 		656D37480ADBA5DE00A4554D /* WebSubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37300ADBA5DE00A4554D /* WebSubresourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37310ADBA5DE00A4554D /* WebSubresourceLoader.mm */; };
 		657429170A9C2D0B00C52C97 /* IconDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 657429140A9C2D0B00C52C97 /* IconDataCache.h */; };
@@ -3265,8 +3263,6 @@
 		656D372B0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebNetscapePlugInStreamLoader.h; sourceTree = "<group>"; };
 		656D372C0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebNetscapePlugInStreamLoader.mm; sourceTree = "<group>"; };
 		656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPlugInStreamLoaderDelegate.h; sourceTree = "<group>"; };
-		656D372E0ADBA5DE00A4554D /* WebPolicyDecider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPolicyDecider.h; sourceTree = "<group>"; };
-		656D372F0ADBA5DE00A4554D /* WebPolicyDecider.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebPolicyDecider.mm; sourceTree = "<group>"; };
 		656D37300ADBA5DE00A4554D /* WebSubresourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebSubresourceLoader.h; sourceTree = "<group>"; };
 		656D37310ADBA5DE00A4554D /* WebSubresourceLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebSubresourceLoader.mm; sourceTree = "<group>"; };
 		657429140A9C2D0B00C52C97 /* IconDataCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDataCache.h; sourceTree = "<group>"; };
@@ -7538,8 +7534,6 @@
 				656D372B0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.h */,
 				656D372C0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm */,
 				656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */,
-				656D372E0ADBA5DE00A4554D /* WebPolicyDecider.h */,
-				656D372F0ADBA5DE00A4554D /* WebPolicyDecider.mm */,
 				656D37300ADBA5DE00A4554D /* WebSubresourceLoader.h */,
 				656D37310ADBA5DE00A4554D /* WebSubresourceLoader.mm */,
 			);
@@ -10443,7 +10437,6 @@
 				656D37410ADBA5DE00A4554D /* WebMainResourceLoader.h in Headers */,
 				656D37430ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.h in Headers */,
 				656D37450ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h in Headers */,
-				656D37460ADBA5DE00A4554D /* WebPolicyDecider.h in Headers */,
 				656D37480ADBA5DE00A4554D /* WebSubresourceLoader.h in Headers */,
 				93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */,
 				65BAAABE0ADCA015005BB5A4 /* RetainPtr.h in Headers */,
@@ -11689,7 +11682,6 @@
 				656D37400ADBA5DE00A4554D /* WebLoader.mm in Sources */,
 				656D37420ADBA5DE00A4554D /* WebMainResourceLoader.mm in Sources */,
 				656D37440ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm in Sources */,
-				656D37470ADBA5DE00A4554D /* WebPolicyDecider.mm in Sources */,
 				656D37490ADBA5DE00A4554D /* WebSubresourceLoader.mm in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
 				6563A9A80ADF4094000ED2CD /* LoaderNSURLRequestExtras.m in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #import "WebFormDelegatePrivate.h"
 
-// FIXME: This should become an informal protocol, now that we switched all the others.
-// FIXME: To get the form elements off NSView we'll have to change this entirely.
+// FIXME: This could become an informal protocol; we switched all the API
+// delegates to be informal.
 
 @implementation WebFormDelegate
 
@@ -39,19 +39,26 @@ static WebFormDelegate *sharedDelegate = nil;
 // Note this feature relies on our default delegate being stateless
 + (WebFormDelegate *)_sharedWebFormDelegate
 {
-    if (!sharedDelegate) {
+    if (!sharedDelegate)
         sharedDelegate = [[WebFormDelegate alloc] init];
-    }
     return sharedDelegate;
 }
     
-- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
+- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
+{
+}
 
-- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
+- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
+{
+}
 
-- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
+- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
+{
+}
 
-- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element inFrame:(WebFrame *)frame { }
+- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element inFrame:(WebFrame *)frame
+{
+}
 
 - (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame
 {
@@ -63,7 +70,8 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form
+    withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
 {
     [listener continue];
 }

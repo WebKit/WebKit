@@ -28,10 +28,11 @@
 
 #include <ctype.h>
 #include <unicode/uchar.h>
-#if __APPLE__
+#include "DeprecatedCString.h"
+
+#if PLATFORM(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
-#include "DeprecatedCString.h"
 
 #if __APPLE__
 #ifdef __OBJC__

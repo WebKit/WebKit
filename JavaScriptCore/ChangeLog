@@ -1,5 +1,32 @@
 2006-10-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - renamed PassRefPtr::release to releaseRef to make it clearer that
+          it's the counterpart of adoptRef, and to make it harder to confuse
+          it with the safer-to-use RefPtr::release
+
+        * kjs/identifier.cpp:
+        (KJS::CStringTranslator::translate):
+        (KJS::UCharBufferTranslator::translate):
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::create):
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::PassRefPtr):
+        (WTF::PassRefPtr::~PassRefPtr):
+        (WTF::PassRefPtr::get):
+        (WTF::PassRefPtr::releaseRef):
+        (WTF::PassRefPtr::operator->):
+        (WTF::PassRefPtr::operator=):
+        (WTF::adoptRef):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::operator=):
+
+2006-10-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Steve.
 
         * kjs/grammar.y: Add definitions of YYMALLOC and YYFREE to fix

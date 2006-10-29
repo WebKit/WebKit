@@ -149,7 +149,7 @@ using namespace WebCore;
     NSString *markupString = [bridge markupStringFromRange:kit(coreFrame->selectionController()->toRange().get()) nodes:&nodes];
     WebArchive *archive = [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 
-    if ([bridge isFrameSet]) {
+    if (coreFrame->isFrameSet()) {
         // Wrap the frameset document in an iframe so it can be pasted into
         // another document (which will have a body or frameset of its own). 
 

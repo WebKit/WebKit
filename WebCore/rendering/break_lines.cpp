@@ -25,7 +25,7 @@
 
 #include "RenderText.h"
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
 #endif
 
@@ -33,7 +33,7 @@ namespace WebCore {
 
 int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     OSStatus status = 0, findStatus = -1;
     static TextBreakLocatorRef breakLocator = 0;
     int nextUCBreak = -1;
@@ -49,7 +49,7 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
         // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
         if (lastCh == '-' || lastCh == '?' || lastCh == SOFT_HYPHEN)
             break;
-#if __APPLE__
+#if PLATFORM(MAC)
         // FIXME: Rewrite break location using ICU.
         // If current character, or the previous character aren't simple latin1 then
         // use the UC line break locator.  UCFindTextBreak will report false if we

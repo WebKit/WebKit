@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
-        WebFormDelegate.h
-        Copyright 2003, Apple Computer, Inc.
-*/
-
 #import <AppKit/AppKit.h>
 
 @class DOMElement;
@@ -40,7 +35,6 @@
 
 /*!
     @protocol  WebFormSubmissionListener
-    @discussion .
 */
 @protocol WebFormSubmissionListener <NSObject>
 - (void)continue;
@@ -48,7 +42,6 @@
 
 /*!
     @protocol  WebFormDelegate
-    @discussion .
 */
 @protocol WebFormDelegate <NSObject>
 
@@ -66,7 +59,9 @@
 
 // Sent when a form is just about to be submitted (before the load is started)
 // listener must be sent continue when the delegate is done.
-- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form
+    withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
+
 @end
 
 /*!
@@ -76,7 +71,4 @@
     to implement some of the above methods and ignore others.
 */
 @interface WebFormDelegate : NSObject <WebFormDelegate>
-{
-}
 @end
-

@@ -43,7 +43,6 @@
 #import "EventNames.h"
 #import "FloatRect.h"
 #import "FontData.h"
-#import "FormDataMac.h"
 #import "FoundationExtras.h"
 #import "FrameLoadRequest.h"
 #import "FrameLoader.h"
@@ -60,6 +59,7 @@
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "HitTestResult.h"
+#import "Page.h"
 #import "PlatformKeyboardEvent.h"
 #import "PlatformScrollBar.h"
 #import "PlatformWheelEvent.h"
@@ -100,9 +100,6 @@ using namespace std;
 using namespace KJS::Bindings;
 
 using KJS::JSLock;
-using KJS::PausedTimeouts;
-using KJS::SavedBuiltins;
-using KJS::SavedProperties;
 
 namespace WebCore {
 
@@ -110,18 +107,6 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 NSEvent* FrameMac::_currentEvent = nil;
-
-static NSMutableDictionary* createNSDictionary(const HashMap<String, String>& map)
-{
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] initWithCapacity:map.size()];
-    HashMap<String, String>::const_iterator end = map.end();
-    for (HashMap<String, String>::const_iterator it = map.begin(); it != end; ++it) {
-        NSString* key = it->first;
-        NSString* object = it->second;
-        [dict setObject:object forKey:key];
-    }
-    return dict;
-}
 
 static const unsigned int escChar = 27;
 static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
@@ -186,50 +171,6 @@ FrameMac::~FrameMac()
 
 #pragma mark BEGIN LOADING FUNCTIONS
 
-void FrameMac::loadRequest(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent, Element* submitForm, NSMutableDictionary* formValues)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    String referrer;
-    String argsReferrer = request.m_request.httpReferrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = FrameMac::referrer();
- 
-    bool hideReferrer;
-    if (!loader()->canLoad(request.m_request.url().getNSURL(), referrer, hideReferrer))
-        return;
-    if (hideReferrer)
-        referrer = String();
-    
-    FrameMac *target = Mac(tree()->find(request.m_frameName));
-    WebCoreFrameBridge *targetFrame = target ? target->bridge() : nil;
-    if (![_bridge canTargetLoadInFrame:targetFrame])
-        return;
-        
-    if (request.m_request.httpMethod() != "POST") {
-        FrameLoadType loadType;
-        if (request.m_request.cachePolicy() == ReloadIgnoringCacheData)
-            loadType = FrameLoadTypeReload;
-        else if (!userGesture)
-            loadType = FrameLoadTypeInternal;
-        else
-            loadType = FrameLoadTypeStandard;    
-    
-        d->m_frameLoader->load(request.m_request.url().getNSURL(), referrer, loadType, 
-            (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), triggeringEvent, submitForm, formValues);
-    } else
-        d->m_frameLoader->post(request.m_request.url().getNSURL(), referrer, (request.m_frameName.length() ? (NSString *)request.m_frameName : nil), 
-            arrayFromFormData(request.m_request.httpBody()), request.m_request.httpContentType(), triggeringEvent, submitForm, formValues);
-
-    if (targetFrame != nil && _bridge != targetFrame) {
-        [targetFrame activateWindow];
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void FrameMac::submitForm(const FrameLoadRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -258,11 +199,9 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
         d->m_submittedFormURL = request.m_request.url();
     }
 
-    NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
-    
-    loadRequest(request, true, _currentEvent, d->m_formAboutToBeSubmitted.get(), formValues);
+    loader()->load(request, true, _currentEvent,
+        d->m_formAboutToBeSubmitted.get(), d->m_formValuesAboutToBeSubmitted);
 
-    [formValues release];
     clearRecordedFormValues();
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -275,81 +214,7 @@ void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*trigg
         copy.m_request.setHTTPReferrer(referrer());
 
     // FIXME: How do we know that userGesture is always true?
-    loadRequest(copy, true, _currentEvent);
-}
-
-void FrameMac::openURLFromPageCache(WebCorePageState *state)
-{
-    // It's safe to assume none of the WebCorePageState methods will raise
-    // exceptions, since WebCorePageState is implemented by WebCore and
-    // does not throw
-
-    Document *doc = [state document];
-    Node *mousePressNode = [state mousePressNode];
-    KURL *kurl = [state URL];
-    SavedProperties *windowProperties = [state windowProperties];
-    SavedProperties *locationProperties = [state locationProperties];
-    SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
-    PausedTimeouts *timeouts = [state pausedTimeouts];
-    
-    cancelRedirection();
-
-    // We still have to close the previous part page.
-    closeURL();
-            
-    d->m_bComplete = false;
-    
-    // Don't re-emit the load event.
-    d->m_bLoadEventEmitted = true;
-    
-    // delete old status bar msg's from kjs (if it _was_ activated on last URL)
-    if (jScriptEnabled()) {
-        d->m_kjsStatusBarText = String();
-        d->m_kjsDefaultStatusBarText = String();
-    }
-
-    ASSERT(kurl);
-    
-    d->m_url = *kurl;
-    
-    // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
-    // data arrives) (Simon)
-    if (url().protocol().startsWith("http") && !url().host().isEmpty() && url().path().isEmpty())
-        d->m_url.setPath("/");
-    
-    // copy to m_workingURL after fixing url() above
-    d->m_workingURL = url();
-        
-    started();
-    
-    // -----------begin-----------
-    clear();
-
-    doc->setInPageCache(NO);
-
-    d->m_bCleared = false;
-    d->m_bComplete = false;
-    d->m_bLoadEventEmitted = false;
-    d->m_referrer = url().url();
-    
-    setView(doc->view());
-    
-    d->m_doc = doc;
-    d->m_mousePressNode = mousePressNode;
-    d->m_decoder = doc->decoder();
-
-    updatePolicyBaseURL();
-
-    { // scope the lock
-        JSLock lock;
-        restoreWindowProperties(windowProperties);
-        restoreLocationProperties(locationProperties);
-        restoreInterpreterBuiltins(*interpreterBuiltins);
-    }
-
-    resumeTimeouts(timeouts);
-    
-    checkCompleted();
+    loader()->load(copy, true, _currentEvent, 0, HashMap<String, String>());
 }
 
 Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
@@ -863,11 +728,7 @@ void FrameMac::stopRedirectionTimer()
 
 String FrameMac::userAgent() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [_bridge userAgentForURL:url().getNSURL()];
-    END_BLOCK_OBJC_EXCEPTIONS;
-         
-    return String();
+    return loader()->client()->userAgent(url().getNSURL());
 }
 
 String FrameMac::mimeTypeForFileName(const String& fileName) const
@@ -1464,9 +1325,9 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
     // mouse. We should confirm that, and then remove the deferrsLoading
     // hack entirely.
     
-    BOOL wasDeferringLoading = [_bridge defersLoading];
+    bool wasDeferringLoading = page()->defersLoading();
     if (!wasDeferringLoading)
-        [_bridge setDefersLoading:YES];
+        page()->setDefersLoading(true);
 
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
@@ -1474,7 +1335,7 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
     _sendingEventToSubview = false;
     
     if (!wasDeferringLoading)
-        [_bridge setDefersLoading:NO];
+        page()->setDefersLoading(false);
 
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;
@@ -1686,14 +1547,13 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     
                     if (mouseDownMayStartDrag()) {
                         // gather values from DHTML element, if it set any
-                        _dragClipboard->sourceOperation(&srcOp);
+                        _dragClipboard->sourceOperation(srcOp);
 
                         NSArray *types = [pasteboard types];
                         wcWrotePasteboard = types && [types count] > 0;
 
-                        if (_dragSrcMayBeDHTML) {
-                            dragImage = _dragClipboard->dragNSImage(&dragLoc);
-                        }
+                        if (_dragSrcMayBeDHTML)
+                            dragImage = _dragClipboard->dragNSImage(dragLoc);
                         
                         // Yuck, dragSourceMovedTo() can be called as a result of kicking off the drag with
                         // dragImage!  Because of that dumb reentrancy, we may think we've not started the

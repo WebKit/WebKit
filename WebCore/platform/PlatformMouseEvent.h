@@ -29,7 +29,7 @@
 #include "IntPoint.h"
 #include <wtf/Platform.h>
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSEvent;
 #else
@@ -96,7 +96,7 @@ namespace WebCore {
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
 
-#if __APPLE__
+#if PLATFORM(MAC)
         PlatformMouseEvent(NSEvent*);
 #endif
 #if PLATFORM(WIN)

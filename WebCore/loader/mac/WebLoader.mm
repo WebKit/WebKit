@@ -31,6 +31,7 @@
 
 #import "FrameLoader.h"
 #import "FrameMac.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
@@ -74,7 +75,7 @@ WebResourceLoader::WebResourceLoader(Frame* frame)
     , m_calledDidFinishLoad(false)
     , m_frame(frame)
     , m_currentConnectionChallenge(nil)
-    , m_defersCallbacks(frameLoader()->defersCallbacks())
+    , m_defersLoading(frame->page()->defersLoading())
 {
     static bool initialized = false;
     if (!initialized) {
@@ -138,21 +139,16 @@ bool WebResourceLoader::load(NSURLRequest *r)
 #endif
     m_connection = connection;
     [connection release];
-    if (defersCallbacks())
+    if (m_defersLoading)
         wkSetNSURLConnectionDefersCallbacks(m_connection.get(), YES);
 
     return true;
 }
 
-void WebResourceLoader::setDefersCallbacks(bool defers)
+void WebResourceLoader::setDefersLoading(bool defers)
 {
-    m_defersCallbacks = defers;
+    m_defersLoading = defers;
     wkSetNSURLConnectionDefersCallbacks(m_connection.get(), defers);
-}
-
-bool WebResourceLoader::defersCallbacks() const
-{
-    return m_defersCallbacks;
 }
 
 FrameLoader* WebResourceLoader::frameLoader() const

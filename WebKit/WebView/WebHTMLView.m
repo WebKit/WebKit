@@ -3303,7 +3303,7 @@ done:
     // according to the paper size
     float minLayoutWidth = 0.0f;
     float maxLayoutWidth = 0.0f;
-    if (![[self _bridge] isFrameSet]) {
+    if (!core([self _frame])->isFrameSet()) {
         float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
         minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
         maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;

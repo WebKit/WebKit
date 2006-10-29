@@ -229,7 +229,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
 #ifdef SVG_SUPPORT
     , m_svgExtensions(0)
 #endif
-#if __APPLE__
+#if PLATFORM(MAC)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
 #endif
@@ -1103,14 +1103,13 @@ void Document::updateSelection()
         }
     }
     
-#if __APPLE__
-    // FIXME: We shouldn't post this AX notification here since updateSelection() is called far to often: every time Safari gains
+#if PLATFORM(MAC)
+    // FIXME: We shouldn't post this AX notification here since updateSelection() is called far too often: every time Safari gains
     // or loses focus, and once for every low level change to the selection during an editing operation.
     // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
     // longer a correct way to check for user-level selection changes.
-    if (AXObjectCache::accessibilityEnabled() && selection.start().isNotNull() && selection.end().isNotNull()) {
+    if (AXObjectCache::accessibilityEnabled() && selection.start().isNotNull() && selection.end().isNotNull())
         axObjectCache()->postNotification(selection.start().node()->renderer(), "AXSelectedTextChanged");
-    }
 #endif
 }
 
@@ -1259,7 +1258,7 @@ void Document::implicitClose()
             view()->layout();
     }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     if (renderer() && AXObjectCache::accessibilityEnabled())
         axObjectCache()->postNotificationToElement(renderer(), "AXLoadComplete");
 #endif
@@ -2001,7 +2000,7 @@ void Document::didEndEditing()
     frame()->didEndEditing();
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
 const Vector<DashboardRegionValue>& Document::dashboardRegions() const
 {
     return m_dashboardRegions;
@@ -2126,7 +2125,7 @@ bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)
         }
    }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     if (!focusChangeBlocked && m_focusNode && AXObjectCache::accessibilityEnabled())
         axObjectCache()->handleFocusedUIElementChanged();
 #endif

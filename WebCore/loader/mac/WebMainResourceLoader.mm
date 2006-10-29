@@ -45,14 +45,6 @@
 
 using namespace WebCore;
 
-@interface WebCoreMainResourceLoaderAsPolicyDelegate : NSObject
-{
-    MainResourceLoader* m_loader;
-}
-- (id)initWithLoader:(MainResourceLoader *)loader;
-- (void)detachLoader;
-@end
-
 namespace WebCore {
 
 const size_t URLBufferLength = 2048;
@@ -63,6 +55,7 @@ MainResourceLoader::MainResourceLoader(Frame* frame)
     , m_bytesReceived(0)
     , m_proxy(wkCreateNSURLConnectionDelegateProxy())
     , m_loadingMultipartContent(false)
+    , m_waitingForContentPolicy(false)
 {
     [m_proxy.get() setDelegate:delegate()];
     [m_proxy.get() release];
@@ -74,7 +67,6 @@ MainResourceLoader::~MainResourceLoader()
 
 void MainResourceLoader::releaseDelegate()
 {
-    releasePolicyDelegate();
     [m_proxy.get() setDelegate:nil];
     WebResourceLoader::releaseDelegate();
 }
@@ -107,7 +99,12 @@ void MainResourceLoader::didCancel(NSError *error)
     // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
 
-    frameLoader()->cancelContentPolicyCheck();
+    if (m_waitingForContentPolicy) {
+        frameLoader()->cancelContentPolicyCheck();
+        ASSERT(m_waitingForContentPolicy);
+        m_waitingForContentPolicy = false;
+        deref(); // balances ref in didReceiveResponse
+    }
     frameLoader()->receivedMainResourceError(error, true);
     WebResourceLoader::didCancel(error);
 }
@@ -122,10 +119,16 @@ void MainResourceLoader::stopLoadingForPolicyChange()
     cancel(interruptionForPolicyChangeError());
 }
 
-void MainResourceLoader::continueAfterNavigationPolicy(NSURLRequest *r)
+void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, NSURLRequest *request, PassRefPtr<FormState>)
 {
-    if (!r)
+    static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request);
+}
+
+void MainResourceLoader::continueAfterNavigationPolicy(NSURLRequest *request)
+{
+    if (!request)
         stopLoadingForPolicyChange();
+    deref(); // balances ref in willSendRequest
 }
 
 bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
@@ -191,7 +194,8 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     // Don't set this on the first request. It is set when the main load was started.
     frameLoader()->setRequest(newRequest);
 
-    frameLoader()->checkNavigationPolicy(newRequest, policyDelegate(), @selector(continueAfterNavigationPolicy:formState:));
+    ref(); // balanced by deref in continueAfterNavigationPolicy
+    frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
 
     return newRequest;
 }
@@ -269,18 +273,23 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         didFinishLoading();
 }
 
+void MainResourceLoader::callContinueAfterContentPolicy(void* argument, PolicyAction policy)
+{
+    static_cast<MainResourceLoader*>(argument)->continueAfterContentPolicy(policy);
+}
+
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 {
-    bool isStopping = frameLoader()->isStopping();
-    frameLoader()->cancelContentPolicyCheck();
-    if (!isStopping)
+    ASSERT(m_waitingForContentPolicy);
+    m_waitingForContentPolicy = false;
+    if (!frameLoader()->isStopping())
         continueAfterContentPolicy(policy, m_response.get());
+    deref(); // balances ref in didReceiveResponse
 }
 
 void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
 {
-    ASSERT(shouldLoadAsEmptyDocument([r URL]) || !defersCallbacks());
-    ASSERT(shouldLoadAsEmptyDocument([r URL]) || !frameLoader()->defersCallbacks());
+    ASSERT(shouldLoadAsEmptyDocument([r URL]) || !defersLoading());
 
     if (m_loadingMultipartContent) {
         frameLoader()->setupForReplaceByMIMEType([r MIMEType]);
@@ -298,15 +307,18 @@ void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
     m_contentLength = (int)[r expectedContentLength];
 
     m_response = r;
-    frameLoader()->checkContentPolicy([m_response.get() MIMEType], policyDelegate(), @selector(continueAfterContentPolicy:));
+
+    ASSERT(!m_waitingForContentPolicy);
+    m_waitingForContentPolicy = true;
+    ref(); // balanced by deref in continueAfterContentPolicy and didCancel
+    frameLoader()->checkContentPolicy([m_response.get() MIMEType], callContinueAfterContentPolicy, this);
 }
 
 void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
 {
     ASSERT(data);
     ASSERT([data length] != 0);
-    ASSERT(!defersCallbacks());
-    ASSERT(!frameLoader()->defersCallbacks());
+    ASSERT(!defersLoading());
  
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
@@ -318,8 +330,7 @@ void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, 
 
 void MainResourceLoader::didFinishLoading()
 {
-    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->URL()) || !defersCallbacks());
-    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->URL()) || !frameLoader()->defersCallbacks());
+    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->URL()) || !defersLoading());
 
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
@@ -331,8 +342,7 @@ void MainResourceLoader::didFinishLoading()
 
 void MainResourceLoader::didFail(NSError *error)
 {
-    ASSERT(!defersCallbacks());
-    ASSERT(!frameLoader()->defersCallbacks());
+    ASSERT(!defersLoading());
 
     receivedError(error);
 }
@@ -342,8 +352,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument([r URL]);
 
     ASSERT(!connection());
-    ASSERT(shouldLoadEmptyBeforeRedirect || !defersCallbacks());
-    ASSERT(shouldLoadEmptyBeforeRedirect || !frameLoader()->defersCallbacks());
+    ASSERT(shouldLoadEmptyBeforeRedirect || !defersLoading());
 
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
@@ -352,7 +361,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     NSURL *URL = [r URL];
     bool shouldLoadEmpty = shouldLoadAsEmptyDocument(URL);
 
-    if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersCallbacks())
+    if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
         return r;
 
     if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme([URL scheme])) {
@@ -379,7 +388,7 @@ bool MainResourceLoader::load(NSURLRequest *r)
 {
     ASSERT(!connection());
 
-    bool defer = defersCallbacks();
+    bool defer = defersLoading();
     if (defer) {
         bool shouldLoadEmpty = shouldLoadAsEmptyDocument([r URL]);
         if (shouldLoadEmpty)
@@ -389,7 +398,7 @@ bool MainResourceLoader::load(NSURLRequest *r)
         r = loadNow(r);
         if (r) {
             // Started as an empty document, but was redirected to something non-empty.
-            ASSERT(defersCallbacks());
+            ASSERT(defersLoading());
             defer = true;
         }
     }
@@ -402,9 +411,9 @@ bool MainResourceLoader::load(NSURLRequest *r)
     return true;
 }
 
-void MainResourceLoader::setDefersCallbacks(bool defers)
+void MainResourceLoader::setDefersLoading(bool defers)
 {
-    WebResourceLoader::setDefersCallbacks(defers);
+    WebResourceLoader::setDefersLoading(defers);
     if (!defers) {
         RetainPtr<NSURLRequest> r = m_initialRequest;
         if (r) {
@@ -414,54 +423,4 @@ void MainResourceLoader::setDefersCallbacks(bool defers)
     }
 }
 
-WebCoreMainResourceLoaderAsPolicyDelegate *MainResourceLoader::policyDelegate()
-{
-    if (!m_policyDelegate) {
-        WebCoreMainResourceLoaderAsPolicyDelegate *d = [[WebCoreMainResourceLoaderAsPolicyDelegate alloc] initWithLoader:this];
-        m_policyDelegate = d;
-        [d release];
-    }
-    return m_policyDelegate.get();
 }
-
-void MainResourceLoader::releasePolicyDelegate()
-{
-    if (!m_policyDelegate)
-        return;
-    [m_policyDelegate.get() detachLoader];
-    m_policyDelegate = nil;
-}
-
-}
-
-@implementation WebCoreMainResourceLoaderAsPolicyDelegate
-
-- (id)initWithLoader:(MainResourceLoader*)loader
-{
-    self = [self init];
-    if (!self)
-        return nil;
-    m_loader = loader;
-    return self;
-}
-
-- (void)detachLoader
-{
-    m_loader = nil;
-}
-
-- (void)continueAfterNavigationPolicy:(NSURLRequest *)request formState:(id)formState
-{
-    if (!m_loader)
-        return;
-    m_loader->continueAfterNavigationPolicy(request);
-}
-
-- (void)continueAfterContentPolicy:(PolicyAction)policy
-{
-    if (!m_loader)
-        return;
-    m_loader->continueAfterContentPolicy(policy);
-}
-
-@end

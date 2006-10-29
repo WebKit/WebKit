@@ -29,13 +29,18 @@
 #import "CachedImage.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "Image.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
 ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, FrameMac *frame)
-  : m_pasteboard(HardRetain(pasteboard)), m_forDragging(forDragging), m_dragImage(0),
-    m_policy(policy), m_dragStarted(false), m_frame(frame)
+    : m_pasteboard(HardRetain(pasteboard))
+    , m_forDragging(forDragging)
+    , m_dragImage(0)
+    , m_policy(policy)
+    , m_dragStarted(false)
+    , m_frame(frame)
 {
     m_changeCount = [m_pasteboard changeCount];
 }
@@ -57,7 +62,7 @@ void ClipboardMac::setAccessPolicy(ClipboardAccessPolicy policy)
     m_policy = policy;
 }
 
-static NSString *cocoaTypeFromMIMEType(const String &type)
+static NSString *cocoaTypeFromMIMEType(const String& type)
 {
     String qType = type.stripWhiteSpace();
 
@@ -85,18 +90,16 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
     }
 
    // No mapping, just pass the whole string though
-    return (NSString*)qType;
+    return qType;
 }
 
-static DeprecatedString MIMETypeFromCocoaType(NSString *type)
+static String MIMETypeFromCocoaType(NSString *type)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
-    if ([type isEqualToString:NSStringPboardType]) {
-        return DeprecatedString("text/plain");
-    }
-    if ([type isEqualToString:NSURLPboardType] || [type isEqualToString:NSFilenamesPboardType]) {
-        return DeprecatedString("text/uri-list");
-    }
+    if ([type isEqualToString:NSStringPboardType])
+        return "text/plain";
+    if ([type isEqualToString:NSURLPboardType] || [type isEqualToString:NSFilenamesPboardType])
+        return "text/uri-list";
     
     // Now try the general UTI mechanism
     CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (CFStringRef)type, NULL);
@@ -104,21 +107,21 @@ static DeprecatedString MIMETypeFromCocoaType(NSString *type)
         CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassMIMEType);
         CFRelease(UTIType);
         if (mimeType) {
-            DeprecatedString result = DeprecatedString::fromCFString(mimeType);
+            String result = mimeType;
             CFRelease(mimeType);
             return result;
         }
     }
 
     // No mapping, just pass the whole string though
-    return DeprecatedString::fromNSString(type);
+    return type;
 }
 
-void ClipboardMac::clearData(const String &type)
+void ClipboardMac::clearData(const String& type)
 {
-    if (m_policy != ClipboardWritable) {
+    if (m_policy != ClipboardWritable)
         return;
-    }
+
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
@@ -129,20 +132,19 @@ void ClipboardMac::clearData(const String &type)
 
 void ClipboardMac::clearAllData()
 {
-    if (m_policy != ClipboardWritable) {
+    if (m_policy != ClipboardWritable)
         return;
-    }
+
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
-String ClipboardMac::getData(const String &type, bool &success) const
+String ClipboardMac::getData(const String& type, bool& success) const
 {
     success = false;
-    if (m_policy != ClipboardReadable) {
+    if (m_policy != ClipboardReadable)
         return String();
-    }
     
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaValue = nil;
@@ -303,7 +305,7 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
         
         if (m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
             NSPoint cocoaLoc;
-            NSImage* cocoaImage = dragNSImage(&cocoaLoc);
+            NSImage* cocoaImage = dragNSImage(cocoaLoc);
             if (cocoaImage) {
                 // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
                 // Instead we must drop down to the CoreGraphics API.
@@ -323,7 +325,7 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
     }
 }
 
-NSImage *ClipboardMac::dragNSImage(NSPoint *loc)
+NSImage *ClipboardMac::dragNSImage(NSPoint& loc)
 {
     NSImage *result = nil;
     if (m_dragImageElement) {
@@ -331,21 +333,17 @@ NSImage *ClipboardMac::dragNSImage(NSPoint *loc)
             NSRect imageRect;
             NSRect elementRect;
             result = m_frame->snapshotDragImage(m_dragImageElement.get(), &imageRect, &elementRect);
-            if (loc) {
-                // Client specifies point relative to element, not the whole image, which may include child
-                // layers spread out all over the place.
-                loc->x = elementRect.origin.x - imageRect.origin.x + m_dragLoc.x();
-                loc->y = elementRect.origin.y - imageRect.origin.y + m_dragLoc.y();
-                loc->y = imageRect.size.height - loc->y;
-            }
+            // Client specifies point relative to element, not the whole image, which may include child
+            // layers spread out all over the place.
+            loc.x = elementRect.origin.x - imageRect.origin.x + m_dragLoc.x();
+            loc.y = elementRect.origin.y - imageRect.origin.y + m_dragLoc.y();
+            loc.y = imageRect.size.height - loc.y;
         }
     } else if (m_dragImage) {
         result = m_dragImage->image()->getNSImage();
         
-        if (loc) {
-            *loc = m_dragLoc;
-            loc->y = [result size].height - loc->y;
-        }
+        loc = m_dragLoc;
+        loc.y = [result size].height - loc.y;
     }
     return result;
 }
@@ -374,70 +372,66 @@ void ClipboardMac::setEffectAllowed(const String &s)
 }
 
 // These "conversion" methods are called by the bridge and part, and never make sense to JS, so we don't
-// worry about security for these.  The don't allow access to the pasteboard anyway.
+// worry about security for these. They don't allow access to the pasteboard anyway.
 
-static NSDragOperation cocoaOpFromIEOp(const String &op) {
+static NSDragOperation cocoaOpFromIEOp(const String& op)
+{
     // yep, it's really just this fixed set
-    if (op == "none") {
+    if (op == "none")
         return NSDragOperationNone;
-    } else if (op == "copy") {
+    if (op == "copy")
         return NSDragOperationCopy;
-    } else if (op == "link") {
+    if (op == "link")
         return NSDragOperationLink;
-    } else if (op == "move") {
+    if (op == "move")
         return NSDragOperationGeneric;
-    } else if (op == "copyLink") {
+    if (op == "copyLink")
         return NSDragOperationCopy | NSDragOperationLink;
-    } else if (op == "copyMove") {
+    if (op == "copyMove")
         return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationMove;
-    } else if (op == "linkMove") {
+    if (op == "linkMove")
         return NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove;
-    } else if (op == "all") {
+    if (op == "all")
         return NSDragOperationEvery;
-    } else
-        return NSDragOperationPrivate;  // really a marker for "no conversion"
+    return NSDragOperationPrivate;  // really a marker for "no conversion"
 }
 
-static const String IEOpFromCocoaOp(NSDragOperation op) {
+static String IEOpFromCocoaOp(NSDragOperation op)
+{
     bool moveSet = ((NSDragOperationGeneric | NSDragOperationMove) & op) != 0;
     
     if ((moveSet && (op & NSDragOperationCopy) && (op & NSDragOperationLink))
-        || (op == NSDragOperationEvery)) {
+        || (op == NSDragOperationEvery))
         return "all";
-    } else if (moveSet && (op & NSDragOperationCopy)) {
+    if (moveSet && (op & NSDragOperationCopy))
         return "copyMove";
-    } else if (moveSet && (op & NSDragOperationLink)) {
+    if (moveSet && (op & NSDragOperationLink))
         return "linkMove";
-    } else if ((op & NSDragOperationCopy) && (op & NSDragOperationLink)) {
+    if ((op & NSDragOperationCopy) && (op & NSDragOperationLink))
         return "copyLink";
-    } else if (moveSet) {
+    if (moveSet)
         return "move";
-    } else if (op & NSDragOperationCopy) {
+    if (op & NSDragOperationCopy)
         return "copy";
-    } else if (op & NSDragOperationLink) {
+    if (op & NSDragOperationLink)
         return "link";
-    } else
-        return "none";
+    return "none";
 }
 
-bool ClipboardMac::sourceOperation(NSDragOperation *op) const
+bool ClipboardMac::sourceOperation(NSDragOperation& op) const
 {
     if (m_effectAllowed.isNull())
         return false;
-    else {
-        *op = cocoaOpFromIEOp(m_effectAllowed);
-        return true;
-    }
+    op = cocoaOpFromIEOp(m_effectAllowed);
+    return true;
 }
 
-bool ClipboardMac::destinationOperation(NSDragOperation *op) const
+bool ClipboardMac::destinationOperation(NSDragOperation& op) const
 {
     if (m_dropEffect.isNull())
         return false;
-    else {
-        *op = cocoaOpFromIEOp(m_dropEffect);
-        return true;
-    }
+    op = cocoaOpFromIEOp(m_dropEffect);
+    return true;
 }
 
 void ClipboardMac::setSourceOperation(NSDragOperation op)

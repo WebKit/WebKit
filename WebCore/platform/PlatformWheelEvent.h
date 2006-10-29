@@ -28,7 +28,7 @@
 
 #include "IntPoint.h"
 
-#ifdef __APPLE__
+#ifdef PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSEvent;
 #else
@@ -70,7 +70,7 @@ namespace WebCore {
         void accept() { m_isAccepted = true; }
         void ignore() { m_isAccepted = false; }
 
-#ifdef __APPLE__
+#ifdef PLATFORM(MAC)
         PlatformWheelEvent(NSEvent*);
 #endif
 #if PLATFORM(WIN)

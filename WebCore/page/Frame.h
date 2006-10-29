@@ -792,14 +792,11 @@ protected:
     void autoscrollTimerFired(Timer<Frame>*);
 
 public:
-  friend class FrameMac;
-  friend class FrameWin;
-#if PLATFORM(GDK)
   friend class FrameGdk;
-#endif
-#if PLATFORM(QT)
+  friend class FrameLoader;
+  friend class FrameMac;
   friend class FrameQt;
-#endif
+  friend class FrameWin;
 
   HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent);
   bool hasSelection();

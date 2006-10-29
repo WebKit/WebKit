@@ -50,8 +50,6 @@
 		6550B7C8099EFAE90090D781 /* WebArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 6550B7C6099EFAE90090D781 /* WebArchiver.m */; };
 		656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 658A40950A14853B005E6987 /* WebDataSourceInternal.h */; };
-		658BA6FC0ADB39DE00AEB387 /* WebPolicyDeciderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 658BA6FA0ADB39DE00AEB387 /* WebPolicyDeciderMac.h */; };
-		658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */ = {isa = PBXBuildFile; fileRef = 658BA6FB0ADB39DE00AEB387 /* WebPolicyDeciderMac.m */; };
 		65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A0006808527D1A005620FA /* libWebKitSystemInterface.a */; };
 		65C7F42C0979DE640022E453 /* WebPageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F42A0979DE640022E453 /* WebPageBridge.h */; };
 		65C7F42D0979DE640022E453 /* WebPageBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65C7F42B0979DE640022E453 /* WebPageBridge.mm */; };
@@ -376,8 +374,6 @@
 		6578F5DF045F817400000128 /* WebDownload.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDownload.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		658A40950A14853B005E6987 /* WebDataSourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDataSourceInternal.h; sourceTree = "<group>"; };
-		658BA6FA0ADB39DE00AEB387 /* WebPolicyDeciderMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPolicyDeciderMac.h; sourceTree = "<group>"; };
-		658BA6FB0ADB39DE00AEB387 /* WebPolicyDeciderMac.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebPolicyDeciderMac.m; sourceTree = "<group>"; };
 		65A0006808527D1A005620FA /* libWebKitSystemInterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitSystemInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65C7F42A0979DE640022E453 /* WebPageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPageBridge.h; sourceTree = "<group>"; };
@@ -835,9 +831,9 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
-				656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
+				656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
 				6550B7C5099EFAE90090D781 /* WebArchiver.h */,
 				933D659903413FF2008635CE /* WebClipView.h */,
@@ -860,7 +856,6 @@
 				51A8B52E04282B5900CA2D3A /* WebFrameView.h */,
 				51A8B53204282BD200CA2D3A /* WebFrameViewInternal.h */,
 				93C6F14507920B93002449CD /* WebFrameViewPrivate.h */,
-				658BA6FA0ADB39DE00AEB387 /* WebPolicyDeciderMac.h */,
 				51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */,
 				51443F9C0429392B00CA2D3A /* WebPolicyDelegatePrivate.h */,
 				EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */,
@@ -886,7 +881,6 @@
 				2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */,
 				F5143A370221DCCE01A80181 /* WebFrame.mm */,
 				51A8B52F04282B5900CA2D3A /* WebFrameView.mm */,
-				658BA6FB0ADB39DE00AEB387 /* WebPolicyDeciderMac.m */,
 				51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */,
 				F5AEBB3D024A527601C1A526 /* WebPreferences.m */,
 				84311A1305EAAAF00088EDA4 /* WebResource.m */,
@@ -1189,7 +1183,6 @@
 				51E4D3990A886B5E00ECEE2C /* WebIconDatabaseBridge.h in Headers */,
 				1C0D40870AC1C8F40009C113 /* WebKitVersionChecks.h in Headers */,
 				65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */,
-				658BA6FC0ADB39DE00AEB387 /* WebPolicyDeciderMac.h in Headers */,
 				51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */,
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
@@ -1417,7 +1410,6 @@
 				51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */,
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
 				65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm in Sources */,
-				658BA6FD0ADB39DE00AEB387 /* WebPolicyDeciderMac.m in Sources */,
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */,
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,

@@ -157,11 +157,6 @@ static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
         doc->updateRendering();
 }
 
-static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
-{
-    return [a caseInsensitiveCompare:b] == NSOrderedSame;
-}
-
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
@@ -294,37 +289,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 }
 #endif
 
-- (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame
-{
-    // This method prevents this exploit:
-    // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
-    
-    Frame *target = [targetFrame _frame];
-
-    // don't mess with navigation within the same page/frameset
-    if (m_frame->page() == (target ? target->page() : nil))
-        return YES;
-
-    // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
-    // Jaguar as well where the DOM API doesn't exist.
-    NSString *thisDomain = [self domain];
-    if ([thisDomain length] == 0)
-        // Allow if the request is made from a local file.
-        return YES;
-    
-    WebCoreFrameBridge *parentBridge = target ? Mac(target->tree()->parent())->bridge() : nil;
-    // Allow if target is an entire window.
-    if (!parentBridge)
-        return YES;
-    
-    NSString *parentDomain = [parentBridge domain];
-    // Allow if the domain of the parent of the targeted frame equals this domain.
-    if (parentDomain && isCaseSensitiveEqual(thisDomain, parentDomain))
-        return YES;
-
-    return NO;
-}
-
 + (NSArray *)supportedNonImageMIMETypes
 {
     return [NSArray arrayWithObjects:        
@@ -455,30 +419,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     _closed = YES;
 }
 
-- (void)openURL:(NSURL *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
-{
-    if (pageCache) {
-        WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
-        m_frame->openURLFromPageCache(state);
-        [state invalidate];
-        return;
-    }
-        
-    m_frame->setResponseMIMEType(contentType);
-    
-    // opening the URL
-    if (m_frame->didOpenURL(URL)) {
-        // things we have to set up after calling didOpenURL
-        if (refresh) {
-            m_frame->addMetaData("http-refresh", refresh);
-        }
-        if (lastModified) {
-            NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
-            m_frame->addMetaData("modified", modifiedString);
-        }
-    }
-}
-
 - (void)addData:(NSData *)data
 {
     Document *doc = m_frame->document();
@@ -491,11 +431,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         doc->setShouldCreateRenderers([self shouldCreateRenderers]);
         m_frame->addData((const char *)[data bytes], [data length]);
     }
-}
-
-- (void)closeURL
-{
-    m_frame->closeURL();
 }
 
 - (void)invalidatePageCache:(NSDictionary *)pageCache
@@ -701,11 +636,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)deselectText
 {
     m_frame->selectionController()->clear();
-}
-
-- (BOOL)isFrameSet
-{
-    return m_frame->isFrameSet();
 }
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
@@ -1907,7 +1837,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
             PlatformMouseEvent event = createMouseEventFromDraggingInfo([self window], info);
             if (v->updateDragAndDrop(event, clipboard.get())) {
                 // *op unchanged if no source op was set
-                if (!clipboard->destinationOperation(&op)) {
+                if (!clipboard->destinationOperation(op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
                     // (as does WinIE).
                     if (srcOp & NSDragOperationCopy)
@@ -2174,7 +2104,7 @@ static NSCharacterSet *_getPostSmartSet(void)
         setHTTPReferrer(request, referrer);
     
     [request setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];
-    [request setValue:[self userAgentForURL:[request URL]] forHTTPHeaderField:@"User-Agent"];
+    [request setValue:m_frame->loader()->client()->userAgent([request URL]) forHTTPHeaderField:@"User-Agent"];
     
     NSError *error = nil;
     id identifier = nil;    

@@ -72,7 +72,7 @@ using namespace WebCore;
     if (hideReferrer)
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
 
-    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), self).release();
+    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), self).releaseRef();
     
     isTerminated = NO;
 

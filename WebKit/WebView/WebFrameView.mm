@@ -54,6 +54,7 @@
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKitSystemInterface.h>
@@ -126,7 +127,7 @@ enum {
     // a border (left, right, top or bottom) if the frame edge abutts the window frame.
     NSView *docV = [self documentView];
     if ([docV isKindOfClass:[WebHTMLView class]])
-        if ([[_private->webFrame _bridge] isFrameSet])
+        if (core(_private->webFrame)->isFrameSet())
             return NO;
     return YES;
 }

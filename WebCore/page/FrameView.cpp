@@ -532,7 +532,7 @@ void FrameView::layout(bool allowSubtree)
     
     d->layoutCount++;
 
-#if __APPLE__
+#if PLATFORM(MAC)
     if (AXObjectCache::accessibilityEnabled())
         root->document()->axObjectCache()->postNotificationToElement(root, "AXLayoutComplete");
     updateDashboardRegions();

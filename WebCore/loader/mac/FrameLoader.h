@@ -30,6 +30,7 @@
 #import <WebCore/PlatformString.h>
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
+#import <wtf/HashMap.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 
@@ -39,9 +40,9 @@
 #import <objc/objc.h>
 
 #ifdef __OBJC__
+
 @class WebCoreFrameBridge;
-@class WebCoreFrameLoaderAsDelegate;
-@class WebPolicyDecider;
+@class WebCorePageState;
 
 @class NSArray;
 @class NSDate;
@@ -62,8 +63,7 @@
 #else
 
 class WebCoreFrameBridge;
-class WebCoreFrameLoaderAsDelegate;
-class WebPolicyDecider;
+class WebCorePageState;
 
 class NSArray;
 class NSDate;
@@ -77,6 +77,7 @@ class NSError;
 class NSData;
 class NSMutableURLRequest;
 class NSURLAuthenticationChallenge;
+
 #endif // __OBJC__
 
 #endif // PLATFORM(MAC)
@@ -87,6 +88,7 @@ namespace WebCore {
     class Element;
     class FormState;
     class Frame;
+    class FrameLoadRequest;
     class FrameLoaderClient;
     class MainResourceLoader;
     class String;
@@ -94,6 +96,40 @@ namespace WebCore {
     class WebResourceLoader;
 
     bool isBackForwardLoadType(FrameLoadType);
+
+    typedef void (*NavigationPolicyDecisionFunction)(void* argument,
+        NSURLRequest *, PassRefPtr<FormState>);
+    typedef void (*NewWindowPolicyDecisionFunction)(void* argument,
+        NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
+    typedef void (*ContentPolicyDecisionFunction)(void* argument, PolicyAction);
+
+    class PolicyCheck {
+    public:
+        PolicyCheck();
+
+        void clear();
+        void set(NSURLRequest *, PassRefPtr<FormState>,
+            NavigationPolicyDecisionFunction, void* argument);
+        void set(NSURLRequest *, PassRefPtr<FormState>, const String& frameName,
+            NewWindowPolicyDecisionFunction, void* argument);
+        void set(ContentPolicyDecisionFunction, void* argument);
+
+        NSURLRequest *request() const { return m_request.get(); }
+        void clearRequest();
+
+        void call();
+        void call(PolicyAction);
+
+    private:
+        RetainPtr<NSURLRequest> m_request;
+        RefPtr<FormState> m_formState;
+        String m_frameName;
+
+        NavigationPolicyDecisionFunction m_navigationFunction;
+        NewWindowPolicyDecisionFunction m_newWindowFunction;
+        ContentPolicyDecisionFunction m_contentFunction;
+        void* m_argument;
+    };
 
     class FrameLoader : Noncopyable {
     public:
@@ -109,13 +145,17 @@ namespace WebCore {
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finalSetupForReplace(DocumentLoader*);
         void safeLoad(NSURL *);
+        void load(const FrameLoadRequest&, bool userGesture, NSEvent* triggeringEvent,
+            Element* submitForm, const HashMap<String, String>& formValues);
+        void load(NSURL *, const String& referrer, FrameLoadType, const String& target, NSEvent *event,
+            Element* form, const HashMap<String, String>& formValues);
+        void post(NSURL *, const String& referrer, const String& target, NSArray *postData, const String& contentType, NSEvent *,
+            Element* form, const HashMap<String, String>&);
         void load(NSURLRequest *);
         void load(NSURLRequest *, const String& frameName);
         void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
-        void load(NSURL *, const String& referrer, FrameLoadType, const String& target, 
-                  NSEvent *event, Element* form, NSDictionary *formValues);
 
         bool canLoad(NSURL *, const String& referrer, bool& hideReferrer);
 
@@ -143,8 +183,8 @@ namespace WebCore {
         void loadEmptyDocumentSynchronously();
 
 #ifdef __OBJC__
-        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders);
-        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader> resourceLoader, const String& method, NSURL *URL, NSDictionary *customHeaders, NSArray *postData);
+        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader>, const String& method, NSURL *, NSDictionary *customHeaders);
+        id <WebCoreResourceHandle> startLoadingResource(id <WebCoreResourceLoader>, const String& method, NSURL *, NSDictionary *customHeaders, NSArray *postData);
 #endif
         
         DocumentLoader* activeDocumentLoader() const;
@@ -153,8 +193,6 @@ namespace WebCore {
         FrameState state() const;
         static double timeOfLastCompletedLoad();
 
-        bool defersCallbacks() const;
-        void defersCallbacksChanged();
         id identifierForInitialRequest(NSURLRequest *);
         NSURLRequest *willSendRequest(WebResourceLoader*, NSMutableURLRequest *, NSURLResponse *redirectResponse);
         void didReceiveAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
@@ -189,9 +227,11 @@ namespace WebCore {
         bool representationExistsForURLScheme(const String& URLScheme);
         String generatedMIMETypeForURLScheme(const String& URLScheme);
         void notifyIconChanged(NSURL *iconURL);
-        void checkNavigationPolicy(NSURLRequest *newRequest, id continuationObject, SEL continuationSelector);
-        void checkContentPolicy(const String& MIMEType, id continuationObject, SEL continuationSelector);
+
+        void checkNavigationPolicy(NSURLRequest *, NavigationPolicyDecisionFunction, void* argument);
+        void checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction, void* argument);
         void cancelContentPolicyCheck();
+
         void reload();
         void reloadAllowingStaleData(const String& overrideEncoding);
 
@@ -220,7 +260,6 @@ namespace WebCore {
 
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
-        void post(NSURL *, const String& referrer, const String& target, NSArray *postData, const String& contentType, NSEvent *, Element* form, NSDictionary *formValues);
         void loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResponse *response, int length);
 
         void checkLoadComplete();
@@ -233,12 +272,7 @@ namespace WebCore {
         void setClient(FrameLoaderClient*);
         FrameLoaderClient* client() const;
 
-        void continueAfterWillSubmitForm(PolicyAction);
-        void continueAfterNewWindowPolicy(PolicyAction);
-        void continueAfterNavigationPolicy(PolicyAction);
-        void continueLoadRequestAfterNavigationPolicy(NSURLRequest *, FormState*);
-        void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
-        void continueLoadRequestAfterNewWindowPolicy(NSURLRequest *, const String& frameName, FormState*);
+        void setDefersLoading(bool);
 #endif
 
     private:
@@ -248,7 +282,6 @@ namespace WebCore {
         bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
         void stopLoadingSubframes();
 
-        void setDefersCallbacks(bool);
         void clearProvisionalLoad();
         void markLoadComplete();
         void commitProvisionalLoad();
@@ -259,9 +292,25 @@ namespace WebCore {
 
         void setLoadType(FrameLoadType);
 
-        void invalidatePendingPolicyDecision(bool callDefaultAction);
-        void checkNewWindowPolicy(NSURLRequest *, NSDictionary *, const String& frameName, PassRefPtr<FormState>);
-        void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>, id continuationObject, SEL continuationSelector);
+        void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>,
+            NavigationPolicyDecisionFunction, void* argument);
+        void checkNewWindowPolicy(NSDictionary *, NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
+
+        void continueAfterNavigationPolicy(PolicyAction);
+        void continueAfterNewWindowPolicy(PolicyAction);
+        void continueAfterContentPolicy(PolicyAction);
+        void continueAfterWillSubmitForm(PolicyAction = PolicyUse);
+
+        static void callContinueLoadAfterNavigationPolicy(void*, NSURLRequest*, PassRefPtr<FormState>);
+        void continueLoadAfterNavigationPolicy(NSURLRequest *, PassRefPtr<FormState>);
+        static void callContinueLoadAfterNewWindowPolicy(void*, NSURLRequest*, PassRefPtr<FormState>, const String& frameName);
+        void continueLoadAfterNewWindowPolicy(NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
+        static void callContinueFragmentScrollAfterNavigationPolicy(void*, NSURLRequest*, PassRefPtr<FormState>);
+        void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
+
+        void stopPolicyCheck();
+
+        void closeDocument();
 
         void transitionToCommitted(NSDictionary *pageCache);
         void checkLoadCompleteForThisFrame();
@@ -274,15 +323,15 @@ namespace WebCore {
 
         void setState(FrameState);
 
-        WebCoreFrameBridge *bridge() const;
-
-        WebCoreFrameLoaderAsDelegate *asDelegate();
-
         void closeOldDataSources();
+        void open(NSURL *, bool reload, NSString *contentType, NSString *refresh, NSDate *lastModified, NSDictionary *pageCache);
+        void open(WebCorePageState *);
         void opened();
 
         void handleUnimplementablePolicy(NSError *);
         bool shouldReloadToHandleUnreachableURL(NSURLRequest *);
+
+        bool canTarget(Frame*) const;
 #endif
 
         Frame* m_frame;
@@ -294,23 +343,14 @@ namespace WebCore {
         RefPtr<MainResourceLoader> m_mainResourceLoader;
         HashSet<RefPtr<WebResourceLoader> > m_subresourceLoaders;
         HashSet<RefPtr<WebResourceLoader> > m_plugInStreamLoaders;
-    
-#if PLATFORM(MAC)
-        RetainPtr<WebCoreFrameLoaderAsDelegate> m_asDelegate;
 
+#if PLATFORM(MAC)
         RefPtr<DocumentLoader> m_documentLoader;
         RefPtr<DocumentLoader> m_provisionalDocumentLoader;
         RefPtr<DocumentLoader> m_policyDocumentLoader;
 
-        // state we'll need to continue after waiting for the policy delegate's decision
-        RetainPtr<WebPolicyDecider> m_policyDecider;    
-
-        RetainPtr<NSURLRequest> m_policyRequest;
-        String m_policyFrameName;
-        RetainPtr<id> m_policyTarget;
-        SEL m_policySelector;
-        RefPtr<FormState> m_policyFormState;
         FrameLoadType m_policyLoadType;
+        PolicyCheck m_policyCheck;
 
         bool m_delegateIsHandlingProvisionalLoadError;
         bool m_delegateIsDecidingNavigationPolicy;

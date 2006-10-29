@@ -30,9 +30,6 @@
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
-@class NSDictionary;
-@class WebCoreFrameBridge;
-
 namespace WebCore {
 
     class Element;
@@ -46,12 +43,8 @@ namespace WebCore {
         const HashMap<String, String>& values() const { return m_values; }
         Frame* sourceFrame() const { return m_sourceFrame.get(); }
 
-        static PassRefPtr<FormState> create(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame);
-        NSDictionary *valuesAsNSDictionary() const;
-
     private:
         FormState(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
-        FormState(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame);
 
         RefPtr<Element> m_form;
         HashMap<String, String> m_values;

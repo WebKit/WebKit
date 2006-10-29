@@ -1032,8 +1032,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         while (currElem->node != residualElem) {
             if (isResidualStyleTag(currElem->node->localName())) {
                 // Create a clone of this element.
-                // We call release to get a raw pointer since we plan to hand over ownership to currElem.
-                Node* currNode = currElem->node->cloneNode(false).release();
+                // We call releaseRef to get a raw pointer since we plan to hand over ownership to currElem.
+                Node* currNode = currElem->node->cloneNode(false).releaseRef();
 
                 // Change the stack element's node to point to the clone.
                 // The stack element adopts the reference we obtained above by calling release().

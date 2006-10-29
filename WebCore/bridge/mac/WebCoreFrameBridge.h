@@ -204,15 +204,9 @@ typedef enum {
 + (NSArray *)supportedImageMIMETypes;
 + (NSArray *)supportedImageResourceMIMETypes; // includes types like PDF
 
-- (void)openURL:(NSURL *)URL reload:(BOOL)reload
-    contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified
-    pageCache:(NSDictionary *)pageCache;
 - (void)addData:(NSData *)data;
-- (void)closeURL;
 
 - (void)invalidatePageCache:(NSDictionary *)pageCache;
-
-- (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame;
 
 - (void)saveDocumentState;
 - (void)restoreDocumentState;
@@ -229,8 +223,6 @@ typedef enum {
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity;
 
 - (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
-
-- (BOOL)isFrameSet;
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
@@ -420,8 +412,6 @@ typedef enum {
 - (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL;
 - (void)showWindow;
 
-- (NSString *)userAgentForURL:(NSURL *)URL;
-
 - (void)setStatusText:(NSString *)status;
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer ownerElement:(WebCoreElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
@@ -466,8 +456,6 @@ typedef enum {
 - (NSView *)nextValidKeyViewOutsideWebFrameViews;
 - (NSView *)previousKeyViewOutsideWebFrameViews;
 
-- (BOOL)defersLoading;
-- (void)setDefersLoading:(BOOL)loading;
 - (void)saveDocumentState:(NSArray *)documentState;
 - (NSArray *)documentState;
 

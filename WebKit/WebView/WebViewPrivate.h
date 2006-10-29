@@ -42,8 +42,6 @@
 
 @protocol WebFormDelegate;
 
-
-
 typedef void (*WebDidCancelAuthenticationChallengeFunc)(id, SEL, WebView *, id, NSURLAuthenticationChallenge *, WebDataSource *);
 typedef void (*WebDidReceiveAuthenticationChallengeFunc)(id, SEL, WebView *, id, NSURLAuthenticationChallenge *, WebDataSource *);
 typedef id (*WebIdentifierForRequestFunc)(id, SEL, WebView *, NSURLRequest *, WebDataSource *);
@@ -187,7 +185,6 @@ Could be worth adding to the API.
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
-
 // May well become public
 - (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;
@@ -301,6 +298,9 @@ Could be worth adding to the API.
     @abstract Detaches any script debuggers from all frames belonging to the receiver.
  */
 - (void)_detachScriptDebuggerFromAllFrames;
+
+- (BOOL)defersCallbacks; // called by QuickTime plug-in
+- (void)setDefersCallbacks:(BOOL)defer; // called by QuickTime plug-in
 
 @end
 

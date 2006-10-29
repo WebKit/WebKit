@@ -29,19 +29,12 @@
 #import "config.h"
 #import "WebFormState.h"
 
-#import "DOMElementInternal.h"
 #import "Element.h"
-#import "FrameMac.h"
-#import "WebCoreFrameBridge.h"
+#import "Frame.h"
 
 namespace WebCore {
 
 PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
-{
-    return new FormState(form, values, sourceFrame);
-}
-
-PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
 {
     return new FormState(form, values, sourceFrame);
 }
@@ -51,24 +44,6 @@ FormState::FormState(PassRefPtr<Element> form, const HashMap<String, String>& va
     , m_values(values)
     , m_sourceFrame(sourceFrame)
 {
-}
-
-FormState::FormState(PassRefPtr<Element> form, NSDictionary *values, WebCoreFrameBridge *sourceFrame)
-    : m_form(form)
-    , m_sourceFrame([sourceFrame _frame])
-{
-    NSEnumerator *keyEnumerator = [values keyEnumerator];
-    while (NSString *key = [keyEnumerator nextObject])
-        m_values.set(key, [values objectForKey:key]);
-}
-
-NSDictionary *FormState::valuesAsNSDictionary() const
-{
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:m_values.size()];
-    HashMap<String, String>::const_iterator end = m_values.end();
-    for (HashMap<String, String>::const_iterator it = m_values.begin(); it != end; ++it)
-        [dictionary setObject:it->second forKey:it->first];
-    return dictionary;
 }
 
 }

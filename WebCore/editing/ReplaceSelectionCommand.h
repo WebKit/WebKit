@@ -27,8 +27,6 @@
 #define replace_selection_command_h__
 
 #include "CompositeEditCommand.h"
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

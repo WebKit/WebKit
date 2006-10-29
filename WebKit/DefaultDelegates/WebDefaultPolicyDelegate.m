@@ -62,7 +62,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv decidePolicyForMIMEType:(NSString *)type
                                                request:(NSURLRequest *)request
                                                  frame:(WebFrame *)frame
-                                      decisionListener:(WebPolicyDecisionListener *)listener;
+                                      decisionListener:(id <WebPolicyDecisionListener>)listener;
 {
     if ([[request URL] isFileURL]) {
         BOOL isDirectory;
@@ -85,7 +85,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation 
                                                        request:(NSURLRequest *)request
                                                          frame:(WebFrame *)frame
-                                              decisionListener:(WebPolicyDecisionListener *)listener
+                                              decisionListener:(id <WebPolicyDecisionListener>)listener
 {
     WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 
@@ -106,7 +106,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv decidePolicyForNewWindowAction:(NSDictionary *)actionInformation 
                                                       request:(NSURLRequest *)request
                                                  newFrameName:(NSString *)frameName
-                                             decisionListener:(WebPolicyDecisionListener *)listener
+                                             decisionListener:(id <WebPolicyDecisionListener>)listener
 {
     [listener use];
 }

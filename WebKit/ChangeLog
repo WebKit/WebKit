@@ -1,3 +1,76 @@
+2006-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminated the use of Objective-C for the policy decider
+          machinery, obviating the need for WebPolicyDeciderMac
+
+        - moved the defersLoading flag from WebView to WebCore::Page
+
+        - removed unused copies of four methods that in the frame bridge;
+          the actually-used copies are in the page bridge
+
+        - updated for rename of PassRefPtr::release to releaseRef
+
+        * WebView/WebPolicyDeciderMac.h: Removed.
+        * WebView/WebPolicyDeciderMac.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj: Updated for removal.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (getWebView):
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::willCloseDocument):
+        (WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::cancelPolicyCheck):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::setDefersLoading):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::deliverArchivedResourcesAfterDelay):
+        (WebFrameLoaderClient::deliverArchivedResources):
+        (WebFrameLoaderClient::setUpPolicyListener):
+        (WebFrameLoaderClient::receivedPolicyDecison):
+        (WebFrameLoaderClient::userAgent):
+        (-[WebFramePolicyListener initWithWebCoreFrame:]):
+        (-[WebFramePolicyListener invalidate]):
+        (-[WebFramePolicyListener dealloc]):
+        (-[WebFramePolicyListener finalize]):
+        (-[WebFramePolicyListener receivedPolicyDecision:]):
+        (-[WebFramePolicyListener ignore]):
+        (-[WebFramePolicyListener download]):
+        (-[WebFramePolicyListener use]):
+        (-[WebFramePolicyListener continue]):
+        * WebCoreSupport/WebPageBridge.mm:
+        (-[WebPageBridge runModal]):
+        * WebView/WebArchiver.m:
+        (+[WebArchiver archiveSelectionInFrame:]):
+        * WebView/WebFormDelegate.h:
+        * WebView/WebFormDelegate.m:
+        (+[WebFormDelegate _sharedWebFormDelegate]):
+        (-[WebFormDelegate textFieldDidBeginEditing:inFrame:]):
+        (-[WebFormDelegate textFieldDidEndEditing:inFrame:]):
+        (-[WebFormDelegate textDidChangeInTextField:inFrame:]):
+        (-[WebFormDelegate textDidChangeInTextArea:inFrame:]):
+        (-[WebFormDelegate frame:sourceFrame:willSubmitForm:withValues:submissionListener:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _isFrameSet]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _shouldDrawBorder]):
+        * WebView/WebHTMLView.m:
+        (-[NSArray knowsPageRange:]):
+        * WebView/WebView.mm:
+        (-[WebView _formDelegate]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2006-10-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

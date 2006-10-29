@@ -131,20 +131,20 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
 
 CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Counter> c)
 {
-    m_value.counter = c.release();
+    m_value.counter = c.releaseRef();
     m_type = CSS_COUNTER;
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<RectImpl> r)
 {
-    m_value.rect = r.release();
+    m_value.rect = r.releaseRef();
     m_type = CSS_RECT;
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
 CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<DashboardRegion> r)
 {
-    m_value.region = r.release();
+    m_value.region = r.releaseRef();
     m_type = CSS_DASHBOARD_REGION;
 }
 #endif
@@ -157,7 +157,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
 
 CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Pair> p)
 {
-    m_value.pair = p.release();
+    m_value.pair = p.releaseRef();
     m_type = CSS_PAIR;
 }
 
@@ -184,7 +184,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_PAIR:
         m_value.pair->deref();
         break;
-#if __APPLE__
+#if PLATFORM(MAC)
     case CSS_DASHBOARD_REGION:
         if (m_value.region)
             m_value.region->deref();
@@ -557,7 +557,7 @@ String CSSPrimitiveValue::cssText() const
             text += " ";
             text += m_value.pair->second()->cssText();
             break;
-#if __APPLE__
+#if PLATFORM(MAC)
         case CSS_DASHBOARD_REGION:
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 text = "dashboard-region(";

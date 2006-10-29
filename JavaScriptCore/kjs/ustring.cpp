@@ -206,7 +206,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   r->rc = 1;
   r->_hash = 0;
   r->isIdentifier = 0;
-  r->baseString = base.release();
+  r->baseString = base.releaseRef();
   r->buf = 0;
   r->usedCapacity = 0;
   r->capacity = 0;

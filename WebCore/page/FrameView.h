@@ -184,7 +184,7 @@ public:
     
     void setResizingFrameSet(HTMLFrameSetElement *);
 
-#if __APPLE__
+#if PLATFORM(MAC)
     void updateDashboardRegions();
 #endif
 

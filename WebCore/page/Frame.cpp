@@ -3018,7 +3018,7 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
             renderer()->document()->invalidateRenderedRectsForMarkersInRect(rect);
         renderer()->layer()->paint(p, rect, d->m_paintRestriction, eltRenderer);
 
-#if __APPLE__
+#if PLATFORM(MAC)
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (renderer()->document()->dashboardRegionsDirty())
             renderer()->view()->frameView()->updateDashboardRegions();

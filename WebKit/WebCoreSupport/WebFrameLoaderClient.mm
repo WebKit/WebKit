@@ -38,6 +38,7 @@
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
+#import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
@@ -50,8 +51,7 @@
 #import "WebNSURLExtras.h"
 #import "WebPageBridge.h"
 #import "WebPanelAuthenticationHandler.h"
-#import "WebPolicyDeciderMac.h"
-#import "WebPolicyDelegatePrivate.h"
+#import "WebPolicyDelegate.h"
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
@@ -67,6 +67,7 @@
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/WebDocumentLoader.h>
+#import <WebCore/WebFormState.h>
 #import <WebCore/WebLoader.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -74,19 +75,28 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
+#import <objc/objc-runtime.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
-static inline WebView* getWebView(DocumentLoader* loader)
+@interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener>
 {
-    return ((WebPageBridge *)loader->frameLoader()->frame()->page()->bridge())->_webView;
+    Frame* m_frame;
+}
+- (id)initWithWebCoreFrame:(Frame*)frame;
+- (void)invalidate;
+@end
+
+static inline WebView *getWebView(DocumentLoader* loader)
+{
+    return static_cast<WebPageBridge *>(loader->frameLoader()->frame()->page()->bridge())->_webView;
 }
 
 static inline WebView *getWebView(WebFrame *webFrame)
 {
    Frame* coreFrame = core(webFrame);
-   return coreFrame ? ((WebPageBridge *)coreFrame->page()->bridge())->_webView : nil;
+   return coreFrame ? static_cast<WebPageBridge *>(coreFrame->page()->bridge())->_webView : nil;
 }
 
 static inline WebDataSource *dataSource(DocumentLoader* loader)
@@ -94,13 +104,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
 }
 
-static inline WebPolicyDecisionListener *decisionListener(WebPolicyDecider *decider)
-{
-    return [(WebPolicyDeciderMac *)decider decisionListener];
-}
-
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
+    , m_policyFunction(0)
     , m_archivedResourcesDeliveryTimer(this, &WebFrameLoaderClient::deliverArchivedResources)
 {
 }
@@ -352,6 +358,13 @@ void WebFrameLoaderClient::doNotResetAfterLoadError(LoadErrorResetToken* token)
 {
     WebHistoryItem *item = (WebHistoryItem *)token;
     [item release];
+}
+
+void WebFrameLoaderClient::willCloseDocument()
+{
+    [m_webFrame->_private->plugInViews makeObjectsPerformSelector:@selector(setWebFrame:) withObject:nil];
+    [m_webFrame->_private->plugInViews release];
+    m_webFrame->_private->plugInViews = nil;
 }
 
 void WebFrameLoaderClient::detachedFromParent1()
@@ -618,44 +631,74 @@ void WebFrameLoaderClient::dispatchShow()
     [[webView _UIDelegateForwarder] webViewShow:webView];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(WebPolicyDecider *decider, const String& MIMEType, NSURLRequest *request)
+void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function,
+    const String& MIMEType, NSURLRequest *request)
 {
     WebView *webView = getWebView(m_webFrame.get());
 
-    [[webView _policyDelegateForwarder] webView:webView decidePolicyForMIMEType:MIMEType request:request frame:m_webFrame.get() decisionListener:decisionListener(decider)];
+    [[webView _policyDelegateForwarder] webView:webView
+                        decidePolicyForMIMEType:MIMEType
+                                        request:request
+                                          frame:m_webFrame.get()
+                               decisionListener:setUpPolicyListener(function)];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *decider, NSDictionary *action, NSURLRequest *request, const String& frameName)
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function,
+    NSDictionary *action, NSURLRequest *request, const String& frameName)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:action
                                    request:request
                               newFrameName:frameName
-                          decisionListener:decisionListener(decider)];
+                          decisionListener:setUpPolicyListener(function)];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebPolicyDecider *decider, NSDictionary *action,
-    NSURLRequest *request)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function,
+    NSDictionary *action, NSURLRequest *request)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:action
                                         request:request
                                           frame:m_webFrame.get()
-                               decisionListener:decisionListener(decider)];
+                               decisionListener:setUpPolicyListener(function)];
+}
+
+void WebFrameLoaderClient::cancelPolicyCheck()
+{
+    [m_policyListener.get() invalidate];
+    m_policyListener = nil;
+    m_policyFunction = 0;
 }
 
 void WebFrameLoaderClient::dispatchUnableToImplementPolicy(NSError *error)
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:m_webFrame.get()];    
+    [[webView _policyDelegateForwarder] webView:webView
+        unableToImplementPolicyWithError:error frame:m_webFrame.get()];    
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(WebPolicyDecider *decider, Frame* sourceFrame,
-    Element* form, NSDictionary *values)
+void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
 {
-    [[getWebView(m_webFrame.get()) _formDelegate] frame:m_webFrame.get() sourceFrame:kit(sourceFrame) willSubmitForm:kit(form) withValues:values submissionListener:decisionListener(decider)];
+    id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
+    if (!formDelegate) {
+        (core(m_webFrame.get())->loader()->*function)(PolicyUse);
+        return;
+    }
+
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:formState->values().size()];
+    HashMap<String, String>::const_iterator end = formState->values().end();
+    for (HashMap<String, String>::const_iterator it = formState->values().begin(); it != end; ++it)
+        [dictionary setObject:it->second forKey:it->first];
+
+    [formDelegate frame:m_webFrame.get()
+            sourceFrame:kit(formState->sourceFrame())
+         willSubmitForm:kit(formState->form())
+             withValues:dictionary
+     submissionListener:setUpPolicyListener(function)];
+
+    [dictionary release];
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
@@ -786,12 +829,7 @@ bool WebFrameLoaderClient::shouldFallBack(NSError *error)
     return [error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad;
 }
 
-NSURL *WebFrameLoaderClient::mainFrameURL()
-{
-    return [[[getWebView(m_webFrame.get()) mainFrame] dataSource] _URL];
-}
-
-void WebFrameLoaderClient::setDefersCallbacks(bool defers)
+void WebFrameLoaderClient::setDefersLoading(bool defers)
 {
     if (!defers)
         deliverArchivedResourcesAfterDelay();
@@ -878,11 +916,6 @@ NSDictionary *WebFrameLoaderClient::elementForEvent(NSEvent *event) const
         viewContainingPoint = [viewContainingPoint superview];
     }
     return nil;
-}
-
-WebPolicyDecider *WebFrameLoaderClient::createPolicyDecider(id object, SEL selector)
-{
-    return [[WebPolicyDeciderMac alloc] initWithTarget:object action:selector];
 }
 
 void WebFrameLoaderClient::frameLoadCompleted()
@@ -1016,10 +1049,11 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(NSURLReque
     return loader.release();
 }
 
-void WebFrameLoaderClient::setTitle(NSString *title, NSURL *URL)
+void WebFrameLoaderClient::setTitle(const String& title, NSURL *URL)
 {
-    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:title];
-    [m_webFrame->_private->currentItem setTitle:title];
+    NSString *titleNSString = title;
+    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:titleNSString];
+    [m_webFrame->_private->currentItem setTitle:titleNSString];
 }
 
 // The following 2 functions are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
@@ -1059,7 +1093,7 @@ void WebFrameLoaderClient::deliverArchivedResourcesAfterDelay() const
 {
     if (m_pendingArchivedResources.isEmpty())
         return;
-    if (core(m_webFrame.get())->loader()->defersCallbacks())
+    if (core(m_webFrame.get())->page()->defersLoading())
         return;
     if (!m_archivedResourcesDeliveryTimer.isActive())
         m_archivedResourcesDeliveryTimer.startOneShot(0);
@@ -1069,7 +1103,7 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
 {
     if (m_pendingArchivedResources.isEmpty())
         return;
-    if (core(m_webFrame.get())->loader()->defersCallbacks())
+    if (core(m_webFrame.get())->page()->defersLoading())
         return;
 
     const ResourceMap copy = m_pendingArchivedResources;
@@ -1100,3 +1134,99 @@ bool WebFrameLoaderClient::createPageCache(WebHistoryItem *item)
     [pageCache setObject:[m_webFrame->_private->webFrameView documentView] forKey: WebPageCacheDocumentViewKey];
     return YES;
 }
+
+WebFramePolicyListener *WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
+{
+    ASSERT(!m_policyListener);
+    ASSERT(!m_policyFunction);
+
+    [m_policyListener.get() invalidate];
+
+    WebFramePolicyListener *listener = [[WebFramePolicyListener alloc] initWithWebCoreFrame:core(m_webFrame.get())];
+    m_policyListener = listener;
+    [listener release];
+    m_policyFunction = function;
+
+    return listener;
+}
+
+void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
+{
+    ASSERT(m_policyListener);
+    ASSERT(m_policyFunction);
+
+    FramePolicyFunction function = m_policyFunction;
+
+    m_policyListener = nil;
+    m_policyFunction = 0;
+
+    (core(m_webFrame.get())->loader()->*function)(action);
+}
+
+String WebFrameLoaderClient::userAgent(NSURL *URL)
+{
+    return [getWebView(m_webFrame.get()) userAgentForURL:URL];
+}
+
+@implementation WebFramePolicyListener
+
+- (id)initWithWebCoreFrame:(Frame*)frame
+{
+    self = [self init];
+    if (!self)
+        return nil;
+    frame->ref();
+    m_frame = frame;
+    return self;
+}
+
+- (void)invalidate
+{
+    if (m_frame) {
+        m_frame->deref();
+        m_frame = 0;
+    }
+}
+
+- (void)dealloc
+{
+    if (m_frame)
+        m_frame->deref();
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    if (m_frame)
+        m_frame->deref();
+    [super finalize];
+}
+
+- (void)receivedPolicyDecision:(PolicyAction)action
+{
+    RefPtr<Frame> frame = adoptRef(m_frame);
+    m_frame = 0;
+    static_cast<WebFrameLoaderClient*>(frame->loader()->client())->receivedPolicyDecison(action);
+}
+
+- (void)ignore
+{
+    [self receivedPolicyDecision:PolicyIgnore];
+}
+
+- (void)download
+{
+    [self receivedPolicyDecision:PolicyDownload];
+}
+
+- (void)use
+{
+    [self receivedPolicyDecision:PolicyUse];
+}
+
+- (void)continue
+{
+    [self receivedPolicyDecision:PolicyUse];
+}
+
+@end

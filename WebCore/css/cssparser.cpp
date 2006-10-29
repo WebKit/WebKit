@@ -1238,7 +1238,7 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-#if __APPLE__
+#if PLATFORM(MAC)
     case CSS_PROP__WEBKIT_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
         if (value->unit == Value::Function || id == CSS_VAL_NONE)
             return parseDashboardRegions(propId, important);
@@ -1905,7 +1905,8 @@ failed:
     return false;
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
+
 #define DASHBOARD_REGION_NUM_PARAMETERS  6
 #define DASHBOARD_REGION_SHORT_NUM_PARAMETERS  2
 

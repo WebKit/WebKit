@@ -28,7 +28,7 @@
 
 #import "WebPolicyDelegatePrivate.h"
 
-#import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <objc/objc-runtime.h>
 
 using namespace WebCore;
@@ -46,23 +46,23 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     SEL action;
 }
 
--(id)initWithTarget:(id)target action:(SEL)action;
+- (id)initWithTarget:(id)target action:(SEL)action;
 
 @end
 
 @implementation WebPolicyDecisionListenerPrivate
 
--(id)initWithTarget:(id)t action:(SEL)a
+- (id)initWithTarget:(id)t action:(SEL)a
 {
     self = [super init];
-    if (self != nil) {
-        target = [t retain];
-        action = a;
-    }
+    if (!self)
+        return nil;
+    target = [t retain];
+    action = a;
     return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
     [target release];
     [super dealloc];
@@ -72,12 +72,12 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 @implementation WebPolicyDecisionListener
 
--(id)_initWithTarget:(id)target action:(SEL)action
+- (id)_initWithTarget:(id)target action:(SEL)action
 {
     self = [super init];
-    if (self != nil) {
-        _private = [[WebPolicyDecisionListenerPrivate alloc] initWithTarget:target action:action];
-    }
+    if (!self)
+        return nil;
+    _private = [[WebPolicyDecisionListenerPrivate alloc] initWithTarget:target action:action];
     return self;
 }
 
@@ -87,43 +87,34 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     [super dealloc];
 }
 
-
--(void)_usePolicy:(PolicyAction)policy
+- (void)_usePolicy:(PolicyAction)policy
 {
-    if (_private->target != nil)
+    if (_private->target)
         ((void (*)(id, SEL, PolicyAction))objc_msgSend)(_private->target, _private->action, policy);
 }
 
--(void)_invalidate
+- (void)_invalidate
 {
-    [self retain];
-    [_private->target release];
+    id target = _private->target;
     _private->target = nil;
-    [self release];
+    [target release];
 }
 
 // WebPolicyDecisionListener implementation
 
--(void)use
+- (void)use
 {
     [self _usePolicy:PolicyUse];
 }
 
--(void)ignore
+- (void)ignore
 {
     [self _usePolicy:PolicyIgnore];
 }
 
--(void)download
+- (void)download
 {
     [self _usePolicy:PolicyDownload];
-}
-
-// WebFormSubmissionListener implementation
-
--(void)continue
-{
-    [self _usePolicy:PolicyUse];
 }
 
 @end

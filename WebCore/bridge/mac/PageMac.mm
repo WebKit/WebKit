@@ -32,8 +32,8 @@ namespace WebCore {
 Page::Page(WebCorePageBridge* bridge)
     : m_frameCount(0)
     , m_dragCaretController(0, true)
+    , m_defersLoading(false)
     , m_bridge(bridge)
-
 {
     init();
 }

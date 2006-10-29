@@ -114,14 +114,13 @@ public:
     ~FrameMac();
 
     // FIXME: Merge these and move them into FrameLoader.
-    void loadRequest(const FrameLoadRequest&, bool userGesture, NSEvent* triggeringEvent = 0, Element* submitForm = 0, NSMutableDictionary* formValues = 0);
     virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
-    void openURLFromPageCache(WebCorePageState*);
     virtual void submitForm(const FrameLoadRequest&);
 
-    virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
-    
+    virtual Plugin* createPlugin(Element*, const KURL&,
+        const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
+
     void clear(bool clearWindowProperties = true);
 
     void setBridge(WebCoreFrameBridge* p);

@@ -81,7 +81,7 @@ public:
     CSSPrimitiveValue(unsigned color); // RGB value
     CSSPrimitiveValue(PassRefPtr<Pair>);
 
-#if __APPLE__
+#if PLATFORM(MAC)
     CSSPrimitiveValue(PassRefPtr<DashboardRegion>); // FIXME: Why is dashboard region a primitive value? This makes no sense.
 #endif
 
@@ -134,7 +134,7 @@ public:
         return m_type != CSS_PAIR ? 0 : m_value.pair;
     }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     DashboardRegion *getDashboardRegionValue () const {
         return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region;
     }
@@ -160,7 +160,7 @@ protected:
         RectImpl* rect;
         unsigned rgbcolor;
         Pair* pair;
-#if __APPLE__
+#if PLATFORM(MAC)
         DashboardRegion* region;
 #endif
     } m_value;

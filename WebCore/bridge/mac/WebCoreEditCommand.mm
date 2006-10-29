@@ -37,7 +37,7 @@ using namespace WebCore;
 {
     ASSERT(command);
     [super init];
-    m_command = command.release();
+    m_command = command.releaseRef();
     return self;
 }
 

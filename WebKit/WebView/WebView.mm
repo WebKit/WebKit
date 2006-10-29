@@ -251,8 +251,6 @@ macro(yankAndSelect) \
     NSString *userAgent;
     BOOL userAgentOverridden;
     
-    BOOL defersCallbacks;
-
     WebPreferences *preferences;
     WebCoreSettings *settings;
         
@@ -699,22 +697,6 @@ static bool debugWidget = true;
     [request release];
 }
 
-- (BOOL)defersCallbacks
-{
-    return _private->defersCallbacks;
-}
-
-- (void)setDefersCallbacks:(BOOL)defers
-{
-    if (defers == _private->defersCallbacks)
-        return;
-
-    _private->defersCallbacks = defers;
-    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
-    if (mainFrameLoader)
-        mainFrameLoader->defersCallbacksChanged();
-}
-
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
     id wd = [self UIDelegate];
@@ -856,10 +838,6 @@ static bool debugWidget = true;
 
 - (id<WebFormDelegate>)_formDelegate
 {
-    if (!_private->formDelegate) {
-        // create lazily, to give the client a chance to set one before we bother to alloc the shared one
-        _private->formDelegate = [WebFormDelegate _sharedWebFormDelegate];
-    }
     return _private->formDelegate;
 }
 
@@ -1593,6 +1571,16 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (NSColor *)backgroundColor
 {
     return _private->backgroundColor;
+}
+
+- (BOOL)defersCallbacks
+{
+    return [_private->_pageBridge impl]->defersLoading();
+}
+
+- (void)setDefersCallbacks:(BOOL)defer
+{
+    return [_private->_pageBridge impl]->setDefersLoading(defer);
 }
 
 @end

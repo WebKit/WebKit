@@ -1,3 +1,177 @@
+2006-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminated the use of Objective-C for the policy decider
+          machinery, obviating the need for WebPolicyDecider,
+          WebCoreFrameLoaderAsDelegate, and
+          WebCoreMainResourceLoaderAsPolicyDelegate
+
+        - grouped the state related to policy decisions into a PolicyCheck
+          class to simplify the FrameLoader logic
+
+        - removed six methods from the bridge, reducing FrameLoader's use of
+          the bridge to a single method
+
+        - changed form state to always use HashMap instead of NSDictionary
+
+        - moved the defersLoading flag from WebView to WebCore::Page
+          and changed code to consistently call it defersLoading rather
+          than defersCallbacks
+
+        - updated for rename of PassRefPtr::release to releaseRef
+        - replaced all uses of __APPLE__ with appropriate PLATFORM defines
+        - cleaned up kjs_binding.h a bit
+        - cleaned up FrameMac.h a bit
+
+        * loader/mac/WebPolicyDecider.h: Removed.
+        * loader/mac/WebPolicyDecider.mm: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Updated for removal.
+
+        * WebCore.exp:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        * bindings/js/kjs_binding.h:
+        (KJS::ScriptInterpreter::setCurrentEvent):
+        (KJS::ScriptInterpreter::setInlineCode):
+        (KJS::ScriptInterpreter::setProcessingTimerCallback):
+        (KJS::ScriptInterpreter::getCurrentEvent):
+        (KJS::cacheDOMObject):
+        (KJS::DOMExceptionTranslator::DOMExceptionTranslator):
+        * bridge/AXObjectCache.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::loadRequest):
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::urlSelected):
+        (WebCore::FrameMac::userAgent):
+        (WebCore::FrameMac::passMouseDownEventToWidget):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        * bridge/mac/PageMac.mm:
+        (WebCore::Page::Page):
+        * bridge/mac/WebCoreEditCommand.mm:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::append):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateSelection):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::setFocusNode):
+        * dom/Document.h:
+        * editing/ReplaceSelectionCommand.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        * loader/mac/FrameLoader.h:
+        (WebCore::PolicyCheck::request):
+        * loader/mac/FrameLoader.mm:
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::safeLoad):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::setAllDefersLoading):
+        (WebCore::FrameLoader::setDefersLoading):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::callContinueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::cancelContentPolicyCheck):
+        (WebCore::FrameLoader::stopPolicyCheck):
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueAfterContentPolicy):
+        (WebCore::FrameLoader::continueAfterWillSubmitForm):
+        (WebCore::FrameLoader::callContinueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::closeDocument):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::callContinueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::PolicyCheck::PolicyCheck):
+        (WebCore::PolicyCheck::clear):
+        (WebCore::PolicyCheck::set):
+        (WebCore::PolicyCheck::call):
+        (WebCore::PolicyCheck::dropRequest):
+        (WebCore::FrameLoaderClient::~FrameLoaderClient):
+        * loader/mac/WebFormState.h:
+        * loader/mac/WebFormState.mm:
+        * loader/mac/WebFrameLoaderClient.h:
+        * loader/mac/WebLoader.h:
+        (WebCore::WebResourceLoader::defersLoading):
+        * loader/mac/WebLoader.mm:
+        (WebCore::WebResourceLoader::WebResourceLoader):
+        (WebCore::WebResourceLoader::load):
+        (WebCore::WebResourceLoader::setDefersLoading):
+        * loader/mac/WebMainResourceLoader.h:
+        * loader/mac/WebMainResourceLoader.mm:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::releaseDelegate):
+        (WebCore::MainResourceLoader::didCancel):
+        (WebCore::MainResourceLoader::callContinueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::callContinueAfterContentPolicy):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::load):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setDefersLoading):
+        * page/Page.h:
+        (WebCore::Page::defersLoading):
+        * platform/DeprecatedString.h:
+        * platform/DeprecatedStringList.h:
+        * platform/FontFallbackList.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::setDragImage):
+        (WebCore::ClipboardMac::dragNSImage):
+        (WebCore::ClipboardMac::sourceOperation):
+        (WebCore::ClipboardMac::destinationOperation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition):
+
 2006-10-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

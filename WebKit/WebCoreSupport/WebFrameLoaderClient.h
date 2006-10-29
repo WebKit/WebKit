@@ -26,12 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/RetainPtr.h>
 #import <WebCore/Timer.h>
 #import <WebCore/WebFrameLoaderClient.h>
 #import <wtf/HashMap.h>
 
 @class WebFrame;
+@class WebFramePolicyListener;
 @class WebHistoryItem;
 @class WebResource;
 
@@ -46,6 +48,8 @@ class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient(WebFrame*);
     WebFrame* webFrame() const { return m_webFrame.get(); }
+
+    void receivedPolicyDecison(WebCore::PolicyAction);
 
 private:
     virtual void detachFrameLoader();
@@ -83,6 +87,8 @@ private:
     virtual void resetAfterLoadError(WebCore::LoadErrorResetToken*);
     virtual void doNotResetAfterLoadError(WebCore::LoadErrorResetToken*);
 
+    virtual void willCloseDocument();
+
     virtual void detachedFromParent1();
     virtual void detachedFromParent2();
     virtual void detachedFromParent3();
@@ -119,12 +125,17 @@ private:
     virtual WebCore::Frame* dispatchCreatePage(NSURLRequest *);
     virtual void dispatchShow();
 
-    virtual void dispatchDecidePolicyForMIMEType(WebPolicyDecider *, const WebCore::String& MIMEType, NSURLRequest *);
-    virtual void dispatchDecidePolicyForNewWindowAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *, const WebCore::String& frameName);
-    virtual void dispatchDecidePolicyForNavigationAction(WebPolicyDecider *, NSDictionary *action, NSURLRequest *);
+    virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction,
+        const WebCore::String& MIMEType, NSURLRequest *);
+    virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction,
+        NSDictionary *action, NSURLRequest *, const WebCore::String& frameName);
+    virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction,
+        NSDictionary *action, NSURLRequest *);
+    virtual void cancelPolicyCheck();
+
     virtual void dispatchUnableToImplementPolicy(NSError *);
 
-    virtual void dispatchWillSubmitForm(WebPolicyDecider *, WebCore::Frame* sourceFrame, WebCore::Element* form, NSDictionary *values);
+    virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
 
     virtual void dispatchDidLoadMainResource(WebCore::DocumentLoader*);
     virtual void clearLoadingFromPageCache(WebCore::DocumentLoader*);
@@ -161,9 +172,9 @@ private:
 
     virtual bool shouldFallBack(NSError *);
 
-    virtual NSURL *mainFrameURL();
+    virtual void setDefersLoading(bool);
 
-    virtual void setDefersCallbacks(bool);
+    virtual WebCore::String userAgent(NSURL *);
 
     virtual bool willUseArchive(WebCore::WebResourceLoader*, NSURLRequest *, NSURL *originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::WebResourceLoader*) const;
@@ -177,8 +188,6 @@ private:
 
     virtual NSDictionary *elementForEvent(NSEvent *) const;
 
-    virtual WebPolicyDecider *createPolicyDecider(id object, SEL selector);
-
     virtual void frameLoadCompleted();
     virtual void restoreScrollPositionAndViewState();
     virtual void provisionalLoadStarted();
@@ -187,16 +196,22 @@ private:
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(NSURLRequest *);
-    virtual void setTitle(NSString *title, NSURL *);
+    virtual void setTitle(const WebCore::String& title, NSURL *);
 
     void deliverArchivedResourcesAfterDelay() const;
     bool canUseArchivedResource(NSURLRequest *) const;
     bool canUseArchivedResource(NSURLResponse *) const;
     void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
 
+    WebFramePolicyListener *setUpPolicyListener(WebCore::FramePolicyFunction);
+
     bool createPageCache(WebHistoryItem *);
 
     WebCore::RetainPtr<WebFrame> m_webFrame;
+
+    WebCore::RetainPtr<WebFramePolicyListener> m_policyListener;
+    WebCore::FramePolicyFunction m_policyFunction;
+
     mutable ResourceMap m_pendingArchivedResources;
     mutable WebCore::Timer<WebFrameLoaderClient> m_archivedResourcesDeliveryTimer;
 };

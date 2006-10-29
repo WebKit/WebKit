@@ -117,10 +117,6 @@ DOMRange *kit(WebCore::Range*);
 #endif
 
 - (void)_addPlugInView:(NSView *)plugInView;
-- (void)_removeAllPlugInViews;
-
-// This should be called when leaving a page or closing the WebView
-- (void)_willCloseURL;
 
 - (BOOL)_isMainFrame;
 

@@ -54,8 +54,7 @@ namespace WebCore {
         virtual void cancel(NSError * = nil);
         NSError *cancelledError();
 
-        virtual void setDefersCallbacks(bool);
-        bool defersCallbacks() const;
+        virtual void setDefersLoading(bool);
 
         void setIdentifier(id);
         id identifier() const { return m_identifier.get(); }
@@ -96,6 +95,7 @@ namespace WebCore {
         NSURLRequest *request() const { return m_request.get(); }
         bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
+        bool defersLoading() const { return m_defersLoading; }
 
         RetainPtr<NSURLConnection> m_connection;
 
@@ -110,7 +110,7 @@ namespace WebCore {
         RetainPtr<NSURLResponse> m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
-        bool m_defersCallbacks;
+        bool m_defersLoading;
         RetainPtr<NSURL> m_originalURL;
         RetainPtr<NSMutableData> m_resourceData;
         RetainPtr<WebCoreResourceLoaderAsDelegate> m_delegate;
