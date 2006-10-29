@@ -1,3 +1,14 @@
+2006-10-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Geoff.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11444
+        REGRESSION (r17378): Exception (-[NSCFDictionary setObject:forKey:]: attempt to insert nil value)
+        when submitting a form with an empty uninitialized field
+
+        * fast/forms/submit-nil-value-field-assert-expected.txt: Added.
+        * fast/forms/submit-nil-value-field-assert.html: Added.
+
 2006-10-30  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.
