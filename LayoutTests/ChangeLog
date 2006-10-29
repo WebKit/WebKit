@@ -1,3 +1,15 @@
+2006-10-30  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix fast/block/basic/014.html to pass when Microsoft Office fonts are present.
+
+        * fast/block/basic/014-expected.checksum:
+        * fast/block/basic/014-expected.png:
+        * fast/block/basic/014-expected.txt:
+        * fast/block/basic/014.html: Always use default sans-serif font rather than
+        preferring Microsoft Office fonts.
+
 2006-10-29  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.
