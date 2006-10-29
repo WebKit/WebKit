@@ -1,3 +1,18 @@
+2006-10-29  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Darin.
+
+        Rolled out change to map NULL Strings to nil NSStrings because it caused
+        even more AppKit crashes. Maybe we should remove the NSString * operator
+        entirely, since its use is not straight-forward, and require callers to
+        specify explicitly whether they tolerate NULL.
+        
+        * platform/AtomicString.h:
+        * platform/PlatformString.h:
+        (WebCore::String::operator NSString*):
+        * platform/mac/TextFieldMac.mm:
+        (-[NSSearchFieldCell _addStringToRecentSearches:]):
+
 2006-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
