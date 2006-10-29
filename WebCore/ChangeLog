@@ -1,6 +1,15 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
-        Rubber stamped by Adam Roben.
+        Reviewed by Geoff.
+
+        - fixed storage leak showing up on the buildbot
+
+        * loader/mac/WebSubresourceLoader.mm: (WebCore::SubresourceLoader::create):
+        Release the NSURLRequest after passing it to load. Also clean up logic a bit.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Adam.
 
         - renamed WebFrameLoaderClient to match the class name inside it
 

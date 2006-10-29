@@ -66,14 +66,8 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
     // FIXME: is that really the rule we want for subresources?
     bool hideReferrer;
     fl->canLoad(request.url().getNSURL(), frame->loader()->referrer(), hideReferrer);
-
     if (!hideReferrer && !request.httpReferrer())
         request.setHTTPReferrer(fl->referrer());
-
-    NSDictionary* headerDict = nil;
-    
-    if (!request.httpHeaderFields().isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:request.httpHeaderFields()];
 
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
 
@@ -84,7 +78,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
 
     wkSupportsMultipartXMixedReplace(newRequest);
 
-    [newRequest setAllHTTPHeaderFields:headerDict];
+    if (!request.httpHeaderFields().isEmpty())
+        [newRequest setAllHTTPHeaderFields:
+            [NSDictionary _webcore_dictionaryWithHeaderMap:request.httpHeaderFields()]];
 
     // Use the original request's cache policy for two reasons:
     // 1. For POST requests, we mutate the cache policy for the main resource,
@@ -102,6 +98,8 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
     RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, handle));
     if (!subloader->load(newRequest))
         return 0;
+
+    [newRequest release];
 
     return subloader.release();
 }
