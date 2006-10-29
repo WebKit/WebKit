@@ -1673,14 +1673,14 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
         return MouseEventWithHitTestResults(event, 0, 0, false);
 
     assert(renderer()->isRenderView());
-    HitTestResult renderInfo(point, readonly, active, mouseMove);
-    renderer()->layer()->hitTest(renderInfo);
+    HitTestResult result(point, readonly, active, mouseMove);
+    renderer()->layer()->hitTest(result);
 
     if (!readonly)
         updateRendering();
 
-    bool isOverLink = renderInfo.URLElement() && !renderInfo.URLElement()->getAttribute(hrefAttr).isNull();
-    return MouseEventWithHitTestResults(event, renderInfo.innerNode(), renderInfo.scrollbar(), isOverLink);
+    bool isOverLink = result.URLElement() && !result.URLElement()->getAttribute(hrefAttr).isNull();
+    return MouseEventWithHitTestResults(event, result.innerNode(), result.scrollbar(), isOverLink);
 }
 
 // DOM Section 1.1.1

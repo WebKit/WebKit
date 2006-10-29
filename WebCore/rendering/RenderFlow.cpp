@@ -416,7 +416,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     }
 }
 
-bool RenderFlow::hitTestLines(HitTestResult& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderFlow::hitTestLines(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -441,9 +441,9 @@ bool RenderFlow::hitTestLines(HitTestResult& i, int x, int y, int tx, int ty, Hi
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevFlowBox()) {
         if (y >= ty + curr->root()->topOverflow() && y < ty + curr->root()->bottomOverflow()) {
-            bool inside = curr->nodeAtPoint(i, x, y, tx, ty);
+            bool inside = curr->nodeAtPoint(result, x, y, tx, ty);
             if (inside) {
-                setInnerNode(i);
+                setInnerNode(result);
                 return true;
             }
         }

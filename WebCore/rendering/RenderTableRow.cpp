@@ -138,7 +138,7 @@ IntRect RenderTableRow::getAbsoluteRepaintRect()
 }
 
 // Hit Testing
-bool RenderTableRow::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderTableRow::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
@@ -147,8 +147,8 @@ bool RenderTableRow::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int 
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(info, x, y, tx, ty, action)) {
-            setInnerNode(info);
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(result, x, y, tx, ty, action)) {
+            setInnerNode(result);
             return true;
         }
     }

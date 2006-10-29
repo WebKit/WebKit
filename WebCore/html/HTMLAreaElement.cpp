@@ -69,7 +69,7 @@ void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLAnchorElement::parseMappedAttribute(attr);
 }
 
-bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& info)
+bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
 {
     if (m_lastSize != size) {
         region = getRegion(size);
@@ -79,8 +79,8 @@ bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRe
     if (!region.contains(IntPoint(x, y)))
         return false;
     
-    info.setInnerNode(this);
-    info.setURLElement(this);
+    result.setInnerNode(this);
+    result.setURLElement(this);
     return true;
 }
 

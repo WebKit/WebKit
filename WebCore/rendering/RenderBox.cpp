@@ -254,7 +254,7 @@ int RenderBox::calcContentBoxHeight(int h) const
 }
 
 // Hit Testing
-bool RenderBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
 {
     tx += m_x;
     ty += m_y;
@@ -265,8 +265,8 @@ bool RenderBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, H
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(info, x, y, tx, ty, action)) {
-            setInnerNode(info);
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(result, x, y, tx, ty, action)) {
+            setInnerNode(result);
             return true;
         }
     }
@@ -274,7 +274,7 @@ bool RenderBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, H
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
     if (action == HitTestForeground && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
-        setInnerNode(info);
+        setInnerNode(result);
         return true;
     }
 

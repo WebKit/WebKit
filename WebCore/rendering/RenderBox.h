@@ -42,8 +42,8 @@ public:
     virtual const char* renderName() const { return "RenderBox"; }
 
     virtual void setStyle(RenderStyle*);
-    virtual void paint(PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(HitTestResult& i, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
+    virtual void paint(PaintInfo&, int _tx, int _ty);
+    virtual bool nodeAtPoint(HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
     virtual void destroy();
     

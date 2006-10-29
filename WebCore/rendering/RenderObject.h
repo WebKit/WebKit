@@ -500,10 +500,9 @@ public:
         RepaintInfo(RenderObject* o, const IntRect& r) :m_object(o), m_repaintRect(r) {}
     };
     
-    bool hitTest(HitTestResult& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
-    virtual bool nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction);
-    void setInnerNode(HitTestResult& info);
+    bool hitTest(HitTestResult&, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    void setInnerNode(HitTestResult&);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     VisiblePosition positionForPoint(const IntPoint& point) { return positionForCoordinates(point.x(), point.y()); }

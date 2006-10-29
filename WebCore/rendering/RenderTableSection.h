@@ -111,7 +111,7 @@ public:
 
     virtual RenderObject* removeChildNode(RenderObject* child);
 
-    virtual bool nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty, HitTestAction action);
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     // this gets a cell grid data structure. changing the number of
     // columns is done by the table

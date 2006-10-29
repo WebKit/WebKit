@@ -220,14 +220,14 @@ bool InlineTextBox::isLineBreak() const
     return object()->isBR() || (object()->style()->preserveNewline() && len() == 1 && (*textObject()->string())[start()] == '\n');
 }
 
-bool InlineTextBox::nodeAtPoint(HitTestResult& i, int x, int y, int tx, int ty)
+bool InlineTextBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty)
 {
     if (isLineBreak())
         return false;
 
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
     if (m_truncation != cFullTruncation && object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
-        object()->setInnerNode(i);
+        object()->setInnerNode(result);
         return true;
     }
     return false;

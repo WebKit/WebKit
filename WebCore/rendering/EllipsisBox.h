@@ -38,8 +38,8 @@ public:
     {
     }
     
-    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty);
+    virtual void paint(RenderObject::PaintInfo&, int _tx, int _ty);
+    virtual bool nodeAtPoint(HitTestResult&, int _x, int _y, int _tx, int _ty);
 
 private:
     AtomicString m_str;

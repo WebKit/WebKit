@@ -283,7 +283,7 @@ RenderPath::PointerEventsHitRules RenderPath::pointerEventsHitRules()
     return hitRules;
 }
 
-bool RenderPath::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderPath::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
@@ -295,7 +295,7 @@ bool RenderPath::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _
         FloatPoint hitPoint(_x,_y);
         if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
-            setInnerNode(info);
+            setInnerNode(result);
             return true;
         }
     }

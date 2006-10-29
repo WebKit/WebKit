@@ -75,8 +75,8 @@ public:
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
     
-    void paintLines(PaintInfo& i, int _tx, int _ty);
-    bool hitTestLines(HitTestResult& i, int x, int y, int tx, int ty, HitTestAction hitTestAction);
+    void paintLines(PaintInfo&, int _tx, int _ty);
+    bool hitTestLines(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     virtual IntRect getAbsoluteRepaintRect();
     

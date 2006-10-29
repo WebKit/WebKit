@@ -52,7 +52,7 @@ bool HTMLMapElement::checkDTD(const Node* newChild)
     return newChild->hasTagName(areaTag) || newChild->hasTagName(scriptTag) || inBlockTagList(newChild);
 }
 
-bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& info)
+bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
 {
     HTMLAreaElement* defaultArea = 0;
     Node *node = this;
@@ -62,14 +62,14 @@ bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRes
             if (areaElt->isDefault()) {
                 if (!defaultArea)
                     defaultArea = areaElt;
-            } else if (areaElt->mapMouseEvent(x, y, size, info))
+            } else if (areaElt->mapMouseEvent(x, y, size, result))
                 return true;
         }
     }
     
     if (defaultArea) {
-        info.setInnerNode(defaultArea);
-        info.setURLElement(defaultArea);
+        result.setInnerNode(defaultArea);
+        result.setURLElement(defaultArea);
     }
     return defaultArea;
 }

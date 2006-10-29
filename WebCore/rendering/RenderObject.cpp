@@ -2534,32 +2534,32 @@ void RenderObject::updateDragState(bool dragOn)
         continuation()->updateDragState(dragOn);
 }
 
-bool RenderObject::hitTest(HitTestResult& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter)
+bool RenderObject::hitTest(HitTestResult& result, int x, int y, int tx, int ty, HitTestFilter hitTestFilter)
 {
     bool inside = false;
     if (hitTestFilter != HitTestSelf) {
         // First test the foreground layer (lines and inlines).
-        inside = nodeAtPoint(info, x, y, tx, ty, HitTestForeground);
+        inside = nodeAtPoint(result, x, y, tx, ty, HitTestForeground);
         
         // Test floats next.
         if (!inside)
-            inside = nodeAtPoint(info, x, y, tx, ty, HitTestFloat);
+            inside = nodeAtPoint(result, x, y, tx, ty, HitTestFloat);
 
         // Finally test to see if the mouse is in the background (within a child block's background).
         if (!inside)
-            inside = nodeAtPoint(info, x, y, tx, ty, HitTestChildBlockBackgrounds);
+            inside = nodeAtPoint(result, x, y, tx, ty, HitTestChildBlockBackgrounds);
     }
     
     // See if the mouse is inside us but not any of our descendants
     if (hitTestFilter != HitTestDescendants && !inside)
-        inside = nodeAtPoint(info, x, y, tx, ty, HitTestBlockBackground);
+        inside = nodeAtPoint(result, x, y, tx, ty, HitTestBlockBackground);
         
     return inside;
 }
 
-void RenderObject::setInnerNode(HitTestResult& info)
+void RenderObject::setInnerNode(HitTestResult& result)
 {
-    if (info.innerNode())
+    if (result.innerNode())
         return;
 
     Node* node = element();
@@ -2572,13 +2572,13 @@ void RenderObject::setInnerNode(HitTestResult& info)
         node = continuation()->element();
          
     if (node) {
-        info.setInnerNode(node);
-        if (!info.innerNonSharedNode())
-            info.setInnerNonSharedNode(node);
+        result.setInnerNode(node);
+        if (!result.innerNonSharedNode())
+            result.setInnerNonSharedNode(node);
     }
 }
 
-bool RenderObject::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
+bool RenderObject::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty,
                                HitTestAction hitTestAction)
 {
     return false;

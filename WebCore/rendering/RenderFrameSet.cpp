@@ -75,17 +75,17 @@ RenderFrameSet::~RenderFrameSet()
       delete [] m_vSplitVar;
 }
 
-bool RenderFrameSet::nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
+bool RenderFrameSet::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty,
                                  HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)
         return false;
 
-    bool inside = RenderContainer::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction) || 
+    bool inside = RenderContainer::nodeAtPoint(result, _x, _y, _tx, _ty, hitTestAction) || 
                   m_resizing || canResize(_x, _y);
-    if (inside && element() && !element()->noResize() && !info.readonly() && !info.innerNode()) {
-        info.setInnerNode(element());
-        info.setInnerNonSharedNode(element());
+    if (inside && element() && !element()->noResize() && !result.readonly() && !result.innerNode()) {
+        result.setInnerNode(element());
+        result.setInnerNonSharedNode(element());
     }
 
     return inside || m_clientResizing;

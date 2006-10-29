@@ -523,12 +523,12 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     }
 }
 
-bool InlineFlowBox::nodeAtPoint(HitTestResult& i, int x, int y, int tx, int ty)
+bool InlineFlowBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty)
 {
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if (!curr->object()->layer() && curr->nodeAtPoint(i, x, y, tx, ty)) {
-            object()->setInnerNode(i);
+        if (!curr->object()->layer() && curr->nodeAtPoint(result, x, y, tx, ty)) {
+            object()->setInnerNode(result);
             return true;
         }
     }
@@ -536,7 +536,7 @@ bool InlineFlowBox::nodeAtPoint(HitTestResult& i, int x, int y, int tx, int ty)
     // Now check ourselves.
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
     if (object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
-        object()->setInnerNode(i);
+        object()->setInnerNode(result);
         return true;
     }
     

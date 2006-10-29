@@ -61,7 +61,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     }
 }
 
-bool EllipsisBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty)
+bool EllipsisBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty)
 {
     tx += m_x;
     ty += m_y;
@@ -70,14 +70,14 @@ bool EllipsisBox::nodeAtPoint(HitTestResult& info, int x, int y, int tx, int ty)
     if (m_markupBox) {
         int mtx = tx + m_width - m_markupBox->xPos();
         int mty = ty + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
-        if (m_markupBox->nodeAtPoint(info, x, y, mtx, mty)) {
-            object()->setInnerNode(info);
+        if (m_markupBox->nodeAtPoint(result, x, y, mtx, mty)) {
+            object()->setInnerNode(result);
             return true;
         }
     }
 
     if (object()->style()->visibility() == VISIBLE && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
-        object()->setInnerNode(info);
+        object()->setInnerNode(result);
         return true;
     }
 

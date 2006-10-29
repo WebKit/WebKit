@@ -57,10 +57,9 @@ public:
 
     virtual void layout() {} // Do nothing for layout()
     
-    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
-    virtual bool nodeAtPoint(HitTestResult& info, int _x, int _y, int _tx, int _ty,
-                             HitTestAction hitTestAction);
+    virtual bool nodeAtPoint(HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
     
     virtual void calcMinMaxWidth();
 

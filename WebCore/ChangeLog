@@ -1,3 +1,76 @@
+2006-10-29  Beth Dakin  <bdakin@apple.com>
+
+        Rubber stamped by Geoff.
+
+        This is a followup to my HitTestResult checkin. Most of the 
+        HitTestResult local variables in the code were named i or info for 
+        when the class was named NodeInfo. This patch renames all of these 
+        local variables to result.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::mapMouseEvent):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInScrollbar):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::hitTestLines):
+        * rendering/RenderFlow.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::nodeAtPoint):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateHoverActiveState):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        (WebCore::RenderObject::setInnerNode):
+        (WebCore::RenderObject::nodeAtPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::nodeAtPoint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+
 2006-10-29  Adam Roben  <aroben@apple.com>
 
         More semi-fixes.
