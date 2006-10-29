@@ -15,6 +15,11 @@
           (the code in this framework was actually using the NSArray to hold a single
            NSData anyway, so I just went back to an NSData for now)
 
+        - also fixed http://bugs.webkit.org/show_bug.cgi?id=11444
+          REGRESSION (r17378): Exception (-[NSCFDictionary setObject:forKey:]:
+          attempt to insert nil value) when submitting a form with an empty
+          uninitialized field
+
         * History/WebHistoryItem.m:
         (-[WebHistoryItem _setFormInfoFromRequest:]):
         (-[WebHistoryItem formData]):
