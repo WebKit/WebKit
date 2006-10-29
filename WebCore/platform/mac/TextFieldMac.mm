@@ -135,7 +135,7 @@ void TextField::setText(const String& s)
 {
     NSTextField *textField = (NSTextField *)getView();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [textField setStringValue:s;
+    [textField setStringValue:s];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

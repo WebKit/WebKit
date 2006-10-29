@@ -159,7 +159,7 @@ public:
     
     // This conversion maps NULL to "", which loses the meaning of NULL, but we 
     // need this mapping because AppKit crashes when passed nil NSStrings.
-    operator NSString*() const { if (!m_impl) return ""; return *m_impl; }
+    operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
 #endif
 
 #if PLATFORM(QT)
