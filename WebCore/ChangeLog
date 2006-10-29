@@ -1,3 +1,13 @@
+2006-10-29  Adam Roben  <aroben@apple.com>
+
+        Build semi-fix.
+
+        Move all FrameLoader-related code in Page.{cpp,h} within #if
+        PLATFORM(MAC), since this class currently only exists on Mac.
+
+        * page/Page.cpp:
+        * page/Page.h:
+
 2006-10-29  Geoffrey Garen  <ggaren@apple.com>
 
         build fix.

@@ -22,13 +22,16 @@
 #include "Page.h"
 
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "StringHash.h"
 #include "Widget.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
 #include <wtf/HashMap.h>
+
+#if PLATFORM(MAC)
+#include "FrameLoader.h"
+#endif
 
 using namespace KJS;
 
