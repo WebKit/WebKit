@@ -1,5 +1,13 @@
 2006-10-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled out accidental commit.
+        
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::AtomicString):
+        (WebCore::AtomicString::operator NSString*):
+
+2006-10-29  Geoffrey Garen  <ggaren@apple.com>
+
         RS by Darin.
 
         Rolled out change to map NULL Strings to nil NSStrings because it caused

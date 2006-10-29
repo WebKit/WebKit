@@ -78,6 +78,11 @@ public:
 
     static void remove(StringImpl*);
     
+#ifdef __OBJC__
+    AtomicString(NSString* s) : m_string(add(String(s).impl())) { }
+    operator NSString*() const { return m_string; }
+#endif
+
     AtomicString(const DeprecatedString&);
     DeprecatedString deprecatedString() const;
 
