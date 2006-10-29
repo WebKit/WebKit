@@ -1,3 +1,29 @@
+2006-10-29  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Adam.
+
+        - moving towards use of FrameLoader cross-platform; move the headers
+          for the Mac loader from loader/mac into loader, in preparation for
+          making them useful on non-Mac
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * loader/mac/FrameLoader.h: Removed.
+        * loader/mac/WebDocumentLoader.h: Removed.
+        * loader/mac/WebFormState.h: Removed.
+        * loader/mac/WebLoader.h: Removed.
+        * loader/mac/WebMainResourceLoader.h: Removed.
+        * loader/mac/WebNetscapePlugInStreamLoader.h: Removed.
+        * loader/mac/WebSubresourceLoader.h: Removed.
+
+        * loader/FrameLoader.h: Added.
+        * loader/WebDocumentLoader.h: Added.
+        * loader/WebFormState.h: Added.
+        * loader/WebLoader.h: Added.
+        * loader/WebMainResourceLoader.h: Added.
+        * loader/WebNetscapePlugInStreamLoader.h: Added.
+        * loader/WebSubresourceLoader.h: Added.
+
 2006-10-29  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.
