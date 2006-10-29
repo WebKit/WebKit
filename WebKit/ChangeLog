@@ -1,5 +1,14 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Adam Roben.
+
+        - renamed WebCore's WebFrameLoaderClient to match the class name inside it
+
+        * WebCoreSupport/WebFrameBridge.mm: Update include.
+        * WebCoreSupport/WebFrameLoaderClient.h: Ditto.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - eliminate use of NSArray to carry form data around

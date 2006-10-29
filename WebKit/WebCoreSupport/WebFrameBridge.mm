@@ -76,6 +76,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/Page.h>
@@ -83,7 +84,6 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebDocumentLoader.h>
 #import <WebCore/WebFormDataStream.h>
-#import <WebCore/WebFrameLoaderClient.h>
 #import <WebCore/WebLoader.h>
 #import <WebCore/WebSubresourceLoader.h>
 #import <WebKitSystemInterface.h>

@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/RetainPtr.h>
 #import <WebCore/Timer.h>
-#import <WebCore/WebFrameLoaderClient.h>
 #import <wtf/HashMap.h>
 
 @class WebFrame;

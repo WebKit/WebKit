@@ -1,5 +1,21 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Adam Roben.
+
+        - renamed WebFrameLoaderClient to match the class name inside it
+
+        * loader/mac/WebFrameLoaderClient.h: Removed.
+        * loader/FrameLoaderClient.h: Moved it here.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated project.
+
+        * bridge/mac/FrameMac.mm: Updated includes.
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto.
+        * loader/mac/FrameLoader.mm: Ditto.
+        * loader/mac/WebLoader.h: Ditto.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix crash visible on buildbot and also when running the test

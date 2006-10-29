@@ -31,24 +31,24 @@
 #include <wtf/RefPtr.h>
 
 #ifdef __OBJC__
+@class NSCachedURLResponse;
 @class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
 @class WebCoreResourceLoaderAsDelegate;
-@class NSCachedURLResponse;
 #else
+class NSCachedURLResponse;
 class NSError;
+class NSMutableData;
+class NSObject;
 class NSURLAuthenticationChallenge;
 class NSURLConnection;
+class NSURLCredential;
 class NSURLRequest;
 class NSURLResponse;
 class WebCoreResourceLoaderAsDelegate;
-class NSCachedURLResponse;
-class NSObject;
-class NSURLCredential;
-class NSMutableData;
 typedef NSObject* id;
 #endif
 
