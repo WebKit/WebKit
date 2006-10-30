@@ -67,7 +67,7 @@
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/WebFormState.h>
+#import <WebCore/FormState.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>

@@ -1,5 +1,12 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        - update for the WebCore rename
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrame.mm:
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         - update for the WebCore renames
 
         * Plugins/WebNetscapePluginStream.mm:

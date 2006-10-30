@@ -1,5 +1,26 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        - one last name change -- WebFormState.h to FormState.h
+        - added more empty placeholder platform-independent files
+          for currently-Mac-specific loader classes
+
+        * loader/FormState.cpp: Updated include.
+        * loader/FrameLoader.cpp: Updated include.
+        * loader/mac/FrameLoaderMac.mm: Updated include.
+
+        * loader/WebFormState.h: Removed.
+        * loader/FormState.h: Added.
+
+        * loader/DocumentLoader.cpp: Added.
+        * loader/MainResourceLoader.cpp: Added.
+        * loader/NetscapePlugInStreamLoader.cpp: Added.
+        * loader/ResourceLoader.cpp: Added.
+        * loader/SubresourceLoader.cpp: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for changes above.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         - did the do-webcore-rename renames, including a number of changes
           to the names of loader files (and WebResourceLoader -> ResourceLoader),
           jScript() to scriptProxy(), jScriptEnabled() to javaScriptEnabled(),

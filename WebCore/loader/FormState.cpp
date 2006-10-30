@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebFormState.h"
+#import "FormState.h"
 
 #import "Element.h"
 #import "Frame.h"

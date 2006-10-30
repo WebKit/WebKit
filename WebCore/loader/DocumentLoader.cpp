@@ -26,54 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FrameLoader.h"
-
-#import "Element.h"
-#import "Frame.h"
-#import "FrameLoaderClient.h"
-#import "DocumentLoader.h"
-#import "FormState.h"
-#import "MainResourceLoader.h"
+#include "config.h"
+#include "DocumentLoader.h"
 
 namespace WebCore {
-
-FrameLoader::FrameLoader(Frame* frame)
-    : m_frame(frame)
-    , m_client(0)
-    , m_state(FrameStateCommittedPage)
-    , m_loadType(FrameLoadTypeStandard)
-    , m_delegateIsHandlingProvisionalLoadError(false)
-    , m_delegateIsDecidingNavigationPolicy(false)
-    , m_delegateIsHandlingUnimplementablePolicy(false)
-    , m_firstLayoutDone(false)
-    , m_quickRedirectComing(false)
-    , m_sentRedirectNotification(false)
-    , m_isStoppingLoad(false)
-{
-}
-
-FrameLoader::~FrameLoader()
-{
-    if (m_client)
-        m_client->detachFrameLoader();
-}
-
-static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
-{
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->setDefersLoading(defers);
-}
-
-void FrameLoader::setDefersLoading(bool defers)
-{
-    if (m_mainResourceLoader)
-        m_mainResourceLoader->setDefersLoading(defers);
-    setAllDefersLoading(m_subresourceLoaders, defers);
-    setAllDefersLoading(m_plugInStreamLoaders, defers);
-    m_client->setDefersLoading(defers);
-}
 
 }

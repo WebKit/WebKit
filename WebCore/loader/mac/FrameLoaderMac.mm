@@ -50,7 +50,7 @@
 #import "WebDataProtocol.h"
 #import "DocumentLoader.h"
 #import "FormDataStream.h"
-#import "WebFormState.h"
+#import "FormState.h"
 #import "MainResourceLoader.h"
 #import "SubresourceLoader.h"
 #import <kjs/JSLock.h>
