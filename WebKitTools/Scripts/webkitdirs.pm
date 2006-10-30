@@ -57,15 +57,21 @@ sub determineSourceDir
 {
     return if $sourceDir;
     $sourceDir = $FindBin::Bin;
-    if ($sourceDir !~ s|/[^/]+/[^/]+$||) {
-        die "Could not find two levels above source directory using FindBin.\n";
+    
+    # walks up path checking each directory to see if it is the main WebKit project dir, 
+    # defined by containing JavaScriptCore, WebCore, and WebKit
+    until (-d "$sourceDir/JavaScriptCore" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit")
+    {
+        if ($sourceDir !~ s|/[^/]+$||) {
+            die "Could not find top level webkit directory above source directory using FindBin.\n";
+        }
     }
 }
 
 # used for scripts which are stored in a non-standard location
 sub setSourceDir($)
 {
-    $sourceDir = $_;
+    ($sourceDir) = @_;
 }
 
 sub determineBaseProductDir

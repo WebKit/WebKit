@@ -1,3 +1,14 @@
+2006-10-30  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin.
+        
+        Change Makefiles to return non-zero when module make fails.
+        Fix bug where if xcode options are not set, modules can build in the
+        wrong directory.
+
+        * Makefile:
+        * Scripts/webkitdirs.pm:
+
 2006-10-30  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Tim H.
