@@ -1,5 +1,27 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Adam (kinda).
+
+        - add Mac suffixes and correct filenames inside loader/mac
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for changes below.
+
+        * loader/mac/FrameLoader.mm: Removed.
+        * loader/mac/WebDocumentLoader.mm: Removed.
+        * loader/mac/WebLoader.mm: Removed.
+        * loader/mac/WebMainResourceLoader.mm: Removed.
+        * loader/mac/WebNetscapePlugInStreamLoader.mm: Removed.
+        * loader/mac/WebSubresourceLoader.mm: Removed.
+
+        * loader/mac/FrameLoaderMac.mm: Added.
+        * loader/mac/DocumentLoaderMac.mm: Added.
+        * loader/mac/ResourceLoaderMac.mm: Added.
+        * loader/mac/MainResourceLoaderMac.mm: Added.
+        * loader/mac/WebNetscapePlugInStreamLoaderMac.mm: Added.
+        * loader/mac/SubresourceLoaderMac.mm: Removed.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam.
 
         - moving towards use of FrameLoader cross-platform; get FrameLoader.h
