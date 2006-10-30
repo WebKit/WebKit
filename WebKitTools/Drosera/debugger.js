@@ -1258,4 +1258,6 @@ function showConsoleWindow()
 {
     if (!consoleWindow)
         consoleWindow = window.open("console.html", "console", "top=200, left=200, width=500, height=300, toolbar=yes, resizable=yes");
+    else
+        consoleWindow.focus();
 }

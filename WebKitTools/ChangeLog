@@ -1,3 +1,18 @@
+2006-10-30  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=10468
+        [Drosera] The Console toolbar button should bring the console window to the front.
+
+        The console now gets focus when its activated but already open.  Command + L also
+        now activates/focuses the console.
+
+        * Drosera/English.lproj/MainMenu.nib/classes.nib:
+        * Drosera/English.lproj/MainMenu.nib/info.nib:
+        * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib:
+        * Drosera/debugger.js:
+
 2006-10-29  Darin Adler  <darin@apple.com>
 
         * Scripts/do-file-rename: Renames done, ready for the next round.

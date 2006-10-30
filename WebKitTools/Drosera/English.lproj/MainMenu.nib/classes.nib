@@ -8,7 +8,7 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {myAction = id; stepInto = id; stepOut = id; stepOver = id; }; 
+            ACTIONS = {myAction = id; showConsole = id; stepInto = id; stepOut = id; stepOver = id; }; 
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 
             SUPERCLASS = NSObject; 
