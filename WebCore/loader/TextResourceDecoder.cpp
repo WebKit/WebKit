@@ -23,14 +23,14 @@
 
 
 #include "config.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 
 #include "CString.h"
 #include "DOMImplementation.h"
 #include "DeprecatedCString.h"
 #include "DeprecatedString.h"
 #include "HTMLNames.h"
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 
 namespace WebCore {
 
@@ -245,7 +245,7 @@ breakBreak:
     return (code);
 }
 
-Decoder::ContentType Decoder::determineContentType(const String& mimeType)
+TextResourceDecoder::ContentType TextResourceDecoder::determineContentType(const String& mimeType)
 {
     if (equalIgnoringCase(mimeType, "text/css"))
         return CSS;
@@ -256,7 +256,7 @@ Decoder::ContentType Decoder::determineContentType(const String& mimeType)
     return PlainText;
 }
 
-const TextEncoding& Decoder::defaultEncoding(ContentType contentType, const TextEncoding& specifiedDefaultEncoding)
+const TextEncoding& TextResourceDecoder::defaultEncoding(ContentType contentType, const TextEncoding& specifiedDefaultEncoding)
 {
     // Despite 8.5 "Text/xml with Omitted Charset" of RFC 3023, we assume UTF-8 instead of US-ASCII 
     // for text/xml. This matches Firefox.
@@ -267,7 +267,7 @@ const TextEncoding& Decoder::defaultEncoding(ContentType contentType, const Text
     return specifiedDefaultEncoding;
 }
 
-Decoder::Decoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding)
+TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding)
     : m_contentType(determineContentType(mimeType))
     , m_decoder(defaultEncoding(m_contentType, specifiedDefaultEncoding))
     , m_source(DefaultEncoding)
@@ -277,11 +277,11 @@ Decoder::Decoder(const String& mimeType, const TextEncoding& specifiedDefaultEnc
 {
 }
 
-Decoder::~Decoder()
+TextResourceDecoder::~TextResourceDecoder()
 {
 }
 
-void Decoder::setEncoding(const TextEncoding& encoding, EncodingSource source)
+void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSource source)
 {
     // In case the encoding didn't exist, we keep the old one (helps some sites specifying invalid encodings).
     if (!encoding.isValid())
@@ -344,7 +344,7 @@ static inline bool skipWhitespace(const char*& pos, const char* dataEnd)
     return pos != dataEnd;
 }
 
-void Decoder::checkForBOM(const char* data, size_t len)
+void TextResourceDecoder::checkForBOM(const char* data, size_t len)
 {
     // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
 
@@ -379,7 +379,7 @@ void Decoder::checkForBOM(const char* data, size_t len)
         setEncoding(UTF8Encoding(), AutoDetectedEncoding);
 }
 
-bool Decoder::checkForCSSCharset(const char* data, size_t len, bool& movedDataToBuffer)
+bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
     if (m_source != DefaultEncoding) {
         m_checkedForCSSCharset = true;
@@ -458,7 +458,7 @@ static inline void skipComment(const char*& ptr, const char* pEnd)
     ptr = p;
 }
 
-bool Decoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
+bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
     if (m_source != DefaultEncoding) {
         m_checkedForHeadCharset = true;
@@ -605,7 +605,7 @@ bool Decoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataT
     return false;
 }
 
-void Decoder::detectJapaneseEncoding(const char* data, size_t len)
+void TextResourceDecoder::detectJapaneseEncoding(const char* data, size_t len)
 {
     switch (KanjiCode::judge(data, len)) {
         case KanjiCode::JIS:
@@ -624,7 +624,7 @@ void Decoder::detectJapaneseEncoding(const char* data, size_t len)
     }
 }
 
-String Decoder::decode(const char* data, size_t len)
+String TextResourceDecoder::decode(const char* data, size_t len)
 {
     if (!m_checkedForBOM)
         checkForBOM(data, len);
@@ -660,7 +660,7 @@ String Decoder::decode(const char* data, size_t len)
     return result;
 }
 
-String Decoder::flush()
+String TextResourceDecoder::flush()
 {
     String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), true);
     m_buffer.resize(0);

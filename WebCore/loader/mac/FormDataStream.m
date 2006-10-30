@@ -29,7 +29,7 @@
 /* originally written by Becky Willrich, additional code by Darin Adler */
 
 #import "config.h"
-#import "WebFormDataStream.h"
+#import "FormDataStream.h"
 
 #import "CString.h"
 #import "FormData.h"

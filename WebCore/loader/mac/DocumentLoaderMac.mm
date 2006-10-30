@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebDocumentLoader.h"
+#import "DocumentLoader.h"
 
 #import "Document.h"
 #import "FrameLoader.h"

@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StreamingTextDecoderMac_H
-#define StreamingTextDecoderMac_H
+#ifndef TextCodecMac_h
+#define TextCodecMac_h
 
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 #include <CoreServices/CoreServices.h>
 
 namespace WebCore {
@@ -63,4 +63,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // StreamingTextDecoderMac_H
+#endif // TextCodecMac_h

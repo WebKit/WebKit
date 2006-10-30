@@ -155,7 +155,7 @@ void raiseDOMException(ExceptionCode ec)
 
     // Dig up Interpreter and ExecState.
     WebCore::Frame *frame = nodeImpl->document()->frame();
-    KJS::Interpreter *interpreter = frame->jScript()->interpreter();
+    KJS::Interpreter *interpreter = frame->scriptProxy()->interpreter();
     KJS::ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.

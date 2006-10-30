@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 
 #include "PlatformString.h"
 

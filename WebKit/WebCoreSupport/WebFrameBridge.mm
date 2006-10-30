@@ -82,10 +82,10 @@
 #import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebCore/WebCoreSettings.h>
-#import <WebCore/WebDocumentLoader.h>
-#import <WebCore/WebFormDataStream.h>
-#import <WebCore/WebLoader.h>
-#import <WebCore/WebSubresourceLoader.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/FormDataStream.h>
+#import <WebCore/ResourceLoader.h>
+#import <WebCore/SubresourceLoader.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 

@@ -163,7 +163,7 @@ void HTMLScriptElement::evaluateScript(const String& URL, const String& script)
     
     Frame* frame = document()->frame();
     if (frame) {
-        KJSProxy* proxy = frame->jScript();
+        KJSProxy* proxy = frame->scriptProxy();
         if (proxy) {
             m_evaluated = true;
             proxy->evaluate(URL, 0, script, 0);

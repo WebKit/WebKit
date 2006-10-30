@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebNetscapePlugInStreamLoader.h"
+#import "NetscapePlugInStreamLoader.h"
 
 #import "FrameLoader.h"
 #import <wtf/PassRefPtr.h>
@@ -35,7 +35,7 @@
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, id <WebPlugInStreamLoaderDelegate> stream)
-    : WebResourceLoader(frame)
+    : ResourceLoader(frame)
     , m_stream(stream)
 {
 }
@@ -57,7 +57,7 @@ bool NetscapePlugInStreamLoader::isDone() const
 void NetscapePlugInStreamLoader::releaseResources()
 {
     m_stream = nil;
-    WebResourceLoader::releaseResources();
+    ResourceLoader::releaseResources();
 }
 
 void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
@@ -72,7 +72,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
     // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
     if (!m_stream)
         return;
-    WebResourceLoader::didReceiveResponse(theResponse);
+    ResourceLoader::didReceiveResponse(theResponse);
     if (!m_stream)
         return;
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
@@ -90,7 +90,7 @@ void NetscapePlugInStreamLoader::didReceiveData(NSData *data, long long lengthRe
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
     [m_stream.get() receivedData:data];
-    WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
 void NetscapePlugInStreamLoader::didFinishLoading()
@@ -100,7 +100,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
 
     frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() finishedLoadingWithData:resourceData()];
-    WebResourceLoader::didFinishLoading();
+    ResourceLoader::didFinishLoading();
 }
 
 void NetscapePlugInStreamLoader::didFail(NSError *error)
@@ -112,7 +112,7 @@ void NetscapePlugInStreamLoader::didFail(NSError *error)
 
     frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
-    WebResourceLoader::didFail(error);
+    ResourceLoader::didFail(error);
 }
 
 void NetscapePlugInStreamLoader::didCancel(NSError *error)
@@ -122,7 +122,7 @@ void NetscapePlugInStreamLoader::didCancel(NSError *error)
 
     frameLoader()->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
-    WebResourceLoader::didCancel(error);
+    ResourceLoader::didCancel(error);
 }
 
 }

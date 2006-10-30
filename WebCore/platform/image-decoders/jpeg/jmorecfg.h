@@ -322,7 +322,7 @@ typedef unsigned char boolean;
  */
 #undef  INPUT_SMOOTHING_SUPPORTED   /* Input image smoothing option? */
 
-/* Decoder capability options: */
+/* TextResourceDecoder capability options: */
 
 #undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */

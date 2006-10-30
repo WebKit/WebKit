@@ -24,36 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StreamingTextDecoder_h
-#define StreamingTextDecoder_h
+#ifndef TextCodecICU_h
+#define TextCodecICU_h
 
-#include "UChar.h"
-#include <memory>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
+#include "TextCodec.h"
+#include "TextEncoding.h"
+
+typedef struct UConverter UConverter;
 
 namespace WebCore {
 
-    class CString;
-    class String;
-    class TextEncoding;
-
-    class TextCodec : Noncopyable {
+    class TextCodecICU : public TextCodec {
     public:
-        virtual ~TextCodec();
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
 
-        virtual String decode(const char*, size_t length, bool flush = false) = 0;
-        virtual CString encode(const UChar*, size_t length, bool allowEntities = false) = 0;
+        TextCodecICU(const TextEncoding&);
+        virtual ~TextCodecICU();
 
-    protected:
-        static void appendOmittingBOM(Vector<UChar>&, const UChar*, size_t length);
+        virtual String decode(const char*, size_t length, bool flush = false);
+        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
+
+    private:
+        void createICUConverter() const;
+        void releaseICUConverter() const;
+
+        TextEncoding m_encoding;
+        unsigned m_numBufferedBytes;
+        unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character        
+        mutable UConverter* m_converterICU;
     };
-
-    typedef void (*EncodingNameRegistrar)(const char* alias, const char* name);
-
-    typedef std::auto_ptr<TextCodec> (*NewTextCodecFunction)(const TextEncoding&, const void* additionalData);
-    typedef void (*TextCodecRegistrar)(const char* name, NewTextCodecFunction, const void* additionalData);
 
 } // namespace WebCore
 
-#endif // StreamingTextDecoder_h
+#endif // TextCodecICU_h

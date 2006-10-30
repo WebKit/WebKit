@@ -1,5 +1,240 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        - did the do-webcore-rename renames, including a number of changes
+          to the names of loader files (and WebResourceLoader -> ResourceLoader),
+          jScript() to scriptProxy(), jScriptEnabled() to javaScriptEnabled(),
+          and improvements to the names of decoder classes and their source
+          files (Decoder -> TextResourceDecoder, StreamingTextDecoder -> TextCodec)
+
+        * CMakeLists.txt:
+        * WebCore.exp:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::updateDOMNodeDocument):
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::implementsCall):
+        * bindings/js/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::interpreter):
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieve):
+        (KJS::ScheduledAction::execute):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::executionContextForDOM):
+        (WebCore::FrameMac::bindingRootObject):
+        (WebCore::FrameMac::windowScriptObject):
+        (WebCore::FrameMac::windowScriptNPObject):
+        (WebCore::FrameMac::partClearedInBegin):
+        * bridge/mac/WebCoreEncodings.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]):
+        (-[WebCoreFrameBridge stringWithData:]):
+        (-[WebCoreFrameBridge executionContextForView:]):
+        * bridge/win/FrameWin.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::inputEncoding):
+        (WebCore::Document::setCharset):
+        (WebCore::Document::createHTMLEventListener):
+        (WebCore::Document::setDecoder):
+        * dom/Document.h:
+        (WebCore::Document::decoder):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::noscriptCreateErrorCheck):
+        (WebCore::HTMLParser::canvasCreateErrorCheck):
+        (WebCore::HTMLParser::isInline):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createNPObject):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::evaluateScript):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::processToken):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::createSVGEventListener):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::setEncoding):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::CachedXBLDocument):
+        (WebCore::CachedXBLDocument::setEncoding):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (WebCore::CachedXSLStyleSheet::setEncoding):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/Decoder.cpp: Removed.
+        * loader/Decoder.h: Removed.
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h: Added.
+        * loader/NetscapePlugInStreamLoader.h: Added.
+        * loader/Request.h:
+        (WebCore::Request::cachedResource):
+        * loader/ResourceLoader.h: Added.
+        * loader/SubresourceLoader.h: Added.
+        * loader/TextResourceDecoder.cpp: Added.
+        (WebCore::TextResourceDecoder::determineContentType):
+        (WebCore::TextResourceDecoder::defaultEncoding):
+        (WebCore::TextResourceDecoder::TextResourceDecoder):
+        (WebCore::TextResourceDecoder::~TextResourceDecoder):
+        (WebCore::TextResourceDecoder::setEncoding):
+        (WebCore::TextResourceDecoder::checkForBOM):
+        (WebCore::TextResourceDecoder::checkForCSSCharset):
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        (WebCore::TextResourceDecoder::detectJapaneseEncoding):
+        (WebCore::TextResourceDecoder::decode):
+        (WebCore::TextResourceDecoder::flush):
+        * loader/TextResourceDecoder.h: Added.
+        * loader/WebDocumentLoader.h: Removed.
+        * loader/WebLoader.h: Removed.
+        * loader/WebMainResourceLoader.h: Removed.
+        * loader/WebNetscapePlugInStreamLoader.h: Removed.
+        * loader/WebSubresourceLoader.h: Removed.
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        (WebCore::Loader::didReceiveData):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::jobForRequest):
+        * loader/mac/DocumentLoaderMac.mm:
+        * loader/mac/FormDataStream.m: Added.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::cancelPendingArchiveLoad):
+        (WebCore::FrameLoader::addPlugInStreamLoader):
+        (WebCore::FrameLoader::removePlugInStreamLoader):
+        (WebCore::FrameLoader::addSubresourceLoader):
+        (WebCore::FrameLoader::removeSubresourceLoader):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveAuthenticationChallenge):
+        (WebCore::FrameLoader::didCancelAuthenticationChallenge):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::didFinishLoad):
+        (WebCore::FrameLoader::didFailToLoad):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::willUseArchive):
+        (WebCore::FrameLoader::isArchiveLoadPending):
+        * loader/mac/ImageDocumentMac.mm:
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::releaseDelegate):
+        (WebCore::MainResourceLoader::didCancel):
+        (WebCore::MainResourceLoader::addData):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::releaseResources):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveData):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoader::didFail):
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::setDefersLoading):
+        (WebCore::ResourceLoader::frameLoader):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::resourceData):
+        (WebCore::ResourceLoader::clearResourceData):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::willCacheResponse):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::setIdentifier):
+        (WebCore::ResourceLoader::response):
+        (WebCore::ResourceLoader::inConnectionCallback):
+        (WebCore::ResourceLoader::cancelledError):
+        (WebCore::ResourceLoader::receivedCredential):
+        (WebCore::ResourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceLoader::receivedCancellation):
+        (WebCore::ResourceLoader::delegate):
+        (WebCore::ResourceLoader::releaseDelegate):
+        (-[WebCoreResourceLoaderAsDelegate initWithLoader:]):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/mac/WebFormDataStream.h: Removed.
+        * loader/mac/WebFormDataStream.m: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::javaScriptEnabled):
+        (WebCore::Frame::scriptProxy):
+        (WebCore::Frame::executeScript):
+        (WebCore::Frame::write):
+        (WebCore::Frame::userGestureHint):
+        (WebCore::Frame::saveInterpreterBuiltins):
+        (WebCore::Frame::restoreInterpreterBuiltins):
+        (WebCore::Frame::backslashAsCurrencySymbol):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * platform/StreamingTextDecoder.cpp: Removed.
+        * platform/StreamingTextDecoder.h: Removed.
+        * platform/StreamingTextDecoderICU.cpp: Removed.
+        * platform/StreamingTextDecoderICU.h: Removed.
+        * platform/TextCodec.cpp: Added.
+        * platform/TextCodec.h: Added.
+        * platform/TextCodecICU.cpp: Added.
+        * platform/TextCodecICU.h: Added.
+        * platform/TextCodecLatin1.h:
+        * platform/TextCodecUTF16.h:
+        * platform/TextDecoder.h:
+        * platform/TextEncoding.cpp:
+        * platform/TextEncodingRegistry.cpp:
+        * platform/image-decoders/jpeg/jmorecfg.h:
+        * platform/mac/StreamingTextDecoderMac.cpp: Removed.
+        * platform/mac/StreamingTextDecoderMac.h: Removed.
+        * platform/mac/TextCodecMac.cpp: Added.
+        * platform/mac/TextCodecMac.h: Added.
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::bindingRootObject):
+        * platform/qt/LoaderFunctionsQt.cpp:
+        (WebCore::CheckCacheObjectStatus):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::backslashAsCurrencySymbol):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Adam (kinda).
 
         - add Mac suffixes and correct filenames inside loader/mac

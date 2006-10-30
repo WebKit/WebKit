@@ -45,7 +45,7 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
 PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
 {
     if (Frame* frame = m_doc->frame())
-        if (KJSProxy* proxy = frame->jScript())
+        if (KJSProxy* proxy = frame->scriptProxy())
             return proxy->createSVGEventHandler(functionName, code, node);
     return 0;
 }

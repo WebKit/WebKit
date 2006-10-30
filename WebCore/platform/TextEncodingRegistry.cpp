@@ -34,10 +34,10 @@
 #include <wtf/HashMap.h>
 
 #if USE(ICU_UNICODE)
-#include "StreamingTextDecoderICU.h"
+#include "TextCodecICU.h"
 #endif
 #if PLATFORM(MAC)
-#include "StreamingTextDecoderMac.h"
+#include "TextCodecMac.h"
 #endif
 
 namespace WebCore {

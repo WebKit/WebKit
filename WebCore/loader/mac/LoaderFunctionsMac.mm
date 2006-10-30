@@ -119,12 +119,12 @@ bool CheckIfReloading(DocLoader *loader)
     return false;
 }
 
-void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
+void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
 {
     // Return from the function for objects that we didn't load from the cache.
-    if (!cachedObject)
+    if (!cachedResource)
         return;
-    switch (cachedObject->status()) {
+    switch (cachedResource->status()) {
     case CachedResource::Cached:
         break;
     case CachedResource::NotCached:
@@ -134,22 +134,22 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
         return;
     }
     
-    ASSERT(cachedObject->response());
+    ASSERT(cachedResource->response());
     
     // Notify the caller that we "loaded".
     FrameMac *frame = static_cast<FrameMac *>(loader->frame());
 
-    if (!frame || frame->haveToldBridgeAboutLoad(cachedObject->url()))
+    if (!frame || frame->haveToldBridgeAboutLoad(cachedResource->url()))
         return;
         
-    NSURLRequest *request = cachedObject->getNSURLRequest();
-    NSURLResponse *response = cachedObject->response();
-    NSData *data = cachedObject->allData();
+    NSURLRequest *request = cachedResource->getNSURLRequest();
+    NSURLResponse *response = cachedResource->response();
+    NSData *data = cachedResource->allData();
     
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     frame->loader()->loadedResourceFromMemoryCache(request, response, [data length]);
     
-    frame->didTellBridgeAboutLoad(cachedObject->url());
+    frame->didTellBridgeAboutLoad(cachedResource->url());
 }
 
 bool IsResponseURLEqualToURL(PlatformResponse response, const String& m_url)

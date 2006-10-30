@@ -82,13 +82,13 @@ bool CheckIfReloading(WebCore::DocLoader* docLoader)
     return false;
 }
 
-void CheckCacheObjectStatus(DocLoader* docLoader, CachedResource* cachedObject)
+void CheckCacheObjectStatus(DocLoader* docLoader, CachedResource* cachedResource)
 {
     // Return from the function for objects that we didn't load from the cache.
-    if (!cachedObject)
+    if (!cachedResource)
         return;
 
-    switch (cachedObject->status()) {
+    switch (cachedResource->status()) {
         case CachedResource::Cached:
             break;
         case CachedResource::NotCached:
@@ -98,7 +98,7 @@ void CheckCacheObjectStatus(DocLoader* docLoader, CachedResource* cachedObject)
             return;
     }
 
-    // FIXME: Doesn't work at the moment! ASSERT(cachedObject->response());
+    // FIXME: Doesn't work at the moment! ASSERT(cachedResource->response());
 
     // FIXME: Notify the caller that we "loaded".
 }

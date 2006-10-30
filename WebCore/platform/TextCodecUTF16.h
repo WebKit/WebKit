@@ -26,7 +26,7 @@
 #ifndef TextCodecUTF16_h
 #define TextCodecUTF16_h
 
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 
 namespace WebCore {
 

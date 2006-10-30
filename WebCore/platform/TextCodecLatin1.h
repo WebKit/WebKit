@@ -26,7 +26,7 @@
 #ifndef TextCodecLatin1_h
 #define TextCodecLatin1_h
 
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 
 namespace WebCore {
 

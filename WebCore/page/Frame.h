@@ -154,7 +154,7 @@ public:
   /**
    * Returns @p true if Javascript is enabled, @p false otherwise.
    */
-  bool jScriptEnabled() const;
+  bool javaScriptEnabled() const;
 
   /**
    * Returns true if Java is enabled, false otherwise.
@@ -658,7 +658,7 @@ public:
 
  public:
   KJS::JSValue* executeScript(const String& filename, int baseLine, Node*, const String& script);
-  KJSProxy* jScript();
+  KJSProxy* scriptProxy();
   Frame* opener();
   void setOpener(Frame* _opener);
   bool openedByJS();

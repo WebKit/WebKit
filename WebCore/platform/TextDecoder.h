@@ -27,7 +27,7 @@
 #define TextDecoder_h
 
 #include "PlatformString.h"
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 #include "TextEncoding.h"
 #include <wtf/OwnPtr.h>
 

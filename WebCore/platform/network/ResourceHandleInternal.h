@@ -50,7 +50,7 @@ typedef void CURL;
 #endif
 
 #if PLATFORM(MAC)
-#include "WebSubresourceLoader.h"
+#include "SubresourceLoader.h"
 #endif
 
 // The allocations and releases in ResourceHandleInternal are

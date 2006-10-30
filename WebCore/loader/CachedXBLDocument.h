@@ -35,7 +35,7 @@ namespace WebCore {
     class CachedResource;
     class Request;
     class DocLoader;
-    class Decoder;
+    class TextResourceDecoder;
     class CachedResourceClient;
     
 #ifdef XBL_SUPPORT
@@ -58,7 +58,7 @@ namespace WebCore {
         
     protected:
         XBL::XBLDocument* m_document;
-        RefPtr<Decoder> m_decoder;
+        RefPtr<TextResourceDecoder> m_decoder;
     };
 
 #endif

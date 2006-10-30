@@ -28,7 +28,7 @@
 #include "FrameWin.h"
 
 #include "BrowserExtensionWin.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "Document.h"
 #include "FrameLoadRequest.h"
 #include "FramePrivate.h"

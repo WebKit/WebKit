@@ -41,7 +41,7 @@ namespace WebCore {
         ~Request();
         
         Vector<char>& buffer() { return m_buffer; }
-        CachedResource* cachedObject() { return m_object; }
+        CachedResource* cachedResource() { return m_object; }
         DocLoader* docLoader() { return m_docLoader; }
 
         bool isIncremental() { return m_incremental; }

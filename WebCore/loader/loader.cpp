@@ -68,10 +68,10 @@ void Loader::servePendingRequests()
     // get the first pending request
     Request* req = m_requestsPending.take(0);
 
-    ResourceRequest request(req->cachedObject()->url());
+    ResourceRequest request(req->cachedResource()->url());
 
-    if (!req->cachedObject()->accept().isEmpty())
-        request.setHTTPAccept(req->cachedObject()->accept());
+    if (!req->cachedResource()->accept().isEmpty())
+        request.setHTTPAccept(req->cachedResource()->accept());
     if (req->docLoader())  {
         KURL r = req->docLoader()->doc()->URL();
         if (r.protocol().startsWith("http") && r.path().isEmpty())
@@ -97,7 +97,7 @@ void Loader::receivedAllData(ResourceHandle* job, PlatformData allData)
     Request* req = i->second;
     m_requestsLoading.remove(i);
 
-    CachedResource* object = req->cachedObject();
+    CachedResource* object = req->cachedResource();
     DocLoader* docLoader = req->docLoader();
 
     if (job->error() || job->isErrorPage()) {
@@ -126,21 +126,21 @@ void Loader::receivedResponse(ResourceHandle* job, PlatformResponse response)
     // FIXME: the win32 platform does not have PlatformResponse yet.
     ASSERT(response);
 #endif
-    req->cachedObject()->setResponse(response);
-    req->cachedObject()->setExpireDate(CacheObjectExpiresTime(req->docLoader(), response), false);
+    req->cachedResource()->setResponse(response);
+    req->cachedResource()->setExpireDate(CacheObjectExpiresTime(req->docLoader(), response), false);
     
     String encoding = job->responseEncoding();
     if (!encoding.isNull())
-        req->cachedObject()->setEncoding(encoding);
+        req->cachedResource()->setEncoding(encoding);
     
     if (req->isMultipart()) {
-        ASSERT(req->cachedObject()->isImage());
-        static_cast<CachedImage*>(req->cachedObject())->clear();
+        ASSERT(req->cachedResource()->isImage());
+        static_cast<CachedImage*>(req->cachedResource())->clear();
         if (req->docLoader()->frame())
             req->docLoader()->frame()->checkCompleted();
     } else if (ResponseIsMultipart(response)) {
         req->setIsMultipart(true);
-        if (!req->cachedObject()->isImage())
+        if (!req->cachedResource()->isImage())
             job->cancel();
     }
 }
@@ -151,7 +151,7 @@ void Loader::didReceiveData(ResourceHandle* job, const char* data, int size)
     if (!request)
         return;
 
-    CachedResource* object = request->cachedObject();    
+    CachedResource* object = request->cachedResource();    
     Vector<char>& buffer = object->bufferData(data, size, request);
 
     // Set the data.
@@ -196,7 +196,7 @@ void Loader::cancelRequests(DocLoader* dl)
     DeprecatedPtrListIterator<Request> pIt(m_requestsPending);
     while (pIt.current()) {
         if (pIt.current()->docLoader() == dl) {
-            cache()->remove(pIt.current()->cachedObject());
+            cache()->remove(pIt.current()->cachedResource());
             m_requestsPending.remove(pIt);
         } else
             ++pIt;
@@ -215,14 +215,14 @@ void Loader::cancelRequests(DocLoader* dl)
         ResourceHandle* job = jobsToCancel[i];
         Request* r = m_requestsLoading.get(job);
         m_requestsLoading.remove(job);
-        cache()->remove(r->cachedObject());
+        cache()->remove(r->cachedResource());
         job->kill();
     }
 
     DeprecatedPtrListIterator<Request> bdIt(m_requestsBackgroundDecoding);
     while (bdIt.current()) {
         if (bdIt.current()->docLoader() == dl) {
-            cache()->remove(bdIt.current()->cachedObject());
+            cache()->remove(bdIt.current()->cachedResource());
             m_requestsBackgroundDecoding.remove(bdIt);
         } else
             ++bdIt;
@@ -239,7 +239,7 @@ ResourceHandle* Loader::jobForRequest(const String& URL) const
 {
     RequestMap::const_iterator end = m_requestsLoading.end();
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {
-        CachedResource* obj = i->second->cachedObject();
+        CachedResource* obj = i->second->cachedResource();
         if (obj && obj->url() == URL)
             return i->first;
     }

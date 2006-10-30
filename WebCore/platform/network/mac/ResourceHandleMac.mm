@@ -36,7 +36,7 @@
 #import "LoaderFunctions.h"
 #import "Logging.h"
 #import "WebCoreFrameBridge.h"
-#import "WebSubresourceLoader.h"
+#import "SubresourceLoader.h"
 
 namespace WebCore {
     

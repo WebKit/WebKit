@@ -31,7 +31,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
-#import <WebCore/WebNetscapePlugInStreamLoader.h>
+#import <WebCore/NetscapePlugInStreamLoader.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>

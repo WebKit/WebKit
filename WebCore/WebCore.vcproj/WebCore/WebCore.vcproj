@@ -1035,11 +1035,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\loader\Decoder.cpp"
+				RelativePath="..\..\loader\TextResourceDecoder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\loader\Decoder.h"
+				RelativePath="..\..\loader\TextResourceDecoder.h"
 				>
 			</File>
 			<File
@@ -1491,19 +1491,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\StreamingTextDecoder.cpp"
+				RelativePath="..\..\platform\TextCodec.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\StreamingTextDecoder.h"
+				RelativePath="..\..\platform\TextCodec.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\StreamingTextDecoderICU.cpp"
+				RelativePath="..\..\platform\TextCodecICU.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\StreamingTextDecoderICU.h"
+				RelativePath="..\..\platform\TextCodecICU.h"
 				>
 			</File>
 			<File

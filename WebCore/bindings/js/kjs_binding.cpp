@@ -191,9 +191,9 @@ ExecState *ScriptInterpreter::globalExec()
 
 void ScriptInterpreter::updateDOMNodeDocument(Node *node, Document *oldDoc, Document *newDoc)
 {
-  DOMNode *cachedObject = getDOMNodeForDocument(oldDoc, node);
-  if (cachedObject) {
-    putDOMNodeForDocument(newDoc, node, cachedObject);
+  DOMNode *cachedResource = getDOMNodeForDocument(oldDoc, node);
+  if (cachedResource) {
+    putDOMNodeForDocument(newDoc, node, cachedResource);
     forgetDOMNodeForDocument(oldDoc, node);
   }
 }

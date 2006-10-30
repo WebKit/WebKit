@@ -34,7 +34,7 @@
 
 #include "Cache.h"
 #include "CachedResourceClientWalker.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
 
@@ -49,7 +49,7 @@ CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, CachePoli
     // Load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
-    m_decoder = new Decoder("application/xml");
+    m_decoder = new TextResourceDecoder("application/xml");
 }
 
 CachedXBLDocument::~CachedXBLDocument()
@@ -67,7 +67,7 @@ void CachedXBLDocument::ref(CachedResourceClient *c)
 
 void CachedXBLDocument::setEncoding(const String& chs)
 {
-    m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 void CachedXBLDocument::data(Vector<char>& data, bool )

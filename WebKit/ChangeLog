@@ -1,5 +1,25 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        - update for the WebCore renames
+
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::willUseArchive):
+        (WebFrameLoaderClient::isArchiveLoadPending):
+        (WebFrameLoaderClient::cancelPendingArchiveLoad):
+        (WebFrameLoaderClient::deliverArchivedResources):
+        * WebCoreSupport/WebPageBridge.mm:
+        (-[WebPageBridge canRunModalNow]):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLRepresentation.m:
+        * WebView/WebView.mm:
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Adam Roben.
 
         - renamed WebCore's WebFrameLoaderClient to match the class name inside it

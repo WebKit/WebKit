@@ -93,9 +93,9 @@ namespace WebCore {
     class ResourceRequest;
     class String;
     class SubresourceLoader;
-    class WebResourceLoader;
+    class ResourceLoader;
 
-    typedef HashSet<RefPtr<WebResourceLoader> > ResourceLoaderSet;
+    typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
 
     bool isBackForwardLoadType(FrameLoadType);
 
@@ -178,15 +178,15 @@ namespace WebCore {
 #endif
         void stopLoading();
         void cancelMainResourceLoad();
-        void cancelPendingArchiveLoad(WebResourceLoader*);
+        void cancelPendingArchiveLoad(ResourceLoader*);
 
-        void addPlugInStreamLoader(WebResourceLoader*);
-        void removePlugInStreamLoader(WebResourceLoader*);
+        void addPlugInStreamLoader(ResourceLoader*);
+        void removePlugInStreamLoader(ResourceLoader*);
         bool isLoadingMainResource() const;
         bool isLoadingSubresources() const;
         bool isLoading() const;
-        void addSubresourceLoader(WebResourceLoader*);
-        void removeSubresourceLoader(WebResourceLoader*);
+        void addSubresourceLoader(ResourceLoader*);
+        void removeSubresourceLoader(ResourceLoader*);
 #if PLATFORM(MAC)
         NSData *mainResourceData() const;
 #endif
@@ -205,13 +205,13 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         id identifierForInitialRequest(NSURLRequest *);
-        NSURLRequest *willSendRequest(WebResourceLoader*, NSMutableURLRequest *, NSURLResponse *redirectResponse);
-        void didReceiveAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
-        void didCancelAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
-        void didReceiveResponse(WebResourceLoader*, NSURLResponse *);
-        void didReceiveData(WebResourceLoader*, NSData *, int lengthReceived);
-        void didFinishLoad(WebResourceLoader*);
-        void didFailToLoad(WebResourceLoader*, NSError *);
+        NSURLRequest *willSendRequest(ResourceLoader*, NSMutableURLRequest *, NSURLResponse *redirectResponse);
+        void didReceiveAuthenticationChallenge(ResourceLoader*, NSURLAuthenticationChallenge *);
+        void didCancelAuthenticationChallenge(ResourceLoader*, NSURLAuthenticationChallenge *);
+        void didReceiveResponse(ResourceLoader*, NSURLResponse *);
+        void didReceiveData(ResourceLoader*, NSData *, int lengthReceived);
+        void didFinishLoad(ResourceLoader*);
+        void didFailToLoad(ResourceLoader*, NSError *);
 #endif
         bool privateBrowsingEnabled() const;
 #if PLATFORM(MAC)
@@ -236,8 +236,8 @@ namespace WebCore {
 #if PLATFORM(MAC)
         NSError *cancelledError(NSURLRequest *) const;
         NSError *fileDoesNotExistError(NSURLResponse *) const;
-        bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *) const;
-        bool isArchiveLoadPending(WebResourceLoader*) const;
+        bool willUseArchive(ResourceLoader*, NSURLRequest *, NSURL *) const;
+        bool isArchiveLoadPending(ResourceLoader*) const;
         void cannotShowMIMEType(NSURLResponse *);
         NSError *interruptionForPolicyChangeError(NSURLRequest *);
 #endif

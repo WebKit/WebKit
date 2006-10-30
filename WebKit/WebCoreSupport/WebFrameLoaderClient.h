@@ -38,10 +38,10 @@
 
 namespace WebCore {
     class String;
-    class WebResourceLoader;
+    class ResourceLoader;
 }
 
-typedef HashMap<RefPtr<WebCore::WebResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
+typedef HashMap<RefPtr<WebCore::ResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
@@ -175,9 +175,9 @@ private:
 
     virtual WebCore::String userAgent(NSURL *);
 
-    virtual bool willUseArchive(WebCore::WebResourceLoader*, NSURLRequest *, NSURL *originalURL) const;
-    virtual bool isArchiveLoadPending(WebCore::WebResourceLoader*) const;
-    virtual void cancelPendingArchiveLoad(WebCore::WebResourceLoader*);
+    virtual bool willUseArchive(WebCore::ResourceLoader*, NSURLRequest *, NSURL *originalURL) const;
+    virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
+    virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
     virtual void clearArchivedResources();
 
     virtual bool canHandleRequest(NSURLRequest *) const;

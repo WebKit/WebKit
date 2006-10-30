@@ -30,7 +30,7 @@
 #include "FrameLoader.h"
 #include "FrameMac.h"
 #include "WebCoreFrameBridge.h"
-#include "WebDocumentLoader.h"
+#include "DocumentLoader.h"
 
 namespace WebCore {
     

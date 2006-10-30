@@ -37,7 +37,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
@@ -630,12 +630,12 @@ void Frame::setView(FrameView* view)
     d->m_view = view;
 }
 
-bool Frame::jScriptEnabled() const
+bool Frame::javaScriptEnabled() const
 {
     return d->m_bJScriptEnabled;
 }
 
-KJSProxy *Frame::jScript()
+KJSProxy *Frame::scriptProxy()
 {
     if (!d->m_bJScriptEnabled)
         return 0;
@@ -659,7 +659,7 @@ void Frame::replaceContentsWithScriptResult(const KURL& url)
 
 JSValue* Frame::executeScript(Node* n, const String& script, bool forceUserGesture)
 {
-  KJSProxy *proxy = jScript();
+  KJSProxy *proxy = scriptProxy();
 
   if (!proxy)
     return 0;
@@ -939,10 +939,10 @@ void Frame::write(const char* str, int len)
     }
     
     if (!d->m_decoder) {
-        d->m_decoder = new Decoder(d->m_responseMIMEType, settings()->encoding());
+        d->m_decoder = new TextResourceDecoder(d->m_responseMIMEType, settings()->encoding());
         if (!d->m_encoding.isNull())
             d->m_decoder->setEncoding(d->m_encoding,
-                d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);
+                d->m_haveEncoding ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder.get());
     }
@@ -2221,7 +2221,7 @@ JSValue* Frame::executeScript(const String& filename, int baseLine, Node* n, con
     // FIXME: This is missing stuff that the other executeScript has.
     // --> d->m_runningScripts and submitFormAgain.
     // Why is that OK?
-    KJSProxy* proxy = jScript();
+    KJSProxy* proxy = scriptProxy();
     if (!proxy)
         return 0;
     JSValue* ret = proxy->evaluate(filename, baseLine, script, n);
@@ -2714,8 +2714,8 @@ bool Frame::userGestureHint()
     while (rootFrame->tree()->parent())
         rootFrame = rootFrame->tree()->parent();
 
-    if (rootFrame->jScript())
-        return rootFrame->jScript()->interpreter()->wasRunByUserGesture();
+    if (rootFrame->scriptProxy())
+        return rootFrame->scriptProxy()->interpreter()->wasRunByUserGesture();
 
     return true; // If JavaScript is disabled, a user gesture must have initiated the navigation
 }
@@ -3129,14 +3129,14 @@ void Frame::restoreLocationProperties(SavedProperties *locationProperties)
 
 void Frame::saveInterpreterBuiltins(SavedBuiltins& interpreterBuiltins)
 {
-    if (jScript())
-        jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+    if (scriptProxy())
+        scriptProxy()->interpreter()->saveBuiltins(interpreterBuiltins);
 }
 
 void Frame::restoreInterpreterBuiltins(const SavedBuiltins& interpreterBuiltins)
 {
-    if (jScript())
-        jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+    if (scriptProxy())
+        scriptProxy()->interpreter()->restoreBuiltins(interpreterBuiltins);
 }
 
 Frame *Frame::frameForWidget(const Widget *widget)
@@ -3448,7 +3448,7 @@ UChar Frame::backslashAsCurrencySymbol() const
     Document *doc = document();
     if (!doc)
         return '\\';
-    Decoder *decoder = doc->decoder();
+    TextResourceDecoder *decoder = doc->decoder();
     if (!decoder)
         return '\\';
 

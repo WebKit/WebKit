@@ -63,9 +63,9 @@ namespace WebCore {
     class FrameLoader;
 
     // FIXME: Rename to ResourceHandle after resolving conflict with existing class of that name.
-    class WebResourceLoader : public Shared<WebResourceLoader> {
+    class ResourceLoader : public Shared<ResourceLoader> {
     public:
-        virtual ~WebResourceLoader();
+        virtual ~ResourceLoader();
 
 #if PLATFORM(MAC)
         virtual bool load(NSURLRequest *);
@@ -108,7 +108,7 @@ namespace WebCore {
 #endif
 
     protected:
-        WebResourceLoader(Frame*);
+        ResourceLoader(Frame*);
 
 #if PLATFORM(MAC)
         WebCoreResourceLoaderAsDelegate *delegate();

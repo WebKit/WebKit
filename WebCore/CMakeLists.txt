@@ -978,7 +978,7 @@ set(WebCore_SRCS
     loader/CachedXBLDocument.cpp
     loader/CachedResource.cpp
     loader/Cache.cpp
-    loader/Decoder.cpp
+    loader/TextResourceDecoder.cpp
     loader/FormData.cpp
     platform/CString.cpp
     platform/AtomicString.cpp
@@ -998,8 +998,8 @@ set(WebCore_SRCS
     platform/ArrayImpl.cpp
     platform/FloatPoint.cpp
     platform/SegmentedString.cpp
-    platform/StreamingTextDecoder.cpp
-    platform/StreamingTextDecoderICU.cpp
+    platform/TextCodec.cpp
+    platform/TextCodecICU.cpp
     platform/DeprecatedString.cpp
     platform/DeprecatedCString.cpp
     platform/TextCodecLatin1.cpp

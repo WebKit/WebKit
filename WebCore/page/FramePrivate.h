@@ -32,7 +32,7 @@
 #include "CachePolicy.h"
 #include "CommandByName.h"
 #include "DOMWindow.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "EditCommand.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-    class Decoder;
+    class TextResourceDecoder;
     class UserStyleSheetLoader;
 
     enum RedirectionScheduled {
@@ -136,7 +136,7 @@ namespace WebCore {
         RefPtr<FrameView> m_view;
         BrowserExtension* m_extension;
         RefPtr<Document> m_doc;
-        RefPtr<Decoder> m_decoder;
+        RefPtr<TextResourceDecoder> m_decoder;
         String m_encoding;
         String scheduledScript;
         RefPtr<Node> scheduledScriptNode;

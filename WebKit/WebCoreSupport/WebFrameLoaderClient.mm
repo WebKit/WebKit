@@ -66,9 +66,9 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/WebFormState.h>
-#import <WebCore/WebLoader.h>
+#import <WebCore/ResourceLoader.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDocumentLoaderMac.h>
@@ -836,7 +836,7 @@ void WebFrameLoaderClient::setDefersLoading(bool defers)
         deliverArchivedResourcesAfterDelay();
 }
 
-bool WebFrameLoaderClient::willUseArchive(WebResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
+bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
 {
     if (![[request URL] isEqual:originalURL])
         return false;
@@ -853,12 +853,12 @@ bool WebFrameLoaderClient::willUseArchive(WebResourceLoader* loader, NSURLReques
     return true;
 }
 
-bool WebFrameLoaderClient::isArchiveLoadPending(WebResourceLoader* loader) const
+bool WebFrameLoaderClient::isArchiveLoadPending(ResourceLoader* loader) const
 {
     return m_pendingArchivedResources.contains(loader);
 }
 
-void WebFrameLoaderClient::cancelPendingArchiveLoad(WebResourceLoader* loader)
+void WebFrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader* loader)
 {
     if (m_pendingArchivedResources.isEmpty())
         return;
@@ -1112,7 +1112,7 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
 
     ResourceMap::const_iterator end = copy.end();
     for (ResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<WebResourceLoader> loader = it->first;
+        RefPtr<ResourceLoader> loader = it->first;
         WebResource *resource = it->second.get();
         NSData *data = [[resource data] retain];
         loader->didReceiveResponse([resource _response]);

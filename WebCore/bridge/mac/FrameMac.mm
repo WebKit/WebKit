@@ -37,7 +37,7 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
-#import "Decoder.h"
+#import "TextResourceDecoder.h"
 #import "Event.h"
 #import "EventNames.h"
 #import "FloatRect.h"
@@ -79,7 +79,7 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
-#import "WebDocumentLoader.h"
+#import "DocumentLoader.h"
 #import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -936,7 +936,7 @@ bool FrameMac::tabsToAllControls() const
 
 KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 {
-    if (!jScriptEnabled())
+    if (!javaScriptEnabled())
         return 0;
 
     return bindingRootObject();
@@ -944,13 +944,13 @@ KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 
 KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 {
-    assert(jScriptEnabled());
+    assert(javaScriptEnabled());
     if (!_bindingRoot) {
         JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
-        _bindingRoot->setInterpreter(jScript()->interpreter());
+        _bindingRoot->setInterpreter(scriptProxy()->interpreter());
         addPluginRootObject (_bindingRoot);
     }
     return _bindingRoot;
@@ -958,7 +958,7 @@ KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 
 WebScriptObject *FrameMac::windowScriptObject()
 {
-    if (!jScriptEnabled())
+    if (!javaScriptEnabled())
         return 0;
 
     if (!_windowScriptObject) {
@@ -973,7 +973,7 @@ WebScriptObject *FrameMac::windowScriptObject()
 NPObject *FrameMac::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
-        if (jScriptEnabled()) {
+        if (javaScriptEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSObject *win = KJS::Window::retrieveWindow(this);
@@ -1026,7 +1026,7 @@ Widget* FrameMac::createJavaAppletWidget(const IntSize& size, Element* element, 
 
 void FrameMac::partClearedInBegin()
 {
-    if (jScriptEnabled())
+    if (javaScriptEnabled())
         [_bridge windowObjectCleared];
 }
 

@@ -48,11 +48,11 @@
 #import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
-#import "WebDocumentLoader.h"
-#import "WebFormDataStream.h"
+#import "DocumentLoader.h"
+#import "FormDataStream.h"
 #import "WebFormState.h"
-#import "WebMainResourceLoader.h"
-#import "WebSubresourceLoader.h"
+#import "MainResourceLoader.h"
+#import "SubresourceLoader.h"
 #import <kjs/JSLock.h>
 #import <wtf/Assertions.h>
 
@@ -459,7 +459,7 @@ void FrameLoader::cancelMainResourceLoad()
         m_mainResourceLoader->cancel();
 }
 
-void FrameLoader::cancelPendingArchiveLoad(WebResourceLoader* loader)
+void FrameLoader::cancelPendingArchiveLoad(ResourceLoader* loader)
 {
     m_client->cancelPendingArchiveLoad(loader);
 }
@@ -471,13 +471,13 @@ DocumentLoader* FrameLoader::activeDocumentLoader() const
     return m_documentLoader.get();
 }
 
-void FrameLoader::addPlugInStreamLoader(WebResourceLoader* loader)
+void FrameLoader::addPlugInStreamLoader(ResourceLoader* loader)
 {
     m_plugInStreamLoaders.add(loader);
     activeDocumentLoader()->setLoading(true);
 }
 
-void FrameLoader::removePlugInStreamLoader(WebResourceLoader* loader)
+void FrameLoader::removePlugInStreamLoader(ResourceLoader* loader)
 {
     m_plugInStreamLoaders.remove(loader);
     activeDocumentLoader()->updateLoading();
@@ -503,14 +503,14 @@ bool FrameLoader::isLoading() const
     return isLoadingMainResource() || isLoadingSubresources() || isLoadingPlugIns();
 }
 
-void FrameLoader::addSubresourceLoader(WebResourceLoader* loader)
+void FrameLoader::addSubresourceLoader(ResourceLoader* loader)
 {
     ASSERT(!m_provisionalDocumentLoader);
     m_subresourceLoaders.add(loader);
     activeDocumentLoader()->setLoading(true);
 }
 
-void FrameLoader::removeSubresourceLoader(WebResourceLoader* loader)
+void FrameLoader::removeSubresourceLoader(ResourceLoader* loader)
 {
     m_subresourceLoaders.remove(loader);
     activeDocumentLoader()->updateLoading();
@@ -639,23 +639,23 @@ id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
     return m_client->dispatchIdentifierForInitialRequest(activeDocumentLoader(), clientRequest);
 }
 
-NSURLRequest *FrameLoader::willSendRequest(WebResourceLoader* loader, NSMutableURLRequest *clientRequest, NSURLResponse *redirectResponse)
+NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, NSURLResponse *redirectResponse)
 {
     [clientRequest setValue:client()->userAgent([clientRequest URL]) forHTTPHeaderField:@"User-Agent"];
     return m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
 }
 
-void FrameLoader::didReceiveAuthenticationChallenge(WebResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
+void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
 {
     m_client->dispatchDidReceiveAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
 }
 
-void FrameLoader::didCancelAuthenticationChallenge(WebResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
+void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
 {
     m_client->dispatchDidCancelAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
 }
 
-void FrameLoader::didReceiveResponse(WebResourceLoader* loader, NSURLResponse *r)
+void FrameLoader::didReceiveResponse(ResourceLoader* loader, NSURLResponse *r)
 {
     activeDocumentLoader()->addResponse(r);
     
@@ -663,19 +663,19 @@ void FrameLoader::didReceiveResponse(WebResourceLoader* loader, NSURLResponse *r
     m_client->dispatchDidReceiveResponse(activeDocumentLoader(), loader->identifier(), r);
 }
 
-void FrameLoader::didReceiveData(WebResourceLoader* loader, NSData *data, int lengthReceived)
+void FrameLoader::didReceiveData(ResourceLoader* loader, NSData *data, int lengthReceived)
 {
     m_client->incrementProgress(loader->identifier(), data);
     m_client->dispatchDidReceiveContentLength(activeDocumentLoader(), loader->identifier(), lengthReceived);
 }
 
-void FrameLoader::didFinishLoad(WebResourceLoader* loader)
+void FrameLoader::didFinishLoad(ResourceLoader* loader)
 {    
     m_client->completeProgress(loader->identifier());
     m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
 }
 
-void FrameLoader::didFailToLoad(WebResourceLoader* loader, NSError *error)
+void FrameLoader::didFailToLoad(ResourceLoader* loader, NSError *error)
 {
     m_client->completeProgress(loader->identifier());
     if (error)
@@ -867,7 +867,7 @@ void FrameLoader::open(WebCorePageState *state)
     d->m_bLoadEventEmitted = true;
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->jScriptEnabled()) {
+    if (m_frame->javaScriptEnabled()) {
         d->m_kjsStatusBarText = String();
         d->m_kjsDefaultStatusBarText = String();
     }
@@ -1056,12 +1056,12 @@ NSError *FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
     return m_client->fileDoesNotExistError(response);    
 }
 
-bool FrameLoader::willUseArchive(WebResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
+bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
 }
 
-bool FrameLoader::isArchiveLoadPending(WebResourceLoader* loader) const
+bool FrameLoader::isArchiveLoadPending(ResourceLoader* loader) const
 {
     return m_client->isArchiveLoadPending(loader);
 }

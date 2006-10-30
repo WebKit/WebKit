@@ -32,7 +32,7 @@
 #include "CachedImage.h"
 #include "CounterNode.h"
 #include "CounterResetNode.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
@@ -3055,7 +3055,7 @@ CounterNode* RenderObject::findCounter(const String& counterName, bool willNeedL
 UChar RenderObject::backslashAsCurrencySymbol() const
 {
     if (Node *node = element())
-        if (Decoder *decoder = node->document()->decoder())
+        if (TextResourceDecoder *decoder = node->document()->decoder())
             return decoder->encoding().backslashAsCurrencySymbol();
     return '\\';
 }

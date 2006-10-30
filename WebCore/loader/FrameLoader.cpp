@@ -32,9 +32,9 @@
 #import "Element.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
-#import "WebDocumentLoader.h"
+#import "DocumentLoader.h"
 #import "WebFormState.h"
-#import "WebMainResourceLoader.h"
+#import "MainResourceLoader.h"
 
 namespace WebCore {
 

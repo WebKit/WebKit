@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebLoader.h"
+#import "ResourceLoader.h"
 
 #import "FrameLoader.h"
 #import "FrameMac.h"
@@ -46,9 +46,9 @@ using namespace WebCore;
 
 @interface WebCoreResourceLoaderAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
 {
-    WebResourceLoader* m_loader;
+    ResourceLoader* m_loader;
 }
-- (id)initWithLoader:(WebResourceLoader*)loader;
+- (id)initWithLoader:(ResourceLoader*)loader;
 - (void)detachLoader;
 @end
 
@@ -69,7 +69,7 @@ static bool NSURLConnectionSupportsBufferedData;
 static bool isInitializingConnection;
 #endif
 
-WebResourceLoader::WebResourceLoader(Frame* frame)
+ResourceLoader::ResourceLoader(Frame* frame)
     : m_reachedTerminalState(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
@@ -84,13 +84,13 @@ WebResourceLoader::WebResourceLoader(Frame* frame)
     }
 }
 
-WebResourceLoader::~WebResourceLoader()
+ResourceLoader::~ResourceLoader()
 {
     ASSERT(m_reachedTerminalState);
     releaseDelegate();
 }
 
-void WebResourceLoader::releaseResources()
+void ResourceLoader::releaseResources()
 {
     ASSERT(!m_reachedTerminalState);
     
@@ -98,7 +98,7 @@ void WebResourceLoader::releaseResources()
     // deallocated and release the last reference to this object.
     // We need to retain to avoid accessing the object after it
     // has been deallocated and also to avoid reentering this method.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     m_frame = 0;
 
@@ -113,7 +113,7 @@ void WebResourceLoader::releaseResources()
     releaseDelegate();
 }
 
-bool WebResourceLoader::load(NSURLRequest *r)
+bool ResourceLoader::load(NSURLRequest *r)
 {
     ASSERT(m_connection == nil);
     ASSERT(!frameLoader()->isArchiveLoadPending(this));
@@ -145,20 +145,20 @@ bool WebResourceLoader::load(NSURLRequest *r)
     return true;
 }
 
-void WebResourceLoader::setDefersLoading(bool defers)
+void ResourceLoader::setDefersLoading(bool defers)
 {
     m_defersLoading = defers;
     wkSetNSURLConnectionDefersCallbacks(m_connection.get(), defers);
 }
 
-FrameLoader* WebResourceLoader::frameLoader() const
+FrameLoader* ResourceLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
     return m_frame->loader();
 }
 
-void WebResourceLoader::addData(NSData *data, bool allAtOnce)
+void ResourceLoader::addData(NSData *data, bool allAtOnce)
 {
     if (allAtOnce) {
         NSMutableData *dataCopy = [data mutableCopy];
@@ -181,7 +181,7 @@ void WebResourceLoader::addData(NSData *data, bool allAtOnce)
     }
 }
 
-NSData *WebResourceLoader::resourceData()
+NSData *ResourceLoader::resourceData()
 {
     if (m_resourceData)
         // Retain and autorelease resourceData since releaseResources (which releases resourceData) may be called 
@@ -194,16 +194,16 @@ NSData *WebResourceLoader::resourceData()
     return nil;
 }
 
-void WebResourceLoader::clearResourceData()
+void ResourceLoader::clearResourceData()
 {
     [m_resourceData.get() setLength:0];
 }
 
-NSURLRequest *WebResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+NSURLRequest *ResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     ASSERT(!m_reachedTerminalState);
     NSMutableURLRequest *mutableRequest = [[newRequest mutableCopy] autorelease];
@@ -254,7 +254,7 @@ NSURLRequest *WebResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     return copy;
 }
 
-void WebResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
 {
     ASSERT(!m_reachedTerminalState);
     ASSERT(!m_currentConnectionChallenge);
@@ -262,7 +262,7 @@ void WebResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationCha
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     m_currentConnectionChallenge = challenge;
     NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:delegate()];
@@ -273,7 +273,7 @@ void WebResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationCha
     [webChallenge release];
 }
 
-void WebResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
 {
     ASSERT(!m_reachedTerminalState);
     ASSERT(m_currentConnectionChallenge);
@@ -282,18 +282,18 @@ void WebResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChal
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge.get());
 }
 
-void WebResourceLoader::didReceiveResponse(NSURLResponse *r)
+void ResourceLoader::didReceiveResponse(NSURLResponse *r)
 {
     ASSERT(!m_reachedTerminalState);
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
@@ -306,7 +306,7 @@ void WebResourceLoader::didReceiveResponse(NSURLResponse *r)
     frameLoader()->didReceiveResponse(this, r);
 }
 
-void WebResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+void ResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
@@ -316,14 +316,14 @@ void WebResourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     addData(data, allAtOnce);
     if (m_frame)
         frameLoader()->didReceiveData(this, data, lengthReceived);
 }
 
-void WebResourceLoader::willStopBufferingData(NSData *data)
+void ResourceLoader::willStopBufferingData(NSData *data)
 {
     ASSERT(!m_resourceData);
     NSMutableData *copy = [data mutableCopy];
@@ -331,7 +331,7 @@ void WebResourceLoader::willStopBufferingData(NSData *data)
     [copy release];
 }
 
-void WebResourceLoader::didFinishLoading()
+void ResourceLoader::didFinishLoading()
 {
     // If load has been cancelled after finishing (which could happen with a 
     // JavaScript that changes the window location), do nothing.
@@ -343,7 +343,7 @@ void WebResourceLoader::didFinishLoading()
     releaseResources();
 }
 
-void WebResourceLoader::didFinishLoadingOnePart()
+void ResourceLoader::didFinishLoadingOnePart()
 {
     if (m_cancelled)
         return;
@@ -355,7 +355,7 @@ void WebResourceLoader::didFinishLoadingOnePart()
     frameLoader()->didFinishLoad(this);
 }
 
-void WebResourceLoader::didFail(NSError *error)
+void ResourceLoader::didFail(NSError *error)
 {
     if (m_cancelled)
         return;
@@ -363,14 +363,14 @@ void WebResourceLoader::didFail(NSError *error)
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<WebResourceLoader> protector(this);
+    RefPtr<ResourceLoader> protector(this);
 
     frameLoader()->didFailToLoad(this, error);
 
     releaseResources();
 }
 
-NSCachedURLResponse *WebResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
+NSCachedURLResponse *ResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
 {
     // When in private browsing mode, prevent caching to disk
     if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && frameLoader()->privateBrowsingEnabled())
@@ -381,7 +381,7 @@ NSCachedURLResponse *WebResourceLoader::willCacheResponse(NSCachedURLResponse *c
     return cachedResponse;
 }
 
-void WebResourceLoader::didCancel(NSError *error)
+void ResourceLoader::didCancel(NSError *error)
 {
     ASSERT(!m_cancelled);
     ASSERT(!m_reachedTerminalState);
@@ -404,7 +404,7 @@ void WebResourceLoader::didCancel(NSError *error)
     releaseResources();
 }
 
-void WebResourceLoader::cancel(NSError *error)
+void ResourceLoader::cancel(NSError *error)
 {
     if (m_reachedTerminalState)
         return;
@@ -414,27 +414,27 @@ void WebResourceLoader::cancel(NSError *error)
         didCancel(cancelledError());
 }
 
-void WebResourceLoader::setIdentifier(id identifier)
+void ResourceLoader::setIdentifier(id identifier)
 {
     m_identifier = identifier;
 }
 
-NSURLResponse *WebResourceLoader::response() const
+NSURLResponse *ResourceLoader::response() const
 {
     return m_response.get();
 }
 
-bool WebResourceLoader::inConnectionCallback()
+bool ResourceLoader::inConnectionCallback()
 {
     return inNSURLConnectionCallback != 0;
 }
 
-NSError *WebResourceLoader::cancelledError()
+NSError *ResourceLoader::cancelledError()
 {
     return frameLoader()->cancelledError(m_request.get());
 }
 
-void WebResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
+void ResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
 {
     ASSERT(challenge);
     if (challenge != m_currentWebChallenge)
@@ -446,7 +446,7 @@ void WebResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challen
     m_currentWebChallenge = nil;
 }
 
-void WebResourceLoader::receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *challenge)
 {
     ASSERT(challenge);
     if (challenge != m_currentWebChallenge)
@@ -458,7 +458,7 @@ void WebResourceLoader::receivedRequestToContinueWithoutCredential(NSURLAuthenti
     m_currentWebChallenge = nil;
 }
 
-void WebResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challenge)
 {
     if (challenge != m_currentWebChallenge)
         return;
@@ -466,7 +466,7 @@ void WebResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *chall
     cancel();
 }
 
-WebCoreResourceLoaderAsDelegate *WebResourceLoader::delegate()
+WebCoreResourceLoaderAsDelegate *ResourceLoader::delegate()
 {
     if (!m_delegate) {
         WebCoreResourceLoaderAsDelegate *d = [[WebCoreResourceLoaderAsDelegate alloc] initWithLoader:this];
@@ -476,7 +476,7 @@ WebCoreResourceLoaderAsDelegate *WebResourceLoader::delegate()
     return m_delegate.get();
 }
 
-void WebResourceLoader::releaseDelegate()
+void ResourceLoader::releaseDelegate()
 {
     if (!m_delegate)
         return;
@@ -488,7 +488,7 @@ void WebResourceLoader::releaseDelegate()
 
 @implementation WebCoreResourceLoaderAsDelegate
 
-- (id)initWithLoader:(WebResourceLoader*)loader
+- (id)initWithLoader:(ResourceLoader*)loader
 {
     self = [self init];
     if (!self)

@@ -110,7 +110,7 @@ short JSNodeFilterCondition::acceptNode(WebCore::Node* filterNode) const
 {
     WebCore::Node *node = filterNode;
     Frame *frame = node->document()->frame();
-    KJSProxy *proxy = frame->jScript();
+    KJSProxy *proxy = frame->scriptProxy();
     if (proxy && filter->implementsCall()) {
         JSLock lock;
         ExecState *exec = proxy->interpreter()->globalExec();

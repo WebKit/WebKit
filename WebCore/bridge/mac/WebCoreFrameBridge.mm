@@ -33,7 +33,7 @@
 #import "ClipboardMac.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
-#import "Decoder.h"
+#import "TextResourceDecoder.h"
 #import "DeleteSelectionCommand.h"
 #import "DocLoader.h"
 #import "DocumentFragment.h"
@@ -79,9 +79,9 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"
-#import "WebDocumentLoader.h"
-#import "WebFormDataStream.h"
-#import "WebSubresourceLoader.h"
+#import "DocumentLoader.h"
+#import "FormDataStream.h"
+#import "SubresourceLoader.h"
 #import "XMLTokenizer.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -1049,7 +1049,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
-    return aeDescFromJSValue(m_frame->jScript()->interpreter()->globalExec(), result);
+    return aeDescFromJSValue(m_frame->scriptProxy()->interpreter()->globalExec(), result);
 }
 
 - (NSAttributedString *)selectedAttributedString
@@ -1112,7 +1112,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document* doc = m_frame->document();
     if (!doc)
         return nil;
-    Decoder* decoder = doc->decoder();
+    TextResourceDecoder* decoder = doc->decoder();
     if (!decoder)
         return nil;
     return decoder->encoding().decode(reinterpret_cast<const char*>([data bytes]), [data length]);
@@ -2074,7 +2074,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     FrameMac *frame = [self _frame];
     RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
     root->setRootObjectImp(Window::retrieveWindow(frame));
-    root->setInterpreter(frame->jScript()->interpreter());
+    root->setInterpreter(frame->scriptProxy()->interpreter());
     frame->addPluginRootObject(root);
     return root;
 }

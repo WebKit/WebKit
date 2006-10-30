@@ -95,7 +95,7 @@
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>

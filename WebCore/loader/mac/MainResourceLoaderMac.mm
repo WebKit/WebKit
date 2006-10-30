@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebMainResourceLoader.h"
+#import "MainResourceLoader.h"
 
 #import "FrameLoader.h"
 #import "PlatformString.h"
@@ -41,7 +41,7 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
 
-// FIXME: More that is in common with SubresourceLoader should move up into WebResourceLoader.
+// FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
 using namespace WebCore;
 
@@ -50,7 +50,7 @@ namespace WebCore {
 const size_t URLBufferLength = 2048;
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
-    : WebResourceLoader(frame)
+    : ResourceLoader(frame)
     , m_proxy(wkCreateNSURLConnectionDelegateProxy())
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
@@ -66,7 +66,7 @@ MainResourceLoader::~MainResourceLoader()
 void MainResourceLoader::releaseDelegate()
 {
     [m_proxy.get() setDelegate:nil];
-    WebResourceLoader::releaseDelegate();
+    ResourceLoader::releaseDelegate();
 }
 
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
@@ -104,7 +104,7 @@ void MainResourceLoader::didCancel(NSError *error)
         deref(); // balances ref in didReceiveResponse
     }
     frameLoader()->receivedMainResourceError(error, true);
-    WebResourceLoader::didCancel(error);
+    ResourceLoader::didCancel(error);
 }
 
 NSError *MainResourceLoader::interruptionForPolicyChangeError() const
@@ -146,7 +146,7 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSU
 
 void MainResourceLoader::addData(NSData *data, bool allAtOnce)
 {
-    WebResourceLoader::addData(data, allAtOnce);
+    ResourceLoader::addData(data, allAtOnce);
     frameLoader()->receivedData(data);
 }
 
@@ -187,7 +187,7 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     // Note super will make a copy for us, so reassigning newRequest is important. Since we are returning this value, but
     // it's only guaranteed to be retained by self, and self might be dealloc'ed in this method, we have to autorelease.
     // See 3777253 for an example.
-    newRequest = [[WebResourceLoader::willSendRequest(newRequest, redirectResponse) retain] autorelease];
+    newRequest = [[ResourceLoader::willSendRequest(newRequest, redirectResponse) retain] autorelease];
 
     // Don't set this on the first request. It is set when the main load was started.
     frameLoader()->setRequest(newRequest);
@@ -265,7 +265,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 
     // we may have cancelled this load as part of switching to fallback content
     if (!reachedTerminalState())
-        WebResourceLoader::didReceiveResponse(r);
+        ResourceLoader::didReceiveResponse(r);
 
     if (frameLoader() && !frameLoader()->isStopping() && (shouldLoadAsEmptyDocument(URL) || frameLoader()->representationExistsForURLScheme([URL scheme])))
         didFinishLoading();
@@ -321,7 +321,7 @@ void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, 
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
 void MainResourceLoader::didFinishLoading()
@@ -333,7 +333,7 @@ void MainResourceLoader::didFinishLoading()
     RefPtr<MainResourceLoader> protect(this);
 
     frameLoader()->finishedLoading();
-    WebResourceLoader::didFinishLoading();
+    ResourceLoader::didFinishLoading();
 }
 
 void MainResourceLoader::didFail(NSError *error)
@@ -409,7 +409,7 @@ bool MainResourceLoader::load(NSURLRequest *r)
 
 void MainResourceLoader::setDefersLoading(bool defers)
 {
-    WebResourceLoader::setDefersLoading(defers);
+    ResourceLoader::setDefersLoading(defers);
     if (!defers) {
         RetainPtr<NSURLRequest> r = m_initialRequest;
         if (r) {

@@ -29,7 +29,7 @@
 
 #include "CString.h"
 #include "PlatformString.h"
-#include "StreamingTextDecoder.h"
+#include "TextCodec.h"
 #include "TextDecoder.h"
 #include "TextEncodingRegistry.h"
 #include <unicode/unorm.h>

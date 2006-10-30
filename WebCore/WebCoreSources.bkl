@@ -129,7 +129,7 @@
 		loader/CachedResourceClientWalker.cpp
 		loader/CachedScript.cpp
 		loader/CachedXSLStyleSheet.cpp
-		loader/Decoder.cpp
+		loader/TextResourceDecoder.cpp
 		loader/DocLoader.cpp
 		loader/FormData.cpp
 		loader/ImageDocument.cpp
@@ -170,8 +170,8 @@
 		platform/Pen.cpp
 		platform/RegularExpression.cpp
 		platform/SegmentedString.cpp
-		platform/StreamingTextDecoder.cpp
-		platform/StreamingTextDecoderICU.cpp
+		platform/TextCodec.cpp
+		platform/TextCodecICU.cpp
 		platform/String.cpp
 		platform/StringImpl.cpp
 		platform/TextCodecLatin1.cpp

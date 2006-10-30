@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebSubresourceLoader.h"
+#import "SubresourceLoader.h"
 
 #import "FrameLoader.h"
 #import "FrameMac.h"
@@ -37,14 +37,14 @@
 #import "ResourceHandle.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
-#import "WebFormDataStream.h"
+#import "FormDataStream.h"
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 
 namespace WebCore {
 
 SubresourceLoader::SubresourceLoader(Frame* frame, ResourceHandle* handle)
-    : WebResourceLoader(frame)
+    : ResourceLoader(frame)
     , m_handle(handle)
     , m_loadingMultipartContent(false)
 {
@@ -107,7 +107,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
 NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
     NSURL *oldURL = [request() URL];
-    NSURLRequest *clientRequest = WebResourceLoader::willSendRequest(newRequest, redirectResponse);
+    NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
         m_handle->redirectedToURL([clientRequest URL]);
     return clientRequest;
@@ -128,7 +128,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
         return;
-    WebResourceLoader::didReceiveResponse(r);
+    ResourceLoader::didReceiveResponse(r);
     
     if (m_loadingMultipartContent && [resourceData() length]) {
         // Since a subresource loader does not load multipart sections progressively,
@@ -152,7 +152,7 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent)
         m_handle->addData(data);
-    WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
 void SubresourceLoader::didFinishLoading()
@@ -170,7 +170,7 @@ void SubresourceLoader::didFinishLoading()
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
-    WebResourceLoader::didFinishLoading();
+    ResourceLoader::didFinishLoading();
 }
 
 void SubresourceLoader::didFail(NSError *error)
@@ -188,7 +188,7 @@ void SubresourceLoader::didFail(NSError *error)
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
-    WebResourceLoader::didFail(error);
+    ResourceLoader::didFail(error);
 }
 
 void SubresourceLoader::didCancel(NSError *error)
@@ -204,7 +204,7 @@ void SubresourceLoader::didCancel(NSError *error)
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
-    WebResourceLoader::didCancel(error);
+    ResourceLoader::didCancel(error);
 }
 
 }

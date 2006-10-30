@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/DocumentLoader.h>
 
 @class WebDataSource;
 

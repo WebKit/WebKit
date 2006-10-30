@@ -22,8 +22,8 @@
 
 */
 
-#ifndef Decoder_h
-#define Decoder_h
+#ifndef TextResourceDecoder_h
+#define TextResourceDecoder_h
 
 #include "PlatformString.h"
 #include "Shared.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class Decoder : public Shared<Decoder> {
+class TextResourceDecoder : public Shared<TextResourceDecoder> {
 public:
     enum EncodingSource {
         DefaultEncoding,
@@ -44,8 +44,8 @@ public:
         UserChosenEncoding
     };
 
-    Decoder(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding());
-    ~Decoder();
+    TextResourceDecoder(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding());
+    ~TextResourceDecoder();
 
     void setEncoding(const TextEncoding&, EncodingSource);
     const TextEncoding& encoding() const { return m_decoder.encoding(); }

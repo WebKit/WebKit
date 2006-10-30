@@ -27,14 +27,14 @@
  */
 
 #import "FrameLoaderTypes.h"
-#import "WebLoader.h"
+#import "ResourceLoader.h"
 #import <wtf/Forward.h>
 
 namespace WebCore {
 
     class FormState;
 
-    class MainResourceLoader : public WebResourceLoader {
+    class MainResourceLoader : public ResourceLoader {
     public:
         static PassRefPtr<MainResourceLoader> create(Frame*);
         virtual ~MainResourceLoader();

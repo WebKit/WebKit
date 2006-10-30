@@ -24,7 +24,7 @@
 #include "CString.h"
 #include "Cache.h"
 #include "DOMImplementation.h"
-#include "Decoder.h"
+#include "TextResourceDecoder.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -569,12 +569,12 @@ void XMLHttpRequest::didReceiveData(ResourceHandle*, const char* data, int len)
             m_encoding = m_loader->responseEncoding();
     
         if (!m_encoding.isEmpty())
-            m_decoder = new Decoder("text/plain", m_encoding);
+            m_decoder = new TextResourceDecoder("text/plain", m_encoding);
         else if (responseIsXML())
-            // allow Decoder to look inside the m_response if it's XML
-            m_decoder = new Decoder("application/xml");
+            // allow TextResourceDecoder to look inside the m_response if it's XML
+            m_decoder = new TextResourceDecoder("application/xml");
         else
-            m_decoder = new Decoder("text/plain", "UTF-8");
+            m_decoder = new TextResourceDecoder("text/plain", "UTF-8");
     }
     if (len == 0)
         return;

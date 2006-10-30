@@ -42,7 +42,7 @@
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameMac.h>
-#import <WebCore/WebDocumentLoader.h>
+#import <WebCore/DocumentLoader.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {

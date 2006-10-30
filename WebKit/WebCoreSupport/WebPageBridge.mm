@@ -39,7 +39,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameNamespaces.h>
-#import <WebCore/WebLoader.h>
+#import <WebCore/ResourceLoader.h>
 
 using namespace WebCore;
 
@@ -110,7 +110,7 @@ using namespace WebCore;
 
 - (BOOL)canRunModalNow
 {
-    return [self canRunModal] && !WebResourceLoader::inConnectionCallback();
+    return [self canRunModal] && !ResourceLoader::inConnectionCallback();
 }
 
 - (void)runModal

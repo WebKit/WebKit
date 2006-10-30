@@ -26,32 +26,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebLoader.h"
-#import "WebPlugInStreamLoaderDelegate.h"
-#import <wtf/Forward.h>
-
+#ifndef SubresourceLoader_H_
+#define SubresourceLoader_H_
+ 
+#import "ResourceLoader.h"
+#include <wtf/PassRefPtr.h>
+ 
+#ifndef __OBJC__
+class NSArray;
+class NSDictionary;
+class NSMutableURLRequest;
+#endif
+ 
 namespace WebCore {
 
-    class NetscapePlugInStreamLoader : public WebResourceLoader {
+    class FormData;
+    class String;
+    class ResourceHandle;
+    class ResourceRequest;
+    
+    class SubresourceLoader : public ResourceLoader {
     public:
-        static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, id <WebPlugInStreamLoaderDelegate>);
-        virtual ~NetscapePlugInStreamLoader();
+        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceHandle*, ResourceRequest&);
 
-        bool isDone() const;
+        virtual ~SubresourceLoader();
 
+        virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(NSError *);
 
-        virtual void releaseResources();
-
     private:
-        NetscapePlugInStreamLoader(Frame*, id <WebPlugInStreamLoaderDelegate>);
+        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceHandle*,
+            NSMutableURLRequest *, NSDictionary *customHeaders, const String& referrer);
+
+        SubresourceLoader(Frame*, ResourceHandle*);
 
         virtual void didCancel(NSError *);
 
-        RetainPtr<id <WebPlugInStreamLoaderDelegate> > m_stream;
+        RefPtr<ResourceHandle> m_handle;
+        bool m_loadingMultipartContent;
     };
 
 }
+
+#endif // SubresourceLoader_H_

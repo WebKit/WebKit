@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "StreamingTextDecoderMac.h"
+#include "TextCodecMac.h"
 
 #include "CharsetData.h"
 #include "CString.h"

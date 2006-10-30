@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "StreamingTextDecoderICU.h"
+#include "TextCodecICU.h"
 
 #include "CString.h"
 #include "PlatformString.h"
