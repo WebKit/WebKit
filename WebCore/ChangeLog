@@ -1,3 +1,9 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * loader/ResourceLoader.h: Added header guard.
+
 2006-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

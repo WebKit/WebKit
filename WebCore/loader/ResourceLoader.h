@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef ResourceLoader_h
+#define ResourceLoader_h
+
 #include "Shared.h"
 #include <wtf/RefPtr.h>
 
@@ -154,3 +157,5 @@ namespace WebCore {
     };
 
 }
+
+#endif
