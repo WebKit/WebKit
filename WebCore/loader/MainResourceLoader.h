@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "FrameLoaderTypes.h"
-#import "ResourceLoader.h"
-#import <wtf/Forward.h>
+#include "FrameLoaderTypes.h"
+#include "ResourceLoader.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

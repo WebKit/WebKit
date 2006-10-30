@@ -151,7 +151,6 @@ FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> c
     , _windowScriptNPObject(0)
 {
     d->m_extension = new BrowserExtensionMac(this);
-    d->m_frameLoader = new FrameLoader(this);
 }
 
 FrameMac::~FrameMac()
@@ -161,8 +160,6 @@ FrameMac::~FrameMac()
     clearRecordedFormValues();    
     
     [_bridge clearFrame];
-    delete d->m_frameLoader;
-    d->m_frameLoader = 0;
     HardRelease(_bridge);
     _bridge = nil;
 

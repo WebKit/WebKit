@@ -1,3 +1,41 @@
+2006-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix FrameLoader files so they can be built on non-Mac platforms
+
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate): Added code to create the frame loader.
+        (WebCore::FramePrivate::~FramePrivate): Added code to delete the frame loader.
+
+        * page/Page.h:
+        * page/Page.cpp: (WebCore::Page::setDefersLoading): Removed the
+        #if PLATFORM(MAC) that Adam added as a stop-gap when I did this wrong
+        the other day.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac): Removed code to create the frame loader.
+        (WebCore::FrameMac::~FrameMac): Removed code to delete the frame loader.
+
+        * loader/FrameLoader.h: Changed import to include, added #if PLATFORM(MAC)
+        around the PolicyCheck definition.
+
+        * loader/FormState.cpp: Changed import to include.
+        * loader/FrameLoader.cpp: Ditto.
+        * loader/MainResourceLoader.h: Ditto.
+
+        * loader/FrameLoaderTypes.h: Added a header guard.
+
+        * loader/NetscapePlugInStreamLoader.h: Changed import to include.
+        Added #if PLATFORM(MAC) around Mac-specific details.
+        * loader/SubresourceLoader.h: Ditto.
+
+        * page/Frame.cpp: (WebCore::Frame::loader): Updated name of loader to
+        m_loader from m_frameLoader.
+
+        * CMakeLists.txt: Updated.
+        * WebCoreSources.bkl: Updated.
+
 2006-10-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Anders.

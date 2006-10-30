@@ -29,7 +29,7 @@
 #ifndef SubresourceLoader_H_
 #define SubresourceLoader_H_
  
-#import "ResourceLoader.h"
+#include "ResourceLoader.h"
 #include <wtf/PassRefPtr.h>
  
 #ifndef __OBJC__
@@ -51,11 +51,13 @@ namespace WebCore {
 
         virtual ~SubresourceLoader();
 
+#if PLATFORM(MAC)
         virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(NSError *);
+#endif
 
     private:
         static PassRefPtr<SubresourceLoader> create(Frame*, ResourceHandle*,
@@ -63,7 +65,9 @@ namespace WebCore {
 
         SubresourceLoader(Frame*, ResourceHandle*);
 
+#if PLATFORM(MAC)
         virtual void didCancel(NSError *);
+#endif
 
         RefPtr<ResourceHandle> m_handle;
         bool m_loadingMultipartContent;

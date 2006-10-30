@@ -534,7 +534,7 @@ void Frame::cancelRedirection(bool cancelWithLoadInProgress)
 
 FrameLoader* Frame::loader() const
 {
-    return d->m_frameLoader;
+    return d->m_loader;
 }
 
 KURL Frame::iconURL()

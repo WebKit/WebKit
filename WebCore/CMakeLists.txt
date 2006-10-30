@@ -964,22 +964,28 @@ set(WebCore_SRCS
     xml/XPathExpression.cpp
     xml/XPathResult.cpp
     xml/XPathEvaluator.cpp
+    loader/Cache.cpp
+    loader/CachedCSSStyleSheet.cpp
     loader/CachedImage.cpp
+    loader/CachedResource.cpp
+    loader/CachedResourceClientWalker.cpp
     loader/CachedScript.cpp
-    loader/Request.cpp
     loader/CachedXSLStyleSheet.cpp
     loader/DocLoader.cpp
-    loader/PluginDocument.cpp
-    loader/TextDocument.cpp
-    loader/ImageDocument.cpp
-    loader/CachedResourceClientWalker.cpp
-    loader/loader.cpp
-    loader/CachedCSSStyleSheet.cpp
-    loader/CachedXBLDocument.cpp
-    loader/CachedResource.cpp
-    loader/Cache.cpp
-    loader/TextResourceDecoder.cpp
+    loader/DocumentLoader.cpp
     loader/FormData.cpp
+    loader/FormState.cpp
+    loader/FrameLoader.cpp
+    loader/ImageDocument.cpp
+    loader/MainResourceLoader.cpp
+    loader/NetscapePlugInStreamLoader.cpp
+    loader/PluginDocument.cpp
+    loader/Request.cpp
+    loader/ResourceLoader.cpp
+    loader/SubresourceLoader.cpp
+    loader/TextDocument.cpp
+    loader/TextResourceDecoder.cpp
+    loader/loader.cpp
     platform/CString.cpp
     platform/AtomicString.cpp
     platform/AffineTransform.cpp

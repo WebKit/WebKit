@@ -26,15 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FrameLoader.h"
+#include "config.h"
+#include "FrameLoader.h"
 
-#import "Element.h"
-#import "Frame.h"
-#import "FrameLoaderClient.h"
-#import "DocumentLoader.h"
-#import "FormState.h"
-#import "MainResourceLoader.h"
+#include "Element.h"
+#include "Frame.h"
+#include "FrameLoaderClient.h"
+#include "DocumentLoader.h"
+#include "FormState.h"
+#include "MainResourceLoader.h"
 
 namespace WebCore {
 

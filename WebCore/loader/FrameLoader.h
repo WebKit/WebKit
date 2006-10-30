@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "FrameLoaderTypes.h"
-#import <WebCore/PlatformString.h>
-#import <wtf/Forward.h>
-#import <wtf/HashSet.h>
-#import <wtf/HashMap.h>
-#import <wtf/Noncopyable.h>
-#import <wtf/RefPtr.h>
+#include "FrameLoaderTypes.h"
+#include "PlatformString.h"
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
 
@@ -386,7 +386,9 @@ namespace WebCore {
 #endif
 
         FrameLoadType m_policyLoadType;
+#if PLATFORM(MAC)
         PolicyCheck m_policyCheck;
+#endif
 
         bool m_delegateIsHandlingProvisionalLoadError;
         bool m_delegateIsDecidingNavigationPolicy;

@@ -38,6 +38,7 @@
 #include "EditorClient.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "IconLoader.h"
 #include "SelectionController.h"
@@ -102,7 +103,7 @@ namespace WebCore {
             , m_executingJavaScriptFormAction(false)
             , m_cancelWithLoadInProgress(false)
             , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
-            , m_frameLoader(0)
+            , m_loader(new FrameLoader(thisFrame))
             , m_userStyleSheetLoader(0)
             , m_iconLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
@@ -123,6 +124,7 @@ namespace WebCore {
         {
             delete m_extension;
             delete m_jscript;
+            delete m_loader;
             delete m_iconLoader;
         }
 
@@ -225,7 +227,7 @@ namespace WebCore {
 
         Timer<Frame> m_lifeSupportTimer;
 
-        FrameLoader* m_frameLoader;
+        FrameLoader* m_loader;
         UserStyleSheetLoader* m_userStyleSheetLoader;
         IconLoader* m_iconLoader;
         

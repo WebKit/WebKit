@@ -121,24 +121,31 @@
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_LOADER">
-		
-		loader/Cache.cpp
-		loader/CachedCSSStyleSheet.cpp
-		loader/CachedImage.cpp
-		loader/CachedResource.cpp
-		loader/CachedResourceClientWalker.cpp
-		loader/CachedScript.cpp
-		loader/CachedXSLStyleSheet.cpp
-		loader/TextResourceDecoder.cpp
-		loader/DocLoader.cpp
-		loader/FormData.cpp
-		loader/ImageDocument.cpp
-		loader/loader.cpp
-		loader/Request.cpp
-		loader/TextDocument.cpp
-		loader/PluginDocument.cpp
 
-	</set>
+    loader/Cache.cpp
+    loader/CachedCSSStyleSheet.cpp
+    loader/CachedImage.cpp
+    loader/CachedResource.cpp
+    loader/CachedResourceClientWalker.cpp
+    loader/CachedScript.cpp
+    loader/CachedXSLStyleSheet.cpp
+    loader/DocLoader.cpp
+    loader/DocumentLoader.cpp
+    loader/FormData.cpp
+    loader/FormState.cpp
+    loader/FrameLoader.cpp
+    loader/ImageDocument.cpp
+    loader/MainResourceLoader.cpp
+    loader/NetscapePlugInStreamLoader.cpp
+    loader/PluginDocument.cpp
+    loader/Request.cpp
+    loader/ResourceLoader.cpp
+    loader/SubresourceLoader.cpp
+    loader/TextDocument.cpp
+    loader/TextResourceDecoder.cpp
+    loader/loader.cpp
+
+  </set>
 	<set append="1" var="WEBCORE_SOURCES_PLATFORM">
 		
 		platform/Arena.cpp

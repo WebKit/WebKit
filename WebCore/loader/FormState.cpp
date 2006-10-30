@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FormState.h"
+#include "config.h"
+#include "FormState.h"
 
-#import "Element.h"
-#import "Frame.h"
+#include "Element.h"
+#include "Frame.h"
 
 namespace WebCore {
 

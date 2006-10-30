@@ -75,10 +75,10 @@ namespace WebCore {
         bool canRunModalNow();
         void runModal();
 
-#if PLATFORM(MAC)
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
 
+#if PLATFORM(MAC)
         Page(WebCorePageBridge*);
         WebCorePageBridge* bridge() const { return m_bridge; }
 #endif
@@ -98,8 +98,8 @@ namespace WebCore {
         String m_groupName;
         mutable SelectionController m_dragCaretController;
 
-#if PLATFORM(MAC)
         bool m_defersLoading;
+#if PLATFORM(MAC)
         WebCorePageBridge* m_bridge;
 #endif
 
