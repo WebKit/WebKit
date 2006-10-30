@@ -487,14 +487,14 @@ bool TextIterator::handleNonTextNode()
 
 void TextIterator::exitNode()
 {
-    VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
-    VisiblePosition next = lastInNode.next();
-    Position start = lastInNode.deepEquivalent();
-    Position end = next.isNull() ? start : next.deepEquivalent();
-    
     if (m_lastTextNode && shouldEmitNewlinesBeforeAndAfterNode(m_node)) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
+        
+        VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
+        VisiblePosition next = lastInNode.next();
+        Position start = lastInNode.deepEquivalent();
+        Position end = next.isNull() ? start : next.deepEquivalent();
         
         if (m_lastCharacter != '\n') {
 
@@ -507,8 +507,13 @@ void TextIterator::exitNode()
             // insert a newline with a position following this block
             emitCharacter('\n', start, end);
         }
-    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
+    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node)) {
+        VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
+        VisiblePosition next = lastInNode.next();
+        Position start = lastInNode.deepEquivalent();
+        Position end = next.isNull() ? start : next.deepEquivalent();
         emitCharacter(' ', start, end);
+    }
 }
 
 void TextIterator::emitCharacter(UChar c, const Position& start, const Position& end)
