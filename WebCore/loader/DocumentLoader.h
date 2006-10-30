@@ -34,6 +34,18 @@
 
 #include "RetainPtr.h"
 
+#ifndef __OBJC__
+
+class NSData;
+class NSDictionary;
+class NSError;
+class NSMutableURLRequest;
+class NSURL;
+class NSURLRequest;
+class NSURLResponse;
+
+#endif
+
 #endif
 
 namespace WebCore {

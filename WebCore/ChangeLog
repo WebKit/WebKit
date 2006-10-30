@@ -1,5 +1,13 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * loader/DocumentLoader.h: Add declarations so this compiles without ObjC.
+        * loader/NetscapePlugInStreamLoader.h: Ditto.
+        * loader/ResourceLoader.h: Ditto.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         - one last name change -- WebFormState.h to FormState.h
         - added more empty placeholder platform-independent files
           for currently-Mac-specific loader classes

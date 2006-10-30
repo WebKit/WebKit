@@ -44,9 +44,11 @@
 @class WebCoreResourceLoaderAsDelegate;
 #else
 class NSCachedURLResponse;
+class NSData;
 class NSError;
 class NSMutableData;
 class NSObject;
+class NSURL;
 class NSURLAuthenticationChallenge;
 class NSURLConnection;
 class NSURLCredential;
