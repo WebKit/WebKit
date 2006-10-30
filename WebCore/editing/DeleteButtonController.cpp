@@ -65,21 +65,31 @@ static bool isDeletableElement(Node* node)
     if (!node || !node->isHTMLElement() || !node->isContentEditable())
         return false;
 
+    const unsigned minimumWidth = 25;
+    const unsigned minimumHeight = 25;
+    const unsigned minimumVisibleBorders = 3;
+
     RenderObject* renderer = node->renderer();
-    if (!renderer || renderer->width() < 25 || renderer->height() < 25)
+    if (!renderer || renderer->width() < minimumWidth || renderer->height() < minimumHeight)
         return false;
 
-    if (node->hasTagName(tableTag) || node->hasTagName(ulTag) || node->hasTagName(olTag))
+    if (renderer->isTable())
         return true;
 
-    if (renderer->isRenderBlock()) {
+    if (node->hasTagName(ulTag) || node->hasTagName(olTag))
+        return true;
+
+    if (renderer->isPositioned())
+        return true;
+
+    // allow block elements (excluding table cells) that have some non-transparent borders
+    if (renderer->isRenderBlock() && !renderer->isTableCell()) {
         RenderStyle* style = renderer->style();
-        if (!style)
-            return false;
-        if (style->position() == AbsolutePosition || style->position() == FixedPosition)
-            return true;
-        if (style->border().hasBorder())
-            return true;
+        if (style && style->hasBorder()) {
+            unsigned visibleBorders = !style->borderTop().isTransparent() + !style->borderBottom().isTransparent() + !style->borderLeft().isTransparent() + !style->borderRight().isTransparent();
+            if (visibleBorders >= minimumVisibleBorders)
+                return true;
+        }
     }
 
     return false;
@@ -158,8 +168,8 @@ void DeleteButtonController::show(HTMLElement* element)
 
     CSSMutableStyleDeclaration* style = m_containerElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-    style->setProperty(CSS_PROP_TOP, "0px");
-    style->setProperty(CSS_PROP_LEFT, "0px");
+    style->setProperty(CSS_PROP_TOP, String::number(-m_element->renderer()->borderTop()) + "px");
+    style->setProperty(CSS_PROP_LEFT, String::number(-m_element->renderer()->borderLeft()) + "px");
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);

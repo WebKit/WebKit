@@ -1,3 +1,16 @@
+2006-10-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/4478625> Basic table editing and culling
+
+        Refined the criteria for deletable elements, rely on the renderer more.
+        Corrected the interface positioning for elements that have borders.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        (WebCore::DeleteButtonController::show):
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         - fix build
