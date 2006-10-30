@@ -111,7 +111,7 @@ struct GregorianDateTime {
         timeZone = new char[inZoneSize];
         strncpy(timeZone, inTm.tm_zone, inZoneSize);
 #else
-        utcOffset = static_cast<int>(getUTCOffset() / msPerSecond + isDST ? secondsPerHour : 0);
+        utcOffset = static_cast<int>(getUTCOffset() / msPerSecond + (isDST ? secondsPerHour : 0));
         timeZone = 0;
 #endif
     }

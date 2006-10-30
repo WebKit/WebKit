@@ -551,7 +551,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   case GetMilliSeconds:
     return jsNumber(ms);
   case GetTimezoneOffset:
-    return jsNumber(-gmtoffset(t) / 60);
+    return jsNumber(-gmtoffset(t) / minutesPerHour);
   case SetTime:
     milli = roundValue(exec, args[0]);
     result = jsNumber(milli);
@@ -663,7 +663,6 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
       value = NaN;
     } else {
       GregorianDateTime t;
-      memset(&t, 0, sizeof(t));
       int year = args[0]->toInt32(exec);
       t.year = (year >= 0 && year <= 99) ? year : year - 1900;
       t.month = args[1]->toInt32(exec);

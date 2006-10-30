@@ -1,3 +1,15 @@
+2006-10-30  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Fix some timezone issues and JavaScriptCore date tests.  Addresses bugzilla 4930.
+
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::GregorianDateTime): Here's the fix, to add parenthesis for order of precedence.
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction): 
+        (KJS::DateObjectImp::construct): memset not needed as GregorianDateTime initializes itself.
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
