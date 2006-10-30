@@ -1,3 +1,15 @@
+2006-10-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Patch by Zack rusin to fix: 
+        http://bugs.webkit.org/show_bug.cgi?id=11429
+
+        Fix startup crash.
+
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+
 2006-10-30  Zach Rusin  <zack@kde.org>
 
         Reviewed and landed by Anders.
