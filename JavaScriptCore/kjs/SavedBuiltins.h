@@ -25,6 +25,8 @@
 #ifndef SavedBuiltins_H
 #define SavedBuiltins_H
 
+#include "protect.h"
+
 namespace KJS {
     
 class SavedBuiltinsInternal;
