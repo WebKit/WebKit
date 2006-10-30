@@ -65,8 +65,8 @@ static bool isDeletableElement(Node* node)
     if (!node || !node->isHTMLElement() || !node->isContentEditable())
         return false;
 
-    const unsigned minimumWidth = 25;
-    const unsigned minimumHeight = 25;
+    const int minimumWidth = 25;
+    const int minimumHeight = 25;
     const unsigned minimumVisibleBorders = 3;
 
     RenderObject* renderer = node->renderer();
