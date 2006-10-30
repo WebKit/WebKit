@@ -1050,7 +1050,19 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSColor *)_bodyBackgroundColor
 {
-    return core(self)->bodyBackgroundColor();
+    Document* document = core(self)->document();
+    if (!document)
+        return nil;
+    HTMLElement* body = document->body();
+    if (!body)
+        return nil;
+    RenderObject* bodyRenderer = body->renderer();
+    if (!bodyRenderer)
+        return nil;
+    Color color = bodyRenderer->style()->backgroundColor();
+    if (!color.isValid())
+        return nil;
+    return nsColor(color);
 }
 
 - (BOOL)_isFrameSet

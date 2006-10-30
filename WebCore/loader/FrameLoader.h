@@ -41,10 +41,7 @@
 
 #ifdef __OBJC__
 
-@class WebCorePageState;
-
 @class NSData;
-@class NSDate;
 @class NSDictionary;
 @class NSError;
 @class NSEvent;
@@ -55,20 +52,13 @@
 @class NSURLRequest;
 @class NSURLResponse;
 
-@protocol WebCoreResourceLoader;
-@protocol WebCoreResourceHandle;
-
 #else
 
-class WebCorePageState;
-
 class NSData;
-class NSDate;
 class NSDictionary;
 class NSError;
 class NSEvent;
 class NSMutableURLRequest;
-class NSString;
 class NSURL;
 class NSURLAuthenticationChallenge;
 class NSURLConnection;
@@ -88,6 +78,7 @@ namespace WebCore {
     class Frame;
     class FrameLoadRequest;
     class FrameLoaderClient;
+    class PageState;
     class KURL;
     class MainResourceLoader;
     class ResourceRequest;
@@ -282,7 +273,7 @@ namespace WebCore {
 
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
 #if PLATFORM(MAC)
-        void clientRedirected(NSURL *, double delay, NSDate *fireDate, bool lockHistory, bool isJavaScriptFormAction);
+        void clientRedirected(NSURL *, double delay, double fireDate, bool lockHistory, bool isJavaScriptFormAction);
         void commitProvisionalLoad(NSDictionary *pageCache);
         bool shouldReload(NSURL *currentURL, NSURL *destinationURL);
 #endif
@@ -368,10 +359,7 @@ namespace WebCore {
         void setState(FrameState);
 
         void closeOldDataSources();
-#if PLATFORM(MAC)
-        void open(NSURL *, bool reload, NSString *contentType, NSString *refresh, NSDate *lastModified, NSDictionary *pageCache);
-        void open(WebCorePageState *);
-#endif
+        void open(PageState&);
         void opened();
 
 #if PLATFORM(MAC)

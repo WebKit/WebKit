@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCorePageState.h"
+#include "KURL.h"
+#include "Shared.h"
+#include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
 
-#import "Document.h"
-#import "Frame.h"
-#import "Page.h"
-#import "PageState.h"
-
-using namespace WebCore;
-
-@implementation WebCorePageState
-
-- (id)initWithPage:(Page*)page
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    Document* document = page->mainFrame()->document();
-    if (!document || !document->view()) {
-        [self release];
-        return nil;
-    }
-
-    m_impl = WebCore::PageState::create(page).releaseRef();
-    return self;
+namespace KJS {
+    class PausedTimeouts;
+    class SavedBuiltins;
+    class SavedProperties;
 }
 
-- (void)dealloc
-{
-    m_impl->deref();
-    [super dealloc];
-}
+namespace WebCore {
 
-- (void)finalize
-{
-    m_impl->deref();
-    [super finalize];
-}
+    class Document;
+    class FrameView;
+    class Node;
+    class Page;
 
-- (WebCore::PageState*)impl
-{
-    return m_impl;
-}
+    class PageState : public Shared<PageState> {
+    public:
+        static PassRefPtr<PageState> create(Page*);
+        ~PageState();
 
-@end
+        void clear();
+
+        Document* document() { return m_document.get(); }
+        Node* mousePressNode() { return m_mousePressNode.get(); }
+        const KURL& URL() { return m_URL; }
+
+        void restoreJavaScriptState(Page*);
+
+    private:
+        PageState(Page*);
+
+        RefPtr<Document> m_document;
+        RefPtr<FrameView> m_view;
+        RefPtr<Node> m_mousePressNode;
+        KURL m_URL;
+        OwnPtr<KJS::SavedProperties> m_windowProperties;
+        OwnPtr<KJS::SavedProperties> m_locationProperties;
+        OwnPtr<KJS::SavedBuiltins> m_interpreterBuiltins;
+        OwnPtr<KJS::PausedTimeouts> m_pausedTimeouts;
+    };
+
+}

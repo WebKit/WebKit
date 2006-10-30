@@ -109,7 +109,7 @@ private:
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();
-    virtual void dispatchWillPerformClientRedirect(NSURL *URL, NSTimeInterval, NSDate *);
+    virtual void dispatchWillPerformClientRedirect(NSURL *URL, double interval, double fireDate);
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon(NSImage *);

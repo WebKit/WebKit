@@ -1,3 +1,30 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - work toward removing Objective-C data types from FrameLoader.h:
+          removed NSDate, NSString, WebCorePageState, WebCoreResourceLoader,
+          and WebCoreResourceHandle
+        - moved bodyBackgroundColor function here from Frame
+
+        * History/WebHistoryItem.m: (+[WebHistoryItem _closeObjectsInPendingPageCaches]):
+        Updated for change in WebCorePageState.
+
+        * WebCoreSupport/WebFrameBridge.mm: Removed saveDocumentToPageCache method.
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Changed NSDate to double.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::invalidateCurrentItemPageCache): Moved the code that was
+        formerly in invalidatePageCache: on the bridge here.
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect): Added code to make the
+        NSDate here.
+        (WebFrameLoaderClient::createPageCache): Restructured code to create the
+        WebCorePageState object directly instead of calling saveDocumentToPageCache on
+        the bridge.
+
+        * WebView/WebFrame.mm: (-[WebFrame _bodyBackgroundColor]): Rewrote this to work
+        directly with the DOM and renderers rather than using a function on Frame.
+
 2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

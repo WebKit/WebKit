@@ -28,7 +28,6 @@
 
 #import "ClipboardAccessPolicy.h"
 #import "Frame.h"
-#import "IntRect.h"
 #import "PlatformMouseEvent.h"
 #import "StringHash.h"
 #import "WebCoreKeyboardAccess.h"
@@ -36,10 +35,6 @@
 class NPObject;
 
 namespace KJS {
-    class PausedTimeouts;
-    class SavedProperties;
-    class SavedBuiltins;
-    class ScheduledAction;
     namespace Bindings {
         class Instance;
         class RootObject;
@@ -48,10 +43,8 @@ namespace KJS {
 
 #ifdef __OBJC__
 
-@class WebCorePageState;
 @class NSArray;
 @class NSAttributedString;
-@class NSColor;
 @class NSDictionary;
 @class NSEvent;
 @class NSFileWrapper;
@@ -59,7 +52,6 @@ namespace KJS {
 @class NSImage;
 @class NSMenu;
 @class NSMutableDictionary;
-@class NSResponder;
 @class NSString;
 @class NSView;
 @class WebCoreFrameBridge;
@@ -67,10 +59,8 @@ namespace KJS {
 
 #else
 
-class WebCorePageState;
 class NSArray;
 class NSAttributedString;
-class NSColor;
 class NSDictionary;
 class NSEvent;
 class NSFileWrapper;
@@ -78,7 +68,6 @@ class NSFont;
 class NSImage;
 class NSMenu;
 class NSMutableDictionary;
-class NSResponder;
 class NSString;
 class NSView;
 class WebCoreFrameBridge;
@@ -92,15 +81,9 @@ typedef int NSWritingDirection;
 namespace WebCore {
 
 class ClipboardMac;
-class DocumentFragment;
 class EditorClient;
-class FramePrivate;
 class HTMLTableCellElement;
-class RenderObject;
-class RenderStyle;
 class VisiblePosition;
-
-struct DashboardRegionValue;
 
 enum SelectionDirection {
     SelectingNext,
@@ -233,8 +216,6 @@ public:
     virtual void tokenizerProcessedData();
 
     virtual String overrideMediaType() const;
-    
-    NSColor* bodyBackgroundColor() const;
     
     WebCoreKeyboardUIMode keyboardUIMode() const;
 

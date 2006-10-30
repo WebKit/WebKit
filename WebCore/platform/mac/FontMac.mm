@@ -29,7 +29,6 @@
 #import "BlockExceptions.h"
 #import "FontData.h"
 #import "FontFallbackList.h"
-#import "FoundationExtras.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
 #import "IntRect.h"

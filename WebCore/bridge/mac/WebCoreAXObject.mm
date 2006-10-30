@@ -30,7 +30,6 @@
 #import "Document.h"
 #import "EventNames.h"
 #import "FontData.h"
-#import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"

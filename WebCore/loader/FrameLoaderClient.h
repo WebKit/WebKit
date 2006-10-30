@@ -112,7 +112,7 @@ namespace WebCore {
         virtual void dispatchDidHandleOnloadEvents() = 0;
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
         virtual void dispatchDidCancelClientRedirect() = 0;
-        virtual void dispatchWillPerformClientRedirect(NSURL *URL, double, NSDate *) = 0;
+        virtual void dispatchWillPerformClientRedirect(NSURL *URL, double interval, double fireDate) = 0;
         virtual void dispatchDidChangeLocationWithinPage() = 0;
         virtual void dispatchWillClose() = 0;
         virtual void dispatchDidReceiveIcon(NSImage *) = 0;

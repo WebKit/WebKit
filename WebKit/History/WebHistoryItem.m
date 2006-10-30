@@ -26,22 +26,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHistoryItemPrivate.h>
+#import "WebHistoryItemPrivate.h"
 
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebHTMLViewInternal.h"
+#import "WebIconDatabase.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebNSDictionaryExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebPluginController.h"
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLViewInternal.h>
-#import <WebKit/WebIconDatabase.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSDictionaryExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginController.h>
+#import <WebCore/PageState.h>
+#import <WebCore/WebCorePageState.h>
 #import <WebKitSystemInterface.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
@@ -713,9 +715,8 @@ static NSTimer *_pageCacheReleaseTimer = nil;
                 [HTMLView close];
         }
 
-        id pageState = [pageCache objectForKey:WebCorePageCacheStateKey];
-        if ([pageState respondsToSelector:@selector(close)])
-            [pageState performSelector:@selector(close)];
+        if (WebCorePageState *pageState = [pageCache objectForKey:WebCorePageCacheStateKey])
+            [pageState impl]->clear();
     }
 }
 

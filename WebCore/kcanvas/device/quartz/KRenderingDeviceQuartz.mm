@@ -28,7 +28,6 @@
 #ifdef SVG_SUPPORT
 #import "KRenderingDeviceQuartz.h"
 
-#import "FoundationExtras.h"
 #import "GraphicsContext.h"
 #include "KCanvasMarker.h"
 #import "KCanvasFilterQuartz.h"

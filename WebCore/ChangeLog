@@ -1,3 +1,47 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - work toward removing Objective-C data types from FrameLoader.h:
+          removed NSDate, NSString, WebCorePageState, WebCoreResourceLoader,
+          and WebCoreResourceHandle
+        - moved bodyBackgroundColor function from Frame to WebFrame in WebKit
+
+        * page/PageState.h:
+        * page/PageState.cpp: Added, C++ class with much of what WebCorePageState had.
+
+        * bridge/mac/FrameMac.h: Removed uneeeded declarations and bodyBackgroundColor().
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::startRedirectionTimer): Use a
+        double for the date instead of an NSDate.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm: Removed invalidatePageCache and
+        saveDocumentToPageCache methods.
+
+        * bridge/mac/WebCorePageState.h:
+        * bridge/mac/WebCorePageState.mm: Removed most of the class and turned it into
+        an Objective-C wrapper for PageState.
+
+        * loader/FrameLoader.h: Removed unused Objective-C types, eliminated use of
+        NSDate and WebCorePageState.
+        * loader/FrameLoaderClient.h: Changed NSDate to double.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::receivedMainResourceError): Moved call to setInPageCache
+        here that used to be in invalidateCurrentItemPageCache on the WebKit side.
+        (WebCore::FrameLoader::clientRedirected): Changed NSDate to double for date.
+        (WebCore::FrameLoader::open): Moved one of the open functions that was part of
+        commitProvisionalLoad inside the commitProvisionalLoad function, so that it can
+        extract the parameters from the response. Changed the open function that takes
+        a PageState to use the new C++ PageState.
+        (WebCore::FrameLoader::commitProvisionalLoad): Added the code from the open
+        function; tightened up logic, removing a few cases that could never happen, as
+        well as the unused reload boolean.
+
+        * ForwardingHeaders/kjs/property_map.h: Added.
+
+        * WebCore.exp: Updated.
+        * WebCore.xcodeproj/project.pbxproj: Updated.
+
 2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

@@ -37,7 +37,7 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
-#import "TextResourceDecoder.h"
+#import "DocumentLoader.h"
 #import "Event.h"
 #import "EventNames.h"
 #import "FloatRect.h"
@@ -72,14 +72,14 @@
 #import "RenderTheme.h"
 #import "RenderView.h"
 #import "ResourceHandle.h"
+#import "SystemTime.h"
 #import "TextIterator.h"
+#import "TextResourceDecoder.h"
 #import "WebCoreEditCommand.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
-#import "DocumentLoader.h"
 #import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
@@ -707,11 +707,9 @@ void FrameMac::startRedirectionTimer()
 
     // Don't report history navigations, just actual redirection.
     if (d->m_scheduledRedirection != historyNavigationScheduled) {
-        NSTimeInterval interval = d->m_redirectionTimer.nextFireInterval();
-        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceNow:interval];
+        double fireDate = currentTime() + d->m_redirectionTimer.nextFireInterval();
         loader()->clientRedirected(KURL(d->m_redirectURL).getNSURL(),
             d->m_delayRedirect, fireDate, d->m_redirectLockHistory, d->m_executingJavaScriptFormAction);
-        [fireDate release];
     }
 }
 
@@ -2708,16 +2706,6 @@ String FrameMac::overrideMediaType() const
     if (overrideType)
         return overrideType;
     return String();
-}
-
-NSColor *FrameMac::bodyBackgroundColor() const
-{
-    if (document() && document()->body() && document()->body()->renderer()) {
-        Color bgColor = document()->body()->renderer()->style()->backgroundColor();
-        if (bgColor.isValid())
-            return nsColor(bgColor);
-    }
-    return nil;
 }
 
 WebCoreKeyboardUIMode FrameMac::keyboardUIMode() const

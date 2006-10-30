@@ -31,7 +31,6 @@
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
-#import "FoundationExtras.h"
 #import "FrameView.h"
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"

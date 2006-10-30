@@ -35,6 +35,7 @@
 
 #import "WebBackForwardList.h"
 #import "WebDataSourceInternal.h"
+#import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
@@ -58,24 +59,22 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Document.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/FormState.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/PageState.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/WebCoreFrameBridge.h>
-#import <WebCore/WebDataProtocol.h>
-#import <WebCore/DocumentLoader.h>
-#import <WebCore/FormState.h>
 #import <WebCore/ResourceLoader.h>
+#import <WebCore/WebCoreFrameBridge.h>
+#import <WebCore/WebCorePageState.h>
+#import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOMElement.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDocumentLoaderMac.h>
-#import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
-#import <objc/objc-runtime.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -163,7 +162,16 @@ void WebFrameLoaderClient::invalidateCurrentItemPageCache()
     // When we are pre-commit, the currentItem is where the pageCache data resides
     WebHistoryItem *currentItem = m_webFrame->_private->currentItem;
     NSDictionary *pageCache = [currentItem pageCache];
-    [m_webFrame->_private->bridge invalidatePageCache:pageCache];
+    WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
+    WebCore::PageState* pageState = [state impl];
+
+    // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
+    // Somehow the WebCorePageState object is not properly updated, and is holding onto a stale document.
+    // Both Xcode and FileMaker see this crash, Safari does not.
+    ASSERT(!pageState || pageState->document() == core(m_webFrame.get())->document());
+    if (pageState && pageState->document() == core(m_webFrame.get())->document())
+        pageState->clear();
+
     // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
     [currentItem setHasPageCache:NO];
 }
@@ -532,13 +540,13 @@ void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
     [[webView _frameLoadDelegateForwarder] webView:webView didCancelClientRedirectForFrame:m_webFrame.get()];
 }
 
-void WebFrameLoaderClient::dispatchWillPerformClientRedirect(NSURL *URL, NSTimeInterval delay, NSDate *fireDate)
+void WebFrameLoaderClient::dispatchWillPerformClientRedirect(NSURL *URL, double delay, double fireDate)
 {
-    WebView *webView = getWebView(m_webFrame.get());   
+    WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView
                          willPerformClientRedirectToURL:URL
                                                   delay:delay
-                                               fireDate:fireDate
+                                               fireDate:[NSDate dateWithTimeIntervalSince1970:fireDate]
                                                forFrame:m_webFrame.get()];
 }
 
@@ -1124,16 +1132,23 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
 
 bool WebFrameLoaderClient::createPageCache(WebHistoryItem *item)
 {
-    [item setHasPageCache:YES];
-    if (![m_webFrame->_private->bridge saveDocumentToPageCache]) {
+    WebCorePageState *pageState = [[WebCorePageState alloc] initWithPage:core(m_webFrame.get())->page()];
+    if (!pageState) {
         [item setHasPageCache:NO];
-        return NO;
+        return false;
     }
+
+    [item setHasPageCache:YES];
     NSMutableDictionary *pageCache = [item pageCache];
-    [pageCache setObject:[NSDate date] forKey: WebPageCacheEntryDateKey];
-    [pageCache setObject:[m_webFrame.get() dataSource] forKey: WebPageCacheDataSourceKey];
-    [pageCache setObject:[m_webFrame->_private->webFrameView documentView] forKey: WebPageCacheDocumentViewKey];
-    return YES;
+
+    [pageCache setObject:pageState forKey:WebCorePageCacheStateKey];
+    [pageCache setObject:[NSDate date] forKey:WebPageCacheEntryDateKey];
+    [pageCache setObject:[m_webFrame.get() dataSource] forKey:WebPageCacheDataSourceKey];
+    [pageCache setObject:[m_webFrame->_private->webFrameView documentView] forKey:WebPageCacheDocumentViewKey];
+
+    [pageState release];
+
+    return true;
 }
 
 WebFramePolicyListener *WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)

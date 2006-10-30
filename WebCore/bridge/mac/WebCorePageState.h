@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-namespace KJS {
-    class SavedBuiltins;
-    class SavedProperties;
-    class PausedTimeouts;
-}
-
 namespace WebCore {
-    class Document;
-    class KURL;
-    class Node;
+    class Page;
+    class PageState;
 }
 
 @interface WebCorePageState : NSObject
 {
-    WebCore::Document *document;
-    WebCore::Node *mousePressNode;
-    WebCore::KURL *URL;
-    KJS::SavedProperties *windowProperties;
-    KJS::SavedProperties *locationProperties;
-    KJS::SavedBuiltins *interpreterBuiltins;
-    KJS::PausedTimeouts *pausedTimeouts;
-    BOOL closed;
+    WebCore::PageState* m_impl;
 }
-
-- initWithDocument:(WebCore::Document *)doc URL:(const WebCore::KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
-
-- (WebCore::Document *)document;
-- (WebCore::Node *)mousePressNode;
-- (WebCore::KURL *)URL;
-- (KJS::SavedProperties *)windowProperties;
-- (KJS::SavedProperties *)locationProperties;
-- (KJS::SavedBuiltins *)interpreterBuiltins;
-- (KJS::PausedTimeouts *)pausedTimeouts;
-- (void)invalidate;
-
+- (id)initWithPage:(WebCore::Page*)page;
+- (WebCore::PageState*)impl;
 @end

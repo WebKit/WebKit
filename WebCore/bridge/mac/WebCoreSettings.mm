@@ -27,7 +27,6 @@
 #import "config.h"
 #import "WebCoreSettings.h"
 
-#import "FoundationExtras.h"
 #import "Settings.h"
 #import "Page.h"
 #import "WebCoreFrameBridge.h"

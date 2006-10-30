@@ -40,7 +40,6 @@
 #import "DocumentType.h"
 #import "EditorClient.h"
 #import "FloatRect.h"
-#import "FoundationExtras.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "FrameMac.h"
@@ -74,7 +73,6 @@
 #import "TypingCommand.h"
 #import "WebCoreEditCommand.h"
 #import "WebCorePageBridge.h"
-#import "WebCorePageState.h"
 #import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
@@ -92,7 +90,6 @@
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
-#import <kjs/SavedBuiltins.h>
 
 @class NSView;
 
@@ -433,26 +430,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
 }
 
-- (void)invalidatePageCache:(NSDictionary *)pageCache
-{
-    // We might have made a page cache item, but now we're bailing out due to an error before we ever
-    // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
-    // so that the existing view (that wenever got far enough to replace) can continue being used.
-    Document *doc = m_frame->document();
-    if (doc)
-        doc->setInPageCache(NO);
-
-    WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
-
-    // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
-    // Somehow the WebCorePageState object is not properly updated, and is holding onto a stale document
-    // both Xcode and FileMaker see this crash, Safari does not.
-    // This if check MUST be removed as part of re-writing the loader down in WebCore
-    ASSERT(!state || ([state document] == doc));
-    if ([state document] == doc)
-        [state invalidate];
-}
-
 - (void)saveDocumentState
 {
     Vector<String> stateVector;
@@ -491,41 +468,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!m_frame)
         return NO;
     return m_frame->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
-}
-
-- (BOOL)saveDocumentToPageCache
-{
-    Document *doc = m_frame->document();
-    if (!doc)
-        return NO;
-    if (!doc->view())
-        return NO;
-
-    m_frame->clearTimers();
-
-    JSLock lock;
-
-    SavedProperties *windowProperties = new SavedProperties;
-    m_frame->saveWindowProperties(windowProperties);
-
-    SavedProperties *locationProperties = new SavedProperties;
-    m_frame->saveLocationProperties(locationProperties);
-    
-    SavedBuiltins *interpreterBuiltins = new SavedBuiltins;
-    m_frame->saveInterpreterBuiltins(*interpreterBuiltins);
-
-    WebCorePageState *pageState = [[WebCorePageState alloc] initWithDocument:doc
-                                                                 URL:m_frame->url()
-                                                    windowProperties:windowProperties
-                                                  locationProperties:locationProperties
-                                                 interpreterBuiltins:interpreterBuiltins
-                                                      pausedTimeouts:m_frame->pauseTimeouts()];
-
-    BOOL result = [self saveDocumentToPageCache:pageState];
-
-    [pageState release];
-
-    return result;
 }
 
 - (void)clearFrame

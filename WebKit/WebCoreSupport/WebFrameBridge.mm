@@ -570,16 +570,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame _itemForRestoringDocState] documentState];
 }
 
-- (BOOL)saveDocumentToPageCache:(id)documentInfo
-{
-    WebHistoryItem *item = [_frame _itemForSavingDocState];
-    if (![item hasPageCache]) {
-        return NO;
-    }
-    [[item pageCache] setObject:documentInfo forKey:WebCorePageCacheStateKey];
-    return YES;
-}
-
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
     return [[self webView] userAgentForURL:URL];

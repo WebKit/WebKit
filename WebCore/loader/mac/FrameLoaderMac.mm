@@ -32,29 +32,30 @@
 #import "Cache.h"
 #import "DOMElementInternal.h"
 #import "Document.h"
+#import "DocumentLoader.h"
 #import "Element.h"
+#import "FormDataStream.h"
+#import "FormState.h"
 #import "FrameLoadRequest.h"
 #import "FrameLoaderClient.h"
 #import "FrameMac.h"
 #import "FramePrivate.h"
+#import "PageState.h"
 #import "FrameTree.h"
 #import "HTMLNames.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "MainResourceLoader.h"
 #import "Page.h"
 #import "Plugin.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
+#import "SubresourceLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
 #import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
-#import "DocumentLoader.h"
-#import "FormDataStream.h"
-#import "FormState.h"
-#import "MainResourceLoader.h"
-#import "SubresourceLoader.h"
 #import <kjs/JSLock.h>
 #import <wtf/Assertions.h>
 
@@ -712,6 +713,13 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
     if (m_state == FrameStateProvisional) {
         NSURL *failedURL = [m_provisionalDocumentLoader->originalRequestCopy() URL];
         m_frame->didNotOpenURL(failedURL);
+
+        // We might have made a page cache item, but now we're bailing out due to an error before we ever
+        // transitioned to the new page (before WebFrameState == commit).  The goal here is to restore any state
+        // so that the existing view (that wenever got far enough to replace) can continue being used.
+        Document* document = m_frame->document();
+        if (document)
+            document->setInPageCache(false);
         m_client->invalidateCurrentItemPageCache();
         
         // Call clientRedirectCancelledOrFinished here so that the frame load delegate is notified that the redirect's
@@ -740,9 +748,9 @@ void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgres
     m_sentRedirectNotification = false;
 }
 
-void FrameLoader::clientRedirected(NSURL *URL, double seconds, NSDate *date, bool lockHistory, bool isJavaScriptFormAction)
+void FrameLoader::clientRedirected(NSURL *URL, double seconds, double fireDate, bool lockHistory, bool isJavaScriptFormAction)
 {
-    m_client->dispatchWillPerformClientRedirect(URL, seconds, date);
+    m_client->dispatchWillPerformClientRedirect(URL, seconds, fireDate);
     
     // Remember that we sent a redirect notification to the frame load delegate so that when we commit
     // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
@@ -819,45 +827,12 @@ void FrameLoader::closeOldDataSources()
     m_client->setMainFrameDocumentReady(false); // stop giving out the actual DOMDocument to observers
 }
 
-void FrameLoader::open(NSURL *URL, bool reload, NSString *contentType, NSString *refresh, NSDate *lastModified, NSDictionary *pageCache)
+void FrameLoader::open(PageState& state)
 {
-    if (pageCache) {
-        WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
-        open(state);
-        [state invalidate];
-        return;
-    }
-        
-    m_frame->setResponseMIMEType(contentType);
-    
-    // opening the URL
-    if (m_frame->didOpenURL(URL)) {
-        // things we have to set up after calling didOpenURL
-        if (refresh)
-            m_frame->addMetaData("http-refresh", refresh);
-        if (lastModified) {
-            NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
-            m_frame->addMetaData("modified", modifiedString);
-        }
-    }
-}
+    ASSERT(m_frame->page()->mainFrame() == m_frame);
 
-void FrameLoader::open(WebCorePageState *state)
-{
     FramePrivate* d = m_frame->d;
 
-    // It's safe to assume none of the WebCorePageState methods will raise
-    // exceptions, since WebCorePageState is implemented by WebCore and
-    // does not throw
-
-    Document* doc = [state document];
-    Node* mousePressNode = [state mousePressNode];
-    KURL URL = *[state URL];
-    SavedProperties* windowProperties = [state windowProperties];
-    SavedProperties* locationProperties = [state locationProperties];
-    SavedBuiltins* interpreterBuiltins = [state interpreterBuiltins];
-    PausedTimeouts* timeouts = [state pausedTimeouts];
-    
     m_frame->cancelRedirection();
 
     // We still have to close the previous part page.
@@ -873,7 +848,9 @@ void FrameLoader::open(WebCorePageState *state)
         d->m_kjsStatusBarText = String();
         d->m_kjsDefaultStatusBarText = String();
     }
-    
+
+    KURL URL = state.URL();
+
     if (URL.protocol().startsWith("http") && !URL.host().isEmpty() && URL.path().isEmpty())
         URL.setPath("/");
     
@@ -884,29 +861,23 @@ void FrameLoader::open(WebCorePageState *state)
 
     m_frame->clear();
 
-    doc->setInPageCache(false);
+    Document* document = state.document();
+    document->setInPageCache(false);
 
     d->m_bCleared = false;
     d->m_bComplete = false;
     d->m_bLoadEventEmitted = false;
     d->m_referrer = URL.url();
     
-    m_frame->setView(doc->view());
+    m_frame->setView(document->view());
     
-    d->m_doc = doc;
-    d->m_mousePressNode = mousePressNode;
-    d->m_decoder = doc->decoder();
+    d->m_doc = document;
+    d->m_mousePressNode = state.mousePressNode();
+    d->m_decoder = document->decoder();
 
     m_frame->updatePolicyBaseURL();
 
-    { // scope the lock
-        JSLock lock;
-        m_frame->restoreWindowProperties(windowProperties);
-        m_frame->restoreLocationProperties(locationProperties);
-        m_frame->restoreInterpreterBuiltins(*interpreterBuiltins);
-    }
-
-    m_frame->resumeTimeouts(timeouts);
+    state.restoreJavaScriptState(m_frame->page());
 
     m_frame->checkCompleted();
 }
@@ -944,14 +915,7 @@ void FrameLoader::opened()
 
 void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
 {
-    bool reload = m_loadType == FrameLoadTypeReload || m_loadType == FrameLoadTypeReloadAllowingStaleData;
-    
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
-    
-    NSURLResponse *response = pdl->response();
-    
-    NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
-        ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
     
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
@@ -968,15 +932,28 @@ void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
     if (m_sentRedirectNotification)
         clientRedirectCancelledOrFinished(false);
     
-    NSURL *baseURL = [pdl->request() _webDataRequestBaseURL];        
-    NSURL *URL = baseURL ? baseURL : [response URL];
+    WebCorePageState *pageState = [pageCache objectForKey:WebCorePageCacheStateKey];
+    if (PageState* frameState = [pageState impl]) {
+        open(*frameState);
+        frameState->clear();
+    } else {
+        NSURLResponse *response = pdl->response();
     
-    if (!URL || urlIsEmpty(URL))
-        URL = [NSURL URLWithString:@"about:blank"];    
-    
-    NSDate *lastModified = pageCache ? nil : wkGetNSURLResponseLastModifiedDate(response);
+        NSURL *URL = [pdl->request() _webDataRequestBaseURL];
+        if (!URL)
+            URL = [response URL];
+        if (!URL || urlIsEmpty(URL))
+            URL = [NSURL URLWithString:@"about:blank"];    
 
-    open(URL, reload, [response MIMEType], [headers objectForKey:@"Refresh"], lastModified, pageCache);
+        m_frame->setResponseMIMEType([response MIMEType]);
+        if (m_frame->didOpenURL(URL)) {
+            if ([response isKindOfClass:[NSHTTPURLResponse class]])
+                if (NSString *refresh = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Refresh"])
+                    m_frame->addMetaData("http-refresh", refresh);
+            m_frame->addMetaData("modified", [wkGetNSURLResponseLastModifiedDate(response)
+                descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil]);
+        }
+    }
     opened();
 }
 
