@@ -1,3 +1,12 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        Requested by Maciej.
+
+        * fast/dom/xmlhttprequest-get-expected.txt: Generated a new result.
+        Maciej says that the new behavior of returning empty string instead of
+        undefined is correct and matches Firefox, so the new result is better
+        than the old.
+
 2006-10-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Geoff.

@@ -15,7 +15,6 @@ responseXML serialized
   <d id="id3">Three</d>
 </doc>
 getAllResponseHeaders()
-undefined
 status
 0
 statusText
