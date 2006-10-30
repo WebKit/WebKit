@@ -62,19 +62,6 @@ void ResourceHandle::setError(int e)
     d->status = e;
 }
 
-String ResourceHandle::responseEncoding() const
-{
-    retrieveResponseEncoding();
-    
-    return d->m_responseEncoding;
-}
-
-String ResourceHandle::responseHTTPHeadersAsString() const
-{
-    assembleResponseHeaders();
-    return d->responseHeaders;
-}
-
 void ResourceHandle::kill()
 {
     if (d->m_loading){

@@ -439,8 +439,6 @@ typedef enum {
 - (void)addMessageToConsole:(NSDictionary *)message;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
-- (time_t)expiresTimeForResponse:(NSURLResponse *)response;
-
 - (void)activateWindow;
 - (void)deactivateWindow;
 

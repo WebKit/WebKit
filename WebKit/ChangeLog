@@ -1,3 +1,12 @@
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - added ResourceResponse class and didReceiveResponse delegate call
+
+        * WebCoreSupport/WebFrameBridge.mm: Removed no longer needed
+        expiresTimeForResponse: method.
+
 2006-10-29  Darin Adler  <darin@apple.com>
 
         - update for the WebCore rename

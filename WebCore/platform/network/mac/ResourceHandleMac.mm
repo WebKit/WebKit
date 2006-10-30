@@ -35,6 +35,8 @@
 #import "KURL.h"
 #import "LoaderFunctions.h"
 #import "Logging.h"
+#import "ResourceResponse.h"
+#import "ResourceResponseMac.h"
 #import "WebCoreFrameBridge.h"
 #import "SubresourceLoader.h"
 
@@ -42,8 +44,6 @@ namespace WebCore {
     
 ResourceHandleInternal::~ResourceHandleInternal()
 {
-    HardRelease(response);
-    HardRelease(loader);
 }
 
 ResourceHandle::~ResourceHandle()
@@ -88,38 +88,16 @@ bool ResourceHandle::start(DocLoader* docLoader)
     return false;
 }
 
-void ResourceHandle::assembleResponseHeaders() const
+void ResourceHandle::receivedResponse(NSURLResponse* nsResponse)
 {
-    if (!d->assembledResponseHeaders) {
-        if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)d->response;
-            NSDictionary *headers = [httpResponse allHeaderFields];
-            d->responseHeaders = DeprecatedString::fromNSString(HeaderStringFromDictionary(headers, [httpResponse statusCode]));
-        }
-        d->assembledResponseHeaders = true;
+    ASSERT(nsResponse);
+
+    if (client()) {
+        client()->receivedResponse(this, nsResponse);
+        ResourceResponse response;
+        getResourceResponse(response, nsResponse);
+        client()->didReceiveResponse(this, response);
     }
-}
-
-void ResourceHandle::retrieveResponseEncoding() const
-{
-    if (!d->m_retrievedResponseEncoding) {
-        NSString *textEncodingName = [d->response textEncodingName];
-        if (textEncodingName)
-            d->m_responseEncoding = textEncodingName;
-        d->m_retrievedResponseEncoding = true;
-    }
-}
-
-void ResourceHandle::receivedResponse(NSURLResponse* response)
-{
-    ASSERT(response);
-
-    d->assembledResponseHeaders = false;
-    d->m_retrievedResponseEncoding = false;
-    d->response = response;
-    HardRetain(d->response);
-    if (client())
-        client()->receivedResponse(this, response);
 }
 
 void ResourceHandle::cancel()

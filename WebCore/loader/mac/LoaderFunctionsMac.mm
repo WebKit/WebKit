@@ -87,7 +87,7 @@ NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const ResourceRequest& request, KURL &finalURL, DeprecatedString &responseHeaders)
+Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const ResourceRequest& request, ResourceResponse& response)
 {
     FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     
@@ -98,12 +98,8 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSDictionary *responseHeaderDict = nil;
-    int statusCode = 0;
     Vector<char> result;
-    frame->loader()->loadResourceSynchronously(request, finalURL, responseHeaderDict, statusCode, result);
-    
-    responseHeaders = DeprecatedString::fromNSString(HeaderStringFromDictionary(responseHeaderDict, statusCode));
+    frame->loader()->loadResourceSynchronously(request, result, response);
 
     return result;
 
@@ -198,21 +194,6 @@ bool ResponseIsMultipart(PlatformResponse response)
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return false;
-}
-
-time_t CacheObjectExpiresTime(DocLoader *docLoader, PlatformResponse response)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
-    if (frame) {
-        WebCoreFrameBridge *bridge = frame->bridge();
-        return [bridge expiresTimeForResponse:(NSURLResponse *)response];
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return 0;
 }
 
 void CachedResource::setResponse(PlatformResponse response)

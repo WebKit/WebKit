@@ -1,5 +1,6 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Vector.h>
-#include <wtf/HashMap.h>
-#include "PlatformString.h"
-#include "ResourceHandleClient.h"  // Defines PlatformResponse
-#include "HTTPHeaderMap.h"
+#ifndef ResourceResponseCFNet_h_
+#define ResourceResponseCFNet_h_
 
-#ifdef __OBJC__
-@class NSDictionary;
-@class NSString;
-
-@interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderMap:(const WebCore::HTTPHeaderMap&)headerMap;
-@end
-
-#else
-class NSDictionary;
-class NSString;
-#endif
+typedef struct _CFURLResponse* CFURLResponseRef;
 
 namespace WebCore {
 
-class CachedResource;
-class DeprecatedString;
-class DocLoader;
-class Loader;
-class Request;
-class ResourceRequest;
+    class ResourceResponse;
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, ResourceResponse&);
-
-void CheckCacheObjectStatus(DocLoader*, CachedResource*);
-bool CheckIfReloading(DocLoader*);
-bool IsResponseURLEqualToURL(PlatformResponse , const String& URL);
-DeprecatedString ResponseURL(PlatformResponse);
-DeprecatedString ResponseMIMEType(PlatformResponse);
-bool ResponseIsMultipart(PlatformResponse);
-NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
+    void getResourceResponse(ResourceResponse& response, CFURLResponseRef cfResponse);
 
 }
+
+#endif // ResourceResponseCFNet_h_

@@ -27,7 +27,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
-#include "PlatformScrollbar.h"
+#include "PlatformScrollBar.h"
 #include "RenderObject.h"
 
 namespace WebCore {

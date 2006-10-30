@@ -31,18 +31,6 @@
 
 using namespace WebCore;
 
-void IconLoader::receivedResponse(ResourceHandle* resourceLoader, NSURLResponse* responsePtr)
-{
-    ASSERT(resourceLoader);
-    ASSERT(responsePtr);
-    
-    id response = responsePtr;
-    if ([response isKindOfClass:[NSHTTPURLResponse class]])
-        m_httpStatusCode = [response statusCode];
-    else
-        m_httpStatusCode = 0;
-}
-
 void IconLoader::notifyIconChanged(const KURL& iconURL)
 {
     m_frame->loader()->notifyIconChanged(iconURL.getNSURL());

@@ -30,6 +30,7 @@
 #include "loader/icon/IconDatabase.h"
 #include "Logging.h"
 #include "page/Frame.h"
+#include "ResourceResponse.h"
 
 #if PLATFORM(MAC)
 #include "FrameMac.h"
@@ -84,6 +85,12 @@ void IconLoader::stopLoading()
         m_resourceLoader->kill();
     m_resourceLoader = 0;
     m_data.clear();
+}
+
+void IconLoader::didReceiveResponse(ResourceHandle* resourceLoader, const ResourceResponse& response)
+{
+    ASSERT(resourceLoader);
+    m_httpStatusCode = response.httpStatusCode();
 }
 
 void IconLoader::didReceiveData(ResourceHandle* resourceLoader, const char* data, int size)

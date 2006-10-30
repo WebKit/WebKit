@@ -144,7 +144,7 @@ XMLHttpRequestState XMLHttpRequest::getReadyState() const
 
 String XMLHttpRequest::getResponseText() const
 {
-    return m_response;
+    return m_responseText;
 }
 
 Document* XMLHttpRequest::getResponseXML() const
@@ -156,7 +156,7 @@ Document* XMLHttpRequest::getResponseXML() const
         if (responseIsXML()) {
             m_responseXML = m_doc->implementation()->createDocument();
             m_responseXML->open();
-            m_responseXML->write(m_response);
+            m_responseXML->write(m_responseText);
             m_responseXML->finishParsing();
             m_responseXML->close();
         }
@@ -191,7 +191,7 @@ XMLHttpRequest::XMLHttpRequest(Document* d)
     , m_async(true)
     , m_loader(0)
     , m_state(Uninitialized)
-    , m_response("", 0)
+    , m_responseText("", 0)
     , m_createdDocument(false)
     , m_aborted(false)
 {
@@ -246,8 +246,8 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
 
     // clear stuff from possible previous load
     m_requestHeaders.clear();
-    m_responseHeaders = String();
-    m_response = "";
+    m_response = ResourceResponse();
+    m_responseText = "";
     m_createdDocument = false;
     m_responseXML = 0;
 
@@ -325,17 +325,16 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     if (!m_async) {
         Vector<char> data;
-        KURL finalURL;
-        DeprecatedString headers;
+        ResourceResponse response;
 
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
             KJS::JSLock::DropAllLocks dropLocks;
-            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), request, finalURL, headers);
+            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), request, response);
         }
 
         m_loader = 0;
-        processSyncLoadResults(data, finalURL, headers);
+        processSyncLoadResults(data, response);
     
         return;
     }
@@ -402,40 +401,23 @@ String XMLHttpRequest::getRequestHeader(const String& name) const
 
 String XMLHttpRequest::getAllResponseHeaders() const
 {
-    if (m_responseHeaders.isEmpty())
-        return String();
+    Vector<UChar> stringBuilder;
+    String separator(": ");
 
-    int endOfLine = m_responseHeaders.find("\n");
-    if (endOfLine == -1)
-        return String();
+    HTTPHeaderMap::const_iterator end = m_response.httpHeaderFields().end();
+    for (HTTPHeaderMap::const_iterator it = m_response.httpHeaderFields().begin(); it!= end; ++it) {
+        stringBuilder.append(it->first.characters(), it->first.length());
+        stringBuilder.append(separator.characters(), separator.length());
+        stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append((UChar)'\n');
+    }
 
-    return m_responseHeaders.substring(endOfLine + 1) + "\n";
+    return String::adopt(stringBuilder);
 }
 
 String XMLHttpRequest::getResponseHeader(const String& name) const
 {
-    return getSpecificHeader(m_responseHeaders.deprecatedString(), name.deprecatedString());
-}
-
-DeprecatedString XMLHttpRequest::getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name)
-{
-    if (headers.isEmpty())
-        return DeprecatedString();
-
-    RegularExpression headerLinePattern(name + ":", false);
-
-    int matchLength;
-    int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
-    while (headerLinePos != -1) {
-        if (headerLinePos == 0 || headers[headerLinePos-1] == '\n')
-            break;
-        headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
-    }
-    if (headerLinePos == -1)
-        return DeprecatedString();
-    
-    int endOfLine = headers.find("\n", headerLinePos + matchLength);
-    return headers.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
+    return m_response.httpHeaderField(name);
 }
 
 bool XMLHttpRequest::responseIsXML() const
@@ -453,26 +435,13 @@ int XMLHttpRequest::getStatus(ExceptionCode& ec) const
     if (m_state == Uninitialized)
         return 0;
     
-    if (m_responseHeaders.isEmpty()) {
+    if (m_response.httpStatusCode() == 0) {
         if (m_state != Receiving && m_state != Loaded)
             // status MUST be available in these states, but we don't get any headers from non-HTTP requests
             ec = INVALID_STATE_ERR;
-        return 0;
     }
-    
-    int endOfLine = m_responseHeaders.find("\n");
-    String firstLine = endOfLine == -1 ? m_responseHeaders : m_responseHeaders.substring(0, endOfLine);
-    int codeStart = firstLine.find(" ");
-    int codeEnd = firstLine.find(" ", codeStart + 1);
-    ASSERT(codeStart != -1);
-    ASSERT(codeEnd != -1);
-  
-    String number = firstLine.substring(codeStart + 1, codeEnd - (codeStart + 1));
-    bool ok = false;
-    int code = number.toInt(&ok);
-    ASSERT(ok);
 
-    return code;
+    return m_response.httpStatusCode();
 }
 
 String XMLHttpRequest::getStatusText(ExceptionCode& ec) const
@@ -480,31 +449,25 @@ String XMLHttpRequest::getStatusText(ExceptionCode& ec) const
     if (m_state == Uninitialized)
         return "";
     
-    if (m_responseHeaders.isEmpty()) {
+    if (m_response.httpStatusCode() == 0) {
         if (m_state != Receiving && m_state != Loaded)
             // statusText MUST be available in these states, but we don't get any headers from non-HTTP requests
             ec = INVALID_STATE_ERR;
         return String();
     }
-  
-    int endOfLine = m_responseHeaders.find("\n");
-    String firstLine = endOfLine == -1 ? m_responseHeaders : m_responseHeaders.substring(0, endOfLine);
-    int codeStart = firstLine.find(" ");
-    int codeEnd = firstLine.find(" ", codeStart + 1);
-    ASSERT(codeStart != -1);
-    ASSERT(codeEnd != -1);
-  
-    return firstLine.substring(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
+
+    // FIXME: should try to preserve status text in response
+    return "OK";
 }
 
-void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL& finalURL, const DeprecatedString& headers)
+void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const ResourceResponse& response)
 {
-    if (!urlMatchesDocumentDomain(finalURL)) {
+    if (!urlMatchesDocumentDomain(response.url())) {
         abort();
         return;
     }
 
-    m_responseHeaders = headers;
+    didReceiveResponse(0, response);
     changeState(Sent);
     if (m_aborted)
         return;
@@ -523,14 +486,11 @@ void XMLHttpRequest::didFinishLoading(ResourceHandle* loader)
 {
     ASSERT(loader == m_loader);
 
-    if (m_responseHeaders.isEmpty() && m_loader)
-        m_responseHeaders = m_loader->responseHTTPHeadersAsString();
-
     if (m_state < Sent)
         changeState(Sent);
 
     if (m_decoder)
-        m_response += m_decoder->flush();
+        m_responseText += m_decoder->flush();
 
     bool hadLoader = m_loader;
     m_loader = 0;
@@ -553,21 +513,21 @@ void XMLHttpRequest::receivedRedirect(ResourceHandle*, const KURL& m_url)
         abort();
 }
 
+void XMLHttpRequest::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+{
+    m_response = response;
+    m_encoding = getCharset(m_mimeTypeOverride);
+    if (m_encoding.isEmpty())
+        m_encoding = response.textEncodingName();
+
+}
+
 void XMLHttpRequest::didReceiveData(ResourceHandle*, const char* data, int len)
 {
-    if (m_responseHeaders.isEmpty() && m_loader)
-        m_responseHeaders = m_loader->responseHTTPHeadersAsString();
-
     if (m_state < Sent)
         changeState(Sent);
   
     if (!m_decoder) {
-        m_encoding = getCharset(m_mimeTypeOverride);
-        if (m_encoding.isEmpty())
-            m_encoding = getCharset(getResponseHeader("Content-Type"));
-        if (m_encoding.isEmpty() && m_loader)
-            m_encoding = m_loader->responseEncoding();
-    
         if (!m_encoding.isEmpty())
             m_decoder = new TextResourceDecoder("text/plain", m_encoding);
         else if (responseIsXML())
@@ -584,7 +544,7 @@ void XMLHttpRequest::didReceiveData(ResourceHandle*, const char* data, int len)
 
     String decoded = m_decoder->decode(data, len);
 
-    m_response += decoded;
+    m_responseText += decoded;
 
     if (!m_aborted) {
         if (m_state != Receiving)

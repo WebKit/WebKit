@@ -102,10 +102,6 @@
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
 
-@interface NSURLResponse (FoundationSecretsWebBridgeKnowsAbout)
-- (NSTimeInterval)_calculatedExpiration;
-@end
-
 @interface NSView (JavaPluginSecrets)
 - (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
@@ -490,23 +486,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ASSERT(_frame != nil);
     WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
-}
-
-// We would like a better value for a maximum time_t,
-// but there is no way to do that in C with any certainty.
-// INT_MAX should work well enough for our purposes.
-#define MAX_TIME_T ((time_t)INT_MAX)    
-
-- (time_t)expiresTimeForResponse:(NSURLResponse *)response
-{
-    // This check can be removed when the new Foundation method
-    // has been around long enough for everyone to have it.
-    ASSERT([response respondsToSelector:@selector(_calculatedExpiration)]);
-
-    NSTimeInterval expiration = [response _calculatedExpiration];
-    expiration += kCFAbsoluteTimeIntervalSince1970;
-    
-    return expiration > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration;
 }
 
 - (void)close

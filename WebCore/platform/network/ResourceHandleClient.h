@@ -74,6 +74,7 @@ namespace WebCore {
 
     class KURL;
     class ResourceHandle;
+    class ResourceResponse;
 
     class ResourceHandleClient {
     public:
@@ -85,7 +86,7 @@ namespace WebCore {
         // void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         // void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
 
-        // void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
+        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
         virtual void didReceiveData(ResourceHandle*, const char*, int) { }
         virtual void didFinishLoading(ResourceHandle*) { }
         // void didFailWithError(ResourceError*) { }

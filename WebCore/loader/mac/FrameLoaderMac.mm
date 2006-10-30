@@ -43,6 +43,8 @@
 #import "LoaderNSURLRequestExtras.h"
 #import "Page.h"
 #import "Plugin.h"
+#import "ResourceResponse.h"
+#import "ResourceResponseMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
 #import "WebCorePageState.h"
@@ -1877,8 +1879,7 @@ void FrameLoader::loadEmptyDocumentSynchronously()
     [url release];
 }
 
-void FrameLoader::loadResourceSynchronously(const ResourceRequest& request,
-            KURL& finalURL, NSDictionary *& responseHeaders, int& statusCode, Vector<char>& data)
+void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r)
 {
 #if 0
     NSDictionary *headerDict = nil;
@@ -1941,23 +1942,14 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request,
     
     [initialRequest release];
 
-    if (error == nil) {
-        finalURL = [response URL];
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
-            responseHeaders = [httpResponse allHeaderFields];
-            statusCode = [httpResponse statusCode];
-        } else {
-            responseHeaders = [NSDictionary dictionary];
-            statusCode = 200;
-        }
-    } else {
-        finalURL = URL;
-        responseHeaders = [NSDictionary dictionary];
+    if (error == nil)
+        getResourceResponse(r, response);
+    else {
+        r = ResourceResponse(URL, String(), 0, String(), String());
         if ([error domain] == NSURLErrorDomain)
-            statusCode = [error code];
+            r.setHTTPStatusCode([error code]);
         else
-            statusCode = 404;
+            r.setHTTPStatusCode(404);
     }
     
     sendRemainingDelegateMessages(identifier, response, [result length], error);

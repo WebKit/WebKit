@@ -75,9 +75,6 @@ public:
     String errorText() const;
     bool isErrorPage() const;
     
-    String responseEncoding() const;
-
-    String responseHTTPHeadersAsString() const;
     void kill();
 
 #if PLATFORM(MAC)
@@ -120,9 +117,6 @@ public:
 
 private:
     bool start(DocLoader*);
-
-    void assembleResponseHeaders() const;
-    void retrieveResponseEncoding() const;
 
     ResourceHandleInternal* d;
 };

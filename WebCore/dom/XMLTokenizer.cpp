@@ -42,6 +42,7 @@
 #include "LoaderFunctions.h"
 #include "ProcessingInstruction.h"
 #include "ResourceHandle.h"
+#include "ResourceResponse.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/Platform.h>
@@ -459,9 +460,8 @@ static void* openFunc(const char* uri)
 
     KURL kurl(uri);
     ResourceRequest request(kurl);
-    KURL finalURL;
-    DeprecatedString headers;
-    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, finalURL, headers);
+    ResourceResponse response;
+    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, response);
     
     return new OffsetBuffer(data);
 }

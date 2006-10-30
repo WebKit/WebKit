@@ -363,6 +363,9 @@
 		6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */; };
 		6582A17809999EA000BEEB6D /* DeprecatedStringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */; };
 		658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 658436850AE01B7400E53753 /* FrameLoadRequest.h */; };
+		658821660AF4CDF700F01D1F /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 658821650AF4CDF700F01D1F /* ResourceResponse.h */; };
+		6588216B0AF4CE1200F01D1F /* ResourceResponseMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 658821680AF4CE1200F01D1F /* ResourceResponseMac.h */; };
+		6588216C0AF4CE1200F01D1F /* ResourceResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */; };
 		65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = 65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */; };
 		6593923709AE4346002C531F /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6593923509AE4346002C531F /* KURL.cpp */; };
@@ -3284,6 +3287,9 @@
 		6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTimeMac.cpp; sourceTree = "<group>"; };
 		6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedStringMac.mm; sourceTree = "<group>"; };
 		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
+		658821650AF4CDF700F01D1F /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
+		658821680AF4CE1200F01D1F /* ResourceResponseMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceResponseMac.h; sourceTree = "<group>"; };
+		658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseMac.mm; sourceTree = "<group>"; };
 		65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreStringTruncator.h; sourceTree = "<group>"; };
 		65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreStringTruncator.mm; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
@@ -6355,12 +6361,13 @@
 			isa = PBXGroup;
 			children = (
 				656B84E70AEA1DAE00A095B4 /* mac */,
-				6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */,
 				655A81BD0AEF67E6000975F0 /* HTTPHeaderMap.h */,
 				656B85370AEA1F9A00A095B4 /* ResourceHandle.h */,
 				656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */,
 				656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */,
 				656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */,
+				6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */,
+				658821650AF4CDF700F01D1F /* ResourceResponse.h */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -6369,6 +6376,8 @@
 			isa = PBXGroup;
 			children = (
 				656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */,
+				658821680AF4CE1200F01D1F /* ResourceResponseMac.h */,
+				658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -10473,6 +10482,8 @@
 				655A81BE0AEF67E6000975F0 /* HTTPHeaderMap.h in Headers */,
 				930500200AF025D300FFF491 /* ClipboardAccessPolicy.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
+				658821660AF4CDF700F01D1F /* ResourceResponse.h in Headers */,
+				6588216B0AF4CE1200F01D1F /* ResourceResponseMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11705,6 +11716,7 @@
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
 				654F68880AF1B7C50065BDD6 /* CachedResourceMac.mm in Sources */,
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
+ 				6588216C0AF4CE1200F01D1F /* ResourceResponseMac.mm in Sources */,
 				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
 				93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */,
 				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,

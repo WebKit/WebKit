@@ -40,8 +40,8 @@ public:
     void startLoading();
     void stopLoading();
     
-// ResourceHandleClient delegate methods
-    virtual void receivedResponse(ResourceHandle*, PlatformResponse);
+    // ResourceHandleClient delegate methods
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int);
     virtual void didFinishLoading(ResourceHandle*);
 private:

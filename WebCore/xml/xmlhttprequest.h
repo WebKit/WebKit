@@ -26,6 +26,7 @@
 #include <wtf/Vector.h>
 #include "KURL.h"
 #include "ResourceHandleClient.h"
+#include "ResourceResponse.h"
 #include "PlatformString.h"
 #include "HTTPHeaderMap.h"
 #include "StringHash.h"
@@ -82,15 +83,15 @@ private:
     bool urlMatchesDocumentDomain(const KURL&) const;
 
     virtual void receivedRedirect(ResourceHandle*, const KURL&);
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char* data, int size);
     virtual void didFinishLoading(ResourceHandle*);
 
-    void processSyncLoadResults(const Vector<char>& data, const KURL& finalURL, const DeprecatedString& headers);
+    void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&);
 
     bool responseIsXML() const;
 
     String getRequestHeader(const String& name) const;
-    static DeprecatedString getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name);
 
     void changeState(XMLHttpRequestState newState);
     void callReadyStateChangeListener();
@@ -101,19 +102,18 @@ private:
 
     KURL m_url;
     DeprecatedString m_method;
-    bool m_async;
     HTTPHeaderMap m_requestHeaders;
+    String m_mimeTypeOverride;
+    bool m_async;
 
     RefPtr<ResourceHandle> m_loader;
-
     XMLHttpRequestState m_state;
 
-    RefPtr<TextResourceDecoder> m_decoder;
+    ResourceResponse m_response;
     String m_encoding;
-    String m_responseHeaders;
-    String m_mimeTypeOverride;
 
-    String m_response;
+    RefPtr<TextResourceDecoder> m_decoder;
+    String m_responseText;
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
 

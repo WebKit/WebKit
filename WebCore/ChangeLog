@@ -1,3 +1,96 @@
+2006-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - added ResourceResponse class and didReceiveResponse delegate call
+        
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * bridge/mac/WebCoreFrameBridge.h: Removed no longer needed
+        expiresTimeForResponse: method.
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc): Updated to use ResourceResponse.
+        * loader/FrameLoader.h: Update loadResourceSynchronously to
+        use ResourceResponse.
+        * loader/LoaderFunctions.h:
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::didReceiveResponse): Updated from receivedResponse
+        and made cross-platform.
+        * loader/icon/IconLoader.h: updated for above change
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse): reduced to just saving
+        the PlatformResponse (ideally we'd phase out use of this).
+        (WebCore::Loader::didReceivedResponse): most of the ReceivedResponse 
+        logic.
+        * loader/loader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::loadResourceSynchronously): Return results
+        as ResourceResponse.
+        * loader/mac/IconLoaderMac.mm: remove receivedResponse.
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest): take ResourceResponse as
+        argument.
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h: Remove calls for
+        broken out response pieces.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didReceiveResponse): New
+        delegate method.
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Remove
+        storage of response bits, we're not gonna return them
+        seprately any more.
+        * platform/network/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse): Freshly
+        implemented. Same for below.
+        (WebCore::ResourceResponse::url):
+        (WebCore::ResourceResponse::mimeType):
+        (WebCore::ResourceResponse::expectedContentLength):
+        (WebCore::ResourceResponse::textEncodingName):
+        (WebCore::ResourceResponse::suggestedFilename):
+        (WebCore::ResourceResponse::httpStatusCode):
+        (WebCore::ResourceResponse::setHTTPStatusCode):
+        (WebCore::ResourceResponse::httpHeaderField):
+        (WebCore::ResourceResponse::httpHeaderFields):
+        (WebCore::ResourceResponse::isMultipart):
+        (WebCore::ResourceResponse::setExpirationDate):
+        (WebCore::ResourceResponse::expirationDate):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didReceiveResponse): Send didReceiveResponse
+        client method.
+        * platform/network/cf/ResourceResponseCFNet.h: Added.
+        * platform/network/cf/ResourceResponseCFNet.mm: Added.
+        (getResourceResponse): Helper function to get a ResourceResponse 
+        from CFURLResponseRef.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        Don't bother cleaning up fields we no longer have.
+        (WebCore::ResourceHandle::receivedResponse): Send
+        didReceiveResponse client method.
+        * platform/network/mac/ResourceResponseMac.h: Added.
+        * platform/network/mac/ResourceResponseMac.mm: Added.
+        (getResourceResponse): Helper function to get a ResourceResponse 
+        from an NSURLResponse*.
+        * rendering/HitTestResult.cpp:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc): Prepare for use of ResourceResponse.
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseText): Store http response
+        info in the form of a ResourceResponse, change all methods to
+        account for this.
+        (WebCore::XMLHttpRequest::getResponseXML):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::getStatus):
+        (WebCore::XMLHttpRequest::getStatusText):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
 2006-10-29  Darin Adler  <darin@apple.com>
 
         - fix build
