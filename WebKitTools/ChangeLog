@@ -1,5 +1,10 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-file-rename: Renames done, ready for the next round.
+        * Scripts/do-webcore-rename: Ditto.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         * Scripts/do-file-rename: And again.
 
 2006-10-29  Darin Adler  <darin@apple.com>

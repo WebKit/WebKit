@@ -44,6 +44,8 @@ my %words;
 my @paths;
 find(\&wanted, "JavaScriptCore");
 find(\&wanted, "WebCore");
+find(\&wanted, "WebKit");
+find(\&wanted, "WebKitQt");
 
 sub wanted
 {
@@ -66,26 +68,7 @@ sub wanted
 }
 
 my %renames = (
-    "Decoder" => "TextResourceDecoder",
-    "Decoder_h" => "TextResourceDecoder_h",
-    "KHTML_NO_XBL" => "WEBKIT_NO_XBL",
-    "KHTML_XSLT" => "WEBKIT_XSLT",
-    "StreamingTextDecoder" => "TextCodec",
-    "StreamingTextDecoderICU" => "TextCodecICU",
-    "StreamingTextDecoderICU_H" => "TextCodecICU_h",
-    "StreamingTextDecoderMac" => "TextCodecMac",
-    "StreamingTextDecoderMac_H" => "TextCodecMac_h",
-    "StreamingTextDecoder_h" => "TextCodec_h",
-    "WebDocumentLoader" => "DocumentLoader",
-    "WebFormDataStream" => "FormDataStream",
-    "WebLoader" => "ResourceLoader",
-    "WebMainResourceLoader" => "MainResourceLoader",
-    "WebNetscapePlugInStreamLoader" => "NetscapePlugInStreamLoader",
-    "WebResourceLoader" => "ResourceLoader",
-    "WebSubresourceLoader" => "SubresourceLoader",
-    "cachedObject" => "cachedResource",
-    "jScript" => "scriptProxy",
-    "jScriptEnabled" => "javaScriptEnabled",
+    "xxx" => "yyy",
     #"KURL" => "PlatformURL",
     #"KURLMac" => "PlatformURLMac",
     #"KURL_H_" => "PlatformURL_h",

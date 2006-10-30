@@ -65,13 +65,7 @@ sub wanted
 }
 
 my %renames = (
-    "FrameLoader.mm" => "FrameLoaderMac.mm",
-    "WebDocumentLoader.mm" => "DocumentLoaderMac.mm",
-    "WebFormState.mm" => "FormState.cpp",
-    "WebLoader.mm" => "ResourceLoaderMac.mm",
-    "WebMainResourceLoader.mm" => "MainResourceLoaderMac.mm",
-    "WebNetscapePlugInStreamLoader.mm" => "NetscapePlugInStreamLoaderMac.mm",
-    "WebSubresourceLoader.mm" => "SubresourceLoaderMac.mm",
+    "xxx.mm" => "yyy.mm",
 );
 
 # rename files
