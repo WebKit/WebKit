@@ -51,8 +51,6 @@ const size_t URLBufferLength = 2048;
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : WebResourceLoader(frame)
-    , m_contentLength(0)
-    , m_bytesReceived(0)
     , m_proxy(wkCreateNSURLConnectionDelegateProxy())
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
@@ -304,7 +302,6 @@ void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
     RefPtr<MainResourceLoader> protect(this);
 
     frameLoader()->setResponse(r);
-    m_contentLength = (int)[r expectedContentLength];
 
     m_response = r;
 
@@ -325,7 +322,6 @@ void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, 
     RefPtr<MainResourceLoader> protect(this);
 
     WebResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
-    m_bytesReceived += [data length];
 }
 
 void MainResourceLoader::didFinishLoading()

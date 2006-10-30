@@ -37,25 +37,28 @@ namespace WebCore {
     class MainResourceLoader : public WebResourceLoader {
     public:
         static PassRefPtr<MainResourceLoader> create(Frame*);
-
         virtual ~MainResourceLoader();
 
+#if PLATFORM(MAC)
         virtual bool load(NSURLRequest *);
+        virtual void addData(NSData *, bool allAtOnce);
+#endif
 
         virtual void setDefersLoading(bool);
 
-        virtual void addData(NSData *, bool allAtOnce);
-
+#if PLATFORM(MAC)
         virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(NSError *);
+#endif
 
     private:
-        virtual void didCancel(NSError *);
-
         MainResourceLoader(Frame*);
+
+#if PLATFORM(MAC)
+        virtual void didCancel(NSError *);
 
         virtual void releaseDelegate();
 
@@ -73,13 +76,12 @@ namespace WebCore {
         void continueAfterContentPolicy(PolicyAction);
         void continueAfterContentPolicy(PolicyAction, NSURLResponse *);
 
-        int m_contentLength; // for logging only
-        int m_bytesReceived; // for logging only
         RetainPtr<NSURLResponse> m_response;
         RetainPtr<id> m_proxy;
         RetainPtr<NSURLRequest> m_initialRequest;
-        bool m_loadingMultipartContent;
+#endif
 
+        bool m_loadingMultipartContent;
         bool m_waitingForContentPolicy;
     };
 

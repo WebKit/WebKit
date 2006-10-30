@@ -26,21 +26,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "RetainPtr.h"
 #include "Shared.h"
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 
-@class WebCoreFrameBridge;
+#if PLATFORM(MAC)
+
+#include "RetainPtr.h"
+
+#endif
 
 namespace WebCore {
 
     class Frame;
     class FrameLoader;
 
+#if PLATFORM(MAC)
     typedef Vector<RetainPtr<NSURLResponse> > ResponseVector;
+#endif
 
     class DocumentLoader : public Shared<DocumentLoader> {
+#if PLATFORM(MAC)
     public:
         DocumentLoader(NSURLRequest *);
         virtual ~DocumentLoader();
@@ -98,7 +104,6 @@ namespace WebCore {
         void commitIfReady();
         void clearErrors();
         double loadingStartedTime() const;
-        WebCoreFrameBridge *bridge() const;
         void setMainDocumentError(NSError *);
         void commitLoad(NSData *);
         bool doesProgressiveLoad(const String& MIMEType) const;
@@ -153,6 +158,7 @@ namespace WebCore {
         // page cache.
         ResponseVector m_responses;
         bool m_stopRecordingResponses;
+#endif
     };
 
 }

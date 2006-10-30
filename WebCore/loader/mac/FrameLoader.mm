@@ -65,8 +65,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashSet<RefPtr<WebResourceLoader> > ResourceLoaderSet;
-
 static double storedTimeOfLastCompletedLoad;
 
 static bool isCaseInsensitiveEqual(NSString *a, NSString *b)
@@ -106,27 +104,6 @@ static int numRequests(Document* document)
     if (document)
         return cache()->loader()->numRequests(document->docLoader());
     return 0;
-}
-
-FrameLoader::FrameLoader(Frame* frame)
-    : m_frame(frame)
-    , m_client(nil)
-    , m_state(FrameStateCommittedPage)
-    , m_loadType(FrameLoadTypeStandard)
-    , m_delegateIsHandlingProvisionalLoadError(false)
-    , m_delegateIsDecidingNavigationPolicy(false)
-    , m_delegateIsHandlingUnimplementablePolicy(false)
-    , m_firstLayoutDone(false)
-    , m_quickRedirectComing(false)
-    , m_sentRedirectNotification(false)
-    , m_isStoppingLoad(false)
-{
-}
-
-FrameLoader::~FrameLoader()
-{
-    if (m_client)
-        m_client->detachFrameLoader();
 }
 
 void FrameLoader::prepareForLoadStart()
@@ -504,23 +481,6 @@ void FrameLoader::removePlugInStreamLoader(WebResourceLoader* loader)
 {
     m_plugInStreamLoaders.remove(loader);
     activeDocumentLoader()->updateLoading();
-}
-
-static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
-{
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->setDefersLoading(defers);
-}
-
-void FrameLoader::setDefersLoading(bool defers)
-{
-    if (m_mainResourceLoader)
-        m_mainResourceLoader->setDefersLoading(defers);
-    setAllDefersLoading(m_subresourceLoaders, defers);
-    setAllDefersLoading(m_plugInStreamLoaders, defers);
-    m_client->setDefersLoading(defers);
 }
 
 bool FrameLoader::isLoadingMainResource() const

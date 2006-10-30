@@ -1,5 +1,42 @@
 2006-10-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - moving towards use of FrameLoader cross-platform; get FrameLoader.h
+          and FrameLoader.cpp mostly ready
+
+        * WebCore.xcodeproj/project.pbxproj: Added FrameLoader.cpp and
+        FormState.cpp. Removed WebFormState.mm.
+
+        * loader/FrameLoader.h: Put in lots of #if statements to see if we can
+        get this header compiling on non-Mac.
+        * loader/FrameLoader.cpp: Added. Has non-Mac-specific bits of FrameLoader.
+        * loader/mac/FrameLoader.mm: Moved some non-Mac-specific bits out.
+
+        * loader/FrameLoaderClient.h: Added some ifdefs.
+        * loader/WebDocumentLoader.h: Ditto.
+        * loader/WebLoader.h: Ditto.
+        * loader/WebMainResourceLoader.h: Ditto.
+
+        * loader/mac/WebDocumentLoader.mm:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        Rewrote to work without bridge, partly to remove the need for ObjC
+        bridge type in the header, and also because we're tearing down the bridge.
+
+        * loader/mac/WebMainResourceLoader.mm:
+        (WebCore::MainResourceLoader::MainResourceLoader): Removed unused
+        m_contentLength and m_bytesReceived.
+        (WebCore::MainResourceLoader::didReceiveResponse): Ditto.
+        (WebCore::MainResourceLoader::didReceiveData): Ditto.
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed doneProcessingData.
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto.
+
+        * loader/mac/FormState.mm: Removed.
+        * loader/FormState.cpp: Added.
+
+2006-10-29  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Adam.
 
         - moving towards use of FrameLoader cross-platform; move the headers

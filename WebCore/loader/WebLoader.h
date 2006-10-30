@@ -26,9 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "RetainPtr.h"
 #include "Shared.h"
 #include <wtf/RefPtr.h>
+
+#if PLATFORM(MAC)
+
+#include "RetainPtr.h"
+#import <objc/objc.h>
 
 #ifdef __OBJC__
 @class NSCachedURLResponse;
@@ -49,7 +53,8 @@ class NSURLCredential;
 class NSURLRequest;
 class NSURLResponse;
 class WebCoreResourceLoaderAsDelegate;
-typedef NSObject* id;
+#endif
+
 #endif
 
 namespace WebCore {
@@ -62,15 +67,18 @@ namespace WebCore {
     public:
         virtual ~WebResourceLoader();
 
+#if PLATFORM(MAC)
         virtual bool load(NSURLRequest *);
 
         FrameLoader *frameLoader() const;
 
         virtual void cancel(NSError * = nil);
         NSError *cancelledError();
+#endif
 
         virtual void setDefersLoading(bool);
 
+#if PLATFORM(MAC)
         void setIdentifier(id);
         id identifier() const { return m_identifier.get(); }
 
@@ -97,9 +105,12 @@ namespace WebCore {
 
         // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the first one.
         static bool inConnectionCallback();
+#endif
 
     protected:
         WebResourceLoader(Frame*);
+
+#if PLATFORM(MAC)
         WebCoreResourceLoaderAsDelegate *delegate();
         virtual void releaseDelegate();
 
@@ -108,27 +119,36 @@ namespace WebCore {
 
         NSURLConnection *connection() const { return m_connection.get(); }
         NSURLRequest *request() const { return m_request.get(); }
+#endif
         bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
         bool defersLoading() const { return m_defersLoading; }
 
+#if PLATFORM(MAC)
         RetainPtr<NSURLConnection> m_connection;
+#endif
 
     private:
+#if PLATFORM(MAC)
         RetainPtr<NSURLRequest> m_request;
+#endif
+
         bool m_reachedTerminalState;
         bool m_cancelled;
         bool m_calledDidFinishLoad;
 
         RefPtr<Frame> m_frame;
+
+#if PLATFORM(MAC)
         RetainPtr<id> m_identifier;
         RetainPtr<NSURLResponse> m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
-        bool m_defersLoading;
         RetainPtr<NSURL> m_originalURL;
         RetainPtr<NSMutableData> m_resourceData;
         RetainPtr<WebCoreResourceLoaderAsDelegate> m_delegate;
+#endif
+        bool m_defersLoading;
     };
 
 }

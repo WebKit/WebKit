@@ -329,7 +329,7 @@
 		656D37380ADBA5DE00A4554D /* WebFormDataStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37200ADBA5DE00A4554D /* WebFormDataStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37390ADBA5DE00A4554D /* WebFormDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D37210ADBA5DE00A4554D /* WebFormDataStream.m */; };
 		656D373A0ADBA5DE00A4554D /* WebFormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* WebFormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D373B0ADBA5DE00A4554D /* WebFormState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* WebFormState.mm */; };
+		656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* FormState.cpp */; };
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373D0ADBA5DE00A4554D /* FrameLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37250ADBA5DE00A4554D /* FrameLoader.mm */; };
 		656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1327,6 +1327,7 @@
 		932CA7C50AAA20D200AD1FAD /* TextCodecLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932CA7C40AAA20D200AD1FAD /* TextCodecLatin1.cpp */; };
 		932CA83B0AAA667F00AD1FAD /* TextCodecUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = 932CA83A0AAA667F00AD1FAD /* TextCodecUTF16.h */; };
 		932CA8480AAA66CB00AD1FAD /* TextCodecUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932CA8470AAA66CB00AD1FAD /* TextCodecUTF16.cpp */; };
+		932E16090AF578340025F408 /* FrameLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932E16080AF578340025F408 /* FrameLoader.cpp */; };
 		93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D87099E64910056E581 /* AppendNodeCommand.cpp */; };
 		93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D88099E64910056E581 /* AppendNodeCommand.h */; };
 		93309DD8099E64920056E581 /* ApplyStyleCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D89099E64910056E581 /* ApplyStyleCommand.cpp */; };
@@ -3244,7 +3245,7 @@
 		656D37200ADBA5DE00A4554D /* WebFormDataStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormDataStream.h; sourceTree = "<group>"; };
 		656D37210ADBA5DE00A4554D /* WebFormDataStream.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFormDataStream.m; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* WebFormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFormState.h; sourceTree = "<group>"; };
-		656D37230ADBA5DE00A4554D /* WebFormState.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebFormState.mm; sourceTree = "<group>"; };
+		656D37230ADBA5DE00A4554D /* FormState.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FormState.cpp; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
 		656D37250ADBA5DE00A4554D /* FrameLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FrameLoader.mm; sourceTree = "<group>"; };
 		656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoaderClient.h; sourceTree = "<group>"; };
@@ -4191,6 +4192,7 @@
 		932CA7C40AAA20D200AD1FAD /* TextCodecLatin1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecLatin1.cpp; sourceTree = "<group>"; };
 		932CA83A0AAA667F00AD1FAD /* TextCodecUTF16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF16.h; sourceTree = "<group>"; };
 		932CA8470AAA66CB00AD1FAD /* TextCodecUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF16.cpp; sourceTree = "<group>"; };
+		932E16080AF578340025F408 /* FrameLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoader.cpp; sourceTree = "<group>"; };
 		93309D87099E64910056E581 /* AppendNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppendNodeCommand.cpp; sourceTree = "<group>"; };
 		93309D88099E64910056E581 /* AppendNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppendNodeCommand.h; sourceTree = "<group>"; };
 		93309D89099E64910056E581 /* ApplyStyleCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyStyleCommand.cpp; sourceTree = "<group>"; };
@@ -7507,7 +7509,6 @@
 				656D371F0ADBA5DE00A4554D /* WebDocumentLoader.mm */,
 				656D37200ADBA5DE00A4554D /* WebFormDataStream.h */,
 				656D37210ADBA5DE00A4554D /* WebFormDataStream.m */,
-				656D37230ADBA5DE00A4554D /* WebFormState.mm */,
 				656D37280ADBA5DE00A4554D /* WebLoader.mm */,
 				656D372A0ADBA5DE00A4554D /* WebMainResourceLoader.mm */,
 				656D372C0ADBA5DE00A4554D /* WebNetscapePlugInStreamLoader.mm */,
@@ -8404,7 +8405,9 @@
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
 				93ABCE5D06E1A42E0085925B /* FormData.cpp */,
 				93ABCE5E06E1A42E0085925B /* FormData.h */,
+				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
+				932E16080AF578340025F408 /* FrameLoader.cpp */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
 				1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */,
@@ -11658,7 +11661,7 @@
 				656D37350ADBA5DE00A4554D /* WebDataProtocol.mm in Sources */,
 				656D37370ADBA5DE00A4554D /* WebDocumentLoader.mm in Sources */,
 				656D37390ADBA5DE00A4554D /* WebFormDataStream.m in Sources */,
-				656D373B0ADBA5DE00A4554D /* WebFormState.mm in Sources */,
+				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
 				656D373D0ADBA5DE00A4554D /* FrameLoader.mm in Sources */,
 				656D37400ADBA5DE00A4554D /* WebLoader.mm in Sources */,
 				656D37420ADBA5DE00A4554D /* WebMainResourceLoader.mm in Sources */,
@@ -11687,6 +11690,7 @@
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
 				654F68880AF1B7C50065BDD6 /* CachedResourceMac.mm in Sources */,
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
+				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

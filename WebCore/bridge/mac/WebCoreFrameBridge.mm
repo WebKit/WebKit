@@ -1152,17 +1152,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return _shouldCreateRenderers;
 }
 
-- (BOOL)doneProcessingData
-{
-    Document *doc = m_frame->document();
-    if (doc) {
-        Tokenizer* tok = doc->tokenizer();
-        if (tok)
-            return !tok->processingData();
-    }
-    return YES;
-}
-
 - (NSColor *)selectionColor
 {
     return m_frame->isActive() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];

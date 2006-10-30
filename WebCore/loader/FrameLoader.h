@@ -68,6 +68,7 @@ class NSDictionary;
 class NSError;
 class NSEvent;
 class NSMutableURLRequest;
+class NSString;
 class NSURL;
 class NSURLAuthenticationChallenge;
 class NSURLConnection;
@@ -94,8 +95,11 @@ namespace WebCore {
     class SubresourceLoader;
     class WebResourceLoader;
 
+    typedef HashSet<RefPtr<WebResourceLoader> > ResourceLoaderSet;
+
     bool isBackForwardLoadType(FrameLoadType);
 
+#if PLATFORM(MAC)
     typedef void (*NavigationPolicyDecisionFunction)(void* argument,
         NSURLRequest *, PassRefPtr<FormState>);
     typedef void (*NewWindowPolicyDecisionFunction)(void* argument,
@@ -129,6 +133,7 @@ namespace WebCore {
         ContentPolicyDecisionFunction m_contentFunction;
         void* m_argument;
     };
+#endif
 
     class FrameLoader : Noncopyable {
     public:
@@ -137,15 +142,15 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
-#if PLATFORM(MAC)
         // FIXME: This is not cool, people.
         void prepareForLoadStart();
         void setupForReplace();
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finalSetupForReplace(DocumentLoader*);
+#if PLATFORM(MAC)
         void safeLoad(NSURL *);
         void load(const FrameLoadRequest&, bool userGesture, NSEvent* triggeringEvent,
-            Element* submitForm, const HashMap<String, String>& formValues);
+            Element* form, const HashMap<String, String>& formValues);
         void load(NSURL *, const String& referrer, FrameLoadType, const String& target,
             NSEvent *event, Element* form, const HashMap<String, String>& formValues);
         void post(NSURL *, const String& referrer, const String& target,
@@ -154,10 +159,13 @@ namespace WebCore {
         void load(NSURLRequest *);
         void load(NSURLRequest *, const String& frameName);
         void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
+#endif
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
 
+#if PLATFORM(MAC)
         bool canLoad(NSURL *, const String& referrer, bool& hideReferrer);
+#endif
 
         void loadResourceSynchronously(const ResourceRequest&,
             KURL& finalURL, NSDictionary *& responseHeaders, int& statusCode, Vector<char>& data);
@@ -165,7 +173,9 @@ namespace WebCore {
         // Also not cool.
         void stopLoadingPlugIns();
         void stopLoadingSubresources();
+#if PLATFORM(MAC)
         void stopLoading(NSError *);
+#endif
         void stopLoading();
         void cancelMainResourceLoad();
         void cancelPendingArchiveLoad(WebResourceLoader*);
@@ -177,7 +187,9 @@ namespace WebCore {
         bool isLoading() const;
         void addSubresourceLoader(WebResourceLoader*);
         void removeSubresourceLoader(WebResourceLoader*);
+#if PLATFORM(MAC)
         NSData *mainResourceData() const;
+#endif
         void releaseMainResourceLoader();
 
         int numPendingOrLoadingRequests(bool recurse) const;
@@ -191,6 +203,7 @@ namespace WebCore {
         FrameState state() const;
         static double timeOfLastCompletedLoad();
 
+#if PLATFORM(MAC)
         id identifierForInitialRequest(NSURLRequest *);
         NSURLRequest *willSendRequest(WebResourceLoader*, NSMutableURLRequest *, NSURLResponse *redirectResponse);
         void didReceiveAuthenticationChallenge(WebResourceLoader*, NSURLAuthenticationChallenge *);
@@ -199,35 +212,48 @@ namespace WebCore {
         void didReceiveData(WebResourceLoader*, NSData *, int lengthReceived);
         void didFinishLoad(WebResourceLoader*);
         void didFailToLoad(WebResourceLoader*, NSError *);
+#endif
         bool privateBrowsingEnabled() const;
+#if PLATFORM(MAC)
         NSURLRequest *originalRequest() const;
         void receivedMainResourceError(NSError *, bool isComplete);
         NSURLRequest *initialRequest() const;
         void receivedData(NSData *);
         void setRequest(NSURLRequest *);
         void download(NSURLConnection *, NSURLRequest *request, NSURLResponse *, id proxy);
+#endif
         void handleFallbackContent();
         bool isStopping() const;
+#if PLATFORM(MAC)
         void setResponse(NSURLResponse *);
+#endif
 
         void finishedLoading();
+#if PLATFORM(MAC)
         NSURL *URL() const;
+#endif
 
+#if PLATFORM(MAC)
         NSError *cancelledError(NSURLRequest *) const;
         NSError *fileDoesNotExistError(NSURLResponse *) const;
         bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *) const;
         bool isArchiveLoadPending(WebResourceLoader*) const;
         void cannotShowMIMEType(NSURLResponse *);
         NSError *interruptionForPolicyChangeError(NSURLRequest *);
+#endif
+
         bool isHostedByObjectElement() const;
         bool isLoadingMainFrame() const;
         bool canShowMIMEType(const String& MIMEType) const;
         bool representationExistsForURLScheme(const String& URLScheme);
         String generatedMIMETypeForURLScheme(const String& URLScheme);
+
+#if PLATFORM(MAC)
         void notifyIconChanged(NSURL *iconURL);
 
         void checkNavigationPolicy(NSURLRequest *, NavigationPolicyDecisionFunction, void* argument);
         void checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction, void* argument);
+#endif
         void cancelContentPolicyCheck();
 
         void reload();
@@ -235,12 +261,16 @@ namespace WebCore {
 
         void didReceiveServerRedirectForProvisionalLoadForFrame();
         void finishedLoadingDocument(DocumentLoader*);
-        void committedLoad(DocumentLoader*, NSData *data);
+#if PLATFORM(MAC)
+        void committedLoad(DocumentLoader*, NSData *);
+#endif
         bool isReplacing() const;
         void setReplacing();
         void revertToProvisional(DocumentLoader*);
+#if PLATFORM(MAC)
         void setMainDocumentError(DocumentLoader*, NSError *);
         void mainReceivedCompleteError(DocumentLoader*, NSError *);
+#endif
         bool subframeIsLoading() const;
         void willChangeTitle(DocumentLoader*);
         void didChangeTitle(DocumentLoader*);
@@ -251,33 +281,41 @@ namespace WebCore {
         bool firstLayoutDone() const;
 
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
+#if PLATFORM(MAC)
         void clientRedirected(NSURL *, double delay, NSDate *fireDate, bool lockHistory, bool isJavaScriptFormAction);
         void commitProvisionalLoad(NSDictionary *pageCache);
-        bool isQuickRedirectComing() const;
         bool shouldReload(NSURL *currentURL, NSURL *destinationURL);
+#endif
 
+        bool isQuickRedirectComing() const;
+
+#if PLATFORM(MAC)
         void sendRemainingDelegateMessages(id identifier, NSURLResponse *, unsigned length, NSError *);
         NSURLRequest *requestFromDelegate(NSURLRequest *, id& identifier, NSError *& error);
         void loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResponse *response, int length);
+#endif
 
         void checkLoadComplete();
         void detachFromParent();
         void detachChildren();
+
+#if PLATFORM(MAC)
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
         NSDictionary *actionInformation(NavigationType, NSEvent *, NSURL *);
         NSDictionary *actionInformation(FrameLoadType loadType, bool isFormSubmission, NSEvent *, NSURL *);
+#endif
 
         void setClient(FrameLoaderClient*);
         FrameLoaderClient* client() const;
 
         void setDefersLoading(bool);
-#endif
 
     private:
-#if PLATFORM(MAC)
         // Also not cool.
         void startLoading();
+#if PLATFORM(MAC)
         bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
+#endif
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
@@ -286,31 +324,39 @@ namespace WebCore {
         void provisionalLoadStarted();
         void frameLoadCompleted();
 
+#if PLATFORM(MAC)
         void mainReceivedError(NSError *, bool isComplete);
+#endif
 
         void setLoadType(FrameLoadType);
 
+#if PLATFORM(MAC)
         void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>,
             NavigationPolicyDecisionFunction, void* argument);
         void checkNewWindowPolicy(NSDictionary *, NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
+#endif
 
         void continueAfterNavigationPolicy(PolicyAction);
         void continueAfterNewWindowPolicy(PolicyAction);
         void continueAfterContentPolicy(PolicyAction);
         void continueAfterWillSubmitForm(PolicyAction = PolicyUse);
 
-        static void callContinueLoadAfterNavigationPolicy(void*, NSURLRequest*, PassRefPtr<FormState>);
+#if PLATFORM(MAC)
+        static void callContinueLoadAfterNavigationPolicy(void*, NSURLRequest *, PassRefPtr<FormState>);
         void continueLoadAfterNavigationPolicy(NSURLRequest *, PassRefPtr<FormState>);
-        static void callContinueLoadAfterNewWindowPolicy(void*, NSURLRequest*, PassRefPtr<FormState>, const String& frameName);
+        static void callContinueLoadAfterNewWindowPolicy(void*, NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
         void continueLoadAfterNewWindowPolicy(NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
-        static void callContinueFragmentScrollAfterNavigationPolicy(void*, NSURLRequest*, PassRefPtr<FormState>);
+        static void callContinueFragmentScrollAfterNavigationPolicy(void*, NSURLRequest *, PassRefPtr<FormState>);
         void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
+#endif
 
         void stopPolicyCheck();
 
         void closeDocument();
 
+#if PLATFORM(MAC)
         void transitionToCommitted(NSDictionary *pageCache);
+#endif
         void checkLoadCompleteForThisFrame();
 
         void setDocumentLoader(DocumentLoader*);
@@ -322,15 +368,18 @@ namespace WebCore {
         void setState(FrameState);
 
         void closeOldDataSources();
+#if PLATFORM(MAC)
         void open(NSURL *, bool reload, NSString *contentType, NSString *refresh, NSDate *lastModified, NSDictionary *pageCache);
         void open(WebCorePageState *);
+#endif
         void opened();
 
+#if PLATFORM(MAC)
         void handleUnimplementablePolicy(NSError *);
         bool shouldReloadToHandleUnreachableURL(NSURLRequest *);
+#endif
 
         bool canTarget(Frame*) const;
-#endif
 
         Frame* m_frame;
         FrameLoaderClient* m_client;
@@ -339,13 +388,14 @@ namespace WebCore {
         FrameLoadType m_loadType;
 
         RefPtr<MainResourceLoader> m_mainResourceLoader;
-        HashSet<RefPtr<WebResourceLoader> > m_subresourceLoaders;
-        HashSet<RefPtr<WebResourceLoader> > m_plugInStreamLoaders;
+        ResourceLoaderSet m_subresourceLoaders;
+        ResourceLoaderSet m_plugInStreamLoaders;
 
 #if PLATFORM(MAC)
         RefPtr<DocumentLoader> m_documentLoader;
         RefPtr<DocumentLoader> m_provisionalDocumentLoader;
         RefPtr<DocumentLoader> m_policyDocumentLoader;
+#endif
 
         FrameLoadType m_policyLoadType;
         PolicyCheck m_policyCheck;
@@ -358,7 +408,6 @@ namespace WebCore {
         bool m_quickRedirectComing;
         bool m_sentRedirectNotification;
         bool m_isStoppingLoad;
-#endif
     };
 
 }

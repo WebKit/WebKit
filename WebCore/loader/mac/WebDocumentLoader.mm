@@ -29,12 +29,14 @@
 #import "config.h"
 #import "WebDocumentLoader.h"
 
+#import "Document.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "PlatformString.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
+#import "XMLTokenizer.h"
 #import <wtf/Assertions.h>
 
 namespace WebCore {
@@ -232,13 +234,6 @@ void DocumentLoader::setResponse(NSURLResponse *resp)
 bool DocumentLoader::isStopping() const
 {
     return m_stopping;
-}
-
-WebCoreFrameBridge *DocumentLoader::bridge() const
-{
-    if (!m_frame)
-        return nil;
-    return Mac(m_frame)->bridge();
 }
 
 void DocumentLoader::setMainDocumentError(NSError *error)
@@ -482,8 +477,10 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
         if (frameLoader()->isLoadingSubresources())
             return true;
-        if (![bridge() doneProcessingData])
-            return true;
+        if (Document* doc = m_frame->document())
+            if (Tokenizer* tok = doc->tokenizer())
+                if (tok->processingData())
+                    return true;
     }
     return frameLoader()->subframeIsLoading();
 }

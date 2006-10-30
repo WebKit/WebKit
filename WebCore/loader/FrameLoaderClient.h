@@ -30,6 +30,12 @@
 #include <wtf/Forward.h>
 #include "FrameLoaderTypes.h"
 
+#if PLATFORM(MAC)
+#ifndef __OBJC__
+class NSImage;
+#endif
+#endif
+
 namespace WebCore {
 
     class DocumentLoader;
@@ -48,6 +54,7 @@ namespace WebCore {
     public:
         virtual void detachFrameLoader() = 0;
 
+#if PLATFORM(MAC)
         virtual bool hasWebView() const = 0; // mainly for assertions
         virtual bool hasFrameView() const = 0; // ditto
 
@@ -105,7 +112,7 @@ namespace WebCore {
         virtual void dispatchDidHandleOnloadEvents() = 0;
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
         virtual void dispatchDidCancelClientRedirect() = 0;
-        virtual void dispatchWillPerformClientRedirect(NSURL *URL, NSTimeInterval, NSDate *) = 0;
+        virtual void dispatchWillPerformClientRedirect(NSURL *URL, double, NSDate *) = 0;
         virtual void dispatchDidChangeLocationWithinPage() = 0;
         virtual void dispatchWillClose() = 0;
         virtual void dispatchDidReceiveIcon(NSImage *) = 0;
@@ -162,9 +169,11 @@ namespace WebCore {
         virtual NSError *fileDoesNotExistError(NSURLResponse *) = 0;
 
         virtual bool shouldFallBack(NSError *) = 0;
+#endif
 
         virtual void setDefersLoading(bool) = 0;
 
+#if PLATFORM(MAC)
         virtual bool willUseArchive(WebResourceLoader*, NSURLRequest *, NSURL *originalURL) const = 0;
         virtual bool isArchiveLoadPending(WebResourceLoader*) const = 0;
         virtual void cancelPendingArchiveLoad(WebResourceLoader*) = 0;
@@ -188,6 +197,7 @@ namespace WebCore {
         virtual void setTitle(const String& title, NSURL *) = 0;
 
         virtual String userAgent(NSURL *) = 0;
+#endif
 
     protected:
         virtual ~FrameLoaderClient();

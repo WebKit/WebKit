@@ -310,8 +310,6 @@ typedef enum {
 - (void)setShouldCreateRenderers:(BOOL)f;
 - (BOOL)shouldCreateRenderers;
 
-- (BOOL)doneProcessingData;
-
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor;
 - (void)setDrawsBackground:(BOOL)drawsBackround;
 
