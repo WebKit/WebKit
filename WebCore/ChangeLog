@@ -1,3 +1,23 @@
+2006-10-30  Zach Rusin  <zack@kde.org>
+
+        Reviewed and landed by Anders.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::receivedResponse):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::FrameQtClientDefault):
+        * platform/qt/LoaderFunctionsQt.cpp:
+        (WebCore::ServeSynchronousRequest):
+        More build fixes.
+
+2006-10-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed and landed by Anders.
+        
+        - fix Qt build
+        * platform/qt/FrameQtClient.cpp: ResourceLoaderClient ->
+        ResourceHandleClient
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

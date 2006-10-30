@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -35,13 +35,16 @@
 #include "Cache.h"
 #include "loader.h"
 #include "FrameQt.h"
+#include "Request.h"
+#include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "DocLoader.h"
 #include "CachedResource.h"
 #include "DeprecatedString.h"
 
 namespace WebCore {
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const ResourceRequest&, KURL& url, DeprecatedString&)
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const ResourceRequest& request, ResourceResponse&)
 {
     // FIXME: Handle last paremeter: "responseHeaders"
     FrameQt* frame = QtFrame(docLoader->frame());
@@ -51,7 +54,7 @@ Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const Resour
 
     // FIXME: We shouldn't use temporary files for sync jobs!
     QString tempFile;
-    if (!KIO::NetAccess::download(KUrl(url.url()), tempFile, 0))
+    if (!KIO::NetAccess::download(KUrl(request.url().url()), tempFile, 0))
         return Vector<char>();
 
     QFile file(tempFile);
@@ -64,7 +67,7 @@ Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const Resour
 
     QByteArray content = file.readAll();
     KIO::NetAccess::removeTempFile(tempFile);
-    
+
     Vector<char> resultBuffer;
     resultBuffer.append(content.data(), content.size());
 

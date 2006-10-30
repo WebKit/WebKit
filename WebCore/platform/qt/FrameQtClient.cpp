@@ -44,7 +44,7 @@ namespace WebCore {
 
 FrameQtClientDefault::FrameQtClientDefault()
     : FrameQtClient()
-    , ResourceLoaderClient()
+    , ResourceHandleClient()
     , m_frame(0)
     , m_assignedMimetype(false)
 {
