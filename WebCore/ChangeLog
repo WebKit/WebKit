@@ -1,3 +1,160 @@
+2006-10-30  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11441
+        More rendering code cleaning
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::RenderApplet):
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/RenderApplet.h:
+        * rendering/RenderArena.cpp:
+        (WebCore::):
+        (WebCore::RenderArena::RenderArena):
+        (WebCore::RenderArena::allocate):
+        (WebCore::RenderArena::free):
+        * rendering/RenderArena.h:
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::RenderBR):
+        (WebCore::RenderBR::baselinePosition):
+        (WebCore::RenderBR::lineHeight):
+        (WebCore::RenderBR::setStyle):
+        (WebCore::RenderBR::caretMinOffset):
+        (WebCore::RenderBR::positionForCoordinates):
+        (WebCore::RenderBR::inlineBox):
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::maxTopMargin):
+        (WebCore::RenderBlock::maxBottomMargin):
+        (WebCore::RenderBlock::initMaxMarginValues):
+        (WebCore::RenderBlock::containsFloats):
+        (WebCore::RenderBlock::setHasMarkupTruncation):
+        (WebCore::RenderBlock::BlockSelectionInfo::BlockSelectionInfo):
+        (WebCore::RenderBlock::BlockSelectionInfo::block):
+        (WebCore::RenderBlock::BlockSelectionInfo::state):
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::CompactInfo::clear):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::removeChild):
+        (WebCore::RenderButton::paintObject):
+        * rendering/RenderButton.h:
+        (WebCore::RenderButton::renderName):
+        (WebCore::RenderButton::removeLeftoverAnonymousBoxes):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::RenderContainer):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::firstChild):
+        (WebCore::RenderContainer::lastChild):
+        (WebCore::RenderContainer::calcMinMaxWidth):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::RenderCounter):
+        (WebCore::toRoman):
+        (WebCore::toHebrew):
+        (WebCore::RenderCounter::calcMinMaxWidth):
+        * rendering/RenderCounter.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+        (WebCore::RenderFieldset::setStyle):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl):
+        (WebCore::RenderFileUploadControl::setStyle):
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::calcMinMaxWidth):
+        * rendering/RenderFileUploadControl.h:
+        (WebCore::RenderFileUploadControl::renderName):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::RenderForeignObject):
+        (WebCore::RenderForeignObject::paint):
+        (WebCore::RenderForeignObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderForeignObject::layout):
+        (WebCore::RenderForeignObject::nodeAtPoint):
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::renderName):
+        * rendering/RenderFormElement.cpp:
+        (WebCore::RenderFormElement::setStyle):
+        (WebCore::RenderFormElement::layout):
+        (WebCore::RenderFormElement::textAlignment):
+        * rendering/RenderFormElement.h:
+        * rendering/RenderFrame.cpp:
+        * rendering/RenderFrame.h:
+        (WebCore::RenderFrame::element):
+        * rendering/RenderFrameSet.cpp:
+        * rendering/RenderFrameSet.h:
+        (WebCore::RenderFrameSet::element):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas):
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderHTMLCanvas.h:
+        (WebCore::RenderHTMLCanvas::renderName):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::setStyle):
+        (WebCore::RenderImage::setContentObject):
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::element):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::~RenderInline):
+        (WebCore::RenderInline::setStyle):
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::cloneInline):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::paint):
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::calcMinMaxWidth):
+        (WebCore::RenderInline::requiresLayer):
+        (WebCore::RenderInline::width):
+        (WebCore::RenderInline::height):
+        (WebCore::RenderInline::renderName):
+        (WebCore::RenderInline::nodeAtPoint):
+        (WebCore::RenderInline::positionForCoordinates):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::layout):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::ClipRects):
+        (WebCore::RenderLayer::nextSibling):
+        (WebCore::RenderLayer::root):
+        (WebCore::RenderLayer::setPos):
+        (WebCore::RenderLayer::height):
+        (WebCore::RenderLayer::relativePositionOffset):
+        * rendering/RenderLineEdit.cpp:
+        (WebCore::RenderLineEdit::setStyle):
+        (WebCore::RenderLineEdit::updateFromElement):
+        (WebCore::RenderLineEdit::selectionStart):
+        (WebCore::RenderLineEdit::selectionEnd):
+        (WebCore::RenderLineEdit::setSelectionStart):
+        (WebCore::RenderLineEdit::setSelectionEnd):
+        (WebCore::RenderLineEdit::setSelectionRange):
+        * rendering/RenderLineEdit.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::renderName):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::setStyle):
+        (WebCore::getParentOfFirstLineBox):
+        (WebCore::RenderListItem::updateMarkerLocation):
+        (WebCore::RenderListItem::positionListMarker):
+        (WebCore::RenderListItem::paint):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderListMarker.h:
+        (WebCore::RenderListMarker::renderName):
+        (WebCore::RenderListMarker::isListMarker):
+
 2006-10-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Hyatt.

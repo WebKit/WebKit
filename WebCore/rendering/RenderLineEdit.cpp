@@ -110,9 +110,9 @@ void RenderLineEdit::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
-void RenderLineEdit::setStyle(RenderStyle *s)
+void RenderLineEdit::setStyle(RenderStyle* newStyle)
 {
-    RenderFormElement::setStyle(s);
+    RenderFormElement::setStyle(newStyle);
 
     TextField* w = static_cast<TextField*>(widget());
     w->setAlignment(textAlignment());
@@ -149,7 +149,7 @@ void RenderLineEdit::updateFromElement()
     }
 
     w->setReadOnly(e->isReadOnlyControl());
-    
+
     // Handle updating the search attributes.
     w->setPlaceholderString(e->getAttribute(placeholderAttr).deprecatedString());
     if (w->type() == TextField::Search) {
@@ -182,7 +182,7 @@ void RenderLineEdit::valueChanged(Widget*)
 
 int RenderLineEdit::selectionStart()
 {
-    TextField *lineEdit = static_cast<TextField *>(m_widget);
+    TextField* lineEdit = static_cast<TextField*>(m_widget);
     int start = lineEdit->selectionStart();
     if (start == -1)
         start = lineEdit->cursorPosition();
@@ -191,18 +191,18 @@ int RenderLineEdit::selectionStart()
 
 int RenderLineEdit::selectionEnd()
 {
-    TextField *lineEdit = static_cast<TextField *>(m_widget);
+    TextField* lineEdit = static_cast<TextField*>(m_widget);
     int start = lineEdit->selectionStart();
     if (start == -1)
         return lineEdit->cursorPosition();
-    return start + (int)lineEdit->selectedText().length();
+    return start + static_cast<int>(lineEdit->selectedText().length());
 }
 
 void RenderLineEdit::setSelectionStart(int start)
 {
     int realStart = max(start, 0);
     int length = max(selectionEnd() - realStart, 0);
-    static_cast<TextField *>(m_widget)->setSelection(realStart, length);
+    static_cast<TextField*>(m_widget)->setSelection(realStart, length);
 }
 
 void RenderLineEdit::setSelectionEnd(int end)
@@ -214,7 +214,7 @@ void RenderLineEdit::setSelectionEnd(int end)
         start = realEnd;
         length = 0;
     }
-    static_cast<TextField *>(m_widget)->setSelection(start, length);
+    static_cast<TextField*>(m_widget)->setSelection(start, length);
 }
 
 void RenderLineEdit::select()
@@ -235,7 +235,7 @@ void RenderLineEdit::setSelectionRange(int start, int end)
 {
     int realStart = max(start, 0);
     int length = max(end - realStart, 0);
-    static_cast<TextField *>(m_widget)->setSelection(realStart, length);
+    static_cast<TextField*>(m_widget)->setSelection(realStart, length);
 }
 
 } // namespace WebCore

@@ -58,7 +58,7 @@ public:
     virtual Node* shadowParentNode() { return m_shadowParent; }
     
 private:
-        Node* m_shadowParent;    
+    Node* m_shadowParent;    
 };
 
 RenderFileUploadControl::RenderFileUploadControl(Node* node)
@@ -72,22 +72,21 @@ RenderFileUploadControl::~RenderFileUploadControl()
 {
     if (m_button)
         m_button->detach();
-    if (m_fileChooser) {
+    if (m_fileChooser)
         m_fileChooser->disconnectUploadControl();
-    }
 }
 
-void RenderFileUploadControl::setStyle(RenderStyle* s)
+void RenderFileUploadControl::setStyle(RenderStyle* newStyle)
 {
     // Force text-align to match the direction
-    if (s->direction() == LTR)
-        s->setTextAlign(LEFT);
+    if (newStyle->direction() == LTR)
+        newStyle->setTextAlign(LEFT);
     else
-        s->setTextAlign(RIGHT);
-    
-    RenderBlock::setStyle(s);
+        newStyle->setTextAlign(RIGHT);
+
+    RenderBlock::setStyle(newStyle);
     if (m_button)
-        m_button->renderer()->setStyle(createButtonStyle(s));
+        m_button->renderer()->setStyle(createButtonStyle(newStyle));
 
     setReplaced(isInline());
 }
@@ -140,22 +139,22 @@ RenderStyle* RenderFileUploadControl::createButtonStyle(RenderStyle* parentStyle
     return style;
 }
 
-void RenderFileUploadControl::paintObject(PaintInfo& i, int tx, int ty)
+void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     // Push a clip.
-    if (i.phase == PaintPhaseForeground || i.phase == PaintPhaseChildBlockBackgrounds) {
+    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         IntRect clipRect(tx + borderLeft(), ty + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        i.p->save();
-        i.p->clip(clipRect);
+        paintInfo.p->save();
+        paintInfo.p->clip(clipRect);
     }
-    
-    if (i.phase == PaintPhaseForeground) {
+
+    if (paintInfo.phase == PaintPhaseForeground) {
         const String& displayedFilename = m_fileChooser->basenameForWidth(maxFilenameWidth());
         TextRun textRun(displayedFilename.characters(), displayedFilename.length());
-        
+
         // Determine where the filename should be placed
         int contentLeft = tx + borderLeft() + paddingLeft();
         int buttonAndIconWidth = m_button->renderer()->width() + afterButtonSpacing + (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0);
@@ -167,13 +166,13 @@ void RenderFileUploadControl::paintObject(PaintInfo& i, int tx, int ty)
         // We want to match the button's baseline
         RenderButton* buttonRenderer = static_cast<RenderButton*>(m_button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y() + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop() + buttonRenderer->baselinePosition(true, false);
-        
-        i.p->setFont(style()->font());
-        i.p->setPen(style()->color());
-        
+
+        paintInfo.p->setFont(style()->font());
+        paintInfo.p->setPen(style()->color());
+
         // Draw the filename
-        i.p->drawText(textRun, IntPoint(textX, textY));
-        
+        paintInfo.p->drawText(textRun, IntPoint(textX, textY));
+
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
             int iconY = ty + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
@@ -182,25 +181,25 @@ void RenderFileUploadControl::paintObject(PaintInfo& i, int tx, int ty)
                 iconX = contentLeft + m_button->renderer()->width() + afterButtonSpacing;
             else
                 iconX = contentLeft + contentWidth() - m_button->renderer()->width() - afterButtonSpacing - iconWidth;
-            
+
             // Draw the file icon
-            m_fileChooser->icon()->paint(i.p, IntRect(iconX, iconY, iconWidth, iconHeight));
+            m_fileChooser->icon()->paint(paintInfo.p, IntRect(iconX, iconY, iconWidth, iconHeight));
         }
     }
-    
+
     // Paint the children.
-    RenderBlock::paintObject(i, tx, ty);
-    
+    RenderBlock::paintObject(paintInfo, tx, ty);
+
     // Pop the clip.
-    if (i.phase == PaintPhaseForeground || i.phase == PaintPhaseChildBlockBackgrounds)
-        i.p->restore();
+    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds)
+        paintInfo.p->restore();
 }
 
 void RenderFileUploadControl::calcMinMaxWidth()
 {
     m_minWidth = 0;
     m_maxWidth = 0;
-    
+
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
     else {
@@ -210,7 +209,7 @@ void RenderFileUploadControl::calcMinMaxWidth()
         float charWidth = style()->font().floatWidth(TextRun(&ch, 1), TextStyle(0, 0, 0, false, false, false));
         m_maxWidth = (int)ceilf(charWidth * defaultWidthNumChars);
     }
-    
+
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
         m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
@@ -218,16 +217,16 @@ void RenderFileUploadControl::calcMinMaxWidth()
         m_minWidth = 0;
     else
         m_minWidth = m_maxWidth;
-    
+
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
         m_maxWidth = min(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
         m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
-    
+
     int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
-    
+
     setMinMaxKnown();
 }
 
@@ -243,4 +242,4 @@ RenderObject* HTMLFileUploadInnerButtonElement::createRenderer(RenderArena* aren
     return HTMLInputElement::createRenderer(arena, style);
 }
 
-}
+} // namespace WebCore

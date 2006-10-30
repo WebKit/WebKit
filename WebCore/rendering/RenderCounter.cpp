@@ -34,7 +34,9 @@ namespace WebCore {
 const int cMarkerPadding = 7;
 
 RenderCounter::RenderCounter(Node* node, CounterData* counter)
-    : RenderText(node, 0), m_counter(counter), m_counterNode(0)
+    : RenderText(node, 0)
+    , m_counter(counter)
+    , m_counterNode(0)
 {
 }
 
@@ -57,9 +59,10 @@ static String toRoman(int number, bool upper)
     int d = 0;
     do {
         int num = number % 10;
-        if (num % 5 < 4)
+        if (num % 5 < 4) {
             for (int i = num % 5; i > 0; i--)
                 roman.insert(&digits[d], 1, 0);
+        }
         if (num >= 4 && num <= 8)
             roman.insert(&digits[d + 1], 1, 0);
         if (num == 9)
@@ -94,7 +97,7 @@ static String toHebrew(int number)
 {
     if (number < 1)
         return String::number(number);
-    
+
     static const UChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
 
     String letter;
@@ -217,11 +220,11 @@ void RenderCounter::calcMinMaxWidth()
     int value = m_counterNode->count();
     if (m_counterNode->isReset())
         value = m_counterNode->value();
-    
+
     int total = value;
     if (m_counterNode->parent())
         total = m_counterNode->parent()->total();
-    
+
     m_item = convertValueToType(value, total, m_counter->listStyle());
 
     if (hasSeparator) {
@@ -230,15 +233,14 @@ void RenderCounter::calcMinMaxWidth()
         while  (counter->parent() && (first || !(counter->isReset() && counter->parent()->isRoot()))) {
             value = counter->count() ? counter->count() : 1;
             total = counter->parent()->total();
-            m_item = convertValueToType(value, total, m_counter->listStyle()) 
-                + m_counter->separator() + m_item;
+            m_item = convertValueToType(value, total, m_counter->listStyle()) + m_counter->separator() + m_item;
             counter = counter->parent();
             first = false;
         }
     }
 
     str = new StringImpl(m_item.characters(), m_item.length());
-    
+
     RenderText::calcMinMaxWidth();
 }
 

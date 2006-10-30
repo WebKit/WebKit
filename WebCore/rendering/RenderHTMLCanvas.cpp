@@ -35,49 +35,44 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderHTMLCanvas::RenderHTMLCanvas(Node* n)
-    : RenderReplaced(n)
+RenderHTMLCanvas::RenderHTMLCanvas(Node* node)
+    : RenderReplaced(node)
 {
 }
 
-const char* RenderHTMLCanvas::renderName() const
+void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    return "RenderHTMLCanvas";
-}
-
-void RenderHTMLCanvas::paint(PaintInfo& i, int tx, int ty)
-{
-    if (!shouldPaint(i, tx, ty))
+    if (!shouldPaint(paintInfo, tx, ty))
         return;
 
     int x = tx + m_x;
     int y = ty + m_y;
 
-    if (shouldPaintBackgroundOrBorder() && (i.phase == PaintPhaseForeground || i.phase == PaintPhaseSelection)) 
-        paintBoxDecorations(i, x, y);
+    if (shouldPaintBackgroundOrBorder() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
+        paintBoxDecorations(paintInfo, x, y);
 
-    if ((i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(i.p, x, y, width(), height(), style());
-    
-    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection)
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(paintInfo.p, x, y, width(), height(), style());
+
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
 
-    if (!shouldPaintWithinRoot(i))
+    if (!shouldPaintWithinRoot(paintInfo))
         return;
 
     bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
-    if (i.phase == PaintPhaseSelection) {
+    if (paintInfo.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
     }
 
     if (element() && element()->hasTagName(canvasTag))
-        static_cast<HTMLCanvasElement*>(element())->paint(i.p,
+        static_cast<HTMLCanvasElement*>(element())->paint(paintInfo.p,
             IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
 
     if (drawSelectionTint)
-        i.p->fillRect(selectionRect(), selectionBackgroundColor());
+        paintInfo.p->fillRect(selectionRect(), selectionBackgroundColor());
 }
 
 void RenderHTMLCanvas::layout()
@@ -97,4 +92,4 @@ void RenderHTMLCanvas::layout()
     setNeedsLayout(false);
 }
 
-}
+} // namespace WebCore

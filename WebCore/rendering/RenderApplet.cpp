@@ -35,7 +35,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderApplet::RenderApplet(HTMLAppletElement* applet, const HashMap<String, String>& args)
-    : RenderWidget(applet), m_args(args)
+    : RenderWidget(applet)
+    , m_args(args)
 {
     setInline(true);
 }
@@ -74,13 +75,14 @@ void RenderApplet::createWidgetIfNecessary()
         m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
     int height = style()->height().isFixed() ? style()->height().value() :
         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    for (Node* child = node()->firstChild(); child; child = child->nextSibling())
+    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(paramTag)) {
             HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
             if (!p->name().isEmpty())
                 m_args.set(p->name(), p->value());
         }
-    
+    }
+
     Frame* frame = document()->frame();
     ASSERT(frame);
     setWidget(frame->createJavaAppletWidget(IntSize(width, height), static_cast<Element*>(node()), m_args));
@@ -99,4 +101,4 @@ void RenderApplet::layout()
     setNeedsLayout(false);
 }
 
-}
+} // namespace WebCore

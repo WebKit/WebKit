@@ -31,7 +31,8 @@
 namespace WebCore {
 
 RenderBR::RenderBR(Node* node)
-    : RenderText(node, new StringImpl("\n")), m_lineHeight(-1)
+    : RenderText(node, new StringImpl("\n"))
+    , m_lineHeight(-1)
 {
 }
 
@@ -48,7 +49,7 @@ InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, b
     return box;
 }
 
-short RenderBR::baselinePosition( bool firstLine, bool isRootLineBox) const
+short RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
     if (firstTextBox() && !firstTextBox()->isText())
         return 0;
@@ -75,21 +76,21 @@ short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
             return lh.calcMinValue(s->fontSize());
         return lh.value();
     }
-    
+
     if (m_lineHeight == -1)
         m_lineHeight = RenderObject::lineHeight(false);
     return m_lineHeight;
 }
 
-void RenderBR::setStyle(RenderStyle* _style)
+void RenderBR::setStyle(RenderStyle* newStyle)
 {
-    RenderText::setStyle(_style);
+    RenderText::setStyle(newStyle);
     m_lineHeight = -1;
 }
 
 int RenderBR::caretMinOffset() const 
 { 
-    return 0; 
+    return 0;
 }
 
 int RenderBR::caretMaxOffset() const 
@@ -102,14 +103,14 @@ unsigned RenderBR::caretMaxRenderedOffset() const
     return 1;
 }
 
-VisiblePosition RenderBR::positionForCoordinates(int _x, int _y)
+VisiblePosition RenderBR::positionForCoordinates(int /*x*/, int /*y*/)
 {
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
-InlineBox *RenderBR::inlineBox(int offset, EAffinity affinity)
+InlineBox* RenderBR::inlineBox(int /*offset*/, EAffinity /*affinity*/)
 {
     return firstTextBox();
 }
 
-}
+} // namespace WebCore

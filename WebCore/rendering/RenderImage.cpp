@@ -44,14 +44,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Node* n)
-    : RenderReplaced(n)
+RenderImage::RenderImage(Node* node)
+    : RenderReplaced(node)
     , m_cachedImage(0)
+    , m_isAnonymousImage(0)
 {
     m_selectionState = SelectionNone;
     setIntrinsicWidth(0);
     setIntrinsicHeight(0);
-    m_isAnonymousImage = 0;
     updateAltText();
 }
 
@@ -61,19 +61,18 @@ RenderImage::~RenderImage()
         m_cachedImage->deref(this);
 }
 
-void RenderImage::setStyle(RenderStyle* _style)
+void RenderImage::setStyle(RenderStyle* newStyle)
 {
-    RenderReplaced::setStyle(_style);
-    
+    RenderReplaced::setStyle(newStyle);
     setShouldPaintBackgroundOrBorder(true);
 }
 
-void RenderImage::setContentObject(CachedResource* co)
+void RenderImage::setContentObject(CachedResource* cachedResource)
 {
-    if (co && m_cachedImage != co) {
+    if (cachedResource && m_cachedImage != cachedResource) {
         if (m_cachedImage)
             m_cachedImage->deref(this);
-        m_cachedImage = static_cast<CachedImage*>(co);
+        m_cachedImage = static_cast<CachedImage*>(cachedResource);
         if (m_cachedImage)
             m_cachedImage->ref(this);
     }
@@ -83,7 +82,7 @@ void RenderImage::setCachedImage(CachedImage* newImage)
 {
     if (isAnonymousImage())
         return;
-    
+
     if (m_cachedImage != newImage) {
         if (m_cachedImage)
             m_cachedImage->deref(this);
@@ -95,46 +94,46 @@ void RenderImage::setCachedImage(CachedImage* newImage)
     }
 }
 
-void RenderImage::imageChanged(CachedImage* o)
+void RenderImage::imageChanged(CachedImage* newImage)
 {
     if (documentBeingDestroyed())
         return;
 
-    if (o != m_cachedImage) {
-        RenderReplaced::imageChanged(o);
+    if (newImage != m_cachedImage) {
+        RenderReplaced::imageChanged(newImage);
         return;
     }
 
-    bool iwchanged = false;
+    bool imageSizeChanged = false;
 
-    if (o->isErrorImage()) {
-        int iw = o->image()->width() + 4;
-        int ih = o->image()->height() + 4;
+    if (newImage->isErrorImage()) {
+        int imageWidth = newImage->image()->width() + 4;
+        int imageHeight = newImage->image()->height() + 4;
 
         // we have an alt and the user meant it (its not a text we invented)
         if (!m_altText.isEmpty()) {
             const Font& font = style()->font();
-            iw = max(iw, min(font.width(TextRun(m_altText.characters(), m_altText.length())), 1024));
-            ih = max(ih, min(font.height(), 256));
+            imageWidth = max(imageWidth, min(font.width(TextRun(m_altText.characters(), m_altText.length())), 1024));
+            imageHeight = max(imageHeight, min(font.height(), 256));
         }
 
-        if (iw != intrinsicWidth()) {
-            setIntrinsicWidth(iw);
-            iwchanged = true;
+        if (imageWidth != intrinsicWidth()) {
+            setIntrinsicWidth(imageWidth);
+            imageSizeChanged = true;
         }
-        if (ih != intrinsicHeight()) {
-            setIntrinsicHeight(ih);
-            iwchanged = true;
+        if (imageHeight != intrinsicHeight()) {
+            setIntrinsicHeight(imageHeight);
+            imageSizeChanged = true;
         }
     }
 
-    bool needlayout = false;
+    bool ensureLayout = false;
 
     // Image dimensions have been changed, see what needs to be done
-    if ((o->imageSize().width() != intrinsicWidth() || o->imageSize().height() != intrinsicHeight() || iwchanged)) {
-        if(!o->isErrorImage()) {
-            setIntrinsicWidth(o->imageSize().width());
-            setIntrinsicHeight(o->imageSize().height());
+    if (newImage->imageSize().width() != intrinsicWidth() || newImage->imageSize().height() != intrinsicHeight() || imageSizeChanged) {
+        if (!newImage->isErrorImage()) {
+            setIntrinsicWidth(newImage->imageSize().width());
+            setIntrinsicHeight(newImage->imageSize().height());
         }
 
         // In the case of generated image content using :before/:after, we might not be in the
@@ -147,24 +146,23 @@ void RenderImage::imageChanged(CachedImage* o)
             calcWidth();
             calcHeight();
     
-            if(iwchanged || m_width != oldwidth || m_height != oldheight)
-                needlayout = true;
-    
+            if (imageSizeChanged || m_width != oldwidth || m_height != oldheight)
+                ensureLayout = true;
+
             m_width = oldwidth;
             m_height = oldheight;
         }
     }
 
-    if (needlayout) {
+    if (ensureLayout) {
         if (!selfNeedsLayout())
             setNeedsLayout(true);
         if (minMaxKnown())
             setMinMaxKnown(false);
-    }
-    else
+    } else
         // FIXME: We always just do a complete repaint, since we always pass in the full image
         // rect at the moment anyway.
-        repaintRectangle(IntRect(borderLeft()+paddingLeft(), borderTop()+paddingTop(), contentWidth(), contentHeight()));
+        repaintRectangle(IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()));
 }
 
 void RenderImage::resetAnimation()
@@ -176,30 +174,31 @@ void RenderImage::resetAnimation()
     }
 }
 
-void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
+void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaint(i, _tx, _ty)) return;
-
-    _tx += m_x;
-    _ty += m_y;
-        
-    if (shouldPaintBackgroundOrBorder() && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline) 
-        paintBoxDecorations(i, _tx, _ty);
-
-    GraphicsContext* p = i.p;
-    
-    if ((i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(p, _tx, _ty, width(), height(), style());
-    
-    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection)
+    if (!shouldPaint(paintInfo, tx, ty))
         return;
 
-    if (!shouldPaintWithinRoot(i))
+    tx += m_x;
+    ty += m_y;
+        
+    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline) 
+        paintBoxDecorations(paintInfo, tx, ty);
+
+    GraphicsContext* p = paintInfo.p;
+
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(p, tx, ty, width(), height(), style());
+
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
+        return;
+
+    if (!shouldPaintWithinRoot(paintInfo))
         return;
         
     bool isPrinting = document()->printing();
     bool drawSelectionTint = isSelected() && !isPrinting;
-    if (i.phase == PaintPhaseSelection) {
+    if (paintInfo.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
@@ -216,42 +215,43 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         return;
 
     if (!m_cachedImage || image()->isNull() || errorOccurred()) {
-        if (i.phase == PaintPhaseSelection)
+        if (paintInfo.phase == PaintPhaseSelection)
             return;
 
         if (cWidth > 2 && cHeight > 2) {
             if (!errorOccurred()) {
                 p->setPen(Color::lightGray);
                 p->setFillColor(Color::transparent);
-                p->drawRect(IntRect(_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight));
+                p->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
             }
-            
+
             bool errorPictureDrawn = false;
-            int imageX = 0, imageY = 0;
+            int imageX = 0;
+            int imageY = 0;
             int usableWidth = cWidth;
             int usableHeight = cHeight;
-            
+
             if (errorOccurred() && !image()->isNull() && (usableWidth >= image()->width()) && (usableHeight >= image()->height())) {
                 // Center the error image, accounting for border and padding.
-                int centerX = (usableWidth - image()->width())/2;
+                int centerX = (usableWidth - image()->width()) / 2;
                 if (centerX < 0)
                     centerX = 0;
-                int centerY = (usableHeight - image()->height())/2;
+                int centerY = (usableHeight - image()->height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX;
                 imageY = topBorder + topPad + centerY;
-                p->drawImage(image(), IntPoint(_tx + imageX, _ty + imageY));
+                p->drawImage(image(), IntPoint(tx + imageX, ty + imageY));
                 errorPictureDrawn = true;
             }
-            
+
             if (!m_altText.isEmpty()) {
                 DeprecatedString text = m_altText.deprecatedString();
                 text.replace('\\', backslashAsCurrencySymbol());
                 p->setFont(style()->font());
                 p->setPen(style()->color());
-                int ax = _tx + leftBorder + leftPad;
-                int ay = _ty + topBorder + topPad;
+                int ax = tx + leftBorder + leftPad;
+                int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();
                 int ascent = font.ascent();
                 
@@ -268,12 +268,12 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         }
     } else if (m_cachedImage) {
 #if PLATFORM(MAC)
-        if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
-            paintCustomHighlight(_tx - m_x, _ty - m_y, style()->highlight(), true);
+        if (style()->highlight() != nullAtom && !paintInfo.p->paintingDisabled())
+            paintCustomHighlight(tx - m_x, ty - m_y, style()->highlight(), true);
 #endif
 
-        IntRect rect(IntPoint(_tx + leftBorder + leftPad, _ty + topBorder + topPad), IntSize(cWidth, cHeight));
-        
+        IntRect rect(IntPoint(tx + leftBorder + leftPad, ty + topBorder + topPad), IntSize(cWidth, cHeight));
+
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
         CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
         p->drawImage(image(), rect, compositeOperator);
@@ -286,7 +286,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 void RenderImage::layout()
 {
     ASSERT(needsLayout());
-    ASSERT( minMaxKnown() );
+    ASSERT(minMaxKnown());
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -334,7 +334,7 @@ void RenderImage::updateAltText()
 {
     if (!element())
         return;
-        
+
     if (element()->hasTagName(inputTag))
         m_altText = static_cast<HTMLInputElement*>(element())->altText();
     else if (element()->hasTagName(imgTag))
@@ -435,4 +435,4 @@ Image* RenderImage::nullImage()
     return &sharedNullImage;
 }
 
-}
+} // namespace WebCore

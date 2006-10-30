@@ -70,29 +70,29 @@ RenderObject* RenderFieldset::findLegend()
     return 0;
 }
 
-void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
+void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
     RenderObject* legend = findLegend();
     if (!legend)
-        return RenderBlock::paintBoxDecorations(i, _tx, _ty);
+        return RenderBlock::paintBoxDecorations(paintInfo, tx, ty);
 
-    int yOff = (legend->yPos() > 0) ? 0 : (legend->height()-borderTop())/2;
+    int yOff = (legend->yPos() > 0) ? 0 : (legend->height() - borderTop()) / 2;
     h -= yOff;
-    _ty += yOff - borderTopExtra();
+    ty += yOff - borderTopExtra();
 
-    int my = max(_ty, i.r.y());
-    int end = min(i.r.bottom(),  _ty + h);
+    int my = max(ty, paintInfo.r.y());
+    int end = min(paintInfo.r.bottom(), ty + h);
     int mh = end - my;
 
-    paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);
+    paintBackground(paintInfo.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder())
-        paintBorderMinusLegend(i.p, _tx, _ty, w, h, style(), legend->xPos(), legend->width());
+        paintBorderMinusLegend(paintInfo.p, tx, ty, w, h, style(), legend->xPos(), legend->width());
 }
 
-void RenderFieldset::paintBorderMinusLegend(GraphicsContext* p, int _tx, int _ty, int w, int h,
+void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
                                             const RenderStyle* style, int lx, int lw)
 {
 
@@ -110,16 +110,16 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* p, int _tx, int _ty
     bool render_b = bs > BHIDDEN;
 
     if (render_t) {
-        drawBorder(p, _tx, _ty, _tx + lx, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE)?style->borderLeftWidth():0), 0);
-        drawBorder(p, _tx+lx+lw, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   0, (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE)?style->borderRightWidth():0));
+        drawBorder(graphicsContext, tx, ty, tx + lx, ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE) ? style->borderLeftWidth() : 0), 0);
+        drawBorder(graphicsContext, tx + lx + lw, ty, tx + w, ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   0, (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE) ? style->borderRightWidth() : 0));
     }
 
     if (render_b)
-        drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
-                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE)?style->borderLeftWidth():0),
-                   (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE)?style->borderRightWidth():0));
+        drawBorder(graphicsContext, tx, ty + h - style->borderBottomWidth(), tx + w, ty + h, BSBottom, bc, style->color(), bs,
+                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE) ? style->borderLeftWidth() : 0),
+                   (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE) ? style->borderRightWidth() : 0));
 
     if (render_l) {
         const Color& lc = style->borderLeftColor();
@@ -134,9 +134,8 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* p, int _tx, int _ty
             (ls >= OUTSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
-        drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
-                   ignore_top?0:style->borderTopWidth(),
-                   ignore_bottom?0:style->borderBottomWidth());
+        drawBorder(graphicsContext, tx, ty, tx + style->borderLeftWidth(), ty + h, BSLeft, lc, style->color(), ls,
+                   ignore_top ? 0 : style->borderTopWidth(), ignore_bottom ? 0 : style->borderBottomWidth());
     }
 
     if (render_r) {
@@ -152,15 +151,14 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* p, int _tx, int _ty
             (rs >= DOTTED || rs == INSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
-        drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,
-                   ignore_top?0:style->borderTopWidth(),
-                   ignore_bottom?0:style->borderBottomWidth());
+        drawBorder(graphicsContext, tx + w - style->borderRightWidth(), ty, tx + w, ty + h, BSRight, rc, style->color(), rs,
+                   ignore_top ? 0 : style->borderTopWidth(), ignore_bottom ? 0 : style->borderBottomWidth());
     }
 }
 
-void RenderFieldset::setStyle(RenderStyle* _style)
+void RenderFieldset::setStyle(RenderStyle* newStyle)
 {
-    RenderBlock::setStyle(_style);
+    RenderBlock::setStyle(newStyle);
 
     // WinIE renders fieldsets with display:inline like they're inline-blocks.  For us,
     // an inline-block is just a block element with replaced set to true and inline set

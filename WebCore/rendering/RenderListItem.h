@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef RenderListItem_H
-#define RenderListItem_H
+#ifndef RenderListItem_h
+#define RenderListItem_h
 
 #include "RenderBlock.h"
 
@@ -31,19 +31,18 @@ namespace WebCore {
 
 class RenderListMarker;
 
-class RenderListItem : public RenderBlock
-{
+class RenderListItem : public RenderBlock {
 public:
     RenderListItem(Node*);
-    
-    virtual void destroy();
 
     virtual const char* renderName() const { return "RenderListItem"; }
 
-    virtual void setStyle(RenderStyle*);
-
     virtual bool isListItem() const { return true; }
     
+    virtual void destroy();
+
+    virtual void setStyle(RenderStyle*);
+
     int value() const { return m_value; }
     void setValue(int v) { m_predefVal = v; }
     void calcValue();
@@ -57,7 +56,7 @@ public:
 
     virtual void positionListMarker();
     void updateMarkerLocation();
-    
+
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
 
@@ -70,7 +69,6 @@ private:
     int m_value;
 };
 
+} // namespace WebCore
 
-} //namespace
-
-#endif
+#endif // RenderListItem_h

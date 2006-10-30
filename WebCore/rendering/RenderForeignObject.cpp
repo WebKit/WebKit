@@ -21,17 +21,19 @@
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
 #include "KRenderingDevice.h"
-#include "SVGLength.h"
 #include "SVGForeignObjectElement.h"
+#include "SVGLength.h"
 
 namespace WebCore {
 
-RenderForeignObject::RenderForeignObject(SVGForeignObjectElement *node) 
+RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node) 
     : RenderBlock(node)
 {
 }
@@ -47,7 +49,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled())
         return;
 
-    KRenderingDevice *device = renderingDevice();
+    KRenderingDevice* device = renderingDevice();
     KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (!context) {
@@ -76,7 +78,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     if (opacity < 1.0f)
         paintInfo.p->endTransparencyLayer();
-    
+
     if (shouldPopContext) {
         device->popContext();
         delete context;
@@ -89,7 +91,7 @@ void RenderForeignObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     AffineTransform transform = translationForAttributes() * localTransform();
     r = transform.mapRect(r);
-    
+
     RenderBlock::computeAbsoluteRepaintRect(r, f);
 }
 
@@ -114,7 +116,7 @@ void RenderForeignObject::layout()
 
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-    
+
     setNeedsLayout(false);
 }
 
@@ -124,9 +126,9 @@ bool RenderForeignObject::nodeAtPoint(HitTestResult& result, int x, int y, int t
     totalTransform *= translationForAttributes();
     double localX, localY;
     totalTransform.invert().map(x, y, &localX, &localY);
-    return RenderBlock::nodeAtPoint(result, (int)localX, (int)localY, tx, ty, hitTestAction);
+    return RenderBlock::nodeAtPoint(result, static_cast<int>(localX), static_cast<int>(localY), tx, ty, hitTestAction);
 }
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT

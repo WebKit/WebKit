@@ -22,45 +22,42 @@
  *
  */
 
-#ifndef RENDER_INLINE_H
-#define RENDER_INLINE_H
+#ifndef RenderInline_h
+#define RenderInline_h
 
 #include "RenderFlow.h"
 
 namespace WebCore {
-    class Position;
-}
 
-namespace WebCore {
+class Position;
 
-class RenderInline : public RenderFlow
-{
+class RenderInline : public RenderFlow {
 public:
     RenderInline(Node*);
     virtual ~RenderInline();
 
-    virtual const char *renderName() const;
+    virtual const char* renderName() const;
 
     virtual bool isRenderInline() const { return true; }
     virtual bool isInlineFlow() const { return true; }
     virtual bool childrenInline() const { return true; }
 
     virtual bool isInlineContinuation() const;
-    
+
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
                       RenderObject* beforeChild, RenderFlow* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderFlow* oldCont);
-    
+
     virtual void setStyle(RenderStyle*);
 
-    virtual void layout() {} // Do nothing for layout()
-    
+    virtual void layout() { } // Do nothing for layout()
+
     virtual void paint(PaintInfo&, int tx, int ty);
 
-    virtual bool nodeAtPoint(HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
-    
+    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+
     virtual void calcMinMaxWidth();
 
     // overrides RenderObject
@@ -68,7 +65,7 @@ public:
 
     virtual int width() const;
     virtual int height() const;
-    
+
     // used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow) to return
     // the remaining width on a given line (and the height of a single line).
     virtual int offsetLeft() const;
@@ -77,7 +74,7 @@ public:
     void absoluteRects(Vector<IntRect>&, int tx, int ty);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
-    
+
 protected:
     static RenderInline* cloneInline(RenderFlow* src);
 
@@ -85,7 +82,6 @@ private:
     bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
-
+#endif // RenderInline_h

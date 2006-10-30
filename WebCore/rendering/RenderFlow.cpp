@@ -20,18 +20,17 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-// -------------------------------------------------------------------------
 
 #include "config.h"
 #include "RenderFlow.h"
 
 #include "Document.h"
 #include "GraphicsContext.h"
-#include "InlineTextBox.h"
 #include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "RenderArena.h"
-#include "RenderView.h"
 #include "RenderInline.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -799,4 +798,4 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    ow);
 }
 
-}
+} // namespace WebCore

@@ -49,7 +49,7 @@ namespace WebCore {
         int selectionEnd();
         void setSelectionStart(int);
         void setSelectionEnd(int);
-        
+
         bool isEdited() const;
         void setEdited(bool);
         bool isTextField() const { return true; }

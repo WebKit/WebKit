@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderHTMLCanvas_H
-#define RenderHTMLCanvas_H
+#ifndef RenderHTMLCanvas_h
+#define RenderHTMLCanvas_h
 
 #include "RenderReplaced.h"
 
@@ -33,11 +33,13 @@ namespace WebCore {
     class RenderHTMLCanvas : public RenderReplaced {
     public:
         RenderHTMLCanvas(Node*);
-        virtual const char* renderName() const;
+
+        virtual const char* renderName() const { return "RenderHTMLCanvas"; }
+
         virtual void paint(PaintInfo&, int tx, int ty);
         virtual void layout();
     };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // RenderHTMLCanvas_h

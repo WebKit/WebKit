@@ -22,27 +22,25 @@
  *
  */
 
-#ifndef RenderFrame_H
-#define RenderFrame_H
+#ifndef RenderFrame_h
+#define RenderFrame_h
 
-#include "RenderPart.h"
 #include "HTMLFrameElement.h"
+#include "RenderPart.h"
 
 namespace WebCore {
 
-class RenderFrame : public RenderPart
-{
+class RenderFrame : public RenderPart {
 public:
     RenderFrame(HTMLFrameElement*);
 
     virtual const char* renderName() const { return "RenderFrame"; }
 
-    HTMLFrameElement* element() const
-        { return static_cast<HTMLFrameElement*>(RenderPart::element()); }
+    HTMLFrameElement* element() const { return static_cast<HTMLFrameElement*>(RenderPart::element()); }
 
     virtual void viewCleared();
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderFrame_h

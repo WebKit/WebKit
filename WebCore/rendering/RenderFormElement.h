@@ -26,8 +26,8 @@
 #ifndef RenderFormElement_h
 #define RenderFormElement_h
 
-#include "RenderWidget.h"
 #include "GraphicsTypes.h"
+#include "RenderWidget.h"
 
 namespace WebCore {
 

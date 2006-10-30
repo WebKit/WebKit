@@ -35,8 +35,11 @@ namespace WebCore {
     public:
         RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
         virtual ~RenderApplet();
+
         virtual const char* renderName() const { return "RenderApplet"; }
+
         virtual bool isApplet() const { return true; }
+
         virtual void layout();
         virtual int intrinsicWidth() const;
         virtual int intrinsicHeight() const;
@@ -47,6 +50,6 @@ namespace WebCore {
         HashMap<String, String> m_args;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderApplet_h

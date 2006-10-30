@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef RENDER_IMAGE_H
-#define RENDER_IMAGE_H
+#ifndef RenderImage_h
+#define RenderImage_h
 
 #include "CachedImage.h"
 #include "HTMLElement.h"
@@ -36,8 +36,7 @@ namespace WebCore {
 class DocLoader;
 class HTMLMapElement;
 
-class RenderImage : public RenderReplaced
-{
+class RenderImage : public RenderReplaced {
 public:
     RenderImage(Node*);
     virtual ~RenderImage();
@@ -51,25 +50,24 @@ public:
     virtual void layout();
 
     virtual void imageChanged(CachedImage*);
-    
+
     // don't even think about making this method virtual!
-    HTMLElement* element() const
-        { return static_cast<HTMLElement*>(RenderReplaced::element()); }
+    HTMLElement* element() const { return static_cast<HTMLElement*>(RenderReplaced::element()); }
 
     // hook to keep RendeObject::m_inline() up to date
-    virtual void setStyle(RenderStyle *style);
+    virtual void setStyle(RenderStyle*);
     void updateAltText();
-    
+
     void setIsAnonymousImage(bool anon) { m_isAnonymousImage = anon; }
     bool isAnonymousImage() { return m_isAnonymousImage; }
-    
+
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_cachedImage; }
-    
+
     Image* image() { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
 
     virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    
+
     virtual int calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;
 
@@ -80,9 +78,9 @@ public:
 
     // Called to set generated content images (e.g., :before/:after generated images).
     void setContentObject(CachedResource*);
-    
+
     bool errorOccurred() const { return m_cachedImage && m_cachedImage->isErrorImage(); }
-    
+
     HTMLMapElement* imageMap();
 
     void resetAnimation();
@@ -103,6 +101,6 @@ private:
     static Image* nullImage();
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // RenderImage_h

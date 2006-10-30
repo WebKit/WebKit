@@ -8783,8 +8783,6 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
-				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
-				ABB5419D0ACDDFE4002820EB /* RenderListBox.h */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
@@ -8864,6 +8862,8 @@
 				A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */,
 				A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */,
 				A8EA73B10A1900E300A8EF5F /* RenderLineEdit.h */,
+				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
+				ABB5419D0ACDDFE4002820EB /* RenderListBox.h */,
 				A8EA7A480A191A5200A8EF5F /* RenderListItem.cpp */,
 				A8EA7A4C0A191A5200A8EF5F /* RenderListItem.h */,
 				A8EA7A4B0A191A5200A8EF5F /* RenderListMarker.cpp */,

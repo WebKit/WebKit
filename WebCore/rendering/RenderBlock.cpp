@@ -28,14 +28,14 @@
 #include "Element.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "InlineTextBox.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InlineTextBox.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
-#include "SelectionController.h"
-#include "HTMLNames.h"
-#include "RenderView.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
+#include "SelectionController.h"
 #include "TextStream.h"
 
 using namespace std;
@@ -3680,4 +3680,3 @@ void RenderBlock::dump(TextStream *stream, DeprecatedString ind) const
 #endif
 
 } // namespace WebCore
-

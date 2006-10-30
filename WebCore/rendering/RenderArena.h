@@ -32,8 +32,8 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
-#ifndef RENDERARENA_H
-#define RENDERARENA_H
+#ifndef RenderArena_h
+#define RenderArena_h
 
 #include "Arena.h"
 
@@ -43,22 +43,22 @@ static const size_t gMaxRecycledSize = 400;
 
 class RenderArena {
 public:
-   RenderArena(unsigned int arenaSize = 4096);
+    RenderArena(unsigned arenaSize = 4096);
     ~RenderArena();
 
-  // Memory management functions
-  void* allocate(size_t size);
-  void  free(size_t size, void* ptr);
+    // Memory management functions
+    void* allocate(size_t);
+    void free(size_t, void*);
 
 private:
-  // Underlying arena pool
-  ArenaPool m_pool;
+    // Underlying arena pool
+    ArenaPool m_pool;
 
-  // The recycler array is sparse with the indices being multiples of 4,
-  // i.e., 0, 4, 8, 12, 16, 20, ...
-  void*       m_recyclers[gMaxRecycledSize >> 2];
+    // The recycler array is sparse with the indices being multiples of 4,
+    // i.e., 0, 4, 8, 12, 16, 20, ...
+    void* m_recyclers[gMaxRecycledSize >> 2];
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderArena_h

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef RenderListMarker_H
-#define RenderListMarker_H
+#ifndef RenderListMarker_h
+#define RenderListMarker_h
 
 #include "DeprecatedString.h"
 #include "RenderBox.h"
@@ -35,19 +35,21 @@ class RenderListItem;
 /* used to render the lists marker.
      This class always has to be a direct child of a RenderListItem!
 */
-class RenderListMarker : public RenderBox
-{
+class RenderListMarker : public RenderBox {
 public:
     RenderListMarker(Document*);
     ~RenderListMarker();
 
+    virtual const char* renderName() const { return "RenderListMarker"; }
+
+    virtual bool isListMarker() const { return true; }
+
     virtual void setStyle(RenderStyle*);
 
-    virtual const char* renderName() const { return "RenderListMarker"; }
+    virtual void paint(PaintInfo&, int xoff, int yoff);
+
     // so the marker gets to layout itself. Only needed for
     // list-style-position: inside
-
-    virtual void paint(PaintInfo&, int xoff, int yoff);
     virtual void layout();
     virtual void calcMinMaxWidth();
 
@@ -57,22 +59,20 @@ public:
 
     virtual InlineBox* createInlineBox(bool, bool, bool);
 
-    virtual short lineHeight(bool b, bool isRootLineBox=false) const;
-    virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
+    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
+    virtual short baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
-    virtual bool isListMarker() const { return true; }
-    
     CachedImage* listImage() const { return m_listImage; }
-    
+
     RenderListItem* listItem() { return m_listItem; }
     void setListItem(RenderListItem* listItem) { m_listItem = listItem; }
-    
+
     const DeprecatedString& text() const { return m_item; }
 
     bool isInside() const;
-    
+
     IntRect getRelativeMarkerRect();
-    
+
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState);
     virtual IntRect selectionRect();
@@ -85,6 +85,6 @@ private:
     SelectionState m_selectionState;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // RenderListMarker_h

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RenderListBox_H
-#define RenderListBox_H
+#ifndef RenderListBox_h
+#define RenderListBox_h
 
 #include "RenderBlock.h"
 
@@ -35,6 +35,8 @@ public:
     RenderListBox(HTMLSelectElement*);
     ~RenderListBox();
 
+    virtual const char* renderName() const { return "RenderListBox"; }
+
     virtual bool isListBox() const { return true; }
 
     virtual void setStyle(RenderStyle*);
@@ -42,47 +44,47 @@ public:
     void setSelectionChanged(bool selectionChanged) { m_selectionChanged = selectionChanged; }
 
     virtual bool canHaveChildren() const { return false; }
-    virtual const char* renderName() const { return "RenderListBox"; }
+
     virtual void paintObject(PaintInfo&, int tx, int ty);
     virtual bool isPointInScrollbar(HitTestResult&, int x, int y, int tx, int ty);
 
-    virtual bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
 
     virtual void calcMinMaxWidth();
-    virtual short baselinePosition(bool, bool isRootLineBox) const;
+    virtual short baselinePosition(bool firstLine, bool isRootLineBox) const;
     virtual void calcHeight();
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
     void valueChanged(unsigned listIndex);
-    
+
     // ScrollbarClient interface.
     virtual void valueChanged(Scrollbar*);
     virtual IntRect windowClipRect() const;
 
     HTMLOptionElement* optionAtPoint(int x, int y);
-    
+
     bool scrollToRevealElementAtListIndex(int index);
-    
+
     virtual bool shouldAutoscroll() const { return numItems() > size(); }
     virtual void autoscroll();
 
 private:
-    bool m_optionsChanged;
-    int m_optionsWidth;
-    int m_optionsMaxHeight;
-    int m_optionsTotalHeight;
-    int m_indexOffset;
-    bool m_selectionChanged;
-    
     int size() const;
     int numItems() const;
     IntRect itemBoundingBoxRect(int tx, int ty, int index);
     void paintScrollbar(PaintInfo&);
     void paintItemForeground(PaintInfo&, int tx, int ty, int listIndex);
     void paintItemBackground(PaintInfo&, int tx, int ty, int listIndex);
-    
+
+    bool m_optionsChanged;
+    int m_optionsWidth;
+    int m_optionsMaxHeight;
+    int m_optionsTotalHeight;
+    int m_indexOffset;
+    bool m_selectionChanged;
+
     Scrollbar* m_vBar;
 };
 
-}
+} // namepace WebCore
 
-#endif
+#endif // RenderListBox_h

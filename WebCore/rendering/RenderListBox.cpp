@@ -29,8 +29,8 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
+#include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "PlatformScrollBar.h" 
@@ -433,4 +433,4 @@ IntRect RenderListBox::windowClipRect() const
     return view()->frameView()->windowClipRectForLayer(enclosingLayer(), true);
 }
 
-}
+} // namespace WebCore

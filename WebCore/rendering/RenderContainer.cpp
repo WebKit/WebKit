@@ -28,27 +28,24 @@
 #include "config.h"
 #include "RenderContainer.h"
 
-#include "htmlediting.h"
+#include "AXObjectCache.h"
+#include "Document.h"
 #include "RenderCounter.h"
+#include "RenderImage.h"
 #include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
-#include "RenderImage.h"
 #include "RenderView.h"
-#include "Document.h"
-
-// For accessibility
-#include "AXObjectCache.h" 
+#include "htmlediting.h"
 
 namespace WebCore {
 
 RenderContainer::RenderContainer(Node* node)
     : RenderBox(node)
+    , m_first(0)
+    , m_last(0)
 {
-    m_first = 0;
-    m_last = 0;
 }
-
 
 RenderContainer::~RenderContainer()
 {
@@ -639,4 +636,4 @@ void RenderContainer::lineBoxRects(Vector<IntRect>& rects)
 
 #undef DEBUG_LAYOUT
 
-}
+} // namespace WebCore

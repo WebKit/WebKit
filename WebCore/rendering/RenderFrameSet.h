@@ -22,20 +22,18 @@
  *
  */
 
-#ifndef RenderFrameSet_H
-#define RenderFrameSet_H
+#ifndef RenderFrameSet_h
+#define RenderFrameSet_h
 
-#include "RenderContainer.h"
 #include "HTMLFrameSetElement.h"
-
+#include "RenderContainer.h"
 
 namespace WebCore {
 
 class HTMLFrameSetElement;
 class MouseEvent;
 
-class RenderFrameSet : public RenderContainer
-{
+class RenderFrameSet : public RenderContainer {
     friend class HTMLFrameSetElement;
 public:
     RenderFrameSet(HTMLFrameSetElement*);
@@ -56,8 +54,7 @@ public:
 
     virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    HTMLFrameSetElement* element() const
-        { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }
+    HTMLFrameSetElement* element() const { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }
 
 #ifndef NDEBUG
     virtual void dump(TextStream* stream, DeprecatedString ind = "") const;
@@ -81,6 +78,6 @@ private:
     bool m_clientResizing;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderFrameSet_h

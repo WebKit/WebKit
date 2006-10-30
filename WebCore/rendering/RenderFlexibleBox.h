@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RenderFlexibleBox_H
-#define RenderFlexibleBox_H
+#ifndef RenderFlexibleBox_h
+#define RenderFlexibleBox_h
 
 #include "RenderBlock.h"
 
@@ -31,6 +31,8 @@ class RenderFlexibleBox : public RenderBlock {
 public:
     RenderFlexibleBox(Node*);
     virtual ~RenderFlexibleBox();
+
+    virtual const char* renderName() const;
 
     virtual void calcMinMaxWidth();
     void calcHorizontalMinMaxWidth();
@@ -45,8 +47,6 @@ public:
     virtual bool isFlexibleBox() const { return true; }
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
-
-    virtual const char* renderName() const;
 
     void placeChild(RenderObject* child, int x, int y);
 
@@ -63,4 +63,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // RenderFlexibleBox_H
+#endif // RenderFlexibleBox_h

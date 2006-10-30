@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "RenderFrameSet.h"
 
@@ -31,11 +32,11 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
-#include "TextStream.h"
-#include "MouseEvent.h"
 #include "HitTestResult.h"
+#include "MouseEvent.h"
 #include "RenderFrame.h"
 #include "RenderView.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -557,4 +558,4 @@ void RenderFrameSet::dump(TextStream* stream, DeprecatedString ind) const
 }
 #endif
 
-}
+} // namespace WebCore

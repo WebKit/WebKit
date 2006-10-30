@@ -33,15 +33,18 @@
 namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
-:RenderFlow(node), m_isContinuation(false)
-{}
+    : RenderFlow(node)
+    , m_isContinuation(false)
+{
+}
 
 RenderInline::~RenderInline()
-{}
-
-void RenderInline::setStyle(RenderStyle* _style)
 {
-    RenderFlow::setStyle(_style);
+}
+
+void RenderInline::setStyle(RenderStyle* newStyle)
+{
+    RenderFlow::setStyle(newStyle);
     setInline(true);
 
     // Ensure that all of the split inlines pick up the new style. We
@@ -62,7 +65,7 @@ void RenderInline::setStyle(RenderStyle* _style)
     }
 
     m_lineHeight = -1;
-    
+
     // Update pseudos for :before and :after now.
     updatePseudoChild(RenderStyle::BEFORE);
     updatePseudoChild(RenderStyle::AFTER);
@@ -84,11 +87,11 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        RenderStyle *newStyle = new (renderArena()) RenderStyle();
+        RenderStyle* newStyle = new (renderArena()) RenderStyle();
         newStyle->inheritFrom(style());
         newStyle->setDisplay(BLOCK);
 
-        RenderBlock *newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+        RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
         newBox->setStyle(newStyle);
         RenderFlow* oldContinuation = continuation();
         setContinuation(newBox);
@@ -101,7 +104,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         if (isLastChild && beforeChild != lastChild())
             beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
                              // point to be 0.  It's just a straight append now.
-        
+
         splitFlow(beforeChild, newBox, newChild, oldContinuation);
         return;
     }
@@ -113,7 +116,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
 
 RenderInline* RenderInline::cloneInline(RenderFlow* src)
 {
-    RenderInline *o = new (src->renderArena()) RenderInline(src->element());
+    RenderInline* o = new (src->renderArena()) RenderInline(src->element());
     o->m_isContinuation = true;
     o->setStyle(src->style());
     return o;
@@ -126,7 +129,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // Create a clone of this inline.
     RenderInline* clone = cloneInline(this);
     clone->setContinuation(oldCont);
-    
+
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
     RenderObject* o = beforeChild;
@@ -162,7 +165,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         // has to move into the inline continuation.  Call updatePseudoChild to ensure that the inline's :after
         // content gets properly destroyed.
         curr->updatePseudoChild(RenderStyle::AFTER);
-        
+
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
         o = currChild->nextSibling();
@@ -208,7 +211,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     }
 
     RenderBlock* post = block->createAnonymousBlock();
-    
+
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)
         block->insertChildNode(pre, boxFirst);
@@ -218,8 +221,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 
     if (madeNewBeforeBlock) {
         RenderObject* o = boxFirst;
-        while (o)
-        {
+        while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
             pre->appendChildNode(block->removeChildNode(no));
@@ -239,7 +241,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // connected, thus allowing newChild access to a renderArena should it need
     // to wrap itself in additional boxes (e.g., table construction).
     newBlockBox->addChildToFlow(newChild, 0);
-    
+
     // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
     // get deleted properly.  Because objects moves from the pre block into the post block, we want to
     // make new line boxes instead of leaving the old line boxes around.
@@ -248,20 +250,21 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     post->setNeedsLayoutAndMinMaxRecalc();
 }
 
-void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
+void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    paintLines(i, _tx, _ty);
+    paintLines(paintInfo, tx, ty);
 }
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
         rects.append(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
-    
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText())
             curr->absoluteRects(rects, tx + curr->xPos(), ty + curr->yPos());
-    
+    }
+
     if (continuation())
         continuation()->absoluteRects(rects, 
                                       tx - containingBlock()->xPos() + continuation()->xPos(),
@@ -270,11 +273,7 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 
 void RenderInline::calcMinMaxWidth()
 {
-    ASSERT( !minMaxKnown() );
-
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderInline)::calcMinMaxWidth() this=" << this << endl;
-#endif
+    ASSERT(!minMaxKnown());
 
     // Irrelevant, since some enclosing block will actually measure us and our children.
     m_minWidth = 0;
@@ -283,7 +282,8 @@ void RenderInline::calcMinMaxWidth()
     setMinMaxKnown();
 }
 
-bool RenderInline::requiresLayer() {
+bool RenderInline::requiresLayer()
+{
     return isRoot() || isRelPositioned() || style()->opacity() < 1.0f;
 }
 
@@ -298,16 +298,15 @@ int RenderInline::width() const
         if (curr == firstLineBox() || curr->xPos() + curr->width() > rightSide)
             rightSide = curr->xPos() + curr->width();
     }
-    
+
     return rightSide - leftSide;
 }
 
 int RenderInline::height() const
 {
-    int h = 0;
     if (firstLineBox())
-        h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-    return h;
+        return lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+    return 0;
 }
 
 int RenderInline::offsetLeft() const
@@ -326,7 +325,7 @@ int RenderInline::offsetTop() const
     return y;
 }
 
-const char *RenderInline::renderName() const
+const char* RenderInline::renderName() const
 {
     if (isRelPositioned())
         return "RenderInline (relative positioned)";
@@ -335,15 +334,14 @@ const char *RenderInline::renderName() const
     return "RenderInline";
 }
 
-bool RenderInline::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty,
-                               HitTestAction hitTestAction)
+bool RenderInline::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    return hitTestLines(result, _x, _y, _tx, _ty, hitTestAction);
+    return hitTestLines(result, x, y, tx, ty, hitTestAction);
 }
 
 VisiblePosition RenderInline::positionForCoordinates(int x, int y)
 {
-    for (RenderObject *c = continuation(); c; c = c->continuation()) {
+    for (RenderObject* c = continuation(); c; c = c->continuation()) {
         if (c->isInline() || c->firstChild())
             return c->positionForCoordinates(x, y);
     }
@@ -351,4 +349,4 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
     return RenderFlow::positionForCoordinates(x, y);
 }
 
-}
+} // namespace WebCore

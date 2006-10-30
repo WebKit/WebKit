@@ -26,8 +26,8 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "RenderText.h"
 #include "HTMLNames.h"
+#include "RenderText.h"
 
 namespace WebCore {
 
@@ -58,8 +58,7 @@ void RenderButton::removeChild(RenderObject* oldChild)
     if (oldChild == m_inner || !m_inner) {
         RenderFlexibleBox::removeChild(oldChild);
         m_inner = 0;
-    }
-    else
+    } else
         m_inner->removeChild(oldChild);
 }
 
@@ -109,24 +108,24 @@ void RenderButton::updatePseudoChild(RenderStyle::PseudoId type)
         updatePseudoChildForObject(type, this);
 }
 
-void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
+void RenderButton::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     // Push a clip.
-    if (m_inner && i.phase == PaintPhaseForeground) {
-        IntRect clipRect(_tx + borderLeft(), _ty + borderTop(),
+    if (m_inner && paintInfo.phase == PaintPhaseForeground) {
+        IntRect clipRect(tx + borderLeft(), ty + borderTop(),
             width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        i.p->save();
-        i.p->clip(clipRect);
+        paintInfo.p->save();
+        paintInfo.p->clip(clipRect);
     }
-    
+
     // Paint the children.
-    RenderBlock::paintObject(i, _tx, _ty);
-    
+    RenderBlock::paintObject(paintInfo, tx, ty);
+
     // Pop the clip.
-    if (m_inner && i.phase == PaintPhaseForeground)
-        i.p->restore();
+    if (m_inner && paintInfo.phase == PaintPhaseForeground)
+        paintInfo.p->restore();
 }
 
-}
+} // namespace WebCore

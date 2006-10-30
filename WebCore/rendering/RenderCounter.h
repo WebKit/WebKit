@@ -20,24 +20,23 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef RENDER_COUNTER_H_
-#define RENDER_COUNTER_H_
+#ifndef RenderCounter_h
+#define RenderCounter_h
 
 #include "RenderText.h"
 
 namespace WebCore {
-    class CounterNode;
 
-// -----------------------------------------------------------------------------
+class CounterNode;
 
 class RenderCounter : public RenderText {
-
 public:
     RenderCounter(Node*, CounterData*);
-    
+
     virtual const char* renderName() const { return "RenderCounter"; }
 
     virtual bool isCounter() const { return true; }
+
     virtual void layout();
     virtual void calcMinMaxWidth();
 
@@ -49,6 +48,6 @@ private:
     CounterNode* m_counterNode;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // RenderCounter_h

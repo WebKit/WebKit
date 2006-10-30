@@ -19,8 +19,9 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef RENDER_BR_H
-#define RENDER_BR_H
+
+#ifndef RenderBR_h
+#define RenderBR_h
 
 #include "RenderText.h"
 
@@ -56,16 +57,15 @@ public:
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
-    
+
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    virtual InlineBox* inlineBox(int offset, EAffinity affinity = UPSTREAM);
-    
+    virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
+
 private:
     mutable short m_lineHeight;
-
 };
 
 } // namespace WebCore
 
-#endif // RENDER_BR_H
+#endif // RenderBR_h
