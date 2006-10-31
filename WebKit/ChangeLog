@@ -1,5 +1,15 @@
 2006-10-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Beth.
+        
+        Fixed nil-deref crash that I saw while using TOT (not sure how to repro,
+        but the debugger confirmed the cause).
+
+        * WebView/WebFrame.mm:
+        (core): Added check for NULL bridge.
+
+2006-10-30  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
 
         Removed a number of editing and selection methods from the bridge.

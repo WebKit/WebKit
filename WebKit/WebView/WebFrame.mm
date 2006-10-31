@@ -212,6 +212,9 @@ FrameMac* core(WebFrame *frame)
 {
     if (!frame)
         return 0;
+    
+    if (!frame->_private->bridge)
+        return 0;
 
     return frame->_private->bridge->m_frame;
 }
