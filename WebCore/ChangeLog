@@ -1,3 +1,19 @@
+2006-10-31  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Mitz.
+
+        Fix the Qt build after last nights changes.
+
+        * WebCore/platform/qt/FrameQt.cpp:
+        * WebCore/platform/qt/EditorClientQt.h:
+        * WebCore/platform/qt/EditorClientQt.cpp:
+        * WebCore/platform/graphics/svg/qt/SVGResourceImageQt.cpp:
+        * WebCore/platform/graphics/svg/qt/SVGResourceClipperQt.cpp:
+        * WebCore/CMakeLists.txt:
+        * WebCore/kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        * WebKitQt/QtLauncher/CMakeLists.txt:
+        * WebKitQt/WebKitPart/CMakeLists.txt:
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

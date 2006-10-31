@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
- * 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,24 @@ bool EditorClientQt::shouldDeleteRange(Range*)
 bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
 {
     return false;
+}
+
+bool EditorClientQt::isContinuousSpellCheckingEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+bool EditorClientQt::isGrammarCheckingEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+int EditorClientQt::spellCheckerDocumentTag()
+{
+    notImplemented();
+    return 0;
 }
 
 }

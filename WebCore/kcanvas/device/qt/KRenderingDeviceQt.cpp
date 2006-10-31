@@ -23,7 +23,7 @@
 #include "config.h"
 
 #include "IntRect.h"
-#include "RenderPathQt.h"
+#include "RenderPath.h"
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "SVGResourceClipper.h"

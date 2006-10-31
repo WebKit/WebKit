@@ -38,6 +38,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/svg
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/gif
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/jpeg
@@ -1059,9 +1060,6 @@ set(WebCore_SRCS
     platform/qt/ScrollViewCanvasQt.cpp
     platform/qt/PlatformMouseEventQt.cpp
     platform/qt/PlatformKeyboardEventQt.cpp
-    platform/network/ResourceLoader.cpp
-    platform/network/qt/ResourceLoaderManager.cpp
-    platform/network/qt/ResourceLoaderQt.cpp
     platform/graphics/GraphicsTypes.cpp
     platform/graphics/GraphicsContext.cpp
     platform/graphics/svg/SVGResource.cpp

@@ -104,7 +104,7 @@ FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* frameClient, 
     settings->setMinLogicalFontSize(5);
     settings->setShouldPrintBackgrounds(true);
     settings->setIsJavaScriptEnabled(true);
- 
+
     settings->setMediumFixedFontSize(14);
     settings->setMediumFontSize(14);
     settings->setSerifFontName("Times New Roman");
@@ -128,7 +128,7 @@ FrameQt::~FrameQt()
 
 void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
 {
-    ResourceRequest request = frameLoadRequest.m_request;
+    const ResourceRequest& request = frameLoadRequest.resourceRequest();
 
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     if (d->m_submittedFormURL == request.url())
@@ -144,7 +144,7 @@ void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
 
 void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest, const Event*)
 {
-    ResourceRequest request = frameLoadRequest.m_request;
+    const ResourceRequest& request = frameLoadRequest.resourceRequest();
 
     if (!m_client)
         return;
@@ -192,7 +192,7 @@ bool FrameQt::passWheelEventToChildWidget(Node*)
 
 bool FrameQt::passSubframeEventToSubframe(MouseEventWithHitTestResults& mev, Frame*)
 {
-    notImplemented(); 
+    notImplemented();
     return false;
 }
 
@@ -380,7 +380,7 @@ void FrameQt::addPluginRootObject(KJS::Bindings::RootObject* root)
 Widget* FrameQt::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&)
 {
     notImplemented();
-    return 0; 
+    return 0;
 }
 
 void FrameQt::registerCommandForUndo(PassRefPtr<EditCommand>)
@@ -476,21 +476,21 @@ void FrameQt::handledOnloadEvents()
 
 bool FrameQt::canPaste() const
 {
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart. 
+    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
     notImplemented();
     return false;
 }
 
 bool FrameQt::canRedo() const
 {
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart. 
+    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
     notImplemented();
     return false;
 }
 
 bool FrameQt::canUndo() const
 {
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart. 
+    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
     notImplemented();
     return false;
 }
@@ -563,12 +563,12 @@ void FrameQt::createNewWindow(const FrameLoadRequest& request, const WindowFeatu
     notImplemented();
 }
 
-void FrameQt::goBackOrForward(int) 
+void FrameQt::goBackOrForward(int)
 {
     notImplemented();
 }
 
-KURL FrameQt::historyURL(int distance) 
+KURL FrameQt::historyURL(int distance)
 {
     notImplemented();
     return KURL();

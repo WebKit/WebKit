@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
- * 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,10 @@ class EditorClientQt : public EditorClient {
 public:
     virtual bool shouldDeleteRange(Range*);
     virtual bool shouldShowDeleteInterface(HTMLElement*);
+
+    virtual bool isContinuousSpellCheckingEnabled();
+    virtual bool isGrammarCheckingEnabled();
+    virtual int spellCheckerDocumentTag();
 };
 
 }

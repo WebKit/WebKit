@@ -5,6 +5,8 @@ include_directories(
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/page
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/loader
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/platform
+   BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/platform/graphics
+   BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/platform/graphics/svg
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/platform/network
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/platform/qt
    BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../WebCore/ksvg2

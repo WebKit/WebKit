@@ -1,3 +1,12 @@
+2006-10-31  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Mitz.
+
+        Fix the Qt build after last nights changes.
+
+        * QtLauncher/CMakeLists.txt:
+        * WebKitPart/CMakeLists.txt:
+
 2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.
