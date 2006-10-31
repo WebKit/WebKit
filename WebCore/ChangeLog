@@ -1,3 +1,20 @@
+2006-10-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4711063>
+        Pasting 10K lines into Mail/Blot takes ~7sec, in TextEdit it takes ~1.5sec
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Don't do the test
+        insertion and plain text string creation unless we need the string
+        for a BeforeTextInserted event handler or for a plain text only region.
+        (WebCore::ReplacementFragment::removeInterchangeNodes): Added, moved
+        code here from ReplacementFragment's constructor.
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement): Added a
+        FIXME.
+        * editing/ReplaceSelectionCommand.h:
+
 2006-10-31  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam

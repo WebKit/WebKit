@@ -1,7 +1,11 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 2 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 1 of #text > BODY > HTML > #document to 2 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -9,20 +13,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x36
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 526x18
+          text run at (0,0) width 526: "These demonstrate 11475: the '\\n's at the end of the fragment should be unrendered."
+        RenderBR {BR} at (526,14) size 0x0
+      RenderBlock {DIV} at (0,18) size 784x36
         RenderText {#text} at (29,0) size 725x36
           text run at (29,0) width 725: "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail "
           text run at (359,18) width 65: "assertions."
-      RenderBlock {DIV} at (0,36) size 784x36
+      RenderBlock {DIV} at (0,54) size 784x54
         RenderBlock {DIV} at (0,0) size 784x36
-          RenderTextField {TEXTAREA} at (302,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderText {#text} at (467,18) size 4x18
-            text run at (467,18) width 4: " "
+          RenderTextField {TEXTAREA} at (304,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderText {#text} at (469,18) size 4x18
+            text run at (469,18) width 4: " "
           RenderInline {SPAN} at (0,0) size 8x18
-            RenderText {#text} at (471,18) size 8x18
-              text run at (471,18) width 8: "x"
-          RenderText {#text} at (479,18) size 4x18
-            text run at (479,18) width 4: " "
-layer at (311,47) size 161x26
+            RenderText {#text} at (473,18) size 8x18
+              text run at (473,18) width 8: "x"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,36) size 784x18
+          RenderText {#text} at (390,0) size 4x18
+            text run at (390,0) width 4: " "
+      RenderBlock (anonymous) at (0,108) size 784x0
+layer at (313,65) size 161x26
   RenderBlock {DIV} at (1,1) size 161x26
-caret: position 1 of child 3 {#text} of child 0 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+    RenderText {#text} at (3,0) size 3x13
+      text run at (3,0) width 3: " "
+caret: position 1 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "EditingText.h"
+#include "EventNames.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLElement.h"
@@ -47,6 +48,7 @@
 
 namespace WebCore {
 
+using namespace EventNames;
 using namespace HTMLNames;
 
 static bool isInterchangeNewlineNode(const Node *node)
@@ -74,14 +76,24 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         return;
     if (!m_fragment)
         return;
-    Node* firstChild = m_fragment->firstChild();
-    if (!firstChild)
+    if (!m_fragment->firstChild())
         return;
     
     Element* editableRoot = selection.rootEditableElement();
     ASSERT(editableRoot);
     if (!editableRoot)
         return;
+    
+    Node* shadowParentNode = editableRoot->shadowParentNode();
+    
+    if (!editableRoot->getHTMLEventListener(khtmlBeforeTextInsertedEvent) &&
+        // FIXME: Remove these checks once textareas and textfields actually register an event handler.
+        !(shadowParentNode && shadowParentNode->renderer() && shadowParentNode->renderer()->isTextField() && static_cast<HTMLInputElement*>(shadowParentNode)->isNonWidgetTextField()) &&
+        !(shadowParentNode && shadowParentNode->renderer() && shadowParentNode->renderer()->isTextArea()) &&
+        editableRoot->isContentRichlyEditable()) {
+        removeInterchangeNodes(m_fragment->firstChild());
+        return;
+    }
 
     Node* styleNode = selection.base().node();
     RefPtr<Node> holder = insertFragmentForTestRendering(styleNode);
@@ -98,44 +110,12 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         removeNode(holder);
 
         m_fragment = createFragmentFromText(selection.toRange().get(), evt->text());
-        firstChild = m_fragment->firstChild();
-        if (!firstChild)
+        if (!m_fragment->firstChild())
             return;
         holder = insertFragmentForTestRendering(styleNode);
     }
-
-    Node *node = firstChild;
-    Node *newlineAtStartNode = 0;
-    Node *newlineAtEndNode = 0;
-    while (node) {
-        Node *next = node->traverseNextNode();
-        if (isInterchangeNewlineNode(node)) {
-            if (next || node == firstChild) {
-                m_hasInterchangeNewlineAtStart = true;
-                newlineAtStartNode = node;
-            }
-            else {
-                m_hasInterchangeNewlineAtEnd = true;
-                newlineAtEndNode = node;
-            }
-        }
-        else if (isInterchangeConvertedSpaceSpan(node)) {
-            RefPtr<Node> n = 0;
-            while ((n = node->firstChild())) {
-                removeNode(n);
-                insertNodeBefore(n.get(), node);
-            }
-            removeNode(node);
-            if (n)
-                next = n->traverseNextNode();
-        }
-        node = next;
-    }
-
-    if (newlineAtStartNode)
-        removeNode(newlineAtStartNode);
-    if (newlineAtEndNode)
-        removeNode(newlineAtEndNode);
+    
+    removeInterchangeNodes(holder->firstChild());
     
     removeUnrenderedNodes(holder.get());
     restoreTestRenderingNodesToFragment(holder.get());
@@ -254,6 +234,42 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
     size_t n = unrendered.size();
     for (size_t i = 0; i < n; ++i)
         removeNode(unrendered[i]);
+}
+
+void ReplacementFragment::removeInterchangeNodes(Node* startNode)
+{
+    Node* node = startNode;
+    Node* newlineAtStartNode = 0;
+    Node* newlineAtEndNode = 0;
+    while (node) {
+        Node *next = node->traverseNextNode();
+        if (isInterchangeNewlineNode(node)) {
+            if (next || node == startNode) {
+                m_hasInterchangeNewlineAtStart = true;
+                newlineAtStartNode = node;
+            }
+            else {
+                m_hasInterchangeNewlineAtEnd = true;
+                newlineAtEndNode = node;
+            }
+        }
+        else if (isInterchangeConvertedSpaceSpan(node)) {
+            RefPtr<Node> n = 0;
+            while ((n = node->firstChild())) {
+                removeNode(n);
+                insertNodeBefore(n.get(), node);
+            }
+            removeNode(node);
+            if (n)
+                next = n->traverseNextNode();
+        }
+        node = next;
+    }
+
+    if (newlineAtStartNode)
+        removeNode(newlineAtStartNode);
+    if (newlineAtEndNode)
+        removeNode(newlineAtEndNode);
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment,
@@ -710,7 +726,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         start = Position(firstLeaf, 0);
         end = Position(lastLeaf, maxDeepOffset(lastLeaf));
         
-        // FIXME: Should we treat all spaces in incoming content as having been rendered?
+        // FIXME (11475): Remove this and require that the creator of the fragment to use nbsps.
         rebalanceWhitespaceAt(start);
         rebalanceWhitespaceAt(end);
 

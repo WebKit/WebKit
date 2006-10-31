@@ -1,3 +1,17 @@
+2006-10-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        Updated these tests to mention the bug that they demonstrate:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.checksum:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.png:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-area.html:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.checksum:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.png:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field.html:
+
 2006-10-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
