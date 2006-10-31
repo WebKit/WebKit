@@ -72,7 +72,7 @@ public:
     void selectionStartEnd(int& sPos, int& ePos);
     
     virtual void paint(RenderObject::PaintInfo& i, int tx, int ty);
-    virtual bool nodeAtPoint(HitTestResult&, int, int, int, int);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int);
 
     RenderText* textObject() const;
 

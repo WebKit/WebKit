@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "KURL.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Position.h"
 #include "RenderArena.h"
@@ -2534,25 +2535,25 @@ void RenderObject::updateDragState(bool dragOn)
         continuation()->updateDragState(dragOn);
 }
 
-bool RenderObject::hitTest(HitTestResult& result, int x, int y, int tx, int ty, HitTestFilter hitTestFilter)
+bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestFilter hitTestFilter)
 {
     bool inside = false;
     if (hitTestFilter != HitTestSelf) {
         // First test the foreground layer (lines and inlines).
-        inside = nodeAtPoint(result, x, y, tx, ty, HitTestForeground);
+        inside = nodeAtPoint(request, result, x, y, tx, ty, HitTestForeground);
         
         // Test floats next.
         if (!inside)
-            inside = nodeAtPoint(result, x, y, tx, ty, HitTestFloat);
+            inside = nodeAtPoint(request, result, x, y, tx, ty, HitTestFloat);
 
         // Finally test to see if the mouse is in the background (within a child block's background).
         if (!inside)
-            inside = nodeAtPoint(result, x, y, tx, ty, HitTestChildBlockBackgrounds);
+            inside = nodeAtPoint(request, result, x, y, tx, ty, HitTestChildBlockBackgrounds);
     }
     
     // See if the mouse is inside us but not any of our descendants
     if (hitTestFilter != HitTestDescendants && !inside)
-        inside = nodeAtPoint(result, x, y, tx, ty, HitTestBlockBackground);
+        inside = nodeAtPoint(request, result, x, y, tx, ty, HitTestBlockBackground);
         
     return inside;
 }
@@ -2578,8 +2579,8 @@ void RenderObject::setInnerNode(HitTestResult& result)
     }
 }
 
-bool RenderObject::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty,
-                               HitTestAction hitTestAction)
+bool RenderObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
+                                int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     return false;
 }

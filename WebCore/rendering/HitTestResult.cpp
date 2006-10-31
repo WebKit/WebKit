@@ -33,11 +33,8 @@
 
 namespace WebCore {
 
-HitTestResult::HitTestResult(const IntPoint& point, bool readonly, bool active, bool mouseMove)
+HitTestResult::HitTestResult(const IntPoint& point)
     : m_point(point)
-    , m_readonly(readonly)
-    , m_active(active)
-    , m_mouseMove(mouseMove)
 {
 }
 
@@ -47,9 +44,6 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_point(other.point())
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
-    , m_readonly(other.readonly())
-    , m_active(other.active())
-    , m_mouseMove(other.mouseMove())
 {
 }
 
@@ -64,9 +58,6 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_point = other.point();
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
-    m_readonly = other.readonly();
-    m_active = other.active();
-    m_mouseMove = other.mouseMove();
     return *this;
 }
 

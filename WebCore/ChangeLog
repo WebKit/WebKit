@@ -1,3 +1,104 @@
+2006-10-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11461 HitTestResult 
+        should be split into HitTestRequest and HitTestResult
+
+        This patch creates a new struct called HitTestRequest that holds 
+        the three boolean values (readonly, active, and mouseMove) that 
+        were formerly a part of HitTestRequest. all hitTest() and 
+        nodeAtPoint() functions now take a HitTestRequest in addition to 
+        the HitTestResult.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]):
+        (-[WebCoreAXObject accessibilityHitTest:]):
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::prepareMouseEvent):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::contains):
+        * page/Frame.cpp:
+        (WebCore::Frame::hitTestResultAtPoint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleWheelEvent):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        * rendering/HitTestResult.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::hitTestLines):
+        * rendering/RenderFlow.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::nodeAtPoint):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateHoverActiveState):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        (WebCore::RenderObject::nodeAtPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        (WebCore::RenderText::nodeAtPoint):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::nodeAtPoint):
+        * rendering/RenderTextControl.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+
 2006-10-31  Lars Naesbye Christensen <larsnaesbye@stud.ku.dk>
 
         Reviewed by Maciej.

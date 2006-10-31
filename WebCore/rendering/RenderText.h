@@ -70,7 +70,7 @@ public:
     virtual void paint(PaintInfo& i, int tx, int ty) { assert(false); }
     virtual void layout() { assert(false); }
 
-    virtual bool nodeAtPoint(HitTestResult&, int, int, int, int, HitTestAction) { assert(false); return false; }
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { assert(false); return false; }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void lineBoxRects(Vector<IntRect>&);

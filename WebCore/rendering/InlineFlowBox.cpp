@@ -523,11 +523,11 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     }
 }
 
-bool InlineFlowBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if (!curr->object()->layer() && curr->nodeAtPoint(result, x, y, tx, ty)) {
+        if (!curr->object()->layer() && curr->nodeAtPoint(request, result, x, y, tx, ty)) {
             object()->setInnerNode(result);
             return true;
         }

@@ -187,7 +187,7 @@ public:
     int leftRelOffset(int y, int fixedOffset, bool applyTextIndent = true, int* heightRemaining = 0) const;
     int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
 
-    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     virtual bool isPointInScrollbar(HitTestResult&, int x, int y, int tx, int ty);
 

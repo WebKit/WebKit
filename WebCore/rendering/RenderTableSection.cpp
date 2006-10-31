@@ -986,7 +986,7 @@ RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
 }
 
 // Hit Testing
-bool RenderTableSection::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
 {
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
@@ -998,7 +998,7 @@ bool RenderTableSection::nodeAtPoint(HitTestResult& result, int x, int y, int tx
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(result, x, y, tx, ty, action)) {
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, action)) {
             setInnerNode(result);
             return true;
         }

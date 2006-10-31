@@ -55,6 +55,7 @@
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
+#import "HitTestRequest.h"
 #import "HitTestResult.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
@@ -1474,9 +1475,10 @@ bool FrameMac::eventMayStartDrag(NSEvent *event) const
     }
 
     NSPoint loc = [event locationInWindow];
+    HitTestRequest request(true, false);
     IntPoint mouseDownPos = d->m_view->windowToContents(IntPoint(loc));
-    HitTestResult result(mouseDownPos, true, false);
-    renderer()->layer()->hitTest(result);
+    HitTestResult result(mouseDownPos);
+    renderer()->layer()->hitTest(request, result);
     bool srcIsDHTML;
     return result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
 }
@@ -1535,8 +1537,9 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         
         if (mouseDownMayStartDrag() && !_dragSrc) {
             // try to find an element that wants to be dragged
-            HitTestResult result(m_mouseDownPos, true, false);
-            renderer()->layer()->hitTest(result);
+            HitTestRequest request(true, false);
+            HitTestResult result(m_mouseDownPos);
+            renderer()->layer()->hitTest(request, result);
             Node *node = result.innerNode();
             _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), _dragSrcIsDHTML) : 0;
             if (!_dragSrc) {

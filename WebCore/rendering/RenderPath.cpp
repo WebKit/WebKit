@@ -283,7 +283,7 @@ RenderPath::PointerEventsHitRules RenderPath::pointerEventsHitRules()
     return hitRules;
 }
 
-bool RenderPath::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)

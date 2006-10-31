@@ -311,9 +311,9 @@ HTMLMapElement* RenderImage::imageMap()
     return i ? i->document()->getImageMap(i->imageMap()) : 0;
 }
 
-bool RenderImage::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    bool inside = RenderReplaced::nodeAtPoint(result, _x, _y, _tx, _ty, hitTestAction);
+    bool inside = RenderReplaced::nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction);
 
     if (inside && element()) {
         int tx = _tx + m_x;

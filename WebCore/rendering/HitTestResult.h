@@ -36,16 +36,10 @@ class String;
 
 class HitTestResult {
 public:
-    HitTestResult(const IntPoint&, bool readonly, bool active, bool mouseMove = false);
+    HitTestResult(const IntPoint&);
     HitTestResult(const HitTestResult&);
     ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
-
-    // These are not really part of the result. They are the parameters of the HitTest.
-    // They should probably be in a different structure.
-    bool readonly() const { return m_readonly; }
-    bool active() const { return m_active; }
-    bool mouseMove() const { return m_mouseMove; }
 
     Node* innerNode() const { return m_innerNode.get(); }
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
@@ -58,9 +52,6 @@ public:
     void setPoint(const IntPoint& p) { m_point = p; }
     void setURLElement(Element*);
     void setScrollbar(PlatformScrollbar*);
-    void setReadonly(bool r) { m_readonly = r; }
-    void setActive(bool a) { m_active = a; }
-    void setMouseMove(bool m) { m_mouseMove = m; }
 
     Frame* targetFrame() const;
     IntRect boundingBox() const;
@@ -73,9 +64,6 @@ private:
     IntPoint m_point;
     RefPtr<Element> m_innerURLElement;
     RefPtr<PlatformScrollbar> m_scrollbar;
-    bool m_readonly;
-    bool m_active;
-    bool m_mouseMove;
 };
 
 } // namespace WebCore

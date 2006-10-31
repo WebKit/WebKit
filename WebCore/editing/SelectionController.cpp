@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "RenderView.h"
 #include "TextIterator.h"
@@ -942,8 +943,9 @@ bool SelectionController::contains(const IntPoint& point)
     if (!document->renderer()) 
         return false;
     
-    HitTestResult result(point, true, true);
-    document->renderer()->layer()->hitTest(result);
+    HitTestRequest request(true, true);
+    HitTestResult result(point);
+    document->renderer()->layer()->hitTest(request, result);
     Node *innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;

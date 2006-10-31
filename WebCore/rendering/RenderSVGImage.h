@@ -54,7 +54,7 @@ namespace WebCore {
 
         virtual void computeAbsoluteRepaintRect(IntRect&, bool f);
 
-        virtual bool nodeAtPoint(HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
+        virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
     private:
         void translateForAttributes();

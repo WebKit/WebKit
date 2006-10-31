@@ -57,6 +57,7 @@ class FrameView;
 class HTMLAreaElement;
 class InlineBox;
 class InlineFlowBox;
+class HitTestRequest;
 class HitTestResult;
 class PlatformScrollbar;
 class Position;
@@ -500,8 +501,8 @@ public:
         RepaintInfo(RenderObject* o, const IntRect& r) :m_object(o), m_repaintRect(r) {}
     };
     
-    bool hitTest(HitTestResult&, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
-    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    bool hitTest(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     void setInnerNode(HitTestResult&);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);

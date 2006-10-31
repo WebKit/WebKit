@@ -254,7 +254,7 @@ int RenderBox::calcContentBoxHeight(int h) const
 }
 
 // Hit Testing
-bool RenderBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
+bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
 {
     tx += m_x;
     ty += m_y;
@@ -265,7 +265,7 @@ bool RenderBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty,
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(result, x, y, tx, ty, action)) {
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, action)) {
             setInnerNode(result);
             return true;
         }

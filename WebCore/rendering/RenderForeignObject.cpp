@@ -120,13 +120,13 @@ void RenderForeignObject::layout()
     setNeedsLayout(false);
 }
 
-bool RenderForeignObject::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderForeignObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     AffineTransform totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
     totalTransform.invert().map(x, y, &localX, &localY);
-    return RenderBlock::nodeAtPoint(result, static_cast<int>(localX), static_cast<int>(localY), tx, ty, hitTestAction);
+    return RenderBlock::nodeAtPoint(request, result, static_cast<int>(localX), static_cast<int>(localY), tx, ty, hitTestAction);
 }
 
 } // namespace WebCore

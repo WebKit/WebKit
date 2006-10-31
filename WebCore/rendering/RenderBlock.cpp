@@ -2529,7 +2529,7 @@ bool RenderBlock::isPointInScrollbar(HitTestResult& result, int _x, int _y, int 
     return false;    
 }
 
-bool RenderBlock::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     bool inlineFlow = isInlineFlow();
 
@@ -2567,7 +2567,7 @@ bool RenderBlock::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, in
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (hitTestLines(result, _x, _y, scrolledX, scrolledY, hitTestAction)) {
+        if (hitTestLines(request, result, _x, _y, scrolledX, scrolledY, hitTestAction)) {
             setInnerNode(result);
             return true;
         }
@@ -2580,7 +2580,7 @@ bool RenderBlock::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, in
         for (RenderObject* child = lastChild(); child; child = child->previousSibling())
             // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
-            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(result, _x, _y, scrolledX, scrolledY, childHitTest)) {
+            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, _x, _y, scrolledX, scrolledY, childHitTest)) {
                 setInnerNode(result);
                 return true;
             }
@@ -2596,7 +2596,7 @@ bool RenderBlock::nodeAtPoint(HitTestResult& result, int _x, int _y, int _tx, in
         FloatingObject* o;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for (it.toLast(); (o = it.current()); --it)
-            if (!o->noPaint && !o->node->layer() && o->node->hitTest(result, _x, _y,
+            if (!o->noPaint && !o->node->layer() && o->node->hitTest(request, result, _x, _y,
                                      scrolledX + o->left + o->node->marginLeft() - o->node->xPos(),
                                      scrolledY + o->startY + o->node->marginTop() - o->node->yPos())) {
                 setInnerNode(result);

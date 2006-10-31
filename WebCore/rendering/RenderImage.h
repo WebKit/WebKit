@@ -66,7 +66,7 @@ public:
 
     Image* image() { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
 
-    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     virtual int calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;

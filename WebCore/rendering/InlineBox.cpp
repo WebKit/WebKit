@@ -149,12 +149,12 @@ void InlineBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     }
 }
 
-bool InlineBox::nodeAtPoint(HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
     // Hit test all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
-    return object()->hitTest(result, x, y, tx, ty);
+    return object()->hitTest(request, result, x, y, tx, ty);
 }
 
 bool InlineBox::isChildOfParent()

@@ -41,7 +41,7 @@ public:
     virtual AffineTransform localTransform() const { return m_transform; }
     virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
     virtual void paint(PaintInfo& i, int _tx, int _ty);
-    virtual bool nodeAtPoint(HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
     virtual bool requiresLayer();

@@ -53,6 +53,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
@@ -2795,8 +2796,9 @@ void Frame::setAutoscrollRenderer(RenderObject* renderer)
 
 HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
-    HitTestResult result(point, true, true);
-    renderer()->layer()->hitTest(result);
+    HitTestRequest request(true, true);
+    HitTestResult result(point);
+    renderer()->layer()->hitTest(request, result);
 
     Node *n;
     Widget *widget = 0;
@@ -2818,8 +2820,9 @@ HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShado
         widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
-        HitTestResult widgetHitTestResult(widgetPoint, true, true);
-        frame->renderer()->layer()->hitTest(widgetHitTestResult);
+        HitTestRequest widgetHitTestRequest(true, true);
+        HitTestResult widgetHitTestResult(widgetPoint);
+        frame->renderer()->layer()->hitTest(widgetHitTestRequest, widgetHitTestResult);
         result = widgetHitTestResult;
     }
     
