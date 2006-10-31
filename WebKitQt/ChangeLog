@@ -1,3 +1,11 @@
+2006-10-31  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Maciej.
+
+        * QtLauncher/main.cpp:
+        (main): Declare our frame as main frame to the Page object.
+        Fixes crashes on various web sites
+
 2006-10-31  Zack Rusin  <zack@kde.org>
 
         Reviewed by Mitz.

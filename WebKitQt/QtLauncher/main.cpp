@@ -64,6 +64,7 @@ int main(int argc, char **argv)
     // Initialize WebCore in Qt platform mode...
     Page* page = new Page();
     Frame* frame = new FrameQt(page, 0, new FrameQtClientDefault());
+    page->setMainFrame(frame);
 
     FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);
