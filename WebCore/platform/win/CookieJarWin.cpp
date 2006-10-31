@@ -48,7 +48,6 @@ String cookies(const KURL& url)
     DeprecatedString str = url.url();
     str.append((UChar)'\0');
 
-    DWORD count;
     InternetGetCookie((UChar*)str.unicode(), 0, 0, &count);
     if (count <= 1) // Null terminator counts as 1.
         return String();
@@ -56,7 +55,7 @@ String cookies(const KURL& url)
     UChar* buffer = new UChar[count];
     InternetGetCookie((UChar*)str.unicode(), 0, buffer, &count);
     String& result = String(buffer, count-1); // Ignore the null terminator.
-    delete buffer;
+    delete[] buffer;
     return result;
 }
 
