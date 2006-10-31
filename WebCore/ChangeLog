@@ -1,3 +1,19 @@
+2006-10-31  Lars Naesbye Christensen <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Maciej.
+
+        Bug 11442: [CSS 3] support for cursor: all-scroll
+        http://bugs.webkit.org/show_bug.cgi?id=11442
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * rendering/RenderStyle.h:
+
 2006-10-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

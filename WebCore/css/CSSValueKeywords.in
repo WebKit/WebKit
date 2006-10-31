@@ -283,6 +283,7 @@ row-resize
 text
 wait
 help
+all-scroll
 #
 # CSS_PROP_DIRECTION:
 #
