@@ -28,7 +28,7 @@
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "KCanvasImage.h"
+#include "SVGResourceImage.h"
 #include "KRenderingDevice.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"

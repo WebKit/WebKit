@@ -25,11 +25,12 @@
 #define KRenderingPaintServer_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasResource.h"
+#include "SVGResource.h"
 
 namespace WebCore {
 
 class KRenderingDeviceContext;
+class RenderObject;
 class RenderPath;
 class RenderStyle;
 class TextStream;
@@ -49,11 +50,11 @@ enum KCPaintTargetType {
     APPLY_TO_STROKE = 2
 };
 
-class KRenderingPaintServer : public KCanvasResource
+class KRenderingPaintServer : public SVGResource
 {
 public:
     KRenderingPaintServer()
-        : KCanvasResource()
+        : SVGResource()
         , m_activeClient(0)
         , m_paintingText(false)
     { }
@@ -64,9 +65,6 @@ public:
     const RenderPath* activeClient() const { return m_activeClient;}
     void setActiveClient(const RenderPath* client) { m_activeClient = client; }
 
-    String idInRegistry() const {  return m_registryId; }
-    void setIdInRegistry(const String& newId) { m_registryId = newId; } 
-    
     virtual KCPaintServerType type() const = 0;
     
     // Actual rendering function
@@ -83,13 +81,10 @@ public:
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 private:
     const RenderPath* m_activeClient;
-    String m_registryId;
     bool m_paintingText;
 };
 
 TextStream& operator<<(TextStream&, const KRenderingPaintServer&);
-
-KRenderingPaintServer* getPaintServerById(Document*, const AtomicString&);
 
 }
 

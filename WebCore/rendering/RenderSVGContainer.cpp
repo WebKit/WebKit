@@ -24,8 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "RenderSVGContainer.h"
 
-#include "KCanvasClipper.h"
-#include "KCanvasMasker.h"
+#include "SVGResourceClipper.h"
+#include "SVGResourceMasker.h"
 #include "KRenderingDevice.h"
 #include "SVGStyledElement.h"
 #include "GraphicsContext.h"
@@ -175,10 +175,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     FloatRect strokeBBox = relativeBBox(true);
     
-    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
+    if (SVGResourceClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
         clipper->applyClip(strokeBBox);
 
-    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
+    if (SVGResourceMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
         masker->applyMask(strokeBBox);
 
     float opacity = style()->opacity();

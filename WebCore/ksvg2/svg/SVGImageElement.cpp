@@ -26,7 +26,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
-#include "KCanvasImage.h"
+#include "SVGResourceImage.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGImage.h"
 #include "SVGDocument.h"

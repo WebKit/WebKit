@@ -23,7 +23,7 @@
 #define SVGMaskElement_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasMasker.h"
+#include "SVGResourceMasker.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledLocatableElement.h"
@@ -52,10 +52,10 @@ namespace WebCore
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual KCanvasMasker* canvasResource();
+        virtual SVGResource* canvasResource();
 
     protected:
-        KCanvasImage* drawMaskerContent();
+        SVGResourceImage* drawMaskerContent();
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
@@ -68,7 +68,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        KCanvasMasker* m_masker;
+        RefPtr<SVGResourceMasker> m_masker;
         bool m_dirty;
     };
 

@@ -27,10 +27,12 @@
 
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+#import "SVGResourceImage.h"
 #import "KRenderingPaintServerQuartz.h"
+#import "RenderPath.h"
 #import "QuartzSupport.h"
-#import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 
 #import "KCanvasRenderingStyle.h"
@@ -133,7 +135,7 @@ void KRenderingPaintServerSolidQuartz::teardown(KRenderingDeviceContext* renderi
 
 void patternCallback(void *info, CGContextRef context)
 {
-    CGLayerRef layer = reinterpret_cast<KCanvasImageQuartz*>(info)->cgLayer();
+    CGLayerRef layer = reinterpret_cast<SVGResourceImage*>(info)->cgLayer();
     CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
@@ -155,7 +157,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
     KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
 
-    KCanvasImage* cell = tile();
+    RefPtr<SVGResourceImage> cell = tile();
     if (!cell)
         return false;
 

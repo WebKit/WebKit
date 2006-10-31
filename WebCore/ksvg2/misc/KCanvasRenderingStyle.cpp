@@ -23,18 +23,21 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
+#include "KCanvasRenderingStyle.h"
 
 #include "CSSValueList.h"
 #include "Document.h"
-#include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerGradient.h"
 #include "KRenderingPaintServerSolid.h"
 #include "RenderObject.h"
+#include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
 #include "ksvg.h"
+
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -42,7 +45,7 @@ static KRenderingPaintServerSolid* sharedSolidPaintServer()
 {
     static KRenderingPaintServerSolid* _sharedSolidPaintServer = 0;
     if (!_sharedSolidPaintServer)
-        _sharedSolidPaintServer = static_cast<KRenderingPaintServerSolid*>(renderingDevice()->createPaintServer(PS_SOLID));
+        _sharedSolidPaintServer = static_cast<KRenderingPaintServerSolid*>(renderingDevice()->createPaintServer(PS_SOLID).releaseRef());
     return _sharedSolidPaintServer;
 }
 

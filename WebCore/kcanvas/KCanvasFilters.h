@@ -25,7 +25,11 @@
 #define KCanvasFilters_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasResource.h"
+#include "CachedImage.h"
+#include "CachedResourceClient.h"
+#include "Color.h"
+#include "FloatRect.h"
+#include "SVGResource.h"
 
 #ifdef __OBJC__
 @class CIFilter;
@@ -35,7 +39,9 @@ class CIFilter;
 
 namespace WebCore {
 
+#if PLATFORM(MAC)
 class KCanvasFilterQuartz;
+#endif
 
 // Enumerations
 typedef enum {
@@ -96,7 +102,7 @@ private:
 class KCanvasFilterEffect;
 class KRenderingDevice;
 
-class KCanvasFilter : public KCanvasResource {
+class KCanvasFilter : public SVGResource {
 public:
     KCanvasFilter() { }
     virtual ~KCanvasFilter() { }
@@ -148,7 +154,7 @@ public:
     String result() const;
     void setResult(const String&);
 
-#if __APPLE__
+#if PLATFORM(MAC)
     virtual CIFilter* getCIFilter(KCanvasFilterQuartz*) const = 0;
 #endif
 

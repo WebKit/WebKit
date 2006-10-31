@@ -32,6 +32,7 @@
 
 #include "config.h"
 
+#include "AffineTransform.h"
 #include "Path.h"
 #include "Color.h"
 #include "GraphicsContext.h"

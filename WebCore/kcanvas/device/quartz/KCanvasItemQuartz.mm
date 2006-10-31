@@ -31,9 +31,7 @@
 #import <wtf/Assertions.h>
 
 #import "KCanvasFilterQuartz.h"
-#import "KCanvasMaskerQuartz.h"
 #import "KCanvasRenderingStyle.h"
-#import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 #import "RenderPath.h"

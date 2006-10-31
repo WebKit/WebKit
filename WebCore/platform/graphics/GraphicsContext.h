@@ -129,7 +129,7 @@ namespace WebCore {
         
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar);
-        
+       
         bool paintingDisabled() const;
         void setPaintingDisabled(bool);
         

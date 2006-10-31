@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class KCanvasImage;
+class SVGResourceImage;
 
 class KRenderingPaintServerQuartzHelper {
 public:
@@ -93,7 +93,7 @@ public:
 protected:
     void invalidateCaches();
     CGShadingRef m_shadingCache;
-    mutable KCanvasImage *m_maskImage;
+    mutable RefPtr<SVGResourceImage> m_maskImage;
 };
 
 class KRenderingPaintServerLinearGradientQuartz : public KRenderingPaintServerGradientQuartz,

@@ -180,6 +180,7 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
     DeprecatedValueListIterator<KCanvasFilterEffect*> end = m_effects.end();
 
     setImageForName(inputImage, "SourceGraphic"); // input
+
     for (;it != end; it++) {
         CIFilter *filter = (*it)->getCIFilter(this);
         if (filter)

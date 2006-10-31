@@ -77,7 +77,7 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
-void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient* _grad) const
+void SVGRadialGradientElement::buildGradient(PassRefPtr<KRenderingPaintServerGradient> _grad) const
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
@@ -94,23 +94,23 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient* _gra
     float _fx = fxSet ? fx()->value() : _cx;
     float _fy = fySet ? fy()->value() : _cy;
 
-    KRenderingPaintServerRadialGradient* grad = static_cast<KRenderingPaintServerRadialGradient*>(_grad);
+    RefPtr<KRenderingPaintServerRadialGradient> grad = WTF::static_pointer_cast<KRenderingPaintServerRadialGradient>(_grad);
     AffineTransform mat;
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = href().deprecatedString();
-    KRenderingPaintServer* pserver = getPaintServerById(document(), ref.mid(1));
+    RefPtr<KRenderingPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
 
     if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
         bool isRadial = pserver->type() == PS_RADIAL_GRADIENT;
-        KRenderingPaintServerGradient* gradient = static_cast<KRenderingPaintServerGradient*>(pserver);
+        RefPtr<KRenderingPaintServerGradient> gradient = WTF::static_pointer_cast<KRenderingPaintServerGradient>(pserver);
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
 
         if (isRadial) {
-            KRenderingPaintServerRadialGradient* radial = static_cast<KRenderingPaintServerRadialGradient*>(pserver);
+            RefPtr<KRenderingPaintServerRadialGradient> radial = WTF::static_pointer_cast<KRenderingPaintServerRadialGradient>(pserver);
             if (!hasAttribute(SVGNames::cxAttr))
                 _cx = radial->gradientCenter().x();
             else if (bbox)
@@ -146,7 +146,7 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient* _gra
 
         // Inherit color stops if empty
         if (grad->gradientStops().isEmpty())
-            grad->setGradientStops(gradient);
+            grad->setGradientStops(gradient.get());
 
         if (!hasAttribute(SVGNames::spreadMethodAttr))
             grad->setGradientSpreadMethod(gradient->spreadMethod());
