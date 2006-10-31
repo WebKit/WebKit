@@ -27,14 +27,16 @@
 
 
 #include "config.h"
-
 #ifdef SVG_SUPPORT
 #import "KRenderingPaintServerQuartz.h"
-#import "SVGResourceImage.h"
+
+#import "KCanvasImage.h"
+#import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KRenderingPaintServer.h"
 #import "QuartzSupport.h"
-#import "RenderPath.h"
+#import "RenderObject.h"
+
 #import <wtf/Assertions.h>
 
 namespace WebCore {
@@ -135,6 +137,7 @@ KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz()
     : m_stopsCache(0)
     , m_stopsCount(0)
     , m_shadingCache(0)
+    , m_maskImage(0)
 {
 }
 
@@ -142,6 +145,7 @@ KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz()
 {
     delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
+    delete m_maskImage;
 }
 
 void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRenderingPaintServerGradient *server)
@@ -216,6 +220,9 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
     if (server->listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         server->listener()->resourceNotification();
     
+    delete m_maskImage;
+    m_maskImage = 0;
+
     // FIXME: total const HACK!
     // We need a hook to call this when the gradient gets updated, before drawn.
     if (!m_shadingCache)
@@ -239,12 +246,12 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
         CGContextSaveGState(context);
         applyStrokeStyleToContext(context, renderStyle, renderObject); // FIXME: this seems like the wrong place for this.
         if (server->isPaintingText()) {
-            m_maskImage = new SVGResourceImage();
+            m_maskImage = static_cast<KCanvasImage*>(quartzDevice->createResource(RS_IMAGE));
             int width  = 2048;
             int height = 2048; // FIXME???
             IntSize size = IntSize(width, height);
             m_maskImage->init(size);
-            KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(m_maskImage.get());
+            KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(m_maskImage);
             quartzDevice->pushContext(maskImageContext);
             CGContextRef maskContext = static_cast<KRenderingDeviceContextQuartz*>(maskImageContext)->cgContext();
             const_cast<RenderObject*>(renderObject)->style()->setColor(Color(255, 255, 255));
@@ -285,6 +292,7 @@ void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServer
 void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGradient *server, KRenderingDeviceContext* renderingContext, const RenderObject* renderObject, KCPaintTargetType type) const
 { 
     CGShadingRef shading = m_shadingCache;
+    KCanvasImage* maskImage = m_maskImage;
     KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     RenderStyle* renderStyle = renderObject->style();
@@ -307,7 +315,8 @@ void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGr
             CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
             CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
             CGColorSpaceRelease(grayColorSpace);
-            CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), m_maskImage->cgLayer());
+            KCanvasImageQuartz* qMaskImage = static_cast<KCanvasImageQuartz*>(maskImage);
+            CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), qMaskImage->cgLayer());
             CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
             CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);
             CGContextRelease(grayscaleContext);

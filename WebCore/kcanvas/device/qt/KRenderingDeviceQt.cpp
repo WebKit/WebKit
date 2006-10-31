@@ -26,8 +26,8 @@
 #include "RenderPathQt.h"
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
-#include "SVGResourceClipper.h"
-#include "SVGResourceMarker.h"
+#include "KCanvasClipperQt.h"
+#include "KCanvasMarker.h"
 #include "KRenderingDeviceQt.h"
 #include "KRenderingPaintServerSolidQt.h"
 #include "KRenderingPaintServerGradientQt.h"
@@ -135,23 +135,23 @@ KRenderingDeviceContextQt* KRenderingDeviceQt::qtContext() const
     return static_cast<KRenderingDeviceContextQt*>(currentContext());
 }
 
-KRenderingDeviceContext* KRenderingDeviceQt::contextForImage(SVGResourceImage* image) const
+KRenderingDeviceContext* KRenderingDeviceQt::contextForImage(KCanvasImage* image) const
 {
     qDebug("KRenderingDeviceQt::contextForImage() TODO!");
     return 0;
 }
 
 // Resource creation
-PassRefPtr<SVGResource> KRenderingDeviceQt::createResource(const SVGResourceType& type) const
+KCanvasResource* KRenderingDeviceQt::createResource(const KCResourceType& type) const
 {
     switch (type)
     {
         case RS_CLIPPER:
-            return new SVGResourceClipper();
+            return new KCanvasClipperQt();
         case RS_MARKER:
-            return new SVGResourceMarker(); // Use default implementation...
+            return new KCanvasMarker(); // Use default implementation...
         case RS_IMAGE:
-            // return new SVGResourceImageQt();
+            // return new KCanvasImageQt();
         case RS_FILTER:
             // return new KCanvasFilterQt();
         case RS_MASKER:
@@ -161,7 +161,7 @@ PassRefPtr<SVGResource> KRenderingDeviceQt::createResource(const SVGResourceType
     }
 }
 
-PassRefPtr<KRenderingPaintServer> KRenderingDeviceQt::createPaintServer(const KCPaintServerType& type) const
+KRenderingPaintServer* KRenderingDeviceQt::createPaintServer(const KCPaintServerType& type) const
 {
     switch (type)
     {

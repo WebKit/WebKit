@@ -26,7 +26,6 @@
 #include <QBrush>
 #include <QPainter>
 
-#include "RenderPath.h"
 #include "RenderStyle.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"

@@ -28,12 +28,12 @@
 #include "RenderStyle.h"
 #include "SVGElement.h"
 #include "SVGStylable.h"
-#include "SVGResource.h"
 #include "Path.h"
 
 namespace WebCore {
 
     class CSSStyleDeclaration;
+    class KCanvasResource;
     class KRenderingDevice;
     class RenderPath;
     class RenderView;
@@ -50,7 +50,7 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
         virtual Path toPathData() const { return Path(); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual SVGResource* canvasResource() { return 0; }
+        virtual KCanvasResource* canvasResource() { return 0; }
         
         virtual void parseMappedAttribute(MappedAttribute*);
 

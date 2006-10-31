@@ -25,7 +25,6 @@
 #include <QPen>
 #include <QVector>
 
-#include "RenderStyle.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingPaintServerQt.h"
 

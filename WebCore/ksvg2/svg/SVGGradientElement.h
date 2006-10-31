@@ -35,7 +35,7 @@ namespace WebCore {
     class SVGGradientElement : public SVGStyledElement,
                                public SVGURIReference,
                                public SVGExternalResourcesRequired,
-                               public SVGResourceListener
+                               public KCanvasResourceListener
     {
     public:
         enum SVGGradientType {
@@ -51,13 +51,12 @@ namespace WebCore {
         // 'SVGGradientElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
-
-        virtual SVGResource* canvasResource();
-
+        
+        virtual KRenderingPaintServerGradient* canvasResource();
         virtual void resourceNotification() const;
 
     protected:
-        virtual void buildGradient(PassRefPtr<KRenderingPaintServerGradient>) const = 0;
+        virtual void buildGradient(KRenderingPaintServerGradient*) const = 0;
         virtual KCPaintServerType gradientType() const = 0;
         void rebuildStops() const;
 
@@ -69,7 +68,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
 
-        mutable RefPtr<KRenderingPaintServerGradient> m_resource;
+        mutable KRenderingPaintServerGradient* m_resource;
     };
 
 } // namespace WebCore

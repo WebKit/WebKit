@@ -29,12 +29,11 @@
 #include <QPointF>
 #include <QPainterPath>
 
-#include "RenderPath.h"
 #include "RenderStyle.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingPaintServerPatternQt.h"
-#include "SVGResourceImage.h"
+#include "KCanvasImage.h"
 
 namespace WebCore {
 

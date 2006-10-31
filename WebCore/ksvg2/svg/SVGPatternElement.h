@@ -32,7 +32,7 @@
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 
-class SVGResourceImage;
+class KCanvasImage;
 
 namespace WebCore
 {
@@ -45,7 +45,7 @@ namespace WebCore
                               public SVGLangSpace,
                               public SVGExternalResourcesRequired,
                               public SVGFitToViewBox,
-                              public SVGResourceListener
+                              public KCanvasResourceListener
     {
     public:
         SVGPatternElement(const QualifiedName&, Document*);
@@ -63,7 +63,7 @@ namespace WebCore
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual SVGResource* canvasResource();
+        virtual KRenderingPaintServerPattern* canvasResource();
 
         // 'virtual SVGLocatable' functions
         virtual SVGMatrix* getCTM() const;
@@ -82,9 +82,9 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternContentUnits, patternContentUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
 
-        mutable RefPtr<SVGResourceImage> m_tile;
+        mutable KCanvasImage* m_tile;
         mutable bool m_ignoreAttributeChanges;
-        mutable RefPtr<KRenderingPaintServerPattern> m_paintServer;
+        mutable KRenderingPaintServerPattern* m_paintServer;
         
         virtual const SVGElement* contextElement() const { return this; }
 

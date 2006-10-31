@@ -50,11 +50,13 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
     , m_orientType(0)
     , m_orientAngle(new SVGAngle(this))
+    , m_marker(0)
 {
 }
 
 SVGMarkerElement::~SVGMarkerElement()
 {
+    delete m_marker;
 }
 
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
@@ -110,10 +112,10 @@ void SVGMarkerElement::setOrientToAngle(SVGAngle* angle)
     setOrientAngleBaseValue(angle);
 }
 
-SVGResource* SVGMarkerElement::canvasResource()
+KCanvasMarker* SVGMarkerElement::canvasResource()
 {
     if (!m_marker)
-        m_marker = new SVGResourceMarker();
+        m_marker = static_cast<KCanvasMarker*>(renderingDevice()->createResource(RS_MARKER));
     
     m_marker->setMarker(static_cast<RenderSVGContainer*>(renderer()));
 
@@ -130,7 +132,7 @@ SVGResource* SVGMarkerElement::canvasResource()
     m_marker->setRef(refX()->value(), refY()->value());
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
     
-    return m_marker.get();
+    return m_marker;
 }
 
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* style)

@@ -1,41 +1,96 @@
-2006-10-31  Nikolas Zimmermann  <zimmermann@kde.org>
+2006-10-30  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by Oliver.
+        Reviewed by Anders.
 
-        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11436
-
-        Better SVG integration in WebKit, Part I.
-
-        The patch is mostly about creating a new platform/graphics directory, and
-        moving the kcanvas resources (clipper/masker/marker) there (in svg budir),
-        with a new name (KCanvasClipper -> SVGResourceClipper). Also fix several ownership
-        issues, by using ref counting (the SVG classes now store RefPtrs to the resources).
-
-        KCanvasFilters is still left in kcanvas/ subdirectory, to be converted in a next patch.
-        All details of the patch, and upcoming patches can be found in the bug report.
+        Roll out last patch
 
         * CMakeLists.txt:
+        * ChangeLog:
         * WebCore.xcodeproj/project.pbxproj:
-        * kcanvas/KCanvasClipper.cpp: Removed.
-        * kcanvas/KCanvasClipper.h: Removed.
-        * kcanvas/KCanvasCreator.cpp: Removed.
-        * kcanvas/KCanvasCreator.h: Removed.
+        * graphics/svg/SVGResource.cpp:
+        * graphics/svg/SVGResourceClipper.cpp:
+        * graphics/svg/SVGResourceClipper.h:
+        * graphics/svg/SVGResourceImage.h:
+        * graphics/svg/SVGResourceListener.h:
+        * graphics/svg/SVGResourceMarker.cpp:
+        * graphics/svg/SVGResourceMarker.h:
+        * graphics/svg/SVGResourceMasker.cpp:
+        * graphics/svg/SVGResourceMasker.h:
+        * kcanvas/KCanvasClipper.cpp: Added.
+        (WebCore::operator<<):
+        (WebCore::KCanvasClipper::KCanvasClipper):
+        (WebCore::KCanvasClipper::~KCanvasClipper):
+        (WebCore::KCanvasClipper::resetClipData):
+        (WebCore::KCanvasClipper::addClipData):
+        (WebCore::KCanvasClipper::clipData):
+        (WebCore::KCanvasClipper::externalRepresentation):
+        (WebCore::getClipperById):
+        * kcanvas/KCanvasClipper.h: Added.
+        (WebCore::KCClipData::windRule):
+        (WebCore::KCClipDataList::KCClipDataList):
+        (WebCore::KCClipDataList::addPath):
+        (WebCore::KCanvasClipper::isClipper):
         * kcanvas/KCanvasFilters.cpp:
         (WebCore::getFilterById):
         * kcanvas/KCanvasFilters.h:
-        * kcanvas/KCanvasImage.h: Removed.
-        * kcanvas/KCanvasMarker.cpp: Removed.
-        * kcanvas/KCanvasMarker.h: Removed.
-        * kcanvas/KCanvasMasker.cpp: Removed.
-        * kcanvas/KCanvasMasker.h: Removed.
-        * kcanvas/KCanvasResource.cpp: Removed.
-        * kcanvas/KCanvasResource.h: Removed.
-        * kcanvas/KCanvasResourceListener.h: Removed.
+        * kcanvas/KCanvasImage.h: Added.
+        (WebCore::KCanvasImage::KCanvasImage):
+        (WebCore::KCanvasImage::~KCanvasImage):
+        * kcanvas/KCanvasMarker.cpp: Added.
+        (WebCore::KCanvasMarker::KCanvasMarker):
+        (WebCore::KCanvasMarker::~KCanvasMarker):
+        (WebCore::KCanvasMarker::setMarker):
+        (WebCore::KCanvasMarker::setRef):
+        (WebCore::KCanvasMarker::refX):
+        (WebCore::KCanvasMarker::refY):
+        (WebCore::KCanvasMarker::setAngle):
+        (WebCore::KCanvasMarker::angle):
+        (WebCore::KCanvasMarker::setAutoAngle):
+        (WebCore::KCanvasMarker::setUseStrokeWidth):
+        (WebCore::KCanvasMarker::useStrokeWidth):
+        (WebCore::KCanvasMarker::draw):
+        (WebCore::KCanvasMarker::externalRepresentation):
+        (WebCore::getMarkerById):
+        * kcanvas/KCanvasMarker.h: Added.
+        (WebCore::KCanvasMarker::isMarker):
+        * kcanvas/KCanvasMasker.cpp: Added.
+        (WebCore::KCanvasMasker::KCanvasMasker):
+        (WebCore::KCanvasMasker::~KCanvasMasker):
+        (WebCore::KCanvasMasker::setMask):
+        (WebCore::KCanvasMasker::externalRepresentation):
+        (WebCore::getMaskerById):
+        * kcanvas/KCanvasMasker.h: Added.
+        (WebCore::KCanvasMasker::isMasker):
+        (WebCore::KCanvasMasker::mask):
+        * kcanvas/KCanvasResource.cpp: Added.
+        (WebCore::operator<<):
+        (WebCore::KCanvasResource::KCanvasResource):
+        (WebCore::KCanvasResource::~KCanvasResource):
+        (WebCore::KCanvasResource::addClient):
+        (WebCore::KCanvasResource::clients):
+        (WebCore::KCanvasResource::invalidate):
+        (WebCore::KCanvasResource::idInRegistry):
+        (WebCore::KCanvasResource::setIdInRegistry):
+        (WebCore::KCanvasResource::externalRepresentation):
+        (WebCore::getResourceById):
+        (WebCore::getPaintServerById):
+        * kcanvas/KCanvasResource.h:
+        (WebCore::):
+        (WebCore::KCanvasResource::isPaintServer):
+        (WebCore::KCanvasResource::isFilter):
+        (WebCore::KCanvasResource::isClipper):
+        (WebCore::KCanvasResource::isMarker):
+        (WebCore::KCanvasResource::isMasker):
+        * kcanvas/KCanvasResourceListener.h: Added.
+        (KCanvasResourceListener::KCanvasResourceListener):
+        (KCanvasResourceListener::~KCanvasResourceListener):
         * kcanvas/KCanvasTreeDebug.cpp:
         (WebCore::writeRenderResources):
         * kcanvas/device/KRenderingDevice.h:
         * kcanvas/device/KRenderingPaintServer.h:
         (WebCore::KRenderingPaintServer::KRenderingPaintServer):
+        (WebCore::KRenderingPaintServer::idInRegistry):
+        (WebCore::KRenderingPaintServer::setIdInRegistry):
         * kcanvas/device/KRenderingPaintServerGradient.cpp:
         (WebCore::KRenderingPaintServerGradient::listener):
         (WebCore::KRenderingPaintServerGradient::setListener):
@@ -49,8 +104,10 @@
         (WebCore::KRenderingPaintServerPattern::setListener):
         * kcanvas/device/KRenderingPaintServerPattern.h:
         * kcanvas/device/KRenderingPaintServerSolid.h:
-        * kcanvas/device/qt/KCanvasClipperQt.cpp: Removed.
-        * kcanvas/device/qt/KCanvasClipperQt.h: Removed.
+        * kcanvas/device/qt/KCanvasClipperQt.cpp:
+        (WebCore::KCanvasClipperQt::applyClip):
+        * kcanvas/device/qt/KCanvasClipperQt.h:
+        (WebCore::KCanvasClipperQt::KCanvasClipperQt):
         * kcanvas/device/qt/KRenderingDeviceQt.cpp:
         (WebCore::KRenderingDeviceQt::contextForImage):
         (WebCore::KRenderingDeviceQt::createResource):
@@ -60,14 +117,26 @@
         * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp:
         * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
         * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp:
-        * kcanvas/device/qt/RenderPathQt.h: Removed.
         * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
         (WebCore::KCanvasFilterQuartz::getCIFilterStack):
         * kcanvas/device/quartz/KCanvasItemQuartz.mm:
-        * kcanvas/device/quartz/KCanvasMaskerQuartz.h: Removed.
-        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm: Removed.
-        * kcanvas/device/quartz/KCanvasResourcesQuartz.h: Removed.
-        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm: Removed.
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h:
+        (WebCore::KCanvasMaskerQuartz::KCanvasMaskerQuartz):
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (WebCore::applyLuminanceToAlphaFilter):
+        (WebCore::applyExpandAlphatoGrayscaleFilter):
+        (WebCore::transformImageIntoGrayscaleMask):
+        (WebCore::KCanvasMaskerQuartz::applyMask):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (WebCore::KCanvasClipperQuartz::KCanvasClipperQuartz):
+        (WebCore::KCanvasImageQuartz::KCanvasImageQuartz):
+        (WebCore::KCanvasImageQuartz::init):
+        (WebCore::KCanvasImageQuartz::size):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasClipperQuartz::applyClip):
+        (WebCore::KCanvasImageQuartz::~KCanvasImageQuartz):
+        (WebCore::KCanvasImageQuartz::cgLayer):
+        (WebCore::KCanvasImageQuartz::setCGLayer):
         * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
         * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
         (WebCore::KRenderingDeviceQuartz::contextForImage):
@@ -129,11 +198,7 @@
         * ksvg2/svg/SVGRadialGradientElement.h:
         * ksvg2/svg/SVGStyledElement.h:
         (WebCore::SVGStyledElement::canvasResource):
-        * platform/GraphicsContext.cpp: Removed.
-        * platform/GraphicsContext.h: Removed.
-        * platform/GraphicsTypes.cpp: Removed.
-        * platform/GraphicsTypes.h: Removed.
-        * platform/graphics/GraphicsContext.cpp: Added.
+        * platform/GraphicsContext.cpp: Added.
         (WebCore::GraphicsContextState::GraphicsContextState):
         (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
         (WebCore::GraphicsContext::createGraphicsContextPrivate):
@@ -161,8 +226,8 @@
         (WebCore::GraphicsContext::focusRingOffset):
         (WebCore::GraphicsContext::focusRingRects):
         (WebCore::GraphicsContext::drawTiledImage):
-        * platform/graphics/GraphicsContext.h: Added.
-        * platform/graphics/GraphicsTypes.cpp: Added.
+        * platform/GraphicsContext.h: Added.
+        * platform/GraphicsTypes.cpp: Added.
         (WebCore::):
         (WebCore::parseCompositeOperator):
         (WebCore::compositeOperatorName):
@@ -170,88 +235,12 @@
         (WebCore::lineCapName):
         (WebCore::parseLineJoin):
         (WebCore::lineJoinName):
-        * platform/graphics/GraphicsTypes.h: Added.
+        * platform/GraphicsTypes.h: Added.
         (WebCore::):
-        * platform/graphics/svg/SVGResource.cpp: Added.
-        (WebCore::SVGResource::SVGResource):
-        (WebCore::SVGResource::~SVGResource):
-        (WebCore::SVGResource::invalidate):
-        (WebCore::SVGResource::addClient):
-        (WebCore::SVGResource::clients):
-        (WebCore::SVGResource::idInRegistry):
-        (WebCore::SVGResource::setIdInRegistry):
-        (WebCore::SVGResource::externalRepresentation):
-        (WebCore::getResourceById):
-        (WebCore::getPaintServerById):
-        (WebCore::operator<<):
-        * platform/graphics/svg/SVGResource.h: Added.
-        (WebCore::):
-        (WebCore::SVGResource::isPaintServer):
-        (WebCore::SVGResource::isFilter):
-        (WebCore::SVGResource::isClipper):
-        (WebCore::SVGResource::isMarker):
-        (WebCore::SVGResource::isMasker):
-        (WebCore::SVGResourceListener::~SVGResourceListener):
-        * platform/graphics/svg/SVGResourceClipper.cpp: Added.
-        (WebCore::SVGResourceClipper::SVGResourceClipper):
-        (WebCore::SVGResourceClipper::~SVGResourceClipper):
-        (WebCore::SVGResourceClipper::resetClipData):
-        (WebCore::SVGResourceClipper::addClipData):
-        (WebCore::SVGResourceClipper::clipData):
-        (WebCore::SVGResourceClipper::externalRepresentation):
-        (WebCore::operator<<):
-        (WebCore::getClipperById):
-        * platform/graphics/svg/SVGResourceClipper.h: Added.
-        (WebCore::ClipDataList::addPath):
-        (WebCore::SVGResourceClipper::isClipper):
-        * platform/graphics/svg/SVGResourceImage.h: Added.
-        * platform/graphics/svg/SVGResourceMarker.cpp: Added.
-        (WebCore::SVGResourceMarker::SVGResourceMarker):
-        (WebCore::SVGResourceMarker::~SVGResourceMarker):
-        (WebCore::SVGResourceMarker::setMarker):
-        (WebCore::SVGResourceMarker::setRef):
-        (WebCore::SVGResourceMarker::draw):
-        (WebCore::SVGResourceMarker::externalRepresentation):
-        (WebCore::getMarkerById):
-        * platform/graphics/svg/SVGResourceMarker.h: Added.
-        (WebCore::SVGResourceMarker::refX):
-        (WebCore::SVGResourceMarker::refY):
-        (WebCore::SVGResourceMarker::setAngle):
-        (WebCore::SVGResourceMarker::setAutoAngle):
-        (WebCore::SVGResourceMarker::angle):
-        (WebCore::SVGResourceMarker::setUseStrokeWidth):
-        (WebCore::SVGResourceMarker::useStrokeWidth):
-        (WebCore::SVGResourceMarker::isMarker):
-        * platform/graphics/svg/SVGResourceMasker.cpp: Added.
-        (WebCore::SVGResourceMasker::SVGResourceMasker):
-        (WebCore::SVGResourceMasker::~SVGResourceMasker):
-        (WebCore::SVGResourceMasker::setMask):
-        (WebCore::SVGResourceMasker::mask):
-        (WebCore::SVGResourceMasker::externalRepresentation):
-        (WebCore::getMaskerById):
-        * platform/graphics/svg/SVGResourceMasker.h: Added.
-        (WebCore::SVGResourceMasker::isMasker):
-        * platform/graphics/svg/cg/SVGResourceClipperCg.mm: Added.
-        (WebCore::SVGResourceClipper::applyClip):
-        * platform/graphics/svg/cg/SVGResourceImageCg.mm: Added.
-        (WebCore::SVGResourceImage::SVGResourceImage):
-        (WebCore::SVGResourceImage::~SVGResourceImage):
-        (WebCore::SVGResourceImage::init):
-        (WebCore::SVGResourceImage::size):
-        (WebCore::SVGResourceImage::cgLayer):
-        (WebCore::SVGResourceImage::setCGLayer):
-        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm: Added.
-        (WebCore::applyLuminanceToAlphaFilter):
-        (WebCore::applyExpandAlphatoGrayscaleFilter):
-        (WebCore::transformImageIntoGrayscaleMask):
-        (WebCore::SVGResourceMasker::applyMask):
-        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp: Added.
-        (WebCore::SVGResourceClipper::applyClip):
-        * platform/graphics/svg/qt/SVGResourceImageQt.cpp: Added.
-        (WebCore::SVGResourceImage::init):
-        (WebCore::SVGResourceImage::size):
-        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp: Added.
-        (WebCore::SVGResourceMasker::applyMask):
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsTypes.cpp:
+        * platform/graphics/GraphicsTypes.h:
         * platform/qt/GraphicsContextQt.cpp:
         * rendering/RenderPath.cpp:
         (WebCore::RenderPath::paint):

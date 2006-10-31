@@ -24,13 +24,11 @@
 #define KRenderingPaintServerPattern_H
 #ifdef SVG_SUPPORT
 
-#include "AffineTransform.h"
-#include "FloatRect.h"
 #include "KRenderingPaintServer.h"
 
 namespace WebCore {
 
-class SVGResourceImage;
+class KCanvasImage;
 
 class KRenderingPaintServerPattern : public KRenderingPaintServer
 {
@@ -50,22 +48,22 @@ public:
     void setBoundingBoxMode(bool mode = true);
     
     // 'Pattern' interface
-    SVGResourceImage* tile() const;
-    void setTile(const PassRefPtr<SVGResourceImage>&);
+    KCanvasImage* tile() const;
+    void setTile(KCanvasImage*);
 
     AffineTransform patternTransform() const;
     void setPatternTransform(const AffineTransform&);
 
-    SVGResourceListener* listener() const;
-    void setListener(SVGResourceListener*);
+    KCanvasResourceListener* listener() const;
+    void setListener(KCanvasResourceListener*);
     TextStream& externalRepresentation(TextStream&) const;
 
 private:
-    RefPtr<SVGResourceImage> m_tile;
+    KCanvasImage* m_tile;
     AffineTransform m_patternTransform;
     FloatRect m_bbox;
     bool m_useBoundingBoxMode;
-    SVGResourceListener* m_listener;
+    KCanvasResourceListener* m_listener;
 
 };
 

@@ -226,12 +226,12 @@ KCPaintServerType KRenderingPaintServerRadialGradient::type() const
     return PS_RADIAL_GRADIENT;
 }
 
-SVGResourceListener* KRenderingPaintServerGradient::listener() const
+KCanvasResourceListener* KRenderingPaintServerGradient::listener() const
 {
     return m_listener;
 }
 
-void KRenderingPaintServerGradient::setListener(SVGResourceListener* listener)
+void KRenderingPaintServerGradient::setListener(KCanvasResourceListener* listener)
 {
     m_listener = listener;
 }

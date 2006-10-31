@@ -43,7 +43,7 @@ namespace WebCore {
         SVGFilterElement(const QualifiedName&, Document*);
         virtual ~SVGFilterElement();
 
-        virtual SVGResource* canvasResource();
+        virtual KCanvasFilter* canvasResource();
 
         // 'SVGFilterElement' functions
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
@@ -66,7 +66,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResX, filterResX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResY, filterResY)
 
-        RefPtr<KCanvasFilter> m_filter;
+        KCanvasFilter* m_filter;
     };
 
 } // namespace WebCore

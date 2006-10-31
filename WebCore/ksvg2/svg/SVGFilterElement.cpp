@@ -58,10 +58,13 @@ SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
     // Spec: If the attribute is not specified, the effect is as if a value of "120%" were specified.
     m_width->setValueAsString("120%");
     m_height->setValueAsString("120%");
+
+    m_filter = 0;
 }
 
 SVGFilterElement::~SVGFilterElement()
 {
+    delete m_filter;
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, Enumeration, enumeration, FilterUnits, filterUnits, SVGNames::filterUnitsAttr.localName(), m_filterUnits)
@@ -107,13 +110,13 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-SVGResource* SVGFilterElement::canvasResource()
+KCanvasFilter* SVGFilterElement::canvasResource()
 {
     if (!attached())
         return 0;
 
     if (!m_filter)
-        m_filter = WTF::static_pointer_cast<KCanvasFilter>(renderingDevice()->createResource(RS_FILTER));
+        m_filter = static_cast<KCanvasFilter*>(renderingDevice()->createResource(RS_FILTER));
 
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
@@ -138,7 +141,7 @@ SVGResource* SVGFilterElement::canvasResource()
                 m_filter->addFilterEffect(fe->filterEffect());
         }
     }
-    return m_filter.get();
+    return m_filter;
 }
 
 }
