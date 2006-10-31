@@ -597,14 +597,10 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 
 - (BOOL)_shouldDeleteRange:(DOMRange *)range
 {
-    if (range == nil || [range collapsed])
-        return NO;
-    
-    if (![[self _bridge] canDeleteRange:range])
-        return NO;
-        
-    WebView *webView = [self _webView];
-    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return nil;
+    return coreFrame->editor()->shouldDeleteRange(core(range));
 }
 
 - (void)_deleteRange:(DOMRange *)range 
@@ -1622,28 +1618,42 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canCopy
 {
-    // Copying can be done regardless of whether you can edit.
-    return [self _hasSelection] && [[self _bridge] mayCopy];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return false;
+    return coreFrame->editor()->canCopy();
 }
 
 - (BOOL)_canCut
 {
-    return [self _canCopy] && [self _isEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return false;
+    return coreFrame->editor()->canCut();
 }
 
 - (BOOL)_canDelete
 {
-    return [self _hasSelection] && [self _isEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return false;
+    return coreFrame->editor()->canDelete();
 }
 
 - (BOOL)_canPaste
 {
-    return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return false;
+    return coreFrame->editor()->canPaste();
 }
 
 - (BOOL)_canEdit
 {
-    return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return false;
+    return coreFrame->editor()->canEdit();
 }
 
 - (BOOL)_canEditRichly
@@ -1651,7 +1661,7 @@ static WebHTMLView *lastHitView = nil;
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return NO;
-    return [self _canEdit] && coreFrame->selectionController()->isContentRichlyEditable();
+    return coreFrame->editor()->canEditRichly();
 }
 
 - (BOOL)_canAlterCurrentSelection
@@ -1685,10 +1695,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_isEditable
 {
-    Frame* coreFrame = core([self _frame]);
+    FrameMac* coreFrame = core([self _frame]);
     if (!coreFrame)
         return NO;
-    return [[self _webView] isEditable] || coreFrame->selectionController()->isContentEditable();
+    return coreFrame->selectionController()->isContentEditable();
 }
 
 - (BOOL)_isSelectionInPasswordField
@@ -1696,7 +1706,7 @@ static WebHTMLView *lastHitView = nil;
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return NO;
-    return coreFrame->isSelectionInPasswordField();
+    return coreFrame->selectionController()->isInPasswordField();
 }
 
 - (BOOL)_isSelectionMisspelled
@@ -2273,10 +2283,10 @@ static WebHTMLView *lastHitView = nil;
         return [[self _webView] isEditable] && [self _canEditRichly];
     
     if (action == @selector(copy:))
-        return (frame && frame->mayDHTMLCopy()) || [self _canCopy];
+        return (frame && frame->canDHTMLCopy()) || [self _canCopy];
     
     if (action == @selector(cut:))
-        return (frame && frame->mayDHTMLCut()) || [self _canCut];
+        return (frame && frame->canDHTMLCut()) || [self _canCut];
     
     if (action == @selector(delete:))
         return [self _canDelete];
@@ -2287,10 +2297,10 @@ static WebHTMLView *lastHitView = nil;
         return [self _hasSelection];
     
     if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
-        return (frame && frame->mayDHTMLPaste()) || [self _canPaste];
+        return (frame && frame->canDHTMLPaste()) || [self _canPaste];
     
     if (action == @selector(pasteAsRichText:))
-        return frame && (frame->mayDHTMLPaste()
+        return frame && (frame->canDHTMLPaste()
             || ([self _canPaste] && frame->selectionController()->isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
@@ -3795,7 +3805,7 @@ done:
         return;
     
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame || !coreFrame->hasSelection())
+    if (!coreFrame || !coreFrame->selectionController()->isCaretOrRange())
         return;
 
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h

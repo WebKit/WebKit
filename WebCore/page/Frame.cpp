@@ -1408,11 +1408,6 @@ String Frame::selectedText() const
     return plainText(selectionController()->toRange().get());
 }
 
-bool Frame::hasSelection() const
-{
-    return selectionController()->isCaretOrRange();
-}
-
 SelectionController* Frame::selectionController() const
 {
     return &d->m_selectionController;
@@ -2043,14 +2038,6 @@ void Frame::textDidChangeInTextArea(Element* input)
 {
 }
 
-bool Frame::isSelectionInPasswordField()
-{
-    Node* startNode = selectionController()->start().node();
-    if (startNode)
-        startNode = startNode->shadowAncestorNode();
-    return startNode && startNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
-}
-  
 static void dispatchEditableContentChangedEvents(const EditCommand& command)
 {
      Element* startRoot = command.startingRootEditableElement();
@@ -2202,11 +2189,6 @@ void Frame::pasteFromPasteboard()
 void Frame::pasteAndMatchStyle()
 {
     issuePasteAndMatchStyleCommand();
-}
-
-bool Frame::mayCopy()
-{
-    return !isSelectionInPasswordField();
 }
 
 void Frame::transpose()
@@ -2732,7 +2714,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
 
 void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
 {
-    if (!hasSelection())
+    if (selectionController()->isNone())
         return;
 
     Position extent = selectionController()->extent();
@@ -2839,16 +2821,6 @@ HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShado
     return result;
 }
 
-bool Frame::hasSelection()
-{
-    if (selectionController()->isNone())
-        return false;
-
-    // If a part has a selection, it should also have a document.        
-    ASSERT(document());
-
-    return true;
-}
 
 void Frame::startAutoscrollTimer()
 {

@@ -37,7 +37,7 @@ class EditorClient : public Shared<EditorClient>{
 public:
     virtual ~EditorClient() { }
 
-    virtual bool shouldDeleteRange(Range *range) = 0;
+    virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
     
     virtual bool isContinuousSpellCheckingEnabled() = 0;

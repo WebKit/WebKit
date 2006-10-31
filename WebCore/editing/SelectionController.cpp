@@ -34,6 +34,8 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "RenderView.h"
@@ -47,6 +49,7 @@
 namespace WebCore {
 
 using namespace EventNames;
+using namespace HTMLNames;
 
 SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_needsLayout(true)
@@ -1074,6 +1077,22 @@ void SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
     setSelection(Selection(visibleStart, visibleEnd), closeTyping);
 }
 
+bool SelectionController::isInPasswordField() const
+{
+    Node* startNode = start().node();
+    if (!startNode)
+        return false;
+
+    startNode = startNode->shadowAncestorNode();
+    if (!startNode)
+        return false;
+
+    if (!startNode->hasTagName(inputTag))
+        return false;
+    
+    return static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
+}
+  
 #ifndef NDEBUG
 
 void SelectionController::formatForDebugger(char* buffer, unsigned length) const

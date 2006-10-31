@@ -1174,12 +1174,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         [(WebHTMLView *)view transpose:nil];
 }
 
-- (BOOL)canPaste
-{
-    NSView* documentView = [[_frame frameView] documentView];
-    return [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView*)documentView _canPaste];
-}
-
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)]) {

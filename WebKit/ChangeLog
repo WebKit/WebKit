@@ -1,3 +1,24 @@
+2006-10-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alice.
+        
+        Moved some Editing code from WebKit, the bridge, and WebCore::Frame down 
+        to WebCore::Editor.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _shouldDeleteRange:]):
+        (-[WebHTMLView _canCopy]):
+        (-[WebHTMLView _canCut]):
+        (-[WebHTMLView _canDelete]):
+        (-[WebHTMLView _canPaste]):
+        (-[WebHTMLView _canEdit]):
+        (-[WebHTMLView _canEditRichly]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView _isSelectionInPasswordField]):
+        (-[NSArray validateUserInterfaceItem:]):
+        (-[NSArray _expandSelectionToGranularity:]):
+
 2006-10-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth and Adam

@@ -60,22 +60,42 @@ EditorClient* Editor::client() const
     return m_client.get();
 }
 
-bool Editor::canCopy()
+bool Editor::canEdit() const
 {
-    return false;
+    SelectionController* selectionController = m_frame->selectionController();
+    return selectionController->isCaretOrRange() && selectionController->isContentEditable();
 }
 
-bool Editor::canCut()
+bool Editor::canEditRichly() const
 {
-    return false;
+    SelectionController* selectionController = m_frame->selectionController();
+    return canEdit() && selectionController->isContentRichlyEditable();
 }
 
-bool Editor::canDelete()
+bool Editor::canCut() const
 {
-    return false;
+    return canCopy() && canDelete();
 }
 
-bool Editor::canDeleteRange(Range* range)
+bool Editor::canCopy() const
+{
+    SelectionController* selectionController = m_frame->selectionController();
+    return selectionController->isRange() && !selectionController->isInPasswordField();
+}
+
+bool Editor::canPaste() const
+{
+    SelectionController* selectionController = m_frame->selectionController();
+    return selectionController->isCaretOrRange() && selectionController->isContentEditable();
+}
+
+bool Editor::canDelete() const
+{
+    SelectionController* selectionController = m_frame->selectionController();
+    return selectionController->isRange() && selectionController->isContentEditable();
+}
+
+bool Editor::canDeleteRange(Range* range) const
 {
     ExceptionCode ec = 0;
     Node* startContainer = range->startContainer(ec);
@@ -96,11 +116,6 @@ bool Editor::canDeleteRange(Range* range)
     return true;
 }
 
-bool Editor::canPaste()
-{
-    return false;
-}
-
 bool Editor::canSmartCopyOrDelete()
 {
     return false;
@@ -112,15 +127,10 @@ void Editor::deleteSelection()
 
 void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     applyCommand(new DeleteSelectionCommand(m_frame->document(), smartDelete));
-}
-
-bool Editor::isSelectionRichlyEditable()
-{
-    return false;
 }
 
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard pasteboard)
@@ -136,7 +146,7 @@ Range* Editor::selectedRange()
     return 0;
 }
 
-bool Editor::shouldDeleteRange(Range* range)
+bool Editor::shouldDeleteRange(Range* range) const
 {
     ExceptionCode ec;
     if (!range || range->collapsed(ec))
@@ -170,7 +180,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
 {
 }
 
-bool Editor::shouldShowDeleteInterface(HTMLElement* element)
+bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 {
     return m_client->shouldShowDeleteInterface(element);
 }
@@ -298,7 +308,7 @@ void Editor::paste()
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
-    if (isSelectionRichlyEditable())
+    if (canEditRichly())
         pasteWithPasteboard(generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(generalPasteboard());

@@ -76,12 +76,6 @@ typedef enum {
 } WebCoreDeviceType;
 
 typedef enum {
-    WebSelectionStateNone,
-    WebSelectionStateCaret,
-    WebSelectionStateRange
-} WebSelectionState;
-
-typedef enum {
     WebSelectByMoving,
     WebSelectByExtending
 } WebSelectionAlteration;
@@ -263,8 +257,6 @@ typedef enum {
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture;
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string;
 
-- (BOOL)mayCopy;
-
 - (NSString *)selectedString;
 
 - (NSString *)stringForRange:(DOMRange *)range;
@@ -311,7 +303,6 @@ typedef enum {
 - (WebBridgeSelectionGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
-- (BOOL)canDeleteRange:(DOMRange *)range;
 - (void)selectNSRange:(NSRange)range;
 - (NSRange)selectedNSRange;
 - (NSRange)markedTextNSRange;
@@ -502,7 +493,6 @@ typedef enum {
 - (BOOL)shouldEndEditing:(DOMRange *)range;
 - (void)didBeginEditing;
 - (void)didEndEditing;
-- (BOOL)canPaste;
 
 - (NSString *)overrideMediaType;
 

@@ -45,9 +45,9 @@ public:
 
     SelectionController(Frame* = 0, bool isDragCaretController = false);
 
-    Element* rootEditableElement() const { return selection().rootEditableElement(); }
-    bool isContentEditable() const { return selection().isContentEditable(); }
-    bool isContentRichlyEditable() const { return selection().isContentRichlyEditable(); }
+    Element* rootEditableElement() const { return m_sel.rootEditableElement(); }
+    bool isContentEditable() const { return m_sel.isContentEditable(); }
+    bool isContentRichlyEditable() const { return m_sel.isContentRichlyEditable(); }
 
     void moveTo(const Range*, EAffinity, bool userTriggered = false);
     void moveTo(const VisiblePosition&, bool userTriggered = false);
@@ -94,6 +94,7 @@ public:
     bool isCaret() const { return m_sel.isCaret(); }
     bool isRange() const { return m_sel.isRange(); }
     bool isCaretOrRange() const { return m_sel.isCaretOrRange(); }
+    bool isInPasswordField() const;
 
     PassRefPtr<Range> toRange() const { return m_sel.toRange(); }
 

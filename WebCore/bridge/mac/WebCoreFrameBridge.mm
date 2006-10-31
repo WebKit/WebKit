@@ -246,46 +246,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return nil;
 }
 
-#if 0
-// FIXME: This is not getting called any more! security regression!?
-- (BOOL)_shouldAllowAccessFrom:(WebCoreFrameBridge *)source
-{
-    // if no source frame, allow access
-    if (source == nil)
-        return YES;
-
-    //   - allow access if the two frames are in the same window
-    if ([self page] == [source page])
-        return YES;
-
-    //   - allow if the request is made from a local file.
-    NSString *sourceDomain = [self domain];
-    if ([sourceDomain length] == 0)
-        return YES;
-
-    //   - allow access if this frame or one of its ancestors
-    //     has the same origin as source
-    for (WebCoreFrameBridge *ancestor = self; ancestor; ancestor = [ancestor parent]) {
-        NSString *ancestorDomain = [ancestor domain];
-        if (ancestorDomain != nil && 
-            isCaseSensitiveEqual(sourceDomain, ancestorDomain))
-            return YES;
-    }
-
-    //   - allow access if this frame is a toplevel window and the source
-    //     can access its opener. Note that we only allow one level of
-    //     recursion here.
-    if ([self parent] == nil) {
-        NSString *openerDomain = [[self opener] domain];
-        if (openerDomain != nil && isCaseSensitiveEqual(sourceDomain, openerDomain))
-            return YES;
-    }
-    
-    // otherwise deny access
-    return NO;
-}
-#endif
-
 + (NSArray *)supportedNonImageMIMETypes
 {
     return [NSArray arrayWithObjects:        
@@ -489,26 +449,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         frameView->setMarginWidth(mw);
     if (mh >= 0)
         frameView->setMarginHeight(mh);
-}
-
-- (WebSelectionState)selectionState
-{
-    switch (m_frame->selectionController()->state()) {
-        case WebCore::Selection::NONE:
-            return WebSelectionStateNone;
-        case WebCore::Selection::CARET:
-            return WebSelectionStateCaret;
-        case WebCore::Selection::RANGE:
-            return WebSelectionStateRange;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return WebSelectionStateNone;
-}
-
-- (BOOL)mayCopy
-{
-    return m_frame->mayCopy();
 }
 
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
@@ -1106,7 +1046,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return nil;
 
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
@@ -1120,7 +1060,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
 
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
@@ -1132,7 +1072,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     SelectionController* selectionController = m_frame->selectionController();
     selectionController->modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance), true);
@@ -1236,7 +1176,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceMarkedTextWithText:(NSString *)text
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     int exception = 0;
@@ -1249,27 +1189,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         TypingCommand::insertText(m_frame->document(), text, YES);
     
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
-- (BOOL)canDeleteRange:(DOMRange *)range
-{
-    Node *startContainer = [[range startContainer] _node];
-    Node *endContainer = [[range endContainer] _node];
-    if (startContainer == nil || endContainer == nil)
-        return NO;
-    
-    if (!startContainer->isContentEditable() || !endContainer->isContentEditable())
-        return NO;
-    
-    if ([range collapsed]) {
-        VisiblePosition start(startContainer, [range startOffset], DOWNSTREAM);
-        VisiblePosition previous = start.previous();
-        // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
-        if (previous.isNull() || previous.deepEquivalent().node()->rootEditableElement() != startContainer->rootEditableElement())
-            return NO;
-    }
-    
-    return YES;
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
@@ -1389,7 +1308,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    if (!m_frame->hasSelection() || !fragment)
+    if (m_frame->selectionController()->isNone() || !fragment)
         return;
     
     applyCommand(new ReplaceSelectionCommand(m_frame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
@@ -1428,7 +1347,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMNode *)increaseSelectionListLevel;
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
@@ -1438,7 +1357,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMNode *)increaseSelectionListLevelOrdered;
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
@@ -1448,7 +1367,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMNode *)increaseSelectionListLevelUnordered;
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
@@ -1458,7 +1377,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)decreaseSelectionListLevel
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
@@ -1467,7 +1386,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertLineBreak
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     TypingCommand::insertLineBreak(m_frame->document());
@@ -1476,7 +1395,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparator
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     TypingCommand::insertParagraphSeparator(m_frame->document());
@@ -1485,7 +1404,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparatorInQuotedContent
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
@@ -1494,7 +1413,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
 {
-    if (!m_frame->hasSelection())
+    if (m_frame->selectionController()->isNone())
         return;
     
     TypingCommand::insertText(m_frame->document(), text, selectInsertedText);

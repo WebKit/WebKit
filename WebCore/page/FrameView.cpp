@@ -683,7 +683,7 @@ static bool nodeIsNotBeingEdited(Node* node, Frame* frame)
 static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed, PlatformScrollbar* scrollbar)
 {
     // During selection, use an I-beam no matter what we're over.
-    if (mousePressed && frame->hasSelection())
+    if (mousePressed && frame->selectionController()->isCaretOrRange())
         return iBeamCursor();
 
     Node* node = event.targetNode();

@@ -28,6 +28,7 @@
 
 #include <wtf/HashMap.h>
 #include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "PlatformString.h"
 #include "SelectionController.h"
@@ -168,7 +169,7 @@ bool enabledAnyEditableSelection(Frame* frame)
 
 bool enabledPaste(Frame* frame)
 {
-    return supportsPasteCommand && frame->canPaste();
+    return supportsPasteCommand && frame->editor()->canPaste();
 }
 
 bool enabledAnyRangeSelection(Frame* frame)

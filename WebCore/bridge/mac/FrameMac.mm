@@ -1599,7 +1599,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                         _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint() + delta);
                     } 
 
-                    setMouseDownMayStartDrag(dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && mayCopy());
+                    setMouseDownMayStartDrag(dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && !selectionController()->isInPasswordField());
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(ClipboardImageWritable);
@@ -1687,24 +1687,24 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPo
 // We need to use onbeforecopy as a real menu enabler because we allow elements that are not
 // normally selectable to implement copy/paste (like divs, or a document body).
 
-bool FrameMac::mayDHTMLCut()
+bool FrameMac::canDHTMLCut()
 {
-    return mayCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
+    return editor()->canCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
 }
 
-bool FrameMac::mayDHTMLCopy()
+bool FrameMac::canDHTMLCopy()
 {
-    return mayCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
+    return editor()->canCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
 }
 
-bool FrameMac::mayDHTMLPaste()
+bool FrameMac::canDHTMLPaste()
 {
     return !dispatchCPPEvent(beforepasteEvent, ClipboardNumb);
 }
 
 bool FrameMac::tryDHTMLCut()
 {
-    if (!mayCopy())
+    if (!editor()->canCopy())
         return false;
 
     // Must be done before oncut adds types and data to the pboard,
@@ -1716,7 +1716,7 @@ bool FrameMac::tryDHTMLCut()
 
 bool FrameMac::tryDHTMLCopy()
 {
-    if (!mayCopy())
+    if (!editor()->canCopy())
         return false;
 
     // Must be done before oncopy adds types and data to the pboard,
@@ -2497,11 +2497,6 @@ bool FrameMac::canUndo() const
 bool FrameMac::canRedo() const
 {
     return [[Mac(this)->_bridge undoManager] canRedo];
-}
-
-bool FrameMac::canPaste() const
-{
-    return [Mac(this)->_bridge canPaste];
 }
 
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)

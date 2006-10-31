@@ -1,3 +1,25 @@
+2006-10-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alice.
+
+        Moved some Editing code from WebKit, the bridge, and WebCore::Frame down 
+        to WebCore::Editor.
+        
+        Layout tests pass.
+        
+        Renamed "may*" to "can*" because "can" is more accurate (these functions
+        aren't just about permission) and it matches WebKit.
+
+        (WebCore::FrameMac::handleMouseMoveEvent): Directly test for dragging in a 
+        password field. Now that WebCore fully implements canCopy(), it doesn't just
+        mean "the selection is not in a password field" anymore.
+        (-[WebCoreFrameBridge _shouldAllowAccessFrom:]): Removed this #ifed-out code. 
+        The fact that it's not called anymore may represent a security issue, but I
+        don't see how commented-out code will help reveal the issue, and the
+        bridge is going away, anyway.
+        * editing/SelectionController.h: Changed selection() calls to references
+        to m_sel, to match the rest of the file.
+
 2006-10-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

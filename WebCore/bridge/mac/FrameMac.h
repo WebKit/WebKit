@@ -191,9 +191,9 @@ public:
     void dragSourceMovedTo(const PlatformMouseEvent&);
     void dragSourceEndedAt(const PlatformMouseEvent&, NSDragOperation);
 
-    bool mayDHTMLCut();
-    bool mayDHTMLCopy();
-    bool mayDHTMLPaste();
+    bool canDHTMLCut();
+    bool canDHTMLCopy();
+    bool canDHTMLPaste();
     bool tryDHTMLCut();
     bool tryDHTMLCopy();
     bool tryDHTMLPaste();
@@ -285,7 +285,6 @@ public:
     
     virtual void handledOnloadEvents();
 
-    virtual bool canPaste() const;
     virtual bool canRedo() const;
     virtual bool canUndo() const;
     virtual void print();
