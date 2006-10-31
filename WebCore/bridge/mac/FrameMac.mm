@@ -709,8 +709,10 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                 
                 if (markMisspelling)
                     [checker updateSpellingPanelWithMisspelledWord:[chunk substringWithRange:misspellingNSRange]];
+#ifndef BUILDING_ON_TIGER
                 else
                     [checker updateSpellingPanelWithGrammarString:[chunk substringWithRange:badGrammarNSRange] detail:grammarDetail];
+#endif
                 
                 [chunk release];
                 return;

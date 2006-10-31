@@ -1,3 +1,9 @@
+2006-10-31  John Sullivan  <sullivan@apple.com>
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        build fix: needed #ifndef BUILDING_ON_TIGER in one more place
+
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben
