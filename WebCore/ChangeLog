@@ -1,5 +1,21 @@
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Brady
+        
+        - minor cleanup to make future patches clearer
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        renamed misspelling to misspellingNSRange for clarity; changed > 0 test to == 0 test
+        with "continue" to better match structure of similar code in markMisspellings; a few
+        other style tweaks.
+        
+        (WebCore::FrameMac::markMisspellings):
+        renamed misspelling to misspellingNSRange for clarity; removed unnecessary braces around
+        a block just after a break and outdented accordingly.
+
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Geoff Garen
         
         WebCore part of change to push the code that updates the spelling panel

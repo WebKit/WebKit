@@ -635,44 +635,43 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
             int len = it.length();
             if (len > 1 || !DeprecatedChar(chars[0]).isSpace()) {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
-                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
+                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
                 [chunk release];
-                if (misspelling.length > 0) {
-                    // Build up result range and string.  Note the misspelling may span many text nodes,
-                    // but the CharIterator insulates us from this complexity
-                    RefPtr<Range> misspellingRange(rangeOfContents(document()));
-                    CharacterIterator chars(it.range().get());
-                    chars.advance(misspelling.location);
-                    misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                    DeprecatedString result = chars.string(misspelling.length);
-                    misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-
-                    selectionController()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
-                    revealSelection();
-                    // Mark misspelling in document.
-                    document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-                    [checker updateSpellingPanelWithMisspelledWord:result];
-                    return;
+                if (misspellingNSRange.length == 0) {
+                    it.advance();
+                    continue;
                 }
+
+                // Build up result range and string.  Note the misspelling may span many text nodes,
+                // but the CharIterator insulates us from this complexity
+                RefPtr<Range> misspellingRange(rangeOfContents(document()));
+                CharacterIterator chars(it.range().get());
+                chars.advance(misspellingNSRange.location);
+                misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
+                DeprecatedString result = chars.string(misspellingNSRange.length);
+                misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
+                selectionController()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
+                revealSelection();
+                // Mark misspelling in document.
+                document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                
+                [checker updateSpellingPanelWithMisspelledWord:result];
+                return;
             }
-        
-            it.advance();
         }
+        
         if (it.atEnd()) {
-            if (wrapped || !startedWithSelection) {
-                break;      // finished the second range, or we did the whole doc with the first range
-            } else {
-                // we've gone from the selection to the end of doc, now wrap around
-                wrapped = YES;
-                searchRange->setStart(topNode, 0, exception);
-                // going until the end of the very first chunk we tested is far enough
-                searchRange->setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset, exception);
-                it = WordAwareIterator(searchRange.get());
-            }
+            if (wrapped || !startedWithSelection)
+                return;      // finished the second range, or we did the whole doc with the first range
+
+            // we've gone from the selection to the end of doc, now wrap around
+            wrapped = YES;
+            searchRange->setStart(topNode, 0, exception);
+            // going until the end of the very first chunk we tested is far enough
+            searchRange->setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset, exception);
+            it = WordAwareIterator(searchRange.get());
         }   
     }
-    
-    return;
 }
 
 bool FrameMac::wheelEvent(NSEvent *event)
@@ -2481,22 +2480,22 @@ void FrameMac::markMisspellings(const Selection& selection)
             int startIndex = 0;
             // Loop over the chunk to find each misspelling in it.
             while (startIndex < len) {
-                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
-                if (misspelling.length == 0)
+                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
+                if (misspellingNSRange.length == 0)
                     break;
-                else {
-                    // Build up result range and string.  Note the misspelling may span many text nodes,
-                    // but the CharIterator insulates us from this complexity
-                    RefPtr<Range> misspellingRange(rangeOfContents(document()));
-                    CharacterIterator chars(it.range().get());
-                    chars.advance(misspelling.location);
-                    misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                    chars.advance(misspelling.length);
-                    misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                    // Mark misspelling in document.
-                    document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-                    startIndex = misspelling.location + misspelling.length;
-                }
+
+                // Build up result range and string.  Note the misspelling may span many text nodes,
+                // but the CharIterator insulates us from this complexity
+                RefPtr<Range> misspellingRange(rangeOfContents(document()));
+                CharacterIterator chars(it.range().get());
+                chars.advance(misspellingNSRange.location);
+                misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
+                chars.advance(misspellingNSRange.length);
+                misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
+                // Mark misspelling in document.
+                document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                
+                startIndex = misspellingNSRange.location + misspellingNSRange.length;
             }
             [chunk release];
         }
