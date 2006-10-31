@@ -2284,7 +2284,7 @@
 		B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */; };
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; };
 		B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */; };
-		B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */; };
+		B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A015AC0AF6CD53006BCE0E /* SVGResourceClipperCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2A015980AF6CD53006BCE0E /* SVGResourceClipperCg.mm */; };
 		B2A015AD0AF6CD53006BCE0E /* SVGResourceImageCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2A015990AF6CD53006BCE0E /* SVGResourceImageCg.mm */; };
 		B2A015AE0AF6CD53006BCE0E /* SVGResourceMaskerCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2A0159A0AF6CD53006BCE0E /* SVGResourceMaskerCg.mm */; };
@@ -10540,7 +10540,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10555,7 +10554,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
