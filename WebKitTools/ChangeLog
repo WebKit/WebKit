@@ -1,3 +1,15 @@
+2006-10-31  Darin Adler  <darin@apple.com>
+
+        * DumpRenderTree/DumpRenderTree.m: Instead of allocating a single local
+        pasteboard, allocate any number of local pasteboards.
+        (main): Allocate the dictionary of pasteboards.
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]): Allocate a pasteboard,
+        given a name.
+        (+[LocalPasteboard alloc]): Added, so we don't have to call NSAllocateObject
+        explicitly elsewhere.
+        (-[LocalPasteboard addTypes:owner:]): Added a check that the owner responds
+        to the selector rather than calling unconditionally.
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         - fixed build

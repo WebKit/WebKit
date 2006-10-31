@@ -124,7 +124,7 @@ static BOOL repaintSweepHorizontally = NO;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
-static NSPasteboard *localPasteboard;
+static NSMutableDictionary *localPasteboards;
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
@@ -290,7 +290,8 @@ int main(int argc, const char *argv[])
         sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     
-    localPasteboard = [(LocalPasteboard *)NSAllocateObject([LocalPasteboard class], 0, 0) init];
+    localPasteboards = [[NSMutableDictionary alloc] init];
+
     navigationController = [[NavigationController alloc] init];
 
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
@@ -387,8 +388,8 @@ int main(int argc, const char *argv[])
     [editingDelegate release];
     [uiDelegate release];
     
-    [localPasteboard release];
-    localPasteboard = nil;
+    [localPasteboards release];
+    localPasteboards = nil;
     
     [navigationController release];
     navigationController = nil;
@@ -1022,15 +1023,29 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
 
 @implementation DumpRenderTreePasteboard
 
-// Return a local pasteboard so we don't disturb the real pasteboard when running tests.
-+ (NSPasteboard *)generalPasteboard
+// Return a local pasteboard so we don't disturb the real pasteboards when running tests.
++ (NSPasteboard *)_pasteboardWithName:(NSString *)name
 {
-    return localPasteboard;
+    static int number = 0;
+    if (!name)
+        name = [NSString stringWithFormat:@"LocalPasteboard%d", ++number];
+    LocalPasteboard *pasteboard = [localPasteboards objectForKey:name];
+    if (pasteboard)
+        return pasteboard;
+    pasteboard = [[LocalPasteboard alloc] init];
+    [localPasteboards setObject:pasteboard forKey:name];
+    [pasteboard release];
+    return pasteboard;
 }
 
 @end
 
 @implementation LocalPasteboard
+
++ (id)alloc
+{
+    return NSAllocateObject(self, 0, 0);
+}
 
 - (id)init
 {
@@ -1078,7 +1093,7 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
             [typesSet addObject:setType];
             [setType release];
         }
-        if (newOwner)
+        if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
             [newOwner pasteboard:self provideDataForType:setType];
     }
     return ++changeCount;
