@@ -1,5 +1,12 @@
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
+        * English.lproj/WebViewEditingContextMenu.nib/info.nib:
+        * English.lproj/WebViewEditingContextMenu.nib/objects.nib:
+        Another wording change to match framework, post-Tiger:
+        "Check Spelling" -> "Check Document Now"
+
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Geoff Garen.
         
         Moved spelling-related methods from bridge to EditorClient. Added one not-yet-used
