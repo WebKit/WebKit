@@ -112,7 +112,7 @@ public:
     virtual void setView(FrameView*);
     virtual void frameDetached();
 
-    String advanceToNextMisspelling(bool startBeforeSelection = false);
+    void advanceToNextMisspelling(bool startBeforeSelection = false);
     
     virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);

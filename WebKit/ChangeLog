@@ -1,5 +1,15 @@
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Geoff Garen
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray checkSpelling:]):
+        removed code to update spelling panel; WebCore handles that now
+        (-[NSArray showGuessPanel:]):
+        ditto
+
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
         * English.lproj/WebViewEditingContextMenu.nib/info.nib:
         * English.lproj/WebViewEditingContextMenu.nib/objects.nib:
         Another wording change to match framework, post-Tiger:

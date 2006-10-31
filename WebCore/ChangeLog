@@ -1,3 +1,16 @@
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen
+        
+        WebCore part of change to push the code that updates the spelling panel
+        into WebCore, in preparation for some grammar-checking stuff.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        no more return value for this method, and update the spelling panel with
+        the misspelled word here rather than in the WebKit callers.
+
 2006-10-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.

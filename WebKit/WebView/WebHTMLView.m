@@ -4537,21 +4537,17 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)checkSpelling:(id)sender
 {
-    // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         LOG_ERROR("No NSSpellChecker");
         return;
     }
     
-    NSString *badWord = core([self _frame])->advanceToNextMisspelling();
-    if (badWord)
-        [checker updateSpellingPanelWithMisspelledWord:badWord];
+    core([self _frame])->advanceToNextMisspelling();
 }
 
 - (void)showGuessPanel:(id)sender
 {
-    // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         LOG_ERROR("No NSSpellChecker");
@@ -4568,9 +4564,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 #endif
     
-    NSString *badWord = core([self _frame])->advanceToNextMisspelling(true);
-    if (badWord)
-        [checker updateSpellingPanelWithMisspelledWord:badWord];
+    core([self _frame])->advanceToNextMisspelling(true);
     [spellingPanel orderFront:sender];
 }
 

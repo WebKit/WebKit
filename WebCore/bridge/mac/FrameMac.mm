@@ -565,7 +565,7 @@ void FrameMac::unfocusWindow()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
+void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 {
     int exception = 0;
 
@@ -592,9 +592,9 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     Node *editableNode = searchRange->startContainer(exception);
     if (!editableNode->isContentEditable()) {
         editableNode = editableNode->nextEditable();
-        if (!editableNode) {
-            return String();
-        }
+        if (!editableNode)
+            return;
+
         searchRange->setStartBefore(editableNode, exception);
         startedWithSelection = false;   // won't need to wrap
     }
@@ -613,12 +613,12 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     }
     
     if (searchRange->collapsed(exception))
-        return String();       // nothing to search in
+        return;       // nothing to search in
     
     // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (checker == nil)
-        return String();
+        return;
         
     WordAwareIterator it(searchRange.get());
     bool wrapped = false;
@@ -651,7 +651,8 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                     revealSelection();
                     // Mark misspelling in document.
                     document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-                    return result;
+                    [checker updateSpellingPanelWithMisspelledWord:result];
+                    return;
                 }
             }
         
@@ -671,7 +672,7 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         }   
     }
     
-    return String();
+    return;
 }
 
 bool FrameMac::wheelEvent(NSEvent *event)
