@@ -1,3 +1,11 @@
+2006-10-30  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11353
+
+        * Drosera/debugger.js: ParsedURL() object now recognizes local files
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

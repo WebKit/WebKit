@@ -982,12 +982,11 @@ function ParsedURL(url)
 {
     // Since we're getting the URL from the browser, we're safe to assume the URL is already well formatted
     // and so there is no need for more sophisticated regular expression here
-    var url_parts = url.match(/(http[s]?:\/\/(www)?\.?(\w|\.|-)+\w(:\d{1,5})?)\/?(.*)/);
-    
-    // the domain here is considered the whole http://www.example.org:8000 string for display purposes
+    var url_parts = ((url.substring(0,4)).toLowerCase() == "file") ? url.match(/(file:[\/]{2,3}(\w|\.|-|_|\/)+)\/(.*)/) : url.match(/(http[s]?:\/\/(www)?\.?(\w|\.|-)+\w(:\d{1,5})?)\/?(.*)/);    
+    // the domain here is considered the whole http://www.example.org:8000 or file:///Users/user/folder/file.htm string for display purposes
     this.domain = url_parts[1];
     // the relative path is everything following the domain
-    this.relativePath = "/" + url_parts[5];
+    this.relativePath = (url_parts[5] === undefined) ? "/" + url_parts[3] : "/" + url_parts[5];
 }
 
 /**
