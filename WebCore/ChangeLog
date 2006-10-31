@@ -1,3 +1,37 @@
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        - fixes <rdar://problem/4804614> Bad grammar ranges are not visibly marked
+        
+        This patch introduces much of the guts of grammar checking, though still not enough to actually
+        check grammar sensibly, due to:
+          
+        <rdar://problem/4811175> Many false reports of bad grammar appear, caused by insufficient 
+        context passed to grammar checker
+
+        * platform/Logging.h:
+        * platform/Logging.cpp:
+        new log channel SpellingAndGrammar
+
+        * bridge/mac/WebCorePageBridge.mm:
+        (initializeLoggingChannelsIfNecessary):
+        initialize new log channel
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        Compute bad grammar range when computing misspelling range. Find first detailed grammar range from the
+        set NSSpellChecker determines. Compare it with misspelling range to see which is earliest (or shortest
+        in the event of a tie), and do further processing with that one (select range; create marker that
+        causes range to be visibly marked with a funky underline; update spelling panel appropriately).
+        (WebCore::FrameMac::markMisspellings):
+        More or less the same types of changes as in advanceToNextMisspelling The loops are structured just 
+        differently enough to make sharing code between these two functions a little tricky, so I decided to 
+        save that for a later patch.
+        
+        (WebCore::FrameMac::respondToChangedSelection):
+        remove grammar markers when we remove spelling markers        
+
 2006-10-31  Nikolas Zimmermann <zimmermann@kde.org>
 
         Reviewed by Mitz.

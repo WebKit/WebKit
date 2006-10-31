@@ -44,6 +44,7 @@ namespace WebCore {
     extern WTFLogChannel LogTextConversion;
     extern WTFLogChannel LogIconDatabase;
     extern WTFLogChannel LogSQLDatabase;
+    extern WTFLogChannel LogSpellingAndGrammar;
 }
 
 #endif
