@@ -56,7 +56,7 @@
 #import <WebKit/WebView.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
-#import <CoreFoundation/CFPasteboard.h>
+#import <CoreFoundation/CoreFoundation.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
 
 #define COMMON_DIGEST_FOR_OPENSSL
@@ -1137,8 +1137,12 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
 - (BOOL)setString:(NSString *)string forType:(NSString *)dataType
 {
     CFDataRef data = NULL;
-    if (string)
-        data = CFPasteboardCreateDataForString(NULL, (CFStringRef)string);
+    if (string) {
+        if ([string length] == 0)
+            data = CFDataCreate(NULL, NULL, 0);
+        else
+            data = CFStringCreateExternalRepresentation(NULL, (CFStringRef)string, kCFStringEncodingUTF8, 0);
+    }
     BOOL result = [self setData:(NSData *)data forType:dataType];
     if (data)
         CFRelease(data);
