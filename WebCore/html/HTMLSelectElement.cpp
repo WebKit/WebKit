@@ -66,6 +66,9 @@ HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     , m_multiple(false)
     , m_recalcListItems(false)
     , m_lastOnChangeIndex(0)
+    , m_activeSelectionAnchorIndex(-1)
+    , m_activeSelectionEndIndex(-1)
+    , m_activeSelectionState(false)
     , m_repeatingChar(0)
     , m_lastCharTime(0)
     , m_typedString(String())
@@ -161,13 +164,23 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
     HTMLOptionElement* element = 0;
+
     if (listIndex >= 0) {
         element = static_cast<HTMLOptionElement*>(items[listIndex]);
         element->setSelected(true);
     }
+
     if (deselect)
         deselectItems(element);
-    if (fireOnChange && m_lastOnChangeIndex != optionIndex) {
+
+    if (listIndex >= 0) {
+        if (m_activeSelectionAnchorIndex < 0 || deselect)
+            setActiveSelectionAnchorIndex(listIndex);
+        if (m_activeSelectionEndIndex < 0 || deselect)
+            setActiveSelectionEndIndex(listIndex);
+    }
+
+    if (usesMenuList() && fireOnChange && m_lastOnChangeIndex != optionIndex) {
         m_lastOnChangeIndex = optionIndex;
         onChange();
     }
@@ -522,7 +535,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
 void HTMLSelectElement::dispatchBlurEvent()
 {
 #if !ARROW_KEYS_POP_MENU
-    if (selectedIndex() != m_lastOnChangeIndex) {
+    if (usesMenuList() && selectedIndex() != m_lastOnChangeIndex) {
         m_lastOnChangeIndex = selectedIndex();
         onChange();
     }
@@ -616,9 +629,9 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 {
     if (evt->type() == mousedownEvent) {
         MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
-        if (HTMLOptionElement* element = static_cast<RenderListBox*>(renderer())->optionAtPoint(mEvt->x(), mEvt->y())) {
-            bool deselectOtherOptions = true;
-            bool shouldSelect = true;
+        int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(mEvt->offsetX(), mEvt->offsetY());
+        if (listIndex >= 0) {
+            m_activeSelectionState = true;
             
             bool multiSelectKeyPressed = false;
 #if PLATFORM(MAC)
@@ -626,44 +639,165 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 #else
             multiSelectKeyPressed = mEvt->ctrlKey();
 #endif
-            if (multiple() && multiSelectKeyPressed)
-                deselectOtherOptions = false;
-            if (element->selected() && multiSelectKeyPressed)
-                shouldSelect = false;
+
+            bool shiftSelect = multiple() && mEvt->shiftKey();
+            bool multiSelect = multiple() && multiSelectKeyPressed && !mEvt->shiftKey();
             
-            int optionIndex = element->index();
-            if (!shouldSelect) {
-                optionIndex = -1;
-                element->m_selected = false;
+            HTMLElement* clickedElement = listItems()[listIndex];            
+            HTMLOptionElement* option = 0;
+            if (clickedElement->hasLocalName(optionTag)) {
+                option = static_cast<HTMLOptionElement*>(clickedElement);
+                
+                // Keep track of whether an active selection (like during drag selection), should select or deselect
+                if (option->selected() && multiSelectKeyPressed)
+                    m_activeSelectionState = false;
+
+                if (!m_activeSelectionState)
+                    option->m_selected = false;
             }
-            setSelectedIndex(optionIndex, deselectOtherOptions);
+            
+            // If we're not in any special multiple selection mode, then deselect all other items, excluding the clicked option.
+            // If no option was clicked, then this will deselect all items in the list.
+            if (!shiftSelect && !multiSelect)
+                deselectItems(option);
+
+            // If the anchor hasn't been set, and we're doing a single selection or a shift selection, then initialize the anchor to the first selected index.
+            if (m_activeSelectionAnchorIndex < 0 && !multiSelect)
+                setActiveSelectionAnchorIndex(selectedIndex());
+
+            // Set the selection state of the clicked option
+            if (option && !option->disabled())
+                option->m_selected = true;
+            
+            // If there was no selectedIndex() for the previous initialization, or
+            // If we're doing a single selection, or a multiple selection (using cmd or ctrl), then initialize the anchor index to the listIndex that just got clicked.
+            if (listIndex >= 0 && (m_activeSelectionAnchorIndex < 0 || !shiftSelect))
+                setActiveSelectionAnchorIndex(listIndex);
+            
+            setActiveSelectionEndIndex(listIndex);
+            updateListBoxSelection(!multiSelect);
+            renderer()->repaint();
         }
-    } else if (evt->type() == keypressEvent) {
+    } else if (evt->type() == mouseupEvent && document()->frame()->autoscrollRenderer() != renderer())
+        // This makes sure we fire onChange for a single click.  For drag selection, onChange will fire when the autoscroll timer stops.
+        listBoxOnChange();
+    else if (evt->type() == keypressEvent) {
         if (!evt->isKeyboardEvent())
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         
-        int index = 0;
+        int endIndex = 0;
         const Vector<HTMLElement*>& items = listItems();
-
-        if (keyIdentifier == "Down") {
-            index = nextSelectableListIndex(lastSelectedListIndex());
-            
-        } else if (keyIdentifier == "Up") {
-            index = previousSelectableListIndex(optionToListIndex(selectedIndex()));
+        
+        if (m_activeSelectionEndIndex < 0) {
+            // Initialize the end index
+            if (keyIdentifier == "Down")
+                endIndex = nextSelectableListIndex(lastSelectedListIndex());
+            else if (keyIdentifier == "Up")
+                endIndex = previousSelectableListIndex(optionToListIndex(selectedIndex()));
+        } else {
+            // Set the end index based on the current end index
+            if (keyIdentifier == "Down")
+                endIndex = nextSelectableListIndex(m_activeSelectionEndIndex);
+            else if (keyIdentifier == "Up")
+                endIndex = previousSelectableListIndex(m_activeSelectionEndIndex);    
         }
+        
         if (keyIdentifier == "Down" || keyIdentifier == "Up") {
-            ASSERT(index >= 0 && (unsigned)index < items.size()); 
-            HTMLOptionElement* element = static_cast<HTMLOptionElement*>(items[index]);
+            ASSERT(endIndex >= 0 && (unsigned)endIndex < items.size()); 
+            setActiveSelectionEndIndex(endIndex);
             
-            setSelectedIndex(element->index(), !multiple() || !static_cast<KeyboardEvent*>(evt)->shiftKey());
-            static_cast<RenderListBox*>(renderer())->scrollToRevealElementAtListIndex(index);
-            
+            // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.
+            bool deselectOthers = !multiple() || !static_cast<KeyboardEvent*>(evt)->shiftKey();
+            if (m_activeSelectionAnchorIndex < 0 || deselectOthers) {
+                m_activeSelectionState = true;
+                if (deselectOthers)
+                    deselectItems();
+                setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
+            }
+
+            static_cast<RenderListBox*>(renderer())->scrollToRevealElementAtListIndex(endIndex);
             evt->setDefaultHandled();
-            setChanged();
+            updateListBoxSelection(deselectOthers);
             renderer()->repaint();
+            
+            listBoxOnChange();
         }
     }
+}
+
+void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
+{
+    m_activeSelectionAnchorIndex = index;
+    
+    // Cache the selection state so we can restore the old selection as the new selection pivots around this anchor index
+    const Vector<HTMLElement*>& items = listItems();
+    m_cachedStateForActiveSelection.clear();
+    for (unsigned i = 0; i < items.size(); i++) {
+        if (items[i]->hasLocalName(optionTag)) {
+            HTMLOptionElement* option = static_cast<HTMLOptionElement*>(items[i]);
+            m_cachedStateForActiveSelection.append(option->selected());
+        } else
+            m_cachedStateForActiveSelection.append(false);
+    }
+}
+
+void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
+{
+    unsigned start;
+    unsigned end;
+    ASSERT(m_activeSelectionAnchorIndex >= 0);
+    start = min(m_activeSelectionAnchorIndex, m_activeSelectionEndIndex);
+    end = max(m_activeSelectionAnchorIndex, m_activeSelectionEndIndex);
+
+    const Vector<HTMLElement*>& items = listItems();
+    for (unsigned i = 0; i < items.size(); i++) {
+        if (items[i]->hasLocalName(optionTag)) {
+            HTMLOptionElement* option = static_cast<HTMLOptionElement*>(items[i]);
+            if (!option->disabled()) {
+                if (i >= start && i <= end)
+                    option->m_selected = m_activeSelectionState;
+                else if (deselectOtherOptions)
+                    option->m_selected = false;
+                else
+                    option->m_selected = m_cachedStateForActiveSelection[i];
+            }
+        }
+    }
+    if (renderer()->isListBox())
+        static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
+}
+
+void HTMLSelectElement::listBoxOnChange()
+{
+    const Vector<HTMLElement*>& items = listItems();
+    
+    // If the cached selection list is empty, or the size has changed, then rebuild the list, fire onChange, and return early.
+    if (m_lastOnChangeSelection.isEmpty() || m_lastOnChangeSelection.size() != items.size()) {
+        m_lastOnChangeSelection.clear();
+        for (unsigned i = 0; i < items.size(); i++) {
+            if (items[i]->hasLocalName(optionTag)) {
+                HTMLOptionElement* option = static_cast<HTMLOptionElement*>(items[i]);
+                m_lastOnChangeSelection.append(option->selected());
+            } else
+                m_lastOnChangeSelection.append(false);
+        }
+        onChange();
+        return;
+    }
+    
+    // Update m_lastOnChangeSelection and fire onChange
+    bool fireOnChange = false;
+    for (unsigned i = 0; i < items.size(); i++) {
+        bool selected = false;
+        if (items[i]->hasLocalName(optionTag))
+            selected = static_cast<HTMLOptionElement*>(items[i])->selected();
+        if (selected != m_lastOnChangeSelection[i])      
+            fireOnChange = true;
+        m_lastOnChangeSelection[i] = selected;
+    }
+    if (fireOnChange)
+        onChange();
 }
 
 static String stripLeadingWhiteSpace(const String& string)

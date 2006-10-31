@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <script>
+            function setup() {
+                var results = document.createElement('div');
+                results.id = "res";
+                results.appendChild(document.createTextNode("Results:"));
+                document.body.appendChild(results);
+            }
+            function test() {
+                setup();
+                
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText();
+                    layoutTestController.waitUntilDone();
+                }
+                
+                log("1) Make sure onChange fires when clicking");
+                clickOnSelect("sl1", 2);
+
+                log("2) Make sure onChange doesn't fire when clicking again on the same item");
+                clickOnSelect("sl1", 2);
+
+                log("3) Make sure onChange fires when clicking on a new item");
+                clickOnSelect("sl1", 0);
+                
+                log("4) Make sure onChange fires when changing the selection with the keyboard");
+                keyPressOnSelect("sl1", "Down", true, false);
+                                
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                
+            }
+            
+            function clickOnSelect(selId, index) {
+                var sl = document.getElementById(selId);
+                var itemHeight = 15;
+                var y = 10 + index * itemHeight;
+                
+                if (window.layoutTestController) {
+                    eventSender.mouseMoveTo(sl.offsetLeft + 10, sl.offsetTop + y);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+                        
+            function keyPressOnSelect(selId, identifier, shift, meta) {
+                var sl = document.getElementById(selId);
+                var event = document.createEvent("KeyboardEvents");
+                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, false, false, shift, meta, false);
+                sl.dispatchEvent(event);
+            }
+            
+            function log(msg) {
+                var r = document.getElementById('res');
+                r.innerHTML = r.innerHTML + "<br>" + msg;
+            }
+        </script>
+    </head>
+    <body onload="test()">
+    <select id="sl1" size=5 multiple onchange="log('onChange fired')">
+    <option>item 0
+    <option>item 1
+    <option>item 2
+    <option>item 3
+    </select>
+    </body>
+</html>

@@ -61,7 +61,8 @@ public:
     int selectedIndex() const;
     void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
     void notifyOptionSelected(HTMLOptionElement* selectedOption, bool selected);
-    
+    int lastSelectedListIndex() const;
+
     virtual bool isEnumeratable() const { return true; }
 
     int length() const;
@@ -125,11 +126,15 @@ public:
 
     HTMLCollection::CollectionInfo* collectionInfo() { return &m_collectionInfo; }
     
+    void setActiveSelectionAnchorIndex(int index);
+    void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
+    void updateListBoxSelection(bool deselectOtherOptions);
+    void listBoxOnChange();
+
 private:
     void recalcListItems() const;
-    void deselectItems(HTMLOptionElement* excludeElement);
+    void deselectItems(HTMLOptionElement* excludeElement = 0);
     bool usesMenuList() const { return !m_multiple && m_size <= 1; }
-    int lastSelectedListIndex() const;
     int nextSelectableListIndex(int startIndex);
     int previousSelectableListIndex(int startIndex);
     void menuListDefaultEventHandler(Event*);
@@ -137,11 +142,17 @@ private:
     void typeAheadFind(KeyboardEvent*);
 
     mutable Vector<HTMLElement*> m_listItems;
+    Vector<bool> m_cachedStateForActiveSelection;
+    Vector<bool> m_lastOnChangeSelection;
     int m_minwidth;
     int m_size;
     bool m_multiple;
     mutable bool m_recalcListItems;
     int m_lastOnChangeIndex;
+    
+    int m_activeSelectionAnchorIndex;
+    int m_activeSelectionEndIndex;  
+    bool m_activeSelectionState;
 
     // Instance variables for type-ahead find
     UChar m_repeatingChar;

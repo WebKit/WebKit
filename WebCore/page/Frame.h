@@ -726,7 +726,7 @@ public:
 
   void setNeedsReapplyStyles();
 
-  void stopAutoscrollTimer();
+  void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
   RenderObject* autoscrollRenderer() const;
 
 protected:

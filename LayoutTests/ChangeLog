@@ -1,3 +1,16 @@
+2006-10-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=11127 NativeListBox: arrow and drag selection should pivot around one list item
+        and http://bugs.webkit.org/show_bug.cgi?id=11173 REGRESSION (NativeListBox): Shift-clicking items in list box doesn't expand the current selection
+        and http://bugs.webkit.org/show_bug.cgi?id=11417 REGRESSION: onchange does not fire for list-style select elements
+
+        * fast/forms/listbox-onchange-expected.txt: Added.
+        * fast/forms/listbox-onchange.html: Added.
+        * fast/forms/listbox-selection-expected.txt: Added.
+        * fast/forms/listbox-selection.html: Added.
+
 2006-10-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

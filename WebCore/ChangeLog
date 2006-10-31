@@ -1,3 +1,47 @@
+2006-10-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=11127 NativeListBox: arrow and drag selection should pivot around one list item
+        and http://bugs.webkit.org/show_bug.cgi?id=11173 REGRESSION (NativeListBox): Shift-clicking items in list box doesn't expand the current selection
+        and http://bugs.webkit.org/show_bug.cgi?id=11417 REGRESSION: onchange does not fire for list-style select elements
+
+        Tests: 
+        * LayoutTests/fast/forms/listbox-selection.html
+        * LayoutTests/fast/forms/listbox-onchange.html
+
+        * html/HTMLSelectElement.h: Added m_selectedListIndexBase and m_selectedListIndexExtent to track indices for the active selection in progress.
+          Added 2 vectors to cache selection state.  One is kept so that the previous selection state can be restored as the active selection grows and shrinks.
+          And one for onChange, that is updated after onChange is fired.
+          Added m_activeSelectionState to keep track of whether the current drag selection is selecting or deselecting.
+ 
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Initialized new variables.
+        (WebCore::HTMLSelectElement::setSelectedIndex): If needed, initialize m_selectedListIndexBase and m_selectedListIndexExtent.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): Only fire the onChange event here for menu lists.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Updates base and extent variables for mouse and key events.
+        (WebCore::HTMLSelectElement::setBase): Added. Also caches the selection state.
+        (WebCore::HTMLSelectElement::setExtent): Added.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Added.
+        (WebCore::HTMLSelectElement::listBoxOnChange): Added.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Only scroll to reveal the first index if both the first and last indices aren't visible.
+        (WebCore::RenderListBox::listIndexAtOffset): Added.  Replaces optionAtPoint, which is no longer used.
+        (WebCore::RenderListBox::autoscroll): Now sets the selection using the select's base and extent.
+        (WebCore::RenderListBox::stopAutoscroll): Added.  Tells the select element to fire onChange.  This is needed because the autoscroll can end from a mouseUp
+         outside of the list box, and the select element won't get a mouseUp event directly.  But the frame will stop the autoscroll at that point, and now we can
+         notify the select element from here.
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex): Checks new listIndexIsVisible method.
+        (WebCore::RenderListBox::listIndexIsVisible): Added.
+        (WebCore::RenderListBox::valueChanged): Removed unnecessary printf.
+
+        * page/Frame.cpp: (WebCore::Frame::stopAutoscrollTimer): Added rendererIsBeingDestroyed argument, so when the renderer calls this during destruction, 
+        we don't try to use the pointer to that renderer to call stopAutoscroll.  This is done so a renderer that's still alive has a chance to do some cleanup after autoscroll.
+        * rendering/RenderListBox.h: (WebCore::RenderListBox::shouldAutoscroll): Always returns true now, since we're also updating selection from the autoscroll timer.
+        * rendering/RenderObject.h: (WebCore::RenderObject::stopAutoscroll): Added.
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::destroy): Calls stopAutoscrollTimer with rendererIsBeingDestroyed argument.
+
 2006-10-31  Beth Dakin  <bdakin@apple.com>
 
         Forgot to check this in a minute ago. Oops!! Thanks Mitz!

@@ -110,7 +110,10 @@ void RenderListBox::updateFromElement()
         setNeedsLayoutAndMinMaxRecalc();
     }
     
-    scrollToRevealElementAtListIndex(select->optionToListIndex(select->selectedIndex()));
+    int firstIndex = select->optionToListIndex(select->selectedIndex());
+    int lastIndex = select->lastSelectedListIndex();
+    if (firstIndex >= 0 && !listIndexIsVisible(firstIndex) && !listIndexIsVisible(lastIndex))
+        scrollToRevealElementAtListIndex(firstIndex);
 }
 
 void RenderListBox::calcMinMaxWidth()
@@ -343,40 +346,54 @@ bool RenderListBox::isPointInScrollbar(HitTestResult& result, int _x, int _y, in
     return false;
 }
 
-HTMLOptionElement* RenderListBox::optionAtPoint(int x, int y)
+int RenderListBox::listIndexAtOffset(int offsetX, int offsetY)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     const Vector<HTMLElement*>& listItems = select->listItems();
-    int yOffset = y - absoluteBoundingBoxRect().y();
-    int newOffset = max(0, yOffset / (style()->font().height() + optionsSpacingMiddle)) + m_indexOffset;
+
+    int newOffset = max(0, offsetY / (style()->font().height() + optionsSpacingMiddle)) + m_indexOffset;
     newOffset = max(0, min((int)listItems.size() - 1, newOffset));
     int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
-    if (x >= absoluteBoundingBoxRect().x() + borderLeft() + paddingLeft() && x < absoluteBoundingBoxRect().right() - borderRight() - paddingRight() - scrollbarWidth)
-        return static_cast<HTMLOptionElement*>(listItems[newOffset]);
-    return 0;
+    if (offsetX >= borderLeft() + paddingLeft() && offsetX < absoluteBoundingBoxRect().width() - borderRight() - paddingRight() - scrollbarWidth)
+        return newOffset;
+            
+    return -1;
 }
 
 void RenderListBox::autoscroll()
 {
     IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->view()->currentMousePosition());
-    IntRect bounds = absoluteBoundingBoxRect();
 
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& items = select->listItems();
-    HTMLOptionElement* element = 0;
+    int rx = 0;
+    int ry = 0;
+    absolutePosition(rx, ry);
+    int offsetX = pos.x() - rx;
+    int offsetY = pos.y() - ry;
+    
+    int endIndex = -1;
     int rows = size();
     int offset = m_indexOffset;
-    if (pos.y() < bounds.y() && scrollToRevealElementAtListIndex(offset - 1) && items[offset - 1]->hasTagName(optionTag))
-        element = static_cast<HTMLOptionElement*>(items[offset - 1]);
-    else if (pos.y() > bounds.bottom() && scrollToRevealElementAtListIndex(offset + rows) && items[offset + rows - 1]->hasTagName(optionTag))
-        element = static_cast<HTMLOptionElement*>(items[offset + rows - 1]);
+    if (offsetY <  0 && scrollToRevealElementAtListIndex(offset - 1))
+        endIndex = offset - 1;
+    else if (offsetY > absoluteBoundingBoxRect().height() && scrollToRevealElementAtListIndex(offset + rows))
+        endIndex = offset + rows - 1;
     else
-        element = optionAtPoint(pos.x(), pos.y());
-        
-    if (element) {
-        select->setSelectedIndex(element->index(), !select->multiple());
+        endIndex = listIndexAtOffset(offsetX, offsetY);
+
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    if (endIndex >= 0 && select) {
+        if (!select->multiple())
+            select->setActiveSelectionAnchorIndex(endIndex);
+        select->setActiveSelectionEndIndex(endIndex);
+        select->updateListBoxSelection(!select->multiple());
         repaint();
     }
+}
+
+void RenderListBox::stopAutoscroll()
+{
+    if ( HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node()))
+        select->listBoxOnChange();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
@@ -384,7 +401,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     const Vector<HTMLElement*>& listItems = select->listItems();
     
-    if (index < 0 || index > (int)listItems.size() - 1 || (index >= m_indexOffset && index < m_indexOffset + size()))
+    if (index < 0 || index > (int)listItems.size() - 1 || listIndexIsVisible(index))
         return false;
 
     int newOffset;
@@ -400,6 +417,11 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     m_indexOffset = newOffset;
     
     return true;
+}
+
+bool RenderListBox::listIndexIsVisible(int index)
+{    
+    return index >= m_indexOffset && index < m_indexOffset + size();
 }
 
 bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
@@ -420,7 +442,6 @@ void RenderListBox::valueChanged(Scrollbar*)
         int newOffset = max(0, m_vBar->value() / (style()->font().height() + optionsSpacingMiddle));
         if (newOffset != m_indexOffset) {
             m_indexOffset = newOffset;
-        //    printf("value changed: new offset index: %d\n", newOffset);
             repaint();
             // Fire the scroll DOM event.
             EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, true, false);

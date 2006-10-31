@@ -608,6 +608,7 @@ public:
     virtual bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
     virtual bool shouldAutoscroll() const;
     virtual void autoscroll();
+    virtual void stopAutoscroll() {};
 
     // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

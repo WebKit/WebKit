@@ -1,0 +1,10 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:(null) affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+
+Results:
+1) Make sure onChange fires when clicking
+onChange fired
+2) Make sure onChange doesn't fire when clicking again on the same item
+3) Make sure onChange fires when clicking on a new item
+onChange fired
+4) Make sure onChange fires when changing the selection with the keyboard
+onChange fired

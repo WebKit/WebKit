@@ -2465,7 +2465,7 @@ void RenderObject::destroy()
 {
     // If this renderer is being autoscrolled, stop the autoscroll timer
     if (document() && document()->frame() && document()->frame()->autoscrollRenderer() == this)
-        document()->frame()->stopAutoscrollTimer();
+        document()->frame()->stopAutoscrollTimer(true);
 
     if (m_hasCounterNodeMap) {
         RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();
