@@ -40,24 +40,24 @@ namespace KJS {
   class FunctionImp : public InternalFunctionImp {
     friend class ActivationImp;
   public:
-    FunctionImp(ExecState* exec, const Identifier& n, FunctionBodyNode* b);
+    FunctionImp(ExecState*, const Identifier& n, FunctionBodyNode* b);
     virtual ~FunctionImp();
 
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
 
-    void addParameter(const Identifier &n);
+    void addParameter(const Identifier& n);
     Identifier getParameterName(int index);
     // parameters in string representation, e.g. (a, b, c)
     UString parameterString() const;
     virtual CodeType codeType() const = 0;
 
-    virtual Completion execute(ExecState *exec) = 0;
+    virtual Completion execute(ExecState*) = 0;
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
     RefPtr<FunctionBodyNode> body;
@@ -88,8 +88,8 @@ namespace KJS {
      * @param exec The current execution state
      * @return The function's scope
      */
-    const ScopeChain &scope() const { return _scope; }
-    void setScope(const ScopeChain &s) { _scope = s; }
+    const ScopeChain& scope() const { return _scope; }
+    void setScope(const ScopeChain& s) { _scope = s; }
 
     virtual void mark();
   protected:
@@ -98,72 +98,73 @@ namespace KJS {
   private:
     ScopeChain _scope;
 
-    static JSValue *argumentsGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
-    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
+    static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* callerGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
-    void processParameters(ExecState *exec, const List &);
-    virtual void processVarDecls(ExecState *exec);
+    void processParameters(ExecState*, const List&);
+    virtual void processVarDecls(ExecState*);
   };
 
   class DeclaredFunctionImp : public FunctionImp {
   public:
-    DeclaredFunctionImp(ExecState *exec, const Identifier &n,
-                        FunctionBodyNode *b, const ScopeChain &sc);
+    DeclaredFunctionImp(ExecState*, const Identifier& n,
+                        FunctionBodyNode* b, const ScopeChain& sc);
 
     bool implementsConstruct() const;
-    JSObject *construct(ExecState *exec, const List &args);
+    JSObject* construct(ExecState*, const List& args);
 
-    virtual Completion execute(ExecState *exec);
+    virtual Completion execute(ExecState*);
     CodeType codeType() const { return FunctionCode; }
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
   private:
-    virtual void processVarDecls(ExecState *exec);
+    virtual void processVarDecls(ExecState*);
   };
 
   class IndexToNameMap {
   public:
-    IndexToNameMap(FunctionImp *func, const List &args);
+    IndexToNameMap(FunctionImp* func, const List& args);
     ~IndexToNameMap();
     
     Identifier& operator[](int index);
     Identifier& operator[](const Identifier &indexIdentifier);
-    bool isMapped(const Identifier &index) const;
-    void unMap(const Identifier &index);
+    bool isMapped(const Identifier& index) const;
+    void unMap(const Identifier& index);
     
   private:
     IndexToNameMap(); // prevent construction w/o parameters
     int size;
-    Identifier * _map;
+    Identifier* _map;
   };
   
   class Arguments : public JSObject {
   public:
-    Arguments(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act);
+    Arguments(ExecState*, FunctionImp* func, const List& args, ActivationImp* act);
     virtual void mark();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static JSValue *mappedIndexGetter(ExecState *exec, JSObject *, const Identifier &, const PropertySlot& slot);
+    static JSValue* mappedIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
 
-    ActivationImp *_activationObject; 
+    ActivationImp* _activationObject; 
     mutable IndexToNameMap indexToNameMap;
   };
 
   class ActivationImp : public JSObject {
   public:
-    ActivationImp(FunctionImp *function, const List &arguments);
+    ActivationImp(FunctionImp* function, const List& arguments);
 
-    virtual bool getOwnPropertySlot(ExecState *exec, const Identifier &, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     
     virtual void mark();
@@ -171,18 +172,18 @@ namespace KJS {
     bool isActivation() { return true; }
   private:
     static PropertySlot::GetValueFunc getArgumentsGetter();
-    static JSValue *argumentsGetter(ExecState *exec, JSObject *, const Identifier &, const PropertySlot& slot);
-    void createArgumentsObject(ExecState *exec) const;
+    static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
+    void createArgumentsObject(ExecState*) const;
     
-    FunctionImp *_function;
+    FunctionImp* _function;
     List _arguments;
-    mutable Arguments *_argumentsObject;
+    mutable Arguments* _argumentsObject;
   };
 
   class GlobalFuncImp : public InternalFunctionImp {
   public:
     GlobalFuncImp(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
     virtual CodeType codeType() const;
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,
            DecodeURI, DecodeURIComponent, EncodeURI, EncodeURIComponent

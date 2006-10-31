@@ -1,3 +1,14 @@
+2006-10-31  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Geoff.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=4166
+        Function object does not support caller property
+
+        * fast/js/caller-property-expected.txt: Added.
+        * fast/js/caller-property.html: Added.
+        * fast/js/resources/caller-property.js: Added.
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Requested by Maciej.

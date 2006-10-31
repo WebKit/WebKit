@@ -1,3 +1,19 @@
+2006-10-31  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=4166
+        Function object does not support caller property
+
+        Test: fast/js/caller-property.html
+
+        * kjs/function.cpp: 
+        (KJS::FunctionImp::callerGetter): added
+        (KJS::FunctionImp::getOwnPropertySlot): added if statement to handle callerGetter()
+        * kjs/function.h: added callerGetter() declaration
+        * kjs/identifier.h: added caller property macro
+        * tests/mozilla/expected.html: 
+
 2006-10-30  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adam.
