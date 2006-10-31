@@ -1,3 +1,9 @@
+2006-10-31  Darin Adler  <darin@apple.com>
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling): Build fix for release Tiger builds.
+        (WebCore::FrameMac::markMisspellings): Ditto.
+
 2006-10-31  John Sullivan  <sullivan@apple.com>
 
         * bridge/mac/FrameMac.mm:

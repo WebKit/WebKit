@@ -641,7 +641,9 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
                 NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
 
+#if !defined(NDEBUG) || !defined(BUILDING_ON_TIGER)
                 NSDictionary *grammarDetail = nil;
+#endif
                 NSRange badGrammarNSRange = NSMakeRange(NSNotFound, 0);
                 NSRange grammarDetailNSRange = NSMakeRange(NSNotFound, 0);
 #ifndef BUILDING_ON_TIGER
@@ -2541,7 +2543,9 @@ void FrameMac::markMisspellings(const Selection& selection)
             while (startIndex < len) {
                 NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
 
+#if !defined(NDEBUG) || !defined(BUILDING_ON_TIGER)
                 NSDictionary *grammarDetail = nil;
+#endif
                 NSRange badGrammarNSRange = NSMakeRange(NSNotFound, 0);
                 NSRange grammarDetailNSRange = NSMakeRange(NSNotFound, 0);
 #ifndef BUILDING_ON_TIGER
