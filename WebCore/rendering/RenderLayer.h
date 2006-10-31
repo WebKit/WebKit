@@ -51,7 +51,6 @@
 namespace WebCore {
 
 class CachedResource;
-class HitTestRequest;
 class HitTestResult;
 class PlatformScrollbar;
 class RenderFrameSet;
@@ -60,6 +59,8 @@ class RenderStyle;
 class RenderTable;
 class RenderText;
 class RenderView;
+
+struct HitTestRequest;
 
 class ClipRects {
 public:

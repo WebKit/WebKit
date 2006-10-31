@@ -27,8 +27,9 @@
 
 namespace WebCore {
 
-class HitTestRequest;
 class HitTestResult;
+
+struct HitTestRequest;
 
 class InlineFlowBox : public InlineRunBox {
 public:

@@ -1,3 +1,15 @@
+2006-10-31  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam
+
+        Correct forward declarations of the HitTestRequest struct.
+
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.h:
+
 2006-10-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth and Adam
