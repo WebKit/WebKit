@@ -1,3 +1,24 @@
+2006-10-30  Timothy Hatcher  <timothy@apple.com>
+
+        Rolling out the following change because this crash:
+        <rdar://problem/4806705> REGRESSION: Crash occurs at WebCore::Font::lineSpacing() when loading site (http://www.photoplusexpo.com/ppe/index.jsp) 
+
+        And this regression:
+        <rdar://problem/4728514> REGRESSION: Safari applies the wrong font to BODY element at http://www.apple.com/downloads/dashboard/
+
+    2006-09-06  David Harrison  <harrison@apple.com>
+
+        Reviewed and tweaked by Tim H. 
+
+        <rdar://problem/4564955> WebKit doesn't trigger Auto Font Activation 
+
+        If we don't find the font in the available fonts list, call [NSFont fontWithName:size:] 
+        to trigger a search that will include auto activation. No PLT or iBench perf impact. 
+        No layout tests affected. Not testable in an automated way that will work on all systems. 
+
+        * platform/mac/WebFontCache.mm: 
+        (+[WebFontCache fontWithFamily:traits:size:]): 
+
 2006-10-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
