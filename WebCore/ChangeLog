@@ -1,3 +1,280 @@
+2006-10-31  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Modified from original due to earlier reversion
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11436
+
+        Better SVG integration in WebKit, Part I.
+
+        The patch is mostly about creating a new platform/graphics directory, and
+        moving the kcanvas resources (clipper/masker/marker) there (in svg budir),
+        with a new name (KCanvasClipper -> SVGResourceClipper). Also fix several ownership
+        issues, by using ref counting (the SVG classes now store RefPtrs to the resources).
+
+        KCanvasFilters is still left in kcanvas/ subdirectory, to be converted in a next patch.
+        All details of the patch, and upcoming patches can be found in the bug report.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * graphics/svg/SVGResource.cpp: Removed.
+        * graphics/svg/SVGResourceClipper.cpp: Removed.
+        * graphics/svg/SVGResourceClipper.h: Removed.
+        * graphics/svg/SVGResourceImage.h: Removed.
+        * graphics/svg/SVGResourceListener.h: Removed.
+        * graphics/svg/SVGResourceMarker.cpp: Removed.
+        * graphics/svg/SVGResourceMarker.h: Removed.
+        * graphics/svg/SVGResourceMasker.cpp: Removed.
+        * graphics/svg/SVGResourceMasker.h: Removed.
+        * kcanvas/KCanvasClipper.cpp: Removed.
+        * kcanvas/KCanvasClipper.h: Removed.
+        * kcanvas/KCanvasCreator.cpp: Removed.
+        * kcanvas/KCanvasCreator.h: Removed.
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::getFilterById):
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasImage.h: Removed.
+        * kcanvas/KCanvasMarker.cpp: Removed.
+        * kcanvas/KCanvasMarker.h: Removed.
+        * kcanvas/KCanvasMasker.cpp: Removed.
+        * kcanvas/KCanvasMasker.h: Removed.
+        * kcanvas/KCanvasResource.cpp: Removed.
+        * kcanvas/KCanvasResource.h: Removed.
+        * kcanvas/KCanvasResourceListener.h: Removed.
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (WebCore::writeRenderResources):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServer.h:
+        (WebCore::KRenderingPaintServer::KRenderingPaintServer):
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (WebCore::KRenderingPaintServerGradient::listener):
+        (WebCore::KRenderingPaintServerGradient::setListener):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (WebCore::KRenderingPaintServerPattern::KRenderingPaintServerPattern):
+        (WebCore::KRenderingPaintServerPattern::~KRenderingPaintServerPattern):
+        (WebCore::KRenderingPaintServerPattern::tile):
+        (WebCore::KRenderingPaintServerPattern::setTile):
+        (WebCore::KRenderingPaintServerPattern::listener):
+        (WebCore::KRenderingPaintServerPattern::setListener):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/qt/KCanvasClipperQt.cpp: Removed.
+        * kcanvas/device/qt/KCanvasClipperQt.h:
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        (WebCore::KRenderingDeviceQt::contextForImage):
+        (WebCore::KRenderingDeviceQt::createResource):
+        (WebCore::KRenderingDeviceQt::createPaintServer):
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp:
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp:
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp:
+        * kcanvas/device/qt/RenderPathQt.h: Removed.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::getCIFilterStack):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm: Removed.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm: Removed.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::contextForImage):
+        (WebCore::KRenderingDeviceQuartz::createPaintServer):
+        (WebCore::KRenderingDeviceQuartz::createResource):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz):
+        (WebCore::KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz):
+        (WebCore::KRenderingPaintServerGradientQuartz::setup):
+        (WebCore::KRenderingPaintServerGradientQuartz::teardown):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::patternCallback):
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::sharedSolidPaintServer):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        (WebCore::SVGClipPathElement::~SVGClipPathElement):
+        (WebCore::SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        (WebCore::SVGFilterElement::~SVGFilterElement):
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::~SVGGradientElement):
+        (WebCore::SVGGradientElement::canvasResource):
+        (WebCore::SVGGradientElement::resourceNotification):
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::~SVGMarkerElement):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::~SVGMaskElement):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        (WebCore::SVGMaskElement::canvasResource):
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::~SVGPatternElement):
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::canvasResource):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::canvasResource):
+        * platform/GraphicsContext.cpp: Removed.
+        * platform/GraphicsContext.h: Removed.
+        * platform/GraphicsTypes.cpp: Removed.
+        * platform/GraphicsTypes.h: Removed.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        (WebCore::GraphicsContext::createGraphicsContextPrivate):
+        (WebCore::GraphicsContext::destroyGraphicsContextPrivate):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::font):
+        (WebCore::GraphicsContext::setFont):
+        (WebCore::GraphicsContext::pen):
+        (WebCore::GraphicsContext::setPen):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::fillColor):
+        (WebCore::GraphicsContext::updatingControlTints):
+        (WebCore::GraphicsContext::setUpdatingControlTints):
+        (WebCore::GraphicsContext::setPaintingDisabled):
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        (WebCore::GraphicsContext::initFocusRing):
+        (WebCore::GraphicsContext::clearFocusRing):
+        (WebCore::GraphicsContext::focusRingBoundingRect):
+        (WebCore::GraphicsContext::addFocusRingRect):
+        (WebCore::GraphicsContext::focusRingWidth):
+        (WebCore::GraphicsContext::focusRingOffset):
+        (WebCore::GraphicsContext::focusRingRects):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::):
+        (WebCore::parseCompositeOperator):
+        (WebCore::compositeOperatorName):
+        (WebCore::parseLineCap):
+        (WebCore::lineCapName):
+        (WebCore::parseLineJoin):
+        (WebCore::lineJoinName):
+        * platform/graphics/GraphicsTypes.h:
+        (WebCore::):
+        * platform/graphics/svg/SVGResource.cpp: Added.
+        (WebCore::SVGResource::SVGResource):
+        (WebCore::SVGResource::~SVGResource):
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::addClient):
+        (WebCore::SVGResource::clients):
+        (WebCore::SVGResource::idInRegistry):
+        (WebCore::SVGResource::setIdInRegistry):
+        (WebCore::SVGResource::externalRepresentation):
+        (WebCore::getResourceById):
+        (WebCore::getPaintServerById):
+        (WebCore::operator<<):
+        * platform/graphics/svg/SVGResource.h: Added.
+        (WebCore::):
+        (WebCore::SVGResource::isPaintServer):
+        (WebCore::SVGResource::isFilter):
+        (WebCore::SVGResource::isClipper):
+        (WebCore::SVGResource::isMarker):
+        (WebCore::SVGResource::isMasker):
+        (WebCore::SVGResourceListener::~SVGResourceListener):
+        * platform/graphics/svg/SVGResourceClipper.cpp: Added.
+        (WebCore::SVGResourceClipper::SVGResourceClipper):
+        (WebCore::SVGResourceClipper::~SVGResourceClipper):
+        (WebCore::SVGResourceClipper::resetClipData):
+        (WebCore::SVGResourceClipper::addClipData):
+        (WebCore::SVGResourceClipper::clipData):
+        (WebCore::SVGResourceClipper::externalRepresentation):
+        (WebCore::operator<<):
+        (WebCore::getClipperById):
+        * platform/graphics/svg/SVGResourceClipper.h: Added.
+        (WebCore::ClipDataList::addPath):
+        (WebCore::SVGResourceClipper::isClipper):
+        * platform/graphics/svg/SVGResourceImage.h: Added.
+        * platform/graphics/svg/SVGResourceMarker.cpp: Added.
+        (WebCore::SVGResourceMarker::SVGResourceMarker):
+        (WebCore::SVGResourceMarker::~SVGResourceMarker):
+        (WebCore::SVGResourceMarker::setMarker):
+        (WebCore::SVGResourceMarker::setRef):
+        (WebCore::SVGResourceMarker::draw):
+        (WebCore::SVGResourceMarker::externalRepresentation):
+        (WebCore::getMarkerById):
+        * platform/graphics/svg/SVGResourceMarker.h: Added.
+        (WebCore::SVGResourceMarker::refX):
+        (WebCore::SVGResourceMarker::refY):
+        (WebCore::SVGResourceMarker::setAngle):
+        (WebCore::SVGResourceMarker::setAutoAngle):
+        (WebCore::SVGResourceMarker::angle):
+        (WebCore::SVGResourceMarker::setUseStrokeWidth):
+        (WebCore::SVGResourceMarker::useStrokeWidth):
+        (WebCore::SVGResourceMarker::isMarker):
+        * platform/graphics/svg/SVGResourceMasker.cpp: Added.
+        (WebCore::SVGResourceMasker::SVGResourceMasker):
+        (WebCore::SVGResourceMasker::~SVGResourceMasker):
+        (WebCore::SVGResourceMasker::setMask):
+        (WebCore::SVGResourceMasker::mask):
+        (WebCore::SVGResourceMasker::externalRepresentation):
+        (WebCore::getMaskerById):
+        * platform/graphics/svg/SVGResourceMasker.h: Added.
+        (WebCore::SVGResourceMasker::isMasker):
+        * platform/graphics/svg/cg/SVGResourceClipperCg.mm: Added.
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/cg/SVGResourceImageCg.mm: Added.
+        (WebCore::SVGResourceImage::SVGResourceImage):
+        (WebCore::SVGResourceImage::~SVGResourceImage):
+        (WebCore::SVGResourceImage::init):
+        (WebCore::SVGResourceImage::size):
+        (WebCore::SVGResourceImage::cgLayer):
+        (WebCore::SVGResourceImage::setCGLayer):
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm: Added.
+        (WebCore::applyLuminanceToAlphaFilter):
+        (WebCore::applyExpandAlphatoGrayscaleFilter):
+        (WebCore::transformImageIntoGrayscaleMask):
+        (WebCore::SVGResourceMasker::applyMask):
+        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp: Added.
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/qt/SVGResourceImageQt.cpp: Added.
+        (WebCore::SVGResourceImage::init):
+        (WebCore::SVGResourceImage::size):
+        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp: Added.
+        (WebCore::SVGResourceMasker::applyMask):
+        * platform/qt/GraphicsContextQt.cpp:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady

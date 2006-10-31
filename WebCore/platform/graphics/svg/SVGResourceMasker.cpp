@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsTypes_h
-#define GraphicsTypes_h
+#include "config.h"
+#include "SVGResourceMasker.h"
+
+#include "TextStream.h"
+#include "SVGResourceImage.h"
 
 namespace WebCore {
 
-    class String;
-
-    // Note: These constants exactly match the NSCompositeOperator constants of
-    // AppKit on Mac OS X. If that's ever changed, we'll need to change the Mac
-    // platform code to map one to the other.
-    enum CompositeOperator {
-        CompositeClear,
-        CompositeCopy,
-        CompositeSourceOver,
-        CompositeSourceIn,
-        CompositeSourceOut,
-        CompositeSourceAtop,
-        CompositeDestinationOver,
-        CompositeDestinationIn,
-        CompositeDestinationOut,
-        CompositeDestinationAtop,
-        CompositeXOR,
-        CompositePlusDarker,
-        CompositeHighlight,
-        CompositePlusLighter
-    };
-
-    enum LineCap { ButtCap, RoundCap, SquareCap };
-
-    enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
-
-    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
-
-    String compositeOperatorName(CompositeOperator);
-    bool parseCompositeOperator(const String&, CompositeOperator&);
-
-    String lineCapName(LineCap);
-    bool parseLineCap(const String&, LineCap&);
-
-    String lineJoinName(LineJoin);
-    bool parseLineJoin(const String&, LineJoin&);
-
+SVGResourceMasker::SVGResourceMasker()
+    : SVGResource()
+{
 }
 
-#endif
+SVGResourceMasker::~SVGResourceMasker()
+{
+}
+
+void SVGResourceMasker::setMask(const PassRefPtr<SVGResourceImage>& mask)
+{
+    m_mask = mask;
+}
+
+SVGResourceImage* SVGResourceMasker::mask() const
+{
+    return m_mask.get();
+}
+
+TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=MASKER]";
+    return ts;
+}
+
+SVGResourceMasker* getMaskerById(Document* document, const AtomicString& id)
+{
+    SVGResource* resource = getResourceById(document, id);
+    if (resource && resource->isMasker())
+        return static_cast<SVGResourceMasker*>(resource);
+
+    return 0;
+}
+
+} // namespace WebCore

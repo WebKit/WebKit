@@ -90,9 +90,9 @@ TextStream& KCanvasFilter::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-KCanvasFilter *getFilterById(Document *document, const AtomicString &id)
+KCanvasFilter* getFilterById(Document *document, const AtomicString &id)
 {
-    KCanvasResource *resource = getResourceById(document, id);
+    SVGResource* resource = getResourceById(document, id);
     if (resource && resource->isFilter())
         return static_cast<KCanvasFilter*>(resource);
     return 0;

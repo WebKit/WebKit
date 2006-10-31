@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsTypes_h
-#define GraphicsTypes_h
+#ifndef SVGResourceMasker_H
+#define SVGResourceMasker_H
+
+#include "SVGResource.h"
 
 namespace WebCore {
 
-    class String;
+    class FloatRect;
+    class SVGResourceImage;
 
-    // Note: These constants exactly match the NSCompositeOperator constants of
-    // AppKit on Mac OS X. If that's ever changed, we'll need to change the Mac
-    // platform code to map one to the other.
-    enum CompositeOperator {
-        CompositeClear,
-        CompositeCopy,
-        CompositeSourceOver,
-        CompositeSourceIn,
-        CompositeSourceOut,
-        CompositeSourceAtop,
-        CompositeDestinationOver,
-        CompositeDestinationIn,
-        CompositeDestinationOut,
-        CompositeDestinationAtop,
-        CompositeXOR,
-        CompositePlusDarker,
-        CompositeHighlight,
-        CompositePlusLighter
+    class SVGResourceMasker : public SVGResource {
+    public:
+        SVGResourceMasker();
+        virtual ~SVGResourceMasker();
+
+        void setMask(const PassRefPtr<SVGResourceImage>&);
+        SVGResourceImage* mask() const;
+
+        virtual bool isMasker() const { return true; }
+        virtual TextStream& externalRepresentation(TextStream&) const;
+
+        // To be implemented by the specific rendering devices
+        void applyMask(const FloatRect& boundingBox) const;
+
+    private:
+        RefPtr<SVGResourceImage> m_mask;
     };
 
-    enum LineCap { ButtCap, RoundCap, SquareCap };
+    SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
 
-    enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
+} // namespace WebCore
 
-    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
-
-    String compositeOperatorName(CompositeOperator);
-    bool parseCompositeOperator(const String&, CompositeOperator&);
-
-    String lineCapName(LineCap);
-    bool parseLineCap(const String&, LineCap&);
-
-    String lineJoinName(LineJoin);
-    bool parseLineJoin(const String&, LineJoin&);
-
-}
-
-#endif
+#endif // SVGResourceMasker_H

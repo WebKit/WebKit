@@ -26,7 +26,7 @@
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasImage.h"
+#include "SVGResourceImage.h"
 #include "KRenderingDevice.h"
 #include "RenderSVGContainer.h"
 #include "SVGHelper.h"
@@ -48,14 +48,12 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
     , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
     , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_masker(0)
     , m_dirty(true)
 {
 }
 
 SVGMaskElement::~SVGMaskElement()
 {
-    delete m_masker;
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
@@ -101,14 +99,15 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-KCanvasImage* SVGMaskElement::drawMaskerContent()
+SVGResourceImage* SVGMaskElement::drawMaskerContent()
 {
     KRenderingDevice* device = renderingDevice();
     if (!device->currentContext()) // FIXME: hack for now until Image::lockFocus exists
         return 0;
     if (!renderer())
         return 0;
-    KCanvasImage* maskImage = static_cast<KCanvasImage*>(device->createResource(RS_IMAGE));
+
+    SVGResourceImage* maskImage = new SVGResourceImage();
 
     IntSize size = IntSize(lroundf(width()->value()), lroundf(height()->value()));
     maskImage->init(size);
@@ -137,18 +136,18 @@ RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
     return maskContainer;
 }
 
-KCanvasMasker* SVGMaskElement::canvasResource()
+SVGResource* SVGMaskElement::canvasResource()
 {
     if (!m_masker) {
-        m_masker = static_cast<KCanvasMasker*>(renderingDevice()->createResource(RS_MASKER));
+        m_masker = new SVGResourceMasker();
         m_dirty = true;
     }
     if (m_dirty) {
-        KCanvasImage* newMaskImage = drawMaskerContent();
-        m_masker->setMask(newMaskImage);
-        m_dirty = (newMaskImage != 0);
+        RefPtr<SVGResourceImage> mask(drawMaskerContent());
+        m_masker->setMask(mask);
+        m_dirty = (mask != 0);
     }
-    return m_masker;
+    return m_masker.get();
 }
 
 }

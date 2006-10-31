@@ -23,44 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCanvasResourcesQuartz_h
-#define KCanvasResourcesQuartz_h
+#include "config.h"
 
-#include "KCanvasClipper.h"
-
-#include "KCanvasImage.h"
-#include "RenderSVGContainer.h"
-#include "AffineTransform.h"
-
-typedef struct CGContext *CGContextRef;
-typedef struct CGLayer *CGLayerRef;
+#if SVG_SUPPORT
+#import "SVGResourceImage.h"
 
 namespace WebCore {
 
-class KCanvasClipperQuartz : public KCanvasClipper {
-public:
-    KCanvasClipperQuartz() { }
-    
-    virtual void applyClip(const FloatRect& boundingBox) const;
-};
-
-class KCanvasImageQuartz : public KCanvasImage {
-public:
-    KCanvasImageQuartz() : m_cgLayer(0) { }
-    ~KCanvasImageQuartz();
-    void init(const Image&) { }
-    void init(IntSize size) { m_size = size; }
-    
-    CGLayerRef cgLayer();
-    void setCGLayer(CGLayerRef layer);
-
-    IntSize size() { return m_size; }
-    
-private:
-    IntSize m_size;
-    CGLayerRef m_cgLayer;
-};
-
+SVGResourceImage::SVGResourceImage()
+    : m_cgLayer(0)
+{
 }
 
-#endif
+SVGResourceImage::~SVGResourceImage()
+{
+    CGLayerRelease(m_cgLayer);
+}
+
+void SVGResourceImage::init(const Image&)
+{
+    // no-op
+}
+
+void SVGResourceImage::init(IntSize size)
+{
+    m_size = size;    
+}
+
+IntSize SVGResourceImage::size() const
+{
+    return m_size;
+}
+
+CGLayerRef SVGResourceImage::cgLayer()
+{
+    return m_cgLayer;
+}
+
+void SVGResourceImage::setCGLayer(CGLayerRef layer)
+{
+    if (m_cgLayer != layer) {
+        CGLayerRelease(m_cgLayer);
+        m_cgLayer = CGLayerRetain(layer);
+    }
+}
+
+} // namespace WebCore
+
+#endif // SVG_SUPPORT

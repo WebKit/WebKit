@@ -29,8 +29,8 @@
 
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
-#include "KCanvasClipper.h"
-#include "KCanvasMasker.h"
+#include "SVGResourceClipper.h"
+#include "SVGResourceMasker.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "RootInlineBox.h"
@@ -80,10 +80,10 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
     FloatRect boundingBox(tx+flow->xPos() , ty+flow->yPos(), flow->width(), flow->height());
     
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
-    if (KCanvasClipper* clipper = getClipperById(object->document(), svgStyle->clipPath().substring(1)))
+    if (SVGResourceClipper* clipper = getClipperById(object->document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);
     
-    if (KCanvasMasker* masker = getMaskerById(object->document(), svgStyle->maskElement().substring(1)))
+    if (SVGResourceMasker* masker = getMaskerById(object->document(), svgStyle->maskElement().substring(1)))
         masker->applyMask(boundingBox);
     
     KCanvasFilter* filter = getFilterById(object->document(), svgStyle->filter().substring(1));

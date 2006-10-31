@@ -22,7 +22,7 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "KCanvasImage.h"
+#include "SVGResourceImage.h"
 #include "KRenderingPaintServerPattern.h"
 
 #include "AffineTransform.h"
@@ -33,7 +33,6 @@ namespace WebCore {
 
 KRenderingPaintServerPattern::KRenderingPaintServerPattern()
     : KRenderingPaintServer()
-    , m_tile(0)
     , m_useBoundingBoxMode(true)
     , m_listener(0)
 {
@@ -41,7 +40,6 @@ KRenderingPaintServerPattern::KRenderingPaintServerPattern()
 
 KRenderingPaintServerPattern::~KRenderingPaintServerPattern()
 {
-    delete m_tile;
 }
 
 void KRenderingPaintServerPattern::setBbox(const FloatRect& rect)
@@ -64,12 +62,12 @@ void KRenderingPaintServerPattern::setBoundingBoxMode(bool mode)
     m_useBoundingBoxMode = mode;
 }
 
-KCanvasImage* KRenderingPaintServerPattern::tile() const
+SVGResourceImage* KRenderingPaintServerPattern::tile() const
 {
-    return m_tile;
+    return m_tile.get();
 }
 
-void KRenderingPaintServerPattern::setTile(KCanvasImage* tile)
+void KRenderingPaintServerPattern::setTile(const PassRefPtr<SVGResourceImage>& tile)
 {
     m_tile = tile;
 }
@@ -89,12 +87,12 @@ KCPaintServerType KRenderingPaintServerPattern::type() const
     return PS_PATTERN;
 }
 
-KCanvasResourceListener* KRenderingPaintServerPattern::listener() const
+SVGResourceListener* KRenderingPaintServerPattern::listener() const
 {
     return m_listener;
 }
 
-void KRenderingPaintServerPattern::setListener(KCanvasResourceListener* listener)
+void KRenderingPaintServerPattern::setListener(SVGResourceListener* listener)
 {
     m_listener = listener;
 }

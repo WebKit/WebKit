@@ -6,8 +6,6 @@ include (CheckCXXCompilerFlag)
 include_directories(
    BEFORE ${CMAKE_CURRENT_BINARY_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/ForwardingHeaders
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network
    ${CMAKE_CURRENT_SOURCE_DIR}/loader
    ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
    ${CMAKE_CURRENT_BINARY_DIR}/css
@@ -34,6 +32,12 @@ include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/events
    ${CMAKE_CURRENT_BINARY_DIR}/platform
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/gif
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/jpeg
@@ -41,8 +45,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/xbm
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/bmp
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/png
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/bindings
@@ -637,8 +639,6 @@ set (SVG_SOURCES
     ksvg2/svg/SVGStopElement.cpp
     ksvg2/svg/SVGDefsElement.cpp
     ksvg2/svg/SVGMetadataElement.cpp
-#   ksvg2/ecma/GlobalObject.cpp
-#   ksvg2/ecma/Ecma.cpp
     ksvg2/misc/SVGImageLoader.cpp
     ksvg2/misc/SVGDocumentExtensions.cpp
     ksvg2/misc/KSVGTimeScheduler.cpp
@@ -647,10 +647,6 @@ set (SVG_SOURCES
     ksvg2/events/SVGZoomEvent.cpp
     kcanvas/KCanvasTreeDebug.cpp
     kcanvas/KCanvasFilters.cpp
-    kcanvas/KCanvasClipper.cpp
-    kcanvas/KCanvasMarker.cpp
-    kcanvas/KCanvasMasker.cpp
-    kcanvas/KCanvasResource.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
     kcanvas/device/KRenderingPaintServerPattern.cpp
@@ -661,7 +657,6 @@ set (SVG_SOURCES
     kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp
     kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp
     kcanvas/device/qt/KRenderingPaintServerQt.cpp
-    kcanvas/device/qt/KCanvasClipperQt.cpp
 #   kcanvas/device/qt/KCanvasFilterQt.cpp
 #   kcanvas/device/qt/KCanvasImageItemQt.cpp
     rendering/RenderForeignObject.cpp
@@ -998,7 +993,6 @@ set(WebCore_SRCS
     platform/FloatSize.cpp
     platform/String.cpp
     platform/DeprecatedValueListImpl.cpp
-    platform/GraphicsTypes.cpp
     platform/IntRect.cpp
     platform/Arena.cpp
     platform/ArrayImpl.cpp
@@ -1013,14 +1007,12 @@ set(WebCore_SRCS
     platform/TextDecoder.cpp
     platform/TextEncoding.cpp
     platform/TextEncodingRegistry.cpp
-    platform/GraphicsContext.cpp
     platform/Logging.cpp
     platform/Color.cpp
     platform/DeprecatedPtrListImpl.cpp
     platform/KURL.cpp
     platform/StringImpl.cpp
     platform/FloatRect.cpp
-    platform/network/ResourceHandle.cpp
     platform/Path.cpp
     platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
@@ -1043,6 +1035,7 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/PopupMenuQt.cpp
+    platform/network/ResourceHandle.cpp
     platform/network/qt/ResourceHandleManager.cpp
     platform/network/qt/ResourceHandleQt.cpp
     platform/qt/FloatPointQt.cpp
@@ -1066,6 +1059,18 @@ set(WebCore_SRCS
     platform/qt/ScrollViewCanvasQt.cpp
     platform/qt/PlatformMouseEventQt.cpp
     platform/qt/PlatformKeyboardEventQt.cpp
+    platform/network/ResourceLoader.cpp
+    platform/network/qt/ResourceLoaderManager.cpp
+    platform/network/qt/ResourceLoaderQt.cpp
+    platform/graphics/GraphicsTypes.cpp
+    platform/graphics/GraphicsContext.cpp
+    platform/graphics/svg/SVGResource.cpp
+    platform/graphics/svg/SVGResourceClipper.cpp
+    platform/graphics/svg/SVGResourceMasker.cpp
+    platform/graphics/svg/SVGResourceMarker.cpp
+    platform/graphics/svg/qt/SVGResourceClipperQt.cpp
+    platform/graphics/svg/qt/SVGResourceImageQt.cpp
+    platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/gif/GIFImageReader.cpp
     platform/image-decoders/gif/GIFImageDecoder.cpp

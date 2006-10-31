@@ -25,6 +25,7 @@
 #include <math.h>
 #include <QPointF>
 
+#include "RenderPath.h"
 #include "RenderStyle.h"
 #include "AffineTransform.h"
 #include "KRenderingDeviceQt.h"

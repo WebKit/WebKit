@@ -1,7 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
+    Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
 
     This file is part of the KDE project
 
@@ -21,29 +19,16 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasImage_H
-#define KCanvasImage_H
-#ifdef SVG_SUPPORT
-
-#include "KCanvasResource.h"
+#include "config.h"
+#include "SVGResourceMasker.h"
 
 namespace WebCore {
-class Image;
 
-class KCanvasImage : public KCanvasResource
+void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
 {
-public:
-    KCanvasImage() { };
-    virtual ~KCanvasImage() { };
-
-    virtual void init(const Image&) = 0;
-    virtual void init(IntSize) = 0;
-
-    virtual IntSize size() = 0;
-};
-
+    // FIXME: implement me :-)
 }
 
-#endif // SVG_SUPPORT
-#endif
+} // namespace WebCore
 
+// vim:ts=4:noet

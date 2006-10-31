@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsTypes_h
-#define GraphicsTypes_h
+#ifndef SVGResourceImage_H
+#define SVGResourceImage_H
+
+#include "IntSize.h"
+#include "SVGResource.h"
+
+#if PLATFORM(MAC)
+typedef struct CGContext *CGContextRef;
+typedef struct CGLayer *CGLayerRef;
+#endif
 
 namespace WebCore {
 
-    class String;
+    class Image;
+    class IntSize;
 
-    // Note: These constants exactly match the NSCompositeOperator constants of
-    // AppKit on Mac OS X. If that's ever changed, we'll need to change the Mac
-    // platform code to map one to the other.
-    enum CompositeOperator {
-        CompositeClear,
-        CompositeCopy,
-        CompositeSourceOver,
-        CompositeSourceIn,
-        CompositeSourceOut,
-        CompositeSourceAtop,
-        CompositeDestinationOver,
-        CompositeDestinationIn,
-        CompositeDestinationOut,
-        CompositeDestinationAtop,
-        CompositeXOR,
-        CompositePlusDarker,
-        CompositeHighlight,
-        CompositePlusLighter
+    class SVGResourceImage : public SVGResource {
+    public:
+        SVGResourceImage();
+
+#if PLATFORM(MAC)
+    virtual ~SVGResourceImage();
+#endif
+
+        // To be implemented by the specific rendering devices 
+        void init(const Image&);
+        void init(IntSize);
+
+        IntSize size() const;
+
+#if PLATFORM(MAC)
+        CGLayerRef cgLayer();
+        void setCGLayer(CGLayerRef layer);
+    
+    private:
+        IntSize m_size;
+        CGLayerRef m_cgLayer;
+#endif
     };
 
-    enum LineCap { ButtCap, RoundCap, SquareCap };
+} // namespace WebCore
 
-    enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
-
-    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
-
-    String compositeOperatorName(CompositeOperator);
-    bool parseCompositeOperator(const String&, CompositeOperator&);
-
-    String lineCapName(LineCap);
-    bool parseLineCap(const String&, LineCap&);
-
-    String lineJoinName(LineJoin);
-    bool parseLineJoin(const String&, LineJoin&);
-
-}
-
-#endif
+#endif // SVGResourceImage_H

@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -20,39 +19,28 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasMasker_H
-#define KCanvasMasker_H
-#ifdef SVG_SUPPORT
+#include "config.h"
+#include "SVGResourceImage.h"
 
-#include "KCanvasResource.h"
+#include "IntSize.h"
 
 namespace WebCore {
 
-class TextStream;
-class KCanvasImage;
+// FIXME: For now we only stub this methods!
 
-class KCanvasMasker : public KCanvasResource
+void SVGResourceImage::init(const Image&)
 {
-public:
-    KCanvasMasker();
-    virtual ~KCanvasMasker();
-    
-    virtual bool isMasker() const { return true; }
-    void setMask(KCanvasImage*);
-    KCanvasImage* mask() const { return m_mask; }
-    
-    virtual void applyMask(const FloatRect& boundingBox) const = 0;
-
-    TextStream& externalRepresentation(TextStream&) const; 
-protected:
-    KCanvasImage* m_mask;
-};
-
-KCanvasMasker* getMaskerById(Document*, const AtomicString&);
-
 }
 
-#endif // SVG_SUPPORT
-#endif
+void SVGResourceImage::init(IntSize size)
+{
+}
+
+IntSize SVGResourceImage::size() const
+{
+    return IntSize();
+}
+
+} // namespace WebCore
 
 // vim:ts=4:noet

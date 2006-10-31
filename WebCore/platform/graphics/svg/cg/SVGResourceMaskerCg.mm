@@ -25,12 +25,12 @@
 
 
 #include "config.h"
-#ifdef SVG_SUPPORT
-#import "KCanvasMaskerQuartz.h"
 
+#ifdef SVG_SUPPORT
+#import "SVGResourceMasker.h"
+#import "SVGResourceImage.h"
 #import "SVGRenderStyle.h"
 
-#import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 
@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-static CIImage *applyLuminanceToAlphaFilter(CIImage *inputImage)
+static CIImage* applyLuminanceToAlphaFilter(CIImage* inputImage)
 {
-    CIFilter *luminanceToAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
+    CIFilter* luminanceToAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
     [luminanceToAlpha setDefaults];
     CGFloat alpha[4] = {0.2125, 0.7154, 0.0721, 0};
     CGFloat zero[4] = {0, 0, 0, 0};
@@ -53,9 +53,9 @@ static CIImage *applyLuminanceToAlphaFilter(CIImage *inputImage)
     return [luminanceToAlpha valueForKey:@"outputImage"];
 }
 
-static CIImage *applyExpandAlphatoGrayscaleFilter(CIImage *inputImage)
+static CIImage* applyExpandAlphatoGrayscaleFilter(CIImage* inputImage)
 {
-    CIFilter *alphaToGrayscale = [CIFilter filterWithName:@"CIColorMatrix"];
+    CIFilter* alphaToGrayscale = [CIFilter filterWithName:@"CIColorMatrix"];
     CGFloat zero[4] = {0, 0, 0, 0};
     [alphaToGrayscale setDefaults];
     [alphaToGrayscale setValue:inputImage forKey:@"inputImage"];
@@ -67,40 +67,40 @@ static CIImage *applyExpandAlphatoGrayscaleFilter(CIImage *inputImage)
     return [alphaToGrayscale valueForKey:@"outputImage"];
 }
 
-static CIImage *transformImageIntoGrayscaleMask(CIImage *inputImage)
+static CIImage* transformImageIntoGrayscaleMask(CIImage* inputImage)
 {
-    CIFilter *blackBackground = [CIFilter filterWithName:@"CIConstantColorGenerator"];
+    CIFilter* blackBackground = [CIFilter filterWithName:@"CIConstantColorGenerator"];
     [blackBackground setValue:[CIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0] forKey:@"inputColor"];
 
-    CIFilter *layerOverBlack = [CIFilter filterWithName:@"CISourceOverCompositing"];
+    CIFilter* layerOverBlack = [CIFilter filterWithName:@"CISourceOverCompositing"];
     [layerOverBlack setValue:[blackBackground valueForKey:@"outputImage"] forKey:@"inputBackgroundImage"];  
     [layerOverBlack setValue:inputImage forKey:@"inputImage"];  
 
-    CIImage *luminanceAlpha = applyLuminanceToAlphaFilter([layerOverBlack valueForKey:@"outputImage"]);
-    CIImage *luminanceAsGrayscale = applyExpandAlphatoGrayscaleFilter(luminanceAlpha);
-    CIImage *alphaAsGrayscale = applyExpandAlphatoGrayscaleFilter(inputImage);
+    CIImage* luminanceAlpha = applyLuminanceToAlphaFilter([layerOverBlack valueForKey:@"outputImage"]);
+    CIImage* luminanceAsGrayscale = applyExpandAlphatoGrayscaleFilter(luminanceAlpha);
+    CIImage* alphaAsGrayscale = applyExpandAlphatoGrayscaleFilter(inputImage);
 
-    CIFilter *multipliedGrayscale = [CIFilter filterWithName:@"CIMultiplyCompositing"];
+    CIFilter* multipliedGrayscale = [CIFilter filterWithName:@"CIMultiplyCompositing"];
     [multipliedGrayscale setValue:luminanceAsGrayscale forKey:@"inputBackgroundImage"];  
     [multipliedGrayscale setValue:alphaAsGrayscale forKey:@"inputImage"];  
     return [multipliedGrayscale valueForKey:@"outputImage"];
 }
 
-void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
+void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
 {
     if (!m_mask)
         return;
     // Create grayscale bitmap context
     int width = m_mask->size().width();
     int height = m_mask->size().height();
-    void *imageBuffer = fastMalloc(width * height);
+    void* imageBuffer = fastMalloc(width * height);
     CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
     CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
     CGColorSpaceRelease(grayColorSpace);
-    CIContext *ciGrayscaleContext = [CIContext contextWithCGContext:grayscaleContext options:nil];
+    CIContext* ciGrayscaleContext = [CIContext contextWithCGContext:grayscaleContext options:nil];
 
-    KCanvasImageQuartz* maskImage = static_cast<KCanvasImageQuartz*>(m_mask);
-    CIImage *grayscaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGLayer:maskImage->cgLayer()]);
+    SVGResourceImage* maskImage = static_cast<SVGResourceImage*>(m_mask.get());
+    CIImage* grayscaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGLayer:maskImage->cgLayer()]);
     [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
 
     CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
@@ -112,6 +112,6 @@ void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
     fastFree(imageBuffer);
 }
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT

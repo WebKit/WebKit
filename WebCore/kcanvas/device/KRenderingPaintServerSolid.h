@@ -24,6 +24,7 @@
 #define KRenderingPaintServerSolid_H
 #ifdef SVG_SUPPORT
 
+#include "Color.h"
 #include "KRenderingPaintServer.h"
 
 namespace WebCore {

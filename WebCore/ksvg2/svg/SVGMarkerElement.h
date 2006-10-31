@@ -24,7 +24,7 @@
 #define SVGMarkerElement_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasMarker.h"
+#include "SVGResourceMarker.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -65,7 +65,7 @@ namespace WebCore
     
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual KCanvasMarker* canvasResource();
+        virtual SVGResource* canvasResource();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -83,7 +83,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, OrientType, orientType)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
 
-        KCanvasMarker* m_marker;
+        RefPtr<SVGResourceMarker> m_marker;
     };
 
 } // namespace WebCore

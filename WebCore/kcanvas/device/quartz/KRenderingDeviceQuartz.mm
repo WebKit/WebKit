@@ -25,14 +25,16 @@
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #import "KRenderingDeviceQuartz.h"
 
 #import "GraphicsContext.h"
-#include "KCanvasMarker.h"
+#import "SVGResourceClipper.h"
+#import "SVGResourceImage.h"
+#import "SVGResourceMarker.h"
 #import "KCanvasFilterQuartz.h"
-#import "KCanvasMaskerQuartz.h"
-#import "KCanvasResourcesQuartz.h"
+#import "SVGResourceMasker.h"
 #import "KRenderingPaintServerQuartz.h"
 #import "Logging.h"
 #import "QuartzSupport.h"
@@ -117,16 +119,15 @@ CGContextRef KRenderingDeviceQuartz::currentCGContext() const
     return quartzContext()->cgContext();
 }
 
-KRenderingDeviceContext* KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const
+KRenderingDeviceContext* KRenderingDeviceQuartz::contextForImage(SVGResourceImage *image) const
 {
-    KCanvasImageQuartz* quartzImage = static_cast<KCanvasImageQuartz*>(image);
-    CGLayerRef cgLayer = quartzImage->cgLayer();
+    CGLayerRef cgLayer = image->cgLayer();
     if (!cgLayer) {
         // FIXME: we might not get back a layer if this is a loaded image
-        // maybe this logic should go into KCanvasImage?
+        // maybe this logic should go into SVGResourceImage?
         cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + IntSize(1,1)), NULL);  // FIXME + 1 is a hack
         // FIXME: we should composite the original image onto the layer...
-        quartzImage->setCGLayer(cgLayer);
+        image->setCGLayer(cgLayer);
         CGLayerRelease(cgLayer);
     }
     return new KRenderingDeviceContextQuartz(CGLayerGetContext(cgLayer));
@@ -135,7 +136,7 @@ KRenderingDeviceContext* KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
 #pragma mark -
 #pragma mark Resource Creation
 
-KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType& type) const
+PassRefPtr<KRenderingPaintServer> KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType& type) const
 {
     KRenderingPaintServer *newServer = NULL;
     switch(type) {
@@ -155,19 +156,19 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     return newServer;
 }
 
-KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType& type) const
+PassRefPtr<SVGResource> KRenderingDeviceQuartz::createResource(const SVGResourceType& type) const
 {
     switch (type) {
     case RS_CLIPPER:
-        return new KCanvasClipperQuartz();
+        return new SVGResourceClipper();
     case RS_MARKER:
-        return new KCanvasMarker();
+        return new SVGResourceMarker();
     case RS_IMAGE:
-        return new KCanvasImageQuartz();
+        return new SVGResourceImage();
     case RS_FILTER:
         return new KCanvasFilterQuartz();
     case RS_MASKER:
-        return new KCanvasMaskerQuartz();
+        return new SVGResourceMasker();
     }
     LOG_ERROR("Failed to create resource of type: %i", type);
     return 0;

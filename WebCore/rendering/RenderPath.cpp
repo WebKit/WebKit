@@ -29,9 +29,9 @@
 
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
-#include "KCanvasClipper.h"
-#include "KCanvasMasker.h"
-#include "KCanvasMarker.h"
+#include "SVGResourceClipper.h"
+#include "SVGResourceMasker.h"
+#include "SVGResourceMarker.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "SVGStyledElement.h"
@@ -193,10 +193,10 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
         context = device->currentContext();
     }
 
-    if (KCanvasClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
+    if (SVGResourceClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
         clipper->applyClip(relativeBBox(true));
 
-    if (KCanvasMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
+    if (SVGResourceMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
         masker->applyMask(relativeBBox(true));
 
     context->clearPath();
@@ -315,18 +315,18 @@ struct MarkerData {
     FloatPoint inslopePoints[2];
     FloatPoint outslopePoints[2];
     MarkerType type;
-    KCanvasMarker *marker;
+    SVGResourceMarker *marker;
 };
 
 struct DrawMarkersData {
-    DrawMarkersData(GraphicsContext*, KCanvasMarker* startMarker, KCanvasMarker* midMarker, double strokeWidth);
+    DrawMarkersData(GraphicsContext*, SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, double strokeWidth);
     GraphicsContext* context;
     int elementIndex;
     MarkerData previousMarkerData;
-    KCanvasMarker* midMarker;
+    SVGResourceMarker* midMarker;
 };
 
-DrawMarkersData::DrawMarkersData(GraphicsContext* c, KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
+DrawMarkersData::DrawMarkersData(GraphicsContext* c, SVGResourceMarker *start, SVGResourceMarker *mid, double strokeWidth)
     : context(c)
     , elementIndex(0)
     , midMarker(mid)
@@ -428,9 +428,9 @@ void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& 
     Document *doc = document();
     const SVGRenderStyle* svgStyle = style()->svgStyle();
 
-    KCanvasMarker* startMarker = getMarkerById(doc, svgStyle->startMarker().substring(1));
-    KCanvasMarker* midMarker = getMarkerById(doc, svgStyle->midMarker().substring(1));
-    KCanvasMarker* endMarker = getMarkerById(doc, svgStyle->endMarker().substring(1));
+    SVGResourceMarker* startMarker = getMarkerById(doc, svgStyle->startMarker().substring(1));
+    SVGResourceMarker* midMarker = getMarkerById(doc, svgStyle->midMarker().substring(1));
+    SVGResourceMarker* endMarker = getMarkerById(doc, svgStyle->endMarker().substring(1));
     
     if (!startMarker && !midMarker && !endMarker)
         return;

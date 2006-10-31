@@ -26,18 +26,18 @@
 
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
-#import "KCanvasResourcesQuartz.h"
+#import "SVGResourceClipper.h"
 
 #import "GraphicsContext.h"
 #import "KCanvasFilterQuartz.h"
-#import "KCanvasMaskerQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 
 namespace WebCore {
 
-void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
+void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
 {
     KRenderingDeviceContext* context = renderingDevice()->currentContext();
     CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();
@@ -45,15 +45,15 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
         return;
 
     BOOL heterogenousClipRules = NO;
-    WindRule clipRule = m_clipData[0].windRule();
+    WindRule clipRule = m_clipData[0].windRule;
 
     context->clearPath();
 
     CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), CGRect(boundingBox));
 
     for (unsigned x = 0; x < m_clipData.count(); x++) {
-        KCClipData data = m_clipData[x];
-        if (data.windRule() != clipRule)
+        ClipData data = m_clipData[x];
+        if (data.windRule != clipRule)
             heterogenousClipRules = YES;
         
         CGPathRef clipPath = data.path.platformPath();
@@ -81,23 +81,6 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
     }
 }
 
-KCanvasImageQuartz::~KCanvasImageQuartz()
-{
-    CGLayerRelease(m_cgLayer);
-}
+} // namespace WebCore
 
-CGLayerRef KCanvasImageQuartz::cgLayer()
-{
-    return m_cgLayer;
-}
-
-void KCanvasImageQuartz::setCGLayer(CGLayerRef layer)
-{
-    if (m_cgLayer != layer) {
-        CGLayerRelease(m_cgLayer);
-        m_cgLayer = CGLayerRetain(layer);
-    }
-}
-
-}
 #endif // SVG_SUPPORT

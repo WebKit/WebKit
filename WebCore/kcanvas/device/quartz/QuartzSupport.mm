@@ -30,8 +30,8 @@
 #import "QuartzSupport.h"
 
 #import "GraphicsContext.h"
-#import "KCanvasResourcesQuartz.h"
 #import "KCanvasRenderingStyle.h"
+#import "RenderStyle.h"
 #import "wtf/Assertions.h"
 
 #import <QuartzCore/CoreImage.h>
