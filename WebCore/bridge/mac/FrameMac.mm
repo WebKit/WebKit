@@ -635,7 +635,7 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
             int len = it.length();
             if (len > 1 || !DeprecatedChar(chars[0]).isSpace()) {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
-                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
+                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
                 [chunk release];
                 if (misspelling.length > 0) {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
@@ -2442,7 +2442,7 @@ bool FrameMac::canPaste() const
 
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
-    if (![_bridge isContinuousSpellCheckingEnabled])
+    if (!editor()->client()->isContinuousSpellCheckingEnabled())
         return;
     markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
 }
@@ -2452,7 +2452,7 @@ void FrameMac::markMisspellings(const Selection& selection)
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
 
-    if (![_bridge isContinuousSpellCheckingEnabled])
+    if (!editor()->client()->isContinuousSpellCheckingEnabled())
         return;
 
     RefPtr<Range> searchRange(selection.toRange());
@@ -2480,7 +2480,7 @@ void FrameMac::markMisspellings(const Selection& selection)
             int startIndex = 0;
             // Loop over the chunk to find each misspelling in it.
             while (startIndex < len) {
-                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
+                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
                 if (misspelling.length == 0)
                     break;
                 else {
@@ -2507,7 +2507,7 @@ void FrameMac::markMisspellings(const Selection& selection)
 void FrameMac::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
 {
     if (document()) {
-        if ([_bridge isContinuousSpellCheckingEnabled]) {
+        if (editor()->client()->isContinuousSpellCheckingEnabled()) {
             Selection oldAdjacentWords;
             
             // If this is a change in selection resulting from a delete operation, oldSelection may no longer

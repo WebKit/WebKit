@@ -1241,16 +1241,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     }
 }
 
-- (int)spellCheckerDocumentTag
-{
-    return [[self webView] spellCheckerDocumentTag];
-}
-
-- (BOOL)isContinuousSpellCheckingEnabled
-{
-    return [[self webView] isContinuousSpellCheckingEnabled];
-}
-
 - (BOOL)_compareDashboardRegions:(NSDictionary *)regions
 {
     return [lastDashboardRegions isEqualToDictionary:regions];

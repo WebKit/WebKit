@@ -55,6 +55,11 @@ static Pasteboard generalPasteboard()
     return 0;
 }
 
+EditorClient* Editor::client() const
+{
+    return m_client.get();
+}
+
 bool Editor::canCopy()
 {
     return false;

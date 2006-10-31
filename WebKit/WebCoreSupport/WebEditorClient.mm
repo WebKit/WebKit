@@ -51,6 +51,25 @@ void WebEditorClient::setWebView(WebView* webView)
     m_webView = webView; 
 }
 
+bool WebEditorClient::isContinuousSpellCheckingEnabled()
+{
+    return [m_webView isContinuousSpellCheckingEnabled];
+}
+
+bool WebEditorClient::isGrammarCheckingEnabled()
+{
+#ifdef BUILDING_ON_TIGER
+    return false;
+#else
+    return [m_webView isGrammarCheckingEnabled];
+#endif
+}
+
+int WebEditorClient::spellCheckerDocumentTag()
+{
+    return [m_webView spellCheckerDocumentTag];
+}
+
 bool WebEditorClient::shouldDeleteRange(WebCore::Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView

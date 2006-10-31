@@ -1,3 +1,24 @@
+2006-10-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        Moved spelling-related methods from bridge to EditorClient. Added one not-yet-used
+        grammar-related method.
+
+        * WebCoreSupport/WebEditorClient.h:
+        declare overrides of isContinuousSpellCheckingEnabled(), spellCheckerDocumentTag(), and new
+        isGrammarCheckingEnabled()
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::isContinuousSpellCheckingEnabled):
+        implement by calling through to WebView
+        (WebEditorClient::isGrammarCheckingEnabled):
+        ditto
+        (WebEditorClient::spellCheckerDocumentTag):
+        ditto
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+        removed bridge equivalents of these methods
+
 2006-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.

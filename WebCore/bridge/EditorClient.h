@@ -39,6 +39,10 @@ public:
 
     virtual bool shouldDeleteRange(Range *range) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
+    
+    virtual bool isContinuousSpellCheckingEnabled() = 0;
+    virtual bool isGrammarCheckingEnabled() = 0;
+    virtual int spellCheckerDocumentTag() = 0;
 
 //    virtual bool shouldBeginEditingInRange(Range *range) = 0;
 //    virtual bool shouldEndEditingInRange(Range *range) = 0;
