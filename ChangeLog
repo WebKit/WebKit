@@ -1,3 +1,11 @@
+2006-10-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Make the universal build return non-zero when module make fails.
+
+        * Makefile:
+
 2006-10-30  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin.
