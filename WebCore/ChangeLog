@@ -1,3 +1,12 @@
+2006-10-31  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Steve.
+
+        Fix some incorrect forward declarations.
+
+        * loader/FrameLoader.h:
+        * page/Frame.h:
+
 2006-10-31  Darin Adler  <darin@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj: Change GraphicsTypes.h to a private header to

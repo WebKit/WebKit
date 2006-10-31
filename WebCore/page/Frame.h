@@ -64,7 +64,7 @@ class Editor;
 class EditorClient;
 class FormData;
 class FramePrivate;
-class FrameLoadRequest;
+struct FrameLoadRequest;
 class FrameLoader;
 class FrameTree;
 class KJSProxy;

@@ -76,7 +76,7 @@ namespace WebCore {
     class FormData;
     class FormState;
     class Frame;
-    class FrameLoadRequest;
+    struct FrameLoadRequest;
     class FrameLoaderClient;
     class KURL;
     class MainResourceLoader;
@@ -86,7 +86,7 @@ namespace WebCore {
     class ResourceResponse;
     class String;
     class SubresourceLoader;
-    class WindowFeatures;
+    struct WindowFeatures;
 
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
 
