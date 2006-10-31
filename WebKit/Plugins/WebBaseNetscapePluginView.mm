@@ -1792,8 +1792,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
         
     if ([JSPluginRequest frameName] != nil) {
-        // FIXME: If the result is a string, we probably want to put that string into the frame, just
-        // like we do in KHTMLPartBrowserExtension::openURLRequest.
+        // FIXME: If the result is a string, we probably want to put that string into the frame.
         if ([JSPluginRequest sendNotification]) {
             [self willCallPlugInFunction];
             NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);

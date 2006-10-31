@@ -1,3 +1,9 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        Fix comment.
+
 2006-10-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen
