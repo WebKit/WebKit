@@ -1,3 +1,12 @@
+2006-10-31  Nikolas Zimmermann <zimmermann@kde.org>
+
+        Reviewed by Mitz.
+
+        Fix Qt/Linux build with older gcc3.3.4.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+
 2006-10-31  Zack Rusin  <zack@kde.org>
 
         Reviewed by Mitz.
