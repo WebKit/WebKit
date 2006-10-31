@@ -90,6 +90,7 @@
 /* PLATFORM(CAIRO) */
 #if PLATFORM(MAC)
 #define WTF_PLATFORM_CG 1
+#define WTF_PLATFORM_CI 1
 #elif !PLATFORM(QT)
 #define WTF_PLATFORM_CAIRO 1
 #endif
