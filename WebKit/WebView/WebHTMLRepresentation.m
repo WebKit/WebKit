@@ -28,6 +28,8 @@
 
 #import "WebHTMLRepresentation.h"
 
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
@@ -36,13 +38,18 @@
 #import "WebFrameInternal.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebNSAttributedStringExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/Range.h>
+
+using namespace WebCore;
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -227,9 +234,10 @@
     return nil;
 }
 
-- (NSAttributedString *)attributedStringFrom: (DOMNode *)startNode startOffset: (int)startOffset to: (DOMNode *)endNode endOffset: (int)endOffset
+- (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    return [_private->bridge attributedStringFrom: startNode startOffset: startOffset to: endNode endOffset: endOffset];
+    Range range([startNode _node]->document(), [startNode _node], startOffset, [endNode _node], endOffset);
+    return [NSAttributedString _web_attributedStringFromRange:&range];
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form

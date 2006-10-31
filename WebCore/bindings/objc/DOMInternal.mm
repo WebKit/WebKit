@@ -71,54 +71,6 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 
 
 //------------------------------------------------------------------------------------------
-// Exceptions
-
-NSString * const DOMException = @"DOMException";
-NSString * const DOMRangeException = @"DOMRangeException";
-NSString * const DOMEventException = @"DOMEventException";
-#ifdef SVG_SUPPORT
-NSString * const DOMSVGException = @"DOMSVGException";
-#endif // SVG_SUPPORT
-#ifdef XPATH_SUPPORT
-NSString * const DOMXPathException = @"DOMXPathException";
-#endif // XPATH_SUPPORT
-
-namespace WebCore {
-
-void raiseDOMException(ExceptionCode ec)
-{
-    ASSERT(ec);
-
-    NSString *name = ::DOMException;
-
-    int code = ec;
-    if (ec >= RangeExceptionOffset && ec <= RangeExceptionMax) {
-        name = DOMRangeException;
-        code -= RangeExceptionOffset;
-    } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
-        name = DOMEventException;
-        code -= EventExceptionOffset;
-#ifdef SVG_SUPPORT
-    } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
-        name = DOMSVGException;
-        code -= SVGExceptionOffset;
-#endif // SVG_SUPPORT
-#ifdef XPATH_SUPPORT
-    } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
-        name = DOMXPathException;
-        code -= XPathExceptionOffset;
-#endif // XPATH_SUPPORT
-    }
-
-    NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
-    NSException *exception = [NSException exceptionWithName:name reason:reason
-        userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:name]];
-    [exception raise];
-}
-
-} // namespace WebCore
-
-//------------------------------------------------------------------------------------------
 
 @implementation WebScriptObject (WebScriptObjectInternal)
 

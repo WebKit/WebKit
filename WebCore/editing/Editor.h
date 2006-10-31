@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EDITOR_H
-#define EDITOR_H
+#ifndef Editor_h
+#define Editor_h
 
+#include "Frame.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
-#include "Frame.h"
-
 namespace WebCore {
 
 class DeleteButtonController;
+class Editor;
 class EditorClient;
 class Frame;
 class HTMLElement;
@@ -66,11 +66,19 @@ public:
 
     Frame* frame() const { return m_frame; }
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
+    EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
+
+    // FIXME: Once the Editor implements all editing commands, it should track 
+    // the lastEditCommand on its own, and we should remove this function.
+    void setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand);
+
+    void deleteSelectionWithSmartDelete(bool smartDelete);
 
 private:
     Frame* m_frame;
     RefPtr<EditorClient> m_client;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
+    RefPtr<EditCommand> m_lastEditCommand;
 
     bool canCopy();
     bool canCut();
@@ -85,13 +93,11 @@ private:
     bool tryDHTMLCut();
     bool tryDHTMLPaste();
     void deleteSelection();
-    void deleteSelectionWithSmartDelete(bool enabled);
     void pasteAsPlainTextWithPasteboard(Pasteboard);
     void pasteWithPasteboard(Pasteboard, bool allowPlainText);
     void writeSelectionToPasteboard(Pasteboard);
-
 };
 
 } // namespace WebCore
 
-#endif // EDITOR_H
+#endif // Editor_h

@@ -1,3 +1,37 @@
+2006-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Removed a number of editing and selection methods from the bridge.
+        
+        I moved cross-platform editing and selection code into Editor and 
+        SelectionController, respecitvely.
+
+        I moved ObjC and AppKit stuff up into WebKit, so I ended up exporting
+        everything + the kitchen sink.
+        
+        Specific comments below for interesting things.
+        
+        * bindings/objc/DOMInternal.h: Moved exception handling helper methods into
+        a new file so that WebKit can use them, too. Added a helper method for
+        handling exceptions when selecting a Range.
+        * bridge/mac/FrameMac.h: Moved attributedString creation and helper functions into 
+        WebKit, since they have to do with creating an NSAttributedString for API
+        consumption, and not much to do with general Frame functionality.
+        * editing/Editor.h: Moved lastEditCommand tracking (at least the data,
+        for now) into the Editor. Eventually, the Frame will not have to notify 
+        the Editor of what the lastEditCommand was, since the Editor will perform
+        all EditCommands.
+        * editing/SelectionController.h: The code here is just stuff moved from the bridge.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelectedRange): We now explicitly check from DOM exceptions
+        and return them. The bridge method to select a DOM range did this implicitly,
+        since all ObjC DOM operations handle DOM exceptions by throwing them as
+        ObjC exceptions.
+        * editing/TextAffinity.h: Added helper functions for conversion to NSSelectionAffinity.
+        The two enumerations are numerically identical, but that's an implementation
+        detail of TextAffinity that clients shouldn't be required to know about.
+
 2006-10-30  Timothy Hatcher  <timothy@apple.com>
 
         Rolling out the following change because this crash:

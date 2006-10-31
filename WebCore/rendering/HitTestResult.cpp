@@ -29,6 +29,7 @@
 #include "HTMLElement.h"
 #include "PlatformScrollBar.h"
 #include "RenderObject.h"
+#include "SelectionController.h"
 
 namespace WebCore {
 
@@ -121,7 +122,7 @@ bool HitTestResult::isSelected() const
     if (!frame)
         return false;
 
-    return frame->isPointInsideSelection(m_point);
+    return frame->selectionController()->contains(m_point);
 }
 
 String HitTestResult::title() const

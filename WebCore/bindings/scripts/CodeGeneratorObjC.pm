@@ -818,6 +818,7 @@ sub GenerateImplementation
     }
 
     $implIncludes{"DOMInternal.h"} = 1;
+    $implIncludes{"ExceptionHandlers.h"} = 1;
 
     @implContent = ();
 

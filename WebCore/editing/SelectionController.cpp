@@ -26,12 +26,15 @@
 #include "config.h"
 #include "SelectionController.h"
 
+#include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -97,7 +100,7 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     ASSERT(!s.end().node() || s.end().node()->document() == m_frame->document());
     
     if (closeTyping)
-        TypingCommand::closeTyping(m_frame->lastEditCommand());
+        TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
 
     if (clearTypingStyle)
         m_frame->clearTypingStyle();
@@ -118,7 +121,7 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_frame->setXPosForVerticalArrowNavigation(Frame::NoXPosForVerticalArrowNavigation);
-    m_frame->selectFrameElementInParentIfFullySelected();
+    selectFrameElementInParentIfFullySelected();
     m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
     m_frame->editor()->respondToChangedSelection(oldSelection);
@@ -927,6 +930,146 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
             fprintf(stderr, "    #text : \"%s\"\n", text.latin1());
         }
     }
+}
+
+bool SelectionController::contains(const IntPoint& point)
+{
+    Document* document = m_frame->document();
+    
+    // Treat a collapsed selection like no selection.
+    if (!isRange())
+        return false;
+    if (!document->renderer()) 
+        return false;
+    
+    HitTestResult result(point, true, true);
+    document->renderer()->layer()->hitTest(result);
+    Node *innerNode = result.innerNode();
+    if (!innerNode || !innerNode->renderer())
+        return false;
+    
+    Position pos(innerNode->renderer()->positionForPoint(point).deepEquivalent());
+    if (pos.isNull())
+        return false;
+
+    Node *n = start().node();
+    while (n) {
+        if (n == pos.node()) {
+            if ((n == start().node() && pos.offset() < start().offset()) ||
+                (n == end().node() && pos.offset() > end().offset())) {
+                return false;
+            }
+            return true;
+        }
+        if (n == end().node())
+            break;
+        n = n->traverseNextNode();
+    }
+
+   return false;
+}
+
+// Workaround for the fact that it's hard to delete a frame.
+// Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
+// Can't do this implicitly as part of every setSelection call because in some contexts it might not be good
+// for the focus to move to another frame. So instead we call it from places where we are selecting with the
+// mouse or the keyboard after setting the selection.
+void SelectionController::selectFrameElementInParentIfFullySelected()
+{
+    // Find the parent frame; if there is none, then we have nothing to do.
+    Frame *parent = m_frame->tree()->parent();
+    if (!parent)
+        return;
+    FrameView *parentView = parent->view();
+    if (!parentView)
+        return;
+
+    // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
+    if (!isRange())
+        return;
+    if (!isStartOfDocument(selection().visibleStart()))
+        return;
+    if (!isEndOfDocument(selection().visibleEnd()))
+        return;
+
+    // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
+    Document *doc = m_frame->document();
+    if (!doc)
+        return;
+    Element *ownerElement = doc->ownerElement();
+    if (!ownerElement)
+        return;
+    Node *ownerElementParent = ownerElement->parentNode();
+    if (!ownerElementParent)
+        return;
+        
+    // This method's purpose is it to make it easier to select iframes (in order to delete them).  Don't do anything if the iframe isn't deletable.
+    if (!ownerElementParent->isContentEditable())
+        return;
+
+    // Create compute positions before and after the element.
+    unsigned ownerElementNodeIndex = ownerElement->nodeIndex();
+    VisiblePosition beforeOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex, SEL_DEFAULT_AFFINITY));
+    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, VP_UPSTREAM_IF_POSSIBLE));
+
+    // Focus on the parent frame, and then select from before this element to after.
+    Selection newSelection(beforeOwnerElement, afterOwnerElement);
+    if (parent->shouldChangeSelection(newSelection)) {
+        parentView->setFocus();
+        parent->selectionController()->setSelection(newSelection);
+    }
+}
+
+void SelectionController::selectAll()
+{
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+    
+    Node* root = isContentEditable() ? rootEditableElement() : document->documentElement();
+    Selection newSelection(Selection::selectionFromContentsOfNode(root));
+    if (m_frame->shouldChangeSelection(newSelection))
+        setSelection(newSelection);
+    selectFrameElementInParentIfFullySelected();
+    m_frame->notifyRendererOfSelectionChange(true);
+}
+
+void SelectionController::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping, ExceptionCode& ec)
+{
+    ec = 0;
+    
+    Node* startContainer = range->startContainer(ec);
+    if (ec)
+        return;
+
+    Node* endContainer = range->endContainer(ec);
+    if (ec)
+        return;
+    
+    ASSERT(startContainer);
+    ASSERT(endContainer);
+    ASSERT(startContainer->document() == endContainer->document());
+    
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+
+    // Non-collapsed ranges are not allowed to start at the end of a line that is wrapped,
+    // they start at the beginning of the next line instead
+    bool collapsed = range->collapsed(ec);
+    if (ec)
+        return;
+    
+    int startOffset = range->startOffset(ec);
+    if (ec)
+        return;
+
+    int endOffset = range->endOffset(ec);
+    if (ec)
+        return;
+    
+    // FIXME: Can we provide extentAffinity?
+    VisiblePosition visibleStart(startContainer, startOffset, collapsed ? affinity : DOWNSTREAM);
+    VisiblePosition visibleEnd(endContainer, endOffset, SEL_DEFAULT_AFFINITY);
+    setSelection(Selection(visibleStart, visibleEnd), closeTyping);
 }
 
 #ifndef NDEBUG

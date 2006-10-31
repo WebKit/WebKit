@@ -30,6 +30,7 @@
 #include "BreakBlockquoteCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
 #include "InsertLineBreakCommand.h"
@@ -61,7 +62,7 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->deleteKeyPressed(granularity);
         return;
@@ -79,7 +80,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->forwardDeleteKeyPressed(granularity);
         return;
@@ -111,7 +112,7 @@ void TypingCommand::insertText(Document *document, const String &text, bool sele
     if (newText.isEmpty())
         return;
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->insertText(newText, selectInsertedText);
         return;
@@ -127,7 +128,7 @@ void TypingCommand::insertLineBreak(Document *document)
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->insertLineBreak();
         return;
@@ -143,7 +144,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->insertParagraphSeparatorInQuotedContent();
         return;
@@ -159,7 +160,7 @@ void TypingCommand::insertParagraphSeparator(Document *document)
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    EditCommand* lastEditCommand = frame->lastEditCommand();
+    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->insertParagraphSeparator();
         return;

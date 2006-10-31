@@ -25,7 +25,6 @@
 #ifndef RENDER_BOX_H
 #define RENDER_BOX_H
 
-#include "loader.h"
 #include "RenderLayer.h"
 
 namespace WebCore {

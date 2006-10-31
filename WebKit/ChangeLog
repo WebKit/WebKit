@@ -1,3 +1,22 @@
+2006-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Removed a number of editing and selection methods from the bridge.
+        
+        I moved cross-platform editing and selection code into WebCore::Editor and 
+        WebCore::SelectionController, respecitvely.
+        
+        All of the seemingly new code here is just code grabbed from WebCore or
+        merged from WebCoreFrameBridge.
+        
+        I changed one piece of internal API: we now pass around Ranges in places
+        where we used to pass around broken out components of Ranges.
+        
+        I also added WebCore XPATH_SUPPORT AND SVG_SUPPORT #defines to the project.
+        Since we now include WebCore headers that depend on these #defines, we need
+        to keep in sync with them, to avoid binary incompatibility.
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

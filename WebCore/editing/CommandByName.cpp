@@ -118,7 +118,7 @@ bool execMoveDown(Frame* frame)
 
 bool execSelectAll(Frame* frame)
 {
-    frame->selectAll();
+    frame->selectionController()->selectAll();
     return true;
 }
 

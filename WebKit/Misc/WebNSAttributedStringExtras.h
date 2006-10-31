@@ -26,8 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace WebCore {
+    class Range;
+}
+
 @interface NSAttributedString (WebKitExtras)
 
++ (NSAttributedString *)_web_attributedStringFromRange:(WebCore::Range*)range;
 - (NSAttributedString *)_web_attributedStringByStrippingAttachmentCharacters;
 
 @end

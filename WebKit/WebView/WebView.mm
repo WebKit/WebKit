@@ -29,6 +29,7 @@
 
 #import "WebViewInternal.h"
 
+#import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebDOMOperationsPrivate.h"
@@ -85,6 +86,9 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Document.h>
+#import <WebCore/Editor.h>
+#import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
@@ -3141,13 +3145,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
-    if (range == nil) {
-        [[self _bridgeForSelectedOrMainFrame] deselectText];
-    } else {
-        // Derive the bridge to use from the range passed in.
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return;
+
+    if (range == nil)
+        coreFrame->selectionController()->clear();
+    else {
+        // Derive the frame to use from the range passed in.
         // Using _bridgeForSelectedOrMainFrame could give us a different document than
         // the one the range uses.
-        [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity closeTyping:YES];
+        coreFrame = core([range startContainer])->document()->frame();
+        if (!coreFrame)
+            return;
+
+        selectRange(coreFrame->selectionController(), [range _range], core(selectionAffinity), true);
     }
 }
 
@@ -3161,7 +3173,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    return [[self _bridgeForSelectedOrMainFrame] selectionAffinity];
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return NSSelectionAffinityDownstream;
+    return kit(coreFrame->selectionController()->affinity());
 }
 
 - (void)setEditable:(BOOL)flag
@@ -3352,8 +3367,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)deleteSelection
 {
-    WebFrameBridge *bridge = [self _bridgeForSelectedOrMainFrame];
-    [bridge deleteSelectionWithSmartDelete:[(WebHTMLView *)[[[bridge webFrame] frameView] documentView] _canSmartCopyOrDelete]];
+    WebFrame *webFrame = [self _selectedOrMainFrame];
+    Frame* coreFrame = core(webFrame);
+    if (coreFrame)
+        coreFrame->editor()->deleteSelectionWithSmartDelete([(WebHTMLView *)[[webFrame frameView] documentView] _canSmartCopyOrDelete]);
 }
     
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style

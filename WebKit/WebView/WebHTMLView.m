@@ -28,6 +28,8 @@
 
 #import "WebHTMLView.h"
 
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebArchiver.h"
 #import "WebBaseNetscapePluginViewInternal.h"
@@ -66,9 +68,13 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/Document.h>
+#import <WebCore/Editor.h>
+#import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebDataProtocol.h>
@@ -609,6 +615,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
          granularity:(WebBridgeSelectionGranularity)granularity
 {
     WebFrameBridge *bridge = [self _bridge];
+    Frame* coreFrame = core([self _frame]);
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
 
     BOOL startNewKillRingSequence = _private->startNewKillRingSequence;
@@ -626,19 +633,23 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
         startNewKillRingSequence = NO;
     }
 
-    switch (deletionAction) {
-        case deleteSelectionAction:
-            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:YES];
-            [bridge deleteSelectionWithSmartDelete:smartDelete];
-            break;
-        case deleteKeyAction:
-            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:(granularity != WebBridgeSelectByCharacter)];
-            [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
-            break;
-        case forwardDeleteKeyAction:
-            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:(granularity != WebBridgeSelectByCharacter)];
-            [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
-            break;
+    if (coreFrame) {
+        SelectionController* selectionController = coreFrame->selectionController();
+        Editor* editor = coreFrame->editor();
+        switch (deletionAction) {
+            case deleteSelectionAction:
+                selectRange(selectionController, core(range), DOWNSTREAM, true);
+                editor->deleteSelectionWithSmartDelete(smartDelete);
+                break;
+            case deleteKeyAction:
+                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != WebBridgeSelectByCharacter));
+                [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
+                break;
+            case forwardDeleteKeyAction:
+                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != WebBridgeSelectByCharacter));
+                [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
+                break;
+        }
     }
 
     _private->startNewKillRingSequence = startNewKillRingSequence;
@@ -2669,9 +2680,16 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 
-- (void)deselectText
+- (void)clearFocus
 {
-    [[self _bridge] deselectText];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    Document* document = coreFrame->document();
+    if (!document)
+        return;
+    
+    document->setFocusNode(0);
 }
 
 - (BOOL)isOpaque
@@ -3142,10 +3160,9 @@ done:
         [_private->compController endRevertingChange:NO moveLeft:NO];
         _private->resigningFirstResponder = YES;
         if (![self maintainsInactiveSelection]) { 
-            if ([[self _webView] _isPerformingProgrammaticFocus])
-                [self deselectText];
-            else
-                [self deselectAll];
+            [self deselectAll];
+            if (![[self _webView] _isPerformingProgrammaticFocus])
+                [self clearFocus];
         }
         [self _updateActiveState];
         _private->resigningFirstResponder = NO;
@@ -3765,14 +3782,25 @@ done:
 {
     if (![self _canAlterCurrentSelection])
         return;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
-    if (range && ![range collapsed]) {
-        WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO])
-            [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity] closeTyping:YES];
-    }
+    
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame || !coreFrame->hasSelection())
+        return;
+
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    Selection selection(coreFrame->selectionController()->selection());
+    selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
+    
+    RefPtr<Range> range = selection.toRange();
+    DOMRange *domRange = kit(range.get());
+    
+    if ([domRange collapsed])
+        return;
+
+    EAffinity affinity = coreFrame->selectionController()->affinity();
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:domRange affinity:kit(affinity) stillSelecting:NO])
+        selectRange(coreFrame->selectionController(), range.get(), affinity, true);
 }
 
 - (void)selectParagraph:(id)sender
@@ -4723,8 +4751,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return;
     }
     DOMRange *selection = [self _selectedRange];
+    Frame* coreFrame = core([self _frame]);
     NS_DURING
-        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityDownstream closeTyping:YES];
+        if (coreFrame)
+            selectRange(coreFrame->selectionController(), core(unionDOMRanges(mark, selection)), DOWNSTREAM, true);
     NS_HANDLER
         NSBeep();
     NS_ENDHANDLER
@@ -4734,13 +4764,17 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
+
     if (mark == nil) {
         NSBeep();
         return;
     }
+
     DOMRange *selection = [self _selectedRange];
+    Frame* coreFrame = core([self _frame]);
     NS_DURING
-        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityDownstream closeTyping:YES];
+        if (coreFrame)
+            selectRange(coreFrame->selectionController(), core(mark), DOWNSTREAM, true);
     NS_HANDLER
         NSBeep();
         return;
@@ -4765,7 +4799,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange]
             toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO])
         return;
-    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityDownstream closeTyping:YES];
+
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        selectRange(coreFrame->selectionController(), core(r), DOWNSTREAM, true);
     if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped])
         [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
 }
@@ -5145,9 +5182,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)cut:(id)sender
 {
-    WebFrameBridge *bridge = [self _bridge];
-    FrameMac* frame = core([self _frame]);
-    if (frame && frame->tryDHTMLCut())
+    FrameMac* coreFrame = core([self _frame]);
+    if (coreFrame && coreFrame->tryDHTMLCut())
         return; // DHTML did the whole operation
     if (![self _canCut]) {
         NSBeep();
@@ -5156,7 +5192,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     DOMRange *range = [self _selectedRange];
     if ([self _shouldDeleteRange:range]) {
         [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-        [bridge deleteSelectionWithSmartDelete:[self _canSmartCopyOrDelete]];
+        if (coreFrame)
+            coreFrame->editor()->deleteSelectionWithSmartDelete([self _canSmartCopyOrDelete]);
    }
 }
 
@@ -5167,7 +5204,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return; // DHTML did the whole operation
     if (![self _canPaste])
         return;
-    if (coreFrame->selectionController()->isContentRichlyEditable())
+    if (coreFrame && coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
@@ -5279,13 +5316,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [[self _bridge] markedTextNSRange];
 }
 
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
     WebFrameBridge *bridge = [self _bridge];
-    DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
-    if (!range)
+    DOMRange *domRange = [bridge convertNSRangeToDOMRange:nsRange];
+    if (!domRange)
         return nil;
-    return [bridge attributedStringFrom:[range startContainer] startOffset:[range startOffset] to:[range endContainer] endOffset:[range endOffset]];
+    return [NSAttributedString _web_attributedStringFromRange:core(domRange)];
 }
 
 // test for 10.4 because of <rdar://problem/4243463>
@@ -5316,7 +5353,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if ([self hasMarkedText]) {
         WebFrameBridge *bridge = [self _bridge];
         DOMRange *markedTextRange = [bridge markedTextDOMRange];
-        [bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
+        Frame* coreFrame = core([self _frame]);
+        if (coreFrame)
+            selectRange(coreFrame->selectionController(), core(markedTextRange), DOWNSTREAM, false);
     }
 }
 
@@ -5336,7 +5375,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [selectedRange setStart:[markedTextRange startContainer] offset:selectionStart];
     [selectedRange setEnd:[markedTextRange startContainer] offset:selectionEnd];
 
-    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        selectRange(coreFrame->selectionController(), core(selectedRange), DOWNSTREAM, false);
 }
 
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
@@ -5415,7 +5456,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self unmarkText];
     [[NSInputManager currentInputManager] markedTextAbandoned:self];
     // FIXME: Should we be calling the delegate here?
-    [[self _bridge] deleteSelectionWithSmartDelete:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->deleteSelectionWithSmartDelete(false);
 
     _private->ignoreMarkedTextSelectionChange = NO;
 }
@@ -5813,12 +5855,17 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)selectAll
 {
-    [[self _bridge] selectAll];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->selectionController()->selectAll();
 }
 
 - (void)deselectAll
 {
-    [[self _bridge] deselectAll];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    coreFrame->selectionController()->clear();
 }
 
 - (NSString *)string
@@ -5842,11 +5889,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSAttributedString *)attributedString
 {
-    WebFrameBridge *bridge = [self _bridge];
     DOMDocument *document = [[self _frame] DOMDocument];
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
-    if (attributedString == nil) {
-        attributedString = [bridge attributedStringFrom:document startOffset:0 to:nil endOffset:0];
+    if (!attributedString) {
+        Document* coreDocument = core(document);
+        Range range(coreDocument, coreDocument, 0, 0, 0);
+        attributedString = [NSAttributedString _web_attributedStringFromRange:&range];
     }
     return attributedString;
 }
@@ -5858,10 +5906,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSAttributedString *)selectedAttributedString
 {
-    WebFrameBridge *bridge = [self _bridge];
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
-    if (attributedString == nil) {
-        attributedString = [bridge selectedAttributedString];
+    if (!attributedString) {
+        FrameMac* coreFrame = core([self _frame]);
+        if (coreFrame) {
+            RefPtr<Range> range = coreFrame->selectionController()->selection().toRange();
+            attributedString = [NSAttributedString _web_attributedStringFromRange:range.get()];
+        }
     }
     return attributedString;
 }

@@ -315,7 +315,7 @@
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFormDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; indentWidth = 4; path = WebHTMLRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebHTMLRepresentation.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9502B6D4D80ACA2ACA /* WebHTMLView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebHTMLView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -487,7 +487,7 @@
 		ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPasteboardExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED2B2475033A2DA800C1A526 /* WebNSPasteboardExtras.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebNSPasteboardExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSAttributedStringExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; indentWidth = 4; path = WebNSAttributedStringExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1483,6 +1483,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1492,6 +1493,7 @@
 				GCC_PREFIX_HEADER = WebKitPrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
+					"$(FEATURE_DEFINES)",
 					"FRAMEWORK_NAME=WebKit",
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
@@ -1528,6 +1530,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1537,6 +1540,7 @@
 				GCC_PREFIX_HEADER = WebKitPrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
+					"$(FEATURE_DEFINES)",
 					"FRAMEWORK_NAME=WebKit",
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
@@ -1573,6 +1577,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
@@ -1583,6 +1588,7 @@
 				GCC_PREFIX_HEADER = WebKitPrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
+					"$(FEATURE_DEFINES)",
 					"FRAMEWORK_NAME=WebKit",
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);

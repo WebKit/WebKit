@@ -567,10 +567,7 @@ bool Frame::didOpenURL(const KURL& url)
   }
   
   cancelRedirection();
-  
-  // clear last edit command
-  d->m_lastEditCommand = 0;
-  
+  editor()->setLastEditCommand(0);
   closeURL();
 
   d->m_bComplete = false;
@@ -1783,41 +1780,6 @@ bool Frame::shouldDragAutoNode(Node *node, const IntPoint& point) const
     return false;
 }
 
-bool Frame::isPointInsideSelection(const IntPoint& point)
-{
-    // Treat a collapsed selection like no selection.
-    if (!selectionController()->isRange())
-        return false;
-    if (!document()->renderer()) 
-        return false;
-    
-    HitTestResult result(point, true, true);
-    document()->renderer()->layer()->hitTest(result);
-    Node *innerNode = result.innerNode();
-    if (!innerNode || !innerNode->renderer())
-        return false;
-    
-    Position pos(innerNode->renderer()->positionForPoint(point).deepEquivalent());
-    if (pos.isNull())
-        return false;
-
-    Node *n = selectionController()->start().node();
-    while (n) {
-        if (n == pos.node()) {
-            if ((n == selectionController()->start().node() && pos.offset() < selectionController()->start().offset()) ||
-                (n == selectionController()->end().node() && pos.offset() > selectionController()->end().offset())) {
-                return false;
-            }
-            return true;
-        }
-        if (n == selectionController()->end().node())
-            break;
-        n = n->traverseNextNode();
-    }
-
-   return false;
-}
-
 void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode)
 {
     Selection newSelection;
@@ -1892,7 +1854,7 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.
             IntPoint vPoint = view()->windowToContents(event.event().pos());
-            if (!extendSelection && isPointInsideSelection(vPoint))
+            if (!extendSelection && selectionController()->contains(vPoint))
                 return;
 
             VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(vPoint));
@@ -2041,28 +2003,7 @@ void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
 
     notifyRendererOfSelectionChange(true);
 
-    selectFrameElementInParentIfFullySelected();
-}
-
-void Frame::selectAll()
-{
-    if (!d->m_doc)
-        return;
-    
-    Node* root = selectionController()->isContentEditable() ? selectionController()->rootEditableElement() : d->m_doc->documentElement();
-    selectContentsOfNode(root);
-    selectFrameElementInParentIfFullySelected();
-    notifyRendererOfSelectionChange(true);
-}
-
-bool Frame::selectContentsOfNode(Node* node)
-{
-    Selection newSelection(Selection::selectionFromContentsOfNode(node));
-    if (shouldChangeSelection(newSelection)) {
-        selectionController()->setSelection(newSelection);
-        return true;
-    }
-    return false;
+    selectionController()->selectFrameElementInParentIfFullySelected();
 }
 
 bool Frame::shouldChangeSelection(const Selection& newSelection) const
@@ -2125,11 +2066,6 @@ bool Frame::isSelectionInPasswordField()
     return startNode && startNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
 }
   
-EditCommand* Frame::lastEditCommand()
-{
-    return d->m_lastEditCommand.get();
-}
-
 static void dispatchEditableContentChangedEvents(const EditCommand& command)
 {
      Element* startRoot = command.startingRootEditableElement();
@@ -2161,12 +2097,12 @@ void Frame::appliedEditing(PassRefPtr<EditCommand> cmd)
     }
 
     // Command will be equal to last edit command only in the case of typing
-    if (d->m_lastEditCommand == cmd)
+    if (editor()->lastEditCommand() == cmd)
         assert(cmd->isTypingCommand());
     else {
         // Only register a new undo command if the command passed in is
         // different from the last command
-        d->m_lastEditCommand = cmd.get();
+        editor()->setLastEditCommand(cmd.get());
         registerCommandForUndo(cmd);
     }
     respondToChangedContents(newSelection);
@@ -2181,7 +2117,7 @@ void Frame::unappliedEditing(PassRefPtr<EditCommand> cmd)
     if (shouldChangeSelection(newSelection))
         selectionController()->setSelection(newSelection, true);
         
-    d->m_lastEditCommand = 0;
+    editor()->setLastEditCommand(0);
     registerCommandForRedo(cmd);
     respondToChangedContents(newSelection);
     editor()->respondToChangedContents();
@@ -2195,7 +2131,7 @@ void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
     if (shouldChangeSelection(newSelection))
         selectionController()->setSelection(newSelection, true);
         
-    d->m_lastEditCommand = 0;
+    editor()->setLastEditCommand(0);
     registerCommandForUndo(cmd);
     respondToChangedContents(newSelection);
     editor()->respondToChangedContents();
@@ -2614,57 +2550,6 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
     lifeSupportSet.remove(this);
 #endif
     deref();
-}
-
-// Workaround for the fact that it's hard to delete a frame.
-// Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
-// Can't do this implicitly as part of every setSelection call because in some contexts it might not be good
-// for the focus to move to another frame. So instead we call it from places where we are selecting with the
-// mouse or the keyboard after setting the selection.
-void Frame::selectFrameElementInParentIfFullySelected()
-{
-    // Find the parent frame; if there is none, then we have nothing to do.
-    Frame *parent = tree()->parent();
-    if (!parent)
-        return;
-    FrameView *parentView = parent->view();
-    if (!parentView)
-        return;
-
-    // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
-    if (!selectionController()->isRange())
-        return;
-    if (!isStartOfDocument(selectionController()->selection().visibleStart()))
-        return;
-    if (!isEndOfDocument(selectionController()->selection().visibleEnd()))
-        return;
-
-    // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    Document *doc = document();
-    if (!doc)
-        return;
-    Element *ownerElement = doc->ownerElement();
-    if (!ownerElement)
-        return;
-    Node *ownerElementParent = ownerElement->parentNode();
-    if (!ownerElementParent)
-        return;
-        
-    // This method's purpose is it to make it easier to select iframes (in order to delete them).  Don't do anything if the iframe isn't deletable.
-    if (!ownerElementParent->isContentEditable())
-        return;
-
-    // Create compute positions before and after the element.
-    unsigned ownerElementNodeIndex = ownerElement->nodeIndex();
-    VisiblePosition beforeOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex, SEL_DEFAULT_AFFINITY));
-    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, VP_UPSTREAM_IF_POSSIBLE));
-
-    // Focus on the parent frame, and then select from before this element to after.
-    Selection newSelection(beforeOwnerElement, afterOwnerElement);
-    if (parent->shouldChangeSelection(newSelection)) {
-        parentView->setFocus();
-        parent->selectionController()->setSelection(newSelection);
-    }
 }
 
 bool Frame::mouseDownMayStartAutoscroll() const

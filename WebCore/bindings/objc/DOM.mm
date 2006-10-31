@@ -41,6 +41,7 @@
 #import "EntityReference.h"
 #import "Event.h"
 #import "EventListener.h"
+#import "ExceptionHandlers.h"
 #import "FontData.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"

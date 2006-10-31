@@ -27,7 +27,7 @@
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardAccess.h>
-
+#import <WebCore/TextAffinity.h>
 #ifdef __cplusplus
 
 namespace WebCore {
@@ -238,8 +238,6 @@ typedef enum {
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 - (NSString *)renderTreeAsExternalRepresentation;
 
-- (BOOL)isPointInsideSelection:(NSPoint)point;
-
 - (NSURL *)URLWithAttributeString:(NSString *)string;
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
@@ -267,7 +265,6 @@ typedef enum {
 
 - (BOOL)mayCopy;
 
-- (NSAttributedString *)selectedAttributedString;
 - (NSString *)selectedString;
 
 - (NSString *)stringForRange:(DOMRange *)range;
@@ -275,16 +272,9 @@ typedef enum {
 - (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes;
 - (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
 
-- (void)selectAll;
-- (void)deselectAll;
-- (void)deselectText;
-
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity;
 - (NSRect)firstRectForDOMRange:(DOMRange *)range;
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
-
-- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity closeTyping:(BOOL)closeTyping;
-- (NSSelectionAffinity)selectionAffinity;
 
 // Emacs-style-editing "mark"
 - (void)setMarkDOMRange:(DOMRange *)range;
@@ -294,8 +284,6 @@ typedef enum {
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges;
 - (DOMRange *)markedTextDOMRange;
 - (void)replaceMarkedTextWithText:(NSString *)text;
-
-- (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
 - (NSWritingDirection)baseWritingDirectionForSelectionStart;
@@ -316,7 +304,6 @@ typedef enum {
 - (void)undoEditing:(id)arg;
 - (void)redoEditing:(id)arg;
 
-- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebBridgeSelectionGranularity)granularity;
 - (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
@@ -360,7 +347,6 @@ typedef enum {
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point;
 
-- (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete;
 - (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
 - (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
 
@@ -510,7 +496,7 @@ typedef enum {
 - (void)respondToChangedContents;
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 - (BOOL)isEditable;
-- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
+- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(WebCore::EAffinity)selectionAffinity stillSelecting:(BOOL)flag;
 - (BOOL)shouldDeleteSelectedDOMRange:(DOMRange *)currentRange;
 - (BOOL)shouldBeginEditing:(DOMRange *)range;
 - (BOOL)shouldEndEditing:(DOMRange *)range;

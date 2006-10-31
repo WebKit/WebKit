@@ -339,8 +339,6 @@ namespace WebCore {
 
     // Helper functions for DOM wrappers and gluing to Objective-C
 
-    typedef int ExceptionCode;
-
     NSObject* getDOMWrapper(DOMObjectInternal*);
     void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);
     void removeDOMWrapper(DOMObjectInternal*);
@@ -355,14 +353,6 @@ namespace WebCore {
     inline void addDOMWrapper(NSObject* wrapper, Source impl)
     {
         addDOMWrapper(wrapper, reinterpret_cast<DOMObjectInternal*>(impl));
-    }
-
-    void raiseDOMException(ExceptionCode);
-
-    inline void raiseOnDOMError(ExceptionCode ec) 
-    {
-        if (ec) 
-            raiseDOMException(ec);
     }
 
     NSString* displayString(const String&, const Node*);

@@ -29,18 +29,21 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "DeleteButtonController.h"
+#include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "EditorClient.h"
 #include "EditCommand.h"
-#include "htmlediting.h"
+#include "Editor.h"
+#include "EditorClient.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "markup.h"
+#include "HitTestResult.h"
 #include "Range.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Sound.h"
+#include "htmlediting.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -102,8 +105,12 @@ void Editor::deleteSelection()
 {
 }
 
-void Editor::deleteSelectionWithSmartDelete(bool enabled)
+void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
 {
+    if (!m_frame->hasSelection())
+        return;
+    
+    applyCommand(new DeleteSelectionCommand(m_frame->document(), smartDelete));
 }
 
 bool Editor::isSelectionRichlyEditable()
@@ -230,6 +237,11 @@ void Editor::removeFormattingAndStyle()
     fragment->appendChild(span, ec);
     
     applyCommand(new ReplaceSelectionCommand(document, fragment, false, false, false, true, EditActionUnspecified));
+}
+
+void Editor::setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand) 
+{
+    m_lastEditCommand = lastEditCommand;
 }
 
 // =============================================================================

@@ -1200,9 +1200,9 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[self webView] isEditable];
 }
 
-- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
+- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(WebCore::EAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
-    return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
+    return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:kit(selectionAffinity) stillSelecting:flag];
 }
 
 - (BOOL)shouldDeleteSelectedDOMRange:(DOMRange *)range

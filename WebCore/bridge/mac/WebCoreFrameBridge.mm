@@ -561,25 +561,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return [[(NSString*)text copy] autorelease];
 }
 
-- (void)selectAll
-{
-    m_frame->selectAll();
-}
-
-- (void)deselectAll
-{
-    [self deselectText];
-    Document *doc = m_frame->document();
-    if (doc) {
-        doc->setFocusNode(0);
-    }
-}
-
-- (void)deselectText
-{
-    m_frame->selectionController()->clear();
-}
-
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
     m_frame->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
@@ -869,11 +850,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->matchLabelsAgainstElement(labels, [element _element]);
 }
 
-- (BOOL)isPointInsideSelection:(NSPoint)point
-{
-    return m_frame->isPointInsideSelection(IntPoint(point));
-}
-
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
     Document *doc = m_frame->document();
@@ -992,18 +968,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return 0;
     JSLock lock;
     return aeDescFromJSValue(m_frame->scriptProxy()->interpreter()->globalExec(), result);
-}
-
-- (NSAttributedString *)selectedAttributedString
-{
-    // FIXME: should be a no-arg version of attributedString() that does this
-    Selection selection = m_frame->selectionController()->selection();
-    return m_frame->attributedString(selection.start().node(), selection.start().offset(), selection.end().node(), selection.end().offset());
-}
-
-- (NSAttributedString *)attributedStringFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset
-{
-    return m_frame->attributedString([start _node], startOffset, [end _node], endOffset);
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1140,17 +1104,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     [arg command]->reapply();
 }
 
-- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebBridgeSelectionGranularity)granularity
-{
-    if (!m_frame->hasSelection())
-        return nil;
-
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    Selection selection(m_frame->selectionController()->selection());
-    selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
-    return [DOMRange _rangeWith:selection.toRange().get()];
-}
-
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!m_frame->hasSelection())
@@ -1189,30 +1142,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     return static_cast<WebBridgeSelectionGranularity>(m_frame->selectionGranularity());
-}
-
-- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity closeTyping:(BOOL)closeTyping
-{
-    Node *startContainer = [[range startContainer] _node];
-    Node *endContainer = [[range endContainer] _node];
-    ASSERT(startContainer);
-    ASSERT(endContainer);
-    ASSERT(startContainer->document() == endContainer->document());
-    
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
-
-    EAffinity affinity = static_cast<EAffinity>(selectionAffinity);
-    
-    // Non-collapsed ranges are not allowed to start at the end of a line that is wrapped,
-    // they start at the beginning of the next line instead
-    if (![range collapsed])
-        affinity = DOWNSTREAM;
-    
-    // FIXME: Can we provide extentAffinity?
-    VisiblePosition visibleStart(startContainer, [range startOffset], affinity);
-    VisiblePosition visibleEnd(endContainer, [range endOffset], SEL_DEFAULT_AFFINITY);
-    Selection selection(visibleStart, visibleEnd);
-    m_frame->selectionController()->setSelection(selection, closeTyping);
 }
 
 - (NSRange)convertToNSRange:(Range *)range
@@ -1277,11 +1206,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSRange)selectedNSRange
 {
     return [self convertToNSRange:m_frame->selectionController()->toRange().get()];
-}
-
-- (NSSelectionAffinity)selectionAffinity
-{
-    return static_cast<NSSelectionAffinity>(m_frame->selectionController()->affinity());
 }
 
 - (void)setMarkDOMRange:(DOMRange *)range
@@ -1647,14 +1571,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     }
     
     return nil;
-}
-
-- (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete
-{
-    if (!m_frame->hasSelection())
-        return;
-    
-    applyCommand(new DeleteSelectionCommand(m_frame->document(), smartDelete));
 }
 
 - (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity

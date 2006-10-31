@@ -419,7 +419,7 @@ bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 
 bool execSelectAll(Frame* frame, bool, const String&)
 {
-    frame->selectAll();
+    frame->selectionController()->selectAll();
     return true;
 }
 

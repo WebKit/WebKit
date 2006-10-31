@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextAffinity_h
-#define TextAffinity_h
+#ifndef ExceptionHandlers_h
+#define ExceptionHandlers_h
 
-#include <wtf/Platform.h>
-
-#ifdef __OBJC__
-#include <AppKit/NSTextView.h>
-#endif
+#include "TextAffinity.h"
 
 namespace WebCore {
+    
+    typedef int ExceptionCode;
+    
+    class SelectionController;
+    class Range;
 
-// These match the AppKit values for these concepts.
-// From NSTextView.h:
-// NSSelectionAffinityUpstream = 0
-// NSSelectionAffinityDownstream = 1
-typedef enum { UPSTREAM = 0, DOWNSTREAM = 1 } EAffinity;
+    void raiseDOMException(ExceptionCode);
 
-#ifdef __OBJC__
-inline NSSelectionAffinity kit(EAffinity affinity)
-{
-    return static_cast<NSSelectionAffinity>(affinity);
-}
+    inline void raiseOnDOMError(ExceptionCode ec) 
+    {
+        if (ec) 
+            raiseDOMException(ec);
+    }
 
-inline EAffinity core(NSSelectionAffinity affinity)
-{
-    return static_cast<EAffinity>(affinity);
-}
-#endif
+    void selectRange(SelectionController*, Range*, EAffinity, bool closeTyping);
 
 } // namespace WebCore
 
-#endif // TextAffinity_h
+#endif // ExceptionHandlers_h

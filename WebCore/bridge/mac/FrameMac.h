@@ -174,9 +174,6 @@ public:
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const Selection&);
 
-    NSFileWrapper* fileWrapperForElement(Element*);
-    NSAttributedString* attributedString(Node* startNode, int startOffset, Node* endNode, int endOffset);
-
     void mouseDown(NSEvent*);
     void mouseDragged(NSEvent*);
     void mouseUp(NSEvent*);
