@@ -116,6 +116,21 @@ bool HitTestResult::isSelected() const
     return frame->selectionController()->contains(m_point);
 }
 
+String HitTestResult::spellingToolTip() const
+{
+    // Return the tool tip string associated with this point
+    // FIXME: At the moment this returns the same hardwired string for all bad grammar rects. This needs to
+    // instead return an instance-specific string that was stashed away when the bad grammar was discovered.
+    // Checking it in now just to modularize the work a little.
+    Vector<IntRect> rects = m_innerNonSharedNode->document()->renderedRectsForMarkers(DocumentMarker::Grammar);
+    unsigned count = rects.size();
+    for (unsigned index = 0; index < count; ++index)
+        if (rects[index].contains(m_point))
+            return "Questionable grammar!";
+
+    return String();
+}
+
 String HitTestResult::title() const
 {
     // Find the title in the nearest enclosing DOM node.

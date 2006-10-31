@@ -334,11 +334,12 @@ NSString *WebElementImageAltStringKey =     @"WebElementImageAltString";
 NSString *WebElementImageRectKey =          @"WebElementImageRect";
 NSString *WebElementImageURLKey =           @"WebElementImageURL";
 NSString *WebElementIsSelectedKey =         @"WebElementIsSelected";
-NSString *WebElementTitleKey =              @"WebElementTitle";
-NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
-NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey =          @"WebElementLinkLabel";
+NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
 NSString *WebElementLinkTitleKey =          @"WebElementLinkTitle";
+NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
+NSString *WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
+NSString *WebElementTitleKey =              @"WebElementTitle";
 
 NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
 NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";

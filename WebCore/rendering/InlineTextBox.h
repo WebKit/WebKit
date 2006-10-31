@@ -110,7 +110,7 @@ public:
     void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
     void paintMarkedTextBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, bool background);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, bool grammar);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
     void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, const MarkedTextUnderline&);
 #if PLATFORM(MAC)

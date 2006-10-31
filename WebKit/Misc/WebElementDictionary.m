@@ -85,6 +85,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementImageRectKey, @selector(_imageRect), WebElementSelf);
     addLookupKey(WebElementImageURLKey, @selector(absoluteImageURL), WebElementInnerNonSharedNode);
     addLookupKey(WebElementIsSelectedKey, @selector(_isSelected), WebElementSelf);
+    addLookupKey(WebElementSpellingToolTipKey, @selector(_spellingToolTip), WebElementSelf);
     addLookupKey(WebElementTitleKey, @selector(_title), WebElementSelf);
     addLookupKey(WebElementLinkURLKey, @selector(absoluteLinkURL), WebElementURLElement);
     addLookupKey(WebElementLinkTargetFrameKey, @selector(_targetWebFrame), WebElementSelf);
@@ -194,6 +195,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 {
     FrameMac* webCoreFrame = Mac(_result->targetFrame());
     return kit(webCoreFrame);
+}
+
+- (NSString *)_spellingToolTip
+{
+    return _result->spellingToolTip();
 }
 
 - (NSString *)_title

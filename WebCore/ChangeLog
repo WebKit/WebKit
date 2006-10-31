@@ -1,3 +1,26 @@
+2006-10-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth and Adam
+
+        Support for displaying tooltips for bad grammar. Currently this always displays the same tooltip; 
+        next I'll make it use a string that's relevant for a specific grammar error.
+
+        * WebCore.exp:
+        export symbol for spellingToolTip function
+        
+        * rendering/HitTestResult.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        new function, returns the string to be used in a tool tip that describes the questionable grammar
+        
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        now takes a style and font, needed to compute the rect representing the range containing
+        questionable grammar. Computes the rect and associates it with the marker.
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        Pass in the style and font now needed by paintSpellingOrGrammarMarker
+
 2006-10-31  Adele Peterson  <adele@apple.com>
 
         Removed commented out variable from last checkin.

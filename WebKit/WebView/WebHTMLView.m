@@ -1216,18 +1216,29 @@ static WebHTMLView *lastHitView = nil;
         [[view _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
 
         // Set a tool tip; it won't show up right away but will if the user pauses.
-        NSString *newToolTip = nil;
-        if (_private->showsURLsInToolTips) {
+
+        // First priority is a potential toolTip representing a spelling or grammar error
+        NSString *newToolTip = [element objectForKey:WebElementSpellingToolTipKey];
+        
+        // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
+        if ([newToolTip length] == 0 && _private->showsURLsInToolTips) {
             DOMHTMLElement *domElement = [element objectForKey:WebElementDOMNodeKey];
+            
+            // Get tooltip representing form action, if relevant
             if ([domElement isKindOfClass:[DOMHTMLInputElement class]]) {
                 if ([[(DOMHTMLInputElement *)domElement type] isEqualToString:@"submit"])
                     newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
             }
-            if (newToolTip == nil)
+            
+            // Get tooltip representing link's URL
+            if ([newToolTip length] == 0)
                 newToolTip = [[element objectForKey:WebElementLinkURLKey] _web_userVisibleString];
         }
-        if (newToolTip == nil)
+        
+        // Lastly we'll consider a tooltip for element with "title" attribute
+        if ([newToolTip length] == 0)
             newToolTip = [element objectForKey:WebElementTitleKey];
+        
         [view _setToolTip:newToolTip];
 
         [view release];

@@ -531,7 +531,7 @@ void InlineTextBox::paintDecoration(GraphicsContext *pt, int _tx, int _ty, int d
     }
 }
 
-void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, int _ty, DocumentMarker marker, bool grammar)
+void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f, bool grammar)
 {
     _tx += m_x;
     _ty += m_y;
@@ -559,6 +559,19 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, i
     }
     if (!useWholeWidth) {
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
+    }
+    
+    // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
+    // display a toolTip. We don't do this for misspelling markers.
+    if (grammar) {
+        int y = root()->selectionTop();
+        IntPoint startPoint = IntPoint(m_x + _tx, y + _ty);
+        TextStyle textStyle = TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered());
+        int startPosition = max(marker.startOffset - m_start, (unsigned)0);
+        int endPosition = min(marker.endOffset - m_start, (unsigned)m_len);    
+        TextRun run = TextRun(textObject()->string(), m_start, m_len, startPosition, endPosition);
+        IntRect markerRect = enclosingIntRect(f->selectionRectForText(run, textStyle, startPoint, root()->selectionHeight()));
+        object()->document()->setRenderedRectForMarker(object()->node(), marker, markerRect);
     }
     
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
@@ -648,10 +661,10 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int _tx, int _ty, 
         // marker intersects this run.  Paint it.
         switch (marker.type) {
             case DocumentMarker::Spelling:
-                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, false);
+                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, style, f, false);
                 break;
             case DocumentMarker::Grammar:
-                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, true);
+                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, style, f, true);
                 break;
             case DocumentMarker::TextMatch:
                 paintTextMatchMarker(pt, _tx, _ty, marker, style, f);

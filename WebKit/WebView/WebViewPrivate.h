@@ -80,7 +80,9 @@ extern NSString *_WebMainFrameTitleKey;
 extern NSString *_WebMainFrameURLKey;
 extern NSString *_WebMainFrameDocumentKey;
 
-extern NSString *WebElementTitleKey;   // NSString of the title of the element (pending public, used by Safari)
+// pending public WebElementDictionary keys
+extern NSString *WebElementTitleKey;             // NSString of the title of the element (used by Safari)
+extern NSString *WebElementSpellingToolTipKey;   // NSString of a tooltip representing misspelling or bad grammar (used internally)
 
 typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
