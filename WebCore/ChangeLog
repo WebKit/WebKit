@@ -14,7 +14,7 @@
 
         This patch creates a new struct called HitTestRequest that holds 
         the three boolean values (readonly, active, and mouseMove) that 
-        were formerly a part of HitTestRequest. all hitTest() and 
+        were formerly a part of HitTestResult. All hitTest() and 
         nodeAtPoint() functions now take a HitTestRequest in addition to 
         the HitTestResult.
 
