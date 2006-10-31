@@ -56,6 +56,7 @@
 #import <WebKit/WebView.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
+#import <CoreFoundation/CFPasteboard.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
 
 #define COMMON_DIGEST_FOR_OPENSSL
@@ -74,6 +75,15 @@
 @end
 
 @interface LayoutTestController : NSObject
+@end
+
+@interface LocalPasteboard : NSPasteboard
+{
+    NSMutableArray *typesArray;
+    NSMutableSet *typesSet;
+    NSMutableDictionary *dataByType;
+    int changeCount;
+}
 @end
 
 BOOL windowIsKey = YES;
@@ -280,7 +290,7 @@ int main(int argc, const char *argv[])
         sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     
-    localPasteboard = [NSPasteboard pasteboardWithUniqueName];
+    localPasteboard = [(LocalPasteboard *)NSAllocateObject([LocalPasteboard class], 0, 0) init];
     navigationController = [[NavigationController alloc] init];
 
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
@@ -377,7 +387,7 @@ int main(int argc, const char *argv[])
     [editingDelegate release];
     [uiDelegate release];
     
-    [localPasteboard releaseGlobally];
+    [localPasteboard release];
     localPasteboard = nil;
     
     [navigationController release];
@@ -1016,6 +1026,123 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
 + (NSPasteboard *)generalPasteboard
 {
     return localPasteboard;
+}
+
+@end
+
+@implementation LocalPasteboard
+
+- (id)init
+{
+    typesArray = [[NSMutableArray alloc] init];
+    typesSet = [[NSMutableSet alloc] init];
+    dataByType = [[NSMutableDictionary alloc] init];
+    return self;
+}
+
+- (void)dealloc
+{
+    [typesArray release];
+    [typesSet release];
+    [dataByType release];
+    [super dealloc];
+}
+
+- (NSString *)name
+{
+    return nil;
+}
+
+- (void)releaseGlobally
+{
+}
+
+- (int)declareTypes:(NSArray *)newTypes owner:(id)newOwner
+{
+    [typesArray removeAllObjects];
+    [typesSet removeAllObjects];
+    [dataByType removeAllObjects];
+    return [self addTypes:newTypes owner:newOwner];
+}
+
+- (int)addTypes:(NSArray *)newTypes owner:(id)newOwner
+{
+    unsigned count = [newTypes count];
+    unsigned i;
+    for (i = 0; i < count; ++i) {
+        NSString *type = [newTypes objectAtIndex:i];
+        NSString *setType = [typesSet member:type];
+        if (!setType) {
+            setType = [type copy];
+            [typesArray addObject:setType];
+            [typesSet addObject:setType];
+            [setType release];
+        }
+        if (newOwner)
+            [newOwner pasteboard:self provideDataForType:setType];
+    }
+    return ++changeCount;
+}
+
+- (int)changeCount
+{
+    return changeCount;
+}
+
+- (NSArray *)types
+{
+    return typesArray;
+}
+
+- (NSString *)availableTypeFromArray:(NSArray *)types
+{
+    unsigned count = [types count];
+    unsigned i;
+    for (i = 0; i < count; ++i) {
+        NSString *type = [types objectAtIndex:i];
+        NSString *setType = [typesSet member:type];
+        if (setType)
+            return setType;
+    }
+    return nil;
+}
+
+- (BOOL)setData:(NSData *)data forType:(NSString *)dataType
+{
+    if (data == nil)
+        data = [NSData data];
+    if (![typesSet containsObject:dataType])
+        return NO;
+    [dataByType setObject:data forKey:dataType];
+    ++changeCount;
+    return YES;
+}
+
+- (NSData *)dataForType:(NSString *)dataType
+{
+    return [dataByType objectForKey:dataType];
+}
+
+- (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType;
+{
+    CFDataRef data = NULL;
+    if (propertyList)
+        data = CFPropertyListCreateXMLData(NULL, propertyList);
+    BOOL result = [self setData:(NSData *)data forType:dataType];
+    if (data)
+        CFRelease(data);
+    return result;
+}
+
+- (BOOL)setString:(NSString *)string forType:(NSString *)dataType
+{
+    CFDataRef data = NULL;
+    if (string)
+        data = CFPasteboardCreateDataForString(NULL, (CFStringRef)string);
+    BOOL result = [self setData:(NSData *)data forType:dataType];
+    if (data)
+        CFRelease(data);
+    return result;
 }
 
 @end

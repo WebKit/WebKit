@@ -29,6 +29,7 @@
 @class DumpRenderTreeDraggingInfo;
 @class WebFrame;
 
+extern BOOL windowIsKey;
 extern WebFrame *frame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
 

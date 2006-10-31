@@ -28,14 +28,5 @@
  
 #import <Cocoa/Cocoa.h>
 
-@class WebFrame;
-
-@interface UIDelegate : NSObject {
-
-}
-
+@interface UIDelegate : NSObject
 @end
-
-extern NSPoint lastMousePosition;
-extern BOOL windowIsKey;
-extern WebFrame *frame;

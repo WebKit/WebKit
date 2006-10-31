@@ -26,10 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "UIDelegate.h"
 
+#import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
+#import "EventSendingController.h"
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebView.h>
