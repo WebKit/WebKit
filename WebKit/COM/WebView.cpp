@@ -832,14 +832,16 @@ HRESULT STDMETHODCALLTYPE WebView::takeStringURLFrom(
 HRESULT STDMETHODCALLTYPE WebView::stopLoading( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    DebugBreak();
+    if (m_mainFrame)
+        m_mainFrame->stopLoading();
     return E_NOTIMPL;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::reload( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    DebugBreak();
+    if (m_mainFrame)
+        m_mainFrame->reload();
     return E_NOTIMPL;
 }
     

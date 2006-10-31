@@ -1,3 +1,16 @@
+2006-10-31  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Maciej.
+        
+        - fixed "Stop and reload don't work on the WebView"
+        http://bugs.webkit.org/show_bug.cgi?id=11285
+
+        * COM/WebFrame.cpp:
+        (WebFrame::stopLoading): Implement.
+        * COM/WebView.cpp:
+        (WebView::stopLoading): ditto
+        (WebView::reload): ditto
+
 2006-10-30  Darin Adler  <darin@apple.com>
 
         * Plugins/WebBaseNetscapePluginView.mm:
