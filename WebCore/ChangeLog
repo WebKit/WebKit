@@ -1,5 +1,12 @@
 2006-10-31  Beth Dakin  <bdakin@apple.com>
 
+        Forgot to check this in a minute ago. Oops!! Thanks Mitz!
+
+        * rendering/HitTestRequest.h: Added.
+        (WebCore::HitTestRequest::HitTestRequest):
+
+2006-10-31  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Maciej.
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=11461 HitTestResult 
