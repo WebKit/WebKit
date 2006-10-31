@@ -27,8 +27,8 @@
 #include "KRenderingPaintServerGradient.h"
 
 #include "AffineTransform.h"
+#include "SVGRenderTreeAsText.h"
 #include "TextStream.h"
-#include "KCanvasTreeDebug.h"
 
 namespace WebCore {
 

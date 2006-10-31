@@ -26,8 +26,8 @@
 #include "config.h"
 #include "SVGResourceClipper.h"
 
+#include "SVGRenderTreeAsText.h"
 #include "TextStream.h"
-#include <kcanvas/KCanvasTreeDebug.h>
 
 namespace WebCore {
 

@@ -21,10 +21,12 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "KRenderingPaintServerSolid.h"
+
+#include "SVGRenderTreeAsText.h"
 #include "TextStream.h"
-#include "KCanvasTreeDebug.h"
 
 namespace WebCore {
 

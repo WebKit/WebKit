@@ -646,7 +646,6 @@ set (SVG_SOURCES
     ksvg2/misc/KCanvasRenderingStyle.cpp
     ksvg2/events/JSSVGLazyEventListener.cpp
     ksvg2/events/SVGZoomEvent.cpp
-    kcanvas/KCanvasTreeDebug.cpp
     kcanvas/KCanvasFilters.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
@@ -1122,6 +1121,7 @@ set(WebCore_SRCS
     rendering/RenderTableCol.cpp
     rendering/RenderObject.cpp
     rendering/RenderTreeAsText.cpp
+    rendering/SVGRenderTreeAsText.cpp
     rendering/RootInlineBox.cpp
     rendering/RenderFormElement.cpp
     rendering/RenderBox.cpp

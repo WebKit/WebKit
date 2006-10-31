@@ -1885,8 +1885,6 @@
 		A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
 		A88AD3B60952486E001DD196 /* QuartzSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.mm */; };
 		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
-		A88AD3CB0952486E001DD196 /* KCanvasTreeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */; };
-		A88AD3CC0952486E001DD196 /* KCanvasTreeDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */; };
 		A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */; };
 		A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F700089701F100BA5114 /* SVGRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */; };
@@ -2299,6 +2297,8 @@
 		B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */; };
 		B2CB41930AB75904004D9C45 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB414C0AB75904004D9C45 /* SVGRenderingIntent.h */; };
 		B2CB41A60AB75904004D9C45 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB415F0AB75904004D9C45 /* SVGUnitTypes.h */; };
+		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
+		B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */; };
 		B2FA3D360AB75A6F000E5AC4 /* JSSVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */; };
 		B2FA3D370AB75A6F000E5AC4 /* JSSVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */; };
 		B2FA3D380AB75A6F000E5AC4 /* JSSVGAnimatedAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */; };
@@ -4540,8 +4540,6 @@
 		A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTextAreaElement.cpp; sourceTree = "<group>"; };
 		A80E7E950A1A83E3007FB8C5 /* JSHTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLButtonElement.h; sourceTree = "<group>"; };
 		A80E7E960A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLButtonElement.cpp; sourceTree = "<group>"; };
-		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A81369AE097374F500D74463 /* HTMLIsIndexElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLIsIndexElement.h; sourceTree = "<group>"; };
 		A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLIsIndexElement.cpp; sourceTree = "<group>"; };
 		A81369B0097374F500D74463 /* HTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLInputElement.h; sourceTree = "<group>"; };
@@ -5259,6 +5257,8 @@
 		B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegMovetoAbs.idl; sourceTree = "<group>"; };
 		B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegMovetoRel.idl; sourceTree = "<group>"; };
 		B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPreserveAspectRatio.idl; sourceTree = "<group>"; };
+		B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderTreeAsText.cpp; sourceTree = "<group>"; };
+		B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGRenderTreeAsText.h; sourceTree = "<group>"; };
 		B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateColorElement.cpp; sourceTree = "<group>"; };
 		B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimateColorElement.h; sourceTree = "<group>"; };
 		B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedAngle.cpp; sourceTree = "<group>"; };
@@ -8190,8 +8190,6 @@
 				A8C0FB53089701F700BA5114 /* device */,
 				A8415F990AC10C5D00F7D0DF /* KCanvasFilters.cpp */,
 				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
-				A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */,
-				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
 			);
 			path = kcanvas;
 			sourceTree = "<group>";
@@ -8930,6 +8928,8 @@
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
+				B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */,
+				B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */,
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
@@ -9174,7 +9174,6 @@
 				A88AD3B30952486E001DD196 /* KRenderingPaintServerQuartz.h in Headers */,
 				A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */,
 				A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */,
-				A88AD3CB0952486E001DD196 /* KCanvasTreeDebug.h in Headers */,
 				A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */,
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,
 				A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */,
@@ -10506,6 +10505,7 @@
 				B2A015B60AF6CD53006BCE0E /* SVGResourceImage.h in Headers */,
 				B2A015B80AF6CD53006BCE0E /* SVGResourceMarker.h in Headers */,
 				B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */,
+				B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10704,7 +10704,6 @@
 				A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.mm in Sources */,
 				A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.mm in Sources */,
 				A88AD3B60952486E001DD196 /* QuartzSupport.mm in Sources */,
-				A88AD3CC0952486E001DD196 /* KCanvasTreeDebug.cpp in Sources */,
 				A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */,
 				A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */,
 				A88AD40A095248F0001DD196 /* SVGZoomEvent.cpp in Sources */,
@@ -11748,6 +11747,7 @@
 				B2A015B40AF6CD53006BCE0E /* SVGResourceClipper.cpp in Sources */,
 				B2A015B70AF6CD53006BCE0E /* SVGResourceMarker.cpp in Sources */,
 				B2A015B90AF6CD53006BCE0E /* SVGResourceMasker.cpp in Sources */,
+				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

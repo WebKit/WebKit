@@ -26,9 +26,9 @@
 #include "KCanvasFilters.h"
 
 #include "CachedImage.h"
-
+#include "SVGRenderTreeAsText.h"
 #include "TextStream.h"
-#include "KCanvasTreeDebug.h"
+
 #include <wtf/Assertions.h>
 #include <math.h>
 

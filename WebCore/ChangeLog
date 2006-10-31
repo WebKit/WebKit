@@ -1,3 +1,27 @@
+2006-10-31  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej. Landed by Adam.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11463
+
+        Move KCanvasTreeDebug into rendering, named as SVGRenderTreeAsText.*,
+        as dicussed with Dave. Also kill the outdated DESIGN document.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/DESIGN: Removed.
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasTreeDebug.cpp: Moved to rendering/SVGRenderTreeAsText
+        * kcanvas/KCanvasTreeDebug.h: Ditto.
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        * platform/graphics/svg/SVGResourceClipper.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/SVGRenderTreeAsText.cpp: Added.
+        * rendering/SVGRenderTreeAsText.h: Added.
+        (WebCore::operator<<):
+
 2006-10-31  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.

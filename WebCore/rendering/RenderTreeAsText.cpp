@@ -40,8 +40,8 @@
 #include <wtf/Vector.h>
 
 #ifdef SVG_SUPPORT
-#include "KCanvasTreeDebug.h"
 #include "RenderSVGContainer.h"
+#include "SVGRenderTreeAsText.h"
 #endif
 
 namespace WebCore {
