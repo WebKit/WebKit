@@ -55,7 +55,6 @@
 #include "PlugInInfoStore.h"
 #include "RenderTheme.h"
 #include "FrameGdk.h"
-#include "BrowserExtensionGdk.h"
 #include "FrameLoadRequest.h"
 #include "RenderThemeGdk.h"
 #include "TextBoundaries.h"
@@ -179,18 +178,6 @@ void FrameGdk::issuePasteAndMatchStyleCommand() { notImplemented(); }
 bool FrameGdk::isLoadTypeReload() { notImplemented(); return false; }
 KURL FrameGdk::originalRequestURL() const { return KURL(); }
 Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
-
-bool BrowserExtensionGdk::canRunModal() { notImplemented(); return 0; }
-void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&, struct WebCore::WindowFeatures const&, Frame*&) { notImplemented(); }
-void BrowserExtensionGdk::createNewWindow(struct WebCore::FrameLoadRequest const&) { notImplemented(); }
-bool BrowserExtensionGdk::canRunModalNow() { notImplemented(); return 0; }
-void BrowserExtensionGdk::runModal() { notImplemented(); }
-void BrowserExtensionGdk::goBackOrForward(int) { notImplemented(); }
-KURL BrowserExtensionGdk::historyURL(int distance) { notImplemented(); return KURL(); }
-BrowserExtensionGdk::BrowserExtensionGdk(WebCore::Frame*) { }
-void BrowserExtensionGdk::setTypedIconURL(KURL const&, const String&) { }
-void BrowserExtensionGdk::setIconURL(KURL const&) { }
-int BrowserExtensionGdk::getHistoryLength() { return 0; }
 
 int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
 bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }

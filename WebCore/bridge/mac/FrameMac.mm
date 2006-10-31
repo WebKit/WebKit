@@ -29,7 +29,6 @@
 #import "AXObjectCache.h"
 #import "BeforeUnloadEvent.h"
 #import "BlockExceptions.h"
-#import "BrowserExtensionMac.h"
 #import "CSSComputedStyleDeclaration.h"
 #import "Cache.h"
 #import "ClipboardEvent.h"
@@ -150,7 +149,6 @@ FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> c
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
 {
-    d->m_extension = new BrowserExtensionMac(this);
 }
 
 FrameMac::~FrameMac()
@@ -182,7 +180,7 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    Frame* target = request.m_frameName.isEmpty() ? this : tree()->find(request.m_frameName);
+    Frame* target = request.frameName().isEmpty() ? this : tree()->find(request.frameName());
     bool willReplaceThisFrame = false;
     for (Frame* p = this; p; p = p->tree()->parent()) {
         if (p == target) {
@@ -191,9 +189,9 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
         }
     }
     if (willReplaceThisFrame) {
-        if (d->m_submittedFormURL == request.m_request.url())
+        if (d->m_submittedFormURL == request.resourceRequest().url())
             return;
-        d->m_submittedFormURL = request.m_request.url();
+        d->m_submittedFormURL = request.resourceRequest().url();
     }
 
     loader()->load(request, true, _currentEvent,
@@ -207,8 +205,8 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
 void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
     FrameLoadRequest copy = request;
-    if (copy.m_request.httpReferrer().isEmpty())
-        copy.m_request.setHTTPReferrer(referrer());
+    if (copy.resourceRequest().httpReferrer().isEmpty())
+        copy.resourceRequest().setHTTPReferrer(referrer());
 
     // FIXME: How do we know that userGesture is always true?
     loader()->load(copy, true, _currentEvent, 0, HashMap<String, String>());

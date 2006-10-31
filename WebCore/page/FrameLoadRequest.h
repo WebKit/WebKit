@@ -29,18 +29,42 @@
 
 #include "ResourceRequest.h"
 
-
 namespace WebCore {
 
     struct FrameLoadRequest {
     public:
-        FrameLoadRequest() : m_lockHistory(false) { }
-        ResourceRequest m_request;
-        String m_frameName;
+        FrameLoadRequest()
+            : m_lockHistory(false)
+        {
+        }
+
+        FrameLoadRequest(const ResourceRequest& resourceRequest)
+            : m_resourceRequest(resourceRequest)
+            , m_lockHistory(false)
+        {
+        }
+
+        FrameLoadRequest(const ResourceRequest& resourceRequest, const String& frameName)
+            : m_resourceRequest(resourceRequest)
+            , m_frameName(frameName)
+            , m_lockHistory(false)
+        {
+        }
+
+        bool isEmpty() const { return m_resourceRequest.isEmpty(); }
+
+        ResourceRequest& resourceRequest() { return m_resourceRequest; }
+        const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+
+        const String& frameName() const { return m_frameName; }
+        void setFrameName(const String& frameName) { m_frameName = frameName; }
+
         bool lockHistory() const { return m_lockHistory; }
         void setLockHistory(bool lock) { m_lockHistory = lock; }
 
     private:
+        ResourceRequest m_resourceRequest;
+        String m_frameName;
         bool m_lockHistory;
     };
 

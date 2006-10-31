@@ -26,10 +26,10 @@
 #include "config.h"
 #include "IconLoader.h"
 
-#include "dom/Document.h"
-#include "loader/icon/IconDatabase.h"
+#include "Document.h"
+#include "Frame.h"
+#include "IconDatabase.h"
 #include "Logging.h"
-#include "page/Frame.h"
 #include "ResourceResponse.h"
 
 #if PLATFORM(MAC)

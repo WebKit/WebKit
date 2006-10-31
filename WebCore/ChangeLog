@@ -1,3 +1,56 @@
+2006-10-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - remove BrowserExtension
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/BrowserExtension.h: Removed.
+        * bridge/mac/BrowserExtensionMac.h: Removed.
+        * bridge/mac/BrowserExtensionMac.mm: Removed.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::urlSelected):
+        * bridge/win/BrowserExtensionWin.cpp: Removed.
+        * bridge/win/BrowserExtensionWin.h: Removed.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        * loader/FrameLoader.h:
+        * loader/icon/IconLoader.cpp:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::safeLoad):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::createWindow):
+        * page/Frame.cpp:
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::submitForm):
+        (WebCore::Frame::scheduleHistoryNavigation):
+        (WebCore::Frame::redirectionTimerFired):
+        * page/Frame.h:
+        * page/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::isEmpty):
+        (WebCore::FrameLoadRequest::resourceRequest):
+        (WebCore::FrameLoadRequest::frameName):
+        (WebCore::FrameLoadRequest::setFrameName):
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        (WebCore::FramePrivate::~FramePrivate):
+        * platform/gdk/BrowserExtensionGdk.h: Removed.
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::FrameGdk):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::isEmpty):
+
 2006-10-31  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

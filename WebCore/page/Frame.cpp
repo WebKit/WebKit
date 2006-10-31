@@ -37,7 +37,6 @@
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
-#include "TextResourceDecoder.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
@@ -54,13 +53,13 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "HitTestResult.h"
+#include "IconDatabase.h"
+#include "IconLoader.h"
 #include "ImageDocument.h"
 #include "IndentOutdentCommand.h"
-#include "loader/icon/IconDatabase.h"
-#include "loader/icon/IconLoader.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
-#include "HitTestResult.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
@@ -76,6 +75,7 @@
 #include "SegmentedString.h"
 #include "TextDocument.h"
 #include "TextIterator.h"
+#include "TextResourceDecoder.h"
 #include "TypingCommand.h"
 #include "XMLTokenizer.h"
 #include "cssstyleselector.h"
@@ -279,15 +279,13 @@ void Frame::urlSelected(const ResourceRequest& request, const String& _target, c
     // ### ERROR HANDLING
     return;
 
-  FrameLoadRequest frameRequest;
-  frameRequest.m_request = request;
-  frameRequest.m_frameName = target;
+  FrameLoadRequest frameRequest(request, target);
 
   if (d->m_bHTTPRefresh)
     d->m_bHTTPRefresh = false;
 
-  if (frameRequest.m_request.httpReferrer().isEmpty())
-      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
+  if (frameRequest.resourceRequest().httpReferrer().isEmpty())
+      frameRequest.resourceRequest().setHTTPReferrer(d->m_referrer);
 
   urlSelected(frameRequest, triggeringEvent);
 }
@@ -306,11 +304,9 @@ bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const At
 
     Frame* frame = tree()->child(frameName);
     if (frame) {
-        ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh) ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
-        ResourceRequest request(url, d->m_referrer, policy);
-        FrameLoadRequest frameRequest;
-        frameRequest.m_request = request;
-        frame->urlSelected(frameRequest, 0);
+        ResourceRequestCachePolicy policy = (d->m_cachePolicy == CachePolicyReload) || (d->m_cachePolicy == CachePolicyRefresh)
+            ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
+        frame->urlSelected(ResourceRequest(url, d->m_referrer, policy), 0);
     } else
         frame = loadSubframe(ownerElement, url, frameName, d->m_referrer);
     
@@ -382,9 +378,9 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
   FrameLoadRequest frameRequest;
 
   if (!d->m_referrer.isEmpty())
-      frameRequest.m_request.setHTTPReferrer(d->m_referrer);
+      frameRequest.resourceRequest().setHTTPReferrer(d->m_referrer);
 
-  frameRequest.m_frameName = _target.isEmpty() ? d->m_doc->baseTarget() : _target ;
+  frameRequest.setFrameName(_target.isEmpty() ? d->m_doc->baseTarget() : _target);
 
   // Handle mailto: forms
   if (u.protocol() == "mailto") {
@@ -415,14 +411,14 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
     if (u.protocol() != "mailto")
        u.setQuery(formData.flattenToString().deprecatedString());
   } else {
-      frameRequest.m_request.setHTTPBody(formData);
-      frameRequest.m_request.setHTTPMethod("POST");
+      frameRequest.resourceRequest().setHTTPBody(formData);
+      frameRequest.resourceRequest().setHTTPMethod("POST");
 
     // construct some user headers if necessary
     if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
-      frameRequest.m_request.setHTTPContentType(contentType);
+      frameRequest.resourceRequest().setHTTPContentType(contentType);
     else // contentType must be "multipart/form-data"
-      frameRequest.m_request.setHTTPContentType(contentType + "; boundary=" + boundary);
+      frameRequest.resourceRequest().setHTTPContentType(contentType + "; boundary=" + boundary);
   }
 
   if (d->m_runningScripts > 0) {
@@ -436,7 +432,7 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
     d->m_submitForm->submitContentType = contentType;
     d->m_submitForm->submitBoundary = boundary;
   } else {
-      frameRequest.m_request.setURL(u);
+      frameRequest.resourceRequest().setURL(u);
       submitForm(frameRequest);
   }
 }
@@ -604,11 +600,6 @@ void Frame::didExplicitOpen()
   // implicitly precedes document.write.
   cancelRedirection(); 
   d->m_url = d->m_doc->URL();
-}
-
-BrowserExtension *Frame::browserExtension() const
-{
-  return d->m_extension;
 }
 
 FrameView* Frame::view() const
@@ -1287,13 +1278,9 @@ void Frame::scheduleHistoryNavigation(int steps)
 
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the navigation.
-    if (d->m_extension) {
-        KURL u = historyURL(steps);
-        
-        if (equalIgnoringRef(d->m_url, u)) {
-            goBackOrForward(steps);
-            return;
-        }
+    if (equalIgnoringRef(d->m_url, historyURL(steps))) {
+        goBackOrForward(steps);
+        return;
     }
     
     d->m_scheduledRedirection = historyNavigationScheduled;
@@ -1317,11 +1304,8 @@ void Frame::redirectionTimerFired(Timer<Frame>*)
         // in Konqueror...
         if (d->m_scheduledHistoryNavigationSteps == 0)
             urlSelected(url(), "", 0);
-        else {
-            if (d->m_extension) {
-                goBackOrForward(d->m_scheduledHistoryNavigationSteps);
-            }
-        }
+        else
+            goBackOrForward(d->m_scheduledHistoryNavigationSteps);
         return;
     }
 

@@ -78,6 +78,8 @@ namespace WebCore {
         {
         }
 
+        bool isEmpty() const { return m_url.isEmpty(); }
+
         const KURL& url() const { return m_url; }
         void setURL(const KURL& url) { m_url = url; }
 

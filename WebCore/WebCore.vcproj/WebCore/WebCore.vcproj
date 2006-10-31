@@ -3939,10 +3939,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bridge\BrowserExtension.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bridge\History.h"
 				>
 			</File>
@@ -3957,14 +3953,6 @@
 			<Filter
 				Name="win"
 				>
-				<File
-					RelativePath="..\..\bridge\win\BrowserExtensionWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bridge\win\BrowserExtensionWin.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\bridge\win\FrameWin.cpp"
 					>

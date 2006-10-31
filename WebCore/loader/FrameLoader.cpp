@@ -76,4 +76,11 @@ void FrameLoader::setDefersLoading(bool defers)
     m_client->setDefersLoading(defers);
 }
 
+#if !PLATFORM(MAC)
+Frame* FrameLoader::createWindow(const FrameLoadRequest&, const WindowFeatures&)
+{
+    return 0;
+}
+#endif
+
 }

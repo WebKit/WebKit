@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "FrameGdk.h"
+
 #include "Element.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
@@ -35,7 +36,6 @@
 #include "Document.h"
 #include "DOMWindow.h"
 #include "DOMImplementation.h"
-#include "BrowserExtensionGdk.h"
 #include "Document.h"
 #include "Settings.h"
 #include "Plugin.h"
@@ -159,7 +159,6 @@ static void doScroll(const RenderObject* r, float deltaX, float deltaY)
 FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
     : Frame(new Page, 0), m_drawable(gdkdrawable)
 {
-    d->m_extension = new BrowserExtensionGdk(this);
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
     settings->setMinFontSize(5);
@@ -187,7 +186,6 @@ FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
 FrameGdk::FrameGdk(Page* page, Element* element)
     : Frame(page,element)
 {
-    d->m_extension = new BrowserExtensionGdk(this);
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
     setSettings(settings);

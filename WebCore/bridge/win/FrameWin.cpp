@@ -27,7 +27,6 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include "BrowserExtensionWin.h"
 #include "TextResourceDecoder.h"
 #include "Document.h"
 #include "FrameLoadRequest.h"
@@ -45,7 +44,6 @@ FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
     : Frame(page, ownerElement)
     , m_client(client)
 {
-    d->m_extension = new BrowserExtensionWin(this);
     Settings* settings = new Settings();
     settings->setAutoLoadImages(true);
     settings->setMediumFixedFontSize(13);
