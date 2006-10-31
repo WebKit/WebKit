@@ -127,9 +127,9 @@ private:
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction,
         const WebCore::String& MIMEType, NSURLRequest *);
     virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction,
-        NSDictionary *action, NSURLRequest *, const WebCore::String& frameName);
+        const WebCore::NavigationAction&, NSURLRequest *, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction,
-        NSDictionary *action, NSURLRequest *);
+        const WebCore::NavigationAction&, NSURLRequest *);
     virtual void cancelPolicyCheck();
 
     virtual void dispatchUnableToImplementPolicy(NSError *);
@@ -185,8 +185,6 @@ private:
     virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
     virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String& URLScheme) const;
 
-    virtual NSDictionary *elementForEvent(NSEvent *) const;
-
     virtual void frameLoadCompleted();
     virtual void restoreScrollPositionAndViewState();
     virtual void provisionalLoadStarted();
@@ -203,6 +201,9 @@ private:
     void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
 
     WebFramePolicyListener *setUpPolicyListener(WebCore::FramePolicyFunction);
+
+    NSDictionary *actionDictionary(const WebCore::NavigationAction&) const;
+    NSDictionary *elementForEvent(NSEvent *) const;
 
     bool createPageCache(WebHistoryItem *);
 

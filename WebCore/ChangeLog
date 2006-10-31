@@ -1,3 +1,36 @@
+2006-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - got "action dictionary" code out of FrameLoader,
+          replacing with a class called NavigationAction
+
+        * loader/DocumentLoader.h: Changed m_triggeringAction to a NavigationAction.
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::triggeringAction): Ditto.
+        (WebCore::DocumentLoader::setTriggeringAction): Ditto.
+
+        * loader/FrameLoader.h: Changed action parameters to NavigationAction.
+
+        * loader/FrameLoaderClient.h: Changed action parameters to NavigationAction.
+        Removed elementForEvent.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::reload): Ditto.
+        (WebCore::FrameLoader::checkNewWindowPolicy): Ditto.
+        (WebCore::FrameLoader::checkNavigationPolicy): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Ditto.
+        (WebCore::FrameLoader::post): Ditto.
+
+        * loader/NavigationAction.h: Added.
+        * loader/NavigationAction.cpp: Added.
+        * loader/mac/NavigationActionMac.mm: Added.
+
+        * loader/mac/MainResourceLoaderMac.mm: Fixed copyright.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for new files.
+        * WebCore.exp: Updated.
+
 2006-10-31  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.

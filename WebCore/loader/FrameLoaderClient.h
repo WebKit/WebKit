@@ -43,6 +43,7 @@ namespace WebCore {
     class FormState;
     class Frame;
     class FrameLoader;
+    class NavigationAction;
     class String;
     class ResourceLoader;
 
@@ -128,8 +129,8 @@ namespace WebCore {
         virtual void dispatchShow() = 0;
 
         virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction, const String& MIMEType, NSURLRequest *) = 0;
-        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, NSDictionary *action, NSURLRequest *, const String& frameName) = 0;
-        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, NSDictionary *action, NSURLRequest *) = 0;
+        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, NSURLRequest *, const String& frameName) = 0;
+        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, NSURLRequest *) = 0;
         virtual void cancelPolicyCheck() = 0;
 
         virtual void dispatchUnableToImplementPolicy(NSError *) = 0;
@@ -183,8 +184,6 @@ namespace WebCore {
         virtual bool canShowMIMEType(const String& MIMEType) const = 0;
         virtual bool representationExistsForURLScheme(const String& URLScheme) const = 0;
         virtual String generatedMIMETypeForURLScheme(const String& URLScheme) const = 0;
-
-        virtual NSDictionary *elementForEvent(NSEvent *) const = 0;
 
         virtual void frameLoadCompleted() = 0;
         virtual void restoreScrollPositionAndViewState() = 0;

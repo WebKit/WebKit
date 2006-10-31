@@ -47,6 +47,7 @@
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
 #import "MainResourceLoader.h"
+#import "NavigationAction.h"
 #import "Page.h"
 #import "Plugin.h"
 #import "ResourceResponse.h"
@@ -61,11 +62,6 @@
 #import "WindowFeatures.h"
 #import <kjs/JSLock.h>
 #import <wtf/Assertions.h>
-
-using KJS::JSLock;
-using KJS::PausedTimeouts;
-using KJS::SavedBuiltins;
-using KJS::SavedProperties;
 
 namespace WebCore {
 
@@ -197,7 +193,8 @@ void FrameLoader::load(NSURL *URL, const String& referrer, FrameLoadType newLoad
 
     ASSERT(newLoadType != FrameLoadTypeSame);
 
-    NSDictionary *action = actionInformation(newLoadType, isFormSubmission, event, URL);
+    NavigationAction action(URL, newLoadType, isFormSubmission, event);
+
     RefPtr<FormState> formState;
     if (form && !values.isEmpty())
         formState = FormState::create(form, values, m_frame);
@@ -276,11 +273,11 @@ void FrameLoader::load(NSURLRequest *request, const String& frameName)
         return;
     }
 
-    checkNewWindowPolicy(actionInformation(NavigationTypeOther, nil, [request URL]),
+    checkNewWindowPolicy(NavigationAction([request URL], NavigationTypeOther),
         request, 0, frameName);
 }
 
-void FrameLoader::load(NSURLRequest *request, NSDictionary *action, FrameLoadType type, PassRefPtr<FormState> formState)
+void FrameLoader::load(NSURLRequest *request, const NavigationAction& action, FrameLoadType type, PassRefPtr<FormState> formState)
 {
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request);
     setPolicyDocumentLoader(loader.get());
@@ -1229,9 +1226,9 @@ void FrameLoader::reload()
 
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
-    // If we're about to rePOST, set up action so the app can warn the user
+    // If we're about to re-post, set up action so the application can warn the user.
     if (isCaseInsensitiveEqual([request HTTPMethod], @"POST"))
-        loader->setTriggeringAction(actionInformation(NavigationTypeFormResubmitted, nil, [request URL]));
+        loader->setTriggeringAction(NavigationAction([request URL], NavigationTypeFormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
@@ -1329,7 +1326,7 @@ void FrameLoader::stopPolicyCheck()
     check.call();
 }
 
-void FrameLoader::checkNewWindowPolicy(NSDictionary *action, NSURLRequest *request,
+void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, NSURLRequest *request,
     PassRefPtr<FormState> formState, const String& frameName)
 {
     m_policyCheck.set(request, formState, frameName,
@@ -1361,9 +1358,9 @@ void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
 void FrameLoader::checkNavigationPolicy(NSURLRequest *request, DocumentLoader* loader,
     PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function, void* argument)
 {
-    NSDictionary *action = loader->triggeringAction();
-    if (!action) {
-        action = actionInformation(NavigationTypeOther, nil, [request URL]);
+    NavigationAction action = loader->triggeringAction();
+    if (action.isEmpty()) {
+        action = NavigationAction([request URL], NavigationTypeOther);
         loader->setTriggeringAction(action);
     }
         
@@ -1705,7 +1702,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(NSURLRequest *request,
     mainFrame->tree()->setName(frameName);
     mainFrame->loader()->client()->dispatchShow();
     mainFrame->setOpener(frame.get());
-    mainFrame->loader()->load(request, nil, FrameLoadTypeStandard, formState);
+    mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
 void FrameLoader::sendRemainingDelegateMessages(id identifier, NSURLResponse *response, unsigned length, NSError *error)
@@ -1765,7 +1762,7 @@ void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameNa
     setHTTPBody(request, formData);
     [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
 
-    NSDictionary *action = actionInformation(FrameLoadTypeStandard, true, event, URL);
+    NavigationAction action(URL, FrameLoadTypeStandard, true, event);
     RefPtr<FormState> formState;
     if (form && !formValues.isEmpty())
         formState = FormState::create(form, formValues, m_frame);
@@ -1825,45 +1822,6 @@ void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mai
     
     if (mainResource)
         [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
-}
-
-NSDictionary *FrameLoader::actionInformation(FrameLoadType type, bool isFormSubmission, NSEvent *event, NSURL *originalURL)
-{
-    NavigationType navType;
-    if (isFormSubmission)
-        navType = NavigationTypeFormSubmitted;
-    else if (event)
-        navType = NavigationTypeLinkClicked;
-    else if (type == FrameLoadTypeReload)
-        navType = NavigationTypeReload;
-    else if (isBackForwardLoadType(type))
-        navType = NavigationTypeBackForward;
-    else
-        navType = NavigationTypeOther;
-    return actionInformation(navType, event, originalURL);
-}
- 
-NSDictionary *FrameLoader::actionInformation(NavigationType navigationType, NSEvent *event, NSURL *originalURL)
-{
-    NSString *ActionNavigationTypeKey = @"WebActionNavigationTypeKey";
-    NSString *ActionElementKey = @"WebActionElementKey";
-    NSString *ActionButtonKey = @"WebActionButtonKey"; 
-    NSString *ActionModifierFlagsKey = @"WebActionModifierFlagsKey";
-    NSString *ActionOriginalURLKey = @"WebActionOriginalURLKey";
-    NSDictionary *elementInfo = m_client->elementForEvent(event);
-    if (elementInfo)
-        return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:navigationType], ActionNavigationTypeKey,
-            elementInfo, ActionElementKey,
-            [NSNumber numberWithInt:[event buttonNumber]], ActionButtonKey,
-            [NSNumber numberWithInt:[event modifierFlags]], ActionModifierFlagsKey,
-            originalURL, ActionOriginalURLKey,
-            nil];
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithInt:navigationType], ActionNavigationTypeKey,
-        [NSNumber numberWithInt:[event modifierFlags]], ActionModifierFlagsKey,
-        originalURL, ActionOriginalURLKey,
-        nil];
 }
 
 // Called every time a resource is completely loaded, or an error is received.

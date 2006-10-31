@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "NavigationAction.h"
 #include "Shared.h"
 #include "PlatformString.h"
 #include <wtf/Vector.h>
@@ -101,8 +102,8 @@ namespace WebCore {
         String overrideEncoding() const;
         void addResponse(NSURLResponse *);
         const ResponseVector& responses() const;
-        NSDictionary *triggeringAction() const;
-        void setTriggeringAction(NSDictionary *);
+        const NavigationAction& triggeringAction() const;
+        void setTriggeringAction(const NavigationAction&);
         void setOverrideEncoding(const String&);
         void setLastCheckedRequest(NSURLRequest *request);
         NSURLRequest *lastCheckedRequest() const;
@@ -159,7 +160,7 @@ namespace WebCore {
 
         // The action that triggered loading - we keep this around for the
         // benefit of the various policy handlers.
-        RetainPtr<NSDictionary> m_triggeringAction;
+        NavigationAction m_triggeringAction;
 
         // The last request that we checked click policy for - kept around
         // so we can avoid asking again needlessly.

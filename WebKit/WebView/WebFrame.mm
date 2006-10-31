@@ -482,7 +482,7 @@ static inline WebView *getWebView(WebFrame *webFrame)
             [self _frameLoader]->addExtraFieldsToRequest(request, true, (formData != nil));
 
             // If this was a repost that failed the page cache, we might try to repost the form.
-            NSDictionary *action;
+            NavigationAction action;
             if (formData) {
                 [request setHTTPMethod:@"POST"];
                 [request _web_setHTTPReferrer:[item formReferrer]];
@@ -502,10 +502,10 @@ static inline WebView *getWebView(WebFrame *webFrame)
                 if (synchResponse == nil) { 
                     // Not in the NSURL cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-                    action = [self _frameLoader]->actionInformation(NavigationTypeFormResubmitted, nil, itemURL);
+                    action = NavigationAction(itemURL, NavigationTypeFormResubmitted);
                 } else
                     // We can use the cache, don't use navType=resubmit
-                    action = [self _frameLoader]->actionInformation(loadType, false, nil, itemURL);
+                    action = NavigationAction(itemURL, loadType, false);
             } else {
                 switch (loadType) {
                     case FrameLoadTypeReload:
@@ -528,7 +528,7 @@ static inline WebView *getWebView(WebFrame *webFrame)
                         ASSERT_NOT_REACHED();
                 }
 
-                action = [self _frameLoader]->actionInformation(loadType, false, nil, itemOriginalURL);
+                action = NavigationAction(itemOriginalURL, loadType, false);
             }
 
             [self _frameLoader]->load(request, action, loadType, 0);

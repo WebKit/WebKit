@@ -652,22 +652,22 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function,
-    NSDictionary *action, NSURLRequest *request, const String& frameName)
+    const NavigationAction& action, NSURLRequest *request, const String& frameName)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
-            decidePolicyForNewWindowAction:action
+            decidePolicyForNewWindowAction:actionDictionary(action)
                                    request:request
                               newFrameName:frameName
                           decisionListener:setUpPolicyListener(function)];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function,
-    NSDictionary *action, NSURLRequest *request)
+    const NavigationAction& action, NSURLRequest *request)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
-                decidePolicyForNavigationAction:action
+                decidePolicyForNavigationAction:actionDictionary(action)
                                         request:request
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function)];
@@ -1182,6 +1182,23 @@ void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
 String WebFrameLoaderClient::userAgent(NSURL *URL)
 {
     return [getWebView(m_webFrame.get()) userAgentForURL:URL];
+}
+
+NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action) const
+{
+    if (NSDictionary *elementInfo = elementForEvent(action.event()))
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
+            elementInfo, WebActionElementKey,
+            [NSNumber numberWithInt:[action.event() buttonNumber]], WebActionButtonKey,
+            [NSNumber numberWithInt:[action.event() modifierFlags]], WebActionModifierFlagsKey,
+            action.URL().getNSURL(), WebActionOriginalURLKey,
+            nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
+        [NSNumber numberWithInt:[action.event() modifierFlags]], WebActionModifierFlagsKey,
+        action.URL().getNSURL(), WebActionOriginalURLKey,
+        nil];
 }
 
 @implementation WebFramePolicyListener

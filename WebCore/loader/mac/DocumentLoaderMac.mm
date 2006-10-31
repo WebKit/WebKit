@@ -515,12 +515,12 @@ NSURLRequest *DocumentLoader::lastCheckedRequest() const
     return [[m_lastCheckedRequest.get() retain] autorelease];
 }
 
-NSDictionary *DocumentLoader::triggeringAction() const
+const NavigationAction& DocumentLoader::triggeringAction() const
 {
-    return [[m_triggeringAction.get() retain] autorelease];
+    return m_triggeringAction;
 }
 
-void DocumentLoader::setTriggeringAction(NSDictionary *action)
+void DocumentLoader::setTriggeringAction(const NavigationAction& action)
 {
     m_triggeringAction = action;
 }

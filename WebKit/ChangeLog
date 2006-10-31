@@ -1,3 +1,22 @@
+2006-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - got "action dictionary" code out of FrameLoader,
+          replacing with a class called NavigationAction
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Changed parameter types to NavigationAction.
+        Made elementForEvent non-virtual. Added actionDictionary function.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Changed parameter type,
+        and used actionDictionary to make the action dictionary.
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        (WebFrameLoaderClient::actionDictionary): Added. Code that was originally in WebCore
+        that creates the action dictionary (from a NavigationAction).
+
+        * WebView/WebFrame.mm: (-[WebFrame _loadItem:withLoadType:]): Use NavigationAction
+        instead of a dictionary for the action parameters.
+
 2006-10-31  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Maciej.

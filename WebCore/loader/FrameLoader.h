@@ -80,6 +80,7 @@ namespace WebCore {
     class FrameLoaderClient;
     class KURL;
     class MainResourceLoader;
+    class NavigationAction;
     class PageState;
     class ResourceLoader;
     class ResourceRequest;
@@ -151,7 +152,7 @@ namespace WebCore {
             NSEvent *, Element* form, const HashMap<String, String>&);
         void load(NSURLRequest *);
         void load(NSURLRequest *, const String& frameName);
-        void load(NSURLRequest *, NSDictionary *triggeringAaction, FrameLoadType, PassRefPtr<FormState>);
+        void load(NSURLRequest *, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
 #endif
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
@@ -295,8 +296,6 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
-        NSDictionary *actionInformation(NavigationType, NSEvent *, NSURL *);
-        NSDictionary *actionInformation(FrameLoadType loadType, bool isFormSubmission, NSEvent *, NSURL *);
 #endif
 
         void setClient(FrameLoaderClient*);
@@ -327,7 +326,8 @@ namespace WebCore {
 #if PLATFORM(MAC)
         void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>,
             NavigationPolicyDecisionFunction, void* argument);
-        void checkNewWindowPolicy(NSDictionary *, NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
+        void checkNewWindowPolicy(const NavigationAction&,
+            NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
 #endif
 
         void continueAfterNavigationPolicy(PolicyAction);
