@@ -1,3 +1,11 @@
+2006-10-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Stephanie.
+
+        Add a special case for the Internal makefiles, so it can find the OepnSource.
+
+        * Scripts/webkitdirs.pm:
+
 2006-10-30  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin.

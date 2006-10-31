@@ -60,12 +60,14 @@ sub determineSourceDir
     
     # walks up path checking each directory to see if it is the main WebKit project dir, 
     # defined by containing JavaScriptCore, WebCore, and WebKit
-    until (-d "$sourceDir/JavaScriptCore" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit")
+    until ((-d "$sourceDir/JavaScriptCore" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
     {
         if ($sourceDir !~ s|/[^/]+$||) {
             die "Could not find top level webkit directory above source directory using FindBin.\n";
         }
     }
+
+    $sourceDir = "$sourceDir/OpenSource" if -d "$sourceDir/OpenSource";
 }
 
 # used for scripts which are stored in a non-standard location
