@@ -28,34 +28,7 @@
  
 #import "DumpRenderTree.h"
 
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/DOMRange.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebCoreStatistics.h>
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebHistory.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebDocumentPrivate.h>
-#import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-
-#import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
-#import <objc/objc-runtime.h>                       // for class_poseAs
-
-#define COMMON_DIGEST_FOR_OPENSSL
-#import <CommonCrypto/CommonDigest.h>               // for MD5 functions
-
-#import <getopt.h>
-#import <malloc/malloc.h>
-
 #import "AppleScriptController.h"
-#import "DumpRenderTreeDraggingInfo.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
 #import "GCController.h"
@@ -63,6 +36,30 @@
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
 #import "TextInputController.h"
+#import "UIDelegate.h"
+#import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
+#import <WebKit/DOMExtensions.h>
+#import <WebKit/DOMRange.h>
+#import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebCoreStatistics.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDocumentPrivate.h>
+#import <WebKit/WebEditingDelegate.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHistory.h>
+#import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebView.h>
+#import <getopt.h>
+#import <malloc/malloc.h>
+#import <objc/objc-runtime.h>                       // for class_poseAs
+
+#define COMMON_DIGEST_FOR_OPENSSL
+#import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
 @interface DumpRenderTreeWindow : NSWindow
 @end
@@ -79,11 +76,11 @@
 @interface LayoutTestController : NSObject
 @end
 
+BOOL windowIsKey = YES;
+WebFrame *frame = 0;
+
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
-
-WebFrame *frame = 0;
-DumpRenderTreeDraggingInfo *draggingInfo = 0;
 
 static volatile BOOL done;
 static NavigationController *navigationController;
@@ -119,14 +116,13 @@ static BOOL printSeparators;
 static NSString *currentTest = nil;
 static NSPasteboard *localPasteboard;
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
-static BOOL windowIsKey = YES;
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
 // a queue of NSInvocations, queued by callouts from the test, to be exec'ed when the load is done
 static NSMutableArray *workQueue = nil;
 // to prevent infinite loops, only the first page of a test can add to a work queue
 // (since we may well come back to that same page)
-BOOL workQueueFrozen;
+static BOOL workQueueFrozen;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
@@ -288,15 +284,18 @@ int main(int argc, const char *argv[])
     navigationController = [[NavigationController alloc] init];
 
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
-    
     WebView *webView = [[WebView alloc] initWithFrame:rect];
-    WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
-    EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
-    [webView setEditingDelegate:editingDelegate];
-    [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
+    WaitUntilDoneDelegate *waitUntilDoneDelegate = [[WaitUntilDoneDelegate alloc] init];
+    [webView setFrameLoadDelegate:waitUntilDoneDelegate];
+    
+    UIDelegate *uiDelegate = [[UIDelegate alloc] init];
+    [webView setUIDelegate:uiDelegate];
+
+    EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
+    [webView setEditingDelegate:editingDelegate];
+
     [[webView preferences] setTabsToLinks:YES];
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
@@ -374,9 +373,10 @@ int main(int argc, const char *argv[])
     
     [window close]; // releases when closed
     [webView release];
-    [delegate release];
+    [waitUntilDoneDelegate release];
     [editingDelegate release];
-
+    [uiDelegate release];
+    
     [localPasteboard releaseGlobally];
     localPasteboard = nil;
     
@@ -688,33 +688,10 @@ static void dump(void)
     [pluginFunction release];
 }
 
-- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
-{
-    printf("ALERT: %s\n", [message UTF8String]);
-}
-
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
     if (dumpTitleChanges)
         printf("TITLE CHANGED: %s\n", [title UTF8String]);
-}
-
-- (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
-{
-    // A new drag was started before the old one ended.  Probably shouldn't happen.
-    if (draggingInfo) {
-        [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:NSDragOperationNone];
-        [draggingInfo release];
-    }
-    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
-}
-
-- (void)webViewFocus:(WebView *)webView
-{
-    windowIsKey = YES;
-    NSView *documentView = [[frame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateActiveState];
 }
 
 @end
@@ -1000,9 +977,6 @@ static void runTest(const char *pathOrURL)
     }
     pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
-    if (draggingInfo)
-        [draggingInfo release];
-    draggingInfo = nil;
     [pool release];
 }
 

@@ -32,6 +32,8 @@
 		141BF44B096A45C800E0753C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF446096A45C800E0753C /* PluginObject.c */; };
 		141BF44C096A45C800E0753C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 141BF448096A45C800E0753C /* Info.plist */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
+		1422A1BA0AF6EDD600E1A883 /* UIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1422A1B80AF6EDD600E1A883 /* UIDelegate.h */; };
+		1422A1BB0AF6EDD600E1A883 /* UIDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1422A1B90AF6EDD600E1A883 /* UIDelegate.m */; };
 		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
 		14770FE30A22ADF7009342EE /* GCController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14770FE10A22ADF7009342EE /* GCController.mm */; };
 		14A6FB8A0971CAE5008B014F /* NavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6FB880971CAE5008B014F /* NavigationController.h */; };
@@ -94,6 +96,8 @@
 		141BF446096A45C800E0753C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = PluginObject.c; sourceTree = "<group>"; };
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		1422A1B80AF6EDD600E1A883 /* UIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIDelegate.h; sourceTree = "<group>"; };
+		1422A1B90AF6EDD600E1A883 /* UIDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIDelegate.m; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
 		14770FE10A22ADF7009342EE /* GCController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GCController.mm; sourceTree = "<group>"; };
 		14A6FB880971CAE5008B014F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
@@ -166,25 +170,15 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
+				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
+				1422A2750AF6F4BD00E1A883 /* Delegates */,
+				1422A2690AF6F45200E1A883 /* Controllers */,
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
-				A803FFF309CAAFE0009B2A37 /* EditingDelegate.h */,
-				A803FFF409CAAFE0009B2A37 /* EditingDelegate.m */,
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
 				08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */,
 				A803FFB209CAAE0B009B2A37 /* DumpRenderTreeDraggingInfo.h */,
 				A803FFB309CAAE0B009B2A37 /* DumpRenderTreeDraggingInfo.m */,
-				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
-				A803FCB709CAAAB0009B2A37 /* EventSendingController.h */,
-				A803FCB809CAAAB1009B2A37 /* EventSendingController.m */,
-				14770FE00A22ADF7009342EE /* GCController.h */,
-				14770FE10A22ADF7009342EE /* GCController.mm */,
-				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
-				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
-				E13307FE099624DA00AC0A91 /* AppleScriptController.h */,
-				E13307FF099624DA00AC0A91 /* AppleScriptController.m */,
 				B5A7525808AF4A3600138E45 /* ImageDiff.m */,
-				14A6FB880971CAE5008B014F /* NavigationController.h */,
-				14A6FB890971CAE5008B014F /* NavigationController.m */,
 				22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */,
 				22181BCE09DC8C4B008342E8 /* ObjCPlugin.m */,
 				22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */,
@@ -204,6 +198,34 @@
 				141BF448096A45C800E0753C /* Info.plist */,
 			);
 			path = TestNetscapePlugIn.subproj;
+			sourceTree = "<group>";
+		};
+		1422A2690AF6F45200E1A883 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				E13307FE099624DA00AC0A91 /* AppleScriptController.h */,
+				E13307FF099624DA00AC0A91 /* AppleScriptController.m */,
+				A803FCB709CAAAB0009B2A37 /* EventSendingController.h */,
+				A803FCB809CAAAB1009B2A37 /* EventSendingController.m */,
+				14770FE00A22ADF7009342EE /* GCController.h */,
+				14770FE10A22ADF7009342EE /* GCController.mm */,
+				14A6FB880971CAE5008B014F /* NavigationController.h */,
+				14A6FB890971CAE5008B014F /* NavigationController.m */,
+				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
+				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		1422A2750AF6F4BD00E1A883 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				A803FFF309CAAFE0009B2A37 /* EditingDelegate.h */,
+				A803FFF409CAAFE0009B2A37 /* EditingDelegate.m */,
+				1422A1B80AF6EDD600E1A883 /* UIDelegate.h */,
+				1422A1B90AF6EDD600E1A883 /* UIDelegate.m */,
+			);
+			name = Delegates;
 			sourceTree = "<group>";
 		};
 		9340995508540CAF007F3BC8 /* Products */ = {
@@ -254,6 +276,7 @@
 				22181BD109DC8C4B008342E8 /* ObjCPlugin.h in Headers */,
 				22181BD309DC8C4B008342E8 /* ObjCPluginFunction.h in Headers */,
 				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
+				1422A1BA0AF6EDD600E1A883 /* UIDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +398,7 @@
 				22181BD209DC8C4B008342E8 /* ObjCPlugin.m in Sources */,
 				22181BD409DC8C4B008342E8 /* ObjCPluginFunction.m in Sources */,
 				14770FE30A22ADF7009342EE /* GCController.mm in Sources */,
+				1422A1BB0AF6EDD600E1A883 /* UIDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
