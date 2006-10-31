@@ -1,3 +1,10 @@
+2006-10-31  Brady Eidson  <beidson@apple.com>
+
+        Build fix (unused variable in release builds)
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+
 2006-10-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

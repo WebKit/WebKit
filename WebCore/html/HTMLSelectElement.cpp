@@ -687,7 +687,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         
         int endIndex = 0;
-        const Vector<HTMLElement*>& items = listItems();
+        //const Vector<HTMLElement*>& items = listItems();
         
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
@@ -704,7 +704,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
         }
         
         if (keyIdentifier == "Down" || keyIdentifier == "Up") {
-            ASSERT(endIndex >= 0 && (unsigned)endIndex < items.size()); 
+            ASSERT(endIndex >= 0 && (unsigned)endIndex < listItems().size()); 
             setActiveSelectionEndIndex(endIndex);
             
             // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.
