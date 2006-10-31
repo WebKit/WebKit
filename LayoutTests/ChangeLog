@@ -1,3 +1,16 @@
+2006-10-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/execCommand/create-list-1.html: Removed.
+        * editing/execCommand/create-list-with-hr-expected.checksum:
+        * editing/execCommand/create-list-with-hr-expected.png:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/execCommand/remove-list-1-expected.checksum:
+        * editing/execCommand/remove-list-1-expected.png:
+        * editing/execCommand/remove-list-1-expected.txt:
+        * fast/text/attributed-substring-from-range-001-expected.txt:
+
 2006-10-31  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Geoff.

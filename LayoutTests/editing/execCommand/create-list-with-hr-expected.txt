@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > LI > UL > DIV > BODY > HTML > #document to 0 of DIV > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 122 of #text > B > P > BODY > HTML > #document to 122 of #text > B > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
               RenderBlock {HR} at (0,0) size 744x2 [border: (1px inset #000000)]
             RenderBlock (anonymous) at (0,36) size 744x0
         RenderBlock (anonymous) at (0,44) size 784x0
-caret: position 0 of child 0 {HR} of child 0 {DIV} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 122 of child 0 {#text} of child 1 {B} of child 0 {P} of child 0 {BODY} of child 0 {HTML} of document

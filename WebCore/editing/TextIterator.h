@@ -62,7 +62,7 @@ public:
     TextIterator();
     explicit TextIterator(const Range *, IteratorKind kind = CONTENT );
     
-    bool atEnd() const { return !m_range; }
+    bool atEnd() const { return !m_positionNode; }
     void advance();
     
     int length() const { return m_textLength; }
@@ -79,7 +79,7 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void handleTextBox();
-    void emitCharacter(UChar, const Position&, const Position&);
+    void emitCharacter(UChar, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset);
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
@@ -94,7 +94,10 @@ private:
     Node *m_pastEndNode;
     
     // The current text and its position, in the form to be returned from the iterator.
-    RefPtr<Range> m_range;
+    Node *m_positionNode;
+    mutable Node *m_positionOffsetBaseNode;
+    mutable int m_positionStartOffset;
+    mutable int m_positionEndOffset;
     const UChar* m_textCharacters;
     int m_textLength;
     
@@ -125,7 +128,7 @@ public:
     SimplifiedBackwardsTextIterator();
     explicit SimplifiedBackwardsTextIterator(const Range *);
     
-    bool atEnd() const { return !m_range; }
+    bool atEnd() const { return !m_positionNode; }
     void advance();
     
     int length() const { return m_textLength; }
@@ -138,7 +141,7 @@ private:
     bool handleTextNode();
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void emitCharacter(UChar, const Position&, const Position&);
+    void emitCharacter(UChar, Node *Node, int startOffset, int endOffset);
     void emitNewline();
     
     // Current position, not necessarily of the text being returned, but position
@@ -153,7 +156,9 @@ private:
     int m_startOffset;
     
     // The current text and its position, in the form to be returned from the iterator.
-    RefPtr<Range> m_range;
+    Node* m_positionNode;
+    int m_positionStartOffset;
+    int m_positionEndOffset;
     const UChar* m_textCharacters;
     int m_textLength;
 

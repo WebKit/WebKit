@@ -73,11 +73,11 @@ private:
     CircularSearchBuffer &operator=(const CircularSearchBuffer&);
 };
 
-TextIterator::TextIterator() : m_endContainer(0), m_endOffset(0), m_lastCharacter(0)
+TextIterator::TextIterator() : m_endContainer(0), m_endOffset(0), m_positionNode(0), m_lastCharacter(0)
 {
 }
 
-TextIterator::TextIterator(const Range *r, IteratorKind kind) : m_endContainer(0), m_endOffset(0)
+TextIterator::TextIterator(const Range *r, IteratorKind kind) : m_endContainer(0), m_endOffset(0), m_positionNode(0)
 {
     if (!r)
         return;
@@ -120,8 +120,8 @@ TextIterator::TextIterator(const Range *r, IteratorKind kind) : m_endContainer(0
         m_lastCharacter = '\n';
 
 #ifndef NDEBUG
-    // Need this just because of the assert in advance().
-    m_range = new Range(m_node->document(), Position(m_node, 0), Position(m_node, 0));
+    // need this just because of the assert in advance()
+    m_positionNode = m_node;
 #endif
 
     // identify the first run
@@ -131,16 +131,13 @@ TextIterator::TextIterator(const Range *r, IteratorKind kind) : m_endContainer(0
 void TextIterator::advance()
 {
     // reset the run information
-    m_range = 0;
+    m_positionNode = 0;
     m_textLength = 0;
 
     // handle remembered node that needed a newline after the text node's newline
     if (m_needAnotherNewline) {
-        VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
-        VisiblePosition next = lastInNode.next();
-        Position start = lastInNode.deepEquivalent();
-        Position end = next.isNull() ? start : next.deepEquivalent();
-        emitCharacter('\n', start, end);
+        // emit the newline, with position a collapsed range at the end of current node.
+        emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
         m_needAnotherNewline = false;
         return;
     }
@@ -148,7 +145,7 @@ void TextIterator::advance()
     // handle remembered text box
     if (m_textBox) {
         handleTextBox();
-        if (m_range)
+        if (m_positionNode)
             return;
     }
 
@@ -165,7 +162,7 @@ void TextIterator::advance()
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();
-            if (m_range)
+            if (m_positionNode)
                 return;
         }
 
@@ -181,7 +178,7 @@ void TextIterator::advance()
                 while (!next && m_node->parentNode()) {
                     m_node = m_node->parentNode();
                     exitNode();
-                    if (m_range) {
+                    if (m_positionNode) {
                         m_handledNode = true;
                         m_handledChildren = true;
                         return;
@@ -196,8 +193,8 @@ void TextIterator::advance()
         m_handledNode = false;
         m_handledChildren = false;
 
-        // FIXME: How would this ever be?
-        if (m_range)
+        // how would this ever be?
+        if (m_positionNode)
             return;
     }
 }
@@ -218,7 +215,7 @@ bool TextIterator::handleTextNode()
     if (!renderer->style()->collapseWhiteSpace()) {
         int runStart = m_offset;
         if (m_lastTextNodeEndedWithCollapsedSpace) {
-            emitCharacter(' ', Position(m_node, runStart), Position(m_node, runStart));
+            emitCharacter(' ', m_node, 0, runStart, runStart);
             return false;
         }
         int strLength = str.length();
@@ -228,8 +225,10 @@ bool TextIterator::handleTextNode()
         if (runStart >= runEnd)
             return true;
 
-        m_range = new Range(m_node->document(), Position(m_node, runStart), Position(m_node, runEnd));
-        
+        m_positionNode = m_node;
+        m_positionOffsetBaseNode = 0;
+        m_positionStartOffset = runStart;
+        m_positionEndOffset = runEnd;
         m_textCharacters = str.characters() + runStart;
         m_textLength = runEnd - runStart;
 
@@ -273,7 +272,7 @@ void TextIterator::handleTextBox()
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == firstTextBox && textBoxStart == runStart && runStart > 0);
         if (needSpace && !isCollapsibleWhitespace(m_lastCharacter) && m_lastCharacter) {
-            emitCharacter(' ', Position(m_node, runStart), Position(m_node, runStart));
+            emitCharacter(' ', m_node, 0, runStart, runStart);
             return;
         }
         int textBoxEnd = textBoxStart + m_textBox->m_len;
@@ -292,7 +291,7 @@ void TextIterator::handleTextBox()
             // or a run of characters that does not include a newline.
             // This effectively translates newlines to spaces without copying the text.
             if (str[runStart] == '\n') {
-                emitCharacter(' ', Position(m_node, runStart), Position(m_node, runStart + 1));
+                emitCharacter(' ', m_node, 0, runStart, runStart + 1);
                 m_offset = runStart + 1;
             } else {
                 int subrunEnd = str.find('\n', runStart);
@@ -301,7 +300,10 @@ void TextIterator::handleTextBox()
 
                 m_offset = subrunEnd;
 
-                m_range = new Range(m_node->document(), Position(m_node, runStart), Position(m_node, subrunEnd));
+                m_positionNode = m_node;
+                m_positionOffsetBaseNode = 0;
+                m_positionStartOffset = runStart;
+                m_positionEndOffset = subrunEnd;
                 m_textCharacters = str.characters() + runStart;
                 m_textLength = subrunEnd - runStart;
 
@@ -311,8 +313,7 @@ void TextIterator::handleTextBox()
 
             // If we are doing a subrun that doesn't go to the end of the text box,
             // come back again to finish handling this text box; don't advance to the next one.
-            ExceptionCode ec;
-            if (m_range->endOffset(ec) < textBoxEnd)
+            if (m_positionEndOffset < textBoxEnd)
                 return;
 
             // Advance and return
@@ -334,11 +335,14 @@ void TextIterator::handleTextBox()
 bool TextIterator::handleReplacedElement()
 {
     if (m_lastTextNodeEndedWithCollapsedSpace) {
-        emitCharacter(' ', positionAfterNode(m_lastTextNode), positionAfterNode(m_lastTextNode));
+        emitCharacter(' ', m_lastTextNode->parentNode(), m_lastTextNode, 1, 1);
         return false;
     }
 
-    m_range = new Range(m_node->document(), positionBeforeNode(m_node), positionAfterNode(m_node));
+    m_positionNode = m_node->parentNode();
+    m_positionOffsetBaseNode = m_node;
+    m_positionStartOffset = 0;
+    m_positionEndOffset = 1;
 
     m_textCharacters = 0;
     m_textLength = 0;
@@ -466,20 +470,15 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
 bool TextIterator::handleNonTextNode()
 {
     if (shouldEmitNewlineForNode(m_node)) {
-        Position start = positionBeforeNode(m_node);
-        VisiblePosition next = VisiblePosition(start).next();
-        Position end = next.isNull() ? start : next.deepEquivalent();
-        emitCharacter('\n', start, end);
+        emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
     } else if (m_lastCharacter != '\n' && m_lastTextNode) {
-        // Only add the tab or newline if not at the start of a line.
-        // FIXME: The ranges for these emitted characters should be the part of the 
-        // document that this imaginary character would occupy.
+        // only add the tab or newline if not at the start of a line
         if (shouldEmitTabBeforeNode(m_node))
-            emitCharacter('\t', positionBeforeNode(m_lastTextNode), positionAfterNode(m_lastTextNode));
+            emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
         else if (shouldEmitNewlinesBeforeAndAfterNode(m_node))
-            emitCharacter('\n', positionBeforeNode(m_lastTextNode), positionAfterNode(m_lastTextNode));
+            emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
         else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
-            emitCharacter(' ', positionBeforeNode(m_lastTextNode), positionAfterNode(m_lastTextNode));
+            emitCharacter(' ', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
     }
 
     return true;
@@ -491,34 +490,29 @@ void TextIterator::exitNode()
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
         
-        VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
-        VisiblePosition next = lastInNode.next();
-        Position start = lastInNode.deepEquivalent();
-        Position end = next.isNull() ? start : next.deepEquivalent();
-        
         if (m_lastCharacter != '\n') {
-
-            emitCharacter('\n', start, end);
+            // insert a newline with a position following this block
+            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
 
             // remember whether to later add a newline for the current node
             assert(!m_needAnotherNewline);
             m_needAnotherNewline = addNewline;
         } else if (addNewline) {
             // insert a newline with a position following this block
-            emitCharacter('\n', start, end);
+            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
         }
-    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node)) {
-        VisiblePosition lastInNode(Position(m_node, maxDeepOffset(m_node)));
-        VisiblePosition next = lastInNode.next();
-        Position start = lastInNode.deepEquivalent();
-        Position end = next.isNull() ? start : next.deepEquivalent();
-        emitCharacter(' ', start, end);
-    }
+    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
+        emitCharacter(' ', m_node->parentNode(), m_node, 1, 1);
 }
 
-void TextIterator::emitCharacter(UChar c, const Position& start, const Position& end)
+void TextIterator::emitCharacter(UChar c, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset)
 {
-    m_range = start.isNull() ? 0 : new Range(start.node()->document(), start, end);
+    // remember information with which to construct the TextIterator::range()
+    // NOTE: textNode is often not a text node, so the range will specify child nodes of positionNode
+    m_positionNode = textNode;
+    m_positionOffsetBaseNode = offsetBaseNode;
+    m_positionStartOffset = textStartOffset;
+    m_positionEndOffset = textEndOffset;
  
     // remember information with which to construct the TextIterator::characters() and length()
     m_singleCharacterBuffer = c;
@@ -532,21 +526,32 @@ void TextIterator::emitCharacter(UChar c, const Position& start, const Position&
 
 PassRefPtr<Range> TextIterator::range() const
 {
-    if (m_range)
-        return m_range;
-        
+    // use the current run information, if we have it
+    if (m_positionNode) {
+        if (m_positionOffsetBaseNode) {
+            int index = m_positionOffsetBaseNode->nodeIndex();
+            m_positionStartOffset += index;
+            m_positionEndOffset += index;
+            m_positionOffsetBaseNode = 0;
+        }
+        return new Range(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    }
+
+    // otherwise, return the end of the overall range we were given
     if (m_endContainer)
         return new Range(m_endContainer->document(), m_endContainer, m_endOffset, m_endContainer, m_endOffset);
-    
+        
     return 0;
 }
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
 {
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
 {
+    m_positionNode = 0;
+
     if (!r)
         return;
 
@@ -587,7 +592,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
 
 #ifndef NDEBUG
     // Need this just because of the assert.
-    m_range = new Range(endNode->document(), Position(endNode, 0), Position(endNode, 0));
+    m_positionNode = endNode;
 #endif
 
     m_lastTextNode = 0;
@@ -598,9 +603,9 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
 
 void SimplifiedBackwardsTextIterator::advance()
 {
-    assert(m_range);
+    assert(m_positionNode);
 
-    m_range = 0;
+    m_positionNode = 0;
     m_textLength = 0;
 
     while (m_node) {
@@ -615,7 +620,7 @@ void SimplifiedBackwardsTextIterator::advance()
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();
-            if (m_range)
+            if (m_positionNode)
                 return;
         }
 
@@ -663,7 +668,7 @@ void SimplifiedBackwardsTextIterator::advance()
             m_offset = 0;
         m_handledNode = false;
         
-        if (m_range)
+        if (m_positionNode)
             return;
     }
 }
@@ -678,21 +683,26 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     if (!renderer->firstTextBox() && str.length() > 0)
         return true;
 
-    Position end(m_node, m_offset);
-    m_offset = (m_node == m_startNode) ? m_startOffset : 0;
-    Position start(m_node, m_offset);
-    m_range = new Range(m_node->document(), start, end);
-    m_textLength = end.offset() - start.offset();
-    m_textCharacters = str.characters() + start.offset();
+    m_positionEndOffset = m_offset;
 
-    m_lastCharacter = str[end.offset() - 1];
+    m_offset = (m_node == m_startNode) ? m_startOffset : 0;
+    m_positionNode = m_node;
+    m_positionStartOffset = m_offset;
+    m_textLength = m_positionEndOffset - m_positionStartOffset;
+    m_textCharacters = str.characters() + m_positionStartOffset;
+
+    m_lastCharacter = str[m_positionEndOffset - 1];
 
     return true;
 }
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()
 {
-    m_range = new Range(m_node->document(), positionBeforeNode(m_node), positionAfterNode(m_node));
+    int offset = m_node->nodeIndex();
+
+    m_positionNode = m_node->parentNode();
+    m_positionStartOffset = offset;
+    m_positionEndOffset = offset + 1;
 
     m_textCharacters = 0;
     m_textLength = 0;
@@ -724,12 +734,12 @@ void SimplifiedBackwardsTextIterator::exitNode()
     handleNonTextNode();
 }
 
-void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, const Position& start, const Position& end)
+void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node *node, int startOffset, int endOffset)
 {
     m_singleCharacterBuffer = c;
-    
-    m_range = start.isNull() ? 0 : new Range(start.node()->document(), start, end);
-    
+    m_positionNode = node;
+    m_positionStartOffset = startOffset;
+    m_positionEndOffset = endOffset;
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
     m_lastCharacter = c;
@@ -737,16 +747,21 @@ void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, const Position& sta
 
 void SimplifiedBackwardsTextIterator::emitNewline()
 {
-    if (m_lastTextNode)
-        emitCharacter('\n', positionBeforeNode(m_lastTextNode), positionAfterNode(m_lastTextNode));
-    else
-        emitCharacter('\n', positionBeforeNode(m_node), positionAfterNode(m_node));
+    int offset;
+    
+    if (m_lastTextNode) {
+        offset = m_lastTextNode->nodeIndex();
+        emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
+    } else {
+        offset = m_node->nodeIndex();
+        emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
+    }
 }
 
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
 {
-    if (m_range)
-        return m_range;
+    if (m_positionNode)
+        return new Range(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     
     return new Range(m_startNode->document(), m_startNode, m_startOffset, m_startNode, m_startOffset);
 }
@@ -766,8 +781,7 @@ CharacterIterator::CharacterIterator(const Range *r)
 
 PassRefPtr<Range> CharacterIterator::range() const
 {
-    ExceptionCode ec;
-    RefPtr<Range> r = m_textIterator.range()->cloneRange(ec);
+    RefPtr<Range> r = m_textIterator.range();
     if (!m_textIterator.atEnd()) {
         if (m_textIterator.length() <= 1) {
             assert(m_runOffset == 0);
@@ -1037,11 +1051,14 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
         if (rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len) {
             startRangeFound = true;
             int exception = 0;
-            if (rangeLocation == docTextPosition + len)
-                resultRange->setStart(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
-            else {
+            if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeLocation - docTextPosition;
                 resultRange->setStart(textRunRange->startContainer(exception), offset + textRunRange->startOffset(exception), exception);
+            } else {
+                if (rangeLocation == docTextPosition)
+                    resultRange->setStart(textRunRange->startContainer(exception), textRunRange->startOffset(exception), exception);
+                else
+                    resultRange->setStart(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
             }
         }
 
@@ -1056,9 +1073,10 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
                 else
                     resultRange->setEnd(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
             }
-            
-            docTextPosition += len;
-            break;
+            if (!(rangeLength == 0 && rangeEnd == docTextPosition + len)) {
+                docTextPosition += len;
+                break;
+            }
         }
         docTextPosition += len;
     }

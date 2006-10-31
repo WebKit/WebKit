@@ -1,3 +1,35 @@
+2006-10-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4808375>
+        REGRESSION: TextIterator slowed down, affecting Find on Page & Copy (etc.) [11460}
+        
+        Completely back out r17276 because of performance issues.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleReplacedElement):
+        (WebCore::TextIterator::handleNonTextNode):
+        (WebCore::TextIterator::exitNode):
+        (WebCore::TextIterator::emitCharacter):
+        (WebCore::TextIterator::range):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode):
+        (WebCore::SimplifiedBackwardsTextIterator::handleReplacedElement):
+        (WebCore::SimplifiedBackwardsTextIterator::emitCharacter):
+        (WebCore::SimplifiedBackwardsTextIterator::emitNewline):
+        (WebCore::SimplifiedBackwardsTextIterator::range):
+        (WebCore::CharacterIterator::range):
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        * editing/TextIterator.h:
+        (WebCore::TextIterator::atEnd):
+        (WebCore::SimplifiedBackwardsTextIterator::atEnd):
+
 2006-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
