@@ -686,9 +686,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         
-        int endIndex = 0;
-        //const Vector<HTMLElement*>& items = listItems();
-        
+        int endIndex = 0;        
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
             if (keyIdentifier == "Down")
