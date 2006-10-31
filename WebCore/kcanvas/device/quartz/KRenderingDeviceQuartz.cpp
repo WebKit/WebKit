@@ -27,18 +27,18 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#import "KRenderingDeviceQuartz.h"
+#include "KRenderingDeviceQuartz.h"
 
-#import "GraphicsContext.h"
-#import "SVGResourceClipper.h"
-#import "SVGResourceImage.h"
-#import "SVGResourceMarker.h"
-#import "KCanvasFilterQuartz.h"
-#import "SVGResourceMasker.h"
-#import "KRenderingPaintServerQuartz.h"
-#import "Logging.h"
-#import "QuartzSupport.h"
-#import "RenderView.h"
+#include "GraphicsContext.h"
+#include "SVGResourceClipper.h"
+#include "SVGResourceImage.h"
+#include "SVGResourceMarker.h"
+#include "KCanvasFilterQuartz.h"
+#include "SVGResourceMasker.h"
+#include "KRenderingPaintServerQuartz.h"
+#include "Logging.h"
+#include "QuartzSupport.h"
+#include "RenderView.h"
 
 namespace WebCore {
 

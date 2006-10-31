@@ -27,16 +27,14 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#import "QuartzSupport.h"
+#include <ApplicationServices/ApplicationServices.h>
+#include "QuartzSupport.h"
 
-#import "GraphicsContext.h"
-#import "KCanvasRenderingStyle.h"
-#import "RenderStyle.h"
-#import "wtf/Assertions.h"
-
-#import <QuartzCore/CoreImage.h>
-
-#import "SVGRenderStyle.h"
+#include "GraphicsContext.h"
+#include "KCanvasRenderingStyle.h"
+#include "RenderStyle.h"
+#include "wtf/Assertions.h"
+#include "SVGRenderStyle.h"
 
 namespace WebCore {
 

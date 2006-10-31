@@ -28,6 +28,7 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
+
 #import "KCanvasFilterQuartz.h"
 
 #import "AffineTransform.h"

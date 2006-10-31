@@ -29,7 +29,7 @@
 #define KRenderingDeviceQuartz_H
 #ifdef SVG_SUPPORT
 
-#import "KRenderingDevice.h"
+#include "KRenderingDevice.h"
 
 typedef struct CGRect CGRect;
 typedef struct CGContext *CGContextRef;

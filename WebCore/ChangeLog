@@ -1,3 +1,28 @@
+2006-10-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Converting Obj-C++ to C++ in kcanvas
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasItemQuartz.cpp: Added.
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm: Removed.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.cpp: Added.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm: Removed.
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * kcanvas/device/quartz/QuartzSupport.cpp: Added.
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm: Removed.
+        * platform/graphics/svg/cg/SVGResourceClipperCg.cpp: Added.
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/cg/SVGResourceClipperCg.mm: Removed.
+        * platform/graphics/svg/cg/SVGResourceImageCg.cpp: Added.
+        * platform/graphics/svg/cg/SVGResourceImageCg.mm: Removed.
+
 2006-10-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -28,12 +28,12 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#import "SVGResourceClipper.h"
+#include "SVGResourceClipper.h"
 
-#import "GraphicsContext.h"
-#import "KCanvasFilterQuartz.h"
-#import "KRenderingDeviceQuartz.h"
-#import "QuartzSupport.h"
+#include "GraphicsContext.h"
+#include "KCanvasFilterQuartz.h"
+#include "KRenderingDeviceQuartz.h"
+#include "QuartzSupport.h"
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
     if (m_clipData.count() < 1)
         return;
 
-    BOOL heterogenousClipRules = NO;
+    bool heterogenousClipRules = false;
     WindRule clipRule = m_clipData[0].windRule;
 
     context->clearPath();
@@ -54,7 +54,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
     for (unsigned x = 0; x < m_clipData.count(); x++) {
         ClipData data = m_clipData[x];
         if (data.windRule != clipRule)
-            heterogenousClipRules = YES;
+            heterogenousClipRules = true;
         
         CGPathRef clipPath = data.path.platformPath();
 

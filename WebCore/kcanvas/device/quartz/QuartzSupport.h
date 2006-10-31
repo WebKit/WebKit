@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef QuartzSupport_H
+#define QuartzSupport_H
+
 #ifdef SVG_SUPPORT
 
-#import "GraphicsTypes.h"
+#include "GraphicsTypes.h"
 
 namespace WebCore {
 
@@ -72,3 +75,4 @@ static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
 }
 
 #endif // SVG_SUPPORT
+#endif // !QuartzSupport_H

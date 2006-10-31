@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2006 Alexander Kellett <lypanov@kde.org>
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +26,52 @@
  */
 
 #include "config.h"
+#ifdef SVG_SUPPORT
 
-#if SVG_SUPPORT
-#import "SVGResourceImage.h"
+#include <wtf/Assertions.h>
+
+#include <ApplicationServices/ApplicationServices.h>
+#include "KCanvasFilterQuartz.h"
+#include "KCanvasRenderingStyle.h"
+#include "KRenderingDeviceQuartz.h"
+#include "QuartzSupport.h"
+#include "RenderPath.h"
+#include "SVGRenderStyle.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore {
 
-SVGResourceImage::SVGResourceImage()
-    : m_cgLayer(0)
+FloatRect RenderPath::strokeBBox() const
 {
+    if (style()->svgStyle()->hasStroke())
+        return strokeBoundingBox(path(), style(), this);
+
+    return path().boundingRect();
 }
 
-SVGResourceImage::~SVGResourceImage()
+
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
 {
-    CGLayerRelease(m_cgLayer);
+    if (path().isEmpty())
+        return false;
+
+    if (requiresStroke && !KSVGPainterFactory::strokePaintServer(style(), this))
+        return false;
+
+    CGMutablePathRef cgPath = path().platformPath();
+    
+    CGContextRef context = scratchContext();
+    CGContextSaveGState(context);
+    
+    CGContextBeginPath(context);
+    CGContextAddPath(context, cgPath);
+    applyStrokeStyleToContext(context, style(), this);
+    bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
+    CGContextRestoreGState(context);
+    
+    return hitSuccess;
 }
 
-void SVGResourceImage::init(const Image&)
-{
-    // no-op
 }
-
-void SVGResourceImage::init(IntSize size)
-{
-    m_size = size;    
-}
-
-IntSize SVGResourceImage::size() const
-{
-    return m_size;
-}
-
-CGLayerRef SVGResourceImage::cgLayer()
-{
-    return m_cgLayer;
-}
-
-void SVGResourceImage::setCGLayer(CGLayerRef layer)
-{
-    if (m_cgLayer != layer) {
-        CGLayerRelease(m_cgLayer);
-        m_cgLayer = CGLayerRetain(layer);
-    }
-}
-
-} // namespace WebCore
 
 #endif // SVG_SUPPORT
