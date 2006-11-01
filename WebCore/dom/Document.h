@@ -530,7 +530,7 @@ public:
     bool queryCommandSupported(const String& command);
     String queryCommandValue(const String& command);
     
-    void addMarker(Range*, DocumentMarker::MarkerType);
+    void addMarker(Range*, DocumentMarker::MarkerType, String description = String());
     void addMarker(Node*, DocumentMarker);
     void copyMarkers(Node *srcNode, unsigned startOffset, int length, Node *dstNode, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void removeMarkers(Range*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
@@ -542,6 +542,7 @@ public:
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
     void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
 
+    DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     Vector<DocumentMarker> markersForNode(Node*);
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     

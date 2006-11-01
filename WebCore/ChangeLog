@@ -1,3 +1,35 @@
+2006-10-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej
+        
+        - fixed <rdar://problem/4804627> ToolTips do not appear for grammar suggestions
+        
+        The foundation of this was in my last checkin. This checkin is all about displaying
+        the correct string in the toolTip.
+
+        * dom/DocumentMarker.h:
+        New description field in this struct.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        When adding a grammar marker, supply the appropriate description. Also, added a comment
+        about the remaining work to make grammar checking return sensible answers.
+        (WebCore::FrameMac::markMisspellings):
+        ditto (yes, still needs some refactoring to minimize duplicated code)
+        
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        Now takes an optional description string
+        (WebCore::Document::markerContainingPoint):
+        New function, returns a pointer to the (first) marker of the specified type whose rect 
+        contains the specified point, or 0 if none.
+        
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        Replaced hardwired string placeholder implementation with code that uses markerContainingPoint
+        and gets the description from the marker.
+
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

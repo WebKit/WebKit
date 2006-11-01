@@ -23,9 +23,13 @@
 #ifndef DOM_DocumentMarker_h
 #define DOM_DocumentMarker_h
 
-namespace WebCore {
+#include "PlatformString.h"
 
-// A range of a node within a document that is "marked", such as being misspelled
+namespace WebCore {
+    class String;
+
+// A range of a node within a document that is "marked", such as the range of a misspelled word.
+// It optionally includes a description that could be displayed in the user interface.
 struct DocumentMarker {
 
     enum MarkerType {
@@ -38,6 +42,7 @@ struct DocumentMarker {
     MarkerType type;
     unsigned startOffset;
     unsigned endOffset;
+    String description;
 
     bool operator==(const DocumentMarker& o) const
     {

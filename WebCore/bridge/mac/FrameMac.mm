@@ -634,6 +634,10 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     Node *searchEndAfterWrapNode = it.range()->endContainer(exception);
     int searchEndAfterWrapOffset = it.range()->endOffset(exception);
 
+    // FIXME: We need to compute the entire paragraph(s?) containing the search range, and use that as "chunk" below,
+    // so there's enough context for the spell checker to evaluate grammar (4811175) and in some cases even spelling (4149250).
+    // That means we need to compute the right offset to pass to the NSSpellChecker methods.
+
     while (1) {
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
             const UChar* chars = it.characters();
@@ -707,14 +711,16 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                 badRangeToMark->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                 selectionController()->setSelection(Selection(badRangeToMark.get(), DOWNSTREAM));
                 revealSelection();
-                // Mark misspelling in document.
-                document()->addMarker(badRangeToMark.get(), markMisspelling ? DocumentMarker::Spelling : DocumentMarker::Grammar);
                 
-                if (markMisspelling)
+                if (markMisspelling) {
                     [checker updateSpellingPanelWithMisspelledWord:[chunk substringWithRange:misspellingNSRange]];
+                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Spelling);
+                }
 #ifndef BUILDING_ON_TIGER
-                else
+                else {
                     [checker updateSpellingPanelWithGrammarString:[chunk substringWithRange:badGrammarNSRange] detail:grammarDetail];
+                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Grammar, [grammarDetail objectForKey:NSGrammarUserDescription]);
+                }
 #endif
                 
                 [chunk release];
@@ -2531,6 +2537,10 @@ void FrameMac::markMisspellings(const Selection& selection)
     
     WordAwareIterator it(searchRange.get());
     
+    // FIXME: We need to compute the entire paragraph(s?) containing the search range, and use that as "chunk" below,
+    // so there's enough context for the spell checker to evaluate grammar (4811175) and in some cases even spelling (4149250).
+    // That means we need to compute the right offset to pass to the NSSpellChecker methods.
+    
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
         const UChar* chars = it.characters();
         int len = it.length();
@@ -2601,9 +2611,11 @@ void FrameMac::markMisspellings(const Selection& selection)
                 badRangeToMark->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                 chars.advance(badNSRangeToMark.length);
                 badRangeToMark->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                // Mark misspelling in document.
-                document()->addMarker(badRangeToMark.get(), markMisspelling ? DocumentMarker::Spelling : DocumentMarker::Grammar);
-                
+                if (markMisspelling)
+                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Spelling);
+                else
+                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Grammar, [grammarDetail objectForKey:NSGrammarUserDescription]);
+
                 startIndex = badNSRangeToMark.location + badNSRangeToMark.length;
             }
             [chunk release];
