@@ -1,3 +1,31 @@
+2006-10-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        This creates local functions for the remaining WebElementDictionary 
+        members that calls into HitTestResult instead of doing magical 
+        things with the Objective-C DOM classes.
+
+        * ChangeLog:
+        * Misc/WebElementDictionary.m:
+        (addLookupKey): The values of the dictionary are now just 
+        selectors. They used to be WebElementMethods which were 
+        WebElementTargetObjects associated with selectors, but none of that 
+        is needed any more.
+        (+[WebElementDictionary initializeLookupTable]): All selectors are 
+        now local functions, no more WebElementTargetObjects.
+        (-[WebElementDictionary objectForKey:]): No more target objects!
+        (-[WebElementDictionary _domNode]): Call into HitTestResult member 
+        variable.
+        (-[WebElementDictionary _altDisplayString]): Same.
+        (-[WebElementDictionary _image]): Same.
+        (-[WebElementDictionary _absoluteImageURL]): Same.
+        (-[WebElementDictionary _title]): Same.
+        (-[WebElementDictionary _absoluteLinkURL]): Same.
+        (-[WebElementDictionary _targetWebFrame]): Same.
+        (-[WebElementDictionary _titleDisplayString]): Same.
+        (-[WebElementDictionary _textContent]): Same.
+
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Alice.

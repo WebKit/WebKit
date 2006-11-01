@@ -29,6 +29,8 @@ namespace WebCore {
 
 class Element;
 class Frame;
+class Image;
+class KURL;
 class IntRect;
 class Node;
 class PlatformScrollbar;
@@ -58,6 +60,12 @@ public:
     bool isSelected() const;
     String spellingToolTip() const;
     String title() const;
+    String altDisplayString() const;
+    Image* image() const;
+    KURL absoluteImageURL() const;
+    KURL absoluteLinkURL() const;
+    String titleDisplayString() const;
+    String textContent() const;
 
 private:
     RefPtr<Node> m_innerNode;

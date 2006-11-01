@@ -39,29 +39,16 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Image.h>
+#import <WebCore/KURL.h>
 
 using namespace WebCore;
 
-typedef enum {
-    WebElementSelf,
-    WebElementInnerNode,
-    WebElementInnerNonSharedNode,
-    WebElementURLElement
-} WebElementTargetObject;
-
-typedef struct WebElementMethod {
-    WebElementTargetObject target;
-    SEL selector;
-} WebElementMethod;
-
 static CFMutableDictionaryRef lookupTable = NULL;
 
-static void addLookupKey(NSString *key, SEL selector, WebElementTargetObject target)
+static void addLookupKey(NSString *key, SEL selector)
 {
-    WebElementMethod* elementMethod = static_cast<WebElementMethod*>(malloc(sizeof(WebElementMethod)));
-    elementMethod->target = target;
-    elementMethod->selector = selector;
-    CFDictionaryAddValue(lookupTable, key, elementMethod);
+    CFDictionaryAddValue(lookupTable, key, selector);
 }
 
 static void cacheValueForKey(const void *key, const void *value, void *self)
@@ -78,19 +65,19 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
     lookupTable = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFCopyStringDictionaryKeyCallBacks, NULL);
 
-    addLookupKey(WebElementDOMNodeKey, @selector(_domNode), WebElementSelf);
-    addLookupKey(WebElementFrameKey, @selector(_webFrame), WebElementSelf);
-    addLookupKey(WebElementImageAltStringKey, @selector(altDisplayString), WebElementInnerNonSharedNode);
-    addLookupKey(WebElementImageKey, @selector(image), WebElementInnerNonSharedNode);
-    addLookupKey(WebElementImageRectKey, @selector(_imageRect), WebElementSelf);
-    addLookupKey(WebElementImageURLKey, @selector(absoluteImageURL), WebElementInnerNonSharedNode);
-    addLookupKey(WebElementIsSelectedKey, @selector(_isSelected), WebElementSelf);
-    addLookupKey(WebElementSpellingToolTipKey, @selector(_spellingToolTip), WebElementSelf);
-    addLookupKey(WebElementTitleKey, @selector(_title), WebElementSelf);
-    addLookupKey(WebElementLinkURLKey, @selector(absoluteLinkURL), WebElementURLElement);
-    addLookupKey(WebElementLinkTargetFrameKey, @selector(_targetWebFrame), WebElementSelf);
-    addLookupKey(WebElementLinkTitleKey, @selector(titleDisplayString), WebElementURLElement);
-    addLookupKey(WebElementLinkLabelKey, @selector(textContent), WebElementURLElement);
+    addLookupKey(WebElementDOMNodeKey, @selector(_domNode));
+    addLookupKey(WebElementFrameKey, @selector(_webFrame));
+    addLookupKey(WebElementImageAltStringKey, @selector(_altDisplayString));
+    addLookupKey(WebElementImageKey, @selector(_image));
+    addLookupKey(WebElementImageRectKey, @selector(_imageRect));
+    addLookupKey(WebElementImageURLKey, @selector(_absoluteImageURL));
+    addLookupKey(WebElementIsSelectedKey, @selector(_isSelected));
+    addLookupKey(WebElementSpellingToolTipKey, @selector(_spellingToolTip));
+    addLookupKey(WebElementTitleKey, @selector(_title));
+    addLookupKey(WebElementLinkURLKey, @selector(_absoluteLinkURL));
+    addLookupKey(WebElementLinkTargetFrameKey, @selector(_targetWebFrame));
+    addLookupKey(WebElementLinkTitleKey, @selector(_titleDisplayString));
+    addLookupKey(WebElementLinkLabelKey, @selector(_textContent));
 }
 
 - (id)initWithHitTestResult:(const HitTestResult&)result
@@ -135,42 +122,18 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return [_cache keyEnumerator];
 }
 
-- (DOMNode *)_domNode
-{
-    return kit(_result->innerNonSharedNode());
-}
-
 - (id)objectForKey:(id)key
 {
     id value = [_cache objectForKey:key];
     if (value || _cacheComplete || [_nilValues containsObject:key])
         return value;
 
-    WebElementMethod *elementMethod = (WebElementMethod *)CFDictionaryGetValue(lookupTable, key);
-    if (!elementMethod)
+    SEL selector = (SEL)CFDictionaryGetValue(lookupTable, key);
+    if (!selector)
         return nil;
-
-    id target = nil;
-    switch (elementMethod->target) {
-        case WebElementSelf:
-            target = self;
-            break;
-        case WebElementInnerNonSharedNode:
-            target = [self _domNode];
-            break;
-        case WebElementInnerNode:
-            target = kit(_result->innerNode());
-            break;
-        case WebElementURLElement:
-            target = kit(_result->URLElement());
-            break;
-    }
-
-    if (target && [target respondsToSelector:elementMethod->selector])
-        value = [target performSelector:elementMethod->selector];
+    value = [self performSelector:selector];
 
     unsigned lookupTableCount = CFDictionaryGetCount(lookupTable);
-
     if (value) {
         if (!_cache)
             _cache = [[NSMutableDictionary alloc] initWithCapacity:lookupTableCount];
@@ -186,15 +149,19 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return value;
 }
 
+- (DOMNode *)_domNode
+{
+    return kit(_result->innerNonSharedNode());
+}
+
 - (WebFrame *)_webFrame
 {
     return [[[self _domNode] ownerDocument] webFrame];
 }
 
-- (WebFrame *)_targetWebFrame
+- (NSString *)_altDisplayString
 {
-    FrameMac* webCoreFrame = Mac(_result->targetFrame());
-    return kit(webCoreFrame);
+    return _result->altDisplayString();
 }
 
 - (NSString *)_spellingToolTip
@@ -202,9 +169,9 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return _result->spellingToolTip();
 }
 
-- (NSString *)_title
+- (NSImage *)_image
 {
-    return _result->title();
+    return _result->image()->getNSImage();
 }
 
 - (NSValue *)_imageRect
@@ -214,8 +181,40 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return nil;
 }
 
+- (NSURL *)_absoluteImageURL
+{
+    return _result->absoluteImageURL().getNSURL();
+}
+
 - (NSNumber *)_isSelected
 {
     return [NSNumber numberWithBool:_result->isSelected()];
 }
+
+- (NSString *)_title
+{
+    return _result->title();
+}
+
+- (NSURL *)_absoluteLinkURL
+{
+    return _result->absoluteLinkURL().getNSURL();
+}
+
+- (WebFrame *)_targetWebFrame
+{
+    FrameMac* webCoreFrame = Mac(_result->targetFrame());
+    return kit(webCoreFrame);
+}
+
+- (NSString *)_titleDisplayString
+{
+    return _result->titleDisplayString();
+}
+
+- (NSString *)_textContent
+{
+    return _result->textContent();
+}
+
 @end

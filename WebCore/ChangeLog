@@ -1,3 +1,25 @@
+2006-10-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        This adds the back-end of the remaining WebElementDictionary 
+        functions into HitTestResult.
+
+        * WebCore.exp:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::title):
+        (WebCore::displayString): This is nearly identical to the 
+        displayString() defined in DOMInternal.mm except that it returns a 
+        String instead of an NSString. The old code path used the 
+        DOMInternal method, so I made a new one here for the new code path.
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::image):
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::titleDisplayString):
+        (WebCore::HitTestResult::textContent):
+        * rendering/HitTestResult.h:
+
 2006-10-31  John Sullivan  <sullivan@apple.com>
 
         * bridge/mac/FrameMac.mm:
