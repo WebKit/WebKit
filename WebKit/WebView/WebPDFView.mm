@@ -290,7 +290,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         
         NSView *topLevelPDFKitView = nil;
         if (previewView) {
-            PDFSubview = [previewView performSelector:@selector(pdfView)];
+            // We'll retain the PDFSubview here so that it is equally retained in all
+            // code paths. That way we don't need to worry about conditionally releasing
+            // it later.
+            PDFSubview = [[previewView performSelector:@selector(pdfView)] retain];
             topLevelPDFKitView = previewView;
         } else {
             PDFSubview = [[[[self class] _PDFViewClass] alloc] initWithFrame:frame];

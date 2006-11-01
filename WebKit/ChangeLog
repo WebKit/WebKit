@@ -1,3 +1,14 @@
+2006-11-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        - fixed <rdar://problem/4801351> Crash reloading PDF file in new Safari (or closing a window containing a PDF file)
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView initWithFrame:]):
+        Retain the PDFSubview in the code path where we just obtain it by asking the PDFPreviewView for it. We were
+        unconditionally releasing it in dealloc, but only retaining it in one of the two code paths.
+
 2006-10-31  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.
