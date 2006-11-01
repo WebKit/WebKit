@@ -2613,8 +2613,10 @@ void FrameMac::markMisspellings(const Selection& selection)
                 badRangeToMark->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                 if (markMisspelling)
                     document()->addMarker(badRangeToMark.get(), DocumentMarker::Spelling);
+#ifndef BUILDING_ON_TIGER
                 else
                     document()->addMarker(badRangeToMark.get(), DocumentMarker::Grammar, [grammarDetail objectForKey:NSGrammarUserDescription]);
+#endif
 
                 startIndex = badNSRangeToMark.location + badNSRangeToMark.length;
             }

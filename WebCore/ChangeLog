@@ -1,5 +1,11 @@
 2006-10-31  John Sullivan  <sullivan@apple.com>
 
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::markMisspellings):
+        Tiger build fix: added an #ifndef BUILDING_ON_TIGER where one was needed.
+
+2006-10-31  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Maciej
         
         - fixed <rdar://problem/4804627> ToolTips do not appear for grammar suggestions
