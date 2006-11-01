@@ -66,22 +66,6 @@ static int firstDayOfMonth[2][12] = {
     {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}
 };
 
-
-/*
- * Years and leap years on which Jan 1 is a Sunday, Monday, etc.
- *
- * yearStartingWith[0][i] is an example non-leap year where
- * Jan 1 appears on Sunday (i == 0), Monday (i == 1), etc.
- *
- * yearStartingWith[1][i] is an example leap year where
- * Jan 1 appears on Sunday (i == 0), Monday (i == 1), etc.
- */
-static int yearStartingWith[2][7] = {
-    {1978, 1973, 1974, 1975, 1981, 1971, 1977},
-    {1984, 1996, 1980, 1992, 1976, 1988, 1972}
-};
-
-
 static inline int daysInYear(int year)
 {
     if (year % 4 != 0)
@@ -298,15 +282,10 @@ static int dateToDayInYear(int year, int month, int day)
  */
 int equivalentYearForDST(int year)
 {
-    int day;
-
-    day = (int) daysFrom1970ToYear(year) + 4;
-    day %= 7;
-
-    if (day < 0)
-        day += 7;
-
-    return yearStartingWith[isLeapYear(year)][day];
+    int difference = 2000 - year;   // Arbitrary year around which most dates equivalence is correct
+    int quotient = difference / 28; // Integer division, no remainder.
+    int product = quotient * 28;
+    return year + product;
 }
 
 /*
@@ -345,6 +324,7 @@ static double getDSTOffsetSimple(double localTimeSeconds)
     else if(localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
         localTimeSeconds += secondsPerDay;
 
+    //input is UTC so we have to shift back to local time to determine DST thus the + getUTCOffset()
     double offsetTime = (localTimeSeconds * msPerSecond) + getUTCOffset() ;
 
     // Offset from UTC but doesn't include DST obviously
@@ -373,11 +353,14 @@ static double getDSTOffsetSimple(double localTimeSeconds)
 // ms is in UTC
 static double getDSTOffset(double ms)
 {
-    /*
-     * If earlier than 1970 or after 2038, potentially beyond the ken of
-     * many OSes, map it to an equivalent year before asking.
-     */
-    if (ms < 0.0 || ms > 2145916800000.0) {
+    // On mac the call to localtime (see getDSTOffsetSimple) will return historically accurate
+    // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
+    // standard explicitly dictates that historical information should not be considered when
+    // determining DST.  For this reason we shift years that localtime can handle but would
+    // return historically accurate information.
+    
+    //if before 2000 or after 2038
+    if (ms < 946684800000.0 || ms > 2145916800000.0) {
         int year;
         int day;
 

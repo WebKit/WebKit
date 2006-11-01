@@ -1,3 +1,14 @@
+2006-11-01  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Brady.
+
+        - Fixes many JavaScriptCore tests in other timezones.  The root problem is that on mac localtime() returns historically accurate information for DST, but the JavaScript spec explicitly states to not take into account historical information but rather to interpolate from valid years.
+
+        * kjs/DateMath.cpp:
+        (KJS::equivalentYearForDST):
+        (KJS::getDSTOffsetSimple):
+        (KJS::getDSTOffset):
+
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.
