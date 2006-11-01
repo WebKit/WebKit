@@ -1,5 +1,13 @@
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
+        Added test for accessing the 'caller' property from inside an event
+        listener.
+
+        * fast/events/caller-access-from-event-listener-expected.txt: Added.
+        * fast/events/caller-access-from-event-listener.html: Added.
+
+2006-10-31  Geoffrey Garen  <ggaren@apple.com>
+
         Added layout test for copying password field.
 
         * editing/pasteboard/copy-in-password-field-expected.txt: Added.

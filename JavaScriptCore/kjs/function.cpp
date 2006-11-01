@@ -219,9 +219,8 @@ JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifi
   FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
   Context* context = exec->m_context;
   while (context) {
-    if (context->function() == thisObj) {
+    if (context->function() == thisObj)
       return static_cast<ActivationImp*>(context->activationObject())->get(exec, propertyName);
-    }
     context = context->callingContext();
   }
   return jsNull();
@@ -229,15 +228,26 @@ JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifi
 
 JSValue* FunctionImp::callerGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
-    FunctionImp* thisObj = static_cast<FunctionImp* >(slot.slotBase());
+    FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
     Context* context = exec->m_context;
     while (context) {
-        if (context->function() == thisObj) 
-            return (context->callingContext()->function()) ? context->callingContext()->function() : jsNull();
-        
+        if (context->function() == thisObj)
+            break;
         context = context->callingContext();
     }
-    return jsNull();
+
+    if (!context)
+        return jsNull();
+    
+    Context* callingContext = context->callingContext();
+    if (!callingContext)
+        return jsNull();
+    
+    FunctionImp* callingFunction = callingContext->function();
+    if (!callingFunction)
+        return jsNull();
+
+    return callingFunction;
 }
 
 JSValue* FunctionImp::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
