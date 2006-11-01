@@ -1,3 +1,11 @@
+2006-10-31  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Update WebKit blog link to prevent pointless redirects.
+
+        * nav.inc:
+
 2006-10-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
