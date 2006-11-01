@@ -1,5 +1,13 @@
 2006-11-01  Adele Peterson  <adele@apple.com>
 
+        Fixing typo.  Changed repaintTest to runRepaintTest.
+
+        * fast/repaint/overflow-outline-repaint-expected.checksum:
+        * fast/repaint/overflow-outline-repaint-expected.png:
+        * fast/repaint/overflow-outline-repaint.html:
+
+2006-11-01  Adele Peterson  <adele@apple.com>
+
         Reviewed by Mitz.
 
         Tests for http://bugs.webkit.org/show_bug.cgi?id=11277
