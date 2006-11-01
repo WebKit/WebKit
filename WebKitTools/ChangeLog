@@ -1,3 +1,14 @@
+2006-11-01  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Update references to webkit.opendarwin.org to webkit.org in Spinneret and WebKit.app.
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (_tWinMain):
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (cleanUpAfterOurselves):
+
 2006-10-31  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Stephanie.

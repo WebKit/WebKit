@@ -205,7 +205,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         goto exit;
     static BSTR defaultHTML = 0;
     if (!defaultHTML)
-        defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+        defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
     frame->loadHTMLString(defaultHTML, 0);
     frame->Release();
 

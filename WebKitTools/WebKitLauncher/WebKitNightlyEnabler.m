@@ -132,7 +132,7 @@ void cleanUpAfterOurselves(void)
             CFUserNotificationDisplayAlert(0, kCFUserNotificationCautionAlertLevel,
                                            NULL, NULL, NULL,
                                            CFSTR("WebKit failed to open correctly"),
-                                           CFSTR("WebKit failed to open correctly on your previous attempt. Please disable any Safari extensions that you may have installed.  If the problem continues to occur, please file a bug report at http://webkit.opendarwin.org/quality/reporting.html"), 
+                                           CFSTR("WebKit failed to open correctly on your previous attempt. Please disable any Safari extensions that you may have installed.  If the problem continues to occur, please file a bug report at http://webkit.org/quality/reporting.html"), 
                                            CFSTR("Continue"), NULL, NULL, &responseFlags);
         }
         else if (savedState == RunStateRunning) {
