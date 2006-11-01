@@ -71,6 +71,9 @@ public:
     void setExpirationDate(time_t expirationDate) { m_expirationDate = expirationDate; }
     time_t expirationDate() const { return m_expirationDate; }
 
+    void setLastModifiedDate(time_t lastModifiedDate) { m_lastModifiedDate = lastModifiedDate; }
+    time_t lastModifiedDate() const { return m_lastModifiedDate; }
+
  private:
     KURL m_url;
     String m_mimeType;
@@ -81,6 +84,7 @@ public:
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
+    time_t m_lastModifiedDate;
 };
 
 } // namespace WebCore

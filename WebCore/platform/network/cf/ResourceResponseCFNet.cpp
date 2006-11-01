@@ -45,7 +45,10 @@ namespace WebCore {
        response = ResourceResponse(CFURLResponseGetURL(cfResponse), CFURLResponseGetMIMEType(cfResponse), CFURLResponseGetExpectedContentLength(cfResponse), CFURLResponseGetTextEncodingName(cfResponse), /* suggestedFilename */ "");
 
        CFAbsoluteTime expiration = CFURLResponseGetExpirationTime(cfResponse);
-       response.setExpirationDate(expiration > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration);
+       response.setExpirationDate(expiration + kCFAbsoluteTimeIntervalSince1970 > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration);
+
+       CFAbsoluteTime lastModified = CFURLResponseGetLastModifiedDate(cfResponse);
+       response.setLastModifiedDate(expiration + kCFAbsoluteTimeIntervalSince1970 > MAX_TIME_T ? MAX_TIME_T : (time_t)lastModified);
 
        CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(cfResponse);
        if (httpResponse) {
