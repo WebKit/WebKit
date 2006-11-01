@@ -1,5 +1,15 @@
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej.
+        
+        Fixed crash resulting from Darin's last patch to remove BrowserExtension.
+
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::createWindow):
+        * manual-tests/window-open-features-parsing.html: Updated for clarity.
+
+2006-10-31  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Alice.
 
         Moved some Editing code from WebKit, the bridge, and WebCore::Frame down 

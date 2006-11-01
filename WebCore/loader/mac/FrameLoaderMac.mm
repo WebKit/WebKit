@@ -414,7 +414,10 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
     // the window, so adjust for the difference between the window size and the view size.
 
     FloatRect windowRect = page->windowRect();
-    IntSize frameViewSize = frame->view()->size();
+    
+    // FIXME: We'd like to get frameViewSize from the frame's view, but that doesn't
+    // get created until the frame loads its document.
+    IntSize frameViewSize = IntSize([[pageBridge outerView] frame].size);
     if (features.xSet)
         windowRect.setX(features.x);
     if (features.ySet)

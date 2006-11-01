@@ -27,7 +27,10 @@ function test() {
 </ul>
 <a href="" onclick="test(); return false;">Click to test</a>
 <hr>
-<p>The link below should open a window whose dimensions and positioning match
-what you would get from file->New Window.</p>
+<p>The link below should open a window with the following attributes:</p>
+<ul>
+<li>A WebView whose size matches what you would get from file->New Window</li>
+<li>A window whose positioning matches what you would get from file->New Window</li>
+</ul>
 <a href="" onclick='window.open("", "", "status,resizable");'>Click to test</a>
 </body></html>
