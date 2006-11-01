@@ -171,7 +171,8 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (NSImage *)_image
 {
-    return _result->image()->getNSImage();
+    Image *image = _result->image();
+    return image ? image->getNSImage() : nil;
 }
 
 - (NSValue *)_imageRect
