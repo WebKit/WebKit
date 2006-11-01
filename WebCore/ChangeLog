@@ -1,3 +1,15 @@
+2006-11-01  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Mitz.
+
+        Added missing "break;" statement in switch statement from r17493.
+
+        Bug 11442: [CSS 3] support for cursor: all-scroll
+        http://bugs.webkit.org/show_bug.cgi?id=11442
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2006-10-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

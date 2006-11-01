@@ -680,6 +680,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 break;
             case CURSOR_HELP:
                 value = new CSSPrimitiveValue(CSS_VAL_HELP);
+                break;
             case CURSOR_ALL_SCROLL:
                 value = new CSSPrimitiveValue(CSS_VAL_ALL_SCROLL);
                 break;
