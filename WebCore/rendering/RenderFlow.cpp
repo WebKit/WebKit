@@ -53,7 +53,7 @@ RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == this)
         return this;
-    
+
     RenderFlow* curr = continuation();
     RenderFlow* nextToLast = this;
     RenderFlow* last = this;
@@ -63,12 +63,12 @@ RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
                 return last;
             return curr;
         }
-        
+
         nextToLast = last;
         last = curr;
         curr = curr->continuation();
     }
-    
+
     if (!beforeChild && !last->firstChild())
         return nextToLast;
     return last;
@@ -81,16 +81,16 @@ void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* 
                 beforeChild->parent()->isRenderInline());
     RenderFlow* beforeChildParent = beforeChild ? static_cast<RenderFlow*>(beforeChild->parent()) : 
                                     (flow->continuation() ? flow->continuation() : flow);
-    
+
     if (newChild->isFloatingOrPositioned())
         return beforeChildParent->addChildToFlow(newChild, beforeChild);
-    
+
     // A continuation always consists of two potential candidates: an inline or an anonymous
     // block box holding block children.
     bool childInline = newChild->isInline();
     bool bcpInline = beforeChildParent->isInline();
     bool flowInline = flow->isInline();
-    
+
     if (flow == beforeChildParent)
         return flow->addChildToFlow(newChild, beforeChild);
     else {
@@ -100,19 +100,13 @@ void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* 
             return beforeChildParent->addChildToFlow(newChild, beforeChild);
         else if (flowInline == childInline)
             return flow->addChildToFlow(newChild, 0); // Just treat like an append.
-        else 
+        else
             return beforeChildParent->addChildToFlow(newChild, beforeChild);
     }
 }
 
-void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
+void RenderFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderFlow)::addChild( " << newChild->renderName() <<
-                       ", " << (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
-    kdDebug( 6040 ) << "current height = " << m_height << endl;
-#endif
-
     if (continuation())
         return addChildWithContinuation(newChild, beforeChild);
     return addChildToFlow(newChild, beforeChild);
@@ -135,8 +129,7 @@ void RenderFlow::attachLineBox(InlineFlowBox* box)
     if (m_lastLineBox) {
         m_lastLineBox->setNextLineBox(box);
         box->setPreviousLineBox(m_lastLineBox);
-    }
-    else
+    } else
         m_firstLineBox = box;
     InlineFlowBox* last = box;
     for (InlineFlowBox* curr = box; curr; curr = curr->nextFlowBox()) {
@@ -179,11 +172,11 @@ void RenderFlow::destroy()
     if (m_continuation)
         m_continuation->destroy();
     m_continuation = 0;
-    
+
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
     RenderContainer::destroyLeftoverChildren();
-    
+
     if (!documentBeingDestroyed()) {
         if (m_firstLineBox) {
             // We can't wait for RenderContainer::destroy to clear the selection,
@@ -208,13 +201,12 @@ void RenderFlow::destroy()
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
                 for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox()) {
-                    while (InlineBox *childBox = box->firstChild()) {
+                    while (InlineBox* childBox = box->firstChild()) {
                         childBox->remove();
                     }
                 }
             }
-        }
-        else if (isInline() && parent())
+        } else if (isInline() && parent())
             parent()->dirtyLinesFromChangedChild(this);
     }
 
@@ -240,23 +232,21 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     for (curr = child->previousSibling(); curr; curr = curr->previousSibling()) {
         if (curr->isFloatingOrPositioned())
             continue;
-        
+
         if (curr->isReplaced()) {
             InlineBox* wrapper = curr->inlineBoxWrapper();
             if (wrapper)
                 box = wrapper->root();
-        }
-        else if (curr->isText()) {
+        } else if (curr->isText()) {
             InlineTextBox* textBox = static_cast<RenderText*>(curr)->lastTextBox();
             if (textBox)
                 box = textBox->root();
-        }
-        else if (curr->isInlineFlow()) {
+        } else if (curr->isInlineFlow()) {
             InlineRunBox* runBox = static_cast<RenderFlow*>(curr)->lastLineBox();
             if (runBox)
                 box = runBox->root();
         }
-        
+
         if (box)
             break;
     }
@@ -267,7 +257,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     if (box) {
         RootInlineBox* adjacentBox;
         box->markDirty();
-        
+
         // dirty the adjacent lines that might be affected
         // NOTE: we dirty the previous line because RootInlineBox objects cache
         // the address of the first object on the next line after a BR, which we may be
@@ -313,7 +303,7 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
 {
     if (!isRootLineBox && isReplaced())
         return RenderContainer::dirtyLineBoxes(fullLayout, isRootLineBox);
-    
+
     if (fullLayout)
         deleteLineBoxes();
     else {
@@ -333,7 +323,7 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
         flowBox = new (renderArena()) InlineFlowBox(this);
     else
         flowBox = new (renderArena()) RootInlineBox(this);
-    
+
     if (!m_firstLineBox)
         m_firstLineBox = m_lastLineBox = flowBox;
     else {
@@ -345,13 +335,13 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
     return flowBox;
 }
 
-void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
+void RenderFlow::paintLines(PaintInfo& paintInfo, int tx, int ty)
 {
     // Only paint during the foreground/selection phases.
-    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection && i.phase != PaintPhaseOutline 
-        && i.phase != PaintPhaseSelfOutline && i.phase != PaintPhaseChildOutlines)
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline 
+        && paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines)
         return;
-    
+
     bool inlineFlow = isInlineFlow();
     if (inlineFlow)
         ASSERT(m_layer); // The only way a compact/run-in/inline could paint like this is if it has a layer.
@@ -364,16 +354,16 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    int yPos = firstLineBox()->root()->topOverflow() - maximalOutlineSize(i.phase);
-    int h = maximalOutlineSize(i.phase) + lastLineBox()->root()->bottomOverflow() - yPos;
-    yPos += _ty;
-    if (yPos >= i.r.bottom() || yPos + h <= i.r.y())
+    int yPos = firstLineBox()->root()->topOverflow() - maximalOutlineSize(paintInfo.phase);
+    int h = maximalOutlineSize(paintInfo.phase) + lastLineBox()->root()->bottomOverflow() - yPos;
+    yPos += ty;
+    if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
         return;
 
-    PaintInfo info(i);
+    PaintInfo info(paintInfo);
     RenderFlowSequencedSet outlineObjects;
     info.outlineObjects = &outlineObjects;
-    
+
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
@@ -387,11 +377,11 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             // Try to avoid splitting a line vertically, but only if it's less than the height
             // of the entire page.
             if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= c->printRect().height()) {
-                if (_ty + curr->root()->bottomOverflow() > c->printRect().bottom()) {
-                    if (_ty + curr->root()->topOverflow() < c->truncatedAt())
-                        c->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
+                if (ty + curr->root()->bottomOverflow() > c->printRect().bottom()) {
+                    if (ty + curr->root()->topOverflow() < c->truncatedAt())
+                        c->setBestTruncatedAt(ty + curr->root()->topOverflow(), this);
                     // If we were able to truncate, don't paint.
-                    if (_ty + curr->root()->topOverflow() >= c->truncatedAt())
+                    if (ty + curr->root()->topOverflow() >= c->truncatedAt())
                         break;
                 }
             }
@@ -400,16 +390,16 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
         int top = min(curr->root()->topOverflow(), curr->root()->selectionTop()) - maximalOutlineSize(info.phase);
         int bottom = curr->root()->bottomOverflow() + maximalOutlineSize(info.phase);
         h = bottom - top;
-        yPos = _ty + top;
-        if (yPos < info.r.bottom() && yPos + h > info.r.y())
-            curr->paint(info, _tx, _ty);
+        yPos = ty + top;
+        if (yPos < info.rect.bottom() && yPos + h > info.rect.y())
+            curr->paint(info, tx, ty);
     }
 
     if (info.phase == PaintPhaseOutline || info.phase == PaintPhaseSelfOutline || info.phase == PaintPhaseChildOutlines) {
         RenderFlowSequencedSet::iterator end = info.outlineObjects->end();
         for (RenderFlowSequencedSet::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderFlow* flow = *it;
-            flow->paintOutline(info.p, _tx, _ty);
+            flow->paintOutline(info.context, tx, ty);
         }
         info.outlineObjects->clear();
     }
@@ -457,9 +447,10 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
         // Find our leftmost position.
         int left = 0;
         int top = firstLineBox() ? firstLineBox()->yPos() : 0;
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             if (curr == firstLineBox() || curr->xPos() < left)
                 left = curr->xPos();
+        }
 
         // Now invalidate a rectangle.
         int ow = style() ? style()->outlineSize() : 0;
@@ -475,7 +466,7 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
                 inlineFlow->layer()->relativePositionOffset(left, top);
         }
 
-        IntRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
+        IntRect r(-ow + left, -ow + top, width() + ow * 2, height() + ow * 2);
         if (cb->hasOverflowClip()) {
             // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
@@ -488,7 +479,7 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
             r = intersection(repaintRect, boxRect);
         }
         cb->computeAbsoluteRepaintRect(r);
-        
+
         if (ow) {
             for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
                 if (!curr->isText()) {
@@ -496,22 +487,22 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
                     r.unite(childRect);
                 }
             }
-            
+
             if (continuation() && !continuation()->isInline()) {
                 IntRect contRect = continuation()->getAbsoluteRepaintRectWithOutline(ow);
                 r.unite(contRect);
             }
         }
-        
+
         return r;
-    } else
-        return RenderContainer::getAbsoluteRepaintRect();
+    }
+
+    return RenderContainer::getAbsoluteRepaintRect();
 }
 
-int
-RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    assert(!isInlineFlow());
+    ASSERT(!isInlineFlow());
     int bottom = includeSelf && m_width > 0 ? m_height : 0;
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
@@ -520,22 +511,20 @@ RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
     // For now, we have to descend into all the children, since we may have a huge abs div inside
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
-            int lp = c->yPos() + c->lowestPosition(false);
-            bottom = max(bottom, lp);
-        }
+    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+            bottom = max(bottom, c->yPos() + c->lowestPosition(false));
     }
- 
+
     if (isRelPositioned())
         bottom += relativePositionOffsetY();         
-    
+
     return bottom;
 }
 
 int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    assert(!isInlineFlow());
+    ASSERT(!isInlineFlow());
     int right = includeSelf && m_height > 0 ? m_width : 0;
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
@@ -544,44 +533,40 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
     // For now, we have to descend into all the children, since we may have a huge abs div inside
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
-            int rp = c->xPos() + c->rightmostPosition(false);
-            right = max(right, rp);
-        }
+    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+            right = max(right, c->xPos() + c->rightmostPosition(false));
     }
-    
+
     if (isRelPositioned())
         right += relativePositionOffsetX();
-    
+
     return right;
 }
 
 int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    assert(!isInlineFlow());
+    ASSERT(!isInlineFlow());
     int left = includeSelf && m_height > 0 ? 0 : m_width;
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
-    
+
     // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
     // For now, we have to descend into all the children, since we may have a huge abs div inside
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
-            int lp = c->xPos() + c->leftmostPosition(false);
-            left = min(left, lp);
-        }
+    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+            left = min(left, c->xPos() + c->leftmostPosition(false));
     }
-    
+
     if (isRelPositioned())
         left += relativePositionOffsetX(); 
-        
+
     return left;
 }
 
-IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
+IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int* extraWidthToEndOfLine)
 {
     // Do the normal calculation in most cases.
     if (firstChild() || style()->display() == INLINE)
@@ -595,7 +580,7 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     // However, as soon as some content is entered, the line boxes will be
     // constructed and this kludge is not called any more. So only the caret size
     // of an empty :first-line'd block is wrong. I think we can live with that.
-    RenderStyle *currentStyle = firstLineStyle();
+    RenderStyle* currentStyle = firstLineStyle();
     int height = lineHeight(true);
     const int caretWidth = 1;
 
@@ -647,10 +632,10 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
             int myRight = x + caretWidth;
             int ignore;
             absolutePositionForContent(myRight, ignore);
-            
+
             int containerRight = containingBlock()->xPos() + containingBlockWidth();
             absolutePositionForContent(containerRight, ignore);
-            
+
             *extraWidthToEndOfLine = containerRight - myRight;
         }
     }
@@ -663,27 +648,27 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     return IntRect(x, y, caretWidth, height);
 }
 
-void RenderFlow::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
+void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
     if (isRenderBlock())
-       p->addFocusRingRect(IntRect(_tx, _ty, width(), height()));
+       graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
 
     if (!hasOverflowClip()) {
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            p->addFocusRingRect(IntRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height()));
-        
+            graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
+
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
             if (!curr->isText() && !curr->isListMarker())
-                curr->addFocusRingRects(p, _tx + curr->xPos(), _ty + curr->yPos());
+                curr->addFocusRingRects(graphicsContext, tx + curr->xPos(), ty + curr->yPos());
     }
-        
+
     if (continuation())
-        continuation()->addFocusRingRects(p, 
-                                          _tx - containingBlock()->xPos() + continuation()->xPos(),
-                                          _ty - containingBlock()->yPos() + continuation()->yPos());
+        continuation()->addFocusRingRects(graphicsContext, 
+                                          tx - containingBlock()->xPos() + continuation()->xPos(),
+                                          ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
-void RenderFlow::paintOutline(GraphicsContext* p, int _tx, int _ty)
+void RenderFlow::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)
 {
     if (!hasOutline())
         return;
@@ -693,20 +678,20 @@ void RenderFlow::paintOutline(GraphicsContext* p, int _tx, int _ty)
         Color oc = style()->outlineColor();
         if (!oc.isValid())
             oc = style()->color();
-        
-        p->initFocusRing(ow, style()->outlineOffset());
-        addFocusRingRects(p, _tx, _ty);
+
+        graphicsContext->initFocusRing(ow, style()->outlineOffset());
+        addFocusRingRects(graphicsContext, tx, ty);
         if (style()->outlineStyleIsAuto())
-            p->drawFocusRing(oc);
+            graphicsContext->drawFocusRing(oc);
         else
-            addPDFURLRect(p, p->focusRingBoundingRect());
-        p->clearFocusRing();
+            addPDFURLRect(graphicsContext, graphicsContext->focusRingBoundingRect());
+        graphicsContext->clearFocusRing();
     }
 
     if (style()->outlineStyleIsAuto() || style()->outlineStyle() <= BHIDDEN)
         return;
 
-    DeprecatedPtrList <IntRect> rects;
+    DeprecatedPtrList<IntRect> rects;
     rects.setAutoDelete(true);
 
     rects.append(new IntRect);
@@ -716,26 +701,27 @@ void RenderFlow::paintOutline(GraphicsContext* p, int _tx, int _ty)
     rects.append(new IntRect);
 
     for (unsigned int i = 1; i < rects.count() - 1; i++)
-        paintOutlineForLine(p, _tx, _ty, *rects.at(i-1), *rects.at(i), *rects.at(i+1));
+        paintOutlineForLine(graphicsContext, tx, ty, *rects.at(i - 1), *rects.at(i), *rects.at(i + 1));
 }
 
-void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const IntRect &lastline, const IntRect &thisline, const IntRect &nextline)
+void RenderFlow::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, int ty,
+                                     const IntRect& lastline, const IntRect& thisline, const IntRect& nextline)
 {
     int ow = style()->outlineWidth();
     EBorderStyle os = style()->outlineStyle();
     Color oc = style()->outlineColor();
     if (!oc.isValid())
         oc = style()->color();
-    
+
     int offset = style()->outlineOffset();
-    
+
     int t = ty + thisline.y() - offset;
     int l = tx + thisline.x() - offset;
     int b = ty + thisline.bottom() + offset;
     int r = tx + thisline.right() + offset;
     
     // left edge
-    drawBorder(p,
+    drawBorder(graphicsContext,
                l - ow,
                t - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : 0),
                l,
@@ -746,7 +732,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow));
     
     // right edge
-    drawBorder(p,
+    drawBorder(graphicsContext,
                r,
                t - (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : 0),
                r + ow,
@@ -757,7 +743,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow));
     // upper edge
     if (thisline.x() < lastline.x())
-        drawBorder(p,
+        drawBorder(graphicsContext,
                    l - ow,
                    t - ow,
                    min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
@@ -767,7 +753,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
     
     if (lastline.right() < thisline.right())
-        drawBorder(p,
+        drawBorder(graphicsContext,
                    max(lastline.isEmpty() ? -1000000 : tx + lastline.right(), l - ow),
                    t - ow,
                    r + ow,
@@ -778,7 +764,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
     
     // lower edge
     if (thisline.x() < nextline.x())
-        drawBorder(p,
+        drawBorder(graphicsContext,
                    l - ow,
                    b,
                    min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
@@ -788,7 +774,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
     
     if (nextline.right() < thisline.right())
-        drawBorder(p,
+        drawBorder(graphicsContext,
                    max(!nextline.isEmpty() ? tx + nextline.right() : -1000000, l - ow),
                    b,
                    r + ow,

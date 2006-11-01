@@ -145,16 +145,16 @@ bool RenderView::absolutePosition(int &xPos, int &yPos, bool f)
     return true;
 }
 
-void RenderView::paint(PaintInfo& i, int _tx, int _ty)
+void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // Cache the print rect because the dirty rect could get changed during painting.
     if (m_printingMode)
-        setPrintRect(i.r);
+        setPrintRect(paintInfo.rect);
     
-    paintObject(i, _tx, _ty);
+    paintObject(paintInfo, tx, ty);
 }
 
-void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
+void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.
@@ -164,7 +164,7 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         if (layer->isTransparent() || layer->transparentAncestor())
             frameView()->setUseSlowRepaints();
     }
-    
+
     if (elt || (firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
         return;
 
@@ -176,12 +176,12 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     else {
         Color baseColor = frameView()->baseBackgroundColor();
         if (baseColor.alpha() > 0) {
-            i.p->save();
-            i.p->setCompositeOperation(CompositeCopy);
-            i.p->fillRect(i.r, baseColor);
-            i.p->restore();
+            paintInfo.context->save();
+            paintInfo.context->setCompositeOperation(CompositeCopy);
+            paintInfo.context->fillRect(paintInfo.rect, baseColor);
+            paintInfo.context->restore();
         } else
-            i.p->clearRect(i.r);
+            paintInfo.context->clearRect(paintInfo.rect);
     }
 }
 

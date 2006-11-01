@@ -167,25 +167,25 @@ String RenderMenuList::text()
     return m_buttonText ? m_buttonText->data() : String();
 }
 
-void RenderMenuList::paintObject(PaintInfo& i, int x, int y)
+void RenderMenuList::paintObject(PaintInfo& paintInfo, int x, int y)
 {
     // Push a clip.
-    if (i.phase == PaintPhaseForeground) {
+    if (paintInfo.phase == PaintPhaseForeground) {
         IntRect clipRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(),
             width() - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
             height() - borderBottom() - borderTop() - paddingTop() - paddingBottom());
         if (clipRect.isEmpty())
             return;
-        i.p->save();
-        i.p->clip(clipRect);
+        paintInfo.context->save();
+        paintInfo.context->clip(clipRect);
     }
 
     // Paint the children.
-    RenderBlock::paintObject(i, x, y);
+    RenderBlock::paintObject(paintInfo, x, y);
 
     // Pop the clip.
-    if (i.phase == PaintPhaseForeground)
-        i.p->restore();
+    if (paintInfo.phase == PaintPhaseForeground)
+        paintInfo.context->restore();
 }
 
 void RenderMenuList::calcMinMaxWidth()

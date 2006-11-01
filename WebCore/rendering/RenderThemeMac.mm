@@ -338,7 +338,7 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
         style->font().update();
 }
 
-bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
     setCheckboxCellState(o, r);
@@ -398,7 +398,7 @@ void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
     setSizeFromFont(style, checkboxSizes());
 }
 
-bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
     setRadioCellState(o, r);
@@ -571,11 +571,11 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 
 bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
 
     // Determine the width and height needed for the control and prepare the cell for painting.
     setButtonCellState(o, r);
-    
+
     // We inflate the rect as needed to account for padding included in the cell to accommodate the button
     // shadow.  We don't consider this part of the bounds of the control in WebKit.
     IntSize size = buttonSizes()[[button controlSize]];
@@ -587,7 +587,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
             inflatedRect.setY(inflatedRect.y() + (inflatedRect.height() - size.height()) / 2);
             inflatedRect.setHeight(size.height());
         }
-        
+
         // Now inflate it to account for the shadow.
         inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
     }
@@ -600,7 +600,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
 
 bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
     wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
     return false;
 }
@@ -611,7 +611,7 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
 
 bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
     return false;
 }
@@ -659,14 +659,14 @@ void RenderThemeMac::setPopupPaddingFromControlSize(RenderStyle* style, NSContro
 bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     setPopupButtonCellState(o, r);
-    
+
     IntRect inflatedRect = r;
     IntSize size = popupButtonSizes()[[popupButton controlSize]];
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
     inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins());
-        
+
     [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->getDocumentView()];
     [popupButton setControlView:nil];
     return false;
@@ -714,124 +714,126 @@ static void MainGradientInterpolate( void *info, const CGFloat *inData, CGFloat 
         outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
 }
 
-void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    CGContextRef context = i.p->platformContext();
-        
-    i.p->save();
+    CGContextRef context = paintInfo.context->platformContext();
+
+    paintInfo.context->save();
 
     int radius = o->style()->borderTopLeftRadius().width();
-    
+
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();    
 
     FloatRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0);
     struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
-    CGFunctionRef topFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &topCallbacks );
-    CGShadingRef topShading = CGShadingCreateAxial( cspace, CGPointMake(topGradient.x(),  topGradient.y()), 
-                            CGPointMake(topGradient.x(), topGradient.bottom()), topFunction, false, false );
+    CGFunctionRef topFunction = CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks);
+    CGShadingRef topShading = CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), 
+                                                   CGPointMake(topGradient.x(), topGradient.bottom()), topFunction, false, false);
 
     FloatRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0, r.width() - 2 * radius, r.height() / 2.0);
     struct CGFunctionCallbacks bottomCallbacks = { 0, BottomGradientInterpolate, NULL };
-    CGFunctionRef bottomFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &bottomCallbacks );
-    CGShadingRef bottomShading = CGShadingCreateAxial( cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), 
-                            CGPointMake(bottomGradient.x(), bottomGradient.bottom()), bottomFunction, false, false );
+    CGFunctionRef bottomFunction = CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks);
+    CGShadingRef bottomShading = CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()),
+                                                      CGPointMake(bottomGradient.x(), bottomGradient.bottom()), bottomFunction, false, false);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, MainGradientInterpolate, NULL };
-    CGFunctionRef mainFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &mainCallbacks );
-    CGShadingRef mainShading = CGShadingCreateAxial( cspace, CGPointMake(r.x(),  r.y()), 
-                            CGPointMake(r.x(), r.bottom()), mainFunction, false, false );
+    CGFunctionRef mainFunction = CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks);
+    CGShadingRef mainShading = CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), 
+                                                    CGPointMake(r.x(), r.bottom()), mainFunction, false, false);
 
-    CGShadingRef leftShading = CGShadingCreateAxial( cspace, CGPointMake(r.x(),  r.y()), 
-                            CGPointMake(r.x() + radius, r.y()), mainFunction, false, false );                        
+    CGShadingRef leftShading = CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), 
+                                                    CGPointMake(r.x() + radius, r.y()), mainFunction, false, false);
 
-    CGShadingRef rightShading = CGShadingCreateAxial( cspace, CGPointMake(r.right(),  r.y()), 
-                            CGPointMake(r.right() - radius, r.y()), mainFunction, false, false );                             
-    i.p->save();
+    CGShadingRef rightShading = CGShadingCreateAxial(cspace, CGPointMake(r.right(),  r.y()), 
+                                                     CGPointMake(r.right() - radius, r.y()), mainFunction, false, false );            
+    paintInfo.context->save();
     CGContextClipToRect(context, r);
-    i.p->addRoundedRectClip(r, 
+    paintInfo.context->addRoundedRectClip(r, 
         o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
         o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
     CGContextDrawShading(context, mainShading);  
-    i.p->restore();      
+    paintInfo.context->restore();      
 
-    i.p->save();
+    paintInfo.context->save();
     CGContextClipToRect(context, topGradient);
-    i.p->addRoundedRectClip(enclosingIntRect(topGradient), 
+    paintInfo.context->addRoundedRectClip(enclosingIntRect(topGradient), 
         o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
         IntSize(), IntSize());
     CGContextDrawShading(context, topShading);  
-    i.p->restore();      
+    paintInfo.context->restore();      
 
-    i.p->save();
+    paintInfo.context->save();
     CGContextClipToRect(context, bottomGradient);
-    i.p->addRoundedRectClip(enclosingIntRect(bottomGradient), 
+    paintInfo.context->addRoundedRectClip(enclosingIntRect(bottomGradient), 
         IntSize(), IntSize(),
         o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
     CGContextDrawShading(context, bottomShading); 
-    i.p->restore();
-    
-    i.p->save();
+    paintInfo.context->restore();
+
+    paintInfo.context->save();
     CGContextClipToRect(context, r);
-    i.p->addRoundedRectClip(r, 
+    paintInfo.context->addRoundedRectClip(r, 
         o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
         o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
     CGContextDrawShading(context, leftShading);
     CGContextDrawShading(context, rightShading);
-    i.p->restore();
-    
-    i.p->restore();
+    paintInfo.context->restore();
+
+    paintInfo.context->restore();
 }
 
-bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
-{        
-    i.p->save();
-        
-    IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(), 
-                             r.y() + o->style()->borderTopWidth(), 
+bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    paintInfo.context->save();
+
+    IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
+                             r.y() + o->style()->borderTopWidth(),
                              r.width() - o->style()->borderLeftWidth() - o->style()->borderRightWidth(),
                              r.height() - o->style()->borderTopWidth() - o->style()->borderBottomWidth());
     // Draw the gradients to give the styled popup menu a button appearance
-    paintMenuListButtonGradients(o, i, bounds);
-                
+    paintMenuListButtonGradients(o, paintInfo, bounds);
+
     float fontScale = o->style()->fontSize() / baseFontSize;
     float centerY = bounds.y() + bounds.height() / 2.0;
     float arrowHeight = baseArrowHeight * fontScale;
-    float arrowWidth = baseArrowWidth * fontScale;    
+    float arrowWidth = baseArrowWidth * fontScale;
     float leftEdge = bounds.right() - arrowPaddingRight - arrowWidth;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
-    
-    i.p->setFillColor(o->style()->color());
-    i.p->setPen(Pen(o->style()->color()));
-    
+
+    paintInfo.context->setFillColor(o->style()->color());
+    paintInfo.context->setPen(o->style()->color());
+
     FloatPoint arrow1[3];
     arrow1[0] = FloatPoint(leftEdge, centerY - spaceBetweenArrows / 2.0);
     arrow1[1] = FloatPoint(leftEdge + arrowWidth, centerY - spaceBetweenArrows / 2.0);
     arrow1[2] = FloatPoint(leftEdge + arrowWidth / 2.0, centerY - spaceBetweenArrows / 2.0 - arrowHeight);
 
     // Draw the top arrow
-    i.p->drawConvexPolygon(3, arrow1, true);
+    paintInfo.context->drawConvexPolygon(3, arrow1, true);
 
     FloatPoint arrow2[3];
     arrow2[0] = FloatPoint(leftEdge, centerY + spaceBetweenArrows / 2.0);
     arrow2[1] = FloatPoint(leftEdge + arrowWidth, centerY + spaceBetweenArrows / 2.0);
-    arrow2[2] = FloatPoint(leftEdge + arrowWidth / 2.0, centerY + spaceBetweenArrows / 2.0 + arrowHeight);   
-    
+    arrow2[2] = FloatPoint(leftEdge + arrowWidth / 2.0, centerY + spaceBetweenArrows / 2.0 + arrowHeight);
+
     // Draw the bottom arrow
-    i.p->drawConvexPolygon(3, arrow2, true); 
-    
+    paintInfo.context->drawConvexPolygon(3, arrow2, true);
+
     Color leftSeparatorColor(0, 0, 0, 40);
     Color rightSeparatorColor(255, 255, 255, 40);
     int separatorSpace = 2;
-    int leftEdgeOfSeparator = int(leftEdge - arrowPaddingLeft); // FIXME: Round?
-    
+    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft); // FIXME: Round?
+
     // Draw the separator to the left of the arrows
-    i.p->setPen(Pen(leftSeparatorColor));
-    i.p->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()), IntPoint(leftEdgeOfSeparator, bounds.bottom()));
+    paintInfo.context->setPen(leftSeparatorColor);
+    paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
+                                IntPoint(leftEdgeOfSeparator, bounds.bottom()));
 
-    i.p->setPen(Pen(rightSeparatorColor));
-    i.p->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()), IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.bottom()));
+    paintInfo.context->setPen(rightSeparatorColor);
+    paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
+                                IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.bottom()));
 
-    i.p->restore();
+    paintInfo.context->restore();
     return false;
 }
 

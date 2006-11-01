@@ -537,28 +537,29 @@ static void outlineBox(GraphicsContext* p, int _tx, int _ty, int w, int h)
 }
 #endif
 
-void RenderTableCell::paint(PaintInfo& i, int _tx, int _ty)
+void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    _tx += m_x;
-    _ty += m_y;
+    tx += m_x;
+    ty += m_y;
 
     // check if we need to do anything at all...
-    int os = 2*maximalOutlineSize(i.phase);
+    int os = 2 * maximalOutlineSize(paintInfo.phase);
 
-    if (i.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
-        if (_ty - table()->outerBorderTop() >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra + table()->outerBorderBottom() <= i.r.y() - os)
+    if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
+        if (ty - table()->outerBorderTop() >= paintInfo.rect.bottom() + os ||
+                ty + _topExtra + m_height + _bottomExtra + table()->outerBorderBottom() <= paintInfo.rect.y() - os)
             return;
         int w = width();
         int h = height() + borderTopExtra() + borderBottomExtra();
-        paintCollapsedBorder(i.p, _tx, _ty, w, h);
+        paintCollapsedBorder(paintInfo.context, tx, ty, w, h);
     } else {
-        if (_ty >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os)
+        if (ty >= paintInfo.rect.bottom() + os || ty + _topExtra + m_height + _bottomExtra <= paintInfo.rect.y() - os)
             return;
-        RenderBlock::paintObject(i, _tx, _ty + _topExtra);
+        RenderBlock::paintObject(paintInfo, tx, ty + _topExtra);
     }
 
 #ifdef BOX_DEBUG
-    ::outlineBox( i.p, _tx, _ty, width(), height() + borderTopExtra() + borderBottomExtra());
+    ::outlineBox(paintInfo.context, tx, ty, width(), height() + borderTopExtra() + borderBottomExtra());
 #endif
 }
 
@@ -700,7 +701,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* p, int _tx, int _ty,
     }
 }
 
-void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty, RenderObject* backgroundObject)
+void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, int ty, RenderObject* backgroundObject)
 {
     if (!backgroundObject)
         return;
@@ -710,18 +711,18 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty,
         return;
 
     if (backgroundObject != this) {
-        _tx += m_x;
-        _ty += m_y + _topExtra;
+        tx += m_x;
+        ty += m_y + _topExtra;
     }
 
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
-    _ty -= borderTopExtra();
-    
-    int my = max(_ty, i.r.y());
-    int end = min(i.r.bottom(), _ty + h);
+    ty -= borderTopExtra();
+
+    int my = max(ty, paintInfo.rect.y());
+    int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
-    
+
     Color c = backgroundObject->style()->backgroundColor();
     const BackgroundLayer* bgLayer = backgroundObject->style()->backgroundLayers();
 
@@ -730,32 +731,32 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty,
         // on top of the borders otherwise.  This only matters for cells and rows.
         bool hasLayer = backgroundObject->layer() && (backgroundObject == this || backgroundObject == parent());
         if (hasLayer && tableElt->collapseBorders()) {
-            IntRect clipRect(_tx + borderLeft(), _ty + borderTop(),
+            IntRect clipRect(tx + borderLeft(), ty + borderTop(),
                 w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
-            i.p->save();
-            i.p->clip(clipRect);
+            paintInfo.context->save();
+            paintInfo.context->clip(clipRect);
         }
-        paintBackground(i.p, c, bgLayer, my, mh, _tx, _ty, w, h);
+        paintBackground(paintInfo.context, c, bgLayer, my, mh, tx, ty, w, h);
         if (hasLayer && tableElt->collapseBorders())
-            i.p->restore();
+            paintInfo.context->restore();
     }
 }
 
-void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
+void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     RenderTable* tableElt = table();
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
- 
+
     // Paint our cell background.
-    paintBackgroundsBehindCell(i, _tx, _ty, this);
+    paintBackgroundsBehindCell(paintInfo, tx, ty, this);
 
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
-    _ty -= borderTopExtra();
+    ty -= borderTopExtra();
 
     if (style()->hasBorder() && !tableElt->collapseBorders())
-        paintBorder(i.p, _tx, _ty, w, h, style());
+        paintBorder(paintInfo.context, tx, ty, w, h, style());
 }
 
 #ifndef NDEBUG

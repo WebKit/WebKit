@@ -29,35 +29,35 @@
 
 namespace WebCore {
 
-void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
+void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
-    GraphicsContext* p = i.p;
-    RenderStyle* _style = m_firstLine ? m_object->firstLineStyle() : m_object->style();
-    if (_style->font() != p->font())
-        p->setFont(_style->font());
+    GraphicsContext* context = paintInfo.context;
+    RenderStyle* style = m_object->style(m_firstLine);
+    if (style->font() != context->font())
+        context->setFont(style->font());
 
-    Color textColor = _style->color();
-    if (textColor != p->pen().color())
-        p->setPen(textColor);
+    Color textColor = style->color();
+    if (textColor != context->pen().color())
+        context->setPen(textColor);
     bool setShadow = false;
-    if (_style->textShadow()) {
-        p->setShadow(IntSize(_style->textShadow()->x, _style->textShadow()->y),
-                     _style->textShadow()->blur, _style->textShadow()->color);
+    if (style->textShadow()) {
+        context->setShadow(IntSize(style->textShadow()->x, style->textShadow()->y),
+                           style->textShadow()->blur, style->textShadow()->color);
         setShadow = true;
     }
 
     const String& str = m_str;
-    TextStyle textStyle(0, 0, 0, false, _style->visuallyOrdered());
-    p->drawText(TextRun(str.impl()), IntPoint(m_x + _tx, m_y + _ty + m_baseline), textStyle);
+    TextStyle textStyle(0, 0, 0, false, style->visuallyOrdered());
+    context->drawText(TextRun(str.impl()), IntPoint(m_x + tx, m_y + ty + m_baseline), textStyle);
 
     if (setShadow)
-        p->clearShadow();
+        context->clearShadow();
 
     if (m_markupBox) {
         // Paint the markup box
-        _tx += m_x + m_width - m_markupBox->xPos();
-        _ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
-        m_markupBox->paint(i, _tx, _ty);
+        tx += m_x + m_width - m_markupBox->xPos();
+        ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        m_markupBox->paint(paintInfo, tx, ty);
     }
 }
 

@@ -209,64 +209,64 @@ IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)
                    style()->font().height() + optionsSpacingMiddle);
 }
     
-void RenderListBox::paintObject(PaintInfo& i, int tx, int ty)
+void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     // Push a clip.
     IntRect clipRect(tx + borderLeft(), ty + borderTop(),
          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
-    if (i.phase == PaintPhaseForeground || i.phase == PaintPhaseChildBlockBackgrounds) {
+    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        i.p->save();
-        i.p->clip(clipRect);
+        paintInfo.context->save();
+        paintInfo.context->clip(clipRect);
     }
     
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     int listItemsSize = select->listItems().size();
 
-    if (i.phase == PaintPhaseForeground) {
+    if (paintInfo.phase == PaintPhaseForeground) {
         int index = m_indexOffset;
         while (index < listItemsSize && index < m_indexOffset + size()) {
-            paintItemForeground(i, tx, ty, index);
+            paintItemForeground(paintInfo, tx, ty, index);
             index++;
         }
     }
-    
+
     // Paint the children.
-    RenderBlock::paintObject(i, tx, ty);
-    
-    if (i.phase == PaintPhaseBlockBackground) {
+    RenderBlock::paintObject(paintInfo, tx, ty);
+
+    if (paintInfo.phase == PaintPhaseBlockBackground) {
         int index = m_indexOffset;
         while (index < listItemsSize && index < m_indexOffset + size()) {
-            paintItemBackground(i, tx, ty, index);
+            paintItemBackground(paintInfo, tx, ty, index);
             index++;
         }
-        paintScrollbar(i);
+        paintScrollbar(paintInfo);
     }
     // Pop the clip.
-    if (i.phase == PaintPhaseForeground || i.phase == PaintPhaseChildBlockBackgrounds)
-        i.p->restore();
+    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds)
+        paintInfo.context->restore();
 }
 
-void RenderListBox::paintScrollbar(PaintInfo& i)
+void RenderListBox::paintScrollbar(PaintInfo& paintInfo)
 {
     if (m_vBar) {
         IntRect absBounds = absoluteBoundingBoxRect();
         IntRect scrollRect(absBounds.right() - borderRight() - m_vBar->width(),
-                absBounds.y() + borderTop(),
-                m_vBar->width(),
-                absBounds.height() - (borderTop() + borderBottom()));
+                           absBounds.y() + borderTop(),
+                           m_vBar->width(),
+                           absBounds.height() - (borderTop() + borderBottom()));
         m_vBar->setRect(scrollRect);
-        m_vBar->paint(i.p, scrollRect);
+        m_vBar->paint(paintInfo.context, scrollRect);
     }
 }
 
-void RenderListBox::paintItemForeground(PaintInfo& i, int tx, int ty, int listIndex)
+void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     const Vector<HTMLElement*>& listItems = select->listItems();
     HTMLElement* element = listItems[listIndex];
-            
+
     String itemText;
     if (element->hasTagName(optionTag))
         itemText = static_cast<HTMLOptionElement*>(element)->optionText();
@@ -290,11 +290,10 @@ void RenderListBox::paintItemForeground(PaintInfo& i, int tx, int ty, int listIn
         // Honor the foreground color for disabled items
         else if (!element->disabled())
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
-          
     }
-        
-    i.p->setPen(textColor);
-    
+
+    paintInfo.context->setPen(textColor);
+
     Font itemFont = style()->font();
     if (element->hasTagName(optgroupTag)) {
         FontDescription d = itemFont.fontDescription();
@@ -302,14 +301,14 @@ void RenderListBox::paintItemForeground(PaintInfo& i, int tx, int ty, int listIn
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
         itemFont.update();
     }
-    i.p->setFont(itemFont);
+    paintInfo.context->setFont(itemFont);
     
     // Draw the item text
     if (itemStyle->visibility() != HIDDEN)
-        i.p->drawText(textRun, r.location());
+        paintInfo.context->drawText(textRun, r.location());
 }
 
-void RenderListBox::paintItemBackground(PaintInfo& i, int tx, int ty, int listIndex)
+void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     const Vector<HTMLElement*>& listItems = select->listItems();
@@ -326,7 +325,7 @@ void RenderListBox::paintItemBackground(PaintInfo& i, int tx, int ty, int listIn
 
     // Draw the background for this list box item
     if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN)
-        i.p->fillRect(itemBoundingBoxRect(tx, ty, listIndex), backColor);
+        paintInfo.context->fillRect(itemBoundingBoxRect(tx, ty, listIndex), backColor);
 }
 
 bool RenderListBox::isPointInScrollbar(HitTestResult& result, int _x, int _y, int _tx, int _ty)

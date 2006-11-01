@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef InlineTextBox_H
-#define InlineTextBox_H
+#ifndef InlineTextBox_h
+#define InlineTextBox_h
 
 #include "DocumentMarker.h"
 #include "InlineRunBox.h"
@@ -70,9 +70,9 @@ public:
     IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
-    
-    virtual void paint(RenderObject::PaintInfo& i, int tx, int ty);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int);
+
+    virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
     RenderText* textObject() const;
 
@@ -89,7 +89,7 @@ public:
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
-    void* operator new(size_t, RenderArena*) throw();  
+    void* operator new(size_t, RenderArena*) throw();
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);
@@ -148,4 +148,4 @@ inline RenderText* InlineTextBox::textObject() const
 
 } // namespace WebCore
 
-#endif // InlineTextBox_H
+#endif // InlineTextBox_h

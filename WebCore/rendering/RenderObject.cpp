@@ -1732,7 +1732,7 @@ void RenderObject::paintOutline(GraphicsContext* p, int _tx, int _ty, int w, int
 
 }
 
-void RenderObject::paint(PaintInfo& i, int tx, int ty)
+void RenderObject::paint(PaintInfo& /*paintInfo*/, int /*tx*/, int /*ty*/)
 {
 }
 

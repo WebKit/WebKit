@@ -421,22 +421,31 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
-        PaintInfo(GraphicsContext* _p, const IntRect& _r, PaintPhase _phase, bool _forceWhiteText, RenderObject* _paintingRoot, RenderFlowSequencedSet* _outlineObjects)
-            : p(_p), r(_r), phase(_phase), forceWhiteText(_forceWhiteText), paintingRoot(_paintingRoot), outlineObjects(_outlineObjects) {}
-        GraphicsContext* p;
-        IntRect r;
+        PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceWhiteText, RenderObject* newPaintingRoot, RenderFlowSequencedSet* newOutlineObjects)
+            : context(newContext)
+            , rect(newRect)
+            , phase(newPhase)
+            , forceWhiteText(newForceWhiteText)
+            , paintingRoot(newPaintingRoot)
+            , outlineObjects(newOutlineObjects)
+        {
+        }
+
+        GraphicsContext* context;
+        IntRect rect;
         PaintPhase phase;
         bool forceWhiteText;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
         RenderFlowSequencedSet* outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
+
     virtual void paint(PaintInfo&, int tx, int ty);
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
     bool paintBorderImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle* style);
     void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle* style);
 
     // RenderBox implements this.
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) {}
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }
 
     virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph,
         int tx, int ty, int w, int height, int bleft, int bright, int pleft, int pright) {}
@@ -861,18 +870,19 @@ public:
 
     virtual void selectionStartEnd(int& spos, int& epos);
 
-    RenderObject* paintingRootForChildren(PaintInfo &i) const {
+    RenderObject* paintingRootForChildren(PaintInfo& paintInfo) const
+    {
         // if we're the painting root, kids draw normally, and see root of 0
-        return (!i.paintingRoot || i.paintingRoot == this) ? 0 : i.paintingRoot;
+        return (!paintInfo.paintingRoot || paintInfo.paintingRoot == this) ? 0 : paintInfo.paintingRoot;
     }
 
-    bool shouldPaintWithinRoot(PaintInfo &i) const {
-        return !i.paintingRoot || i.paintingRoot == this;
+    bool shouldPaintWithinRoot(PaintInfo& paintInfo) const
+    {
+        return !paintInfo.paintingRoot || paintInfo.paintingRoot == this;
     }
-    
+
 protected:
-    virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/,
-        int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) {}
+    virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
 
     virtual IntRect viewRect() const;
 

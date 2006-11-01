@@ -147,8 +147,8 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        paintInfo.p->save();
-        paintInfo.p->clip(clipRect);
+        paintInfo.context->save();
+        paintInfo.context->clip(clipRect);
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
@@ -167,11 +167,11 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         RenderButton* buttonRenderer = static_cast<RenderButton*>(m_button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y() + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop() + buttonRenderer->baselinePosition(true, false);
 
-        paintInfo.p->setFont(style()->font());
-        paintInfo.p->setPen(style()->color());
+        paintInfo.context->setFont(style()->font());
+        paintInfo.context->setPen(style()->color());
 
         // Draw the filename
-        paintInfo.p->drawText(textRun, IntPoint(textX, textY));
+        paintInfo.context->drawText(textRun, IntPoint(textX, textY));
 
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
@@ -183,7 +183,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
                 iconX = contentLeft + contentWidth() - m_button->renderer()->width() - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
-            m_fileChooser->icon()->paint(paintInfo.p, IntRect(iconX, iconY, iconWidth, iconHeight));
+            m_fileChooser->icon()->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
         }
     }
 
@@ -192,7 +192,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // Pop the clip.
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds)
-        paintInfo.p->restore();
+        paintInfo.context->restore();
 }
 
 void RenderFileUploadControl::calcMinMaxWidth()

@@ -82,14 +82,14 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     h -= yOff;
     ty += yOff - borderTopExtra();
 
-    int my = max(ty, paintInfo.r.y());
-    int end = min(paintInfo.r.bottom(), ty + h);
+    int my = max(ty, paintInfo.rect.y());
+    int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
 
-    paintBackground(paintInfo.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+    paintBackground(paintInfo.context, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder())
-        paintBorderMinusLegend(paintInfo.p, tx, ty, w, h, style(), legend->xPos(), legend->width());
+        paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->xPos(), legend->width());
 }
 
 void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,

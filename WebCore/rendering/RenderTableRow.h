@@ -50,7 +50,7 @@ public:
     // The only time rows get a layer is when they have transparency.
     virtual bool requiresLayer() { return isTransparent() || hasOverflowClip(); }
 
-    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
     RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()); }
     RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()); }

@@ -46,7 +46,7 @@ AffineTransform RenderForeignObject::translationForAttributes()
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.p->paintingDisabled())
+    if (paintInfo.context->paintingDisabled())
         return;
 
     KRenderingDevice* device = renderingDevice();
@@ -54,37 +54,37 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     bool shouldPopContext = false;
     if (!context) {
         // Only need to setup for KCanvas rendering if it hasn't already been done.
-        context = paintInfo.p->createRenderingDeviceContext();
+        context = paintInfo.context->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
     }
 
-    paintInfo.p->save();
+    paintInfo.context->save();
 
     context->concatCTM(AffineTransform().translate(parentX, parentY));
     context->concatCTM(localTransform());
     context->concatCTM(translationForAttributes());
 
-    paintInfo.p->clip(getClipRect(parentX, parentY));
+    paintInfo.context->clip(getClipRect(parentX, parentY));
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)
         // FIXME: Possible optimization by clipping to bbox here, once relativeBBox is implemented & clip, mask and filter support added.
-        paintInfo.p->beginTransparencyLayer(opacity);
+        paintInfo.context->beginTransparencyLayer(opacity);
 
     PaintInfo pi(paintInfo);
-    pi.r = absoluteTransform().invert().mapRect(paintInfo.r);
+    pi.rect = absoluteTransform().invert().mapRect(paintInfo.rect);
     RenderBlock::paint(pi, 0, 0);
 
     if (opacity < 1.0f)
-        paintInfo.p->endTransparencyLayer();
+        paintInfo.context->endTransparencyLayer();
 
     if (shouldPopContext) {
         device->popContext();
         delete context;
     }
 
-    paintInfo.p->restore();
+    paintInfo.context->restore();
 }
 
 void RenderForeignObject::computeAbsoluteRepaintRect(IntRect& r, bool f)

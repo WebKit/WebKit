@@ -116,8 +116,8 @@ void RenderButton::paintObject(PaintInfo& paintInfo, int tx, int ty)
             width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        paintInfo.p->save();
-        paintInfo.p->clip(clipRect);
+        paintInfo.context->save();
+        paintInfo.context->clip(clipRect);
     }
 
     // Paint the children.
@@ -125,7 +125,7 @@ void RenderButton::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // Pop the clip.
     if (m_inner && paintInfo.phase == PaintPhaseForeground)
-        paintInfo.p->restore();
+        paintInfo.context->restore();
 }
 
 } // namespace WebCore

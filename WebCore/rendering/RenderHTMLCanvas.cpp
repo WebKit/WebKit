@@ -52,7 +52,7 @@ void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
         paintBoxDecorations(paintInfo, x, y);
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.p, x, y, width(), height(), style());
+        paintOutline(paintInfo.context, x, y, width(), height(), style());
 
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
@@ -68,11 +68,11 @@ void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     if (element() && element()->hasTagName(canvasTag))
-        static_cast<HTMLCanvasElement*>(element())->paint(paintInfo.p,
+        static_cast<HTMLCanvasElement*>(element())->paint(paintInfo.context,
             IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
 
     if (drawSelectionTint)
-        paintInfo.p->fillRect(selectionRect(), selectionBackgroundColor());
+        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
 }
 
 void RenderHTMLCanvas::layout()

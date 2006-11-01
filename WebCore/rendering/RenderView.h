@@ -54,8 +54,8 @@ public:
     
     virtual void repaintViewRectangle(const IntRect& r, bool immediate = false);
     
-    virtual void paint(PaintInfo& i, int tx, int ty);
-    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     
     void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
     void clearSelection();

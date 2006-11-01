@@ -1399,8 +1399,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         setClip(p, paintDirtyRect, damageRect);
 
         // Paint the background.
-        RenderObject::PaintInfo info(p, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
-        renderer()->paint(info, tx, ty);
+        RenderObject::PaintInfo paintInfo(p, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        renderer()->paint(paintInfo, tx, ty);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
@@ -1424,18 +1424,17 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         // Set up the clip used when painting our children.
         setClip(p, paintDirtyRect, clipRectToApply);
-        RenderObject::PaintInfo info(p, clipRectToApply, 
-                                     selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                                     forceWhiteText,
-                                     paintingRootForRenderer, 0);
-        renderer()->paint(info, tx, ty);
+        RenderObject::PaintInfo paintInfo(p, clipRectToApply, 
+                                          selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
+                                          forceWhiteText, paintingRootForRenderer, 0);
+        renderer()->paint(paintInfo, tx, ty);
         if (!selectionOnly) {
-            info.phase = PaintPhaseFloat;
-            renderer()->paint(info, tx, ty);
-            info.phase = PaintPhaseForeground;
-            renderer()->paint(info, tx, ty);
-            info.phase = PaintPhaseChildOutlines;
-            renderer()->paint(info, tx, ty);
+            paintInfo.phase = PaintPhaseFloat;
+            renderer()->paint(paintInfo, tx, ty);
+            paintInfo.phase = PaintPhaseForeground;
+            renderer()->paint(paintInfo, tx, ty);
+            paintInfo.phase = PaintPhaseChildOutlines;
+            renderer()->paint(paintInfo, tx, ty);
         }
 
         // Now restore our clip.
@@ -1444,9 +1443,9 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     
     if (!outlineRect.isEmpty()) {
         // Paint our own outline
-        RenderObject::PaintInfo info(p, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
+        RenderObject::PaintInfo paintInfo(p, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
         setClip(p, paintDirtyRect, outlineRect);
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(paintInfo, tx, ty);
         restoreClip(p, paintDirtyRect, outlineRect);
     }
     

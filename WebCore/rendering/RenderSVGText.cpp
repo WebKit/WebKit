@@ -113,14 +113,14 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
     rects.append(enclosingIntRect(boxTransform.mapRect(boxRect)));
 }
 
-void RenderSVGText::paint(PaintInfo& paintInfo, int _tx, int _ty)
+void RenderSVGText::paint(PaintInfo& paintInfo, int tx, int ty)
 {    
     KRenderingDevice* device = renderingDevice();
     RenderObject::PaintInfo pi = paintInfo;
     OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    pi.p = c.get();
-    pi.r = (absoluteTransform()).invert().mapRect(paintInfo.r);
-    RenderBlock::paint(pi, _tx, _ty);
+    pi.context = c.get();
+    pi.rect = (absoluteTransform()).invert().mapRect(paintInfo.rect);
+    RenderBlock::paint(pi, tx, ty);
 }
 
 FloatRect RenderSVGText::relativeBBox(bool includeStroke) const

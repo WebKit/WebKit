@@ -149,30 +149,30 @@ InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
     return box;
 }
 
-void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
+void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (i.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhaseForeground)
         return;
     
     if (style()->visibility() != VISIBLE)
         return;
 
     IntRect marker = getRelativeMarkerRect();
-    marker.move(_tx, _ty);
+    marker.move(tx, ty);
 
-    IntRect box(_tx + m_x, _ty + m_y, m_width, m_height);
+    IntRect box(tx + m_x, ty + m_y, m_width, m_height);
 
-    if (box.y() > i.r.bottom() || box.y() + box.height() < i.r.y())
+    if (box.y() > paintInfo.rect.bottom() || box.y() + box.height() < paintInfo.rect.y())
         return;
 
     if (shouldPaintBackgroundOrBorder()) 
-        paintBoxDecorations(i, box.x(), box.y());
+        paintBoxDecorations(paintInfo, box.x(), box.y());
 
-    GraphicsContext* p = i.p;
-    p->setFont(style()->font());
+    GraphicsContext* context = paintInfo.context;
+    context->setFont(style()->font());
 
     if (document()->printing()) {
-        if (box.y() < i.r.y())
+        if (box.y() < paintInfo.rect.y())
             // This has been printed already we suppose.
             return;
         
@@ -187,44 +187,44 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
     if (m_listImage && !m_listImage->isErrorImage()) {
 #if PLATFORM(MAC)
-        if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
-            paintCustomHighlight(_tx, _ty, style()->highlight(), true);
+        if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
+            paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
-        p->drawImage(m_listImage->image(), marker.location());
+        context->drawImage(m_listImage->image(), marker.location());
         if (selectionState() != SelectionNone)
-            p->fillRect(selectionRect(), selectionBackgroundColor());
+            context->fillRect(selectionRect(), selectionBackgroundColor());
         return;
     }
 
 #ifdef BOX_DEBUG
-    p->setPen(red);
-    p->drawRect(box.x(), box.y(), box.width(), box.height());
+    context->setPen(red);
+    context->drawRect(box.x(), box.y(), box.width(), box.height());
 #endif
 
 #if PLATFORM(MAC)
     // FIXME: paint gap between marker and list item proper
-    if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
-        paintCustomHighlight(_tx, _ty, style()->highlight(), true);
+    if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
+        paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
 
     if (selectionState() != SelectionNone)
-        p->fillRect(selectionRect(), selectionBackgroundColor());
+        context->fillRect(selectionRect(), selectionBackgroundColor());
 
     const Color color(style()->color());
-    p->setPen(color);
+    context->setPen(color);
 
     switch(style()->listStyleType()) {
     case DISC:
-        p->setFillColor(color.rgb());
-        p->drawEllipse(marker);
+        context->setFillColor(color);
+        context->drawEllipse(marker);
         return;
     case CIRCLE:
-        p->setFillColor(Color::transparent);
-        p->drawEllipse(marker);
+        context->setFillColor(Color::transparent);
+        context->drawEllipse(marker);
         return;
     case SQUARE:
-        p->setFillColor(color.rgb());
-        p->drawRect(marker);
+        context->setFillColor(color);
+        context->drawRect(marker);
         return;
     case LNONE:
         return;
@@ -234,15 +234,15 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             TextRun textRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
             if (style()->direction() == LTR) {
                 int width = font.width(textRun);
-                p->drawText(textRun, marker.location());
+                context->drawText(textRun, marker.location());
                 UChar periodSpace[2] = { '.', ' ' };
-                p->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
+                context->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
             } else {
                 UChar spacePeriod[2] = { ' ', '.' };
                 TextRun spacePeriodRun(spacePeriod, 2);
                 int width = font.width(spacePeriodRun);
-                p->drawText(spacePeriodRun, marker.location());
-                p->drawText(textRun, marker.location() + IntSize(width, 0));
+                context->drawText(spacePeriodRun, marker.location());
+                context->drawText(textRun, marker.location() + IntSize(width, 0));
             }
         }
     }

@@ -98,13 +98,14 @@ public:
     int outerBorderLeft() const { return m_outerBorderLeft; }
     int outerBorderRight() const { return m_outerBorderRight; }
 
-    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
     int numRows() const { return gridRows; }
     int numColumns() const;
-    int getBaseline(int row) {return grid[row].baseLine;}
+    int getBaseline(int row) { return grid[row].baseLine; }
 
-    void setNeedCellRecalc() {
+    void setNeedCellRecalc()
+    {
         needCellRecalc = true;
         table()->setNeedSectionRecalc();
     }

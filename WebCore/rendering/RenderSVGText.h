@@ -31,16 +31,15 @@ namespace WebCore {
 
 class SVGTextElement;
 
-class RenderSVGText : public RenderBlock
-{
+class RenderSVGText : public RenderBlock {
 public:
     RenderSVGText(SVGTextElement* node);
 
-    virtual const char *renderName() const { return "RenderSVGText"; }
+    virtual const char* renderName() const { return "RenderSVGText"; }
     
     virtual AffineTransform localTransform() const { return m_transform; }
     virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
-    virtual void paint(PaintInfo& i, int _tx, int _ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);

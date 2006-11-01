@@ -124,17 +124,17 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
+    if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
         return;
     
     KRenderingDevice* device = renderingDevice();
     KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (context)
-        paintInfo.p->save();
+        paintInfo.context->save();
     else {
         // Need to push a device context on the stack if empty.
-        context = paintInfo.p->createRenderingDeviceContext();
+        context = paintInfo.context->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
     }
@@ -145,7 +145,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     FloatRect boundingBox = FloatRect(0, 0, width(), height());
     const SVGRenderStyle* svgStyle = style()->svgStyle();
-            
+
     if (SVGResourceClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);
 
@@ -165,13 +165,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
 
     PaintInfo pi(paintInfo);
-    pi.p = c.get();
-    pi.r = absoluteTransform().invert().mapRect(paintInfo.r);
+    pi.context = c.get();
+    pi.rect = absoluteTransform().invert().mapRect(paintInfo.rect);
 
     int x = 0, y = 0;
     if (shouldPaint(pi, x, y)) {
-        SVGImageElement *imageElt = static_cast<SVGImageElement*>(node());
-        
+        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
+
         if (imageElt->preserveAspectRatio()->align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
             RenderImage::paint(pi, 0, 0);
         else {
@@ -190,7 +190,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // restore drawing state
     if (!shouldPopContext)
-        paintInfo.p->restore();
+        paintInfo.context->restore();
     else {
         device->popContext();
         delete context;

@@ -59,43 +59,42 @@ void SVGInlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
 
 void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
-    if (paintInfo.p->paintingDisabled())
+    if (paintInfo.context->paintingDisabled())
         return;
     
     KRenderingDevice* device = renderingDevice();
     KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (context)
-        paintInfo.p->save();
+        paintInfo.context->save();
     else {
         // Need to set up KCanvas rendering if it hasn't already been done.
-        context = paintInfo.p->createRenderingDeviceContext();
+        context = paintInfo.context->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
     }
-    
 
     context->concatCTM(object->localTransform());
-    
-    FloatRect boundingBox(tx+flow->xPos() , ty+flow->yPos(), flow->width(), flow->height());
-    
+
+    FloatRect boundingBox(tx + flow->xPos(), ty + flow->yPos(), flow->width(), flow->height());
+
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (SVGResourceClipper* clipper = getClipperById(object->document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);
-    
+
     if (SVGResourceMasker* masker = getMaskerById(object->document(), svgStyle->maskElement().substring(1)))
         masker->applyMask(boundingBox);
-    
+
     KCanvasFilter* filter = getFilterById(object->document(), svgStyle->filter().substring(1));
     if (filter)
         filter->prepareFilter(boundingBox);
-    
+
     RenderObject::PaintInfo pi = paintInfo;
     OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    pi.p = c.get();
+    pi.context = c.get();
     if (!flow->isRootInlineBox())
-        pi.r = (object->localTransform()).invert().mapRect(paintInfo.r);
-    
+        pi.rect = (object->localTransform()).invert().mapRect(paintInfo.rect);
+
     float opacity = object->style()->opacity();
     if (opacity < 1.0f) {
         c->clip(enclosingIntRect(boundingBox));
@@ -120,16 +119,16 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
         }
         strokePaintServer->setPaintingText(false);
     }
-    
+
     if (filter) 
         filter->applyFilter(boundingBox);
-    
+
     if (opacity < 1.0f)
         c->endTransparencyLayer();
 
     // restore drawing state
     if (!shouldPopContext)
-        paintInfo.p->restore();
+        paintInfo.context->restore();
     else {
         device->popContext();
         delete context;

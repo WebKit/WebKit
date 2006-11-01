@@ -77,31 +77,31 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     }
 }
 
-bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
     // for that control.
-    if (i.p->updatingControlTints()) {
+    if (paintInfo.context->updatingControlTints()) {
         if (controlSupportsTints(o))
             o->repaint();
         return false;
     }
-    if (i.p->paintingDisabled())
+    if (paintInfo.context->paintingDisabled())
         return false;
-        
+
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
         case CheckboxAppearance:
-            return paintCheckbox(o, i, r);
+            return paintCheckbox(o, paintInfo, r);
         case RadioAppearance:
-            return paintRadio(o, i, r);
+            return paintRadio(o, paintInfo, r);
         case PushButtonAppearance:
         case SquareButtonAppearance:
         case ButtonAppearance:
-            return paintButton(o, i, r);
+            return paintButton(o, paintInfo, r);
         case MenulistAppearance:
-            return paintMenuList(o, i, r);
+            return paintMenuList(o, paintInfo, r);
         case MenulistButtonAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
@@ -110,22 +110,22 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
         default:
             break;
     }
-    
+
     return true; // We don't support the appearance, so let the normal background/border paint.
 }
 
-bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    if (i.p->paintingDisabled())
+    if (paintInfo.context->paintingDisabled())
         return false;
-        
+
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
         case TextFieldAppearance:
-            return paintTextField(o, i, r);
+            return paintTextField(o, paintInfo, r);
         case ListboxAppearance:
         case TextAreaAppearance:
-            return paintTextArea(o, i, r);
+            return paintTextArea(o, paintInfo, r);
         case MenulistButtonAppearance:
             return true;
         case CheckboxAppearance:
@@ -137,19 +137,19 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         default:
             break;
     }
-    
+
     return false;
 }
 
-bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    if (i.p->paintingDisabled())
+    if (paintInfo.context->paintingDisabled())
         return false;
-        
+
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
         case MenulistButtonAppearance:
-            return paintMenuListButton(o, i, r);
+            return paintMenuListButton(o, paintInfo, r);
         case TextFieldAppearance:
         case TextAreaAppearance:
         case ListboxAppearance:
@@ -162,7 +162,7 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         default:
             break;
     }
-    
+
     return false;
 }
 

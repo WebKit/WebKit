@@ -1,3 +1,180 @@
+2006-11-01  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11474
+        Rename the "p" member variable of the PaintInfo struct to "context"
+
+        - Renames the 'p' and 'r' member variables of the PaintInfo struct to
+          'context' and 'rect' respectively.
+
+        - Assorted surrounding cleanups.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        (WebCore::InlineFlowBox::paintDecorations):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineRunBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintCaret):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+        (WebCore::RenderBlock::fillBlockSelectionGaps):
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paint):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::paintObject):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::continuationBefore):
+        (WebCore::RenderFlow::addChildWithContinuation):
+        (WebCore::RenderFlow::addChild):
+        (WebCore::RenderFlow::attachLineBox):
+        (WebCore::RenderFlow::destroy):
+        (WebCore::RenderFlow::dirtyLinesFromChangedChild):
+        (WebCore::RenderFlow::dirtyLineBoxes):
+        (WebCore::RenderFlow::createInlineBox):
+        (WebCore::RenderFlow::paintLines):
+        (WebCore::RenderFlow::getAbsoluteRepaintRect):
+        (WebCore::RenderFlow::lowestPosition):
+        (WebCore::RenderFlow::rightmostPosition):
+        (WebCore::RenderFlow::leftmostPosition):
+        (WebCore::RenderFlow::caretRect):
+        (WebCore::RenderFlow::addFocusRingRects):
+        (WebCore::RenderFlow::paintOutline):
+        (WebCore::RenderFlow::paintOutlineForLine):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::paintObject):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::PaintInfo::PaintInfo):
+        (WebCore::RenderObject::paintBoxDecorations):
+        (WebCore::RenderObject::paintingRootForChildren):
+        (WebCore::RenderObject::shouldPaintWithinRoot):
+        (WebCore::RenderObject::printBoxDecorations):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::renderName):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::getBaseline):
+        (WebCore::RenderTableSection::setNeedCellRecalc):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::renderName):
+        (WebCore::RenderText::paint):
+        (WebCore::RenderText::element):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::RenderTheme):
+        (WebCore::RenderTheme::~RenderTheme):
+        (WebCore::RenderTheme::controlSupportsTints):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        (WebCore::RenderTheme::themeChanged):
+        (WebCore::RenderTheme::supportsHover):
+        (WebCore::RenderTheme::paintCheckbox):
+        (WebCore::RenderTheme::setCheckboxSize):
+        (WebCore::RenderTheme::paintRadio):
+        (WebCore::RenderTheme::setRadioSize):
+        (WebCore::RenderTheme::paintButton):
+        (WebCore::RenderTheme::setButtonSize):
+        (WebCore::RenderTheme::paintTextField):
+        (WebCore::RenderTheme::paintTextArea):
+        (WebCore::RenderTheme::paintMenuList):
+        (WebCore::RenderTheme::paintMenuListButton):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintCheckbox):
+        (WebCore::RenderThemeMac::paintRadio):
+        (WebCore::RenderThemeMac::paintButton):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::isWidget):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        (WebCore::RootInlineBox::fillLineSelectionGap):
+        * rendering/RootInlineBox.h:
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+
 2006-11-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver, Brady.

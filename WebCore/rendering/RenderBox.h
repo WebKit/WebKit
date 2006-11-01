@@ -150,8 +150,8 @@ public:
     virtual int staticY() const { return m_staticY; }
 
 protected:
-    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
-    void paintRootBoxDecorations(PaintInfo& i, int _tx, int _ty);
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
 
     void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);

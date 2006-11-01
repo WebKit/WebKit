@@ -21,25 +21,24 @@
  *
  */
 
-#ifndef RenderWidget_H
-#define RenderWidget_H
+#ifndef RenderWidget_h
+#define RenderWidget_h
 
 #include "RenderReplaced.h"
 #include "WidgetClient.h"
 
 namespace WebCore {
 
-class RenderWidget : public RenderReplaced, public WidgetClient
-{
+class RenderWidget : public RenderReplaced, public WidgetClient {
 public:
     RenderWidget(Node*);
     virtual ~RenderWidget();
 
+    virtual bool isWidget() const { return true; }
+
     virtual void setStyle(RenderStyle*);
 
     virtual void paint(PaintInfo&, int tx, int ty);
-
-    virtual bool isWidget() const { return true; };
 
     virtual void destroy();
     virtual void layout( );
@@ -48,7 +47,7 @@ public:
 
     RenderArena* ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena*);
-    
+
     virtual void setSelectionState(SelectionState);
 
     virtual void updateWidgetPosition();
@@ -72,10 +71,11 @@ private:
 protected:
     Widget* m_widget;
     FrameView* m_view;
+
 private:
     int m_refCount;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderWidget_h

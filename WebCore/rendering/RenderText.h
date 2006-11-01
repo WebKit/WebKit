@@ -51,13 +51,13 @@ public:
     virtual bool isTextFragment() const;
     virtual PassRefPtr<StringImpl> originalString() const;
     
-    virtual const char *renderName() const { return "RenderText"; }
+    virtual const char* renderName() const { return "RenderText"; }
 
-    virtual void setStyle(RenderStyle *style);
+    virtual void setStyle(RenderStyle*);
 
-    void extractTextBox(InlineTextBox* textBox);
-    void attachTextBox(InlineTextBox* textBox);
-    void removeTextBox(InlineTextBox* textBox);
+    void extractTextBox(InlineTextBox*);
+    void attachTextBox(InlineTextBox*);
+    void removeTextBox(InlineTextBox*);
     void deleteTextBoxes();
     virtual void destroy();
     
@@ -67,7 +67,7 @@ public:
     virtual InlineBox* createInlineBox(bool,bool, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
     
-    virtual void paint(PaintInfo& i, int tx, int ty) { assert(false); }
+    virtual void paint(PaintInfo&, int tx, int ty) { assert(false); }
     virtual void layout() { assert(false); }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { assert(false); return false; }
@@ -104,7 +104,7 @@ public:
                                     int& minW, int& maxW, bool& stripFrontSpaces);
     
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
-    
+
     // returns the minimum x position of all runs relative to the parent.
     // defaults to 0.
     int minXPos() const;
@@ -113,7 +113,7 @@ public:
     virtual int yPos() const;
 
     virtual const Font& font();
-    virtual short verticalPositionHint( bool firstLine ) const;
+    virtual short verticalPositionHint(bool firstLine) const;
 
     void setText(StringImpl*, bool force = false);
     void setTextWithOffset(StringImpl*, unsigned offset, unsigned len, bool force = false);
@@ -122,8 +122,8 @@ public:
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect();
-    virtual IntRect caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine = 0);
-    void posOfChar(int ch, int &x, int &y);
+    virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
+    void posOfChar(int ch, int& x, int& y);
 
     virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }
@@ -132,15 +132,15 @@ public:
 
     const Font* font(bool firstLine) const;
 
-    Text *element() const { return static_cast<Text*>(RenderObject::element()); }
+    Text* element() const { return static_cast<Text*>(RenderObject::element()); }
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
-    
-    virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
+
+    virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
 
     int widthFromCache(const Font*, int start, int len, int tabWidth, int xpos) const;
-    bool shouldUseMonospaceCache(const Font *) const;
+    bool shouldUseMonospaceCache(const Font*) const;
     void cacheWidths();
     bool allAscii() const;
 
@@ -153,27 +153,27 @@ public:
     
     bool containsReversedText() const { return m_containsReversedText; }
     
-public:
-    InlineTextBox * findNextInlineTextBox( int offset, int &pos ) const;
+    InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
-protected: // members
+protected:
+    // members
     RefPtr<StringImpl> str;
-    
+
     InlineTextBox* m_firstTextBox;
     InlineTextBox* m_lastTextBox;
-    
+
     int m_minWidth;
     int m_maxWidth;
     int m_beginMinWidth;
     int m_endMinWidth;
-    
+
     SelectionState m_selectionState : 3 ;
     bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
     bool m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
     bool m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
     bool m_hasBeginWS : 1; // Whether or not we begin with WS (only true if we aren't pre)
     bool m_hasEndWS : 1; // Whether or not we end with WS (only true if we aren't pre)
-    
+
     bool m_linesDirty : 1; // This bit indicates that the text run has already dirtied specific
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
@@ -188,6 +188,6 @@ protected: // members
 
 UBreakIterator* characterBreakIterator(const StringImpl*);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderText_h

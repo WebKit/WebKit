@@ -41,36 +41,36 @@ RenderReplaced::RenderReplaced(Node* node)
     m_selectionState = SelectionNone;
 }
 
-bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
+bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
 {
-    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline 
-        && i.phase != PaintPhaseSelection)
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline 
+            && paintInfo.phase != PaintPhaseSelection)
         return false;
 
-    if (!shouldPaintWithinRoot(i))
+    if (!shouldPaintWithinRoot(paintInfo))
         return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
     if (style()->visibility() != VISIBLE)
         return false;
 
-    int tx = _tx + m_x;
-    int ty = _ty + m_y;
+    int currentTX = tx + m_x;
+    int currentTY = ty + m_y;
 
     // Early exit if the element touches the edges.
-    int top = ty;
-    int bottom = ty + m_height;
+    int top = currentTY;
+    int bottom = currentTY + m_height;
     if (isSelected() && m_inlineBoxWrapper) {
-        int selTop = _ty + m_inlineBoxWrapper->root()->selectionTop();
-        int selBottom = _ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
+        int selTop = ty + m_inlineBoxWrapper->root()->selectionTop();
+        int selBottom = ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
         top = min(selTop, top);
         bottom = max(selBottom, bottom);
     }
     
-    int os = 2*maximalOutlineSize(i.phase);
-    if (tx >= i.r.right() + os || tx + m_width <= i.r.x() - os)
+    int os = 2 * maximalOutlineSize(paintInfo.phase);
+    if (currentTX >= paintInfo.rect.right() + os || currentTX + m_width <= paintInfo.rect.x() - os)
         return false;
-    if (top >= i.r.bottom() + os || bottom <= i.r.y() - os)
+    if (top >= paintInfo.rect.bottom() + os || bottom <= paintInfo.rect.y() - os)
         return false;
 
     return true;

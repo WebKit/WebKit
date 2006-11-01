@@ -84,9 +84,9 @@ public:
     void setCellTopExtra(int p) { _topExtra = p; }
     void setCellBottomExtra(int p) { _bottomExtra = p; }
 
-    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
-    void paintCollapsedBorder(GraphicsContext* p, int x, int y, int w, int h);
+    void paintCollapsedBorder(GraphicsContext*, int x, int y, int w, int h);
     
     // lie about position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }
