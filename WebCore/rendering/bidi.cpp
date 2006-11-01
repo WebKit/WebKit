@@ -1744,9 +1744,6 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         repaintRect.setWidth(m_overflowWidth - m_overflowLeft);
         repaintRect.setY(repaintTop);
         repaintRect.setHeight(repaintBottom - repaintTop);
-        if (hasOverflowClip())
-            // Don't allow this rect to spill out of our overflow box.
-            repaintRect.intersect(IntRect(0, 0, m_width, m_height));
     }
 
     if (!firstLineBox() && hasLineIfEmpty())

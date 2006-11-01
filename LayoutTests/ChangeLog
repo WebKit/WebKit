@@ -1,3 +1,23 @@
+2006-11-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=11277
+        REGRESSION: Incomplete repaint of overflow areas when deleting
+
+        * fast/repaint/overflow-delete-line-expected.checksum: Added.
+        * fast/repaint/overflow-delete-line-expected.png: Added.
+        * fast/repaint/overflow-delete-line-expected.txt: Added.
+        * fast/repaint/overflow-delete-line.html: Added.
+        * fast/repaint/overflow-scroll-delete-expected.checksum: Added.
+        * fast/repaint/overflow-scroll-delete-expected.png: Added.
+        * fast/repaint/overflow-scroll-delete-expected.txt: Added.
+        * fast/repaint/overflow-scroll-delete.html: Added.
+        * fast/repaint/overflow-outline-repaint-expected.checksum: Added.
+        * fast/repaint/overflow-outline-repaint-expected.png: Added.
+        * fast/repaint/overflow-outline-repaint-expected.txt: Added.
+        * fast/repaint/overflow-outline-repaint.html: Added.
+
 2006-10-31  Geoffrey Garen  <ggaren@apple.com>
 
         Added test for accessing the 'caller' property from inside an event
