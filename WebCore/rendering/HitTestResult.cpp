@@ -167,7 +167,7 @@ String HitTestResult::altDisplayString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    if (m_innerNonSharedNode->hasTagName(imageTag)) {
+    if (m_innerNonSharedNode->hasTagName(imgTag)) {
         HTMLImageElement* image = static_cast<HTMLImageElement*>(m_innerNonSharedNode.get());
         return displayString(image->alt(), m_innerNonSharedNode.get());
     }
@@ -204,7 +204,7 @@ KURL HitTestResult::absoluteImageURL() const
         return KURL();
 
     String name;
-    if (m_innerNonSharedNode->hasTagName(imageTag) || m_innerNonSharedNode->hasTagName(inputTag))
+    if (m_innerNonSharedNode->hasTagName(imgTag) || m_innerNonSharedNode->hasTagName(inputTag))
         name = "src";
     else if (m_innerNonSharedNode->hasTagName(objectTag))
         name = "data";
