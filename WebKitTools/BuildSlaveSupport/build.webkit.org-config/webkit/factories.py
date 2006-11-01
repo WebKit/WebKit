@@ -58,10 +58,3 @@ class Win32BuildFactory(BuildFactory):
         self.steps.append(s(CompileWebKit, configuration="release"))
         self.steps.append(s(JavaScriptCoreTest))
         self.steps.append(s(LayoutTest))
-
-class QtBuildFactory(BuildFactory):
-    def __init__(self):
-        BuildFactory.__init__(self)
-        self.steps.append(s(SetConfiguration, configuration="release"))
-        self.steps.append(s(CompileWebKit, configuration="release"))
-        self.steps.append(s(JavaScriptCoreTest))

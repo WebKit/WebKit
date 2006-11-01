@@ -1,3 +1,12 @@
+2006-10-31  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Stephanie.
+
+        Limit build slaves to a single build to prevent concurrent builds on a single slave from significantly increasing build time.
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Adjust slave distribution, and make use of a SlaveLock.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py: Remove unused Qt build factory.
+
 2006-10-31  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/DumpRenderTree.m: Instead of allocating a single local
