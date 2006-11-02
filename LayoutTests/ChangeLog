@@ -1,3 +1,12 @@
+2006-11-02  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - Changed the test to take into account the JavaScript standard's interesting take on DST.  According to the standard DST should not reflect historically accurate information but should rather interpolate from a comparable year.  This test used to show historically accurate information but now reflects the results of interpolating.
+
+        * fast/js/date-big-setdate-expected.txt:
+        * fast/js/resources/date-big-setdate.js:
+
 2006-11-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

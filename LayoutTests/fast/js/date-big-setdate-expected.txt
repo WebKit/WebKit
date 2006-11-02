@@ -8,10 +8,11 @@ PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
-FAIL d.valueOf() - curValue should be 86400000 (of type number). Was 82800000 (of type number).
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
+PASS d.valueOf() - curValue is millisecondsPerDay
+PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
 PASS successfullyParsed is true
 
 TEST COMPLETE
