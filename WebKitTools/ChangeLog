@@ -1,3 +1,11 @@
+2006-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Added accessor to get the source directory for use in client scripts
+
+        * Scripts/webkitdirs.pm:
+
 2006-11-01  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.

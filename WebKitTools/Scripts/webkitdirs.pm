@@ -169,6 +169,12 @@ sub baseProductDir
     return $baseProductDir;
 }
 
+sub sourceDir
+{
+    determineSourceDir();
+    return $sourceDir;
+}
+
 sub productDir
 {
     determineConfigurationProductDir();
