@@ -27,8 +27,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "KCanvasTreeDebug.h"
-
 #include "SVGResourceClipper.h"
 #include "GraphicsTypes.h"
 #include "HTMLNames.h"

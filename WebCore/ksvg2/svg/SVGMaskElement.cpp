@@ -35,6 +35,7 @@
 #include "cssstyleselector.h"
 #include <wtf/OwnPtr.h>
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

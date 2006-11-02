@@ -36,6 +36,7 @@
 #include "KRenderingDevice.h"
 #include "SVGStyledElement.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

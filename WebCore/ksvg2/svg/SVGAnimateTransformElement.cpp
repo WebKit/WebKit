@@ -32,6 +32,7 @@
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 using namespace std;
 

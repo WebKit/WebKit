@@ -30,6 +30,7 @@
 #include "SVGColor.h"
 #include "SVGSVGElement.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

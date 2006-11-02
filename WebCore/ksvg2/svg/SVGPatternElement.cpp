@@ -40,6 +40,7 @@
 #include "SVGUnitTypes.h"
 #include <math.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

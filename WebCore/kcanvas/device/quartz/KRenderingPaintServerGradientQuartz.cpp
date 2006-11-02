@@ -151,9 +151,6 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     if (!m_stopsCache)
         updateQuartzGradientStopsCache(server->gradientStops());
     
-    if (!m_stopsCount)
-        NSLog(@"Warning, no gradient stops, gradient (%p) will be all black!", this);
-    
     if (m_shadingCache)
         CGShadingRelease(m_shadingCache);
     if (server->type() == PS_RADIAL_GRADIENT) {

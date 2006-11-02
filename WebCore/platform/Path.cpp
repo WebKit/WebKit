@@ -31,6 +31,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 const double QUARTER = 0.552; // approximation of control point positions on a bezier
                       // to simulate a quarter of a circle.

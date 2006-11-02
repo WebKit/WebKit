@@ -27,6 +27,8 @@
 
 #include <wtf/Vector.h>
 
+#include "QuartzSupport.h"
+
 namespace WebCore {
 
 // Special types

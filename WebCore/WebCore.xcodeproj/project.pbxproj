@@ -1883,9 +1883,9 @@
 		A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */; };
 		A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */; };
 		A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */; };
-		A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.mm */; };
+		A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.cpp */; };
 		A88AD3B30952486E001DD196 /* KRenderingPaintServerQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB74089701F800BA5114 /* KRenderingPaintServerQuartz.h */; };
-		A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */; };
+		A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.cpp */; };
 		A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
 		A88AD3B60952486E001DD196 /* QuartzSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */; };
 		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
@@ -4920,9 +4920,9 @@
 		A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasItemQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDeviceQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDeviceQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KRenderingPaintServerGradientQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerGradientQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB74089701F800BA5114 /* KRenderingPaintServerQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KRenderingPaintServerQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB76089701F800BA5114 /* QuartzSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QuartzSupport.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuartzSupport.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilters.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8230,9 +8230,9 @@
 				A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */,
 				A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */,
 				A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */,
-				A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.mm */,
+				A8C0FB73089701F800BA5114 /* KRenderingPaintServerGradientQuartz.cpp */,
 				A8C0FB74089701F800BA5114 /* KRenderingPaintServerQuartz.h */,
-				A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */,
+				A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.cpp */,
 				A8C0FB76089701F800BA5114 /* QuartzSupport.h */,
 				A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */,
 			);
@@ -10717,8 +10717,8 @@
 				A88AD3AB0952486D001DD196 /* KCanvasFilterQuartz.mm in Sources */,
 				A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */,
 				A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */,
-				A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.mm in Sources */,
-				A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.mm in Sources */,
+				A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.cpp in Sources */,
+				A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.cpp in Sources */,
 				A88AD3B60952486E001DD196 /* QuartzSupport.cpp in Sources */,
 				A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */,
 				A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */,

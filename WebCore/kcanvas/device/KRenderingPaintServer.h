@@ -35,6 +35,10 @@ class RenderPath;
 class RenderStyle;
 class TextStream;
 
+#ifdef PS_SOLID
+#undef PS_SOLID
+#endif
+
 // Enumerations
 enum KCPaintServerType {
     // Painting mode

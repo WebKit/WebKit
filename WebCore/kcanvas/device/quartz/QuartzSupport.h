@@ -28,6 +28,7 @@
 
 #ifdef SVG_SUPPORT
 
+#include <ApplicationServices/ApplicationServices.h>
 #include "GraphicsTypes.h"
 
 namespace WebCore {

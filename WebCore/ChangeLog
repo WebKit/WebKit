@@ -1,3 +1,35 @@
+2006-11-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Converting more or kcanvas/quartz from Obj-C to C++
+        Minor SVG updates
+        compatibility fixes
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/KRenderingPaintServer.h:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.cpp: Added.
+        (WebCore::KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm: Removed.
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.cpp: Added.
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm: Removed.
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/scripts/cssmakeprops:
+        * ksvg2/scripts/cssmakevalues:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/svgpathparser.cpp:
+        * platform/Path.cpp:
+        * platform/graphics/svg/SVGResourceImage.h:
+        * rendering/RenderPath.cpp:
+        * rendering/SVGRenderAsText.cpp:
+
 2006-11-02  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

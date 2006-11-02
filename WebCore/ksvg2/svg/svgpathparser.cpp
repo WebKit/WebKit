@@ -23,6 +23,7 @@
 #include "svgpathparser.h"
 #include "DeprecatedString.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

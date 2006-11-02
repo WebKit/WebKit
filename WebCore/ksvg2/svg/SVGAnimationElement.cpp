@@ -37,6 +37,7 @@
 #include <float.h>
 #include <math.h>
 #include <wtf/Vector.h>
+#include <wtf/MathExtras.h>
 
 using namespace std;
 
