@@ -39,6 +39,20 @@ my $configuration;
 setConfiguration();
 $configuration = configuration();
 
+my @jsArgs;
+my @xcodeArgs;
+
+# pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
+foreach my $arg(@ARGV) {
+    print $arg."\n";
+    if( $arg =~ /^-/ ){
+        push( @jsArgs, $arg );
+    } else {
+        push( @xcodeArgs, $arg );
+        
+    }
+}
+        
 # Find JavaScriptCore directory
 chdirWebKit();
 chdir("JavaScriptCore");
@@ -47,7 +61,7 @@ chdir("JavaScriptCore");
 my @options = XcodeOptions();
 my $result;
 if (isOSX()) {
-    $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @ARGV;
+    $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @xcodeArgs;
 }elsif (isCygwin()) {
     $result = buildVisualStudioProject( "JavaScriptCore" );
 }
@@ -71,7 +85,7 @@ sub determineTestkjsName
 }
 $testkjsName = determineTestkjsName();
 
-$result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/$testkjsName", "-f", "actual.html", @ARGV;
+$result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/$testkjsName", "-f", "actual.html", @jsArgs;
 
 exit $result if $result;
 

@@ -88,7 +88,7 @@ for my $dir (@projects) {
     my $result = 0;
     if (isOSX()) {
         if ($dir eq "JavaScriptCore") {
-            $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
+            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
         } elsif ($dir eq "WebCore") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @additionalWebCoreOptions, @ARGV;
         } else {

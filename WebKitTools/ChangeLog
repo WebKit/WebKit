@@ -1,3 +1,18 @@
+2006-11-01  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Kevin.
+        
+        Fixed bug where additional arguments got fed to xcode and jsdriver.pl
+        Since testkjs is being built before the tests are run, we don't need 
+        to build it with webkit.
+        
+        Fixes bugs
+        http://bugs.webkit.org/show_bug.cgi?id=11462
+        http://bugs.webkit.org/show_bug.cgi?id=6168
+
+        * Scripts/build-webkit:
+        * Scripts/run-javascriptcore-tests:
+
 2006-11-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
