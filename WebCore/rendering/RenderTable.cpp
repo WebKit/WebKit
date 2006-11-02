@@ -416,7 +416,7 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
         // Collect all the unique border styles that we want to paint in a sorted list.  Once we
         // have all the styles sorted, we then do individual passes, painting each style of border
         // from lowest precedence to highest precedence.
-        paintInfo.phase = PaintPhaseCollapsedTableBorders;
+        info.phase = PaintPhaseCollapsedTableBorders;
         DeprecatedValueList<CollapsedBorderValue> borderStyles;
         collectBorders(borderStyles);
         DeprecatedValueListIterator<CollapsedBorderValue> it = borderStyles.begin();

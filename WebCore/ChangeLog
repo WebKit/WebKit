@@ -1,3 +1,15 @@
+2006-11-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - Fix a regression from r17521: painting of and crash caused by tables
+          with collapsed borders
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint): Changed 'paintInfo' to 'info'. Prior to
+        r17521, 'paintInfo' was the local variable. Now 'info' is the local variable
+        and 'paintInfo' is the parameter, which we were accidently modifying.
+
 2006-11-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.
