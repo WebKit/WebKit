@@ -46,7 +46,7 @@ using namespace HTMLNames;
 using namespace std;
 
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)
-    : RenderFlexibleBox(node), m_dirty(false), m_multiLine(multiLine)
+    : RenderBlock(node), m_dirty(false), m_multiLine(multiLine)
 {
 }
 
@@ -61,7 +61,7 @@ RenderTextControl::~RenderTextControl()
 
 void RenderTextControl::setStyle(RenderStyle* style)
 {
-    RenderFlexibleBox::setStyle(style);
+    RenderBlock::setStyle(style);
     if (m_div) {
         RenderBlock* divRenderer = static_cast<RenderBlock*>(m_div->renderer());
         RenderStyle* divStyle = createDivStyle(style);
@@ -81,7 +81,6 @@ RenderStyle* RenderTextControl::createDivStyle(RenderStyle* startStyle)
     
     divStyle->inheritFrom(startStyle);
     divStyle->setDisplay(BLOCK);
-    divStyle->setBoxFlex(1.0f);
     divStyle->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
     if (m_multiLine) {
@@ -141,7 +140,7 @@ void RenderTextControl::updateFromElement()
         divRenderer->setStyle(divStyle); 
         
         // Add div to Render tree
-        RenderFlexibleBox::addChild(divRenderer);
+        RenderBlock::addChild(divRenderer);
     }
 
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
@@ -335,25 +334,38 @@ void RenderTextControl::calcHeight()
 
     m_height = line * rows + toAdd + scrollbarSize;
     
-    RenderFlexibleBox::calcHeight();
+    RenderBlock::calcHeight();
 }
 
 short RenderTextControl::baselinePosition(bool b, bool isRootLineBox) const
 {
     if (m_multiLine)
         return height() + marginTop() + marginBottom();
-    return RenderFlexibleBox::baselinePosition(b, isRootLineBox);
+    return RenderBlock::baselinePosition(b, isRootLineBox);
 }
 
 bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     // If we're within the text control, we want to act as if we've hit the inner div, incase the point 
     // was on the control but not on the div (see Radar 4617841).
-    if (RenderFlexibleBox::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction)) {
+    if (RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction)) {
         result.setInnerNode(m_div.get());
         return true;
     }  
     return false;
+}
+
+void RenderTextControl::layout()
+{    
+    int oldHeight = m_height;
+    calcHeight();
+    bool relayoutChildren = oldHeight != m_height;
+    
+    // Set the div's height
+    int divHeight = m_height - paddingTop() - paddingBottom() - borderTop() - borderBottom();
+    m_div->renderer()->style()->setHeight(Length(divHeight, Fixed));
+
+    RenderBlock::layoutBlock(relayoutChildren);
 }
 
 void RenderTextControl::calcMinMaxWidth()
@@ -433,28 +445,28 @@ int RenderTextControl::scrollWidth() const
 {
     if (m_div)
         return m_div->scrollWidth();
-    return RenderFlexibleBox::scrollWidth();
+    return RenderBlock::scrollWidth();
 }
 
 int RenderTextControl::scrollHeight() const
 {
     if (m_div)
         return m_div->scrollHeight();
-    return RenderFlexibleBox::scrollHeight();
+    return RenderBlock::scrollHeight();
 }
 
 int RenderTextControl::scrollLeft() const
 {
     if (m_div)
         return m_div->scrollLeft();
-    return RenderFlexibleBox::scrollLeft();
+    return RenderBlock::scrollLeft();
 }
 
 int RenderTextControl::scrollTop() const
 {
     if (m_div)
         return m_div->scrollTop();
-    return RenderFlexibleBox::scrollTop();
+    return RenderBlock::scrollTop();
 }
 
 void RenderTextControl::setScrollLeft(int newLeft)

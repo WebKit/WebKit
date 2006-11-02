@@ -21,13 +21,13 @@
 #ifndef RenderTextField_H
 #define RenderTextField_H
 
-#include "RenderFlexibleBox.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
 class HTMLTextFieldInnerElement;
 
-class RenderTextControl : public RenderFlexibleBox {
+class RenderTextControl : public RenderBlock {
 public:
     RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
@@ -41,7 +41,9 @@ public:
     virtual bool canHaveChildren() const { return false; }
     virtual short baselinePosition( bool, bool ) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-                             
+    virtual void layout();
+    virtual bool avoidsFloats() const { return true; }
+
     RenderStyle* createDivStyle(RenderStyle* startStyle);
 
     bool isEdited() const { return m_dirty; };

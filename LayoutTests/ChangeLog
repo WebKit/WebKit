@@ -1,3 +1,14 @@
+2006-11-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz and Geoff.
+
+        Test for <rdar://problem/4650271> REGRESSION(NativeTextArea): Textareas don't get scrollbars when text gets too big for content area (10105)
+
+        * fast/forms/textarea-scrollbar-expected.checksum: Added.
+        * fast/forms/textarea-scrollbar-expected.png: Added.
+        * fast/forms/textarea-scrollbar-expected.txt: Added.
+        * fast/forms/textarea-scrollbar.html: Added.
+
 2006-11-02  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Maciej.
