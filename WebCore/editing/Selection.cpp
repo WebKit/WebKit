@@ -490,8 +490,10 @@ void Selection::formatForDebugger(char* buffer, unsigned length) const
 
 void Selection::showTreeForThis() const
 {
-    if (start().node())
+    if (start().node()) {
         start().node()->showTreeAndMark(start().node(), "S", end().node(), "E");
+        fprintf(stderr, "start offset: %d, end offset: %d\n", start().offset(), end().offset());
+    }
 }
 
 #endif

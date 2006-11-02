@@ -1,3 +1,11 @@
+2006-11-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen
+
+        * editing/Selection.cpp:
+        (WebCore::Selection::showTreeForThis):
+        this debugging method now displays start offset and end offset, at Darin's suggestion
+
 2006-11-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
