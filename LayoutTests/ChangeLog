@@ -1,3 +1,10 @@
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated results to fix failure seen when running layout tests. Justin 
+        Garcia says the new results look more correct.
+        
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+
 2006-11-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz and Geoff.
