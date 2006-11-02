@@ -1,3 +1,37 @@
+2006-11-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/4062865>
+        Copy/paste of a select element fails to include the options
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify): Added paragraphBoundary.
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Added checks for input elements
+        and textareas.  Insertion operations would fail when performed just 
+        before/after one of these elements b/c the content would be put inside 
+        the element.
+        (WebCore::enclosingNodeWithTag): Fixed a problem when calling these in non
+        editable content, and made the code to stop at an root faster (don't check
+        isDescendantOf on every iteration).
+        (WebCore::enclosingNodeOfType): Ditto.
+        (WebCore::enclosingList): Ditto.
+        (WebCore::enclosingListChild): Ditto.  Added a FIXME, this function seems
+        inappropriately named.
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Use the text node's value instead of its rendered
+        content for text nodes inside select elements.  One might also turn off
+        annotation when createMarkup enters a select element, but createMarkup
+        is iterative, not recursive, so doing so would be complicated.
+        (WebCore::createMarkup): Add markup for unrendered nodes if they are 
+        descendants of a select element.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Migrate to isBlock/enclosingBlock.  Fixes bug
+        where various replaced elements can't be copied when they are the only
+        thing selected.
+        (WebCore::endOfParagraph): Ditto.
+
 2006-11-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

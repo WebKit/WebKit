@@ -127,7 +127,9 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                         || parent->hasTagName(xmpTag))
                     return stringValueForRange(node, range).deprecatedString();
             }
-            DeprecatedString markup = annotate ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
+            bool useRenderedText = annotate && !enclosingNodeWithTag(const_cast<Node*>(node), selectTag);
+            
+            DeprecatedString markup = useRenderedText ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
             if (defaultStyle) {
                 Node *element = node->parentNode();
                 if (element) {
@@ -358,8 +360,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             continue;
         
         // Add the node to the markup.
-        // FIXME: Add markup for nodes without renderers to fix <rdar://problem/4062865>. Also see the three checks below.
-        if (n->renderer()) {
+        // FIXME: Add markup for nodes without renderers?  Also see the three checks below.
+        if (n->renderer() || enclosingNodeWithTag(n, selectTag)) {
             markups.append(startMarkup(n, range, annotate, defaultStyle.get()));
             if (nodes)
                 nodes->append(n);
@@ -367,7 +369,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         
         if (n->firstChild() == 0) {
             // Node has no children, add its close tag now.
-            if (n->renderer()) {
+            if (n->renderer() || enclosingNodeWithTag(n, selectTag)) {
                 markups.append(endMarkup(n));
                 lastClosed = n;
             }
@@ -405,7 +407,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                     }
                 }
             }
-        } else if (n->renderer())
+        } else if (n->renderer() || enclosingNodeWithTag(n, selectTag))
             // Node is an ancestor, set it to close eventually.
             ancestorsToClose.append(n);
     }

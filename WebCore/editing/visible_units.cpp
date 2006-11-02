@@ -578,7 +578,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         && p.offset() == maxDeepOffset(startNode))
         return VisiblePosition(Position(startNode, 0));
 
-    Node *startBlock = startNode->enclosingBlockFlowElement();
+    Node* startBlock = enclosingBlock(startNode);
 
     Node *node = startNode;
     int offset = p.offset();
@@ -597,8 +597,8 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
             n = n->traversePreviousNodePostOrder(startBlock);
             continue;
         }
-        // FIXME: isBlockFlow should not exclude non-inline tables
-        if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
+        
+        if (r->isBR() || isBlock(n))
             break;
             
         if (r->isText()) {
@@ -640,7 +640,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
         && p.offset() == 0)
         return VisiblePosition(Position(startNode, maxDeepOffset(startNode)));
     
-    Node *startBlock = startNode->enclosingBlockFlowElement();
+    Node* startBlock = enclosingBlock(startNode);
     Node *stayInsideBlock = startBlock;
     
     Node *node = startNode;
@@ -661,8 +661,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
             continue;
         }
         
-        // FIXME: isBlockFlow should not exclude non-inline tables
-        if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
+        if (r->isBR() || isBlock(n))
             break;
             
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
