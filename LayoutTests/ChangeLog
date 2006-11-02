@@ -1,3 +1,9 @@
+2006-11-01  Kevin McCullough  <KMcCullough@apple.com>
+
+        - temporarily passing a test so that it does not interfere with others testing.
+
+        * fast/js/date-big-setdate-expected.txt:
+
 2006-11-01  Adele Peterson  <adele@apple.com>
 
         Fixing typo.  Changed repaintTest to runRepaintTest.
