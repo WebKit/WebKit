@@ -1,5 +1,12 @@
 2006-11-02  Anders Carlsson  <acarlsson@apple.com>
 
+        Another build fix.
+        
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+
+2006-11-02  Anders Carlsson  <acarlsson@apple.com>
+
         Build fix.
         
         * page/FramePrivate.h:
