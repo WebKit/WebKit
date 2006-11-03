@@ -55,5 +55,10 @@ Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*);
 bool CheckIfReloading(DocLoader*);
+bool IsResponseURLEqualToURL(PlatformResponse , const String& URL);
+DeprecatedString ResponseURL(PlatformResponse);
+DeprecatedString ResponseMIMEType(PlatformResponse);
+bool ResponseIsMultipart(PlatformResponse);
+NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
 
 }

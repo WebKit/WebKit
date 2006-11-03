@@ -37,18 +37,8 @@
 #import <sys/stat.h>
 #import <sys/types.h>
 #import <wtf/Assertions.h>
-#import <wtf/HashMap.h>
 
 namespace WebCore {
-
-static HashMap<CFReadStreamRef, const FormData*>* streamFormDatas = 0;
-
-static HashMap<CFReadStreamRef, const FormData*>* getStreamFormDatas()
-{
-    if (!streamFormDatas)
-        streamFormDatas = new HashMap<CFReadStreamRef, const FormData*>();
-    return streamFormDatas;
-}
 
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
@@ -182,17 +172,12 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(formData->elements()[size - i - 1]);
 
-    getStreamFormDatas()->set(stream, new FormData(*formData));
-
     return newInfo;
 }
 
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
-
-    delete getStreamFormDatas()->get(stream);
-    getStreamFormDatas()->remove(stream);
 
     closeCurrentStream(form);
     CFRelease(form->scheduledRunLoopPairs);
@@ -343,12 +328,6 @@ void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
         const_cast<FormData*>(&formData));
     [request setHTTPBodyStream:(NSInputStream *)stream];
     CFRelease(stream);
-}
-
-
-const FormData* httpBodyFromStream(NSInputStream* stream)
-{
-    return getStreamFormDatas()->get((CFReadStreamRef)stream);
 }
 
 }

@@ -127,14 +127,14 @@ void Loader::receivedResponse(ResourceHandle* handle, PlatformResponse response)
     // FIXME: the win32 platform does not have PlatformResponse yet.
     ASSERT(response);
 #endif
-    req->cachedResource()->setPlatformResponse(response);
+    req->cachedResource()->setResponse(response);
 }
 
-void Loader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
+void Loader::didReceivedResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
     Request* req = m_requestsLoading.get(handle);
     ASSERT(req);
-    req->cachedResource()->setResponse(response);
+    req->cachedResource()->setExpireDate(response.expirationDate(), false);
     
     String encoding = response.textEncodingName();
     if (!encoding.isNull())

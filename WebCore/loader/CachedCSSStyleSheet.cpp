@@ -86,8 +86,12 @@ void CachedCSSStyleSheet::checkNotify()
         return;
 
     CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient *c = w.next())
-        c->setCSSStyleSheet(m_response.url().url(), m_decoder->encoding().name(), m_sheet);
+    while (CachedResourceClient *c = w.next()) {
+        if (m_response && !IsResponseURLEqualToURL(m_response, m_url))
+            c->setCSSStyleSheet(ResponseURL(m_response), m_decoder->encoding().name(), m_sheet);
+        else
+            c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
+    }
 }
 
 void CachedCSSStyleSheet::error()

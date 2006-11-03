@@ -109,7 +109,7 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     NSURL *oldURL = [request() URL];
     NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
-        clientRequest = m_handle->willSendRequest(clientRequest, redirectResponse);
+        m_handle->redirectedToURL([clientRequest URL]);
     return clientRequest;
 }
 

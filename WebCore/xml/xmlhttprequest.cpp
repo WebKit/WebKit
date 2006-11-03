@@ -507,9 +507,9 @@ void XMLHttpRequest::didFinishLoading(ResourceHandle* loader)
     }
 }
 
-void XMLHttpRequest::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void XMLHttpRequest::receivedRedirect(ResourceHandle*, const KURL& m_url)
 {
-    if (!urlMatchesDocumentDomain(request.url()))
+    if (!urlMatchesDocumentDomain(m_url))
         abort();
 }
 

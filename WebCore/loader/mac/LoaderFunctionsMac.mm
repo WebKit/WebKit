@@ -130,7 +130,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
         return;
     }
     
-    ASSERT(cachedResource->platformResponse());
+    ASSERT(cachedResource->response());
     
     // Notify the caller that we "loaded".
     FrameMac *frame = static_cast<FrameMac *>(loader->frame());
@@ -139,7 +139,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
         return;
         
     NSURLRequest *request = cachedResource->getNSURLRequest();
-    NSURLResponse *response = cachedResource->platformResponse();
+    NSURLResponse *response = cachedResource->response();
     NSData *data = cachedResource->allData();
     
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
@@ -196,14 +196,14 @@ bool ResponseIsMultipart(PlatformResponse response)
     return false;
 }
 
-void CachedResource::setPlatformResponse(PlatformResponse response)
+void CachedResource::setResponse(PlatformResponse response)
 {
     HardRetain(response);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    HardRelease(m_platformResponse);
+    HardRelease(m_response);
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    m_platformResponse = response;
+    m_response = response;
 }
 
 void CachedResource::setAllData(PlatformData allData)

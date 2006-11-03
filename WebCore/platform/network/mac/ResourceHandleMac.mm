@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #import "KURL.h"
 #import "LoaderFunctions.h"
 #import "Logging.h"
-#import "ResourceRequestMac.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
 #import "WebCoreFrameBridge.h"
@@ -105,19 +104,11 @@ void ResourceHandle::cancel()
     d->m_subresourceLoader->cancel();
 }
 
-NSURLRequest *ResourceHandle::willSendRequest(NSURLRequest *nsRequest, NSURLResponse* nsRedirectResponse)
+void ResourceHandle::redirectedToURL(NSURL *url)
 {
-    ASSERT(nsRequest);
-    if (ResourceHandleClient* c = client()) {
-        ResourceRequest request;
-        getResourceRequest(request, nsRequest);
-        ResourceResponse redirectResponse;
-        getResourceResponse(redirectResponse, nsRedirectResponse);
-        c->willSendRequest(this, request, redirectResponse);
-        return nsURLRequest(request);
-    }
-
-    return nsRequest;
+    ASSERT(url);
+    if (ResourceHandleClient* c = client())
+        c->receivedRedirect(this, KURL(url));
 }
 
 void ResourceHandle::addData(NSData *data)

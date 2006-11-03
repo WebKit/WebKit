@@ -1,3 +1,52 @@
+2006-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, fix for accidental commit.
+
+        - roll back some network changes accidentally committed with a previous patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::setExpireDate):
+        (WebCore::CachedResource::isExpired):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::response):
+        * loader/LoaderFunctions.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse):
+        (WebCore::Loader::didReceivedResponse):
+        * loader/loader.h:
+        * loader/mac/FormDataStream.h:
+        * loader/mac/FormDataStream.m:
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::CachedResource::setResponse):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::willSendRequest):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::receivedRedirect):
+        * platform/network/ResourceRequest.h:
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::redirectedToURL):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::receivedRedirect):
+        * xml/xmlhttprequest.h:
+
 2006-11-03  Anders Carlsson  <acarlsson@apple.com>
 
         Rubber-stamped by Oliver.

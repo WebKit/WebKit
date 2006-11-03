@@ -31,5 +31,4 @@
 namespace WebCore {
     class FormData;
     void setHTTPBody(NSMutableURLRequest *, const FormData&);
-    const FormData* httpBodyFromStream(NSInputStream* stream);
 }
