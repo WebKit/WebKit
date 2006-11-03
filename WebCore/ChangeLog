@@ -1,3 +1,10 @@
+2006-11-03  Anders Carlsson  <acarlsson@apple.com>
+
+        Build fix.
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, Beth.
