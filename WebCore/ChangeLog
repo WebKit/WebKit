@@ -1,3 +1,13 @@
+2006-11-02  Kevin Ollivier <kevino@theolliviers.com>
+
+        Reviewed by Geoff, landed by Anders.
+        
+        Fix dependency problems caused when running move-js-headers.sh
+        
+        * move-js-headers.sh:
+        Use cp -p instead of just cp so that the modification time
+        of the original files are used.
+
 2006-11-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Tim H, landed by Anders.
