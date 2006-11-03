@@ -86,6 +86,7 @@ namespace WebCore {
             , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
             , m_submitForm(0)
             , m_bMousePressed(false)
+            , m_beganSelectingText(false)
             , m_selectionController(thisFrame)
             , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
             , m_editor(thisFrame, client)
@@ -115,7 +116,6 @@ namespace WebCore {
             , m_inViewSourceMode(false)
             , frameCount(0)
             , m_prohibitsScrolling(false)
-            , m_beganSelectingText(false)
         {
         }
 
