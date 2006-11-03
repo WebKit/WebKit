@@ -36,6 +36,8 @@
 #include "Path.h"
 #include "Color.h"
 #include "GraphicsContext.h"
+#include "Font.h"
+#include "Pen.h"
 
 #include <QStack>
 #include <QPainter>
@@ -55,7 +57,7 @@
 
 namespace WebCore {
 
-static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
+static inline QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
 {
     switch (op) {
         case CompositeClear:
@@ -91,7 +93,7 @@ static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
     return QPainter::CompositionMode_SourceOver;
 }
 
-static Qt::PenCapStyle toQtLineCap(LineCap lc)
+static inline Qt::PenCapStyle toQtLineCap(LineCap lc)
 {
     switch (lc) {
         case ButtCap:
@@ -105,7 +107,7 @@ static Qt::PenCapStyle toQtLineCap(LineCap lc)
     return Qt::FlatCap;
 }
 
-static Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
+static inline Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
 {
     switch (lj) {
         case MiterJoin:
@@ -119,6 +121,31 @@ static Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
     return Qt::MiterJoin;
 }
 
+static Qt::PenStyle toQPenStyle(Pen::PenStyle style)
+{
+    switch (style) {
+    case Pen::NoPen:
+        return Qt::NoPen;
+        break;
+    case Pen::SolidLine:
+        return Qt::SolidLine;
+        break;
+    case Pen::DotLine:
+        return Qt::DotLine;
+        break;
+    case Pen::DashLine:
+        return Qt::DashLine;
+        break;
+    }
+    qWarning("couldn't recognize the pen style");
+    return Qt::NoPen;
+}
+
+static inline QPen penToQPen(const Pen& pen)
+{
+    return QPen(QColor(pen.color()), pen.width(), toQPenStyle(pen.style()));
+}
+
 struct TransparencyLayer
 {
     TransparencyLayer(const QPainter& p, int width, int height)
@@ -129,6 +156,10 @@ struct TransparencyLayer
         painter->setPen(p.pen());
         painter->setBrush(p.brush());
         painter->setMatrix(p.matrix());
+        painter->setOpacity(p.opacity());
+        painter->setFont(p.font());
+        painter->setCompositionMode(p.compositionMode());
+        painter->setClipPath(p.clipPath());
     }
 
     TransparencyLayer()
@@ -664,7 +695,7 @@ IntPoint GraphicsContext::origin()
     return IntPoint(qRound(m_data->p().matrix().dx()),
                     qRound(m_data->p().matrix().dy()));
 }
- 
+
 void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())
@@ -739,10 +770,10 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
 
     int topLeftRightHeightMax = qMax(topLeft.height(), topRight.height());
     int bottomLeftRightHeightMax = qMax(bottomLeft.height(), bottomRight.height());
-    
-    int topBottomLeftWidthMax = qMax(topLeft.width(), bottomLeft.width());  
+
+    int topBottomLeftWidthMax = qMax(topLeft.width(), bottomLeft.width());
     int topBottomRightWidthMax = qMax(topRight.width(), bottomRight.width());
-    
+
     // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
     path.addRect(QRectF(rect.x() + topLeft.width(),
                         rect.y(),
@@ -756,12 +787,12 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
                         rect.y() + topLeft.height(),
                         topBottomLeftWidthMax,
                         rect.height() - topLeft.height() - bottomLeft.height()));
-    
+
     path.addRect(QRectF(rect.right() - topBottomRightWidthMax,
                         rect.y() + topRight.height(),
                         topBottomRightWidthMax,
                         rect.height() - topRight.height() - bottomRight.height()));
-    
+
     path.addRect(QRectF(rect.x() + topBottomLeftWidthMax,
                         rect.y() + topLeftRightHeightMax,
                         rect.width() - topBottomLeftWidthMax - topBottomRightWidthMax,
@@ -782,6 +813,21 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
     notImplemented();
+}
+
+void GraphicsContext::setPlatformFont(const Font& aFont)
+{
+    m_data->p().setFont(aFont);
+}
+
+void GraphicsContext::setPlatformPen(const Pen& pen)
+{
+    m_data->p().setPen(penToQPen(pen));
+}
+
+void GraphicsContext::setPlatformFillColor(const Color& color)
+{
+    m_data->p().setBrush(QBrush(color));
 }
 
 #ifdef SVG_SUPPORT

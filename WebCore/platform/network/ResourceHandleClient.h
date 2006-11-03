@@ -74,6 +74,7 @@ namespace WebCore {
 
     class KURL;
     class ResourceHandle;
+    class ResourceRequest;
     class ResourceResponse;
 
     class ResourceHandleClient {
@@ -81,7 +82,7 @@ namespace WebCore {
         virtual ~ResourceHandleClient() { }
 
         // request may be modified
-        // void willSendRequest(ResourceHandle*, Request&, const ResourceResonse& redirectResponse) { }
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) { }
     
         // void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         // void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
@@ -95,7 +96,6 @@ namespace WebCore {
         // void willCacheResponse(ResourceHandle*, CachedResourceResponse&) { }
 
         // old-style methods
-        virtual void receivedRedirect(ResourceHandle*, const KURL&) { }
         virtual void receivedResponse(ResourceHandle*, PlatformResponse) { }
         virtual void receivedAllData(ResourceHandle*, PlatformData) { }
     };

@@ -1,3 +1,38 @@
+2006-11-03  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Hyatt. Landed by Maciej.
+
+        Adding setPlatformPen/setPlatformFont/setPlatformFillColor
+        to graphics context to be able to set consistant state
+        on the platform specific painter without having to change
+        fill/stroke/font on every operation. This fixes color/stroke/fill
+        and font handling in the Qt port.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setFont):
+        (WebCore::GraphicsContext::setPen):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::setPlatformPen):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformFont):
+        * platform/graphics/GraphicsContext.h:
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+        (WebCore::toQtLineCap):
+        (WebCore::toQtLineJoin):
+        (WebCore::toQPenStyle):
+        (WebCore::penToQPen):
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::setPlatformFont):
+        (WebCore::GraphicsContext::setPlatformPen):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        (WebCore::ScrollViewCanvasQt::paintEvent):
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+        * platform/qt/ScrollViewCanvasQt.h:
+
 2006-11-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

@@ -41,8 +41,9 @@ namespace WebCore {
 
 class ScrollView;
 
-class ScrollViewCanvasQt : public QWidget {
-Q_OBJECT
+class ScrollViewCanvasQt : public QWidget
+{
+    Q_OBJECT
 public:
     ScrollViewCanvasQt(ScrollView*, QWidget* parent = 0);
 

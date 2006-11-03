@@ -103,6 +103,7 @@ const Font& GraphicsContext::font() const
 void GraphicsContext::setFont(const Font& aFont)
 {
     m_common->state.font = aFont;
+    setPlatformFont(aFont);
 }
 
 const Pen& GraphicsContext::pen() const
@@ -113,6 +114,7 @@ const Pen& GraphicsContext::pen() const
 void GraphicsContext::setPen(const Pen& pen)
 {
     m_common->state.pen = pen;
+    setPlatformPen(pen);
 }
 
 void GraphicsContext::setPen(Pen::PenStyle style)
@@ -120,6 +122,7 @@ void GraphicsContext::setPen(Pen::PenStyle style)
     m_common->state.pen.setStyle(style);
     m_common->state.pen.setColor(Color::black);
     m_common->state.pen.setWidth(0);
+    setPlatformPen(m_common->state.pen);
 }
 
 void GraphicsContext::setPen(RGBA32 rgb)
@@ -127,11 +130,13 @@ void GraphicsContext::setPen(RGBA32 rgb)
     m_common->state.pen.setStyle(Pen::SolidLine);
     m_common->state.pen.setColor(rgb);
     m_common->state.pen.setWidth(0);
+    setPlatformPen(m_common->state.pen);
 }
 
 void GraphicsContext::setFillColor(const Color& color)
 {
     m_common->state.fillColor = color;
+    setPlatformFillColor(color);
 }
 
 Color GraphicsContext::fillColor() const
@@ -292,5 +297,19 @@ void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const In
 
     image->drawTiled(this, dest, srcRect, hRule, vRule, op);
 }
+
+#if !PLATFORM(QT)
+void GraphicsContext::setPlatformPen(const Pen&)
+{
+}
+
+void GraphicsContext::setPlatformFillColor(const Color&)
+{
+}
+
+void GraphicsContext::setPlatformFont(const Font&)
+{
+}
+#endif
 
 }

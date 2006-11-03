@@ -47,11 +47,12 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 
+
 namespace WebCore {
 
 ScrollViewCanvasQt::ScrollViewCanvasQt(ScrollView* frameView, QWidget* parent)
-    : QWidget(parent)
-    , m_frameView(frameView)
+    : QWidget(parent),
+      m_frameView(frameView)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -154,7 +155,7 @@ void ScrollViewCanvasQt::handleKeyEvent(QKeyEvent* ev, bool isKeyUp)
 
             handled = true;
         }
-        
+
         // FIXME: doScroll stuff()!
     }
 }
