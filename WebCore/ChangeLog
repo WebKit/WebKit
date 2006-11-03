@@ -1,3 +1,13 @@
+2006-11-02  Eike Preuss  <mail@eikepreuss.de>
+
+        Reviewed by Maciej, landed by Anders.
+
+        * platform/qt/ScrollViewQt.cpp: Fix translation of coordinates between
+        content and window. ScrollViewQt already receives correct content
+        coordinates from QScrollArea.
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::windowToContents):
+
 2006-11-02  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Maciej, landed by Anders
