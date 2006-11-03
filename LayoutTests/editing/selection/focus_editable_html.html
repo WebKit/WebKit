@@ -1,4 +1,9 @@
 <html id="hElem" contenteditable=true>
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+
 <body onload="document.getElementById('hElem').focus()">
 This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element.
 <br> If the document doesn't scroll, test passes.<br>

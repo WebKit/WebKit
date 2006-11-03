@@ -1,6 +1,11 @@
 <html>
 <head>
 <script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+
+<script>
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");

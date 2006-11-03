@@ -37,4 +37,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 63: "foobarbaz"
         RenderBlock (anonymous) at (0,54) size 784x0
       RenderBlock {UL} at (0,104) size 784x0
-caret: position 9 of child 0 {#text} of child 2 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 9 of child 0 {#text} of child 2 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

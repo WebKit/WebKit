@@ -1,4 +1,3 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:(null) affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 
 Results:
 1) Make sure onChange fires when clicking

@@ -1,3 +1,29 @@
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Justin Garcia.
+        
+        Made dumping of editing callbacks opt-in, so that editing spew doesn't 
+        cloud non-editing tests.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController shouldDumpEditingCallbacks]):
+        (runTest):
+        * DumpRenderTree/EditingDelegate.m:
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+        (-[EditingDelegate webViewDidChangeSelection:]):
+
 2006-11-02  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej, landed by Anders.

@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This demonstrates a bug in interchange newline handling during paste.  The selection being pasted into spans multiple blocks, which breaks the old code in paste that handled interchange newlines.</p>
 
 <div id="test" contenteditable="true"><div>foo</div>bar</div>

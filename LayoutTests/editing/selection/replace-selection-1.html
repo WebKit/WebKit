@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests for a bug when a selection is replaced by content with selectReplacement == true.  Below, you should see 'A new link' and  'link' should be selected.</p>
 <div id="test" contenteditable="true">A new link</div>
 

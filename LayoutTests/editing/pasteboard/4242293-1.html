@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests to make sure that createMarkup puts an interchange newline on the pasteboard for a selection ending at the end of a block.  Both regions below should have contents that are identical.</p>
 
 <div id="copy" contenteditable="true"><div><div>foo</div>bar</div>baz</div>

@@ -31,6 +31,8 @@
 
 #import <WebKit/WebKit.h>
 
+extern BOOL shouldDumpEditingCallbacks;
+
 @interface DOMNode (dumpPath)
 - (NSString *)dumpPath;
 @end
@@ -72,13 +74,15 @@
 
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
 {
-    printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", [[range dump] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range
 {
-    printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", [[range dump] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
@@ -90,7 +94,8 @@
         "WebViewInsertActionDropped",
     };
 
-    printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", [[node dumpPath] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", [[node dumpPath] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
     return acceptsEditing;
 }
 
@@ -102,13 +107,15 @@
         "WebViewInsertActionDropped",
     };
 
-    printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", [[text description] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", [[text description] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range
 {
-    printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", [[range dump] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
@@ -123,45 +130,52 @@
         "TRUE"
     };
 
-    printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", [[currentRange dump] UTF8String], [[proposedRange dump] UTF8String], affinitystring[selectionAffinity], boolstring[flag]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", [[currentRange dump] UTF8String], [[proposedRange dump] UTF8String], affinitystring[selectionAffinity], boolstring[flag]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
-    printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n", [[style description] UTF8String], [[range dump] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n", [[style description] UTF8String], [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
 {
-    printf("EDITING DELEGATE: shouldChangeTypingStyle:%s toStyle:%s\n", [[currentStyle description] UTF8String], [[proposedStyle description] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldChangeTypingStyle:%s toStyle:%s\n", [[currentStyle description] UTF8String], [[proposedStyle description] UTF8String]);
     return acceptsEditing;
 }
 
 - (void)webViewDidBeginEditing:(NSNotification *)notification
 {
-    printf("EDITING DELEGATE: webViewDidBeginEditing:%s\n", [[notification name] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidBeginEditing:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChange:(NSNotification *)notification
 {
-    printf("EDITING DELEGATE: webViewDidChange:%s\n", [[notification name] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidChange:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidEndEditing:(NSNotification *)notification
 {
-    printf("EDITING DELEGATE: webViewDidEndEditing:%s\n", [[notification name] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidEndEditing:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChangeTypingStyle:(NSNotification *)notification
 {
-    printf("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n", [[notification name] UTF8String]);
+    if (shouldDumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChangeSelection:(NSNotification *)notification
 {
-    if (!doneLoading())
+    if (!doneLoading() && shouldDumpEditingCallbacks)
         printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", [[notification name] UTF8String]);
 }
 

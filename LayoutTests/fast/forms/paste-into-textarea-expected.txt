@@ -1,7 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV to 1 of #text > DIV toDOMRange:range from 57 of #text > DIV to 57 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This tests for a bug where text pasted into a textarea would appear one character before the position where it was pasted.
 
 

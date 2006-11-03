@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.</p>
 <div id="test" contenteditable="true"><div style="border: 1px solid red;">This x</div><div style="border: 1px solid blue;">x it.</div></div>
 

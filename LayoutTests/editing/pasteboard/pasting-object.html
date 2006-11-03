@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <body>
 <p>This tests for a bug where attachments dragged into Mail documents blew all content after the position being pasted into.  You should see "Hello[black box] World!" below.</p>
 <div id="test" contenteditable="true">Hello World!</div>

@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is empty, the blockquote should just move up.</p>
 <div contenteditable="true"><div><br></div><blockquote style="margin: 0px; padding-left: 25px; border-left: 3px solid blue; color: blue;" type="cite"><span id="test">foo</span></blockquote></div>
 

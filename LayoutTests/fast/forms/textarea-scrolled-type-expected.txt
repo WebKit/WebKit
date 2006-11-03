@@ -1,20 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 44 of #text > DIV to 44 of #text > DIV toDOMRange:range from 45 of #text > DIV to 45 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 45 of #text > DIV to 45 of #text > DIV toDOMRange:range from 46 of #text > DIV to 46 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 46 of #text > DIV to 46 of #text > DIV toDOMRange:range from 47 of #text > DIV to 47 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 47 of #text > DIV to 47 of #text > DIV toDOMRange:range from 48 of #text > DIV to 48 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 48 of #text > DIV to 48 of #text > DIV toDOMRange:range from 49 of #text > DIV to 49 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

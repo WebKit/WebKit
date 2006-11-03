@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests a change made with the fix for 8145.  The paragraph separator inserted to prevent nesting blocks from the fragment to paste inside the block where the paste occured was not being inserted when the fragment had an interchange newline at the end.</p>
 <div id="test" style="border: 1px solid black;" contenteditable="true"></div>
 

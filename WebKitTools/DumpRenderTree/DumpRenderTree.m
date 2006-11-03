@@ -88,6 +88,7 @@
 
 BOOL windowIsKey = YES;
 WebFrame *frame = 0;
+BOOL shouldDumpEditingCallbacks;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -717,6 +718,7 @@ static void dump(void)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
+            || aSelector == @selector(dumpEditingCallbacks)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
@@ -813,6 +815,11 @@ static void dump(void)
 - (void)dumpChildFrameScrollPositions
 {
     dumpChildFrameScrollPositions = YES;
+}
+
+- (void)dumpEditingCallbacks
+{
+    shouldDumpEditingCallbacks = YES;
 }
 
 - (void)setWindowIsKey:(BOOL)flag
@@ -959,6 +966,7 @@ static void runTest(const char *pathOrURL)
     waitToDump = NO;
     dumpAsText = NO;
     dumpChildFrameScrollPositions = NO;
+    shouldDumpEditingCallbacks = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
     dumpBackForwardList = NO;

@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests for a bug where pasted content starting with an interchange newline would end up outside of the editable region where it was pasted.  You should see 'foo\nbar' below.</p>
 <div id="test" contenteditable="true">foo</div>
 non-editable

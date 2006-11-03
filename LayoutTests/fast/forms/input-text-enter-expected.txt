@@ -1,4 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 This test selects some characters, then simulates a press of the Enter key (marked Return on Macintosh keyboards).
 
 

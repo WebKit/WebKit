@@ -1,6 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 This tests that the selection is restored when a text field's value changes.
 
 If this test succeeded, you should see a line saying "4, 4" below.

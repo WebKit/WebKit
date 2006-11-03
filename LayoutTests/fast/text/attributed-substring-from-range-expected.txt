@@ -1,15 +1,3 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 4 of BODY > HTML > #document
-EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > B > BODY > HTML > #document to 1 of #text > I > B > BODY > HTML > #document toDOMRange:range from 1 of #text > I > B > BODY > HTML > #document to 3 of #text > I > B > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 Testing styled text (12<b>3<i>456</i></b>)
 (0, 0): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
 (0, 2): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }

@@ -1,11 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV to 5 of #text > DIV toDOMRange:range from 8 of #text > DIV to 8 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV to 8 of #text > DIV toDOMRange:range from 6 of #text > DIV to 10 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 
 This tests onSelect for text fields. 
 

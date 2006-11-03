@@ -703,6 +703,9 @@ function forwardDeleteCommand() {
 //-------------------------------------------------------------------------------------------------------
 
 function runEditingTest() {
+    if (window.layoutTestController)
+        layoutTestController.dumpEditingCallbacks();
+    
     var elem = document.getElementById("test");
     var selection = window.getSelection();
     selection.setPosition(elem, 0);

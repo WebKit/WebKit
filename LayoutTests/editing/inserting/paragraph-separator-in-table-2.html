@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests InsertParagraphSeparator inside table cells.  The first cell should contain 'Cell' and a newline, and the second cell should contain 'Two'.</p>
 
 <div contenteditable="true"><table border="1"><tr><td>Cell <span id="start">One</span></td><td><span id="end">Cell</span> Two</td></tr></table></div>

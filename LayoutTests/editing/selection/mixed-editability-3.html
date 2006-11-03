@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This tests moving the caret forward through content of mixed editability.  The caret should move down one line from the editable piece to the editable piece that's embedded in a non-editable piece.</p>
 
 <div contenteditable="true" id="test">

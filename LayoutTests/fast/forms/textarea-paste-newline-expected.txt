@@ -1,17 +1,1 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV to 4 of #text > DIV
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldInsertText:abc
- replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV to 4 of #text > DIV toDOMRange:range from 4 of #text > DIV to 4 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertText:abc
- replacingDOMRange:range from 0 of #text > DIV to 0 of #text > DIV givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV to 4 of #text > DIV toDOMRange:range from 4 of #text > DIV to 4 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 Hooray, the test was successful!

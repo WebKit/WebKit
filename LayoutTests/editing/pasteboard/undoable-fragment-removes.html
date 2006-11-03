@@ -1,3 +1,7 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
 <p>This is a testcase for 8193, hitting an assert inside RemoveNodeCommand on Undo Paste.  Both editable regions below should look the same after the test.</p>
 <hr>
 <div style="border: 1px solid black;" id="copy" contenteditable="true">

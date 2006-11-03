@@ -1,6 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 20 of #text > DIV to 20 of #text > DIV toDOMRange:range from 17 of #text > DIV to 17 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 
 Test Succeeded
 

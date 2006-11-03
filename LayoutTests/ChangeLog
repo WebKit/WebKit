@@ -1,5 +1,23 @@
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Justin Garcia.
+        
+        Used a PERL script to add calls to opt into dumping of editing callbacks
+        in all editing tests that didn't do so already. This is required now that 
+        dumping of editing callbacks is opt-in.
+        
+        Updated editing.js so that any test that calls runEditingTest() opt into
+        dumping of editing callbacks.
+        
+        Updated results in all non-editing tests to remove dumping of editing callbacks.
+        
+        Updated results in all editing tests to reflect minor DOM changes due to new
+        <script> elements.
+        
+        [ many tests and results modified ]
+
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
         Updated results because they were incorrect when checked in. (We never
         passed this test.)
         

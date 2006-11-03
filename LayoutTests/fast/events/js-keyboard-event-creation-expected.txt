@@ -1,4 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 
 This tests that DOMKeyboardEvents are created correctly in the JavaScript API.
 

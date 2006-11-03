@@ -29,8 +29,6 @@ event type:      selectstart
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 event type:      mouseup
   target:        <div>
   eventPhase:    3
@@ -197,8 +195,6 @@ event type:      selectstart
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 event type:      mousedown
   target:        <div>
   eventPhase:    3
@@ -217,8 +213,6 @@ event type:      selectstart
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 event type:      mouseout
   target:        <div>
   eventPhase:    3
@@ -265,7 +259,6 @@ event type:      selectstart
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 event type:      mouseup
   target:        <html>
   eventPhase:    3

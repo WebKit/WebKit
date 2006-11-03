@@ -1,8 +1,3 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document toDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document toDOMRange:range from 3 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
