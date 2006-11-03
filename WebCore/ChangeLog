@@ -1,5 +1,14 @@
 2006-11-03  Anders Carlsson  <acarlsson@apple.com>
 
+        Rubber-stamped by Oliver.
+
+        Remove these, they have been merged with SVGRenderTreeAsText.
+        
+        * rendering/SVGRenderAsText.cpp: Removed.
+        * rendering/SVGRenderAsText.h: Removed.
+
+2006-11-03  Anders Carlsson  <acarlsson@apple.com>
+
         Build fix.
         
         * platform/network/cf/ResourceHandleCFNet.cpp:
