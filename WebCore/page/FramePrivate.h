@@ -115,6 +115,7 @@ namespace WebCore {
             , m_inViewSourceMode(false)
             , frameCount(0)
             , m_prohibitsScrolling(false)
+            , m_beganSelectingText(false)
         {
         }
 

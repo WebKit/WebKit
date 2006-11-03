@@ -1,3 +1,13 @@
+2006-11-02  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Geoff, landed by Anders.
+
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=11471
+        Initializing variable in constructor.
+
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+
 2006-11-02  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
