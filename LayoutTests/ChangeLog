@@ -1,3 +1,22 @@
+2006-11-02  W. Andy Carrel  <wac@google.com>
+
+        Reviewed by Maciej, landed by Anders.
+        
+        Adding tests for Unicode RegExp behavior to match IE and Firefox.
+        * fast/js/regexp-unicode-handling-expected.txt: Added.
+        * fast/js/regexp-unicode-handling.html: Added.
+        * fast/js/resources/regexp-unicode-handling.js: Added.
+
+2006-11-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej, landed by Anders.
+
+        Test for bugs 7253 and 7445, based on reductions made by Parag Shah and W. Andy Carrel.
+
+        * fast/js/gmail-re-re-expected.txt: Added.
+        * fast/js/gmail-re-re.html: Added.
+        * fast/js/resources/gmail-re-re.js: Added.
+
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         Updated results to fix failure seen when running layout tests. Justin 
