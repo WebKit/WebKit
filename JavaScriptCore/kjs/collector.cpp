@@ -332,10 +332,11 @@ void Collector::markCurrentThreadConservatively()
         // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
         pthread_getattr_np(thread, &sattr);
 #endif
-        // Should work but fails on Linux (?)
-        //  pthread_attr_getstack(&sattr, &stackBase, &stackSize);
-        pthread_attr_getstackaddr(&sattr, &stackBase);
+        size_t stackSize;
+        int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
+        (void)rc; // FIXME: deal with error code somehow?  seems fatal...
         assert(stackBase);
+        stackBase = (void*)(size_t(stackBase) + stackSize);
         stackThread = thread;
     }
 #else
