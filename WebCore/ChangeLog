@@ -1,3 +1,15 @@
+2006-11-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=9581
+        REGRESSION: The new NativeTextArea scrolls to the top when the control is unfocused.
+
+        Test: fast/forms/textarea-no-scroll-on-blur.html
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::forwardEvent):
+          On blur, only scroll back to the start for text fields.
+
 2006-11-02  Anders Carlsson  <acarlsson@apple.com>
 
         Another build fix.

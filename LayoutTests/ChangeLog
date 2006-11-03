@@ -1,3 +1,13 @@
+2006-11-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=9581
+        REGRESSION: The new NativeTextArea scrolls to the top when the control is unfocused.
+
+        * fast/forms/textarea-no-scroll-on-blur-expected.txt: Added.
+        * fast/forms/textarea-no-scroll-on-blur.html: Added.
+
 2006-11-02  W. Andy Carrel  <wac@google.com>
 
         Reviewed by Maciej, landed by Anders.

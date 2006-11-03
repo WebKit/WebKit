@@ -1,0 +1,6 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests that we don't scroll back to the top when leaving a textarea 
+
+Test Passed
+
