@@ -424,7 +424,8 @@ NSURLResponse *ResourceLoader::response() const
     return m_response.get();
 }
 
-bool ResourceLoader::inConnectionCallback()
+// FIXME: We should move this to ResourceHandle, once it implements all the connection callbacks
+bool ResourceLoader::loadsBlocked()
 {
     return inNSURLConnectionCallback != 0;
 }

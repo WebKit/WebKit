@@ -1,3 +1,26 @@
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, Beth.
+        
+        First cut at factoring Page's UIDelegate-related functions into Chrome
+        and ChromeClient.
+
+        Layout tests pass.
+        
+        * bridge/mac/PageMac.mm: Removed platform-specific constructor, added
+        setBridge method to replace it.
+        (WebCore::Page::setBridge):
+
+        * bridge/mac/WebCorePageBridge.h: Simplified some things based on the fact
+        that WebCorePageBridge.h doesn't need to be included by ObjC-only files,
+        and, now that it uses PassRefPtr, can't be.
+        
+        * page/Chrome.cpp: Added. Code copied and converted to c++ from WebCorePageBridge.mm.
+
+        * page/Page.h:
+        (WebCore::Page::dragCaretController): Made this function non-const so that
+        m_dragCaretController doesn't have to be mutable.
+
 2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Adele.

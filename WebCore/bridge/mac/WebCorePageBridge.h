@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <wtf/PassRefPtr.h>
+
 // WebCorePageBridge is used to bridge between Page in WebCore and
 // WebView in WebKit. It is a two-way bridge, with subclasses expected
 // to implement a protocol of bridging methods.
 
-#ifdef __cplusplus
-namespace WebCore { class Page; }
-typedef WebCore::Page WebCorePage;
-#else
-@class WebCorePage;
-#endif
+namespace WebCore { 
+    class ChromeClient;
+    class Page;
+}
 
 #ifdef __OBJC__
 @class WebCoreFrameBridge;
@@ -45,9 +45,10 @@ class WebCoreFrameBridge;
 
 @interface WebCorePageBridge : NSObject
 {
-    WebCorePage *_page;
+    WebCore::Page* _page;
     BOOL _closed;
 }
+- (id)initWithChromeClient:(PassRefPtr<WebCore::ChromeClient>)chromeClient;
 - (void)close;
 
 - (void)setMainFrame:(WebCoreFrameBridge *)mainFrame;
@@ -70,9 +71,6 @@ class WebCoreFrameBridge;
 
 - (WebCorePageBridge *)createModalDialogWithURL:(NSURL *)URL referrer:(NSString *)referrer;
 
-- (BOOL)canRunModal;
-- (BOOL)canRunModalNow;
-- (void)runModal;
 @end
 
 // This interface definition allows those who hold a WebCorePageBridge * to call all the methods
@@ -86,5 +84,5 @@ class WebCoreFrameBridge;
 // Could move this to another header, but would be a pity to create an entire header just for that.
 
 @interface WebCorePageBridge (WebCoreInternalUse)
-- (WebCorePage *)impl;
+- (WebCore::Page*)impl;
 @end

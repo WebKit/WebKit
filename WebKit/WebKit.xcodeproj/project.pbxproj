@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
+		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
 		1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0706620A431E01001078F6 /* WebScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C07073D0A433BD8001078F6 /* WebScriptDebugServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C07073C0A433BD8001078F6 /* WebScriptDebugServer.m */; };
 		1C07079A0A433E22001078F6 /* WebScriptDebugServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0707990A433E22001078F6 /* WebScriptDebugServerPrivate.h */; };
@@ -280,6 +282,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
+		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
 		1C0706620A431E01001078F6 /* WebScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugServer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C07073C0A433BD8001078F6 /* WebScriptDebugServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebScriptDebugServer.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C0707990A433E22001078F6 /* WebScriptDebugServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugServerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -935,6 +939,8 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				14D8252D0AF955090004F057 /* WebChromeClient.h */,
+				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
 				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
 				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
@@ -1189,6 +1195,7 @@
 				1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */,
 				656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */,
 				931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */,
+				14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1413,6 +1420,7 @@
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */,
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
+				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

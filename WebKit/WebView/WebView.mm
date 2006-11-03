@@ -93,6 +93,7 @@
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/Page.h>
+#import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSettings.h>

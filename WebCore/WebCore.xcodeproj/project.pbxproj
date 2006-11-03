@@ -48,6 +48,9 @@
 		14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */; };
 		14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */; };
 		14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */; };
+		14D823520AF92A790004F057 /* Chrome.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D823500AF92A790004F057 /* Chrome.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D8238A0AF92DF60004F057 /* Chrome.cpp */; };
+		14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D824060AF93AEB0004F057 /* ChromeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DC0D3509FED073007B0235 /* JSNode.cpp */; };
 		14DC0D3809FED073007B0235 /* JSNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DC0D3609FED073007B0235 /* JSNode.h */; };
 		14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E8378309F85D1C00B85AE4 /* JSEvent.cpp */; };
@@ -2925,6 +2928,9 @@
 		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
 		14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = KeyboardEvent.idl; sourceTree = "<group>"; };
 		14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_domnode.h; sourceTree = "<group>"; };
+		14D823500AF92A790004F057 /* Chrome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chrome.h; sourceTree = "<group>"; };
+		14D8238A0AF92DF60004F057 /* Chrome.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Chrome.cpp; sourceTree = "<group>"; };
+		14D824060AF93AEB0004F057 /* ChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChromeClient.h; sourceTree = "<group>"; };
 		14DC0D0B09FECFA4007B0235 /* Node.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Node.idl; sourceTree = "<group>"; };
 		14DC0D3509FED073007B0235 /* JSNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNode.cpp; sourceTree = "<group>"; };
 		14DC0D3609FED073007B0235 /* JSNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNode.h; sourceTree = "<group>"; };
@@ -6496,6 +6502,9 @@
 				93E22A6E0AF5E94100D48324 /* PageState.cpp */,
 				65D1C1C909932B22000CB324 /* Plugin.h */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
+				14D823500AF92A790004F057 /* Chrome.h */,
+				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
+				14D824060AF93AEB0004F057 /* ChromeClient.h */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -10527,6 +10536,8 @@
 				B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */,
 				B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
+				14D823520AF92A790004F057 /* Chrome.h in Headers */,
+				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10561,7 +10572,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10576,7 +10586,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11774,6 +11783,7 @@
 				B2A015B70AF6CD53006BCE0E /* SVGResourceMarker.cpp in Sources */,
 				B2A015B90AF6CD53006BCE0E /* SVGResourceMasker.cpp in Sources */,
 				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
+				14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

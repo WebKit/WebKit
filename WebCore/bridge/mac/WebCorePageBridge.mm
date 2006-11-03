@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCorePageBridge.h"
 
+#import "ChromeClient.h"
 #import "FrameMac.h"
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
@@ -67,12 +68,14 @@ static void initializeLoggingChannelsIfNecessary()
     initializeLogChannel(LogSpellingAndGrammar);
 }
 
-- (id)init
+- (id)initWithChromeClient:(PassRefPtr<ChromeClient>)chromeClient
 {
     initializeLoggingChannelsIfNecessary();
     self = [super init];
-    if (self)
-        _page = new Page(self);
+    if (self) {
+        _page = new Page(chromeClient);
+        _page->setBridge(self);
+    }
     return self;
 }
 

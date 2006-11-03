@@ -18,33 +18,33 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#import "config.h"
-#import "Page.h"
+#ifndef Chrome_h
+#define Chrome_h
 
-#import "BlockExceptions.h"
-#import "Frame.h"
-#import "FloatRect.h"
-#import "Screen.h"
-#import "WebCorePageBridge.h"
+#include "ChromeClient.h"
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-void Page::setBridge(WebCorePageBridge* bridge)
-{
-    m_bridge = bridge;
+    class Page;
+    
+    class Chrome {
+    public:
+        Chrome(Page* page, PassRefPtr<ChromeClient> client)
+            : m_page(page)
+            , m_client(client)
+        {
+        }
+        
+        bool canRunModal();
+        bool canRunModalNow();
+        void runModal();
+
+    private:
+        Page* m_page;
+        RefPtr<ChromeClient> m_client;
+    };
 }
 
-// These methods scale between window and WebView coordinates because JavaScript/DOM operations 
-// assume that the WebView and the window share the same coordinate system.
-
-FloatRect Page::windowRect() const
-{
-    return scaleScreenRectToPageCoordinates(flipScreenRect([bridge() windowFrame]), this);
-}
-
-void Page::setWindowRect(const FloatRect& r)
-{
-    [bridge() setWindowFrame:flipScreenRect(scalePageRectToScreenCoordinates(r, this))];
-}
-
-} // namespace WebCore
+#endif // Chrome_h

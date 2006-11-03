@@ -18,33 +18,21 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#import "config.h"
-#import "Page.h"
+#ifndef ChromeClient_h
+#define ChromeClient_h
 
-#import "BlockExceptions.h"
-#import "Frame.h"
-#import "FloatRect.h"
-#import "Screen.h"
-#import "WebCorePageBridge.h"
+#include "Shared.h"
 
 namespace WebCore {
 
-void Page::setBridge(WebCorePageBridge* bridge)
-{
-    m_bridge = bridge;
+    class ChromeClient : public Shared<ChromeClient> {
+    public:
+        virtual ~ChromeClient() { }
+        
+        virtual bool canRunModal() = 0;
+        virtual void runModal() = 0;
+    };
+
 }
 
-// These methods scale between window and WebView coordinates because JavaScript/DOM operations 
-// assume that the WebView and the window share the same coordinate system.
-
-FloatRect Page::windowRect() const
-{
-    return scaleScreenRectToPageCoordinates(flipScreenRect([bridge() windowFrame]), this);
-}
-
-void Page::setWindowRect(const FloatRect& r)
-{
-    [bridge() setWindowFrame:flipScreenRect(scalePageRectToScreenCoordinates(r, this))];
-}
-
-} // namespace WebCore
+#endif // ChromeClient_h

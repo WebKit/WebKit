@@ -1,3 +1,16 @@
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, Beth.
+
+        First cut at factoring Page's UIDelegate-related functions into Chrome
+        and ChromeClient.
+
+        Layout tests pass.
+        
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebPageBridge.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-11-02  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.

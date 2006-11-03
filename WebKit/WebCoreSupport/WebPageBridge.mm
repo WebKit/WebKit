@@ -28,6 +28,7 @@
 
 #import "WebPageBridge.h"
 
+#import "WebChromeClient.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameView.h"
@@ -38,8 +39,9 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Page.h>
-#import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebCore/ResourceLoader.h>
+#import <WebCore/WebCoreFrameNamespaces.h>
+#import <wtf/Forward.h>
 
 using namespace WebCore;
 
@@ -47,7 +49,7 @@ using namespace WebCore;
 
 - (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView
 {
-    self = [super init];
+    self = [super initWithChromeClient:WebChromeClient::create(webView)];
     if (self) {
         _webView = webView;
         WebFrameBridge *mainFrame = [[WebFrameBridge alloc] initMainFrameWithPage:self frameName:frameName view:frameView];
@@ -101,49 +103,6 @@ using namespace WebCore;
         newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:_webView createWebViewWithRequest:request];
 
     return [newWebView _pageBridge];
-}
-
-- (BOOL)canRunModal
-{
-    return [[_webView UIDelegate] respondsToSelector:@selector(webViewRunModal:)];
-}
-
-- (BOOL)canRunModalNow
-{
-    return [self canRunModal] && !ResourceLoader::inConnectionCallback();
-}
-
-- (void)runModal
-{
-    if (![self canRunModal])
-        return;
-
-    if (_page->defersLoading()) {
-        LOG_ERROR("tried to run modal in a view when it was deferring loading -- should never happen");
-        return;
-    }
-
-    // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
-    // in a way that could interact with this view.
-    Vector<Page*> pagesToDefer;
-    if (const HashSet<Page*>* group = _page->frameNamespace()) {
-        HashSet<Page*>::const_iterator end = group->end();
-        for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
-            Page* otherPage = *it;
-            if (otherPage != _page && !otherPage->defersLoading())
-                pagesToDefer.append(otherPage);
-        }
-    }
-    size_t count = pagesToDefer.size();
-    for (size_t i = 0; i < count; ++i)
-        pagesToDefer[i]->setDefersLoading(true);
-
-    // Go run the modal event loop.
-    [[_webView UIDelegate] webViewRunModal:_webView];
-
-    // Restore loading for any views that we shut down.
-    for (size_t i = 0; i < count; ++i)
-        pagesToDefer[i]->setDefersLoading(false);
 }
 
 @end

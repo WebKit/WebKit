@@ -22,7 +22,6 @@
 #define Page_h
 
 #include "PlatformString.h"
-#include "SelectionController.h"
 #include <wtf/HashSet.h>
 
 #if PLATFORM(MAC)
@@ -40,14 +39,18 @@ typedef struct HINSTANCE__* HINSTANCE;
 
 namespace WebCore {
 
+    class Chrome;
+    class ChromeClient;
     class Frame;
     class FrameNamespace;
     class FloatRect;
     class Settings;
+    class SelectionController;
     class Widget;
 
     class Page : Noncopyable {
     public:
+        Page(PassRefPtr<ChromeClient>);
         ~Page();
 
         void setMainFrame(PassRefPtr<Frame>);
@@ -69,22 +72,18 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
-        SelectionController* dragCaretController() const;
-
-        bool canRunModal();
-        bool canRunModalNow();
-        void runModal();
+        SelectionController* dragCaretController() { return m_dragCaretController; }
+        Chrome* chrome() { return m_chrome; }
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
 
 #if PLATFORM(MAC)
-        Page(WebCorePageBridge*);
+        void setBridge(WebCorePageBridge* bridge);
         WebCorePageBridge* bridge() const { return m_bridge; }
 #endif
 
 #if PLATFORM(WIN)
-        Page();
         // The global DLL or application instance used for all windows.
         static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
         static HINSTANCE instanceHandle() { return s_instanceHandle; }
@@ -93,12 +92,15 @@ namespace WebCore {
     private:
         void init();
 
+        SelectionController* m_dragCaretController;
+        Chrome* m_chrome;
+
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
         String m_groupName;
-        mutable SelectionController m_dragCaretController;
 
         bool m_defersLoading;
+
 #if PLATFORM(MAC)
         WebCorePageBridge* m_bridge;
 #endif

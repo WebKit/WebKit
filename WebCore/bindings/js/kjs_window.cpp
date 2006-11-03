@@ -23,6 +23,7 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "Chrome.h"
 #include "CString.h"
 #include "DOMWindow.h"
 #include "Element.h"
@@ -594,14 +595,14 @@ static Frame* createNewWindow(ExecState* exec, Window* openerWindow, const Depre
 static bool canShowModalDialog(const Window *window)
 {
     if (Frame* frame = window->frame())
-        return frame->page()->canRunModal();
+        return frame->page()->chrome()->canRunModal();
     return false;
 }
 
 static bool canShowModalDialogNow(const Window *window)
 {
     if (Frame* frame = window->frame())
-        return frame->page()->canRunModalNow();
+        return frame->page()->chrome()->canRunModalNow();
     return false;
 }
 
@@ -668,7 +669,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // properties (in Window::clear), or when on return from runModal.
     JSValue* returnValue = 0;
     dialogWindow->setReturnValueSlot(&returnValue);
-    dialogFrame->page()->runModal();
+    dialogFrame->page()->chrome()->runModal();
     dialogWindow->setReturnValueSlot(0);
 
     // If we don't have a return value, get it now.
