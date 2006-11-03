@@ -1,6 +1,15 @@
 2006-10-31  Simon Hausmann  <hausmann@kde.org>
 
-        Reviewed by Maciej.
+        Reviewed by Maciej, landed by Anders.
+
+        * QtLauncher/CMakeLists.txt: Make linkage against kde libraries
+          optional
+        * QtLauncher/main.cpp: Make it compile without KDE.
+        (main):
+
+2006-11-02  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Maciej, landed by Anders.
 
         * QtLauncher/main.cpp:
         (main): Declare our frame as main frame to the Page object.

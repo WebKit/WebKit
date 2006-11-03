@@ -30,9 +30,12 @@
 
 #include <wtf/Platform.h>
 
+#include <QApplication>
+#if PLATFORM(KDE)
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
+#endif
 
 #include <Document.h>
 
@@ -44,19 +47,37 @@
 
 using namespace WebCore;
 
+#if PLATFORM(KDE)
 static KCmdLineOptions options[] =
 {
     { "+file",        "File to load", 0 },
     KCmdLineLastOption
 };
+#endif
 
 int main(int argc, char **argv)
 {
+    QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
+#if PLATFORM(KDE)
     KCmdLineArgs::init(argc, argv, "testunity", "testunity",
                        "unity testcase app", "0.1");
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    QString url;
+
+    if (args->count() != 0)
+        url = args->arg(0);
+
+#else
+    QApplication app(argc, argv);
+
+    const QStringList args = app.arguments();
+    if (args.count() > 1)
+        url = args.at(1);
+
+#endif
      
     QWidget topLevel;
     QBoxLayout *l = new QVBoxLayout(&topLevel);
@@ -75,13 +96,6 @@ int main(int argc, char **argv)
     frame->view()->qwidget()->show();
 
     topLevel.show();
-
-    QString url;
-
-    if (args->count() == 0)
-        url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-    else
-        url = args->arg(0);
 
     QtFrame(frame)->client()->openURL(KURL(url.toLatin1()));
     

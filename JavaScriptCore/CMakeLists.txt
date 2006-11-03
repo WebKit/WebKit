@@ -120,11 +120,13 @@ set(kjs-unity_LIB_SRCS
 
 kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
 
+IF (WEBKIT_USE_KDE_SUPPORT)
 if(UNIX)
    target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS} m )
 else(UNIX)
    target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS})
 endif(UNIX)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 target_link_libraries(kjs-unity wtf-unity)
 set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )

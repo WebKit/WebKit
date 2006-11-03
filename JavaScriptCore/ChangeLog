@@ -1,3 +1,10 @@
+2006-11-02  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej, landed by Anders.
+
+        * CMakeLists.txt:
+        Make KDE support optional.
+
 2006-11-01  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Brady.
