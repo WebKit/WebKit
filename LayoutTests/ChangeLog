@@ -1,3 +1,10 @@
+2006-11-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated results because they were incorrect when checked in. (We never
+        passed this test.)
+        
+        * fast/js/regexp-unicode-handling-expected.txt:
+
 2006-11-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.
