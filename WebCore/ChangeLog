@@ -1,3 +1,15 @@
+2006-11-02  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Use CFMutableURLRequestRef instead of CFHTTPMessageRef since not all URL requests are http requests.
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::addHeadersFromHashMap):
+        Don't set all headers at once since that clears any previous headers set.
+        
+        (WebCore::ResourceHandle::start):
+
 2006-11-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz and Geoff.
