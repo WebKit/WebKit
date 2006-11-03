@@ -65,18 +65,14 @@ int main(int argc, char **argv)
     KApplication app;
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    QString url;
-
     if (args->count() != 0)
         url = args->arg(0);
-
 #else
     QApplication app(argc, argv);
 
     const QStringList args = app.arguments();
     if (args.count() > 1)
         url = args.at(1);
-
 #endif
      
     QWidget topLevel;

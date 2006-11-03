@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -42,6 +42,36 @@ namespace WebCore {
 
 static ResourceHandleManager* s_self = 0;
 
+
+ResourceHandleManager* ResourceHandleManager::self()
+{
+    if (!s_self)
+        s_self = new ResourceHandleManager();
+
+    return s_self;
+}
+
+QtJob::QtJob(const QString& path)
+    : m_path(path)
+{
+    startTimer(0);
+}
+
+void QtJob::timerEvent(QTimerEvent* e)
+{
+    killTimer(e->timerId());
+
+    QFile f(m_path);
+    QByteArray data;
+    if (f.open(QIODevice::ReadOnly)) {
+        data = f.readAll();
+        f.close();
+    };
+
+    emit finished(this, data);
+
+    deleteLater();
+}
 #if PLATFORM(KDE)
 
 ResourceHandleManager::ResourceHandleManager()
@@ -55,14 +85,11 @@ ResourceHandleManager::~ResourceHandleManager()
 {
 }
 
-ResourceHandleManager* ResourceHandleManager::self()
+
+void ResourceHandleManager::deliverJobData(QtJob*, const QByteArray&)
 {
-    if (!s_self)
-        s_self = new ResourceHandleManager();
 
-    return s_self;
 }
-
 void ResourceHandleManager::slotData(KIO::Job* kioJob, const QByteArray& data)
 {
     ResourceHandle* job = 0;
@@ -148,7 +175,7 @@ void ResourceHandleManager::remove(ResourceHandle* job)
         // This must be called before didFinishLoading(),
         // otherwhise assembleResponseHeaders() is called too early...
         RefPtr<PlatformResponseQt> response(new PlatformResponseQt());
-        response->data = headers;    
+        response->data = headers;
         response->url = job->url().url();
 
         job->receivedResponse(response);
@@ -199,31 +226,8 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
     job->setError(1);
 }
 
-#else
 // Qt Resource Handle Manager
-
-QtJob::QtJob(const QString& path)
-    : m_path(path)
-{
-    startTimer(0);
-}
-
-void QtJob::timerEvent(QTimerEvent* e)
-{
-    killTimer(e->timerId());
-
-    QFile f(m_path);
-    QByteArray data;
-    if (f.open(QIODevice::ReadOnly)) {
-        data = f.readAll();
-        f.close();
-    };
-
-    emit finished(this, data);
-
-    deleteLater();
-}
-
+#else
 ResourceHandleManager::ResourceHandleManager()
     : m_frameClient(0)
 {
@@ -233,13 +237,6 @@ ResourceHandleManager::~ResourceHandleManager()
 {
 }
 
-ResourceHandleManager* ResourceHandleManager::self()
-{
-    if (!s_self)
-        s_self = new ResourceHandleManager();
-
-    return s_self;
-}
 
 void ResourceHandleManager::remove(ResourceHandle* job)
 {

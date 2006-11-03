@@ -1207,6 +1207,7 @@ target_link_libraries(WebCore-unity
   wtf-unity
   kjs-unity
   pcre-unity
+  z
 )
 ELSE (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
@@ -1218,6 +1219,7 @@ target_link_libraries(WebCore-unity
   wtf-unity
   kjs-unity
   pcre-unity
+  z
 )
 ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
