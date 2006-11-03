@@ -1,3 +1,13 @@
+2006-11-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej, landed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+          devenv.com not available in VC++ Express installations
+
+        * Scripts/webkitdirs.pm: Make Windows build work with Visual C++ Express.
+        * Scripts/install-win-extras: Make setx.exe actually run.
+
 2006-11-01  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Kevin.

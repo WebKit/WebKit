@@ -50,7 +50,7 @@ my $sourceDir;
 my $currentSVNRevision;
 
 # Variables for Win32 support
-my $devenvPath;
+my $vcBuildPath;
 my $windowsTmpPath;
 
 sub determineSourceDir
@@ -380,11 +380,34 @@ sub checkRequiredSystemConfig
 sub setupCygwinEnv()
 {
     return if !isCygwin();
-    return if $devenvPath;
+    return if $vcBuildPath;
 
     my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
     chomp $programFilesPath;
-    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.com";
+    $vcBuildPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.com";
+    if (! -e $vcBuildPath) {
+        # VC++ not found, try VC++ Express
+        my $vsInstallDir;
+        if ($ENV{'VSINSTALLDIR'}) {
+            $vsInstallDir = $ENV{'VSINSTALLDIR'};
+        } else {
+            $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
+            $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
+        }
+        $vsInstallDir = `cygpath "$vsInstallDir"`;
+        chomp $vsInstallDir;
+        $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
+        if (! -e $vcBuildPath) {
+            print "*************************************************************\n";
+            print "Cannot find '$vcBuildPath'\n";
+            print "Please execute the file 'vcvars32.bat' from\n";
+            print "'$programFilesPath\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
+            print "to setup the necessary environment variables.\n";
+            print "*************************************************************\n";
+            die;
+        }
+    }
+
     $windowsTmpPath = `cygpath -w /tmp`;
     chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
@@ -399,8 +422,8 @@ sub buildVisualStudioProject($)
     chdir "$project.vcproj" or die "Failed to cd into $project.vcproj\n";
     my $config = configuration();
 
-    print "$devenvPath $project.sln /build $config";
-    my $result = system $devenvPath, "$project.sln", "/build", $config;
+    print "$vcBuildPath $project.sln /build $config";
+    my $result = system $vcBuildPath, "$project.sln", "/build", $config;
     chdir ".." or die;
     return $result;
 }

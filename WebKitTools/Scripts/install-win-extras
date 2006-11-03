@@ -112,7 +112,7 @@ if (! -x "$setx") {
     `chmod +x "$setx"`;
 
     print "$setx WebKitOutputDir 'c:\\WebKitBuild'\n";
-    system '$setx', "WebKitOutputDir", 'c:\\WebKitBuild';
+    system "$setx", "WebKitOutputDir", 'c:\\WebKitBuild';
 
     my $PATH = $ENV{"PATH"};
     my $WINPATH = `cygpath -p -w "$PATH"`;
@@ -131,7 +131,7 @@ if (! -x "$setx") {
     }
 
     print "$setx Path \"$WINPATH\" -m\n";
-    system '$setx', "Path", "$WINPATH", "-m";
+    system "$setx", "Path", "$WINPATH", "-m";
 }
 
 # Disable error reporting UI
