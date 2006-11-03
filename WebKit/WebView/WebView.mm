@@ -187,6 +187,7 @@ macro(moveWordLeft) \
 macro(moveWordLeftAndModifySelection) \
 macro(moveWordRight) \
 macro(moveWordRightAndModifySelection) \
+macro(outdent) \
 macro(pageDown) \
 macro(pageUp) \
 macro(paste) \

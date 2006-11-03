@@ -1,3 +1,14 @@
+2006-11-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Adding outdent to the WebView responder forwarding list.
+        Also add outdent to WebHTMLView.h and WebViewPrivate.h.
+
+        * WebView/WebHTMLView.h:
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.mm:
+
 2006-11-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben

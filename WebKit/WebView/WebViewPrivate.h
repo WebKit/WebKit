@@ -100,6 +100,8 @@ typedef enum {
 
 @interface WebView (WebPendingPublic)
 
+- (void)outdent:(id)sender;
+
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady;
 
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements;
