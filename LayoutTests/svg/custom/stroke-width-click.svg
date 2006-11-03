@@ -72,7 +72,6 @@
       testClick(300, 49, false);
       testClick(300, 150, true);
       testClick(300, 151, false);
-      testClick(1000, 1000, false);
     } else {
       log("ERROR: window.eventSender not found!  This test must be run using DumpRenderTree.  Mousing over the yellow area will log however.");
     }

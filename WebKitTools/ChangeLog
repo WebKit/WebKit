@@ -1,3 +1,28 @@
+2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7323
+        REGRESSION (10.4.4): ondrag* events don't fire on page in a frame
+
+        When dragging, do not send EventSendingController's events immediately. Dragging 
+        is supposed to be modal, so we need to perform it from within the delegate, without
+        returning to JS to make the next mouse movement.
+
+        When the mouse is down, mouse events are now recorded, and executed when mouseUp is sent.
+
+        * DumpRenderTree/EventSendingController.h:
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController dealloc]):
+        (-[EventSendingController leapForward:]):
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (+[EventSendingController saveEvent:]):
+        (+[EventSendingController replaySavedEvents]):
+        * DumpRenderTree/UIDelegate.m:
+        (-[UIDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Justin Garcia.

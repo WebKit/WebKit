@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +115,18 @@ using namespace HTMLNames;
 
 NSEvent* FrameMac::_currentEvent = nil;
 
+struct FrameMacDragInfo {
+    RefPtr<Node> m_dragSrc;     // element that may be a drag source, for the current mouse gesture
+    bool m_dragSrcIsLink;
+    bool m_dragSrcIsImage;
+    bool m_dragSrcInSelection;
+    bool m_dragSrcMayBeDHTML, m_dragSrcMayBeUA;   // Are DHTML and/or the UserAgent allowed to drag out?
+    bool m_dragSrcIsDHTML;
+    RefPtr<ClipboardMac> m_dragClipboard;   // used on only the source side of dragging
+};
+
+static FrameMacDragInfo* sharedDragInfo;
+
 static const unsigned int escChar = 27;
 static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
 {
@@ -156,6 +169,8 @@ FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> c
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
 {
+     if (!sharedDragInfo)
+         sharedDragInfo = new FrameMacDragInfo;
 }
 
 FrameMac::~FrameMac()
@@ -250,8 +265,8 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* owner
 
 void FrameMac::freeClipboard()
 {
-    if (_dragClipboard)
-        _dragClipboard->setAccessPolicy(ClipboardNumb);
+    if (sharedDragInfo->m_dragClipboard)
+        sharedDragInfo->m_dragClipboard->setAccessPolicy(ClipboardNumb);
 }
 
 // Either get cached regexp or build one that matches any of the labels.
@@ -1505,11 +1520,11 @@ bool FrameMac::dragHysteresisExceeded(float dragLocationX, float dragLocationY) 
     IntSize delta = dragLocation - m_mouseDownPos;
     
     float threshold = GeneralDragHysteresis;
-    if (_dragSrcIsImage)
+    if (sharedDragInfo->m_dragSrcIsImage)
         threshold = ImageDragHysteresis;
-    else if (_dragSrcIsLink)
+    else if (sharedDragInfo->m_dragSrcIsLink)
         threshold = LinkDragHysteresis;
-    else if (_dragSrcInSelection)
+    else if (sharedDragInfo->m_dragSrcInSelection)
         threshold = TextDragHysteresis;
 
     return fabsf(delta.width()) >= threshold || fabsf(delta.height()) >= threshold;
@@ -1520,51 +1535,44 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     if ([_currentEvent type] == NSLeftMouseDragged) {
-        NSView *view = mouseDownViewIfStillGood();
-
-        if (view) {
-            _sendingEventToSubview = true;
-            [view mouseDragged:_currentEvent];
-            _sendingEventToSubview = false;
-            return;
-        }
+        if (mouseDownViewIfStillGood())
+            return; // The event has been already dispatched to a subframe
 
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
-        if (mouseDownMayStartDrag() && !_dragSrc) {
+        if (mouseDownMayStartDrag() && !sharedDragInfo->m_dragSrc) {
             BOOL tempFlag1, tempFlag2;
             [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
-            _dragSrcMayBeDHTML = tempFlag1;
-            _dragSrcMayBeUA = tempFlag2;
-            if (!_dragSrcMayBeDHTML && !_dragSrcMayBeUA) {
+            sharedDragInfo->m_dragSrcMayBeDHTML = tempFlag1;
+            sharedDragInfo->m_dragSrcMayBeUA = tempFlag2;
+            if (!sharedDragInfo->m_dragSrcMayBeDHTML && !sharedDragInfo->m_dragSrcMayBeUA)
                 setMouseDownMayStartDrag(false);     // no element is draggable
-            }
         }
         
-        if (mouseDownMayStartDrag() && !_dragSrc) {
+        if (mouseDownMayStartDrag() && !sharedDragInfo->m_dragSrc) {
             // try to find an element that wants to be dragged
             HitTestRequest request(true, false);
             HitTestResult result(m_mouseDownPos);
             renderer()->layer()->hitTest(request, result);
             Node *node = result.innerNode();
-            _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), _dragSrcIsDHTML) : 0;
-            if (!_dragSrc) {
+            sharedDragInfo->m_dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(sharedDragInfo->m_dragSrcMayBeDHTML, sharedDragInfo->m_dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), sharedDragInfo->m_dragSrcIsDHTML) : 0;
+            if (!sharedDragInfo->m_dragSrc) {
                 setMouseDownMayStartDrag(false);     // no element is draggable
             } else {
                 // remember some facts about this source, while we have a HitTestResult handy
                 node = result.URLElement();
-                _dragSrcIsLink = node && node->isLink();
+                sharedDragInfo->m_dragSrcIsLink = node && node->isLink();
 
                 node = result.innerNonSharedNode();
-                _dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
+                sharedDragInfo->m_dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
                 
-                _dragSrcInSelection = selectionController()->contains(m_mouseDownPos);
+                sharedDragInfo->m_dragSrcInSelection = selectionController()->contains(m_mouseDownPos);
             }                
         }
         
         // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
         // or else we bail on the dragging stuff and allow selection to occur
-        if (mouseDownMayStartDrag() && _dragSrcInSelection && [_currentEvent timestamp] - _mouseDownTimestamp < TextDragDelay) {
+        if (mouseDownMayStartDrag() && sharedDragInfo->m_dragSrcInSelection && [_currentEvent timestamp] - _mouseDownTimestamp < TextDragDelay) {
             setMouseDownMayStartDrag(false);
             // ...but if this was the first click in the window, we don't even want to start selection
             if (_activationEventNumber == [_currentEvent eventNumber]) {
@@ -1586,7 +1594,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                 NSPoint dragLoc = NSZeroPoint;
                 NSDragOperation srcOp = NSDragOperationNone;                
                 BOOL wcWrotePasteboard = NO;
-                if (_dragSrcMayBeDHTML) {
+                if (sharedDragInfo->m_dragSrcMayBeDHTML) {
                     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
                     // Must be done before ondragstart adds types and data to the pboard,
                     // also done for security, as it erases data from the last drag
@@ -1594,43 +1602,43 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     
                     freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
                                         // to make sure it gets numbified
-                    _dragClipboard = new ClipboardMac(true, pasteboard, ClipboardWritable, this);
+                    sharedDragInfo->m_dragClipboard = new ClipboardMac(true, pasteboard, ClipboardWritable, this);
                     
                     // If this is drag of an element, get set up to generate a default image.  Otherwise
                     // WebKit will generate the default, the element doesn't override.
-                    if (_dragSrcIsDHTML) {
+                    if (sharedDragInfo->m_dragSrcIsDHTML) {
                         int srcX, srcY;
-                        _dragSrc->renderer()->absolutePosition(srcX, srcY);
+                        sharedDragInfo->m_dragSrc->renderer()->absolutePosition(srcX, srcY);
                         IntSize delta = m_mouseDownPos - IntPoint(srcX, srcY);
-                        _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint() + delta);
+                        sharedDragInfo->m_dragClipboard->setDragImageElement(sharedDragInfo->m_dragSrc.get(), IntPoint() + delta);
                     } 
 
                     setMouseDownMayStartDrag(dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && !selectionController()->isInPasswordField());
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
-                    _dragClipboard->setAccessPolicy(ClipboardImageWritable);
+                    sharedDragInfo->m_dragClipboard->setAccessPolicy(ClipboardImageWritable);
                     
                     if (mouseDownMayStartDrag()) {
                         // gather values from DHTML element, if it set any
-                        _dragClipboard->sourceOperation(srcOp);
+                        sharedDragInfo->m_dragClipboard->sourceOperation(srcOp);
 
                         NSArray *types = [pasteboard types];
                         wcWrotePasteboard = types && [types count] > 0;
 
-                        if (_dragSrcMayBeDHTML)
-                            dragImage = _dragClipboard->dragNSImage(dragLoc);
+                        if (sharedDragInfo->m_dragSrcMayBeDHTML)
+                            dragImage = sharedDragInfo->m_dragClipboard->dragNSImage(dragLoc);
                         
                         // Yuck, dragSourceMovedTo() can be called as a result of kicking off the drag with
                         // dragImage!  Because of that dumb reentrancy, we may think we've not started the
                         // drag when that happens.  So we have to assume it's started before we kick it off.
-                        _dragClipboard->setDragHasStarted();
+                        sharedDragInfo->m_dragClipboard->setDragHasStarted();
                     }
                 }
                 
                 if (mouseDownMayStartDrag()) {
-                    BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
-                    if (!startedDrag && _dragSrcMayBeDHTML) {
-                        // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
+                    BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:sharedDragInfo->m_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
+                    if (!startedDrag && sharedDragInfo->m_dragSrcMayBeDHTML) {
+                        // WebKit canned the drag at the last minute - we owe m_dragSrc a DRAGEND event
                         PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
                         dispatchDragSrcEvent(dragendEvent, event);
                         setMouseDownMayStartDrag(false);
@@ -1640,7 +1648,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                 if (!mouseDownMayStartDrag()) {
                     // something failed to start the drag, cleanup
                     freeClipboard();
-                    _dragSrc = 0;
+                    sharedDragInfo->m_dragSrc = 0;
                 }
             }
 
@@ -1751,12 +1759,6 @@ void FrameMac::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event
         return;
     }
     stopAutoscrollTimer();
-    
-    _sendingEventToSubview = true;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [view mouseUp:_currentEvent];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    _sendingEventToSubview = false;
 }
 
 bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
@@ -1849,7 +1851,7 @@ void FrameMac::mouseDown(NSEvent *event)
     prepareForUserAction();
 
     _mouseDownView = nil;
-    _dragSrc = 0;
+    sharedDragInfo->m_dragSrc = 0;
     
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = HardRetain(event);
@@ -2954,26 +2956,26 @@ bool FrameMac::shouldClose()
 
 void FrameMac::dragSourceMovedTo(const PlatformMouseEvent& event)
 {
-    if (_dragSrc && _dragSrcMayBeDHTML)
+    if (sharedDragInfo->m_dragSrc && sharedDragInfo->m_dragSrcMayBeDHTML)
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragEvent, event);
 }
 
 void FrameMac::dragSourceEndedAt(const PlatformMouseEvent& event, NSDragOperation operation)
 {
-    if (_dragSrc && _dragSrcMayBeDHTML) {
-        _dragClipboard->setDestinationOperation(operation);
+    if (sharedDragInfo->m_dragSrc && sharedDragInfo->m_dragSrcMayBeDHTML) {
+        sharedDragInfo->m_dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragendEvent, event);
     }
     freeClipboard();
-    _dragSrc = 0;
+    sharedDragInfo->m_dragSrc = 0;
 }
 
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool FrameMac::dispatchDragSrcEvent(const AtomicString &eventType, const PlatformMouseEvent& event) const
+bool FrameMac::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event) const
 {
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), event, _dragClipboard.get());
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, sharedDragInfo->m_dragSrc.get(), event, sharedDragInfo->m_dragClipboard.get());
     return !noDefaultProc;
 }
 

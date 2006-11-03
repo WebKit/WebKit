@@ -1,3 +1,35 @@
+2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7323
+        REGRESSION (10.4.4): ondrag* events don't fire on page in a frame
+
+        * bridge/mac/FrameMac.h: Moved drag source information to a static variable
+        in FrameMac.mm. There can be only one drag active at any moment, and having 
+        this information here was making sharing this information between 
+        subframes hard.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac): Initialize sharedDragInfo.
+        (WebCore::FrameMac::freeClipboard):
+        (WebCore::FrameMac::dragHysteresisExceeded):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::handleMouseReleaseEvent):
+        (WebCore::FrameMac::mouseDown):
+        (WebCore::FrameMac::dragSourceMovedTo):
+        (WebCore::FrameMac::dragSourceEndedAt):
+        (WebCore::FrameMac::dispatchDragSrcEvent):
+        Access drag source info via sharedDragInfo - this fixes drag source even dispatching.
+        Also removed some old code that was forwarding mouse events to subviews to make 
+        HTML editing work in subframes.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateDragAndDrop):
+        (WebCore::FrameView::cancelDragAndDrop):
+        (WebCore::FrameView::performDragAndDrop):
+        Forward events to subframes for dispatching - this fixes drag target events.
+
 2006-11-03  Zack Rusin  <zack@kde.org>
 
         Reviewed by Tim.

@@ -46,7 +46,7 @@
   
     
       
-      SUCCESS: click at 10, 10 was correctly ignoredSUCCESS: click received at: 30, 100SUCCESS: click at 29, 100 was correctly ignoredSUCCESS: click received at: 30, 50SUCCESS: click at 30, 49 was correctly ignoredSUCCESS: click received at: 30, 150SUCCESS: click at 30, 151 was correctly ignoredSUCCESS: click received at: 300, 100SUCCESS: click at 301, 100 was correctly ignoredSUCCESS: click received at: 300, 50SUCCESS: click at 300, 49 was correctly ignoredSUCCESS: click received at: 300, 150SUCCESS: click at 300, 151 was correctly ignoredSUCCESS: click at 1000, 1000 was correctly ignored
+      SUCCESS: click at 10, 10 was correctly ignoredSUCCESS: click received at: 30, 100SUCCESS: click at 29, 100 was correctly ignoredSUCCESS: click received at: 30, 50SUCCESS: click at 30, 49 was correctly ignoredSUCCESS: click received at: 30, 150SUCCESS: click at 30, 151 was correctly ignoredSUCCESS: click received at: 300, 100SUCCESS: click at 301, 100 was correctly ignoredSUCCESS: click received at: 300, 50SUCCESS: click at 300, 49 was correctly ignoredSUCCESS: click received at: 300, 150SUCCESS: click at 300, 151 was correctly ignored
     
   
   
@@ -71,7 +71,6 @@
       testClick(300, 49, false);
       testClick(300, 150, true);
       testClick(300, 151, false);
-      testClick(1000, 1000, false);
     } else {
       log("ERROR: window.eventSender not found!  This test must be run using DumpRenderTree.  Mousing over the yellow area will log however.");
     }

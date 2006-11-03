@@ -1,3 +1,33 @@
+2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Adele.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=7323
+        REGRESSION (10.4.4): ondrag* events don't fire on page in a frame
+
+        * fast/events/drag-in-frames-expected.txt: Added.
+        * fast/events/drag-in-frames.html: Added.
+        * fast/events/resources/drag-in-frames-console.html: Added.
+        * fast/events/resources/drag-in-frames-left.html: Added.
+        * fast/events/resources/drag-in-frames-right.html: Added.
+
+        * editing/selection/expanding-selections.html:
+        * editing/selection/expanding-selections2.html:
+        * fast/dynamic/layer-hit-test-crash.html:
+        * fast/events/event-view-toString.html:
+        * fast/events/resources/drag-outside-window-frame.html:
+        * svg/custom/hover-default-fill.svg:
+        Added missing calls to mouseUp().
+
+        * svg/custom/stroke-width-click-expected.txt:
+        * svg/custom/stroke-width-click.svg:
+        Don't attempt to click outside the page, this was confusing DRT.
+
+        * editing/selection/select-from-textfield-outwards-expected.txt:
+        * editing/selection/select-from-textfield-outwards.html:
+        Removed alerts between dragging steps - they are now useless,
+        as the dragging events are stored and executed at once.
+
 2006-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         Missed a few tests in my last check-in, and checked in old results for

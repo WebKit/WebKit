@@ -33,6 +33,8 @@ function moveMouse()
 
 function finish()
 {
+    if (window.eventSender)
+        eventSender.mouseUp();
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }

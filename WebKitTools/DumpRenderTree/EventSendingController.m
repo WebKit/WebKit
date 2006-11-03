@@ -2,6 +2,7 @@
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +42,8 @@ extern void _NSNewKillRingSequence();
 
 NSPoint lastMousePosition;
 NSArray *webkitDomEventNames;
+NSMutableArray *savedMouseEvents; // mouse events sent between mouseDown and mouseUp are stored here, and then executed at once.
+BOOL replayingSavedEvents;
 
 @implementation EventSendingController
 
@@ -126,6 +129,15 @@ NSArray *webkitDomEventNames;
     return nil;
 }
 
+- (void)dealloc
+{
+    assert(!down);
+    assert([savedMouseEvents count] == 0);
+    [savedMouseEvents release];
+    savedMouseEvents = nil;
+    [super dealloc];
+}
+
 - (double)currentEventTime
 {
     return GetCurrentEventTime() + timeOffset;
@@ -133,6 +145,17 @@ NSArray *webkitDomEventNames;
 
 - (void)leapForward:(int)milliseconds
 {
+    if (down && !replayingSavedEvents) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(leapForward:)]];
+        [invocation setTarget:self];
+        [invocation setSelector:@selector(leapForward:)];
+        [invocation setArgument:&milliseconds atIndex:2];
+        
+        [EventSendingController saveEvent:invocation];
+        
+        return;
+    }
+
     timeOffset += milliseconds / 1000.0;
 }
 
@@ -143,6 +166,9 @@ NSArray *webkitDomEventNames;
 
 - (void)mouseDown
 {
+    assert(!down);
+    assert(!replayingSavedEvents);
+
     [[[frame frameView] documentView] layout];
     if ([self currentEventTime] - lastClick >= 1)
         clickCount = 1;
@@ -167,6 +193,20 @@ NSArray *webkitDomEventNames;
 
 - (void)mouseUp
 {
+    assert(down);
+
+    if (!replayingSavedEvents) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp)]];
+        [invocation setTarget:self];
+        [invocation setSelector:@selector(mouseUp)];
+        
+        [EventSendingController saveEvent:invocation];
+        [EventSendingController replaySavedEvents];
+
+        return;
+    }
+
+
     [[[frame frameView] documentView] layout];
     NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp 
                                         location:lastMousePosition 
@@ -201,6 +241,18 @@ NSArray *webkitDomEventNames;
 
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
+    if (down && !replayingSavedEvents) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseMoveToX:Y:)]];
+        [invocation setTarget:self];
+        [invocation setSelector:@selector(mouseMoveToX:Y:)];
+        [invocation setArgument:&x atIndex:2];
+        [invocation setArgument:&y atIndex:3];
+        
+        [EventSendingController saveEvent:invocation];
+        
+        return;
+    }
+
     NSView *view = [frame webView];
     lastMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) 
@@ -259,6 +311,25 @@ NSArray *webkitDomEventNames;
         [subView mouseDown:mouseDownEvent];
         lastClick = [mouseUpEvent timestamp];
     }
+}
+
++ (void)saveEvent:(NSInvocation *)event
+{
+    if (!savedMouseEvents)
+        savedMouseEvents = [[NSMutableArray alloc] init];
+    [savedMouseEvents addObject:event];
+}
+
++ (void)replaySavedEvents
+{
+    replayingSavedEvents = YES;
+    while ([savedMouseEvents count]) {
+        // if a drag is initiated, the remaining saved events will be dispatched from our dragging delegate
+        NSInvocation *invocation = [[[savedMouseEvents objectAtIndex:0] retain] autorelease];
+        [savedMouseEvents removeObjectAtIndex:0];
+        [invocation invoke];
+    }
+    replayingSavedEvents = NO;
 }
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers

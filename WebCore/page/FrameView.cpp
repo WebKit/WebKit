@@ -6,6 +6,7 @@
  *                     2000 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLDocument.h"
+#include "HTMLFrameElementBase.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -942,14 +944,26 @@ bool FrameView::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* cl
         newTarget = newTarget->shadowAncestorNode();
 
     if (d->dragTarget != newTarget) {
-        // note this ordering is explicitly chosen to match WinIE
+        // FIXME: this ordering was explicitly chosen to match WinIE. However,
+        // it is sometimes incorrect when dragging within subframes, as seen with
+        // LayoutTests/fast/events/drag-in-frames.html.
         if (newTarget)
-            accept = dispatchDragEvent(dragenterEvent, newTarget, event, clipboard);
+            if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
+                accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->view()->updateDragAndDrop(event, clipboard);
+            else
+                accept = dispatchDragEvent(dragenterEvent, newTarget, event, clipboard);
+        
         if (d->dragTarget)
-            dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), event, clipboard);
+            if (d->dragTarget->hasTagName(frameTag) || d->dragTarget->hasTagName(iframeTag))
+                accept = static_cast<HTMLFrameElementBase*>(d->dragTarget.get())->contentFrame()->view()->updateDragAndDrop(event, clipboard);
+            else
+                dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), event, clipboard);
     } else {
         if (newTarget)
-            accept = dispatchDragEvent(dragoverEvent, newTarget, event, clipboard);
+            if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
+                accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->view()->updateDragAndDrop(event, clipboard);
+            else
+                accept = dispatchDragEvent(dragoverEvent, newTarget, event, clipboard);
     }
     d->dragTarget = newTarget;
 
@@ -959,7 +973,10 @@ bool FrameView::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* cl
 void FrameView::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     if (d->dragTarget)
-        dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), event, clipboard);
+        if (d->dragTarget->hasTagName(frameTag) || d->dragTarget->hasTagName(iframeTag))
+            static_cast<HTMLFrameElementBase*>(d->dragTarget.get())->contentFrame()->view()->cancelDragAndDrop(event, clipboard);
+        else
+            dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), event, clipboard);
     d->dragTarget = 0;
 }
 
@@ -967,7 +984,10 @@ bool FrameView::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* c
 {
     bool accept = false;
     if (d->dragTarget)
-        accept = dispatchDragEvent(dropEvent, d->dragTarget.get(), event, clipboard);
+        if (d->dragTarget->hasTagName(frameTag) || d->dragTarget->hasTagName(iframeTag))
+            accept = static_cast<HTMLFrameElementBase*>(d->dragTarget.get())->contentFrame()->view()->performDragAndDrop(event, clipboard);
+        else
+            accept = dispatchDragEvent(dropEvent, d->dragTarget.get(), event, clipboard);
     d->dragTarget = 0;
     return accept;
 }

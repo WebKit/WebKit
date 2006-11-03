@@ -38,6 +38,9 @@
     double timeOffset;
 }
 
++ (void)saveEvent:(NSInvocation *)event;
++ (void)replaySavedEvents;
+
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node;
 
 - (void)handleEvent:(DOMEvent *)event;

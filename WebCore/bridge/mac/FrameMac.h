@@ -349,15 +349,7 @@ private:
     Vector<KJS::Bindings::RootObject*> m_rootObjects;
     WebScriptObject* _windowScriptObject;
     NPObject* _windowScriptNPObject;
-    
-    RefPtr<Node> _dragSrc;     // element that may be a drag source, for the current mouse gesture
-    bool _dragSrcIsLink;
-    bool _dragSrcIsImage;
-    bool _dragSrcInSelection;
-    bool _dragSrcMayBeDHTML, _dragSrcMayBeUA;   // Are DHTML and/or the UserAgent allowed to drag out?
-    bool _dragSrcIsDHTML;
-    RefPtr<ClipboardMac> _dragClipboard;   // used on only the source side of dragging
-    
+
     RefPtr<Range> m_markedTextRange;
 };
 

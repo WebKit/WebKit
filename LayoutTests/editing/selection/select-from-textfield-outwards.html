@@ -10,24 +10,25 @@ function editingTest() {
     var middleX = field.offsetLeft + field.offsetWidth / 2;
     var middleY = field.offsetTop + field.offsetHeight / 2;
     
-    alert("middle");
+    // middle
     eventSender.mouseMoveTo(middleX, middleY);
     eventSender.mouseDown();
     eventSender.leapForward(1000);
     eventSender.mouseUp();
     eventSender.mouseDown();
-    alert("left");
+    // left
     eventSender.mouseMoveTo(0, middleY);
-    alert("right");
+    // right
     eventSender.mouseMoveTo(document.body.offsetWidth, middleY);
-    alert("way up");
+    // way up
     eventSender.mouseMoveTo(middleX, middleY - 2 * field.offsetHeight);
-    alert("up");
+    // up
     eventSender.mouseMoveTo(middleX, middleY - field.offsetHeight);
-    alert("down");
+    // down
     eventSender.mouseMoveTo(middleX, middleY + field.offsetHeight);
-    alert("way down");
+    // way down
     eventSender.mouseMoveTo(middleX, middleY + 2 * field.offsetHeight);
+    eventSender.mouseUp();
 }
 </script>
 </head>

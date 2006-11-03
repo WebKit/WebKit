@@ -8,6 +8,7 @@
   if (window.eventSender) {
     eventSender.mouseMoveTo(50, 50);
     eventSender.mouseDown();
+    eventSender.mouseUp();
   }
 ]]>
 </script>
