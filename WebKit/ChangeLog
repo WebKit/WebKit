@@ -1,3 +1,10 @@
+2006-11-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Forgot to add these two files. Oops.
+
+        * WebCoreSupport/WebChromeClient.h: Added.
+        * WebCoreSupport/WebChromeClient.mm: Added.
+
 2006-11-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, Beth.
