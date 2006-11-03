@@ -1,3 +1,18 @@
+2006-11-01  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Maciej.
+
+        Moving the word/sentence seperators into a file of their own
+        and implementing findWordBoundary.
+
+        * CMakeLists.txt:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/qt/TextBoundaries.cpp: Added.
+        (WebCore::findNextSentenceFromIndex):
+        (WebCore::findSentenceBoundary):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+
 2006-11-03  Zack Rusin  <zack@kde.org>
 
         Reviewed by Maciej.

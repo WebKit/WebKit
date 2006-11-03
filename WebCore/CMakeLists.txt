@@ -1028,6 +1028,7 @@ set(WebCore_SRCS
     platform/qt/GraphicsContextQt.cpp
     platform/qt/ScrollViewQt.cpp
     platform/qt/TemporaryLinkStubs.cpp
+    platform/qt/TextBoundaries.cpp
     platform/qt/CursorQt.cpp
     platform/qt/WidgetQt.cpp
     platform/qt/SystemTimeQt.cpp
