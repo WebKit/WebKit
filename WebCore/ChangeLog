@@ -1,3 +1,31 @@
+2006-11-02  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Maciej, landed by Anders
+
+        * CMakeLists.txt: Make linkage against KDE libraries conditional
+        * platform/network/qt/ResourceHandleManager.cpp: Added a simple
+          Qt base resource handler that supports only requests to the
+          local filesystem. Used when compiling without KDE support.
+          ResourceHandleManager.cpp/h are to be split up into ResourceHandleManagerKDE
+          and ResourceHandleManagerQt in the future, as well as QtJob.cpp/h.
+        (WebCore::QtJob::QtJob):
+        (WebCore::QtJob::timerEvent):
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::ResourceHandleManager::self):
+        (WebCore::ResourceHandleManager::remove):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        (WebCore::ResourceHandleManager::deliverJobData):
+        * platform/network/qt/ResourceHandleManager.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::runJavaScriptAlert):
+        (WebCore::FrameQtClientDefault::runJavaScriptConfirm):
+        (WebCore::FrameQtClientDefault::runJavaScriptPrompt):
+        * platform/qt/LoaderFunctionsQt.cpp: Use the Qt messagebox and
+          input dialog functions when compiling without KDE support
+        (WebCore::ServeSynchronousRequest):
+
 2006-11-02  David Carson  <dacarson@gmail.com>
 
         Reviewed by Geoff, landed by Anders.

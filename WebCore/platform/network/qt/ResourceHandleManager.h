@@ -37,6 +37,7 @@ namespace WebCore {
 
 class FrameQtClient;
 
+#if PLATFORM(KDE)
 class ResourceHandleManager : public QObject {
 Q_OBJECT
 public:
@@ -62,6 +63,48 @@ private:
 
     FrameQtClient* m_frameClient;
 };
+#else
+
+class QtJob : public QObject
+{
+    Q_OBJECT
+public:
+    QtJob(const QString& url);
+
+Q_SIGNALS:
+    void finished(QtJob* job, const QByteArray& data);
+
+protected:
+    virtual void timerEvent(QTimerEvent*);
+
+private:
+    QString m_path;
+};
+
+class ResourceHandleManager : public QObject {
+Q_OBJECT
+public:
+    static ResourceHandleManager* self();
+
+    void add(ResourceHandle*, FrameQtClient*);
+    void cancel(ResourceHandle*);
+
+public Q_SLOTS:
+    void deliverJobData(QtJob* job, const QByteArray& data);
+
+private:
+    ResourceHandleManager();
+    ~ResourceHandleManager();
+
+    void remove(ResourceHandle*);
+
+    QMap<ResourceHandle*, QtJob*> m_resourceToJob;
+    QMap<QtJob*, ResourceHandle*> m_jobToResource;
+
+    FrameQtClient* m_frameClient;
+};
+
+#endif
 
 }
 

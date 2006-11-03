@@ -28,7 +28,9 @@
 #include "config.h"
 
 #include <wtf/Vector.h>
+#if PLATFORM(KDE)
 #include <kio/netaccess.h>
+#endif
 
 #include <QFile>
 
@@ -54,19 +56,30 @@ Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const Resour
 
     // FIXME: We shouldn't use temporary files for sync jobs!
     QString tempFile;
+#if PLATFORM(KDE)
     if (!KIO::NetAccess::download(KUrl(request.url().url()), tempFile, 0))
         return Vector<char>();
+#else
+    KURL url = request.url();
+    if (!url.isLocalFile())
+        return Vector<char>();
+    tempFile = url.path();
+#endif
 
     QFile file(tempFile);
     if (!file.open(QIODevice::ReadOnly)) {
+#if PLATFORM(KDE)
         KIO::NetAccess::removeTempFile(tempFile);
+#endif
         return Vector<char>();
     }
 
     ASSERT(!file.atEnd());
 
     QByteArray content = file.readAll();
+#if PLATFORM(KDE)
     KIO::NetAccess::removeTempFile(tempFile);
+#endif
 
     Vector<char> resultBuffer;
     resultBuffer.append(content.data(), content.size());

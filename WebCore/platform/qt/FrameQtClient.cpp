@@ -36,9 +36,14 @@
 #include "LoaderFunctions.h"
 #include "ResourceHandleInternal.h"
 
+#if PLATFORM(KDE)
 #include <kstdguiitem.h>
 #include <kmessagebox.h>
 #include <kinputdialog.h>
+#else
+#include <QInputDialog>
+#include <QMessageBox>
+#endif
 
 namespace WebCore {
 
@@ -101,20 +106,35 @@ void FrameQtClientDefault::checkLoaded()
 
 void FrameQtClientDefault::runJavaScriptAlert(String const& message)
 {
+#if PLATFORM(KDE)
     KMessageBox::error(m_frame->view()->qwidget(), message, "JavaScript");
+#else
+    QMessageBox::warning(m_frame->view()->qwidget(), "JavaScript", message);
+#endif
 }
 
 bool FrameQtClientDefault::runJavaScriptConfirm(const String& message)
 {
+#if PLATFORM(KDE)
     return KMessageBox::warningYesNo(m_frame->view()->qwidget(), message,
                                      "JavaScript", KStdGuiItem::ok(), KStdGuiItem::cancel())
                                      == KMessageBox::Yes;
+#else
+    return QMessageBox::warning(m_frame->view()->qwidget(), "JavaScript", message,
+                                QMessageBox::Yes | QMessageBox::No)
+                               == QMessageBox::Yes;
+#endif
 }
 
 bool FrameQtClientDefault::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
 {
     bool ok;
+#if PLATFORM(KDE)
     result = KInputDialog::getText("JavaScript", message, defaultValue, &ok, m_frame->view()->qwidget());
+#else
+    result = QInputDialog::getText(m_frame->view()->qwidget(), "JavaScript", message,
+            QLineEdit::Normal, defaultValue, &ok);
+#endif
 
     return ok;
 }

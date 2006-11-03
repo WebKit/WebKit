@@ -1194,6 +1194,7 @@ set(WebCore_SRCS
 
 kde4_add_library(WebCore-unity SHARED  ${WebCore_SRCS})
 
+IF (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
   ${QT_QT3SUPPORT_LIBRARY}
   ${QT_QTCORE_LIBRARY}
@@ -1207,5 +1208,17 @@ target_link_libraries(WebCore-unity
   kjs-unity
   pcre-unity
 )
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+target_link_libraries(WebCore-unity
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${LIBXSLT_LIBRARIES}
+  ${LIBXML2_LIBRARIES}
+  icuuc
+  wtf-unity
+  kjs-unity
+  pcre-unity
+)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 install (TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR})

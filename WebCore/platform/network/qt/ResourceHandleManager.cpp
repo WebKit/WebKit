@@ -27,7 +27,12 @@
 
 #include "config.h"
 
+#if PLATFORM(KDE)
 #include <kio/job.h>
+#endif
+
+#include <QEvent>
+#include <QFile>
 
 #include "FrameQt.h"
 #include "ResourceHandleManager.h"
@@ -36,6 +41,8 @@
 namespace WebCore {
 
 static ResourceHandleManager* s_self = 0;
+
+#if PLATFORM(KDE)
 
 ResourceHandleManager::ResourceHandleManager()
     : m_jobToKioMap()
@@ -191,6 +198,115 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
     remove(job);
     job->setError(1);
 }
+
+#else
+// Qt Resource Handle Manager
+
+QtJob::QtJob(const QString& path)
+    : m_path(path)
+{
+    startTimer(0);
+}
+
+void QtJob::timerEvent(QTimerEvent* e)
+{
+    killTimer(e->timerId());
+
+    QFile f(m_path);
+    QByteArray data;
+    if (f.open(QIODevice::ReadOnly)) {
+        data = f.readAll();
+        f.close();
+    };
+
+    emit finished(this, data);
+
+    deleteLater();
+}
+
+ResourceHandleManager::ResourceHandleManager()
+    : m_frameClient(0)
+{
+}
+
+ResourceHandleManager::~ResourceHandleManager()
+{
+}
+
+ResourceHandleManager* ResourceHandleManager::self()
+{
+    if (!s_self)
+        s_self = new ResourceHandleManager();
+
+    return s_self;
+}
+
+void ResourceHandleManager::remove(ResourceHandle* job)
+{
+    ResourceHandleInternal* d = job->getInternal();
+    if (!d || !d->m_client)
+        return;
+
+    // Check if we know about 'job'...
+    QtJob *qtJob = m_resourceToJob.value(job);
+    if (!qtJob)
+        return;
+
+    d->m_client->receivedAllData(job, 0);
+    d->m_client->didFinishLoading(job);
+
+    m_resourceToJob.remove(job);
+    m_jobToResource.remove(qtJob);
+}
+
+void ResourceHandleManager::add(ResourceHandle* resource, FrameQtClient* frameClient)
+{
+    ResourceHandleInternal* d = resource->getInternal();
+
+    if (resource->method() == "POST"
+        || !d->m_request.url().isLocalFile()) {
+        // ### not supported for the local filesystem
+        return;
+    }
+    QtJob* qtJob =  new QtJob(d->m_request.url().path());
+    connect(qtJob, SIGNAL(finished(QtJob *, const QByteArray &)),
+            this, SLOT(deliverJobData(QtJob *, const QByteArray &)));
+
+    m_resourceToJob.insert(resource, qtJob);
+    m_jobToResource.insert(qtJob, resource);
+
+    if (!m_frameClient)
+        m_frameClient = frameClient;
+    else
+        ASSERT(m_frameClient == frameClient);
+}
+
+void ResourceHandleManager::cancel(ResourceHandle* job)
+{
+    remove(job);
+    job->setError(1);
+}
+
+void ResourceHandleManager::deliverJobData(QtJob* job, const QByteArray& data)
+{
+    ResourceHandle* handle = m_jobToResource.value(job);
+    if (!handle)
+        return;
+
+    ResourceHandleInternal* d = handle->getInternal();
+    if (!d || !d->m_client)
+        return;
+
+    d->m_client->didReceiveData(handle, data.data(), data.size());
+
+    handle->setError(0);
+    remove(handle);
+
+    ASSERT(m_frameClient);
+    m_frameClient->checkLoaded();
+}
+
+#endif
 
 } // namespace WebCore
 
