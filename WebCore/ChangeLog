@@ -1,3 +1,14 @@
+2006-11-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Tim H, landed by Anders.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10840
+        REGRESSION: Shadow of file upload button is clipped
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject): Add 2px to the clip
+        height to keep from clipping in the shadow
+
 2006-11-02  Eike Preuss  <mail@eikepreuss.de>
 
         Reviewed by Maciej, landed by Anders.

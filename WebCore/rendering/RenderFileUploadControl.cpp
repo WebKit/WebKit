@@ -144,7 +144,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // Push a clip.
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         IntRect clipRect(tx + borderLeft(), ty + borderTop(),
-                         width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
+                         width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight);
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
         paintInfo.context->save();
