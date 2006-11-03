@@ -1,5 +1,15 @@
 2006-11-03  Zack Rusin  <zack@kde.org>
 
+        Reviewed and landed by Maciej.
+        
+        Compile on the Qt platform.
+
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::getStylePainterAndWidgetFromPaintInfo):
+
+2006-11-03  Zack Rusin  <zack@kde.org>
+
         Reviewed by Hyatt. Landed by Maciej.
 
         Adding setPlatformPen/setPlatformFont/setPlatformFillColor

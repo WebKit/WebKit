@@ -143,7 +143,7 @@ void RenderThemeQt::addIntrinsicMargins(RenderStyle* style) const
 
 bool RenderThemeQt::getStylePainterAndWidgetFromPaintInfo(const RenderObject::PaintInfo& i, QStyle*& style, QPainter*& painter, QWidget*& widget) const
 {
-    painter = (i.p ? static_cast<QPainter*>(i.p->platformContext()) : 0);
+    painter = (i.context ? static_cast<QPainter*>(i.context->platformContext()) : 0);
     widget = (painter ? static_cast<QWidget*>(painter->device()) : 0);
     style = (widget ? widget->style() : 0);
 

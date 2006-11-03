@@ -27,7 +27,9 @@
 
 #include <wtf/Vector.h>
 
+#if PLATFORM(CG)
 #include "QuartzSupport.h"
+#endif
 
 namespace WebCore {
 
