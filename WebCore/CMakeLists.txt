@@ -1107,7 +1107,6 @@ set(WebCore_SRCS
     rendering/RenderStyle.cpp
     rendering/RenderContainer.cpp
     rendering/EllipsisBox.cpp
-    rendering/DeprecatedRenderSelect.cpp
     rendering/RenderFieldset.cpp
     rendering/RenderFrameSet.cpp
     rendering/RenderTable.cpp

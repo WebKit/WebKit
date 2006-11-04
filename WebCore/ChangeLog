@@ -1,3 +1,12 @@
+2006-11-03  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Oliver.
+
+        Update Windows and Qt project files for file removals in r17585.
+
+        * CMakeLists.txt:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-11-03  Zack Rusin  <zack@kde.org>
 
         Reviewed by Maciej.

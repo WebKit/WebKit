@@ -1371,10 +1371,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ListBox.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\LocalizedStrings.h"
 				>
 			</File>
@@ -2892,14 +2888,6 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\DataRef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\DeprecatedRenderSelect.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\DeprecatedRenderSelect.h"
 				>
 			</File>
 			<File
