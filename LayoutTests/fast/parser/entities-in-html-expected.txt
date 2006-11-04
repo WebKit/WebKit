@@ -1,4 +1,4 @@
-XHTML Entities Test
+HTML Entities Test
 
 Latin-1 Characters (xhtml-lat1.ent)
 Special Characters (xhtml-special.ent)

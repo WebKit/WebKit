@@ -1,3 +1,22 @@
+2006-11-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11448
+        &lang; and &rang; entities are mapped to the incorrect Unicode codepoint
+
+        * fast/parser/entities-in-xhtml-expected.checksum: Removed.
+        * fast/parser/entities-in-xhtml-expected.png: Removed.
+        Converted to plain text, the large table in the test didn't nearly fit anyway.
+
+        * fast/parser/entities-in-xhtml-expected.txt:
+        * fast/parser/entities-in-xhtml.xhtml:
+        Made the test self-consistent again by using actual numeric values for &lang; and &rang;.
+
+        * fast/parser/entities-in-html-expected.txt: Added.
+        * fast/parser/entities-in-html.html: Added.
+        An HTML copy of the same test.
+
 2006-11-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Adele.
