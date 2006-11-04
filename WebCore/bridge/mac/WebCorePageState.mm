@@ -53,13 +53,15 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    m_impl->deref();
+    if (m_impl)
+        m_impl->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    m_impl->deref();
+    if (m_impl)
+        m_impl->deref();
     [super finalize];
 }
 

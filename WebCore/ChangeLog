@@ -1,3 +1,14 @@
+2006-11-04  Darin Adler  <darin@apple.com>
+
+        Change suggested by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11514
+          REGRESSION (r17438): Repro crash when opening a web archive
+
+        * bridge/mac/WebCorePageState.mm:
+        (-[WebCorePageState dealloc]): Add null check.
+        (-[WebCorePageState finalize]): Ditto.
+
 2006-11-04  Bertrand Guiheneuf <guiheneuf@gmail.com>
 
         Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Don Gibson).
