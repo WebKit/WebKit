@@ -102,7 +102,7 @@ body { margin: 0; padding: 0; overflow: hidden; }
     background-color: white;
 }
 
-#files {
+#files, #functions {
     opacity: 0;
     position: absolute;
     top: -2px;
@@ -129,7 +129,7 @@ button.popup {
     max-width: 350px;
 }
 
-#filesPopupButtonContent {
+#filesPopupButtonContent, #functionButtonContent {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

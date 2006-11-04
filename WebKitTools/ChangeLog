@@ -1,3 +1,14 @@
+2006-11-03  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=9596
+        Bug 9596: [Drosera] add a function popup to the source pane
+
+        * Drosera/debugger.css: Added styles for function popup
+        * Drosera/debugger.html: Added function popup button and select
+        * Drosera/debugger.js: Added function popup functionality
+
 2006-11-03  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Maciej.

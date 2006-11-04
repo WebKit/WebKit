@@ -375,6 +375,12 @@ Element.prototype.query = function(query)
     return document.evaluate(query, this, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
+Element.prototype.removeChildren = function()
+{
+    while (this.firstChild) 
+        this.removeChild(this.firstChild);        
+}
+
 function breakpointAction(event)
 {
     var file = files[currentFile];
@@ -665,7 +671,7 @@ function switchFile()
     loadFile(filesSelect.options[filesSelect.selectedIndex].value, true);
 }
 
-function syntaxHighlight(code)
+function syntaxHighlight(code, file)
 {
     var keywords = { 'abstract': 1, 'boolean': 1, 'break': 1, 'byte': 1, 'case': 1, 'catch': 1, 'char': 1, 'class': 1, 'const': 1, 'continue': 1, 'debugger': 1, 'default': 1, 'delete': 1, 'do': 1, 'double': 1, 'else': 1, 'enum': 1, 'export': 1, 'extends': 1, 'false': 1, 'final': 1, 'finally': 1, 'float': 1, 'for': 1, 'function': 1, 'goto': 1, 'if': 1, 'implements': 1, 'import': 1, 'in': 1, 'instanceof': 1, 'int': 1, 'interface': 1, 'long': 1, 'native': 1, 'new': 1, 'null': 1, 'package': 1, 'private': 1, 'protected': 1, 'public': 1, 'return': 1, 'short': 1, 'static': 1, 'super': 1, 'switch': 1, 'synchronized': 1, 'this': 1, 'throw': 1, 'throws': 1, 'transient': 1, 'true': 1, 'try': 1, 'typeof': 1, 'var': 1, 'void': 1, 'volatile': 1, 'while': 1, 'with': 1 };
 
@@ -793,15 +799,51 @@ function syntaxHighlight(code)
             }
 
             if (keywords[keyword]) {
-                result += "<span class=\"keyword\">" + keyword + "</span>";
-                i += keyword.length - 1;
+                var functionName = "";
+                if (keyword == "function") {
+                    var functionKeywordOffset = 8;
+                    var functionNameChar = "";
+                    
+                    if (code.charAt(i + functionKeywordOffset) == " ") { 
+                        functionNameChar = code.charAt(i + functionKeywordOffset + 1);
+                        functionKeywordOffset++;
+                    } else
+                        functionNameChar = code.charAt(i + functionKeywordOffset);
+                    
+                    if (functionNameChar == "(") {
+                        functionName = "function";
+                        file.functionNames.push(functionName);
+                    } else {
+                        while (functionNameChar != "(") {
+                            functionName += functionNameChar;                        
+                            functionKeywordOffset++;
+                            functionNameChar = code.charAt(i + functionKeywordOffset);
+                            if ((i + functionKeywordOffset) >= code.length || functionNameChar == " " || functionNameChar == "\n") break;
+                        }
+                    }
+                }
+
+                var fileIndex = filesLookup[file.url];
+
+                if (functionName == "function") 
+                    result += "<span class=\"keyword\"><a name=\"function-" + fileIndex + "-" + file.functionNames.length + "\" id=\"" + fileIndex + "-" + file.functionNames.length + "\">" + keyword + "</a></span>";
+                else
+                    result += "<span class=\"keyword\">" + keyword + "</span>";
+                
+                if (functionName.length > 0 && functionName != "function") {
+                    file.functionNames.push(functionName);
+                    result += " <a name=\"function-" + fileIndex + "-" + file.functionNames.length + "\" id=\"" + fileIndex + "-" + file.functionNames.length + "\">" + functionName + "</a>";
+                    i += keyword.length + functionName.length;
+                } else
+                    i += keyword.length - 1;
+                
                 continue;
             }
         }
 
         echoChar(c);
     }
-
+        
     return result;
 }
 
@@ -883,6 +925,28 @@ function selectVariable(event)
     this.addStyleClass("current");
 }
 
+function switchFunction(index, shouldResetPopup)
+{
+    if (shouldResetPopup === undefined) shouldResetPopup = false;
+    var sourcesFrame = window.frames['sourcesFrame'];
+    
+    if (shouldResetPopup || index == 0) {
+        document.getElementById("functionPopupButtonContent").innerHTML = '<span class="placeholder">&lt;No selected symbol&gt;</span>';
+        return;
+    }
+
+    var functionSelect = document.getElementById("functions");
+    var selectedFunction = functionSelect.childNodes[index];
+    var selection = sourcesFrame.getSelection();
+    var currentFunction = selectedFunction.value;     
+    var currentFunctionElement = sourcesFrame.document.getElementById(currentFunction);
+    
+    sourcesFrame.focus();
+    selection.setBaseAndExtent(currentFunctionElement, 0, currentFunctionElement, 1);
+    sourcesFrame.location.hash = "#function-" + selectedFunction.value;
+    document.getElementById("functionPopupButtonContent").innerText = selectedFunction.innerText;
+}
+
 function loadFile(fileIndex, manageNavLists)
 {
     var file = files[fileIndex];
@@ -904,7 +968,7 @@ function loadFile(fileIndex, manageNavLists)
         sourceDiv.appendChild(table);
 
         var normalizedSource = file.source.replace(/\r\n|\r/, "\n"); // normalize line endings
-        var lines = syntaxHighlight(normalizedSource).split("\n");
+        var lines = syntaxHighlight(normalizedSource, file).split("\n");
         for( var i = 0; i < lines.length; i++ ) {
             var tr = sourcesDocument.createElement("tr");
             var td = sourcesDocument.createElement("td");
@@ -921,7 +985,7 @@ function loadFile(fileIndex, manageNavLists)
             tr.appendChild(td);
             table.appendChild(tr);
         }
-
+        
         file.loaded = true;
     }
 
@@ -936,7 +1000,28 @@ function loadFile(fileIndex, manageNavLists)
             break;
         }
     }
-    
+
+    // Populate the function names pop-up
+    if (file.functionNames.length > 0) {
+        var functionSelect = document.getElementById("functions");
+        var functionOption = document.createElement("option");
+        
+        document.getElementById("functionNamesPopup").style.display = "inline";
+        switchFunction(0, true);
+        
+        functionSelect.removeChildren();
+        functionOption.value = null;
+        functionOption.text = "< no selected symbol >";
+        functionSelect.appendChild(functionOption);
+        
+        for (var i = 0; i < file.functionNames.length; i++) {
+            functionOption = document.createElement("option");
+            functionOption.value = fileIndex + "-" + (i+1);
+            functionOption.text = file.functionNames[i] + "()";
+            functionSelect.appendChild(functionOption);
+        }
+    } else
+        document.getElementById("functionNamesPopup").style.display = "none";
     
     if (manageNavLists) {
         nextFiles = new Array();
@@ -1102,6 +1187,7 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         file = new Object();
         file.scripts = new Array();
         file.breakpoints = new Array();
+        file.functionNames = new Array();
         file.source = (fileSource.length ? fileSource : source);
         file.url = (url.length ? url : null);
         file.loaded = false;
