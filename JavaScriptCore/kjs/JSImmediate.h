@@ -34,6 +34,7 @@
 #pragma warning(disable: 4305)
 #pragma warning(disable: 4307)
 #pragma warning(disable: 4309)
+#pragma warning(disable: 4341)
 #endif
 
 namespace KJS {
