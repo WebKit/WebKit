@@ -84,11 +84,10 @@ sub determineBaseProductDir
         open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
         $baseProductDir = <PRODUCT>;
         close PRODUCT;
-        if ($baseProductDir) {
-            chomp $baseProductDir;
-        }
+        chomp $baseProductDir if $baseProductDir;
+        undef $baseProductDir unless $baseProductDir =~ /^\//;
     } else {
-        $baseProductDir =  $ENV{"WEBKITOUTPUTDIR"};
+        $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
         if (isCygwin() && $baseProductDir) {
             my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
             chomp $unixBuildPath;
