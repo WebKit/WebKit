@@ -29,6 +29,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QStyleOptionButton>
+#include <QStyleOptionFrameV2>
 
 #include "Document.h"
 #include "RenderTheme.h"
@@ -257,16 +258,17 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     
     if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
         return true;
-  
-    QStyleOption option;
-
+    
+    QStyleOptionFrameV2 panel;
+    panel.initFrom(widget);
+    panel.rect = r;
     // Get the correct theme data for a button
-    EAppearance appearance = applyTheme(option, o);
+    EAppearance appearance = applyTheme(panel, o);
     Q_ASSERT(appearance == TextFieldAppearance);
 
     // Now paint the text field.
-    // FIXME: this is not enough for sure! (use 'option'...)
-    painter->drawRect(r);
+    style->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, painter, widget);
+    style->drawPrimitive(QStyle::PE_FrameLineEdit, &panel, painter, widget);
 
     return false;
 }

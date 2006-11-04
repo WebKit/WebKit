@@ -1,3 +1,13 @@
+2006-11-03  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Maciej.
+
+        The patch fixes text field drawing on the Qt platform.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField): Use the style to correctly
+        render the text field
+
 2006-11-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim.
