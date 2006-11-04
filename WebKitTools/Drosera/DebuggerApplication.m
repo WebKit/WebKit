@@ -91,6 +91,8 @@
     if (![attachWindow isVisible])
         [attachWindow center];
     [attachTable reloadData];
+    [attachTable setTarget:self];
+    [attachTable setDoubleAction:@selector(attach:)];
     [attachWindow makeKeyAndOrderFront:sender];
 }
 

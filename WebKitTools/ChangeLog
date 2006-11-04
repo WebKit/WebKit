@@ -1,3 +1,13 @@
+2006-11-03  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11510
+        Bug 11510: [Drosera] Doubleclicking the attach table should attach to the clicked item.
+
+        * Drosera/DebuggerApplication.m:
+        (-[DebuggerApplication showAttachPanel:]): Set the doubleAction for the table view
+
 2006-11-03  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Tim H.
