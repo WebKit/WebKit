@@ -29,7 +29,6 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "DeprecatedRenderSelect.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
@@ -98,10 +97,8 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
     if (hasChangedChild() && renderer()) {
         if (usesMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
-        else if (renderer() && renderer()->isListBox())
-            static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
         else
-            static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+            static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
     }
 
     HTMLGenericFormElement::recalcStyle( ch );
@@ -345,14 +342,14 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLSelectElement::isKeyboardFocusable() const
 {
-    if (renderer() && (usesMenuList() || renderer()->isListBox()))
+    if (renderer())
         return isFocusable();
     return HTMLGenericFormElement::isKeyboardFocusable();
 }
 
 bool HTMLSelectElement::isMouseFocusable() const
 {
-    if (renderer() && (usesMenuList() || renderer()->isListBox()))
+    if (renderer())
         return isFocusable();
     return HTMLGenericFormElement::isMouseFocusable();
 }
@@ -361,12 +358,6 @@ RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle 
 {
     if (usesMenuList())
         return new (arena) RenderMenuList(this);
-#if PLATFORM(MAC)
-    // FIXME: Remove this when DeprecatedRenderSelect is no longer needed.
-    if (style->appearance() == ListboxAppearance)
-        return new (arena) RenderListBox(this);
-    return new (arena) DeprecatedRenderSelect(this);
-#endif
     return new (arena) RenderListBox(this);
 }
 
@@ -486,10 +477,8 @@ void HTMLSelectElement::setRecalcListItems()
     if (renderer()) {
         if (usesMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
-        else if (renderer() && renderer()->isListBox())
-            static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
         else
-            static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+            static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
     }
     setChanged();
 }
@@ -522,13 +511,9 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
     if (selected && !m_multiple)
         deselectItems(selectedOption);
 
-    if (renderer() && !usesMenuList()) {
-        if (renderer()->isListBox())
-            static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
-        else
-            static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
-    }
- 
+    if (renderer() && !usesMenuList())
+        static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
+
     setChanged(true);
 }
 
@@ -547,7 +532,7 @@ void HTMLSelectElement::defaultEventHandler(Event* evt)
 {
     if (usesMenuList())
         menuListDefaultEventHandler(evt);
-    else if (renderer() && renderer()->isListBox() && renderer()->isListBox()) 
+    else 
         listBoxDefaultEventHandler(evt);
 
     if (!evt->defaultHandled() && evt->type() == keypressEvent && evt->isKeyboardEvent()) {
@@ -627,6 +612,9 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
 
 void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 {
+    if (!renderer())
+        return;
+
     if (evt->type() == mousedownEvent) {
         MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
         int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(mEvt->offsetX(), mEvt->offsetY());
@@ -742,6 +730,8 @@ void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
 
 void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 {
+    ASSERT(renderer() && renderer()->isListBox());
+    
     unsigned start;
     unsigned end;
     ASSERT(m_activeSelectionAnchorIndex >= 0);
@@ -762,8 +752,8 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
             }
         }
     }
-    if (renderer()->isListBox())
-        static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
+
+    static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
 }
 
 void HTMLSelectElement::listBoxOnChange()

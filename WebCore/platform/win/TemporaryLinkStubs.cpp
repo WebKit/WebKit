@@ -36,7 +36,6 @@
 #include "TextField.h"
 #include "FileChooser.h"
 #include "Font.h"
-#include "ListBox.h"
 #include "IntPoint.h"
 #include "Widget.h"
 #include "GraphicsContext.h"
@@ -123,16 +122,6 @@ void Slider::setMinValue(double) { notImplemented(); }
 void Slider::setFont(WebCore::Font const&) { notImplemented(); }
 double Slider::value() const { notImplemented(); return 0; }
 
-void ListBox::setSelected(int,bool) { notImplemented(); }
-IntSize ListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
-bool ListBox::isSelected(int) const { notImplemented(); return 0; }
-void ListBox::appendItem(DeprecatedString const&,ListBoxItemType,bool) { notImplemented(); }
-void ListBox::doneAppendingItems() { notImplemented(); }
-void ListBox::setWritingDirection(TextDirection) { notImplemented(); }
-void ListBox::setEnabled(bool) { notImplemented(); }
-void ListBox::clear() { notImplemented(); }
-bool ListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
-
 FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
 PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
@@ -142,7 +131,6 @@ void FileChooser::disconnectUploadControl() { notImplemented(); }
 void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
-Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
@@ -347,11 +335,6 @@ void Scrollbar::setSteps(int, int) { }
 bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
 bool Scrollbar::setValue(int) { return false; }
 void Scrollbar::setProportion(int, int) { }
-
-ListBox::ListBox() { }
-ListBox::~ListBox() { }
-void ListBox::setSelectionMode(ListBox::SelectionMode) { }
-void ListBox::setFont(WebCore::Font const&) { }
 
 Color focusRingColor() { return 0xFF0000FF; }
 void setFocusRingColorChangeFunction(void (*)()) { }

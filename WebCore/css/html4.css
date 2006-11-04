@@ -423,19 +423,6 @@ select {
 select[size],
 select[multiple],
 select[size][multiple] {
-    /* FIXME: If we need to switch back to the old listbox implementation, switch the commented style blocks here */
-
-    /* Old listbox appearance */
-    /*
-    -webkit-appearance: none;
-    -webkit-box-align: initial;
-    box-sizing: initial;
-    color: initial;
-    border: initial;
-    background-color: initial;
-    */
-
-    /* New listbox appearance */
     -webkit-appearance: listbox;
     -webkit-box-align: start;
     box-sizing: initial;

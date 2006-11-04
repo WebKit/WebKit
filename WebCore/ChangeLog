@@ -1,3 +1,30 @@
+2006-11-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Removed DeprecatedRenderSelect and ListBox classes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html4.css:
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::isKeyboardFocusable):
+        (WebCore::HTMLSelectElement::isMouseFocusable):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        * html/HTMLSelectElement.h:
+        * platform/ListBox.h: Removed.
+        * platform/mac/FontCacheMac.mm:
+        * platform/mac/ListBoxMac.mm: Removed.
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/DeprecatedRenderSelect.cpp: Removed.
+        * rendering/DeprecatedRenderSelect.h: Removed.
+
 2006-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, fix for accidental commit.
