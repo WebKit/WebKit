@@ -2,6 +2,15 @@
 
         Not reviewed, fix for accidental commit.
 
+        - rolled back more of the accidentall commit that I forgot.
+
+        * platform/network/mac/ResourceRequestMac.h: Removed.
+        * platform/network/mac/ResourceRequestMac.mm: Removed.
+
+2006-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, fix for accidental commit.
+
         - roll back some network changes accidentally committed with a previous patch.
 
         * WebCore.xcodeproj/project.pbxproj:
