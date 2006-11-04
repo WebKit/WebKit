@@ -1,3 +1,87 @@
+2006-11-04  Bertrand Guiheneuf <guiheneuf@gmail.com>
+
+        Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Don Gibson).
+
+        http://bugs.webkit.org/show_bug.cgi?id=11433
+        Fixes to get WebKit to run on Windows; implemented AffineTransformCairo.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        Added platform/graphics platform/network and platform/network/win to headers search paths
+        Created platform/graphics and platform/network filters in hierarchy
+        Moved GraphicsContext and GraphicsTypes to their respective filters
+        Added EditorClient.h
+        Added FrameLoader* files in loader/
+        Added HitTest* files in rendering/
+        Added Editor.* files in editing/
+        Added DeleteButton.* and DeleteButtonController.* in editing/
+
+        * bridge/win/ChromeClientWin.h: Added.
+        (WebCore::ChromeClientWin::~ChromeClientWin):
+        * bridge/win/EditorClientWin.h: Added.
+        (WebCore::EditorClientWin::~EditorClientWin):
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        (WebCore::FrameWin::urlSelected):
+        (WebCore::FrameWin::submitForm):
+        (WebCore::FrameWin::createNewWindow):
+        * bridge/win/FrameWin.h:
+        Added EditorClient parameter to constructor
+        Replace usage of FrameLoadRequest::m_request with FrameLoadRequest::resourceRequest()
+        Removed openURL() and openURLRequest from class definition
+
+        * bridge/win/PageWin.cpp:
+        * platform/AffineTransform.h:
+        * platform/cairo/AffineTransformCairo.cpp: Added.
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::setMatrix):
+        (WebCore::AffineTransform::map):
+        (WebCore::AffineTransform::mapRect):
+        (WebCore::AffineTransform::isIdentity):
+        (WebCore::AffineTransform::m11):
+        (WebCore::AffineTransform::m12):
+        (WebCore::AffineTransform::m21):
+        (WebCore::AffineTransform::m22):
+        (WebCore::AffineTransform::dx):
+        (WebCore::AffineTransform::dy):
+        (WebCore::AffineTransform::reset):
+        (WebCore::AffineTransform::scale):
+        (WebCore::AffineTransform::rotate):
+        (WebCore::AffineTransform::translate):
+        (WebCore::AffineTransform::shear):
+        (WebCore::AffineTransform::det):
+        (WebCore::AffineTransform::invert):
+        (WebCore::AffineTransform::operator cairo_matrix_t):
+        (WebCore::AffineTransform::operator== ):
+        (WebCore::AffineTransform::operator*= ):
+        (WebCore::AffineTransform::operator* ):
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onHandleCreated):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::fileLoadTimer):
+        (WebCore::ResourceHandle::cancel):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::FrameWin::goBackOrForward):
+        (WebCore::FrameWin::getHistoryLength):
+        (WebCore::FrameWin::historyURL):
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::ChromeClientWin::canRunModal):
+        (WebCore::ChromeClientWin::runModal):
+        (WebCore::EditorClientWin::shouldDeleteRange):
+        (WebCore::EditorClientWin::shouldShowDeleteInterface):
+        (WebCore::EditorClientWin::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientWin::isGrammarCheckingEnabled):
+        (WebCore::EditorClientWin::spellCheckerDocumentTag):
+        (WebCore::Path::transform):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::ResourceLoader::loadsBlocked):
+        (WebCore::systemBeep):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::paintTextField):
+
 2006-11-04  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

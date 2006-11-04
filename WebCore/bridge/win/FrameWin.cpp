@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
-    : Frame(page, ownerElement)
+FrameWin::FrameWin(Page* page, Element* ownerElement,  PassRefPtr<EditorClient> editorClient, FrameWinClient* client)
+    : Frame(page, ownerElement, editorClient)
     , m_client(client)
 {
     Settings* settings = new Settings();
@@ -65,13 +65,13 @@ FrameWin::~FrameWin()
 void FrameWin::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
 {
     if (m_client)
-        m_client->openURL(request.m_request.url().url(), request.lockHistory());
+        m_client->openURL(request.resourceRequest().url().url(), request.lockHistory());
 }
 
 void FrameWin::submitForm(const FrameLoadRequest& request)
 {
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    const ResourceRequest& resourceRequest = request.m_request;
+    const ResourceRequest& resourceRequest = request.resourceRequest();
     if (d->m_submittedFormURL == resourceRequest.url())
         return;
     d->m_submittedFormURL = resourceRequest.url();
@@ -152,7 +152,7 @@ void FrameWin::setStatusBarText(const String& status)
 
 void FrameWin::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& features, Frame*& newFrame)
 {
-    m_client->createNewWindow(request.m_request, features, newFrame);
+    m_client->createNewWindow(request.resourceRequest(), features, newFrame);
 }
 
 } // namespace WebCore

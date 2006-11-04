@@ -32,6 +32,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(QT)
 #include <QMatrix>
+#elif PLATFORM(CAIRO)
+#include "cairo.h"
 #endif
 
 namespace WebCore {
@@ -47,6 +49,8 @@ public:
     AffineTransform(CGAffineTransform transform);
 #elif PLATFORM(QT)
     AffineTransform(const QMatrix &matrix);
+#elif PLATFORM(CAIRO)
+    AffineTransform(const cairo_matrix_t &matrix);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
@@ -78,6 +82,8 @@ public:
     operator CGAffineTransform() const;
 #elif PLATFORM(QT)
     operator QMatrix() const;
+#elif PLATFORM(CAIRO)
+    operator cairo_matrix_t() const;
 #endif
 
     bool operator==(const AffineTransform&) const;
@@ -89,6 +95,8 @@ private:
     CGAffineTransform m_transform;
 #elif PLATFORM(QT)
     QMatrix m_transform;
+#elif PLATFORM(CAIRO)
+    cairo_matrix_t m_transform;
 #endif
 };
 

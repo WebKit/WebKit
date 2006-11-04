@@ -45,12 +45,10 @@ public:
 
 class FrameWin : public Frame {
 public:
-    FrameWin(Page*, Element*, FrameWinClient*);
+    FrameWin(Page*, Element*,  PassRefPtr<EditorClient>, FrameWinClient*);
     ~FrameWin();
 
     virtual void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*& part);
-    virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const FrameLoadRequest&);
     virtual void submitForm(const FrameLoadRequest&);
     virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
 
@@ -122,6 +120,9 @@ public:
     virtual void partClearedInBegin();
 
     virtual bool canGoBackOrForward(int distance) const;
+    virtual void goBackOrForward(int distance);
+    virtual int getHistoryLength();
+    virtual KURL historyURL(int distance);
     virtual void handledOnloadEvents();
 
     virtual bool canPaste() const;

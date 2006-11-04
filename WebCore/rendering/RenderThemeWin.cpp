@@ -238,10 +238,10 @@ bool RenderThemeWin::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     ThemeData themeData = getThemeData(o);
     
     // Now paint the button.
-    HDC hdc = prepareForDrawing(i.p);  
+    HDC hdc = prepareForDrawing(i.context);  
     RECT widgetRect = r;
     drawThemeBG(m_buttonTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
-    doneDrawing(i.p, hdc);
+    doneDrawing(i.context, hdc);
 
     return false;
 }
@@ -289,10 +289,10 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintIn
     ThemeData themeData = getThemeData(o);
     
     // Now paint the text field.
-    HDC hdc = prepareForDrawing(i.p);
+    HDC hdc = prepareForDrawing(i.context);
     RECT widgetRect = r;
     drawThemeBG(m_textFieldTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
-    doneDrawing(i.p, hdc);
+    doneDrawing(i.context, hdc);
 
     return false;
 }

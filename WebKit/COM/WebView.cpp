@@ -33,7 +33,7 @@
 #include "WebBackForwardList.h"
 
 #pragma warning( push, 0 )
-#include "ResourceLoaderClient.h"
+#include "ResourceHandleClient.h"
 #include "FrameWin.h"
 #include "Document.h"
 #include "FrameView.h"

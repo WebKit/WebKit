@@ -142,7 +142,7 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
 
         if (method() == "POST") {
             // FIXME: Too late to set referrer properly.
-            DeprecatedString urlStr = d->URL.path();
+            DeprecatedString urlStr = url().path();
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);
@@ -306,8 +306,8 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
 bool ResourceHandle::start(DocLoader* docLoader)
 {
     ref();
-    if (d->URL.isLocalFile()) {
-        DeprecatedString path = d->URL.path();
+    if (url().isLocalFile()) {
+        DeprecatedString path = url().path();
         // windows does not enjoy a leading slash on paths
         if (path[0] == '/')
             path = path.mid(1);
@@ -345,12 +345,12 @@ bool ResourceHandle::start(DocLoader* docLoader)
         String referrer = docLoader->frame()->referrer();
         if (method() == "POST") {
             d->m_postReferrer = referrer;
-            DeprecatedString host = d->URL.host();
+            DeprecatedString host = url().host();
             host += "\0";
-            urlHandle = InternetConnectA(internetHandle, host.ascii(), d->URL.port(), 0, 0, 
+            urlHandle = InternetConnectA(internetHandle, host.ascii(), url().port(), 0, 0, 
                                          INTERNET_SERVICE_HTTP, 0, (DWORD_PTR)d->m_jobId);
         } else {
-            DeprecatedString urlStr = d->URL.url();
+            DeprecatedString urlStr = url().url();
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);
@@ -374,7 +374,7 @@ bool ResourceHandle::start(DocLoader* docLoader)
 
 void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
 {
-    d->client->receivedResponse(this, 0);
+    client()->receivedResponse(this, 0);
 
     bool result = false;
     DWORD bytesRead = 0;
@@ -384,7 +384,7 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
         char buffer[bufferSize];
         result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
         if (result && bytesRead)
-            d->client->didReceiveData(this, buffer, bytesRead);
+            client()->didReceiveData(this, buffer, bytesRead);
         // Check for end of file. 
     } while (result && bytesRead);
 
@@ -398,8 +398,8 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
     platformData.error = 0;
     platformData.loaded = TRUE;
 
-    d->client->receivedAllData(this, &platformData);
-    d->client->didFinishLoading(this);
+    client()->receivedAllData(this, &platformData);
+    client()->didFinishLoading(this);
 }
 
 void ResourceHandle::cancel()
@@ -414,8 +414,8 @@ void ResourceHandle::cancel()
     platformData.error = 0;
     platformData.loaded = FALSE;
 
-    d->client->receivedAllData(this, &platformData);
-    d->client->didFinishLoading(this);
+    client()->receivedAllData(this, &platformData);
+    client()->didFinishLoading(this); 
 
     if (!d->m_resourceHandle)
         // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.

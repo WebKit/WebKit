@@ -1,3 +1,32 @@
+2006-11-04  Bertrand Guiheneuf <guiheneuf@gmail.com>
+
+        Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Don Gibson).
+
+        http://bugs.webkit.org/show_bug.cgi?id=11433
+        Fixes to get WebKit to run on Windows; implemented AffineTransformCairo.
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+        (WebFrame::loadDataSource):
+        (WebFrame::receivedRedirect):
+        (WebFrame::receivedResponse):
+        (WebFrame::didReceiveData):
+        (WebFrame::receivedAllData):
+        Use resource handles now. Do not start doc loader by hand anymore. 
+        Handle didReceiveData() callback instead of receivedData() which 
+        is deprecated in implementation of ResourceHandleClient        
+
+        * COM/WebFrame.h:
+        * COM/WebView.cpp:
+        Applied ResourceLoader --> ResourceHandle renaming
+
+        * WebKit.vcproj/WebKit.rc:
+        Got rid of MFC dependencies (build fix for VCExpress).
+
+        * WebKit.vcproj/WebKit.vcproj:
+        Added platform/graphics platform/network and platform/network/win 
+        to headers search paths
+
 2006-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         Forgot to add these two files. Oops.

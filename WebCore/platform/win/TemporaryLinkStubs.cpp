@@ -60,11 +60,14 @@
 #include "FrameWin.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
+#include "ResourceLoader.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
 #include "PopupMenu.h"
+#include "ChromeClientWin.h"
 #include "EditCommand.h"
+#include "EditorClientWin.h"
 #include "Icon.h"
 #include "IconLoader.h"
 #include "IconDatabase.h"
@@ -172,6 +175,9 @@ bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 bool FrameWin::canPaste() const { notImplemented(); return 0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
+void FrameWin::goBackOrForward(int distance) { notImplemented(); }
+int FrameWin::getHistoryLength() { notImplemented(); return 0;}
+KURL FrameWin::historyURL(int distance) { notImplemented(); return KURL();}
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 KURL FrameWin::originalRequestURL() const { return KURL(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
@@ -228,11 +234,7 @@ unsigned PlugInInfoStore::pluginCount() const { return 0; }
 bool PlugInInfoStore::supportsMIMEType(const String&) { return false; }
 void refreshPlugins(bool) { }
 
-void ResourceHandle::assembleResponseHeaders() const { }
-void ResourceHandle::retrieveResponseEncoding() const {}
-
-
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceHandle*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, ResourceResponse&){ notImplemented(); return Vector<char>(); }
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 bool CheckIfReloading(DocLoader*) { return false; }
@@ -246,6 +248,14 @@ void CachedResource::setResponse(PlatformResponse) { notImplemented(); }
 void CachedResource::setAllData(PlatformData) { notImplemented(); }
 
 HINSTANCE Page::s_instanceHandle = 0;
+bool ChromeClientWin::canRunModal() { notImplemented(); return false; }
+void ChromeClientWin::runModal() { }
+
+bool EditorClientWin::shouldDeleteRange(Range*) { notImplemented(); return false; }
+bool EditorClientWin::shouldShowDeleteInterface(HTMLElement*) { return false; }
+bool EditorClientWin::isContinuousSpellCheckingEnabled() { notImplemented(); return false; }
+bool EditorClientWin::isGrammarCheckingEnabled() { notImplemented(); return false; }
+int EditorClientWin::spellCheckerDocumentTag() { notImplemented(); return 0; }
 
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }
@@ -300,6 +310,7 @@ void Path::closeSubpath() { }
 void Path::addArc(const FloatPoint&, float, float, float, bool) { }
 void Path::addRect(const FloatRect&) { }
 void Path::addEllipse(const FloatRect&) { }
+void Path::transform(const AffineTransform&) { }
 
 TextField::TextField(TextField::Type type) { m_type = type; }
 TextField::~TextField() { }
@@ -348,10 +359,13 @@ PopupMenu::PopupMenu(RenderMenuList*) { notImplemented(); }
 PopupMenu::~PopupMenu() { notImplemented(); }
 void PopupMenu::show(const IntRect&, FrameView*, int index) { notImplemented(); }
 void PopupMenu::hide() { notImplemented(); }
+void PopupMenu::updateFromElement() { notImplemented(); }
 
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const {}
 bool RenderThemeWin::paintMenuList(RenderObject *, const RenderObject::PaintInfo&, const IntRect&) { return false; }
 void RenderThemeWin::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const { }
+
+bool ResourceLoader::loadsBlocked() { notImplemented(); return false; }
 
 Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
@@ -367,4 +381,5 @@ bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
 IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
 bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
 
+void systemBeep() {}
 } // namespace WebCore

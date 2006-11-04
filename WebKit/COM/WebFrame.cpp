@@ -35,8 +35,8 @@
 #include "WebHistoryItem.h"
 
 #pragma warning( push, 0 )
-#include "BrowserExtension.h"
 #include "Cache.h"
+#include "ChromeClientWin.h"
 #include "Document.h"
 #include "FrameView.h"
 #include "FrameWin.h"
@@ -45,8 +45,9 @@
 #include "RenderFrame.h"
 #include "cairo.h"
 #include "cairo-win32.h"
-#include "ResourceLoader.h"
-#include "ResourceLoaderWin.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleWin.h"
+#include "EditorClient.h"
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -135,8 +136,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
     if (FAILED(hr))
         return hr;
 
-    Page* page = new Page();
-    Frame* frame = new FrameWin(page, 0, this);
+    Page* page = new Page(new ChromeClientWin());
+    Frame* frame = new FrameWin(page, 0, 0, this);
 
     // FIXME: This is one-time initialization, but it gets the value of the setting from the
     // current WebView. That's a mismatch and not good!
@@ -380,10 +381,10 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
                     WebMutableURLRequest* requestImpl = static_cast<WebMutableURLRequest*>(request);
                     formData = requestImpl->formData();
                 }
-                RefPtr<ResourceLoader> loader = formData ?
-                  ResourceLoader::create(this, methodString, kurl, *formData) :
-                  ResourceLoader::create(this, methodString, kurl);
-                loader->start(d->frame->document()->docLoader());
+
+                ResourceRequest resourceRequest(kurl);
+                RefPtr<ResourceHandle> loader = ResourceHandle::create(resourceRequest, this, d->frame->document()->docLoader());
+
                 IWebFrameLoadDelegate* frameLoadDelegate;
                 if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
                     frameLoadDelegate->didStartProvisionalLoadForFrame(d->webView, this);
@@ -461,9 +462,9 @@ int WebFrame::getObjectCacheSize()
     return cacheSize * multiplier;
 }
 
-// ResourceLoaderClient
+// ResourceHandleClient
 
-void WebFrame::receivedRedirect(ResourceLoader*, const KURL& url)
+void WebFrame::receivedRedirect(ResourceHandle*, const KURL& url)
 {
     DeprecatedString urlStr(url.url());
     urlStr.append('\0');
@@ -486,7 +487,7 @@ void WebFrame::receivedRedirect(ResourceLoader*, const KURL& url)
     }
 }
 
-void WebFrame::receivedResponse(ResourceLoader* job, PlatformResponse)
+void WebFrame::receivedResponse(ResourceHandle* job, PlatformResponse)
 {
     // Commit the provisional data source
 
@@ -534,7 +535,7 @@ void WebFrame::receivedResponse(ResourceLoader* job, PlatformResponse)
     }
 }
 
-void WebFrame::receivedData(ResourceLoader*, const char* data, int length)
+void WebFrame::didReceiveData(WebCore::ResourceHandle*, const char* data, int length)
 {
     // Ensure that WebFrame::receivedResponse was called.
     _ASSERT(m_dataSource && !m_provisionalDataSource);
@@ -542,13 +543,13 @@ void WebFrame::receivedData(ResourceLoader*, const char* data, int length)
     d->frame->write(data, length);
 }
 
-void WebFrame::receivedAllData(ResourceLoader* /*job*/)
+void WebFrame::receivedAllData(ResourceHandle* /*job*/)
 {
     m_quickRedirectComing = false;
     m_loadType = WebFrameLoadTypeStandard;
 }
 
-void WebFrame::receivedAllData(ResourceLoader*, PlatformData data)
+void WebFrame::receivedAllData(ResourceHandle*, PlatformData data)
 {
     IWebFrameLoadDelegate* frameLoadDelegate;
     if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
