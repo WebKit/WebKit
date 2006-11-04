@@ -455,8 +455,7 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
             m_vSplitPos = _x;
             m_hSplitPos = _y;
             m_oldpos = -1;
-        } else
-            view()->frameView()->setCursor(pointerCursor());
+        }
     }
     
     // ### check the resize is not going out of bounds.
