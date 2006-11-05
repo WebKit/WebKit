@@ -429,12 +429,12 @@ function toggleBreakpointEditorOnLine(lineNum)
             bp.editor = editor;
             file.breakpoints[lineNum] = bp;
 
-            editor.query('//input[@class="enable"]').checked = bp.enabled;
+            editor.query('.//input[@class="enable"]').checked = bp.enabled;
 
-            editor.query('//select[@class="editorDropdown"]').selectedIndex = bp.type;
+            editor.query('.//select[@class="editorDropdown"]').selectedIndex = bp.type;
             updateBreakpointTypeOnLine(lineNum);
 
-            editor.query('//span[@class="hitCounter"]').innerText = bp.hitcount;
+            editor.query('.//span[@class="hitCounter"]').innerText = bp.hitcount;
                 
             setConditionFieldText(bp);
         } else {
@@ -449,8 +449,8 @@ function updateBreakpointTypeOnLine(line)
 {
     var breakpoint = files[currentFile].breakpoints[line];
     var editor = breakpoint.editor;
-    var label = editor.query('//label[@class="conditionLabel"]');
-    var dropdown = editor.query('//select[@class="editorDropdown"]');
+    var label = editor.query('.//label[@class="conditionLabel"]');
+    var dropdown = editor.query('.//select[@class="editorDropdown"]');
     breakpoint.type = dropdown.selectedIndex;
     switch(breakpoint.type) {
         case 0:
@@ -464,7 +464,7 @@ function updateBreakpointTypeOnLine(line)
 
 function setConditionFieldText(breakpoint)
 {
-    var conditionField = breakpoint.editor.query('//div[@class="condition"]');
+    var conditionField = breakpoint.editor.query('.//div[@class="condition"]');
     
     var functionBody = breakpoint.value;
     if (!functionBody || functionBody == "break")
@@ -491,8 +491,8 @@ function saveBreakpointOnLine(lineNum)
     var breakpoint = file.breakpoints[lineNum];
     row = file.element.firstChild.childNodes.item(lineNum - 1);
     var editor = breakpoint.editor;
-    var body = editor.query('//div[@class="condition"]').innerText;
-    var actionIndex = editor.query('//select[@class="editorDropdown"]').selectedIndex;
+    var body = editor.query('.//div[@class="condition"]').innerText;
+    var actionIndex = editor.query('.//select[@class="editorDropdown"]').selectedIndex;
     if (body.length == 0)
         breakpoint.value = "break";
     else if (body.indexOf("return") != -1)
@@ -515,7 +515,7 @@ function toggleBreakpointOnLine(lineNum)
     breakpoint.enabled = !breakpoint.enabled;
     var editor = breakpoint.editor;
     if (editor) {
-        editor.query('//input[@class="enable"]').checked = breakpoint.enabled;
+        editor.query('.//input[@class="enable"]').checked = breakpoint.enabled;
         setConditionFieldText(editor, lineNum);
     }
 }
@@ -1290,7 +1290,7 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
         var editor = breakpoint.editor;
         var counter = null;
         if (editor)
-            counter = breakpoint.editor.query('//span[@class="hitCounter"]');
+            counter = breakpoint.editor.query('.//span[@class="hitCounter"]');
         if (counter)
             counter.innerText = breakpoint.hitcount;
     }

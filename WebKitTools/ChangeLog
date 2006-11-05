@@ -2,6 +2,15 @@
 
         Reviewed by Tim H.
 
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11521
+        Bug 11521: [Drosera] Breakpoint editor UI behaves incorrectly when multiple editors are open
+
+        * Drosera/debugger.js: Use .// instead of // so that it doesn't root the search at the document.
+
+2006-11-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11513
         Bug 11513: [Drosera] Function popup fails to appear when clicking supposedly valid areas.
 
