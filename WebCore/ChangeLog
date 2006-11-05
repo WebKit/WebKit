@@ -1,6 +1,6 @@
 2006-11-04  Darin Adler  <darin@apple.com>
 
-        Reviewed by Ander.
+        Reviewed by Anders.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11453
           REGRESSION: Status bar always shows cancelled opening the page
