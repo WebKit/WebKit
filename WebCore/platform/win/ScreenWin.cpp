@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "Page.h"
 #include <windows.h>
 

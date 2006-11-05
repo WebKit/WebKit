@@ -1,3 +1,10 @@
+2006-11-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build breaks
+
+        * loader/DocumentLoader.h:
+        * platform/win/ScreenWin.cpp:
+
 2006-11-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

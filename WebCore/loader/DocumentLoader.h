@@ -109,8 +109,8 @@ namespace WebCore {
         String overrideEncoding() const;
 #if PLATFORM(MAC)
         void addResponse(NSURLResponse *);
-#endif
         const ResponseVector& responses() const;
+#endif
         const NavigationAction& triggeringAction() const;
         void setTriggeringAction(const NavigationAction&);
         void setOverrideEncoding(const String&);
