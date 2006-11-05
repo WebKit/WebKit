@@ -39,6 +39,7 @@
 @public
     WebFrame *_frame;
 
+@private
     WebCoreKeyboardUIMode _keyboardUIMode;
     BOOL _keyboardUIModeAccessed;
     BOOL _doingClientRedirect;
@@ -49,11 +50,11 @@
 }
 
 - (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view;
-
 - (void)close;
 
-- (BOOL)inNextKeyViewOutsideWebFrameViews;
-
 - (WebFrame *)webFrame;
+
+- (BOOL)inNextKeyViewOutsideWebFrameViews;
+- (NSView *)nextValidKeyViewOutsideWebFrameViews;
 
 @end

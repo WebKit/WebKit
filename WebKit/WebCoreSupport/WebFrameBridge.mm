@@ -75,27 +75,23 @@
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/FormDataStream.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/Page.h>
-#import <WebCore/WebCoreFrameNamespaces.h>
-#import <WebCore/WebCoreSettings.h>
-#import <WebCore/DocumentLoader.h>
-#import <WebCore/FormDataStream.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/SubresourceLoader.h>
+#import <WebCore/WebCoreFrameNamespaces.h>
+#import <WebCore/WebCoreSettings.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 
-// For compatibility only with old SPI. 
-@interface NSObject (OldWebPlugin)
+// For compatibility with old SPI. 
+@interface NSView (OldWebPlugin)
 - (void)setIsSelected:(BOOL)f;
-@end
-
-@interface NSApplication (DeclarationStolenFromAppKit)
-- (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
 
 @interface NSView (AppKitSecretsWebBridgeKnowsAbout)
@@ -111,6 +107,10 @@ using namespace WebCore;
 NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
+
+#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
+#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
+#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
 @implementation WebFrameBridge
 
@@ -149,10 +149,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self finishInitializingWithFrameName:name view:view];
     return self;
 }
-
-#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
-#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
-#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
 - (void)fini
 {
@@ -284,12 +280,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[wv _UIDelegateForwarder] webView:wv setToolbarsVisible:visible];
 }
 
-- (BOOL)areScrollbarsVisible
-{
-    ASSERT(_frame != nil);
-    return [[_frame frameView] allowsScrolling];
-}
-
 - (void)setScrollbarsVisible:(BOOL)visible
 {
     ASSERT(_frame != nil);
@@ -320,13 +310,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[webView _UIDelegateForwarder] webView:webView setResizable:resizable];
 }
 
-- (BOOL)windowIsResizable
-{
-    ASSERT(_frame != nil);
-    WebView *webView = [self webView];
-    return [[webView _UIDelegateForwarder] webViewIsResizable:webView];
-}
-
 - (NSResponder *)firstResponder
 {
     ASSERT(_frame != nil);
@@ -349,14 +332,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [(WebHTMLView *)[[_frame frameView] documentView] _willMakeFirstResponderForNodeFocus];
 }
 
-
 - (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 {
     ASSERT(_frame != nil);
     NSView *documentView = [[_frame frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]]) {
+    if (![documentView isKindOfClass:[WebHTMLView class]])
         return NO;
-    }
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     return [webHTMLView _textViewWasFirstResponderAtMouseDownTime:textView];
 }
@@ -420,7 +401,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebView *wv = [self webView];
     id wd = [wv UIDelegate];
-    
     if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
         return [wd webViewShouldInterruptJavaScript:wv];
     return NO;
@@ -556,12 +536,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebHistoryItem *item = [_frame _itemForSavingDocState];
     LOG(Loading, "%@: saving form state from to 0x%x", [_frame name], item);
-    if (item) {
+    if (item)
         [item setDocumentState:documentState];
         // You might think we could save the scroll state here too, but unfortunately this
         // often gets called after WebFrame::_transitionToCommitted has restored the scroll
         // position of the next document.
-    }
 }
 
 - (NSArray *)documentState
@@ -611,9 +590,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    WebView *webView = [self webView];
-    NSView *previousKeyView = [webView previousKeyView];
-    return previousKeyView;
+    return [[self webView] previousKeyView];
 }
 
 - (void)setNeedsReapplyStyles
@@ -677,10 +654,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     unsigned count = [keys count];
     unsigned i;
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
         if ([[keys objectAtIndex:i] _webkit_isCaseInsensitiveEqualToString:key])
             return [values objectAtIndex:i];
-    }
     return nil;
 }
 
@@ -878,7 +854,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 #ifndef NDEBUG
     if (!loggedObjectCacheSize){
-        LOG (CacheSizes, "Object cache size set to %d bytes.", cacheSize * multiplier);
+        LOG(CacheSizes, "Object cache size set to %d bytes.", cacheSize * multiplier);
         loggedObjectCacheSize = YES;
     }
 #endif
@@ -931,20 +907,20 @@ static BOOL loggedObjectCacheSize = NO;
     *flagUA = ((mask & WebDragSourceActionImage) || (mask & WebDragSourceActionLink) || (mask & WebDragSourceActionSelection));
 }
 
-- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
+- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op
+    event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
     [docView _setInitiatedDrag:YES];
-    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
+    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event
+        sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }
 
 - (BOOL)mayStartDragAtEventLocation:(NSPoint)location
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-
     return [docView _mayStartDragAtEventLocation:location];
 }
 
@@ -962,21 +938,17 @@ static BOOL loggedObjectCacheSize = NO;
 {
     if (distance == 0)
         return YES;
-
     if (distance > 0 && distance <= [[[self webView] backForwardList] forwardListCount])
         return YES;
-
     if (distance < 0 && -distance <= [[[self webView] backForwardList] backListCount])
         return YES;
-    
     return NO;
 }
 
 - (void)goBackOrForward:(int)distance
 {
-    if (distance == 0) {
+    if (distance == 0)
         return;
-    }
     WebView *webView = [self webView];
     WebBackForwardList *list = [webView backForwardList];
     WebHistoryItem *item = [list itemAtIndex:distance];
@@ -1069,68 +1041,50 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     [[_frame frameView] _setHasBorder:hasBorder];
 }
 
-- (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL
-{
-    return [[_frame dataSource] _fileWrapperForURL:URL];
-}
-
 - (void)print
 {
-    id wd = [[self webView] UIDelegate];
-    
-    if ([wd respondsToSelector:@selector(webView:printFrameView:)]) {
+    id wd = [[self webView] UIDelegate];    
+    if ([wd respondsToSelector:@selector(webView:printFrameView:)])
         [wd webView:[self webView] printFrameView:[_frame frameView]];
-    } else {
+    else
         [[WebDefaultUIDelegate sharedUIDelegate] webView:[self webView] printFrameView:[_frame frameView]];
-    }
 }
 
 - (jobject)getAppletInView:(NSView *)view
 {
-    jobject applet;
-
     if ([view respondsToSelector:@selector(webPlugInGetApplet)])
-        applet = [view webPlugInGetApplet];
-    else
-        applet = [self pollForAppletInView:view];
-        
-    return applet;
+        return [view webPlugInGetApplet];
+    return [self pollForAppletInView:view];
 }
 
 // NOTE: pollForAppletInView: will block until the block is ready to use, or
-// until a timeout is exceeded.  It will return nil if the timeour is
+// until a timeout is exceeded.  It will return nil if the timeout is
 // exceeded.
 // Deprecated, use getAppletInView:.
 - (jobject)pollForAppletInView:(NSView *)view
 {
-    jobject applet = 0;
-    
-    if ([view respondsToSelector:@selector(pollForAppletInWindow:)]) {
+    if ([view respondsToSelector:@selector(pollForAppletInWindow:)])
         // The Java VM needs the containing window of the view to
-        // initialize.  The view may not yet be in the window's view 
+        // initialize. The view may not yet be in the window's view 
         // hierarchy, so we have to pass the window when requesting
         // the applet.
-        applet = [view pollForAppletInWindow:[[self webView] window]];
-    }
-    
-    return applet;
+        return [view pollForAppletInWindow:[[self webView] window]];
+    return 0;
 }
 
 - (void)respondToChangedContents
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
+    if ([view isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)view _updateFontPanel];
-    }
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[self webView]];
 }
 
 - (void)respondToChangedSelection
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
+    if ([view isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)view _selectionChanged];
-    }
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[self webView]];
 }
 
@@ -1176,12 +1130,10 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
-    if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)]) {
+    if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
         [view webPlugInSetIsSelected:isSelected];
-    }
-    else if ([view respondsToSelector:@selector(setIsSelected:)]) {
+    else if ([view respondsToSelector:@selector(setIsSelected:)])
         [view setIsSelected:isSelected];
-    }
 }
 
 - (NSString *)overrideMediaType
