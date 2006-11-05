@@ -1,3 +1,12 @@
+2006-11-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11512
+        Bug 11512: [Drosera] Scrolling via keyboard breaks after clicking in function popup.
+
+        * Drosera/debugger.js: blur() the function popup when we're done with it.
+
 2006-11-04  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Darin.

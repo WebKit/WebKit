@@ -941,6 +941,7 @@ function switchFunction(index, shouldResetPopup)
     var currentFunction = selectedFunction.value;     
     var currentFunctionElement = sourcesFrame.document.getElementById(currentFunction);
     
+    functionSelect.blur();
     sourcesFrame.focus();
     selection.setBaseAndExtent(currentFunctionElement, 0, currentFunctionElement, 1);
     sourcesFrame.location.hash = "#function-" + selectedFunction.value;
