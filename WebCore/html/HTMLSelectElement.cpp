@@ -64,7 +64,7 @@ HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     , m_size(0)
     , m_multiple(false)
     , m_recalcListItems(false)
-    , m_lastOnChangeIndex(0)
+    , m_lastOnChangeIndex(-1)
     , m_activeSelectionAnchorIndex(-1)
     , m_activeSelectionEndIndex(-1)
     , m_activeSelectionState(false)
@@ -504,6 +504,7 @@ void HTMLSelectElement::reset()
     if (!optionSelected && firstOption)
         firstOption->setSelected(true);
     setChanged(true);
+    m_lastOnChangeIndex = -1;
 }
 
 void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, bool selected)
