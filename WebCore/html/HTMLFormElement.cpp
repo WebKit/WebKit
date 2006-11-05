@@ -124,7 +124,7 @@ Node* HTMLFormElement::item(unsigned index)
     return elements()->item(index);
 }
 
-void HTMLFormElement::submitClick()
+void HTMLFormElement::submitClick(Event* event)
 {
     bool submitFound = false;
     for (unsigned i = 0; i < formElements.size(); ++i) {
@@ -138,7 +138,7 @@ void HTMLFormElement::submitClick()
         }
     }
     if (!submitFound) // submit the form without a submit or image input
-        prepareSubmit();
+        prepareSubmit(event);
 }
 
 static DeprecatedCString encodeCString(const CString& cstr)
@@ -305,9 +305,9 @@ void HTMLFormElement::setBoundary( const String& bound )
     m_boundary = bound;
 }
 
-bool HTMLFormElement::prepareSubmit()
+bool HTMLFormElement::prepareSubmit(Event* event)
 {
-    Frame *frame = document()->frame();
+    Frame* frame = document()->frame();
     if (m_insubmit || !frame)
         return m_insubmit;
 
@@ -320,19 +320,24 @@ bool HTMLFormElement::prepareSubmit()
     m_insubmit = false;
 
     if (m_doingsubmit)
-        submit(true);
+        submit(event, true);
 
     return m_doingsubmit;
 }
 
-void HTMLFormElement::submit(bool activateSubmitButton)
+void HTMLFormElement::submit()
+{
+    submit(0, false);
+}
+
+void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
 {
     FrameView *view = document()->view();
     Frame *frame = document()->frame();
     if (!view || !frame)
         return;
 
-    if ( m_insubmit ) {
+    if (m_insubmit) {
         m_doingsubmit = true;
         return;
     }
@@ -370,9 +375,9 @@ void HTMLFormElement::submit(bool activateSubmitButton)
     FormData postData;
     if (formData(postData)) {
         if (m_post)
-            frame->submitForm("post", m_url, postData, m_target, enctype(), boundary());
+            frame->submitForm("POST", m_url, postData, m_target, enctype(), boundary(), event);
         else
-            frame->submitForm("get", m_url, postData, m_target);
+            frame->submitForm("GET", m_url, postData, m_target, String(), String(), event);
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

@@ -78,8 +78,8 @@ public:
     virtual ~FrameGdk();
 
     void handleGdkEvent(GdkEvent*);
-    virtual void submitForm(const FrameLoadRequest&);
-    virtual void urlSelected(const FrameLoadRequest&);
+    virtual void submitForm(const FrameLoadRequest&, Event*);
+    virtual void urlSelected(const FrameLoadRequest&, Event*);
 
     virtual void setTitle(const String&);
 

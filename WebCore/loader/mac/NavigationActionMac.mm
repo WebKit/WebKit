@@ -33,12 +33,11 @@
 
 namespace WebCore {
 
-static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSubmission,
-    NSEvent *event)
+static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)
 {
     if (isFormSubmission)
         return NavigationTypeFormSubmitted;
-    if (event)
+    if (haveEvent)
         return NavigationTypeLinkClicked;
     if (frameLoadType == FrameLoadTypeReload)
         return NavigationTypeReload;
@@ -65,7 +64,7 @@ NavigationAction::NavigationAction(const KURL& URL, FrameLoadType frameLoadType,
 {
 }
 
-NavigationAction::NavigationAction(const KURL& URL, NavigationType type, NSEvent *event)
+NavigationAction::NavigationAction(const KURL& URL, NavigationType type, PassRefPtr<Event> event)
     : m_URL(URL)
     , m_type(type)
     , m_event(event)
@@ -73,7 +72,7 @@ NavigationAction::NavigationAction(const KURL& URL, NavigationType type, NSEvent
 }
 
 NavigationAction::NavigationAction(const KURL& URL, FrameLoadType frameLoadType,
-        bool isFormSubmission, NSEvent *event)
+        bool isFormSubmission, PassRefPtr<Event> event)
     : m_URL(URL)
     , m_type(navigationType(frameLoadType, isFormSubmission, event))
     , m_event(event)

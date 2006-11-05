@@ -30,6 +30,8 @@
 #import "MainResourceLoader.h"
 
 #import "FrameLoader.h"
+#import "FrameLoaderClient.h"
+#import "KURL.h"
 #import "PlatformString.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
@@ -198,18 +200,9 @@ NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSUR
     return newRequest;
 }
 
-static bool shouldLoadAsEmptyDocument(NSURL *url)
+static bool shouldLoadAsEmptyDocument(const KURL& URL)
 {
-    Vector<UInt8, URLBufferLength> buffer(URLBufferLength);
-    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)url, buffer.data(), URLBufferLength);
-    if (bytesFilled == -1) {
-        CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)url, NULL, 0);
-        buffer.resize(bytesToAllocate);
-        bytesFilled = CFURLGetBytes((CFURLRef)url, buffer.data(), bytesToAllocate);
-        ASSERT(bytesFilled == bytesToAllocate);
-    }
-    
-    return (bytesFilled == 0) || (bytesFilled > 5 && strncmp((char *)buffer.data(), "about:", 6) == 0);
+    return URL.isEmpty() || equalIgnoringCase(URL.protocol(), "about");
 }
 
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, NSURLResponse *r)
@@ -234,7 +227,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 
     case PolicyDownload:
         [m_proxy.get() setDelegate:nil];
-        frameLoader()->download(connection(), request(), r, m_proxy.get());
+        frameLoader()->client()->download(connection(), request(), r, m_proxy.get());
         m_proxy = nil;
         receivedError(interruptionForPolicyChangeError());
         return;
@@ -267,7 +260,9 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     if (!reachedTerminalState())
         ResourceLoader::didReceiveResponse(r);
 
-    if (frameLoader() && !frameLoader()->isStopping() && (shouldLoadAsEmptyDocument(URL) || frameLoader()->representationExistsForURLScheme([URL scheme])))
+    if (frameLoader() && !frameLoader()->isStopping()
+            && (shouldLoadAsEmptyDocument(URL)
+                || frameLoader()->representationExistsForURLScheme([URL scheme])))
         didFinishLoading();
 }
 

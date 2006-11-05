@@ -26,13 +26,9 @@
 #ifndef MouseRelatedEvent_h
 #define MouseRelatedEvent_h
 
-#include "AtomicString.h"
-#include "DOMWindow.h"
 #include "UIEventWithKeyState.h"
 
 namespace WebCore {
-
-    typedef DOMWindow AbstractView;
 
     // Internal only: Helper class for what's common between mouse and wheel events.
     class MouseRelatedEvent : public UIEventWithKeyState {

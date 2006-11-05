@@ -51,8 +51,6 @@ class WebCoreFrameBridge;
 - (id)initWithChromeClient:(PassRefPtr<WebCore::ChromeClient>)chromeClient;
 - (void)close;
 
-- (void)setMainFrame:(WebCoreFrameBridge *)mainFrame;
-
 - (WebCoreFrameBridge *)mainFrame;
 
 - (void)setGroupName:(NSString *)groupName;

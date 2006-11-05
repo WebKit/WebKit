@@ -52,9 +52,7 @@ using namespace WebCore;
     self = [super initWithChromeClient:WebChromeClient::create(webView)];
     if (self) {
         _webView = webView;
-        WebFrameBridge *mainFrame = [[WebFrameBridge alloc] initMainFrameWithPage:self frameName:frameName view:frameView];
-        [self setMainFrame:mainFrame];
-        [mainFrame release];
+        [[[WebFrameBridge alloc] initMainFrameWithPage:self frameName:frameName view:frameView] release];
     }
     return self;
 }

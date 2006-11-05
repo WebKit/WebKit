@@ -34,6 +34,12 @@
 @class WebPageBridge;
 @class WebBasePluginPackage;
 
+#ifdef __cplusplus
+namespace WebCore {
+    class String;
+}
+#endif
+
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
@@ -47,8 +53,11 @@
 - (void)_addToAllWebViewsSet;
 @end
 
-@interface WebView (WebViewBridge)
+@interface WebView (WebViewInternal)
 - (WebPageBridge *)_pageBridge;
+#ifdef __cplusplus
+- (WebCore::String&)_userAgent;
+#endif
 @end
 
 id WebViewGetResourceLoadDelegate(WebView *webView);

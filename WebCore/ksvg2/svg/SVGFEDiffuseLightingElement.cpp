@@ -31,7 +31,6 @@
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "ksvg.h"
 
 namespace WebCore {
 

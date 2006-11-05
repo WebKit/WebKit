@@ -27,10 +27,7 @@
 #ifndef ResourceHandleInternal_h
 #define ResourceHandleInternal_h
 
-#include "FormData.h"
-#include "KURL.h"
-#include <wtf/HashMap.h>
-#include <wtf/Platform.h>
+#include "ResourceRequest.h"
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLConnectionPriv.h>
@@ -123,7 +120,7 @@ namespace WebCore {
         bool m_resend;
 #endif
 #if USE(CURL)
-        CURL *m_handle;
+        CURL* m_handle;
 #endif
 #if PLATFORM(QT)
         QString m_charset;

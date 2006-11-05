@@ -30,7 +30,6 @@
 #include "SVGLength.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
-#include "ksvg.h"
 #include <math.h>
 
 using namespace std;

@@ -29,45 +29,34 @@
 #ifndef NavigationAction_h
 #define NavigationAction_h
 
+#include "Event.h"
 #include "FrameLoaderTypes.h"
+#include "HitTestResult.h"
 #include "KURL.h"
-
-#if PLATFORM(MAC)
-#include "RetainPtr.h"
-#ifdef __OBJC__
-@class NSEvent;
-#else
-class NSEvent;
-#endif
-#endif
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+    class Event;
 
     class NavigationAction {
     public:
         NavigationAction();
         NavigationAction(const KURL&, NavigationType);
         NavigationAction(const KURL&, FrameLoadType, bool isFormSubmission);
-#if PLATFORM(MAC)
-        // FIXME: Change from NSEvent to DOM event.
-        NavigationAction(const KURL&, NavigationType, NSEvent *);
-        NavigationAction(const KURL&, FrameLoadType, bool isFormSubmission, NSEvent *);
-#endif
+        NavigationAction(const KURL&, NavigationType, PassRefPtr<Event>);
+        NavigationAction(const KURL&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
 
         bool isEmpty() const { return m_URL.isEmpty(); }
 
-#if PLATFORM(MAC)
         KURL URL() const { return m_URL; }
         NavigationType type() const { return m_type; }
-        NSEvent *event() const { return m_event.get(); }
-#endif
+        const Event* event() const { return m_event.get(); }
 
     private:
         KURL m_URL;
         NavigationType m_type;
-#if PLATFORM(MAC)
-        RetainPtr<NSEvent> m_event;
-#endif
+        RefPtr<Event> m_event;
     };
 
 }

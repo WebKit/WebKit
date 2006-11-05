@@ -254,7 +254,7 @@ macro(yankAndSelect) \
     float textSizeMultiplier;
 
     NSString *applicationNameForUserAgent;
-    NSString *userAgent;
+    String* userAgent;
     BOOL userAgentOverridden;
     
     WebPreferences *preferences;
@@ -379,7 +379,6 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 @implementation WebProgressItem
 @end
 
-
 static BOOL continuousSpellCheckingEnabled;
 #if !BUILDING_ON_TIGER
 static BOOL grammarCheckingEnabled;
@@ -405,6 +404,7 @@ static BOOL grammarCheckingEnabled;
 #if !BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 #endif
+    userAgent = new String;
     
     return self;
 }
@@ -413,10 +413,11 @@ static BOOL grammarCheckingEnabled;
 {
     ASSERT(!_pageBridge);
     ASSERT(draggingDocumentView == nil);
-    
+
+    delete userAgent;
+
     [backForwardList release];
     [applicationNameForUserAgent release];
-    [userAgent release];
     [backgroundColor release];
     
     [preferences release];
@@ -435,6 +436,12 @@ static BOOL grammarCheckingEnabled;
     [mediaStyle release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete userAgent;
+    [super finalize];
 }
 
 @end
@@ -888,10 +895,8 @@ static bool debugWidget = true;
     WebPreferences *preferences = (WebPreferences *)[notification object];
     
     ASSERT(preferences == [self preferences]);
-    if (!_private->userAgentOverridden) {
-        [_private->userAgent release];
-        _private->userAgent = nil;
-    }
+    if (!_private->userAgentOverridden)
+        *_private->userAgent = String();
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
@@ -1346,7 +1351,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
+    [request _web_setHTTPUserAgent:[self _userAgent]];
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     return cachedResponse;
@@ -2177,10 +2182,8 @@ NS_ENDHANDLER
     NSString *name = [applicationName copy];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
-    if (!_private->userAgentOverridden) {
-        [_private->userAgent release];
-        _private->userAgent = nil;
-    }
+    if (!_private->userAgentOverridden)
+        *_private->userAgent = String();
 }
 
 - (NSString *)applicationNameForUserAgent
@@ -2190,15 +2193,15 @@ NS_ENDHANDLER
 
 - (void)setCustomUserAgent:(NSString *)userAgentString
 {
-    NSString *override = [userAgentString copy];
-    [_private->userAgent release];
-    _private->userAgent = override;
-    _private->userAgentOverridden = override != nil;
+    *_private->userAgent = userAgentString;
+    _private->userAgentOverridden = userAgentString != nil;
 }
 
 - (NSString *)customUserAgent
 {
-    return _private->userAgentOverridden ? [[_private->userAgent retain] autorelease] : nil;
+    if (!_private->userAgentOverridden)
+        return nil;
+    return *_private->userAgent;
 }
 
 - (void)setMediaStyle:(NSString *)mediaStyle
@@ -2260,26 +2263,7 @@ NS_ENDHANDLER
 // Since we no longer automatically spoof, this no longer requires looking at the URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    NSString *userAgent = _private->userAgent;
-    if (userAgent) {
-        return [[userAgent retain] autorelease];
-    }
-    
-    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
-    id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
-        objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
-    NSString *applicationName = _private->applicationNameForUserAgent;
-
-    if ([applicationName length]) {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
-            language, sourceVersion, applicationName];
-    } else {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
-            language, sourceVersion];
-    }
-
-    _private->userAgent = [userAgent retain];
-    return userAgent;
+    return [self _userAgent];
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow
@@ -2706,6 +2690,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
     [inspector showWindow:nil];
 }
+
 @end
 
 @implementation WebView (WebIBActions)
@@ -3662,11 +3647,34 @@ static WebFrameView *containingFrameView(NSView *view)
 
 @end
 
-@implementation WebView (WebViewBridge)
+@implementation WebView (WebViewInternal)
 
 - (WebPageBridge *)_pageBridge
 {
     return _private->_pageBridge;
+}
+
+- (void)_computeUserAgent
+{
+    NSString *userAgent;
+    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
+    id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
+        objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
+    NSString *applicationName = _private->applicationNameForUserAgent;
+    if ([applicationName length])
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
+            language, sourceVersion, applicationName];
+    else
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
+            language, sourceVersion];
+    *_private->userAgent = userAgent;
+}
+
+- (WebCore::String&)_userAgent
+{
+    if (_private->userAgent->isNull())
+        [self _computeUserAgent];
+    return *_private->userAgent;
 }
 
 @end

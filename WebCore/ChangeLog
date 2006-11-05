@@ -1,3 +1,168 @@
+2006-11-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - converted more of the loader machinery to work with cross-platform
+          data structures instead of Macintosh-specific ones
+
+          converted most uses of NSURL to KURL and NSEvent to DOM Event in
+          loader classes
+
+          moved download function out of FrameLoader.h to avoid reference to
+          NSURLConnection
+
+          added DOM Event parameters to various functions so that the handlers
+          can use the DOM Event instead of the global "current NSEvent";
+          includes Frame::submitForm, HTMLFormElement::prepareSubmit,
+          HTMLFormElement::submit, FrameLoader::load
+
+          moved the setMainFrame call that hands ownership to the Page
+          into one of the Frame constructors, and removed it from all
+          the clients
+
+          removed const from Event parameter to the urlSelected function
+          (we rarely use const with DOM elements)
+
+          removed some redundant includes and declarations from various
+          header files
+
+          removed NSURL parameter from userAgent function -- if we need it we
+          can add it back, but converting from NSURL to KURL and back is
+          inefficient enough that it's best to have it out for now (since it's
+          been unused for years) -- if we add it back, we can choose an
+          appropriate parameter type that's always inexpensive to pass
+
+          did some basic cleanup in the IconLoader class, including removing
+          an unnecessary loop that added icon data a byte at a time
+
+          renamed safeLoad to load, since it's no different from the other
+          FrameLoader load functions, safety-wise
+
+          fixed some code that was trying to distinguish null frame name from
+          empty string frame name -- both should be handled the same, but callers
+          were doing it by checking for empty and turning it into null (in a way
+          that was causing extra round trips between NSString and WebCore::String)
+
+          corrected all uses of "get" and "post" to be uppercase "GET" and "POST"
+          and got rid of case-insensitive compares of methods
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::urlSelected):
+        (WebCore::FrameMac::userAgent):
+        * bridge/mac/FrameViewMac.mm:
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject rendererForView:]):
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageBridge.mm:
+        * bridge/mac/WebCoreSettings.mm:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::urlSelected):
+        (WebCore::FrameWin::submitForm):
+        * bridge/win/FrameWin.h:
+        * dom/MouseRelatedEvent.cpp:
+        * dom/MouseRelatedEvent.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::~UIEvent):
+        * dom/UIEvent.h:
+        * dom/UIEventWithKeyState.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitClick):
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::event):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::create):
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::didReceiveData):
+        (WebCore::IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::unreachableURL):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::URLForHistory):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::clientRedirected):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::notifyIconChanged):
+        (WebCore::FrameLoader::URL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/IconLoaderMac.mm:
+        (WebCore::IconLoader::notifyIconChanged):
+        * loader/mac/LoaderFunctionsMac.mm:
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::shouldLoadAsEmptyDocument):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * loader/mac/NavigationActionMac.mm:
+        (WebCore::navigationType):
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/mac/ResourceLoaderMac.mm:
+        * loader/mac/SubresourceLoaderMac.mm:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::submitFormAgain):
+        (WebCore::Frame::submitForm):
+        (WebCore::Frame::endIfNotLoading):
+        (WebCore::Frame::hitTestResultAtPoint):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::FrameGdk):
+        (WebCore::FrameGdk::submitForm):
+        (WebCore::FrameGdk::urlSelected):
+        * platform/gdk/FrameGdk.h:
+        * platform/mac/TextFieldMac.mm:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/ResourceResponseMac.h:
+        * platform/network/mac/ResourceResponseMac.mm:
+        (-[NSURLResponse WebCore]):
+        * platform/network/win/ResourceHandleWin.cpp:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        * platform/qt/FrameQt.h:
+        * rendering/RenderLineEdit.cpp:
+        (WebCore::RenderLineEdit::returnPressed):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+
 2006-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

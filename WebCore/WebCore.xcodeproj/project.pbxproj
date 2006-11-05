@@ -531,20 +531,20 @@
 		85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */; };
 		85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */; };
 		85031B410A44EFC700F992E0 /* Event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B2B0A44EFC700F992E0 /* Event.cpp */; };
-		85031B420A44EFC700F992E0 /* Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B2C0A44EFC700F992E0 /* Event.h */; };
+		85031B420A44EFC700F992E0 /* Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B2C0A44EFC700F992E0 /* Event.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B430A44EFC700F992E0 /* KeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */; };
-		85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */; };
+		85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B450A44EFC700F992E0 /* MouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B2F0A44EFC700F992E0 /* MouseEvent.cpp */; };
-		85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B300A44EFC700F992E0 /* MouseEvent.h */; };
+		85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B300A44EFC700F992E0 /* MouseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */; };
-		85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */; };
+		85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B330A44EFC700F992E0 /* MutationEvent.cpp */; };
 		85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B340A44EFC700F992E0 /* MutationEvent.h */; };
 		85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */; };
 		85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B360A44EFC700F992E0 /* RegisteredEventListener.h */; };
 		85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B370A44EFC700F992E0 /* UIEvent.cpp */; };
-		85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B380A44EFC700F992E0 /* UIEvent.h */; };
-		85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */; };
+		85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B380A44EFC700F992E0 /* UIEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */; };
 		85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B3B0A44EFC700F992E0 /* WheelEvent.h */; };
 		85032DD70AA8C9BE007D3B7D /* DOMCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85032DC30AA8C9BE007D3B7D /* DOMCSSCharsetRule.h */; };
@@ -1436,7 +1436,7 @@
 		935C475F09AC4CAE00A6AAB4 /* HistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */; };
 		935C476109AC4CD100A6AAB4 /* Length.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476009AC4CD100A6AAB4 /* Length.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */; };
-		935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */; };
+		935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */; };
 		935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */; };
@@ -1466,7 +1466,7 @@
 		9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392F14F0AD1862300691BD4 /* CounterNode.cpp */; };
 		9392F1520AD1862B00691BD4 /* CounterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9392F1510AD1862B00691BD4 /* CounterListItem.h */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
-		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
+		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
 		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
 		93AC8DE10A955FAC00239794 /* TextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC8DE00A955FAC00239794 /* TextStyle.h */; };
@@ -2114,7 +2114,6 @@
 		A88AD50A095248F0001DD196 /* SVGViewElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EA089701F400BA5114 /* SVGViewElement.h */; };
 		A88AD50B095248F0001DD196 /* SVGZoomAndPan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F8EB089701F400BA5114 /* SVGZoomAndPan.cpp */; };
 		A88AD50C095248F0001DD196 /* SVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */; };
-		A88AD50D095248F0001DD196 /* ksvg.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8ED089701F400BA5114 /* ksvg.h */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
 		A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EB09D563270003AC8D /* StyledElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4911,7 +4910,6 @@
 		A8C0F8EA089701F400BA5114 /* SVGViewElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGViewElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8EB089701F400BA5114 /* SVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomAndPan.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomAndPan.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F8ED089701F400BA5114 /* ksvg.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ksvg.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDevice.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB55089701F700BA5114 /* KRenderingDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDevice.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB5B089701F700BA5114 /* KRenderingPaintServer.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -7785,7 +7783,6 @@
 				A8C0F7F1089701F300BA5114 /* events */,
 				A8C0F6EA089701F100BA5114 /* misc */,
 				A8C0F7FC089701F300BA5114 /* svg */,
-				A8C0F8ED089701F400BA5114 /* ksvg.h */,
 			);
 			path = ksvg2;
 			sourceTree = "<group>";
@@ -9302,7 +9299,6 @@
 				A88AD508095248F0001DD196 /* SVGUseElement.h in Headers */,
 				A88AD50A095248F0001DD196 /* SVGViewElement.h in Headers */,
 				A88AD50C095248F0001DD196 /* SVGZoomAndPan.h in Headers */,
-				A88AD50D095248F0001DD196 /* ksvg.h in Headers */,
 				6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */,
 				A81655E5096BC13900601058 /* SVGMaskElement.h in Headers */,
 				A81369CA097374F600D74463 /* HTMLIsIndexElement.h in Headers */,

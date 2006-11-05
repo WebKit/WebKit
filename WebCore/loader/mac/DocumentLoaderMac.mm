@@ -33,7 +33,6 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "PlatformString.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import "XMLTokenizer.h"
@@ -173,27 +172,27 @@ NSMutableURLRequest *DocumentLoader::actualRequest()
     return m_request.get();
 }
 
-NSURL *DocumentLoader::URL() const
+KURL DocumentLoader::URL() const
 {
     return [const_cast<DocumentLoader*>(this)->request() URL];
 }
 
-NSURL *DocumentLoader::unreachableURL() const
+KURL DocumentLoader::unreachableURL() const
 {
     return [m_originalRequest.get() _webDataRequestUnreachableURL];
 }
 
-void DocumentLoader::replaceRequestURLForAnchorScroll(NSURL *URL)
+void DocumentLoader::replaceRequestURLForAnchorScroll(const KURL& URL)
 {
-    // assert that URLs differ only by fragment ID
-    
+    NSURL *newURL = URL.getNSURL();
+
     NSMutableURLRequest *newOriginalRequest = [m_originalRequestCopy.get() mutableCopy];
-    [newOriginalRequest setURL:URL];
+    [newOriginalRequest setURL:newURL];
     m_originalRequestCopy = newOriginalRequest;
     [newOriginalRequest release];
     
     NSMutableURLRequest *newRequest = [m_request.get() mutableCopy];
-    [newRequest setURL:URL];
+    [newRequest setURL:newURL];
     m_request = newRequest;
     [newRequest release];
 }
@@ -553,7 +552,7 @@ void DocumentLoader::setTitle(const String& title)
     }
 }
 
-NSURL *DocumentLoader::URLForHistory() const
+KURL DocumentLoader::URLForHistory() const
 {
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 

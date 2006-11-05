@@ -48,8 +48,8 @@ public:
     FrameQt(Page*, Element*, FrameQtClient*, EditorClient* client = 0);
     virtual ~FrameQt();
 
-    virtual void submitForm(const FrameLoadRequest&);
-    virtual void urlSelected(const FrameLoadRequest&, const Event*);
+    virtual void submitForm(const FrameLoadRequest&, Event*);
+    virtual void urlSelected(const FrameLoadRequest&, Event*);
 
     virtual void setTitle(const String&);
 

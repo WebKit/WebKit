@@ -26,7 +26,10 @@
 #ifndef ResourceHandleClient_h
 #define ResourceHandleClient_h
 
+#include "Shared.h"
 #include <wtf/Platform.h>
+#include <wtf/RefPtr.h>
+
 #if USE(CFNETWORK)
 #include <ConditionalMacros.h>
 #include <CFNetwork/CFURLResponsePriv.h>
@@ -44,10 +47,7 @@ class NSURLResponse;
 
 #if PLATFORM(QT)
 #include <QString>
-#include <wtf/RefPtr.h>
 #endif
-
-#include "Shared.h"
 
 namespace WebCore {
 

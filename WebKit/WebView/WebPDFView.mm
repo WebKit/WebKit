@@ -43,13 +43,20 @@
 #import "WebUIDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <WebCore/EventNames.h>
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/MouseEvent.h>
+#import <WebCore/PlatformKeyboardEvent.h>
 #import <JavaScriptCore/Assertions.h>
 #import <PDFKit/PDFKit.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/KURL.h>
 #import <WebKitSystemInterface.h>
 
+using namespace WebCore;
+using namespace EventNames;
+
 #define TEMP_PREFIX "/tmp/XXXXXX-"
-#define OBJC_TEMP_PREFIX @"/tmp/XXXXXX-"
 
 #define PDFKitLaunchNotification @"PDFPreviewLaunchPreview"
 
@@ -815,12 +822,45 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 #pragma mark PDFView DELEGATE METHODS
 
-// Delegates implementing the following method will be called to handle clicks on URL
-// links within the PDFView.  
 - (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)URL
 {
-    if (URL)
-        [[dataSource webFrame] _frameLoader]->safeLoad(URL);
+    if (!URL)
+        return;
+
+    NSWindow *window = [sender window];
+    NSEvent *nsEvent = [window currentEvent];
+    const int noButton = -1;
+    int button = noButton;
+    RefPtr<Event> event;
+    switch ([nsEvent type]) {
+        case NSLeftMouseUp:
+            button = 0;
+            break;
+        case NSRightMouseUp:
+            button = 1;
+            break;
+        case NSOtherMouseUp:
+            button = [nsEvent buttonNumber];
+            break;
+        case NSKeyDown: {
+            PlatformKeyboardEvent pe(nsEvent);
+            event = new KeyboardEvent(keydownEvent, true, true, 0,
+                pe.keyIdentifier(), pe.WindowsKeyCode(),
+                pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);
+        }
+        default:
+            break;
+    }
+    if (button != noButton)
+        event = new MouseEvent(clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
+            [nsEvent modifierFlags] & NSControlKeyMask,
+            [nsEvent modifierFlags] & NSAlternateKeyMask,
+            [nsEvent modifierFlags] & NSShiftKeyMask,
+            [nsEvent modifierFlags] & NSCommandKeyMask,
+            button, 0, 0, true);
+
+    // Call to the frame loader because this is where our security checks are made.
+    [[dataSource webFrame] _frameLoader]->load(URL, event.get());
 }
 
 @end
@@ -984,18 +1024,18 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSString *filename = [[dataSource response] suggestedFilename];
     NSFileManager *manager = [NSFileManager defaultManager];    
     
-    path = [@"/tmp/" stringByAppendingPathComponent: filename];
+    path = [@"/tmp/" stringByAppendingPathComponent:filename];
     if ([manager fileExistsAtPath:path]) {
-        path = [OBJC_TEMP_PREFIX stringByAppendingString:filename];
+        path = [@"" TEMP_PREFIX stringByAppendingString:filename];
+        // FIXME: Bad style to modify the path returned by fileSystemRepresentation!
         char *cpath = (char *)[path fileSystemRepresentation];
-        
-        int fd = mkstemps (cpath, strlen(cpath) - strlen(TEMP_PREFIX) + 1);
+        int fd = mkstemps(cpath, strlen(cpath) - strlen(TEMP_PREFIX) + 1);
         if (fd < 0) {
-            // Couldn't create a temporary file!  Should never happen.  Do
-            // we need an alert here?
+            // Couldn't create a temporary file! Should never happen.
+            // Do we need an alert here?
             path = nil;
         } else {
-            close (fd);
+            close(fd);
             path = [manager stringWithFileSystemRepresentation:cpath length:strlen(cpath)];
         }
     }

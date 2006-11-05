@@ -32,7 +32,6 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "Page.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>

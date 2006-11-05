@@ -6109,11 +6109,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 {
-    Frame* frame = core([self _frame]);
-    HitTestResult result = HitTestResult(IntPoint(point));
-    if (frame->renderer())
-        result = frame->hitTestResultAtPoint(IntPoint(point), allow);
-    return [[[WebElementDictionary alloc] initWithHitTestResult:result] autorelease];
+    return [[[WebElementDictionary alloc] initWithHitTestResult:
+        core([self _frame])->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
 }
 
 @end

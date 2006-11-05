@@ -36,7 +36,6 @@
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
-#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
@@ -188,12 +187,15 @@ Frame::Frame(Page* page, Element* ownerElement, PassRefPtr<EditorClient> client)
     XMLNames::init();
 #endif
 
-    if (d->m_ownerElement)
-        d->m_page->incrementFrameCount();
+    if (!ownerElement)
+        page->setMainFrame(this);
+    else {
+        // FIXME: Frames were originally created with a refcount of 1.
+        // Leave this ref call here until we can straighten that out.
+        ref();
+        page->incrementFrameCount();
+    }
 
-    // FIXME: Frames were originally created with a refcount of 1, leave this
-    // ref call here until we can straighten that out.
-    ref();
 #ifndef NDEBUG
     ++FrameCounter::count;
 #endif
@@ -263,7 +265,7 @@ void Frame::changeLocation(const DeprecatedString& URL, const String& referrer, 
     urlSelected(request, "_self", 0, lockHistory);
 }
 
-void Frame::urlSelected(const ResourceRequest& request, const String& _target, const Event* triggeringEvent, bool lockHistory)
+void Frame::urlSelected(const ResourceRequest& request, const String& _target, Event* triggeringEvent, bool lockHistory)
 {
   String target = _target;
   if (target.isEmpty() && d->m_doc)
@@ -355,11 +357,11 @@ void Frame::submitFormAgain()
     d->m_submitForm = 0;
     if (d->m_doc && !d->m_doc->parsing() && form)
         submitForm(form->submitAction, form->submitUrl, form->submitFormData,
-            form->target, form->submitContentType, form->submitBoundary);
+            form->target, form->submitContentType, form->submitBoundary, form->event.get());
     delete form;
 }
 
-void Frame::submitForm(const char *action, const String& url, const FormData& formData, const String& _target, const String& contentType, const String& boundary)
+void Frame::submitForm(const char *action, const String& url, const FormData& formData, const String& _target, const String& contentType, const String& boundary, Event* event)
 {
   KURL u = completeURL(url.deprecatedString());
 
@@ -408,7 +410,7 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
       u.setQuery(query);
   } 
 
-  if (strcmp(action, "get") == 0) {
+  if (strcmp(action, "GET") == 0) {
     if (u.protocol() != "mailto")
        u.setQuery(formData.flattenToString().deprecatedString());
   } else {
@@ -432,9 +434,10 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
     d->m_submitForm->target = _target;
     d->m_submitForm->submitContentType = contentType;
     d->m_submitForm->submitBoundary = boundary;
+    d->m_submitForm->event = event;
   } else {
       frameRequest.resourceRequest().setURL(u);
-      submitForm(frameRequest);
+      submitForm(frameRequest, event);
   }
 }
 
@@ -863,7 +866,6 @@ void Frame::begin(const KURL& url)
   d->m_url = url;
   KURL baseurl;
 
-  // We don't need KDE chained URI handling or window caption setting
   if (!d->m_url.isEmpty())
     baseurl = d->m_url;
 
@@ -907,7 +909,7 @@ void Frame::begin(const KURL& url)
   restoreDocumentState();
 
   d->m_doc->implicitOpen();
-  // clear widget
+
   if (d->m_view)
     d->m_view->resizeContents(0, 0);
 }
@@ -1033,7 +1035,7 @@ void Frame::endIfNotLoading()
         }
         
         if (!d->m_iconLoader)
-            d->m_iconLoader = IconLoader::createForFrame(this);
+            d->m_iconLoader = IconLoader::create(this).release();
         d->m_iconLoader->startLoading();
     }
 }
@@ -2778,19 +2780,17 @@ void Frame::setAutoscrollRenderer(RenderObject* renderer)
 
 HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
-    HitTestRequest request(true, true);
     HitTestResult result(point);
-    renderer()->layer()->hitTest(request, result);
+    if (!renderer())
+        return result;
+    renderer()->layer()->hitTest(HitTestRequest(true, true), result);
 
-    Node *n;
-    Widget *widget = 0;
     IntPoint widgetPoint(point);
-    
     while (true) {
-        n = result.innerNode();
+        Node* n = result.innerNode();
         if (!n || !n->renderer() || !n->renderer()->isWidget())
             break;
-        widget = static_cast<RenderWidget*>(n->renderer())->widget();
+        Widget* widget = static_cast<RenderWidget*>(n->renderer())->widget();
         if (!widget || !widget->isFrameView())
             break;
         Frame* frame = static_cast<HTMLFrameElement*>(n)->contentFrame();
@@ -2798,16 +2798,13 @@ HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShado
             break;
         int absX, absY;
         n->renderer()->absolutePosition(absX, absY, true);
-        FrameView *view = static_cast<FrameView*>(widget);
-        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
-        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
-
-        HitTestRequest widgetHitTestRequest(true, true);
+        FrameView* view = static_cast<FrameView*>(widget);
+        widgetPoint.move(view->contentsX() - absX, view->contentsY() - absY);
         HitTestResult widgetHitTestResult(widgetPoint);
-        frame->renderer()->layer()->hitTest(widgetHitTestRequest, widgetHitTestResult);
+        frame->renderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
         result = widgetHitTestResult;
     }
-    
+
     if (!allowShadowContent) {
         Node* node = result.innerNode();
         if (node)
@@ -2818,6 +2815,7 @@ HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShado
             node = node->shadowAncestorNode();
         result.setInnerNonSharedNode(node); 
     }
+
     return result;
 }
 

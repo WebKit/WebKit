@@ -29,15 +29,15 @@
 #import "config.h"
 #import "SubresourceLoader.h"
 
+#import "FormDataStream.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "LoaderFunctions.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
 #import "ResourceHandle.h"
-#import "WebCoreFrameBridge.h"
+#import "ResourceRequest.h"
 #import "WebCoreSystemInterface.h"
-#import "FormDataStream.h"
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 

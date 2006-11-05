@@ -69,11 +69,6 @@ using namespace HTMLNames;
 
 static double storedTimeOfLastCompletedLoad;
 
-static bool isCaseInsensitiveEqual(NSString *a, NSString *b)
-{
-    return [a caseInsensitiveCompare:b] == NSOrderedSame;
-}
-
 static void cancelAll(const ResourceLoaderSet& loaders)
 {
     const ResourceLoaderSet copy = loaders;
@@ -132,16 +127,12 @@ void FrameLoader::finalSetupForReplace(DocumentLoader* loader)
     m_client->clearUnarchivingState(loader);
 }
 
-void FrameLoader::safeLoad(NSURL *URL)
+void FrameLoader::load(const KURL& URL, Event* event)
 {
-    // Call to the Frame because this is where our security checks are made.
-    FrameLoadRequest request;
-    request.resourceRequest().setURL(URL);
-    request.resourceRequest().setHTTPReferrer(urlOriginalDataAsString([m_documentLoader->request() URL]));
-    load(request, true, [NSApp currentEvent], 0, HashMap<String, String>());
+    load(ResourceRequest(URL), true, event, 0, HashMap<String, String>());
 }
 
-void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, NSEvent* triggeringEvent,
+void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
     Element* submitForm, const HashMap<String, String>& formValues)
 {
     String referrer;
@@ -170,22 +161,22 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, NSEven
         else
             loadType = FrameLoadTypeStandard;    
     
-        load(request.resourceRequest().url().getNSURL(), referrer, loadType, 
-            (!request.frameName().isEmpty() ? (NSString *)request.frameName() : nil), triggeringEvent, submitForm, formValues);
+        load(request.resourceRequest().url(), referrer, loadType, 
+            request.frameName(), event, submitForm, formValues);
     } else
-        post(request.resourceRequest().url().getNSURL(), referrer, (!request.frameName().isEmpty() ? (NSString *)request.frameName() : nil), 
-            request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), triggeringEvent, submitForm, formValues);
+        post(request.resourceRequest().url(), referrer, request.frameName(), 
+            request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), event, submitForm, formValues);
 
     if (targetFrame && targetFrame != m_frame)
         [Mac(targetFrame)->bridge() activateWindow];
 }
 
-void FrameLoader::load(NSURL *URL, const String& referrer, FrameLoadType newLoadType,
-    const String& frameName, NSEvent *event, Element* form, const HashMap<String, String>& values)
+void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
+    const String& frameName, Event* event, Element* form, const HashMap<String, String>& values)
 {
     bool isFormSubmission = !values.isEmpty();
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL.getNSURL()];
     setHTTPReferrer(request, referrer);
     addExtraFieldsToRequest(request, true, event || isFormSubmission);
     if (newLoadType == FrameLoadTypeReload)
@@ -199,7 +190,7 @@ void FrameLoader::load(NSURL *URL, const String& referrer, FrameLoadType newLoad
     if (form && !values.isEmpty())
         formState = FormState::create(form, values, m_frame);
     
-    if (!frameName.isNull()) {
+    if (!frameName.isEmpty()) {
         if (Frame* targetFrame = m_frame->tree()->find(frameName))
             targetFrame->loader()->load(URL, referrer, newLoadType, String(), event, form, values);
         else
@@ -218,7 +209,7 @@ void FrameLoader::load(NSURL *URL, const String& referrer, FrameLoadType newLoad
     if (!isFormSubmission
         && newLoadType != FrameLoadTypeReload
         && newLoadType != FrameLoadTypeSame
-        && !shouldReload(URL, m_frame->url().getNSURL())
+        && !shouldReload(URL, m_frame->url())
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && !m_frame->isFrameSet()) {
@@ -262,7 +253,7 @@ void FrameLoader::load(NSURLRequest *request)
 
 void FrameLoader::load(NSURLRequest *request, const String& frameName)
 {
-    if (frameName.isNull()) {
+    if (frameName.isEmpty()) {
         load(request);
         return;
     }
@@ -694,9 +685,24 @@ id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
     return m_client->dispatchIdentifierForInitialRequest(activeDocumentLoader(), clientRequest);
 }
 
+void FrameLoader::applyUserAgent(NSMutableURLRequest *request)
+{
+    static String lastUserAgent;
+    static RetainPtr<NSString> lastUserAgentNSString;
+
+    String userAgent = client()->userAgent();
+    ASSERT(!userAgent.isNull());
+    if (userAgent != lastUserAgent) {
+        lastUserAgent = userAgent;
+        lastUserAgentNSString = userAgent;
+    }
+
+    [request setValue:lastUserAgentNSString.get() forHTTPHeaderField:@"User-Agent"];
+}
+
 NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, NSURLResponse *redirectResponse)
 {
-    [clientRequest setValue:client()->userAgent([clientRequest URL]) forHTTPHeaderField:@"User-Agent"];
+    applyUserAgent(clientRequest);
     return m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
 }
 
@@ -800,7 +806,7 @@ void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgres
     m_sentRedirectNotification = false;
 }
 
-void FrameLoader::clientRedirected(NSURL *URL, double seconds, double fireDate, bool lockHistory, bool isJavaScriptFormAction)
+void FrameLoader::clientRedirected(const KURL& URL, double seconds, double fireDate, bool lockHistory, bool isJavaScriptFormAction)
 {
     m_client->dispatchWillPerformClientRedirect(URL, seconds, fireDate);
     
@@ -814,10 +820,14 @@ void FrameLoader::clientRedirected(NSURL *URL, double seconds, double fireDate, 
     m_quickRedirectComing = lockHistory && m_documentLoader && !isJavaScriptFormAction;
 }
 
-bool FrameLoader::shouldReload(NSURL *currentURL, NSURL *destinationURL)
+bool FrameLoader::shouldReload(const KURL& currentURL, const KURL& destinationURL)
 {
-    return !(([currentURL fragment] || [destinationURL fragment])
-        && [urlByRemovingFragment(currentURL) isEqual:urlByRemovingFragment(destinationURL)]);
+    // This function implements the rule: "Don't reload if navigating by fragment within
+    // the same URL, but do reload if going to a new URL or to the same URL with no
+    // fragment identifier at all."
+    if (!currentURL.hasRef() && !destinationURL.hasRef())
+        return true;
+    return !equalIgnoringRef(currentURL, destinationURL);
 }
 
 void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument,
@@ -1024,11 +1034,6 @@ void FrameLoader::setRequest(NSURLRequest *request)
     activeDocumentLoader()->setRequest(request);
 }
 
-void FrameLoader::download(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *response, id proxy)
-{
-    m_client->download(connection, request, response, proxy);
-}
-
 void FrameLoader::handleFallbackContent()
 {
     m_frame->handleFallbackContent();
@@ -1063,16 +1068,16 @@ void FrameLoader::finishedLoading()
     checkLoadComplete();
 }
 
-void FrameLoader::notifyIconChanged(NSURL *iconURL)
+void FrameLoader::notifyIconChanged()
 {
     ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
     NSImage *icon = [[WebCoreIconDatabaseBridge sharedInstance]
-        iconForPageURL:urlOriginalDataAsString(activeDocumentLoader()->URL())
+        iconForPageURL:urlOriginalDataAsString(activeDocumentLoader()->URL().getNSURL())
         withSize:NSMakeSize(16, 16)];
     m_client->dispatchDidReceiveIcon(icon);
 }
 
-NSURL *FrameLoader::URL() const
+KURL FrameLoader::URL() const
 {
     return activeDocumentLoader()->URL();
 }
@@ -1189,9 +1194,9 @@ void FrameLoader::reloadAllowingStaleData(const String& encoding)
         return;
 
     NSMutableURLRequest *request = [m_documentLoader->request() mutableCopy];
-    NSURL *unreachableURL = m_documentLoader->unreachableURL();
-    if (unreachableURL)
-        [request setURL:unreachableURL];
+    KURL unreachableURL = m_documentLoader->unreachableURL();
+    if (!unreachableURL.isEmpty())
+        [request setURL:unreachableURL.getNSURL()];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
 
@@ -1230,7 +1235,7 @@ void FrameLoader::reload()
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to re-post, set up action so the application can warn the user.
-    if (isCaseInsensitiveEqual([request HTTPMethod], @"POST"))
+    if ([[request HTTPMethod] isEqualToString:@"POST"])
         loader->setTriggeringAction(NavigationAction([request URL], NavigationTypeFormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
@@ -1306,7 +1311,7 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 
     // The title doesn't get communicated to the WebView until we are committed.
     if (loader->isCommitted())
-        if (NSURL *URLForHistory = canonicalURL(loader->URLForHistory())) {
+        if (NSURL *URLForHistory = canonicalURL(loader->URLForHistory().getNSURL())) {
             // Must update the entries in the back-forward list too.
             // This must go through the WebFrame because it has the right notion of the current b/f item.
             m_client->setTitle(loader->title(), URLForHistory);
@@ -1442,7 +1447,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(NSURLRequest *request,
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
     // through this method already, nested; otherwise, policyDataSource should still be set.
-    ASSERT(m_policyDocumentLoader || m_provisionalDocumentLoader->unreachableURL());
+    ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isEmpty());
 
     BOOL isTargetItem = m_client->provisionalItemIsTarget();
 
@@ -1633,9 +1638,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 // delegate callback.
                 if (pdl == m_provisionalDocumentLoader)
                     clearProvisionalLoad();
-                else {
-                    NSURL *unreachableURL = m_provisionalDocumentLoader->unreachableURL();
-                    if (unreachableURL && [unreachableURL isEqual:[pdl->request() URL]])
+                else if (m_documentLoader) {
+                    KURL unreachableURL = m_documentLoader->unreachableURL();
+                    if (!unreachableURL.isEmpty() && unreachableURL == [pdl->request() URL])
                         shouldReset = false;
                 }
             }
@@ -1748,8 +1753,8 @@ void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResp
     sendRemainingDelegateMessages(identifier, response, length, error);
 }
 
-void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameName, const FormData& formData, 
-    const String& contentType, NSEvent *event, Element* form, const HashMap<String, String>& formValues)
+void FrameLoader::post(const KURL& URL, const String& referrer, const String& frameName, const FormData& formData, 
+    const String& contentType, Event* event, Element* form, const HashMap<String, String>& formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1757,7 +1762,7 @@ void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameNa
 
     // FIXME: Where's the code that implements what the comment above says?
 
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL.getNSURL()];
     addExtraFieldsToRequest(request, true, true);
 
     setHTTPReferrer(request, referrer);
@@ -1766,11 +1771,12 @@ void FrameLoader::post(NSURL *URL, const String& referrer, const String& frameNa
     [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
 
     NavigationAction action(URL, FrameLoadTypeStandard, true, event);
+
     RefPtr<FormState> formState;
     if (form && !formValues.isEmpty())
         formState = FormState::create(form, formValues, m_frame);
 
-    if (!frameName.isNull()) {
+    if (!frameName.isEmpty()) {
         if (Frame* targetFrame = m_frame->tree()->find(frameName))
             targetFrame->loader()->load(request, action, FrameLoadTypeStandard, formState.release());
         else
@@ -1810,7 +1816,7 @@ void FrameLoader::detachFromParent()
 
 void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mainResource, bool alwaysFromRequest)
 {
-    [request setValue:client()->userAgent([request URL]) forHTTPHeaderField:@"User-Agent"];
+    applyUserAgent(request);
     
     if (m_loadType == FrameLoadTypeReload)
         [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
@@ -1913,11 +1919,11 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     else
         [initialRequest setCachePolicy:[documentLoader()->request() cachePolicy]];
     
-    if (!referrer.isNull())
+    if (!referrer.isEmpty())
         setHTTPReferrer(initialRequest, referrer);
     
     [initialRequest setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];
-    [initialRequest setValue:client()->userAgent(URL) forHTTPHeaderField:@"User-Agent"];
+    applyUserAgent(initialRequest);
     
     NSError *error = nil;
     id identifier = nil;    

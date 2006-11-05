@@ -62,13 +62,13 @@ FrameWin::~FrameWin()
     clearRecordedFormValues();    
 }
 
-void FrameWin::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
+void FrameWin::urlSelected(const FrameLoadRequest& request, Event* /*triggeringEvent*/)
 {
     if (m_client)
         m_client->openURL(request.resourceRequest().url().url(), request.lockHistory());
 }
 
-void FrameWin::submitForm(const FrameLoadRequest& request)
+void FrameWin::submitForm(const FrameLoadRequest& request, Event*)
 {
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     const ResourceRequest& resourceRequest = request.resourceRequest();

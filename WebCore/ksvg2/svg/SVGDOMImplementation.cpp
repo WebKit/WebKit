@@ -34,7 +34,6 @@
 #include "SVGDocument.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-#include "ksvg.h"
 #include <wtf/HashSet.h>
 
 using namespace WebCore;

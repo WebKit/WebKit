@@ -28,10 +28,10 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "ksvg.h"
+#include "SVGRenderStyleDefs.h"
+
 #include "RenderStyle.h"
 #include "SVGRenderStyle.h"
-#include "SVGRenderStyleDefs.h"
 
 using namespace WebCore;
 

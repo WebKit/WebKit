@@ -109,7 +109,7 @@ private:
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();
-    virtual void dispatchWillPerformClientRedirect(NSURL *URL, double interval, double fireDate);
+    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate);
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon(NSImage *);
@@ -173,7 +173,7 @@ private:
 
     virtual void setDefersLoading(bool);
 
-    virtual WebCore::String userAgent(NSURL *);
+    virtual WebCore::String userAgent();
 
     virtual bool willUseArchive(WebCore::ResourceLoader*, NSURLRequest *, NSURL *originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
@@ -188,12 +188,12 @@ private:
     virtual void frameLoadCompleted();
     virtual void restoreScrollPositionAndViewState();
     virtual void provisionalLoadStarted();
-    virtual bool shouldTreatURLAsSameAsCurrent(NSURL *) const;
+    virtual bool shouldTreatURLAsSameAsCurrent(const WebCore::KURL&) const;
     virtual void addHistoryItemForFragmentScroll();
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(NSURLRequest *);
-    virtual void setTitle(const WebCore::String& title, NSURL *);
+    virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
 
     void deliverArchivedResourcesAfterDelay() const;
     bool canUseArchivedResource(NSURLRequest *) const;
@@ -203,7 +203,6 @@ private:
     WebFramePolicyListener *setUpPolicyListener(WebCore::FramePolicyFunction);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&) const;
-    NSDictionary *elementForEvent(NSEvent *) const;
 
     bool createPageCache(WebHistoryItem *);
 

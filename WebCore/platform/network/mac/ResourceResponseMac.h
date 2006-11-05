@@ -33,7 +33,7 @@ namespace WebCore {
 
     class ResourceResponse;
 
-    void getResourceResponse(ResourceResponse& response, NSURLResponse *nsResponse);
+    void getResourceResponse(ResourceResponse&, NSURLResponse *);
 
 }
 

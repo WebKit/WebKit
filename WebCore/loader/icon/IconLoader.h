@@ -22,32 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef ICONLOADER_H_
 #define ICONLOADER_H_
 
-#include "ResourceHandle.h"
+#include "KURL.h"
+#include "ResourceHandleClient.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Frame;
 
-class IconLoader : public ResourceHandleClient
-{
+class IconLoader : public ResourceHandleClient {
 public:
-    static IconLoader* createForFrame(Frame* frame);
+    static std::auto_ptr<IconLoader> create(Frame*);
     ~IconLoader();
     
     void startLoading();
     void stopLoading();
-    
-    // ResourceHandleClient delegate methods
+
+private:
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int);
     virtual void didFinishLoading(ResourceHandle*);
-private:
-    IconLoader(Frame* frame);
+
+    IconLoader(Frame*);
     
-    void notifyIconChanged(const KURL& iconURL);
+    void notifyIconChanged(const KURL&);
 
     KURL m_url;
     RefPtr<ResourceHandle> m_resourceLoader;
@@ -58,6 +60,6 @@ private:
     int m_httpStatusCode;
 }; // class Iconloader
 
-}; // namespace WebCore
+} // namespace WebCore
 
 #endif

@@ -172,7 +172,6 @@ FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
     settings->setFixedFontName("Courier");
     settings->setStdFontName("Arial");
     setSettings(settings);
-    page()->setMainFrame(this);
     FrameView* view = new FrameView(this);
     setView(view);
     IntRect geom = frameGeometry();
@@ -198,7 +197,7 @@ FrameGdk::~FrameGdk()
     cancelAndClear();
 }
 
-void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest)
+void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
 {
     ResourceRequest request = frameLoadRequest.m_request;
 
@@ -213,7 +212,7 @@ void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest)
     clearRecordedFormValues();
 }
 
-void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest)
+void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
 {
     ResourceRequest request = frameLoadRequest.m_request;
 

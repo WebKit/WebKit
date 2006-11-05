@@ -26,7 +26,6 @@
 #include "SVGMatrix.h"
 #include "SVGTransform.h"
 #include "SVGSVGElement.h"
-#include "ksvg.h"
 
 using namespace WebCore;
 

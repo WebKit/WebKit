@@ -41,7 +41,6 @@ class NSData;
 class NSDictionary;
 class NSError;
 class NSMutableURLRequest;
-class NSURL;
 class NSURLRequest;
 class NSURLResponse;
 
@@ -53,15 +52,17 @@ namespace WebCore {
 
     class Frame;
     class FrameLoader;
+    class KURL;
 
 #if PLATFORM(MAC)
     typedef Vector<RetainPtr<NSURLResponse> > ResponseVector;
 #endif
 
     class DocumentLoader : public Shared<DocumentLoader> {
-#if PLATFORM(MAC)
     public:
+#if PLATFORM(MAC)
         DocumentLoader(NSURLRequest *);
+#endif
         virtual ~DocumentLoader();
 
         void setFrame(Frame*);
@@ -69,6 +70,7 @@ namespace WebCore {
         virtual void detachFromFrame();
 
         FrameLoader* frameLoader() const;
+#if PLATFORM(MAC)
         NSData *mainResourceData() const;
         NSURLRequest *originalRequest() const;
         NSURLRequest *originalRequestCopy() const;
@@ -76,9 +78,10 @@ namespace WebCore {
         void setRequest(NSURLRequest *);
         NSMutableURLRequest *actualRequest();
         NSURLRequest *initialRequest() const;
-        NSURL *URL() const;
-        NSURL *unreachableURL() const;
-        void replaceRequestURLForAnchorScroll(NSURL *);
+#endif
+        KURL URL() const;
+        KURL unreachableURL() const;
+        void replaceRequestURLForAnchorScroll(const KURL&);
         bool isStopping() const;
         void stopLoading();
         void setCommitted(bool);
@@ -86,13 +89,17 @@ namespace WebCore {
         bool isLoading() const;
         void setLoading(bool);
         void updateLoading();
+#if PLATFORM(MAC)
         void receivedData(NSData *);
+#endif
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
+#if PLATFORM(MAC)
         NSURLResponse *response() const;
         NSError *mainDocumentError() const;
         void mainReceivedError(NSError *, bool isComplete);
         void setResponse(NSURLResponse *);
+#endif
         void prepareForLoadStart();
         bool isClientRedirect() const;
         void setIsClientRedirect(bool);
@@ -100,29 +107,38 @@ namespace WebCore {
         void setPrimaryLoadComplete(bool);
         void setTitle(const String&);
         String overrideEncoding() const;
+#if PLATFORM(MAC)
         void addResponse(NSURLResponse *);
+#endif
         const ResponseVector& responses() const;
         const NavigationAction& triggeringAction() const;
         void setTriggeringAction(const NavigationAction&);
         void setOverrideEncoding(const String&);
+#if PLATFORM(MAC)
         void setLastCheckedRequest(NSURLRequest *request);
         NSURLRequest *lastCheckedRequest() const;
+#endif
         void stopRecordingResponses();
         String title() const;
-        NSURL *URLForHistory() const;
+        KURL URLForHistory() const;
 
     private:
+#if PLATFORM(MAC)
         void setMainResourceData(NSData *);
+#endif
         void setupForReplace();
         void commitIfReady();
         void clearErrors();
         double loadingStartedTime() const;
+#if PLATFORM(MAC)
         void setMainDocumentError(NSError *);
         void commitLoad(NSData *);
+#endif
         bool doesProgressiveLoad(const String& MIMEType) const;
 
         Frame* m_frame;
 
+#if PLATFORM(MAC)
         RetainPtr<NSData> m_mainResourceData;
 
         // A reference to actual request used to create the data source.
@@ -143,7 +159,8 @@ namespace WebCore {
         RetainPtr<NSURLResponse> m_response;
     
         RetainPtr<NSError> m_mainDocumentError;    
-    
+#endif
+
         // The time when the data source was told to start loading.
         double m_loadingStartedTime;
 
@@ -162,6 +179,7 @@ namespace WebCore {
         // benefit of the various policy handlers.
         NavigationAction m_triggeringAction;
 
+#if PLATFORM(MAC)
         // The last request that we checked click policy for - kept around
         // so we can avoid asking again needlessly.
         RetainPtr<NSURLRequest> m_lastCheckedRequest;

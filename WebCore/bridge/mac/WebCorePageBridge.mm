@@ -79,12 +79,6 @@ static void initializeLoggingChannelsIfNecessary()
     return self;
 }
 
-- (void)setMainFrame:(WebCoreFrameBridge *)mainFrame
-{
-    if (_page)
-        _page->setMainFrame(adoptRef([mainFrame _frame]));
-}
-
 - (void)dealloc
 {
     ASSERT(_closed);

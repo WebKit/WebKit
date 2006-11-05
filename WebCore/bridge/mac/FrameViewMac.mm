@@ -26,8 +26,8 @@
 #import "config.h"
 #import "FrameView.h"
 
-#import "Document.h"
 #import "BlockExceptions.h"
+#import "Document.h"
 #import "FrameMac.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformScrollBar.h"

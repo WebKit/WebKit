@@ -36,7 +36,6 @@
 #import "ClipboardMac.h"
 #import "Cursor.h"
 #import "DOMInternal.h"
-#import "DOMWindow.h"
 #import "DocumentLoader.h"
 #import "Event.h"
 #import "EventNames.h"
@@ -188,7 +187,7 @@ FrameMac::~FrameMac()
 
 #pragma mark BEGIN LOADING FUNCTIONS
 
-void FrameMac::submitForm(const FrameLoadRequest& request)
+void FrameMac::submitForm(const FrameLoadRequest& request, Event* event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -216,7 +215,7 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
         d->m_submittedFormURL = request.resourceRequest().url();
     }
 
-    loader()->load(request, true, _currentEvent,
+    loader()->load(request, true, event,
         d->m_formAboutToBeSubmitted.get(), d->m_formValuesAboutToBeSubmitted);
 
     clearRecordedFormValues();
@@ -224,14 +223,14 @@ void FrameMac::submitForm(const FrameLoadRequest& request)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void FrameMac::urlSelected(const FrameLoadRequest& request, const Event* /*triggeringEvent*/)
+void FrameMac::urlSelected(const FrameLoadRequest& request, Event* event)
 {
     FrameLoadRequest copy = request;
     if (copy.resourceRequest().httpReferrer().isEmpty())
         copy.resourceRequest().setHTTPReferrer(referrer());
 
     // FIXME: How do we know that userGesture is always true?
-    loader()->load(copy, true, _currentEvent, 0, HashMap<String, String>());
+    loader()->load(copy, true, event, 0, HashMap<String, String>());
 }
 
 Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
@@ -806,7 +805,7 @@ void FrameMac::stopRedirectionTimer()
 
 String FrameMac::userAgent() const
 {
-    return loader()->client()->userAgent(url().getNSURL());
+    return loader()->client()->userAgent();
 }
 
 String FrameMac::mimeTypeForFileName(const String& fileName) const

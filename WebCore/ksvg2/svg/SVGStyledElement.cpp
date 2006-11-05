@@ -37,7 +37,6 @@
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-#include "ksvg.h"
 #include "ksvgcssproperties.h"
 
 #include <wtf/Assertions.h>

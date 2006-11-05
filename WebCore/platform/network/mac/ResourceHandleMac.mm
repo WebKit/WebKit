@@ -31,13 +31,9 @@
 #import "DocLoader.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
-#import "KURL.h"
-#import "LoaderFunctions.h"
-#import "Logging.h"
 #import "ResourceRequestMac.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
-#import "WebCoreFrameBridge.h"
 #import "SubresourceLoader.h"
 
 namespace WebCore {

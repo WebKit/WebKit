@@ -39,7 +39,6 @@
 #import "Request.h"
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
-#import "WebCoreFrameBridge.h"
 #import "loader.h"
 #import <wtf/Vector.h>
 #import <Foundation/NSURLResponse.h>

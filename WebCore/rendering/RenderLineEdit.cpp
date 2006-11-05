@@ -79,7 +79,7 @@ void RenderLineEdit::returnPressed(Widget*)
     }
 
     if (HTMLFormElement* fe = static_cast<HTMLGenericFormElement*>(node())->form())
-        fe->submitClick();
+        fe->submitClick(0);
 }
 
 void RenderLineEdit::performSearch(Widget*)

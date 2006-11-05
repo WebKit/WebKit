@@ -24,8 +24,6 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 
-#include "ksvg.h"
-
 #include "SVGPaint.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"

@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
-#include "ksvg.h"
 
 namespace WebCore
 {

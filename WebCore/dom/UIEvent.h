@@ -26,11 +26,11 @@
 #ifndef UIEvent_h
 #define UIEvent_h
 
-#include "AtomicString.h"
-#include "DOMWindow.h"
 #include "Event.h"
 
 namespace WebCore {
+
+    class DOMWindow;
 
     typedef DOMWindow AbstractView;
 
@@ -38,6 +38,7 @@ namespace WebCore {
     public:
         UIEvent();
         UIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail);
+        virtual ~UIEvent();
 
         void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail);
 

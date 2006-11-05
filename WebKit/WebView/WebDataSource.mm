@@ -51,6 +51,7 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/KURL.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
@@ -283,7 +284,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    return _private->loader->URL();
+    KURL URL = _private->loader->URL();
+    return URL.isEmpty() ? nil : URL.getNSURL();
 }
 
 - (void)_loadFromPageCache:(NSDictionary *)pageCache
@@ -337,7 +339,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)_URLForHistory
 {
-    return [_private->loader->URLForHistory() _webkit_canonicalize];
+    KURL URL = _private->loader->URLForHistory().getNSURL();
+    return URL.isEmpty() ? nil : [URL.getNSURL() _webkit_canonicalize];
 }
 
 - (void)_addToUnarchiveState:(WebArchive *)archive
@@ -449,7 +452,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)unreachableURL
 {
-    return _private->loader->unreachableURL();
+    KURL URL = _private->loader->unreachableURL();
+    return URL.isEmpty() ? nil : URL.getNSURL();
 }
 
 - (WebArchive *)webArchive

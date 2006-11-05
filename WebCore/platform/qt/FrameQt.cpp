@@ -126,7 +126,7 @@ FrameQt::~FrameQt()
     cancelAndClear();
 }
 
-void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
+void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
 {
     const ResourceRequest& request = frameLoadRequest.resourceRequest();
 
@@ -142,7 +142,7 @@ void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest)
     clearRecordedFormValues();
 }
 
-void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest, const Event*)
+void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
 {
     const ResourceRequest& request = frameLoadRequest.resourceRequest();
 

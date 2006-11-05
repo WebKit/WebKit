@@ -115,7 +115,7 @@ bool HTMLAnchorElement::isKeyboardFocusable() const
     return document()->frame()->tabsToLinks();
 }
 
-void HTMLAnchorElement::defaultEventHandler(Event *evt)
+void HTMLAnchorElement::defaultEventHandler(Event* evt)
 {
     // React on clicks and on keypresses.
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
@@ -140,7 +140,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
             if (document()->frame() && document()->frame()->settings())
                 editableLinkBehavior = document()->frame()->settings()->editableLinkBehavior();
                 
-            switch(editableLinkBehavior) {
+            switch (editableLinkBehavior) {
                 // Always follow the link (Safari 2.0 behavior)
                 default:
                 case Settings::EditableLinkDefaultBehavior:

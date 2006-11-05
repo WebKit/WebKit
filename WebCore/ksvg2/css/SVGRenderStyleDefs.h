@@ -30,7 +30,11 @@
 #define SVGRenderStyleDefs_H
 #ifdef SVG_SUPPORT
 
+#include "Color.h"
 #include "Path.h"
+#include "PlatformString.h"
+#include "Shared.h"
+#include <wtf/RefPtr.h>
 
 // Helper macros for 'SVGRenderStyle'
 #define SVG_RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \

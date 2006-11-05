@@ -36,6 +36,7 @@
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
 #include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Text.h"
 #include "loader.h"
@@ -85,12 +86,11 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             xmlChar *base = xmlNodeGetBase(context->document->doc, context->node);
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
-            ResourceRequest request(url);
             ResourceResponse response;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;
             
-            Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, response);
+            Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, url, response);
         
             xmlSetGenericErrorFunc(0, parseErrorFunc);
             // We don't specify an encoding here. Neither Gecko nor WinIE respects

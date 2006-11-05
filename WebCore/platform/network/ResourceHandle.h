@@ -26,12 +26,8 @@
 #ifndef ResourceHandle_h
 #define ResourceHandle_h
 
+#include "HTTPHeaderMap.h"
 #include "ResourceHandleClient.h" // for PlatformResponse
-#include "ResourceRequest.h"
-#include "StringHash.h"
-#include "Timer.h"
-#include <wtf/HashMap.h>
-#include <wtf/Platform.h>
 
 #if PLATFORM(WIN)
 typedef unsigned long DWORD;
@@ -47,11 +43,9 @@ typedef LONG_PTR LRESULT;
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class WebCoreResourceLoaderImp;
 @class NSURLRequest;
 @class NSURLResponse;
 #else
-class WebCoreResourceLoaderImp;
 class NSURLRequest;
 class NSURLResponse;
 #endif
@@ -63,6 +57,10 @@ class DocLoader;
 class FormData;
 class KURL;
 class ResourceHandleInternal;
+
+struct ResourceRequest;
+
+template <typename T> class Timer;
 
 class ResourceHandle : public Shared<ResourceHandle> {
 private:
@@ -83,15 +81,15 @@ public:
 
 #if PLATFORM(MAC)
     NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *);
-    void addData(NSData *data);
-    void finishJobAndHandle(NSData *data);
+    void addData(NSData *);
+    void finishJobAndHandle(NSData *);
     void reportError();
 #endif
 
 #if USE(WININET)
-    void setHasReceivedResponse(bool b = true);
+    void setHasReceivedResponse(bool = true);
     bool hasReceivedResponse() const;
-    void fileLoadTimer(Timer<ResourceHandle>* timer);
+    void fileLoadTimer(Timer<ResourceHandle>*);
     void onHandleCreated(LPARAM);
     void onRequestRedirected(LPARAM);
     void onRequestComplete(LPARAM);
@@ -104,7 +102,6 @@ public:
 #endif
 
 #if PLATFORM(QT)
-    // Helper function
     QString extractCharsetFromHeaders(QString headers) const;
 #endif
 

@@ -26,13 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Noncopyable.h>
-#include <wtf/Forward.h>
 #include "FrameLoaderTypes.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 #if PLATFORM(MAC)
-#ifndef __OBJC__
+#ifdef __OBJC__
+@class NSURLConnection;
+#else
 class NSImage;
+class NSURLConnection;
 #endif
 #endif
 
@@ -43,6 +46,7 @@ namespace WebCore {
     class FormState;
     class Frame;
     class FrameLoader;
+    class KURL;
     class NavigationAction;
     class String;
     class ResourceLoader;
@@ -113,7 +117,7 @@ namespace WebCore {
         virtual void dispatchDidHandleOnloadEvents() = 0;
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
         virtual void dispatchDidCancelClientRedirect() = 0;
-        virtual void dispatchWillPerformClientRedirect(NSURL *URL, double interval, double fireDate) = 0;
+        virtual void dispatchWillPerformClientRedirect(const KURL&, double interval, double fireDate) = 0;
         virtual void dispatchDidChangeLocationWithinPage() = 0;
         virtual void dispatchWillClose() = 0;
         virtual void dispatchDidReceiveIcon(NSImage *) = 0;
@@ -188,14 +192,14 @@ namespace WebCore {
         virtual void frameLoadCompleted() = 0;
         virtual void restoreScrollPositionAndViewState() = 0;
         virtual void provisionalLoadStarted() = 0;
-        virtual bool shouldTreatURLAsSameAsCurrent(NSURL *) const = 0;
+        virtual bool shouldTreatURLAsSameAsCurrent(const KURL&) const = 0;
         virtual void addHistoryItemForFragmentScroll() = 0;
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
         virtual PassRefPtr<DocumentLoader> createDocumentLoader(NSURLRequest *) = 0;
-        virtual void setTitle(const String& title, NSURL *) = 0;
+        virtual void setTitle(const String& title, const KURL&) = 0;
 
-        virtual String userAgent(NSURL *) = 0;
+        virtual String userAgent() = 0;
 #endif
 
     protected:

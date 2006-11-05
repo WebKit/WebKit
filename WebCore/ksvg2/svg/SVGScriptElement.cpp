@@ -26,7 +26,6 @@
 #include "Attr.h"
 #include "StringImpl.h"
 
-#include "ksvg.h"
 #include "SVGNames.h"
 #include "SVGScriptElement.h"
 

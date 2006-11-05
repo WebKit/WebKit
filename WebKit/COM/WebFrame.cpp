@@ -148,8 +148,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
     }
 
     d->frame = frame;
-    frame->deref(); // Frames are created with a refcount of 1.  Release this ref, since we've assigned it to a RefPtr
-    page->setMainFrame(frame);
     FrameView* frameView = new FrameView(frame);
     d->frameView = frameView;
     frameView->deref(); // FrameViews are created with a refcount of 1.  Release this ref, since we've assigned it to a RefPtr

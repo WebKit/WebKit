@@ -564,7 +564,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             blur();
             // Make sure the form hasn't been destroyed during the blur.
             if (form())
-                form()->submitClick();
+                form()->submitClick(evt);
             handled = true;
         }
         if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && usesMenuList()) {

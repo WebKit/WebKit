@@ -22,12 +22,12 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include <math.h>
-
-#include "ksvg.h"
-#include "SVGHelper.h"
-#include "SVGAngle.h"
 #include "SVGMatrix.h"
+
+#include "SVGAngle.h"
+#include "SVGException.h"
+#include "SVGHelper.h"
+#include <math.h>
 
 using namespace WebCore;
 

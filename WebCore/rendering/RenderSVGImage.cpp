@@ -33,7 +33,6 @@
 #include "SVGPreserveAspectRatio.h"
 #include "SVGImageElement.h"
 #include "SVGImageElement.h"
-#include "ksvg.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

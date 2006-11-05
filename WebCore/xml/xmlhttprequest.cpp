@@ -35,6 +35,7 @@
 #include "PlatformString.h"
 #include "RegularExpression.h"
 #include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "TextEncoding.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>

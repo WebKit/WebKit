@@ -64,7 +64,6 @@ class Editor;
 class EditorClient;
 class FormData;
 class FramePrivate;
-struct FrameLoadRequest;
 class FrameLoader;
 class FrameTree;
 class KJSProxy;
@@ -80,6 +79,8 @@ class Selection;
 class SelectionController;
 class Settings;
 class VisiblePosition;
+
+struct FrameLoadRequest;
 
 template <typename T> class Timer;
 
@@ -110,18 +111,16 @@ public:
 
   // FIXME: Merge these methods and move them into FrameLoader.
   void changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-  virtual void urlSelected(const ResourceRequest&, const String& target, const Event* triggeringEvent, bool lockHistory = false);
-  virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent) = 0;
+  void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory = false);
+  virtual void urlSelected(const FrameLoadRequest&, Event*) = 0;
   
   bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
   virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;
   Frame* loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer);
 
-  virtual void submitForm(const FrameLoadRequest&) = 0;
-  void submitForm(const char* action, const String& url, const FormData& formData,
-                  const String& target, const String& contentType = String(),
-                  const String& boundary = String());
+  void submitForm(const char* action, const String& URL, const FormData&, const String& target, const String& contentType, const String& boundary, Event*);
   void submitFormAgain();
+  virtual void submitForm(const FrameLoadRequest&, Event*) = 0;
 
   void stop();
   void stopLoading(bool sendUnload = false);

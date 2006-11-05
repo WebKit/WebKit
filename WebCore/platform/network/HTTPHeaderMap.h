@@ -27,7 +27,6 @@
 #ifndef HTTPHeaderMap_H_
 #define HTTPHeaderMap_H_
 
-#include "PlatformString.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 

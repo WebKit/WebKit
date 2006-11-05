@@ -30,13 +30,13 @@
 #include "Frame.h"
 #include "IconDatabase.h"
 #include "Logging.h"
+#include "ResourceHandle.h"
 #include "ResourceResponse.h"
+#include "ResourceRequest.h"
 
-#if PLATFORM(MAC)
-#include "FrameMac.h"
-#endif
+using namespace std;
 
-using namespace WebCore;
+namespace WebCore {
 
 IconLoader::IconLoader(Frame* frame)
     : m_frame(frame)
@@ -44,11 +44,9 @@ IconLoader::IconLoader(Frame* frame)
 {
 }
 
-IconLoader* IconLoader::createForFrame(Frame* frame)
+auto_ptr<IconLoader> IconLoader::create(Frame* frame)
 {
-    if (frame)
-        return new IconLoader(frame);
-    return 0;
+    return auto_ptr<IconLoader>(new IconLoader(frame));
 }
 
 IconLoader::~IconLoader()
@@ -72,8 +70,7 @@ void IconLoader::startLoading()
     } 
     
     m_url = m_frame->iconURL();
-    ResourceRequest request(m_url);
-    m_resourceLoader = ResourceHandle::create(request, this, m_frame->document()->docLoader());
+    m_resourceLoader = ResourceHandle::create(m_url, this, m_frame->document()->docLoader());
 
     if (!m_resourceLoader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->iconURL().url().ascii());
@@ -98,9 +95,7 @@ void IconLoader::didReceiveData(ResourceHandle* resourceLoader, const char* data
     ASSERT(resourceLoader == m_resourceLoader);
     ASSERT(data);
     ASSERT(size > -1);
-    
-    for (int i=0; i<size; ++i)
-        m_data.append(data[i]);
+    m_data.append(data, size);
 }
 
 void IconLoader::didFinishLoading(ResourceHandle* resourceLoader)
@@ -122,21 +117,20 @@ void IconLoader::didFinishLoading(ResourceHandle* resourceLoader)
     IconDatabase* iconDatabase = IconDatabase::sharedIconDatabase();
     ASSERT(iconDatabase);
     
-    KURL iconURL(m_url);
-    
     if (data)
-        iconDatabase->setIconDataForIconURL(data, size, iconURL.url());
+        iconDatabase->setIconDataForIconURL(data, size, m_url.url());
     else
-        iconDatabase->setHaveNoIconForIconURL(iconURL.url());
+        iconDatabase->setHaveNoIconForIconURL(m_url.url());
         
-    // Tell the Frame to map its url(s) to its iconURL in the database
+    // Tell the frame to map its url(s) to its iconURL in the database
     m_frame->commitIconURLToIconDatabase();
     
     // Send the notification to the app that this icon is finished loading
-    notifyIconChanged(iconURL);
+    notifyIconChanged(m_url);
 
     // ResourceLoaders delete themselves after they deliver their last data, so we can just forget about it
     m_resourceLoader = 0;
     m_data.clear();
 }
 
+}

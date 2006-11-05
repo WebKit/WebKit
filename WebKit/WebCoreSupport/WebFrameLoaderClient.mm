@@ -28,7 +28,7 @@
 
 #import "WebFrameLoaderClient.h"
 
-// Terrible hack, but needed so we can get right at the private structure.
+// Terrible hack; lets us get at the WebFrame private structure.
 #define private public
 #import "WebFrame.h"
 #undef private
@@ -39,6 +39,7 @@
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
+#import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -67,6 +68,7 @@
 #import <WebCore/FrameMac.h>
 #import <WebCore/PageState.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceLoader.h>
@@ -540,11 +542,11 @@ void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
     [[webView _frameLoadDelegateForwarder] webView:webView didCancelClientRedirectForFrame:m_webFrame.get()];
 }
 
-void WebFrameLoaderClient::dispatchWillPerformClientRedirect(NSURL *URL, double delay, double fireDate)
+void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const KURL& URL, double delay, double fireDate)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _frameLoadDelegateForwarder] webView:webView
-                         willPerformClientRedirectToURL:URL
+                         willPerformClientRedirectToURL:URL.getNSURL()
                                                   delay:delay
                                                fireDate:[NSDate dateWithTimeIntervalSince1970:fireDate]
                                                forFrame:m_webFrame.get()];
@@ -901,32 +903,6 @@ String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLSche
     return [WebView _generatedMIMETypeForURLScheme:URLScheme];
 }
 
-NSDictionary *WebFrameLoaderClient::elementForEvent(NSEvent *event) const
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSRightMouseDown:
-        case NSOtherMouseDown:
-        case NSLeftMouseUp:
-        case NSRightMouseUp:
-        case NSOtherMouseUp:
-            break;
-        default:
-            return nil;
-    }
-
-    NSView *topViewInEventWindow = [[event window] contentView];
-    NSView *viewContainingPoint = [topViewInEventWindow hitTest:
-        [topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-    while (viewContainingPoint) {
-        if ([viewContainingPoint isKindOfClass:[WebView class]])
-            return [(WebView *)viewContainingPoint elementAtPoint:
-                [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil]];
-        viewContainingPoint = [viewContainingPoint superview];
-    }
-    return nil;
-}
-
 void WebFrameLoaderClient::frameLoadCompleted()
 {
     // Note: Can be called multiple times.
@@ -1002,10 +978,10 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     }
 }
 
-bool WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent(NSURL *URL) const
+bool WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent(const KURL& URL) const
 {
     WebHistoryItem *item = m_webFrame->_private->currentItem;
-    NSString* URLString = [URL _web_originalDataAsString];
+    NSString* URLString = [URL.getNSURL() _web_originalDataAsString];
     return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
 }
 
@@ -1058,10 +1034,10 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(NSURLReque
     return loader.release();
 }
 
-void WebFrameLoaderClient::setTitle(const String& title, NSURL *URL)
+void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
 {
     NSString *titleNSString = title;
-    [[[WebHistory optionalSharedHistory] itemForURL:URL] setTitle:titleNSString];
+    [[[WebHistory optionalSharedHistory] itemForURL:URL.getNSURL()] setTitle:titleNSString];
     [m_webFrame->_private->currentItem setTitle:titleNSString];
 }
 
@@ -1179,24 +1155,43 @@ void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
     (core(m_webFrame.get())->loader()->*function)(action);
 }
 
-String WebFrameLoaderClient::userAgent(NSURL *URL)
+String WebFrameLoaderClient::userAgent()
 {
-    return [getWebView(m_webFrame.get()) userAgentForURL:URL];
+    return [getWebView(m_webFrame.get()) _userAgent];
 }
 
 NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action) const
 {
-    if (NSDictionary *elementInfo = elementForEvent(action.event()))
-        return [NSDictionary dictionaryWithObjectsAndKeys:
+    unsigned modifierFlags = 0;
+    const Event* event = action.event();
+    if (event && (event->isMouseEvent() || event->isKeyboardEvent())) {
+        if (static_cast<const UIEventWithKeyState*>(event)->ctrlKey())
+            modifierFlags |= NSControlKeyMask;
+        if (static_cast<const UIEventWithKeyState*>(event)->altKey())
+            modifierFlags |= NSAlternateKeyMask;
+        if (static_cast<const UIEventWithKeyState*>(event)->shiftKey())
+            modifierFlags |= NSShiftKeyMask;
+        if (static_cast<const UIEventWithKeyState*>(event)->metaKey())
+            modifierFlags |= NSCommandKeyMask;
+    }
+    if (event && event->isMouseEvent()) {
+        IntPoint point(static_cast<const MouseEvent*>(event)->clientX(),
+            static_cast<const MouseEvent*>(event)->clientY());
+        WebElementDictionary *element = [[WebElementDictionary alloc]
+            initWithHitTestResult:core(m_webFrame.get())->hitTestResultAtPoint(point, false)];
+        NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
-            elementInfo, WebActionElementKey,
-            [NSNumber numberWithInt:[action.event() buttonNumber]], WebActionButtonKey,
-            [NSNumber numberWithInt:[action.event() modifierFlags]], WebActionModifierFlagsKey,
+            element, WebActionElementKey,
+            [NSNumber numberWithInt:static_cast<const MouseEvent*>(event)->button()], WebActionButtonKey,
+            [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
             action.URL().getNSURL(), WebActionOriginalURLKey,
             nil];
+        [element release];
+        return result;
+    }
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
-        [NSNumber numberWithInt:[action.event() modifierFlags]], WebActionModifierFlagsKey,
+        [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
         action.URL().getNSURL(), WebActionOriginalURLKey,
         nil];
 }

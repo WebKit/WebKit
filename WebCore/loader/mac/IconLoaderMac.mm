@@ -27,12 +27,15 @@
 #include "IconLoader.h"
 
 #include "FrameLoader.h"
-#include "FrameMac.h"
+#include "Frame.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-void IconLoader::notifyIconChanged(const KURL& iconURL)
+void IconLoader::notifyIconChanged(const KURL&)
 {
-    m_frame->loader()->notifyIconChanged(iconURL.getNSURL());
+    // FIXME: Change caller to not send the URL?
+    // FIXME: Move this out of Mac-specific into platform-independent.
+    m_frame->loader()->notifyIconChanged();
 }
 
+}

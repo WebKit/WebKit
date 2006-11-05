@@ -97,9 +97,9 @@ public:
     ~FrameMac();
 
     // FIXME: Merge these and move them into FrameLoader.
-    virtual void urlSelected(const FrameLoadRequest&, const Event* triggeringEvent);
+    virtual void urlSelected(const FrameLoadRequest&, Event*);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
-    virtual void submitForm(const FrameLoadRequest&);
+    virtual void submitForm(const FrameLoadRequest&, Event*);
 
     virtual Plugin* createPlugin(Element*, const KURL&,
         const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);

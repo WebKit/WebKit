@@ -39,7 +39,6 @@
 #include "SVGStyledElement.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
-#include "ksvg.h"
 #include "ksvgcssvalues.h"
 #include "ksvgcssproperties.h"
 #include <stdlib.h>

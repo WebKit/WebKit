@@ -42,6 +42,7 @@
 #include "LoaderFunctions.h"
 #include "ProcessingInstruction.h"
 #include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -458,10 +459,8 @@ static void* openFunc(const char* uri)
     if (!globalDocLoader || !shouldAllowExternalLoad(uri))
         return &globalDescriptor;
 
-    KURL kurl(uri);
-    ResourceRequest request(kurl);
     ResourceResponse response;
-    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, request, response);
+    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, KURL(uri), response);
     
     return new OffsetBuffer(data);
 }

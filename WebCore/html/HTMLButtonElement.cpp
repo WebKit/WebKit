@@ -88,7 +88,7 @@ void HTMLButtonElement::defaultEventHandler(Event *evt)
     if (m_type != BUTTON && (evt->type() == DOMActivateEvent) && !disabled()) {
         if (form() && m_type == SUBMIT) {
             m_activeSubmit = true;
-            form()->prepareSubmit();
+            form()->prepareSubmit(evt);
             m_activeSubmit = false; // in case we were canceled
         }
         if (form() && m_type == RESET)

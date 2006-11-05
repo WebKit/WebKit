@@ -1,3 +1,51 @@
+2006-11-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - converted more of the loader machinery to work with cross-platform
+          data structures instead of Macintosh-specific ones
+
+          store the computed user agent string as a WebCore::String instead
+          of an NSString to avoid overhead converting it every time we get it
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+        * ChangeLog:
+        * Misc/WebElementDictionary.m:
+        (-[WebElementDictionary _image]):
+        (-[WebElementDictionary _targetWebFrame]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::userAgent):
+        (WebFrameLoaderClient::actionDictionary):
+        * WebCoreSupport/WebPageBridge.mm:
+        (WebCore::if):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _URL]):
+        (-[WebDataSource _URLForHistory]):
+        (-[WebDataSource unreachableURL]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        (-[WebPDFView _path]):
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebViewPrivate finalize]):
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _cachedResponseForURL:]):
+        (-[WebView setApplicationNameForUserAgent:]):
+        (-[WebView setCustomUserAgent:]):
+        (-[WebView customUserAgent]):
+        (-[WebView userAgentForURL:]):
+        (-[WebView _computeUserAgent]):
+        (-[WebView WebCore::]):
+        * WebView/WebViewInternal.h:
+
 2006-11-04  Bertrand Guiheneuf <guiheneuf@gmail.com>
 
         Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Don Gibson).

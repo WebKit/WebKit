@@ -27,9 +27,8 @@
 #import "config.h"
 #import "WebCoreSettings.h"
 
-#import "Settings.h"
 #import "Page.h"
-#import "WebCoreFrameBridge.h"
+#import "Settings.h"
 
 using namespace WebCore;
 

@@ -35,7 +35,6 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "TextStyle.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreTextField.h"
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "MouseRelatedEvent.h"
 
-#include "AtomicString.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Node.h"

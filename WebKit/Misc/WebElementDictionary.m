@@ -58,6 +58,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 }
 
 @implementation WebElementDictionary
+
 + (void)initializeLookupTable
 {
     if (lookupTable)
@@ -171,7 +172,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (NSImage *)_image
 {
-    Image *image = _result->image();
+    Image* image = _result->image();
     return image ? image->getNSImage() : nil;
 }
 
@@ -204,8 +205,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (WebFrame *)_targetWebFrame
 {
-    FrameMac* webCoreFrame = Mac(_result->targetFrame());
-    return kit(webCoreFrame);
+    return kit(_result->targetFrame());
 }
 
 - (NSString *)_titleDisplayString

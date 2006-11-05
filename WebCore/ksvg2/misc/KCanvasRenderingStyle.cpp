@@ -35,7 +35,6 @@
 #include "SVGLength.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
-#include "ksvg.h"
 
 #include <wtf/PassRefPtr.h>
 

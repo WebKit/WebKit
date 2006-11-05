@@ -161,17 +161,18 @@ bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
   return getStaticPropertySlot<NavigatorFunc, Navigator, JSObject>(exec, &NavigatorTable, this, propertyName, slot);
 }
 
-JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
+JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
 {
-  String userAgent = m_frame->userAgent();
   switch (token) {
   case AppCodeName:
     return jsString("Mozilla");
   case AppName:
     return jsString("Netscape");
-  case AppVersion:
-    // We assume the string is something like Mozilla/version (properties)
+  case AppVersion: {
+    // Version is everything in the user agent string past the "Mozilla/" prefix.
+    const String userAgent = m_frame->userAgent();
     return jsString(userAgent.substring(userAgent.find('/') + 1));
+  }
   case Product:
     return jsString("Gecko");
   case ProductSub:
@@ -183,7 +184,7 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case Language:
     return jsString(defaultLanguage());
   case UserAgent:
-    return jsString(userAgent);
+    return jsString(m_frame->userAgent());
   case Platform:
     return jsString(WEBCORE_NAVIGATOR_PLATFORM);
   case _Plugins:

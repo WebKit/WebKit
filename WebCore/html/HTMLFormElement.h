@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Event;
 class FormData;
 class HTMLGenericFormElement;
 class HTMLImageElement;
@@ -70,8 +71,9 @@ public:
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
-    bool prepareSubmit();
-    void submit(bool activateSubmitButton = false);
+    bool prepareSubmit(Event*);
+    void submit();
+    void submit(Event*, bool activateSubmitButton = false);
     void reset();
 
     void setMalformed(bool malformed) { m_malformed = malformed; }
@@ -82,7 +84,7 @@ public:
 
     virtual bool isURLAttribute(Attribute*) const;
     
-    void submitClick();
+    void submitClick(Event*);
     bool formWouldHaveSecureSubmission(const String& url);
 
     String name() const;

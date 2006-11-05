@@ -30,9 +30,10 @@
 
 #include "CString.h"
 #include "DocLoader.h"
-#include "Frame.h"
 #include "Document.h"
+#include "Frame.h"
 #include "Page.h"
+#include "Timer.h"
 #include <windows.h>
 #include <wininet.h>
 

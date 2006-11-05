@@ -2317,7 +2317,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     return NSAccessibilityUnignoredAncestor(obj->document()->axObjectCache()->get(obj));
 }
 
-- (RenderObject*) rendererForView:(NSView*)view
+- (RenderObject*)rendererForView:(NSView*)view
 {
     // check for WebCore NSView that lets us find its widget
     Frame* frame = m_renderer->document()->frame();

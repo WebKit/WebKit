@@ -28,44 +28,40 @@
 #import "ResourceResponseMac.h"
 
 #import "ResourceResponse.h"
-
 #import <Foundation/Foundation.h>
+#import <limits>
 
 @interface NSURLResponse (FoundationSecretsWebCoreKnowsAbout)
 - (NSTimeInterval)_calculatedExpiration;
 @end
 
-// We would like a better value for a maximum time_t,
-// but there is no way to do that in C with any certainty.
-// INT_MAX should work well enough for our purposes.
-#define MAX_TIME_T ((time_t)INT_MAX)    
-
 namespace WebCore {
 
-   void getResourceResponse(ResourceResponse& response, NSURLResponse *nsResponse)
-   {
-       response = ResourceResponse([nsResponse URL], [nsResponse MIMEType], [nsResponse expectedContentLength], [nsResponse textEncodingName], [nsResponse suggestedFilename]);
+void getResourceResponse(ResourceResponse& response, NSURLResponse *nsResponse)
+{
+    response = ResourceResponse([nsResponse URL], [nsResponse MIMEType],
+        [nsResponse expectedContentLength], [nsResponse textEncodingName],
+        [nsResponse suggestedFilename]);
 
-       NSTimeInterval expiration = [nsResponse _calculatedExpiration];
-       expiration += kCFAbsoluteTimeIntervalSince1970;
-       response.setExpirationDate(expiration > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration);
+    const time_t maxTime = std::numeric_limits<time_t>::max();
 
+    NSTimeInterval expiration = [nsResponse _calculatedExpiration];
+    expiration += kCFAbsoluteTimeIntervalSince1970;
+    response.setExpirationDate(expiration > maxTime ? maxTime : static_cast<time_t>(expiration));
 
-       if ([nsResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)nsResponse;
+    if ([nsResponse isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)nsResponse;
 
-           response.setHTTPStatusCode([httpResponse statusCode]);
+        response.setHTTPStatusCode([httpResponse statusCode]);
 
-           // FIXME: it would be nice to have a way to get the real
-           // status text eventually
-           response.setHTTPStatusText("OK");
-           
-           NSDictionary *headers = [httpResponse allHeaderFields];
-           NSEnumerator *e = [headers keyEnumerator];
-           NSString *name;
-           while ((name = [e nextObject]))
-               response.httpHeaderFields().set(name, [headers objectForKey:name]);
-       } 
-   }
+        // FIXME: it would be nice to have a way to get the real status text eventually.
+        response.setHTTPStatusText("OK");
+       
+        NSDictionary *headers = [httpResponse allHeaderFields];
+        NSEnumerator *e = [headers keyEnumerator];
+        while (NSString *name = [e nextObject])
+            response.httpHeaderFields().set(name, [headers objectForKey:name]);
+   } 
+}
 
 }
