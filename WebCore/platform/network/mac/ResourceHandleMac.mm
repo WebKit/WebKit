@@ -44,8 +44,6 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 ResourceHandle::~ResourceHandle()
 {
-    if (d->m_subresourceLoader)
-        d->m_subresourceLoader->cancel();
     delete d;
 }
 

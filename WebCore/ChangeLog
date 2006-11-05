@@ -1,5 +1,19 @@
 2006-11-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ander.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11453
+          REGRESSION: Status bar always shows cancelled opening the page
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::~ResourceHandle): Removed call to cancel.
+        Since the subresource owns the resource handle, there's no need to cancel.
+        This arrangement is only temporary, anyway, since Maciej will soon change
+        things so that the subresource loader uses the resource handle and the
+        resource handle doesn't know anything about the subresource loader.
+
+2006-11-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - converted more of the loader machinery to work with cross-platform
