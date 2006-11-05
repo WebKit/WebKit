@@ -1,3 +1,82 @@
+2006-11-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - more preparation for splitting up Frame into sub-pieces
+        - removed unnecessary includes from Frame.h
+
+        * page/Frame.h: Removed unneeded includes and forward declarations.
+        Added additional forward declarations. Removed the constant
+        NoXPosForVerticalArrowNavigation, now moved inside SelectionController.
+        Created sections of functions to be moved into Chrome, Editor,
+        EventHandler, FrameLoader, SelectionController, and the Platform
+        directory, as well as marking one function for deletion.
+
+        * page/FramePrivate.h: Removed the definition of the constructor and
+        destructor and removed unnecessary includes.
+
+        * page/FrameView.h: Removed unneeded forward declarations and friend
+        declarations. Created a section of functions and data to be moved into
+        EventHandler.
+
+        * bridge/mac/FrameMac.h: Removed unneeded forward declarations.
+        Created sections of functions and data to be moved into Chrome,
+        Editor, EventHandler, FrameLoader, and the Platform directory.
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed obsolete comment.
+        Removed unused methods areScrollbarsVisible,
+        nextValidKeyViewOutsideWebFrameViews, and fileWrapperForURL:.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::begin): Added an overload, so Frame.h doesn't have
+        to include KURL.h just for the KURL default constructor.
+        (WebCore::FramePrivate::FramePrivate): Moved here from FramePrivate.h.
+        (WebCore::FramePrivate::~FramePrivate): Ditto.
+
+        * page/FrameView.cpp: Removed unused scrollbarMoved and scrollingSelf
+        booleans, scrollbarMoved and cleared funcitons.
+        (WebCore::FrameView::clear): Moved the code from the cleared
+        function in here.
+        (WebCore::FrameView::scrollTo): Removed code to set scrollingSelf.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::FrameMac): Updated
+        for changes to header.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        Moved NoXPosForVerticalArrowNavigation into this file.
+
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_window.cpp:
+        * bridge/mac/WebCoreAXObject.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/cssstyleselector.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/EventTargetNode.cpp:
+        * dom/MouseRelatedEvent.cpp:
+        * dom/XMLTokenizer.cpp:
+        * html/HTMLBaseElement.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFrameElementBase.cpp:
+        * html/HTMLGenericFormElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLTokenizer.cpp:
+        * loader/mac/FrameLoaderMac.mm:
+        * page/PageState.cpp:
+        * rendering/RenderApplet.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderPartObject.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * xml/XSLTProcessor.cpp:
+        Added includes as needed to keep compiling, since there are fewer
+        includes in Frame.h.
+
 2006-11-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Dave Harrison.

@@ -27,6 +27,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLFormElement.h"
 #include "HTMLDocument.h"
 #include "HTMLImageLoader.h"

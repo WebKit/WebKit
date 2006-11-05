@@ -370,9 +370,6 @@ typedef enum {
 
 // The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.
 
-// In NSArray objects for post data, NSData objects represent literal data, and NSString objects represent encoded files.
-// The encoding is the standard form encoding for uploading files.
-
 @protocol WebCoreFrameBridge
 
 - (NSView *)documentView;
@@ -384,16 +381,15 @@ typedef enum {
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer ownerElement:(WebCoreElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
-- (BOOL)areToolbarsVisible;
-- (void)setToolbarsVisible:(BOOL)visible;
-- (BOOL)isStatusbarVisible;
-- (void)setStatusbarVisible:(BOOL)visible;
-- (BOOL)areScrollbarsVisible;
-- (void)setScrollbarsVisible:(BOOL)visible;
 - (NSWindow *)window;
 
+- (void)setToolbarsVisible:(BOOL)visible;
+- (void)setStatusbarVisible:(BOOL)visible;
+- (void)setScrollbarsVisible:(BOOL)visible;
 - (void)setWindowIsResizable:(BOOL)resizable;
-- (BOOL)windowIsResizable;
+
+- (BOOL)areToolbarsVisible;
+- (BOOL)isStatusbarVisible;
 
 - (NSResponder *)firstResponder;
 - (void)makeFirstResponder:(NSResponder *)responder;
@@ -419,7 +415,6 @@ typedef enum {
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl;
 
 - (NSView *)nextKeyViewOutsideWebFrameViews;
-- (NSView *)nextValidKeyViewOutsideWebFrameViews;
 - (NSView *)previousKeyViewOutsideWebFrameViews;
 
 - (void)saveDocumentState:(NSArray *)documentState;
@@ -467,8 +462,6 @@ typedef enum {
 
 - (void)setHasBorder:(BOOL)hasBorder;
 
-- (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL;
-
 - (void)print;
 
 - (jobject)getAppletInView:(NSView *)view;
@@ -508,7 +501,6 @@ typedef enum {
 
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size;
 
-
 @end
 
 // This interface definition allows those who hold a WebCoreFrameBridge * to call all the methods
@@ -518,9 +510,8 @@ typedef enum {
 @interface WebCoreFrameBridge (SubclassResponsibility) <WebCoreFrameBridge>
 @end
 
-// Protocols that make up part of the interaces above.
+// Protocols that make up part of the interfaces above.
 
 @protocol WebCoreRenderTreeCopier <NSObject>
 - (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
 @end
-

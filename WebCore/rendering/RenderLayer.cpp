@@ -49,6 +49,7 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "HTMLMarqueeElement.h"

@@ -53,6 +53,7 @@
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
+#import "TextResourceDecoder.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
 #import "WebCorePageBridge.h"

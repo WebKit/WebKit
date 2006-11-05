@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"

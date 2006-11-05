@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "Page.h"
 #include "kjs_window.h"
 #include <kjs/JSLock.h>

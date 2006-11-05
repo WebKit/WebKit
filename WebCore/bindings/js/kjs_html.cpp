@@ -25,6 +25,7 @@
 #include "DocLoader.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBRElement.h"

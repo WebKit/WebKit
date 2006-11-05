@@ -65,6 +65,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
+#include "KURL.h"
 #include "cssstyleselector.h"
 
 #include "DocTypeStrings.cpp"

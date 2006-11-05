@@ -37,6 +37,8 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "DocumentLoader.h"
+#import "EditCommand.h"
+#import "EditorClient.h"
 #import "Event.h"
 #import "EventNames.h"
 #import "FloatRect.h"
@@ -47,6 +49,7 @@
 #import "FrameLoaderClient.h"
 #import "FrameLoaderTypes.h"
 #import "FramePrivate.h"
+#import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
@@ -83,6 +86,7 @@
 #import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
+#import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
@@ -160,13 +164,13 @@ static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
 FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> client)
     : Frame(page, ownerElement, client)
     , _bridge(nil)
+    , _bindingRoot(0)
+    , _windowScriptObject(0)
+    , _windowScriptNPObject(0)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
     , _mouseDownMayStartSelect(false)
     , _activationEventNumber(0)
-    , _bindingRoot(0)
-    , _windowScriptObject(0)
-    , _windowScriptNPObject(0)
 {
      if (!sharedDragInfo)
          sharedDragInfo = new FrameMacDragInfo;

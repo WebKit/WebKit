@@ -44,6 +44,7 @@
 #import "FrameLoaderClient.h"
 #import "FrameMac.h"
 #import "FrameTree.h"
+#import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"

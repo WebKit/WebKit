@@ -35,6 +35,7 @@
 #include "DocumentType.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTableSectionElement.h"

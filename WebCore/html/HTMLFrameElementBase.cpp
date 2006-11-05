@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLFrameSetElement.h"
+#include "KURL.h"
 #include "Page.h"
 #include "RenderFrame.h"
 

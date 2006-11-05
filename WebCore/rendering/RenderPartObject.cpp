@@ -28,11 +28,13 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
+#include "KURL.h"
 #include "Page.h"
 #include "Text.h"
 

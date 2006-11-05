@@ -36,14 +36,18 @@
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
+#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
+#include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoadRequest.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
@@ -80,6 +84,7 @@
 #include "XMLTokenizer.h"
 #include "cssstyleselector.h"
 #include "htmlediting.h"
+#include "kjs_proxy.h"
 #include "kjs_window.h"
 #include "markup.h"
 #include "visible_units.h"
@@ -843,6 +848,11 @@ void Frame::setResponseMIMEType(const String& contentType)
 const String& Frame::responseMIMEType() const
 {
     return d->m_responseMIMEType;
+}
+
+void Frame::begin()
+{
+    begin(KURL());
 }
 
 void Frame::begin(const KURL& url)
@@ -3551,6 +3561,71 @@ bool Frame::prohibitsScrolling() const
 void Frame::setProhibitsScrolling(const bool prohibit)
 {
     d->m_prohibitsScrolling = prohibit;
+}
+
+FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element* ownerElement, PassRefPtr<EditorClient> client)
+    : m_page(page)
+    , m_treeNode(thisFrame, parent)
+    , m_ownerElement(ownerElement)
+    , m_jscript(0)
+    , m_runningScripts(0)
+    , m_bJScriptEnabled(true)
+    , m_bJavaEnabled(true)
+    , m_bPluginsEnabled(true)
+    , m_settings(0)
+    , m_bComplete(true)
+    , m_bLoadingMainResource(false)
+    , m_bLoadEventEmitted(true)
+    , m_bUnloadEventEmitted(true)
+    , m_haveEncoding(false)
+    , m_bHTTPRefresh(false)
+    , m_redirectLockHistory(false)
+    , m_redirectUserGesture(false)
+    , m_cachePolicy(CachePolicyVerify)
+    , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
+    , m_scheduledRedirection(noRedirectionScheduled)
+    , m_delayRedirect(0)
+    , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
+    , m_submitForm(0)
+    , m_bMousePressed(false)
+    , m_beganSelectingText(false)
+    , m_selectionController(thisFrame)
+    , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
+    , m_editor(thisFrame, client)
+    , m_command(thisFrame)
+    , m_caretVisible(false)
+    , m_caretPaint(true)
+    , m_bFirstData(true)
+    , m_bCleared(true)
+    , m_isActive(false)
+    , m_opener(0)
+    , m_openedByJS(false)
+    , m_bPendingChildRedirection(false)
+    , m_executingJavaScriptFormAction(false)
+    , m_cancelWithLoadInProgress(false)
+    , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
+    , m_loader(new FrameLoader(thisFrame))
+    , m_userStyleSheetLoader(0)
+    , m_iconLoader(0)
+    , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
+    , m_autoscrollRenderer(0)
+    , m_mouseDownMayStartAutoscroll(false)
+    , m_mouseDownMayStartDrag(false)
+    , m_paintRestriction(PaintRestrictionNone)
+    , m_markedTextUsesUnderlines(false)
+    , m_highlightTextMatches(false)
+    , m_windowHasFocus(false)
+    , m_inViewSourceMode(false)
+    , frameCount(0)
+    , m_prohibitsScrolling(false)
+{
+}
+
+FramePrivate::~FramePrivate()
+{
+    delete m_jscript;
+    delete m_loader;
+    delete m_iconLoader;
 }
 
 } // namespace WebCore

@@ -30,9 +30,10 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
+#include "HTMLNames.h"
 #include "RenderTheme.h"
 #include "RenderWidget.h"
-#include "HTMLNames.h"
+#include "Widget.h"
 
 namespace WebCore {
 

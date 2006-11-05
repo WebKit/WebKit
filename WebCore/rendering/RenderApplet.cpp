@@ -29,6 +29,7 @@
 #include "HTMLAppletElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
+#include "Widget.h"
 
 namespace WebCore {
 

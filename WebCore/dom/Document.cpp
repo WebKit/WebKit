@@ -42,10 +42,9 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#if PLATFORM(MAC)
 #include "FrameLoader.h"
-#endif
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"

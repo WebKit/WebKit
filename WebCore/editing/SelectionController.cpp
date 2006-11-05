@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -50,6 +51,8 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
+
+const int NoXPosForVerticalArrowNavigation = INT_MIN;
 
 SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_needsLayout(true)
@@ -124,7 +127,7 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     m_frame->selectionLayoutChanged();
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
-    m_frame->setXPosForVerticalArrowNavigation(Frame::NoXPosForVerticalArrowNavigation);
+    m_frame->setXPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation);
     selectFrameElementInParentIfFullySelected();
     m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
@@ -644,7 +647,7 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
     if (!frame)
         return x;
         
-    if (recalc || frame->xPosForVerticalArrowNavigation() == Frame::NoXPosForVerticalArrowNavigation) {
+    if (recalc || frame->xPosForVerticalArrowNavigation() == NoXPosForVerticalArrowNavigation) {
         pos = VisiblePosition(pos, m_sel.affinity()).deepEquivalent();
         x = pos.node()->renderer()->caretRect(pos.offset(), m_sel.affinity()).x();
         frame->setXPosForVerticalArrowNavigation(x);

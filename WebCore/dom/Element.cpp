@@ -22,6 +22,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "Element.h"
 
@@ -29,6 +30,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "NamedAttrMap.h"
 #include "RenderBlock.h"

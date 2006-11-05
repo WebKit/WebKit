@@ -38,6 +38,7 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"

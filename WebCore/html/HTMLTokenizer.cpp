@@ -34,6 +34,7 @@
 #include "DocumentFragment.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLViewSourceDocument.h"
 #include "HTMLElement.h"
 #include "SystemTime.h"

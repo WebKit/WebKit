@@ -32,6 +32,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "TextStream.h"
 #include "KeyboardEvent.h"

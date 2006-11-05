@@ -28,6 +28,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "Node.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"

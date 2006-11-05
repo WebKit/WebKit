@@ -44,6 +44,7 @@
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"

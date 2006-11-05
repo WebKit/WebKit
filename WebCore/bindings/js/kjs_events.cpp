@@ -21,9 +21,9 @@
 #include "config.h"
 #include "kjs_events.h"
 
+#include "CString.h"
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
-#include "CString.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -36,6 +36,7 @@
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
 #include "JSWheelEvent.h"
+#include "KURL.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"

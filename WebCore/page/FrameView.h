@@ -34,79 +34,36 @@ namespace WebCore {
 
 class AtomicString;
 class Color;
-class CSSProperty;
-class CSSStyleSelector;
 class Clipboard;
-class Document;
-class Element;
 class Event;
 class EventTargetNode;
 class Frame;
 class FrameViewPrivate;
-class GraphicsContext;
-class HTMLAnchorElement;
-class HTMLDocument;
-class HTMLElement;
-class HTMLFormElement;
 class HTMLFrameSetElement;
-class HTMLGenericFormElement;
-class HTMLTitleElement;
-class InlineBox;
 class IntPoint;
 class IntRect;
-class PlatformKeyboardEvent;
-class FrameMac;
 class PlatformMouseEvent;
 class MouseEventWithHitTestResults;
 class Node;
-class RenderBox;
-class RenderView;
 class RenderLayer;
-class RenderLineEdit;
 class RenderObject;
-class RenderPart;
-class RenderPartObject;
-class RenderStyle;
-class RenderWidget;
 class PlatformWheelEvent;
-class String;
 
 template <typename T> class Timer;
 
-void applyRule(CSSProperty*);
-
 class FrameView : public ScrollView {
-    friend class CSSStyleSelector;
-    friend class Document;
-    friend class Frame;
-    friend class HTMLAnchorElement;
-    friend class HTMLDocument;
-    friend class HTMLFormElement;
-    friend class HTMLGenericFormElement;
-    friend class HTMLTitleElement;
-    friend class FrameMac;
-    friend class RenderBox;
-    friend class RenderView;
-    friend class RenderLineEdit;
-    friend class RenderObject;
-    friend class RenderPart;
-    friend class RenderPartObject;
-    friend class RenderWidget;
-    friend void applyRule(CSSProperty *prop);
-
 public:
     FrameView(Frame*);
     virtual ~FrameView();
 
     Frame* frame() const { return m_frame.get(); }
 
-    /**
-     * Gets/Sets the margin width/height
-     *
-     * A return value of -1 means the default value will be used.
-     */
-    int marginWidth() const { return m_margins.width(); }
-    int marginHeight() { return  m_margins.height(); }
+    void ref() { ++m_refCount; }
+    void deref() { if (!--m_refCount) delete this; }
+    bool hasOneRef() { return m_refCount == 1; }
+
+    int marginWidth() const { return m_margins.width(); } // -1 means default
+    int marginHeight() const { return m_margins.height(); } // -1 means default
     void setMarginWidth(int);
     void setMarginHeight(int);
 
@@ -117,23 +74,87 @@ public:
     void print();
 
     void layout(bool allowSubtree = true);
+    bool didFirstLayout() const;
+    void layoutTimerFired(Timer<FrameView>*);
+    void scheduleRelayout();
+    void scheduleRelayoutOfSubtree(Node*);
+    void unscheduleRelayout();
+    bool haveDelayedLayoutScheduled();
+    bool layoutPending() const;
 
     Node* layoutRoot() const;
     int layoutCount() const;
 
     bool needsFullRepaint() const;
-    
+    void repaintRectangle(const IntRect&, bool immediate);
     void addRepaintInfo(RenderObject*, const IntRect&);
 
     void resetScrollbars();
 
     void clear();
-
-    bool didFirstLayout() const;
-
-public:
     void clearPart();
 
+    bool isTransparent() const;
+    void setTransparent(bool isTransparent);
+
+    Color baseBackgroundColor() const;
+    void setBaseBackgroundColor(Color);
+
+    void adjustViewSize();
+    void initScrollbars();
+    
+    void setHasBorder(bool);
+    bool hasBorder() const;
+    
+    virtual IntRect windowClipRect() const;
+    IntRect windowClipRect(bool clipToContents) const;
+    IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
+
+    virtual void scrollPointRecursively(int x, int y);
+    virtual void setContentsPos(int x, int y);
+
+    String mediaType() const;
+
+    void setUseSlowRepaints();
+
+    void addSlowRepaintObject();
+    void removeSlowRepaintObject();
+
+#if PLATFORM(MAC)
+    void updateDashboardRegions();
+#endif
+
+private:
+    void init();
+
+    virtual bool isFrameView() const;
+
+    void setMediaType(const String&);
+
+    bool scrollTo(const IntRect&);
+
+    bool useSlowRepaints() const;
+
+    void restoreScrollbar();
+
+    void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
+
+    void updateBorder();
+
+    void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
+
+    unsigned m_refCount;
+    IntSize m_size;
+    IntSize m_margins;
+    RefPtr<Frame> m_frame;
+    FrameViewPrivate* d;
+
+    friend class Frame;
+    friend class FrameMac;
+
+// === to be moved into EventHandler
+
+public:
     void handleMousePressEvent(const PlatformMouseEvent&);
     void handleMouseDoubleClickEvent(const PlatformMouseEvent&);
     virtual void handleMouseMoveEvent(const PlatformMouseEvent&);
@@ -157,86 +178,21 @@ public:
     void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
     bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
 
-    void layoutTimerFired(Timer<FrameView>*);
+    void scheduleHoverStateUpdate();
     void hoverTimerFired(Timer<FrameView>*);
 
-    void repaintRectangle(const IntRect& r, bool immediate);
-
-    bool isTransparent() const;
-    void setTransparent(bool isTransparent);
-
-    Color baseBackgroundColor() const;
-    void setBaseBackgroundColor(Color);
-
-    void scheduleRelayout();
-    void scheduleRelayoutOfSubtree(Node*);
-    void unscheduleRelayout();
-    bool haveDelayedLayoutScheduled();
-    bool layoutPending() const;
-
-    void scheduleHoverStateUpdate();
-
-    void adjustViewSize();
-    void initScrollbars();
-    
-    void setHasBorder(bool);
-    bool hasBorder() const;
-    
-    void setResizingFrameSet(HTMLFrameSetElement *);
-
-#if PLATFORM(MAC)
-    void updateDashboardRegions();
-#endif
-
-    virtual IntRect windowClipRect() const;
-    IntRect windowClipRect(bool clipToContents) const;
-    IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
-
-    virtual void scrollPointRecursively(int x, int y);
-    virtual void setContentsPos(int x, int y);
+    void setResizingFrameSet(HTMLFrameSetElement*);
 
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
 
     IntPoint currentMousePosition() const;
 
-    void ref() { ++m_refCount; }
-    void deref() { if (!--m_refCount) delete this; }
-    bool hasOneRef() { return m_refCount == 1; }
+    void setIgnoreWheelEvents(bool);
 
 private:
-    void cleared();
-    void scrollbarMoved();
-
-    void resetCursor();
     void invalidateClick();
 
-    /**
-     * Get/set the CSS Media Type.
-     *
-     * Media type is set to "screen" for on-screen rendering and "print"
-     * during printing. Other media types lack the proper support in the
-     * renderer and are not activated. The DOM tree and the parser itself,
-     * however, properly handle other media types. To make them actually work
-     * you only need to enable the media type in the view and if necessary
-     * add the media type dependent changes to the renderer.
-     */
-    void setMediaType(const String&);
-    String mediaType() const;
-
-    bool scrollTo(const IntRect&);
-
-    bool useSlowRepaints() const;
-    void setUseSlowRepaints();
-    void addSlowRepaintObject();
-    void removeSlowRepaintObject();
-
-    void setIgnoreWheelEvents(bool e);
-
-    void init();
-
     Node *nodeUnderMouse() const;
-
-    void restoreScrollbar();
 
     MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
 
@@ -245,22 +201,8 @@ private:
     bool dispatchDragEvent(const AtomicString& eventType, Node* target,
         const PlatformMouseEvent&, Clipboard*);
 
-    void applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode);
-
-    virtual bool isFrameView() const;
-
-    void updateBorder();
-
-    void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
     void dispatchScheduledEvents();
-        
-    unsigned m_refCount;
-    
-    IntSize m_size;
-    IntSize m_margins;
-    
-    RefPtr<Frame> m_frame;
-    FrameViewPrivate* d;
+
 };
 
 }

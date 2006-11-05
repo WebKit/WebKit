@@ -27,27 +27,18 @@
 #ifndef FramePrivate_h
 #define FramePrivate_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "CachePolicy.h"
 #include "CommandByName.h"
-#include "DOMWindow.h"
-#include "TextResourceDecoder.h"
-#include "EditCommand.h"
 #include "Editor.h"
-#include "EditorClient.h"
 #include "FormData.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameTree.h"
-#include "IconLoader.h"
+#include "KURL.h"
 #include "SelectionController.h"
 #include "StringHash.h"
-#include "Timer.h"
-#include "kjs_proxy.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
+    class IconLoader;
     class TextResourceDecoder;
     class UserStyleSheetLoader;
 
@@ -61,70 +52,8 @@ namespace WebCore {
     
     class FramePrivate {
     public:
-        FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element* ownerElement, PassRefPtr<EditorClient> client)
-            : m_page(page)
-            , m_treeNode(thisFrame, parent)
-            , m_ownerElement(ownerElement)
-            , m_jscript(0)
-            , m_runningScripts(0)
-            , m_bJScriptEnabled(true)
-            , m_bJavaEnabled(true)
-            , m_bPluginsEnabled(true)
-            , m_settings(0)
-            , m_bComplete(true)
-            , m_bLoadingMainResource(false)
-            , m_bLoadEventEmitted(true)
-            , m_bUnloadEventEmitted(true)
-            , m_haveEncoding(false)
-            , m_bHTTPRefresh(false)
-            , m_redirectLockHistory(false)
-            , m_redirectUserGesture(false)
-            , m_cachePolicy(CachePolicyVerify)
-            , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
-            , m_scheduledRedirection(noRedirectionScheduled)
-            , m_delayRedirect(0)
-            , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
-            , m_submitForm(0)
-            , m_bMousePressed(false)
-            , m_beganSelectingText(false)
-            , m_selectionController(thisFrame)
-            , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
-            , m_editor(thisFrame, client)
-            , m_command(thisFrame)
-            , m_caretVisible(false)
-            , m_caretPaint(true)
-            , m_bFirstData(true)
-            , m_bCleared(true)
-            , m_isActive(false)
-            , m_opener(0)
-            , m_openedByJS(false)
-            , m_bPendingChildRedirection(false)
-            , m_executingJavaScriptFormAction(false)
-            , m_cancelWithLoadInProgress(false)
-            , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
-            , m_loader(new FrameLoader(thisFrame))
-            , m_userStyleSheetLoader(0)
-            , m_iconLoader(0)
-            , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
-            , m_autoscrollRenderer(0)
-            , m_mouseDownMayStartAutoscroll(false)
-            , m_mouseDownMayStartDrag(false)
-            , m_paintRestriction(PaintRestrictionNone)
-            , m_markedTextUsesUnderlines(false)
-            , m_highlightTextMatches(false)
-            , m_windowHasFocus(false)
-            , m_inViewSourceMode(false)
-            , frameCount(0)
-            , m_prohibitsScrolling(false)
-        {
-        }
-
-        ~FramePrivate()
-        {
-            delete m_jscript;
-            delete m_loader;
-            delete m_iconLoader;
-        }
+        FramePrivate(Page*, Frame* parent, Frame* thisFrame, Element* ownerElement, PassRefPtr<EditorClient>);
+        ~FramePrivate();
 
         Page* m_page;
         FrameTree m_treeNode;

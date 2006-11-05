@@ -32,6 +32,7 @@
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
