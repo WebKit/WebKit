@@ -2,6 +2,15 @@
 
         Reviewed by Tim H.
 
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11513
+        Bug 11513: [Drosera] Function popup fails to appear when clicking supposedly valid areas.
+
+        * Drosera/debugger.css: Stick a min-width on the menu to keep it from becoming smaller than the control.
+
+2006-11-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11512
         Bug 11512: [Drosera] Scrolling via keyboard breaks after clicking in function popup.
 

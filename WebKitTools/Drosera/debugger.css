@@ -111,6 +111,7 @@ body { margin: 0; padding: 0; overflow: hidden; }
     z-index: 10;
     margin: 0;
     padding: 0;
+    min-width: 100px;
 }
 
 button.popup {
