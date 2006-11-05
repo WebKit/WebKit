@@ -35,7 +35,12 @@ namespace WebCore {
 class ResourceResponse {
 public:
 
-    ResourceResponse() : m_expectedContentLength(0), m_httpStatusCode(0) {}
+    ResourceResponse() 
+        : m_expectedContentLength(0)
+        , m_httpStatusCode(0)
+        , m_expirationDate(0) 
+    {
+    }
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : m_url(url)
@@ -44,6 +49,7 @@ public:
         , m_textEncodingName(textEncodingName)
         , m_suggestedFilename(filename)
         , m_httpStatusCode(0)
+        , m_expirationDate(0)
     {
     }
  
@@ -62,9 +68,6 @@ public:
     String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
     const HTTPHeaderMap& httpHeaderFields() const { return m_httpHeaderFields; }
     HTTPHeaderMap& httpHeaderFields() { return m_httpHeaderFields; }
-
-    // possibly add calculated expiration info
-    // lastModifiedDate (date)
 
     bool isMultipart() const { return m_mimeType == "multipart/x-mixed-replace"; }
 

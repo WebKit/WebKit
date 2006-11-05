@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -28,16 +29,18 @@
 
 /* originally written by Becky Willrich, additional code by Darin Adler */
 
-#import "config.h"
-#import "FormDataStream.h"
+#include "config.h"
+#include "FormDataStreamCFNet.h"
 
-#import "CString.h"
-#import "FormData.h"
-#import "WebCoreSystemInterface.h"
-#import <sys/stat.h>
-#import <sys/types.h>
-#import <wtf/Assertions.h>
-#import <wtf/HashMap.h>
+#include "CString.h"
+#include "FormData.h"
+#include <CFNetwork/CFURLRequestPriv.h>
+#include <CoreFoundation/CFStreamAbstract.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
+
 
 namespace WebCore {
 
@@ -157,7 +160,7 @@ static void advanceCurrentStream(FormStreamFields *form)
 static void openNextStream(FormStreamFields* form)
 {
     // Skip over any streams we can't open.
-    // For some purposes we might want to return an error, but the current NSURLConnection
+    // For some purposes we might want to return an error, but the current CFURLConnection
     // can't really do anything useful with an error at this point, so this is better.
     advanceCurrentStream(form);
     while (form->currentStream && !CFReadStreamOpen(form->currentStream))
@@ -241,7 +244,7 @@ static Boolean formCanRead(CFReadStreamRef stream, void* context)
         openNextStream(form);
     }
     if (!form->currentStream) {
-        wkSignalCFReadStreamEnd(stream);
+        CFReadStreamSignalEvent(stream, kCFStreamEventEndEncountered, 0);
         return FALSE;
     }
     return CFReadStreamHasBytesAvailable(form->currentStream);
@@ -280,18 +283,17 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
     switch (type) {
     case kCFStreamEventHasBytesAvailable:
-        wkSignalCFReadStreamHasBytes(form->formStream);
+        CFReadStreamSignalEvent(form->formStream, kCFStreamEventHasBytesAvailable, 0);
         break;
     case kCFStreamEventErrorOccurred: {
         CFStreamError readStreamError = CFReadStreamGetError(stream);
-        wkSignalCFReadStreamError(form->formStream, &readStreamError);
+        CFReadStreamSignalEvent(form->formStream, kCFStreamEventErrorOccurred, &readStreamError);
         break;
     }
     case kCFStreamEventEndEncountered:
         openNextStream(form);
-        if (!form->currentStream) {
-            wkSignalCFReadStreamEnd(form->formStream);
-        }
+        if (!form->currentStream)
+            CFReadStreamSignalEvent(form->formStream, kCFStreamEventEndEncountered, 0);
         break;
     case kCFStreamEventNone:
         LOG_ERROR("unexpected kCFStreamEventNone");
@@ -305,50 +307,59 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
+void setHTTPBody(CFMutableURLRequestRef request, const FormData& formData)
 {
     size_t count = formData.elements().size();
+
+    if (!count == 0)
+        return;
 
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1) {
         const FormDataElement& element = formData.elements()[0];
         if (element.m_type == FormDataElement::data) {
-            NSData *data = [[NSData alloc] initWithBytes:element.m_data.data() length:element.m_data.size()];
-            [request setHTTPBody:data];
-            [data release];
+            CFDataRef data = CFDataCreate(0, reinterpret_cast<const UInt8 *>(element.m_data.data()), element.m_data.size());
+            CFURLRequestSetHTTPRequestBody(request, data);
+            CFRelease(data);
             return;
         }
     }
 
-    // Precompute the content length so NSURLConnection doesn't use chunked mode.
+    // Precompute the content length so CFURLConnection doesn't use chunked mode.
+    bool haveLength = true;
     long long length = 0;
     for (size_t i = 0; i < count; ++i) {
         const FormDataElement& element = formData.elements()[i];
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
-            struct stat sb;
-            int statResult = stat(element.m_filename.utf8(), &sb);
+            struct _stat64i32 sb;
+            int statResult = _stat(element.m_filename.utf8(), &sb);
             if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
                 length += sb.st_size;
+            else
+                haveLength = false;
         }
     }
 
-    // Set the length.
-    [request setValue:[NSString stringWithFormat:@"%lld", length] forHTTPHeaderField:@"Content-Length"];
+    if (haveLength) {
+        CFStringRef lengthStr = CFStringCreateWithFormat(0, 0, CFSTR("%lld"), length);
+        CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Content-Length"), lengthStr);
+        CFRelease(lengthStr);
+    }
 
-    // Create and set the stream.
-    CFReadStreamRef stream = wkCreateCustomCFReadStream(formCreate, formFinalize,
-        formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,
-        const_cast<FormData*>(&formData));
-    [request setHTTPBodyStream:(NSInputStream *)stream];
+    static CFReadStreamCallBacks formDataStreamCallbacks = 
+        { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule};
+
+    CFReadStreamRef stream = CFReadStreamCreate(0, &formDataStreamCallbacks, const_cast<FormData*>(&formData));
+    CFURLRequestSetHTTPRequestBodyStream(request, stream);
     CFRelease(stream);
 }
 
 
-const FormData* httpBodyFromStream(NSInputStream* stream)
+const FormData* httpBodyFromStream(CFReadStreamRef stream)
 {
-    return getStreamFormDatas()->get((CFReadStreamRef)stream);
+    return getStreamFormDatas()->get(stream);
 }
 
 }

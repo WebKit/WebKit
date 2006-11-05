@@ -1,3 +1,95 @@
+2006-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - replaced receivedRedirect with new willSendRequest delegate
+        - removed most mac-specific loader functions
+        - use ResourceResponse more in loader code
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]): Adapted
+        for CachedResource method renames.
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        Ditto.
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify): simplified
+        based on ResourceResponse
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage): adapt for ResourceResponse
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource): store a ResourceResponse;
+        platform response is now called platformResponse and expiration date
+        is removed.
+        (WebCore::CachedResource::~CachedResource): ditto
+        (WebCore::CachedResource::isExpired): ditto
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::platformResponse): ditto
+        (WebCore::CachedResource::setResponse): ditto
+        (WebCore::CachedResource::canDelete): ditto
+        * loader/LoaderFunctions.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedResponse): Adjusted for renames.
+        (WebCore::Loader::didReceiveResponse): Store whole ResourceResponse
+        in the CachedResource.
+        * loader/loader.h:
+        * loader/mac/FormDataStream.h:
+        * loader/mac/FormDataStream.m:
+        (WebCore::getStreamFormDatas): Rearranged things so it's
+        possible to get a FormData back out of a form data stream.
+        (WebCore::formCreate): ditto
+        (WebCore::formFinalize): ditto
+        (WebCore::httpBodyFromStream): ditto
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad): s/response/platformResponse/
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus): ditto
+        (WebCore::CachedResource::setPlatformResponse): ditto
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::willSendRequest): send redirect
+        to client appropriately
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willSendRequest): new entry
+        point for SubresourceLoader, dispatch to client.
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::allowHTTPCookies): implemented
+        (WebCore::ResourceRequest::setAllowHTTPCookies): ditto
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse): initialize expiration
+        date(!)
+        * platform/network/cf/FormDataStreamCFNet.cpp: Added.
+        (WebCore::getStreamFormDatas): Added this, ported from NSURL version.
+        (WebCore::openNextStream): ditto
+        (WebCore::formCreate): ditto
+        (WebCore::formFinalize): ditto
+        (WebCore::formCanRead): ditto
+        (WebCore::formEventCallback): ditto
+        (WebCore::setHTTPBody): ditto
+        (WebCore::httpBodyFromStream): ditto
+        * platform/network/cf/FormDataStreamCFNet.h: Added.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest): implemented
+        (WebCore::ResourceHandle::start): use new ResourceRequest stuff
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::getResourceResponse): do nothing for a null response
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest): Implemented; dispatch to client.
+        * platform/network/mac/ResourceRequestMac.h: Added.
+        * platform/network/mac/ResourceRequestMac.mm: Added.
+        (WebCore::getResourceRequest): Added way to convert an NSURLRequest
+        to a ResourceRequest.
+        (WebCore::nsURLRequest): Opposite of the above.
+        * platform/network/cf/ResourceRequestCFNet.h: Added.
+        * platform/network/cf/ResourceRequestCFNet.cpp: Added.
+        (WebCore::getResourceRequest): Added way to convert an CFURLRequest
+        to a ResourceRequest.
+        (WebCore::cfURLRequest): Opposite of the above.
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::willSendRequest): Renamed from receivedRedirect,
+        adjusted.
+        * xml/xmlhttprequest.h:
+
 2006-11-04  Darin Adler  <darin@apple.com>
 
         Change suggested by Mitz.

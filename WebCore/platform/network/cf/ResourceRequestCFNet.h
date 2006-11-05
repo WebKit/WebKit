@@ -1,5 +1,6 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Vector.h>
-#include <wtf/HashMap.h>
-#include "PlatformString.h"
-#include "ResourceHandleClient.h"  // Defines PlatformResponse
-#include "HTTPHeaderMap.h"
+#ifndef ResourceRequestCFNet_h_
+#define ResourceRequestCFNet_h_
 
-#ifdef __OBJC__
-@class NSDictionary;
-@class NSString;
-
-@interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderMap:(const WebCore::HTTPHeaderMap&)headerMap;
-@end
-
-#else
-class NSDictionary;
-class NSString;
-#endif
+typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
 
-class CachedResource;
-class DeprecatedString;
-class DocLoader;
-class Loader;
-class Request;
-class ResourceRequest;
+    class ResourceRequest;
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, ResourceResponse&);
-
-void CheckCacheObjectStatus(DocLoader*, CachedResource*);
-bool CheckIfReloading(DocLoader*);
-
+    void getResourceRequest(ResourceRequest&, CFURLRequestRef);
+    CFURLRequestRef cfURLRequest(const ResourceRequest&);
 }
+
+#endif // ResourceRequestCFNet_h_

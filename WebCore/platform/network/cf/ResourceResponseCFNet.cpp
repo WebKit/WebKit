@@ -39,6 +39,9 @@ namespace WebCore {
 
    void getResourceResponse(ResourceResponse& response, CFURLResponseRef cfResponse)
    {
+       if (!cfResponse)
+           return;
+
        // FIXME: we may need to do MIME type sniffing here (unless that is done
        // in CFURLResponseGetMIMEType
 

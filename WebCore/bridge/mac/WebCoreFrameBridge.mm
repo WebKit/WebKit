@@ -1763,7 +1763,7 @@ static NSCharacterSet *_getPostSmartSet(void)
         return NO;
 
     *data = resource->allData();
-    *response = resource->response();
+    *response = resource->platformResponse();
     return YES;
 }
 
@@ -1785,7 +1785,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     HashMap<String, CachedResource*>::const_iterator end = allResources.end();
     for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
         [d addObject:it->second->allData()];
-        [r addObject:it->second->response()];
+        [r addObject:it->second->platformResponse()];
     }
 
     *datas = [d autorelease];

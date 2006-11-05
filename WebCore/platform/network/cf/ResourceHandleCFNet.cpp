@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "ResourceRequestCFNet.h"
 #include "ResourceResponse.h"
 #include "ResourceResponseCFNet.h"
 
@@ -47,35 +48,24 @@
 
 namespace WebCore {
 
-CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef request, CFURLResponseRef redirectionResponse, const void* clientInfo) 
+CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
 {
-    ResourceHandle* job = (ResourceHandle*)clientInfo;
-    CFURLRef url = CFURLRequestGetURL(request);
-    CFStringRef urlString = CFURLGetString(url);
-    const char *bytes = CFStringGetCStringPtr(urlString, kCFStringEncodingUTF8);
-    bool freeBytes = false;
-
+    ResourceHandle* handle = (ResourceHandle*)clientInfo;
 #if defined(LOG_RESOURCELOADER_EVENTS)
-    CFStringRef str = CFStringCreateWithFormat(0, 0, CFSTR("willSendRequest(conn=%p, job = %p)\n"), conn, job);
+    CFStringRef str = CFStringCreateWithFormat(0, 0, CFSTR("willSendRequest(conn=%p, job = %p)\n"), conn, handle);
     CFShow(str);
     CFRelease(str);
 #endif
 
-    if (!bytes) {
-        CFIndex numBytes, urlLength = CFStringGetLength(urlString);
-        UInt8* newBytes;
-        CFStringGetBytes(urlString, CFRangeMake(0, urlLength), kCFStringEncodingUTF8, 0, FALSE, 0, 0, &numBytes);
-        newBytes = (UInt8*)malloc(numBytes + 1);
-        CFStringGetBytes(urlString, CFRangeMake(0, urlLength), kCFStringEncodingUTF8, 0, FALSE, newBytes, numBytes, &numBytes);
-        newBytes[numBytes] = 0;
-        freeBytes = true;
-        bytes = (char*)newBytes;
+    if (ResourceHandleClient* c = handle->client()) {
+        ResourceRequest request;
+        getResourceRequest(request, cfRequest);
+        ResourceResponse redirectResponse;
+        getResourceResponse(redirectResponse, cfRedirectResponse);
+        return cfURLRequest(request);
     }
-    ASSERT(bytes);
-    KURL newURL(bytes);
-    if (freeBytes) 
-        free((void*)bytes);
-    return request;
+
+    return cfRequest;
 }
 
 void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, const void* clientInfo) 
@@ -234,84 +224,16 @@ void runLoaderThread(void *unused)
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
-    CFURLRef url = d->m_request.url().createCFURL();
+    d->m_request.setHTTPUserAgent(docLoader->frame()->userAgent());
+    String referrer = docLoader->frame()->referrer();
+    if (!referrer.isEmpty() && referrer.find("file:", 0, false) != 0)
+        d->m_request.setHTTPReferrer(referrer);
 
-    CFStringRef requestMethod = d->m_request.httpMethod().createCFString();
-    CFMutableURLRequestRef request = CFURLRequestCreateMutable(0, url, kCFURLRequestCachePolicyProtocolDefault, 30.0, 0);
-    Boolean isPost = CFStringCompare(requestMethod, CFSTR("POST"), kCFCompareCaseInsensitive);
-    CFRelease(requestMethod);
-    
-    CFStringRef userAgentString = docLoader->frame()->userAgent().createCFString();
-    CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("User-Agent"), userAgentString);
-    CFRelease(userAgentString);
+    CFURLRequestRef request = cfURLRequest(d->m_request);
 
     ref();
     d->m_loading = true;
-    addHeadersFromHashMap(request, d->m_request.httpHeaderFields());
-
-    String referrer = docLoader->frame()->referrer();
-    if (!referrer.isEmpty() && referrer.find("file:", 0, false) != 0) {
-        CFStringRef str = referrer.createCFString();
-        CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Referer"),str);
-        CFRelease(str);
-    }
     
-    CFReadStreamRef bodyStream = 0;
-    if (postData().elements().size() > 0) {
-        CFArrayRef formArray = arrayFromFormData(postData());
-        bool done = false;
-        CFIndex count = CFArrayGetCount(formArray);
-
-        if (count == 1) {
-            // Handle the common special case of one piece of form data, with no files.
-            CFTypeRef d = CFArrayGetValueAtIndex(formArray, 0);
-            if (CFGetTypeID(d) == CFDataGetTypeID()) {
-                CFURLRequestSetHTTPRequestBody(request, (CFDataRef)d);
-                done = true;
-            }
-        }
-
-        if (!done) {
-            // Precompute the content length so NSURLConnection doesn't use chunked mode.
-            long long length = 0;
-            unsigned i;
-            bool success = true;
-            for (i = 0; success && i < count; ++i) {
-                CFTypeRef data = CFArrayGetValueAtIndex(formArray, i);
-                CFIndex typeID = CFGetTypeID(data);
-                if (typeID == CFDataGetTypeID()) {
-                    CFDataRef d = (CFDataRef)data;
-                    length += CFDataGetLength(d);
-                } else {
-                    // data is a CFStringRef
-                    CFStringRef s = (CFStringRef)data;
-                    CFIndex bufLen = CFStringGetMaximumSizeOfFileSystemRepresentation(s);
-                    char* buf = (char*)malloc(bufLen);
-                    if (CFStringGetFileSystemRepresentation(s, buf, bufLen)) {
-                        struct _stat64i32 sb;
-                        int statResult = _stat(buf, &sb);
-                        if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
-                            length += sb.st_size;
-                        else
-                            success = false;
-                    } else {
-                        success = false;
-                    }
-                    free(buf);
-                }
-            }
-            if (success) {
-                CFStringRef lengthStr = CFStringCreateWithFormat(0, 0, CFSTR("%lld"), length);
-                CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Content-Length"), lengthStr);
-                CFRelease(lengthStr);
-            }
-            bodyStream = CFReadStreamCreateWithFormArray(0, formArray);
-        }
-        CFRelease(formArray);
-    }
-
-    if (bodyStream)
-        CFURLRequestSetHTTPRequestBodyStream(request, bodyStream);
     CFURLConnectionClient client = {0, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge};
     d->m_connection = CFURLConnectionCreate(0, request, &client);
     CFRelease(request);
@@ -319,6 +241,7 @@ bool ResourceHandle::start(DocLoader* docLoader)
     if (!loaderRL) {
         _beginthread(runLoaderThread, 0, 0);
         while (loaderRL == 0) {
+            // FIXME: sleep 10? that can't be right...
             Sleep(10);
         }
     }
@@ -328,11 +251,12 @@ bool ResourceHandle::start(DocLoader* docLoader)
     CFURLConnectionStart(d->m_connection);
 
 #if defined(LOG_RESOURCELOADER_EVENTS)
+    CFURLRef url = d->m_request.url().createCFURL();
     CFStringRef outStr = CFStringCreateWithFormat(0, 0, CFSTR("Starting URL %@ (job = %p, connection = %p)\n"), CFURLGetString(url), this, d->m_connection);
     CFShow(outStr);
     CFRelease(outStr);
-#endif
     CFRelease(url);
+#endif
     return true;
 }
 

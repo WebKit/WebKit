@@ -26,10 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class NSMutableURLRequest;
+#ifndef FormDataStreamCFNet_h_
+#define FormDataStreamCFNet_h_
+
+#include <CoreFoundation/CoreFoundation.h>
+
+typedef struct _CFURLRequest* CFMutableURLRequestRef;
 
 namespace WebCore {
     class FormData;
-    void setHTTPBody(NSMutableURLRequest *, const FormData&);
-    const FormData* httpBodyFromStream(NSInputStream* stream);
+    void setHTTPBody(CFMutableURLRequestRef, const FormData&);
+    const FormData* httpBodyFromStream(CFReadStreamRef);
 }
+
+#endif FormDataStreamCFNet_h_

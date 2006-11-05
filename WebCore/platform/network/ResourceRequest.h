@@ -117,8 +117,8 @@ namespace WebCore {
         FormData& httpBody() { return m_httpBody; }
         void setHTTPBody(const FormData& httpBody) { m_httpBody = httpBody; } 
         
-        bool allowHTTPCookies() const;
-        void setAllowHTTPCookies(bool);
+        bool allowHTTPCookies() const { return m_allowHTTPCookies; }
+        void setAllowHTTPCookies(bool allowHTTPCookies) { m_allowHTTPCookies = allowHTTPCookies; }
 
     private:
         static const int defaultTimeoutInterval = 60;
