@@ -800,43 +800,65 @@ function syntaxHighlight(code, file)
 
             if (keywords[keyword]) {
                 var functionName = "";
+                var functionIsAnonymous = false;
                 if (keyword == "function") {
                     var functionKeywordOffset = 8;
-                    var functionNameChar = "";
-                    
-                    if (code.charAt(i + functionKeywordOffset) == " ") { 
-                        functionNameChar = code.charAt(i + functionKeywordOffset + 1);
-                        functionKeywordOffset++;
-                    } else
-                        functionNameChar = code.charAt(i + functionKeywordOffset);
-                    
-                    if (functionNameChar == "(") {
-                        functionName = "function";
-                        file.functionNames.push(functionName);
-                    } else {
-                        while (functionNameChar != "(") {
-                            functionName += functionNameChar;                        
-                            functionKeywordOffset++;
-                            functionNameChar = code.charAt(i + functionKeywordOffset);
-                            if ((i + functionKeywordOffset) >= code.length || functionNameChar == " " || functionNameChar == "\n") break;
-                        }
+                    for (var j = i + functionKeywordOffset; j < code.length; j++) {
+                        cj = code.charAt(j);
+                        if (cj == " ")
+                            continue;
+                        if (cj == "(")
+                            break;
+                        functionName += cj;
                     }
+
+                    if (!functionName.length) {
+                        functionIsAnonymous = true;
+                        var functionAssignmentFound = false;
+                        var functionNameStart = -1;
+                        var functionNameEnd = -1;
+
+                        for (var j = i - 1; j >= 0; j--) {
+                            cj = code.charAt(j);
+                            if (cj == ":" || cj == "=") {
+                                functionAssignmentFound = true;
+                                continue;
+                            }
+
+                            var curCharIsSpace = (cj == " " || cj == "\t" || cj == "\n");
+                            if (functionAssignmentFound && functionNameEnd == -1 && !curCharIsSpace) {
+                                functionNameEnd = j + 1;
+                            } else if (!functionAssignmentFound && !curCharIsSpace) {
+                                break;
+                            } else if (functionNameEnd != -1 && curCharIsSpace) {
+                                functionNameStart = j;
+                                break;
+                            }
+                        }
+
+                        if (functionNameStart != -1 && functionNameEnd != -1)
+                            functionName = code.substring(functionNameStart, functionNameEnd);
+                    }
+
+                    if (!functionName.length)
+                        functionName = "function";
+
+                    file.functionNames.push(functionName);
                 }
 
                 var fileIndex = filesLookup[file.url];
 
-                if (functionName == "function") 
+                if (keyword == "function") 
                     result += "<span class=\"keyword\"><a name=\"function-" + fileIndex + "-" + file.functionNames.length + "\" id=\"" + fileIndex + "-" + file.functionNames.length + "\">" + keyword + "</a></span>";
                 else
                     result += "<span class=\"keyword\">" + keyword + "</span>";
-                
-                if (functionName.length > 0 && functionName != "function") {
-                    file.functionNames.push(functionName);
+
+                if (functionName.length && !functionIsAnonymous) {
                     result += " <a name=\"function-" + fileIndex + "-" + file.functionNames.length + "\" id=\"" + fileIndex + "-" + file.functionNames.length + "\">" + functionName + "</a>";
                     i += keyword.length + functionName.length;
                 } else
                     i += keyword.length - 1;
-                
+
                 continue;
             }
         }

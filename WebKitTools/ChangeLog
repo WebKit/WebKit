@@ -1,3 +1,12 @@
+2006-11-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 11525: [Drosera] function menu doesn't understand object.method = function() {} syntax
+        http://bugs.webkit.org/show_bug.cgi?id=11525
+
+        * Drosera/debugger.js: imporved the function name code
+
 2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
