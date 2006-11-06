@@ -1,3 +1,27 @@
+2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Make sure that alerts and delegate output made after notifyDone() are ignored, rather than
+        being attributed to the next test.
+
+        * DumpRenderTree/EditingDelegate.m:
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+        (-[EditingDelegate webViewDidChangeSelection:]):
+        * DumpRenderTree/UIDelegate.m:
+        (-[UIDelegate webView:runJavaScriptAlertPanelWithMessage:]):
+
 2006-11-06  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Alexey.

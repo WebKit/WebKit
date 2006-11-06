@@ -41,7 +41,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    printf("ALERT: %s\n", [message UTF8String]);
+    if (!doneLoading())
+        printf("ALERT: %s\n", [message UTF8String]);
 }
 
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
