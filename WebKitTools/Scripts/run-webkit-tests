@@ -59,6 +59,7 @@ use Time::HiRes qw(time);
 
 use lib $FindBin::Bin;
 use webkitdirs;
+use POSIX;
 
 sub closeDumpRenderTree();
 sub closeHTTPD();

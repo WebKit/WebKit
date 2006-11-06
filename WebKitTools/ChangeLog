@@ -1,3 +1,11 @@
+2006-11-06  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Alexey.
+
+        Fix "Undefined subroutine &main::WEXITSTATUS" when build-dumprendertree fails.
+
+        * Scripts/run-webkit-tests: import the POSIX module.
+
 2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
@@ -1620,7 +1628,7 @@
 
 2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
-        Reviewed by Alexy Proskuryakov.
+        Reviewed by Alexey Proskuryakov.
 
         Bug 9692: Warning about Safari extensions on every launch is obnoxious
         http://bugs.webkit.org/show_bug.cgi?id=9692
@@ -1634,7 +1642,7 @@
 
 2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
-        Reviewed by Alexy Proskuryakov.
+        Reviewed by Alexey Proskuryakov.
 
         Bug 9654: Refresh Loop when accessing feed URLs
         http://bugs.webkit.org/show_bug.cgi?id=9654
