@@ -17,7 +17,7 @@ function checkExpected(actual, expected)
 }
 
 var metaTag = document.getElementById("test");
-checkExpected(metaTag, "[object META]");
+checkExpected(metaTag, "[object HTMLMetaElement]");
 checkExpected(metaTag.name, "foo");
 checkExpected(metaTag.scheme, "bar");
 checkExpected(metaTag.httpEquiv, "content-type");

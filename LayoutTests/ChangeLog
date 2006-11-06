@@ -1,3 +1,13 @@
+2006-11-07  Mark Rowe  <bdash@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=11526
+        Bug 11526: REGRESSION(r17610): Layout test failure in svg/custom/create-metadata-element.svg
+
+        Correctly updated tests results.
+
+        * fast/dom/HTMLMetaElement/meta-attributes-expected.txt:
+        * fast/dom/HTMLMetaElement/meta-attributes.html:
+
 2006-11-06  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.

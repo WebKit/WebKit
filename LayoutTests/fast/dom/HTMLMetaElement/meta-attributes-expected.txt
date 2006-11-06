@@ -1,5 +1,5 @@
 You should see 5 lines with "SUCCESS" below:
-FAILURE: expected "[object META]", actual "[object HTMLMetaElement]"
+SUCCESS (value: "[object HTMLMetaElement]")
 
 SUCCESS (value: "foo")
 
