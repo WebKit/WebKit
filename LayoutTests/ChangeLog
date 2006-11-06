@@ -1,3 +1,24 @@
+2006-11-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-intro-01-t.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg-disabled: Removed.
+
 2006-11-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
