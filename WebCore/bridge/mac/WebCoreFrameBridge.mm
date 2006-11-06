@@ -79,7 +79,7 @@
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "DocumentLoader.h"
-#import "FormDataStream.h"
+#import "FormDataStreamMac.h"
 #import "SubresourceLoader.h"
 #import "XMLTokenizer.h"
 #import "csshelper.h"

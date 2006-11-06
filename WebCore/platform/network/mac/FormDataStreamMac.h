@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef FormDataStreamMac_h_
+#define FormDataStreamMac_h_
+
 @class NSMutableURLRequest;
 
 namespace WebCore {
@@ -33,3 +36,5 @@ namespace WebCore {
     void setHTTPBody(NSMutableURLRequest *, const FormData&);
     const FormData* httpBodyFromStream(NSInputStream* stream);
 }
+
+#endif // FormDataStreamMac_h_

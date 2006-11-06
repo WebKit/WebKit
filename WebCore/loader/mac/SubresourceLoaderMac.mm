@@ -29,7 +29,7 @@
 #import "config.h"
 #import "SubresourceLoader.h"
 
-#import "FormDataStream.h"
+#import "FormDataStreamMac.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "LoaderFunctions.h"

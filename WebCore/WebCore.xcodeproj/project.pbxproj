@@ -334,8 +334,6 @@
 		656D37350ADBA5DE00A4554D /* WebDataProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D371D0ADBA5DE00A4554D /* WebDataProtocol.mm */; };
 		656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371E0ADBA5DE00A4554D /* DocumentLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37370ADBA5DE00A4554D /* DocumentLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */; };
-		656D37380ADBA5DE00A4554D /* FormDataStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37200ADBA5DE00A4554D /* FormDataStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D37390ADBA5DE00A4554D /* FormDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D37210ADBA5DE00A4554D /* FormDataStream.m */; };
 		656D373A0ADBA5DE00A4554D /* FormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* FormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* FormState.cpp */; };
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -396,6 +394,10 @@
 		65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65CBFEF70974F607001DAC25 /* FrameView.cpp */; };
 		65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CBFEF80974F607001DAC25 /* FrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D1C1CA09932B22000CB324 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D1C1C909932B22000CB324 /* Plugin.h */; };
+		65DAD9FC0AFD86B400CE53ED /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DAD9FA0AFD86B400CE53ED /* FormData.cpp */; };
+		65DADA000AFD86BF00CE53ED /* FormDataStreamMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DAD9FE0AFD86BF00CE53ED /* FormDataStreamMac.h */; };
+		65DADA010AFD86BF00CE53ED /* FormDataStreamMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DAD9FF0AFD86BF00CE53ED /* FormDataStreamMac.mm */; };
+		65DADA180AFD878000CE53ED /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DADA170AFD878000CE53ED /* FormData.h */; };
 		65DF31DA09D1C123000BE325 /* JSAttr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31D809D1C122000BE325 /* JSAttr.cpp */; };
 		65DF31DB09D1C123000BE325 /* JSAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31D909D1C123000BE325 /* JSAttr.h */; };
 		65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */; };
@@ -1578,7 +1580,6 @@
 		93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* ClipboardMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
-		93F199EE08245E59001E9ABC /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F19A1808245E59001E9ABC /* DeprecatedCString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784D502DE375901EA4122 /* DeprecatedCString.cpp */; };
@@ -1618,7 +1619,6 @@
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
-		93F19B0508245E59001E9ABC /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABCE5D06E1A42E0085925B /* FormData.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
@@ -3263,8 +3263,6 @@
 		656D371D0ADBA5DE00A4554D /* WebDataProtocol.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebDataProtocol.mm; sourceTree = "<group>"; };
 		656D371E0ADBA5DE00A4554D /* DocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentLoader.h; sourceTree = "<group>"; };
 		656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = DocumentLoaderMac.mm; sourceTree = "<group>"; };
-		656D37200ADBA5DE00A4554D /* FormDataStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormDataStream.h; sourceTree = "<group>"; };
-		656D37210ADBA5DE00A4554D /* FormDataStream.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FormDataStream.m; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* FormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* FormState.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FormState.cpp; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
@@ -3326,6 +3324,10 @@
 		65CBFEF70974F607001DAC25 /* FrameView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameView.cpp; sourceTree = "<group>"; };
 		65CBFEF80974F607001DAC25 /* FrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameView.h; sourceTree = "<group>"; };
 		65D1C1C909932B22000CB324 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
+		65DAD9FA0AFD86B400CE53ED /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; };
+		65DAD9FE0AFD86BF00CE53ED /* FormDataStreamMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormDataStreamMac.h; sourceTree = "<group>"; };
+		65DAD9FF0AFD86BF00CE53ED /* FormDataStreamMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FormDataStreamMac.mm; sourceTree = "<group>"; };
+		65DADA170AFD878000CE53ED /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; };
 		65DF31D809D1C122000BE325 /* JSAttr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSAttr.cpp; sourceTree = "<group>"; };
 		65DF31D909D1C123000BE325 /* JSAttr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSAttr.h; sourceTree = "<group>"; };
 		65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCharacterData.cpp; sourceTree = "<group>"; };
@@ -4351,8 +4353,6 @@
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDocumentMac.mm; sourceTree = "<group>"; };
 		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
-		93ABCE5D06E1A42E0085925B /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		93ABCE5E06E1A42E0085925B /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93AC8DE00A955FAC00239794 /* TextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStyle.h; sourceTree = "<group>"; };
 		93AE23170AAB51E500CD8A35 /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
 		93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
@@ -6369,6 +6369,8 @@
 		656B84D70AEA1CE900A095B4 /* network */ = {
 			isa = PBXGroup;
 			children = (
+				65DADA170AFD878000CE53ED /* FormData.h */,
+				65DAD9FA0AFD86B400CE53ED /* FormData.cpp */,
 				656B84E70AEA1DAE00A095B4 /* mac */,
 				655A81BD0AEF67E6000975F0 /* HTTPHeaderMap.h */,
 				656B85370AEA1F9A00A095B4 /* ResourceHandle.h */,
@@ -6384,6 +6386,8 @@
 		656B84E70AEA1DAE00A095B4 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				65DAD9FE0AFD86BF00CE53ED /* FormDataStreamMac.h */,
+				65DAD9FF0AFD86BF00CE53ED /* FormDataStreamMac.mm */,
 				656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */,
 				650E3F670AF6C168001FA3AD /* ResourceRequestMac.h */,
 				650E3F680AF6C168001FA3AD /* ResourceRequestMac.mm */,
@@ -7528,8 +7532,6 @@
 			children = (
 				654F68870AF1B7C50065BDD6 /* CachedResourceMac.mm */,
 				656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */,
-				656D37200ADBA5DE00A4554D /* FormDataStream.h */,
-				656D37210ADBA5DE00A4554D /* FormDataStream.m */,
 				656D37250ADBA5DE00A4554D /* FrameLoaderMac.mm */,
 				51A1D2C50AB69120000D732C /* IconLoaderMac.mm */,
 				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
@@ -8460,8 +8462,6 @@
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
 				93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */,
 				656D371E0ADBA5DE00A4554D /* DocumentLoader.h */,
-				93ABCE5D06E1A42E0085925B /* FormData.cpp */,
-				93ABCE5E06E1A42E0085925B /* FormData.h */,
 				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37220ADBA5DE00A4554D /* FormState.h */,
 				932E16080AF578340025F408 /* FrameLoader.cpp */,
@@ -9160,7 +9160,6 @@
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
-				93F199EE08245E59001E9ABC /* FormData.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
@@ -10460,7 +10459,6 @@
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				656D37340ADBA5DE00A4554D /* WebDataProtocol.h in Headers */,
 				656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */,
-				656D37380ADBA5DE00A4554D /* FormDataStream.h in Headers */,
 				656D373A0ADBA5DE00A4554D /* FormState.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */,
@@ -10520,6 +10518,8 @@
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				14D823520AF92A790004F057 /* Chrome.h in Headers */,
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
+				65DADA000AFD86BF00CE53ED /* FormDataStreamMac.h in Headers */,
+				65DADA180AFD878000CE53ED /* FormData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10691,7 +10691,6 @@
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
 				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
-				93F19B0508245E59001E9ABC /* FormData.cpp in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
@@ -11710,7 +11709,6 @@
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.m in Sources */,
 				656D37350ADBA5DE00A4554D /* WebDataProtocol.mm in Sources */,
 				656D37370ADBA5DE00A4554D /* DocumentLoaderMac.mm in Sources */,
-				656D37390ADBA5DE00A4554D /* FormDataStream.m in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
 				656D373D0ADBA5DE00A4554D /* FrameLoaderMac.mm in Sources */,
 				656D37400ADBA5DE00A4554D /* ResourceLoaderMac.mm in Sources */,
@@ -11763,6 +11761,8 @@
 				B2A015B90AF6CD53006BCE0E /* SVGResourceMasker.cpp in Sources */,
 				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
 				14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */,
+				65DAD9FC0AFD86B400CE53ED /* FormData.cpp in Sources */,
+				65DADA010AFD86BF00CE53ED /* FormDataStreamMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

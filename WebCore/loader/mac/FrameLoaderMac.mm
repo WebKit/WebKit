@@ -35,7 +35,7 @@
 #import "DocumentLoader.h"
 #import "Element.h"
 #import "FloatRect.h"
-#import "FormDataStream.h"
+#import "FormDataStreamMac.h"
 #import "FormState.h"
 #import "FrameLoadRequest.h"
 #import "FrameLoaderClient.h"

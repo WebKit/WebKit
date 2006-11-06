@@ -1,3 +1,12 @@
+2006-11-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - removed unneeded (and obsolete) header includes
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebView/WebFrame.mm:
+
 2006-11-05  Darin Adler  <darin@apple.com>
 
         - WebKit part of Frame.h check-in (forgot to land it)

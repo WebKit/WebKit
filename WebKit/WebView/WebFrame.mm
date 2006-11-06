@@ -66,7 +66,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/FormDataStream.h>
 #import <WebCore/FormState.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>

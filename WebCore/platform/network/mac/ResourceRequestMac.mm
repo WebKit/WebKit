@@ -27,7 +27,7 @@
 #import "config.h"
 #import "ResourceRequestMac.h"
 
-#import "FormDataStream.h"
+#import "FormDataStreamMac.h"
 #import "ResourceRequest.h"
 
 #import <Foundation/Foundation.h>

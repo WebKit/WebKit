@@ -29,7 +29,7 @@
 /* originally written by Becky Willrich, additional code by Darin Adler */
 
 #import "config.h"
-#import "FormDataStream.h"
+#import "FormDataStreamMac.h"
 
 #import "CString.h"
 #import "FormData.h"

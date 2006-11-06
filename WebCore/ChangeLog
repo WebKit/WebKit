@@ -1,3 +1,21 @@
+2006-11-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - moved FormData and FormDataStream to platform/network directory
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * loader/FormData.cpp: Removed.
+        * loader/FormData.h: Removed.
+        * loader/mac/FormDataStream.h: Removed.
+        * loader/mac/FormDataStream.m: Removed.
+        * loader/mac/FrameLoaderMac.mm:
+        * loader/mac/SubresourceLoaderMac.mm:
+        * platform/network/mac/FormDataStreamMac.h: Added.
+        * platform/network/mac/FormDataStreamMac.mm: Added.
+        * platform/network/mac/ResourceRequestMac.mm:
+
 2006-11-05  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build breaks
