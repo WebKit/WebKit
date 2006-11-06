@@ -28,7 +28,7 @@
 		141BF437096A455900E0753C /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
-		141BF44A096A45C800E0753C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF445096A45C800E0753C /* main.c */; };
+		141BF44A096A45C800E0753C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF445096A45C800E0753C /* main.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		141BF44B096A45C800E0753C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF446096A45C800E0753C /* PluginObject.c */; };
 		141BF44C096A45C800E0753C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 141BF448096A45C800E0753C /* Info.plist */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };

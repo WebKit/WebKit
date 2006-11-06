@@ -1,3 +1,11 @@
+2006-11-06  Alexey Proskuryakov  <ap@nypop.com>
+
+        Build fix, approved in principle by Tim H.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Disable deprecated warnings for main.c (TestNetscapePlugin),
+        as it now uses QuickDraw to convert mouse event coordinates.
+
 2006-11-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
