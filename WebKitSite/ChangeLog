@@ -1,3 +1,15 @@
+2006-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Update the site with new wiki and Trac links.
+
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * building/build.html:
+        * index.html:
+        * nav.inc:
+        * projects/svg/index.html:
+
 2006-10-31  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.

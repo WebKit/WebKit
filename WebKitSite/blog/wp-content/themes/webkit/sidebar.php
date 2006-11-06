@@ -14,7 +14,8 @@
 
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
-        <li><a href="http://wiki.webkit.org">Wiki</a></li>
+        <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
+        <li><a href="http://trac.webkit.org/projects/webkit">Trac</a></li>
 
         <li class="subtitle">Web Developers</li>
 
