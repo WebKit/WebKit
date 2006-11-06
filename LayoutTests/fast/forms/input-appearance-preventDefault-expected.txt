@@ -16,8 +16,8 @@ layer at (15,55) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
     RenderText {#text} at (1,0) size 129x13
       text run at (1,0) width 129: "No caret should be here"
-layer at (10,70) size 240x36
-  RenderBlock (positioned) {DIV} at (10,70) size 240x36
+layer at (10,70) size 323x36
+  RenderBlock (positioned) {DIV} at (10,70) size 323x36
     RenderBR {BR} at (0,0) size 0x18
-    RenderText {#text} at (0,18) size 240x18
-      text run at (0,18) width 240: "mousedown on target [object INPUT]"
+    RenderText {#text} at (0,18) size 323x18
+      text run at (0,18) width 323: "mousedown on target [object HTMLInputElement]"

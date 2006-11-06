@@ -1,3 +1,27 @@
+2006-11-06  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11526
+        Bug 11526: REGRESSION(r17610): Layout test failure in svg/custom/create-metadata-element.svg
+
+        Updated test results for change from nodeName to className in DOMNode::toString.
+
+        * fast/dom/HTMLMetaElement/meta-attributes-expected.txt:
+        * fast/dom/prototype-chain-expected.txt:
+        * fast/dom/replace-first-child-expected.txt:
+        * fast/events/mouseclick-target-and-positioning-expected.txt:
+        * fast/forms/input-appearance-preventDefault-expected.checksum:
+        * fast/forms/input-appearance-preventDefault-expected.png:
+        * fast/forms/input-appearance-preventDefault-expected.txt:
+        * fast/loader/loadInProgress-expected.txt:
+        * fast/tokenizer/external-script-document-write-expected.checksum:
+        * fast/tokenizer/external-script-document-write-expected.png:
+        * fast/tokenizer/external-script-document-write-expected.txt:
+        * traversal/stay-within-root-expected.checksum:
+        * traversal/stay-within-root-expected.png:
+        * traversal/stay-within-root-expected.txt:
+
 2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

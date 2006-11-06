@@ -1,3 +1,15 @@
+2006-11-06  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11526
+        Bug 11526: REGRESSION(r17610): Layout test failure in svg/custom/create-metadata-element.svg
+
+        Update DOMNode::toString to always use className rather than preferring nodeName.
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::toString): Match the format returned by valueOf.
+
 2006-11-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
