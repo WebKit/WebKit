@@ -1,3 +1,17 @@
+2006-11-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4813973> Pressing delete key to remove empty quoted line leaves cursor mis-positioned
+
+        Test:
+        * editing/deleting/delete-br-012.html
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        Update m_endingPosition when preventing merge.
+        Also removed setting of m_mergeBlocksAfterDelete when this function returns true, because is is not checked in this case.
+
 2006-11-06  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Maciej.

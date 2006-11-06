@@ -194,15 +194,16 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     bool isBROnLineByItself = upstreamStartIsBR && downstreamStartIsBR && m_downstreamStart.node() == m_upstreamEnd.node();
     if (isBROnLineByItself) {
         removeNode(m_downstreamStart.node());
-        m_mergeBlocksAfterDelete = false;
         return true;
     }
 
     // Not a special-case delete per se, but we can detect that the merging of content between blocks
     // should not be done.
-    if (upstreamStartIsBR && downstreamStartIsBR)
+    if (upstreamStartIsBR && downstreamStartIsBR) {
         m_mergeBlocksAfterDelete = false;
-
+        m_endingPosition = m_downstreamEnd;
+    }
+    
     return false;
 }
 
