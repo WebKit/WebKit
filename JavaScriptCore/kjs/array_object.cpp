@@ -469,50 +469,37 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
   case Join: {
     static HashSet<JSObject*> visitedElems;
     if (visitedElems.contains(thisObj))
-      return jsString("");
+        return jsString("");
     UString separator = ",";
     UString str = "";
 
     visitedElems.add(thisObj);
     if (id == Join && !args[0]->isUndefined())
-      separator = args[0]->toString(exec);
+        separator = args[0]->toString(exec);
     for (unsigned int k = 0; k < length; k++) {
-      if (k >= 1)
-        str += separator;
-      
-      JSValue *element = thisObj->get(exec, k);
-      if (element->isUndefinedOrNull())
-        continue;
+        if (k >= 1)
+            str += separator;
 
-      bool fallback = false;
-      if (id == ToLocaleString) {
-        JSObject *o = element->toObject(exec);
-        JSValue *conversionFunction = o->get(exec, toLocaleStringPropertyName);
-        if (conversionFunction->isObject() && static_cast<JSObject *>(conversionFunction)->implementsCall()) {
-          str += static_cast<JSObject *>(conversionFunction)->call(exec, o, List())->toString(exec);
-        } else {
-          // try toString() fallback
-          fallback = true;
+        JSValue* element = thisObj->get(exec, k);
+        if (element->isUndefinedOrNull())
+            continue;
+
+        bool fallback = false;
+        if (id == ToLocaleString) {
+            JSObject* o = element->toObject(exec);
+            JSValue* conversionFunction = o->get(exec, toLocaleStringPropertyName);
+            if (conversionFunction->isObject() && static_cast<JSObject*>(conversionFunction)->implementsCall())
+                str += static_cast<JSObject*>(conversionFunction)->call(exec, o, List())->toString(exec);
+            else
+                // try toString() fallback
+                fallback = true;
         }
-      }
 
-      if (id == ToString || id == Join || fallback) {
-        if (element->isObject()) {
-          JSObject *o = static_cast<JSObject *>(element);
-          JSValue *conversionFunction = o->get(exec, toStringPropertyName);
-          if (conversionFunction->isObject() && static_cast<JSObject *>(conversionFunction)->implementsCall()) {
-            str += static_cast<JSObject *>(conversionFunction)->call(exec, o, List())->toString(exec);
-          } else {
-            visitedElems.remove(thisObj);
-            return throwError(exec, RangeError, "Can't convert " + o->className() + " object to string");
-          }
-        } else {
-          str += element->toString(exec);
-        }
-      }
+        if (id == ToString || id == Join || fallback)
+            str += element->toString(exec);
 
-      if ( exec->hadException() )
-        break;
+        if (exec->hadException())
+            break;
     }
     visitedElems.remove(thisObj);
     result = jsString(str);

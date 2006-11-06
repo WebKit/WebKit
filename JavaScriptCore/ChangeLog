@@ -1,3 +1,13 @@
+2006-11-06  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by the wonderful Mitz Pettel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11524
+        Bug 11524: REGRESSION(r9842): Array.prototype.join should use ToString operator rather than calling toString on each element
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): Use ToString operator on each element rather than calling their toString method.
+
 2006-11-03  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build
