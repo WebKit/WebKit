@@ -203,10 +203,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (unsigned)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
 {
-    DOMElement *elementAtPoint = [[webView elementAtPoint:point] objectForKey:WebElementDOMNodeKey];
-    if ([elementAtPoint respondsToSelector:@selector(isContentEditable)] && [(id)elementAtPoint isContentEditable])
-        return (WebDragSourceActionAny & ~WebDragSourceActionLink);
-
     return WebDragSourceActionAny;
 }
 

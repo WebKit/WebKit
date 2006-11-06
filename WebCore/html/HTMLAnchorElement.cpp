@@ -50,12 +50,14 @@ using namespace EventNames;
 HTMLAnchorElement::HTMLAnchorElement(Document* doc)
     : HTMLElement(aTag, doc)
     , m_rootEditableElementForSelectionOnMouseDown(0)
+    , m_wasShiftKeyDownOnMouseDown(false)
 {
 }
 
 HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
     , m_rootEditableElementForSelectionOnMouseDown(0)
+    , m_wasShiftKeyDownOnMouseDown(false)
 {
 }
 
@@ -212,10 +214,17 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
     } else if (m_isLink && isContentEditable()) {
     // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
     // for the LiveWhenNotFocused editable link behavior
-        if (evt->type() == mousedownEvent && document()->frame() && document()->frame()->selectionController())
+        if (evt->type() == mousedownEvent && document()->frame() && document()->frame()->selectionController()) {
+            MouseEvent* e = static_cast<MouseEvent*>(evt);
+
             m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selectionController()->rootEditableElement();
-        else if (evt->type() == mouseoutEvent)
+            m_wasShiftKeyDownOnMouseDown = e && e->shiftKey();
+        } else if (evt->type() == mouseoverEvent) {
+        // These are cleared on mouseover and not mouseout because their values are needed for drag events, but these happen
+        // after mouse out events.
             m_rootEditableElementForSelectionOnMouseDown = 0;
+            m_wasShiftKeyDownOnMouseDown = false;
+        }
     }
 
     HTMLElement::defaultEventHandler(evt);
@@ -446,5 +455,34 @@ String HTMLAnchorElement::text() const
     return innerText();
 }
 
+bool HTMLAnchorElement::isLiveLink() const
+{
+    if (!m_isLink)
+        return false;
+    if (!isContentEditable())
+        return true;
+    
+    Settings::EditableLinkBehavior editableLinkBehavior = Settings::EditableLinkDefaultBehavior;
+    if (document() && document()->frame() && document()->frame()->settings())
+        editableLinkBehavior = document()->frame()->settings()->editableLinkBehavior();
+        
+    switch(editableLinkBehavior) {
+        default:
+        case Settings::EditableLinkDefaultBehavior:
+        case Settings::EditableLinkAlwaysLive:
+            return true;
+            
+        // Don't set the link to be live if the current selection is in the same editable block as
+        // this link or if the shift key is down
+        case Settings::EditableLinkLiveWhenNotFocused:
+            return m_wasShiftKeyDownOnMouseDown || m_rootEditableElementForSelectionOnMouseDown != rootEditableElement();
+            
+        case Settings::EditableLinkOnlyLiveWithShiftKey:
+            return m_wasShiftKeyDownOnMouseDown;
+    }
+    // not reached
+    ASSERT(0);
+    return false;
+}
 
 }

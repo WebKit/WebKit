@@ -79,6 +79,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementLinkTargetFrameKey, @selector(_targetWebFrame));
     addLookupKey(WebElementLinkTitleKey, @selector(_titleDisplayString));
     addLookupKey(WebElementLinkLabelKey, @selector(_textContent));
+    addLookupKey(WebElementLinkIsLiveKey, @selector(_isLiveLink));
 }
 
 - (id)initWithHitTestResult:(const HitTestResult&)result
@@ -216,6 +217,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 - (NSString *)_textContent
 {
     return _result->textContent();
+}
+
+- (NSNumber *)_isLiveLink
+{
+    return [NSNumber numberWithBool:_result->isLiveLink()];
 }
 
 @end

@@ -342,6 +342,7 @@ NSString *WebElementLinkTitleKey =          @"WebElementLinkTitle";
 NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
 NSString *WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
 NSString *WebElementTitleKey =              @"WebElementTitle";
+NSString *WebElementLinkIsLiveKey =         @"WebElementLinkIsLive";
 
 NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
 NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";

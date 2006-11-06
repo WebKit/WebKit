@@ -95,8 +95,11 @@ public:
     String search() const;
     String text() const;
     
+    bool isLiveLink() const;
+    
 private:
     Element *m_rootEditableElementForSelectionOnMouseDown;
+    bool m_wasShiftKeyDownOnMouseDown;
 };
 
 } //namespace

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1512,7 +1513,8 @@ static WebHTMLView *lastHitView = nil;
         return YES;
     
     if ([mouseDownElement objectForKey:WebElementLinkURLKey]
-            && (_private->dragSourceActionMask & WebDragSourceActionLink))
+            && (_private->dragSourceActionMask & WebDragSourceActionLink)
+            && [[mouseDownElement objectForKey:WebElementLinkIsLiveKey] boolValue])
         return YES;
     
     if ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue]
@@ -5972,13 +5974,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return NO;
 }
 
-- (BOOL)_isMoveDrag
+- (BOOL)_isMoveDrag:(id <NSDraggingInfo>)draggingInfo
 {
     FrameMac* coreFrame = core([self _frame]);
     return _private->initiatedDrag
         && coreFrame
         && coreFrame->selectionController()->isContentEditable()
-        && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask);
+        && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        && ![[[draggingInfo draggingPasteboard] types] containsObject:NSURLPboardType];
 }
 
 - (BOOL)_isNSColorDrag:(id <NSDraggingInfo>)draggingInfo
@@ -6008,7 +6011,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             ASSERT(innerFrame);
             ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
             WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
-            operation = [innerView _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
+            operation = [innerView _isMoveDrag:draggingInfo] ? NSDragOperationMove : NSDragOperationCopy;
         }
     } else
         [[self _webView] removeDragCaret];
@@ -6072,14 +6075,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     BOOL didInsert = NO;
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
         NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-        if ([innerView _isMoveDrag] || [innerBridge isDragCaretRichlyEditable]) { 
+        if ([innerView _isMoveDrag:draggingInfo] || [innerBridge isDragCaretRichlyEditable]) { 
             DOMRange *range = [innerBridge dragCaretDOMRange];
             BOOL chosePlainText;
             DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard
                 inContext:range allowPlainText:YES chosePlainText:&chosePlainText];
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if ([innerView _isMoveDrag]) {
+                if ([innerView _isMoveDrag:draggingInfo]) {
                     BOOL smartMove = [innerBridge selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
                     [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                 } else {

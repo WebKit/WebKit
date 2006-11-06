@@ -1,3 +1,26 @@
+2006-11-06  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of patch for http://bugs.webkit.org/show_bug.cgi?id=11323
+        Link dragging behaviour does not obey WebKitEditableLinkBehavior WebPref
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[NSApplication webView:dragSourceActionMaskForPoint:]): Logic moved to 
+        WebHTMLView's _mayStartDragAtEventLocation
+        * Misc/WebElementDictionary.m: added isLiveLink
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary _isLiveLink]):
+        * WebView/WebHTMLView.m: 
+        (-[WebHTMLView _mayStartDragAtEventLocation:]): Editable links should
+        only be followed if isLiveLink is true
+        (-[WebHTMLView _isMoveDrag:]): A drag of a live editable link is not
+        a move
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]):
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]):
+        * WebView/WebView.mm: added WebElementLinkIsLiveKey
+        * WebView/WebViewPrivate.h: ditto
+
 2006-11-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

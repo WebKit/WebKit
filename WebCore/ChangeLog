@@ -1,3 +1,26 @@
+2006-11-06  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of patch for http://bugs.webkit.org/show_bug.cgi?id=11323
+        Link dragging behaviour does not obey WebKitEditableLinkBehavior WebPref
+        
+        No layout tests added as this must be tested manually by the test
+        WebCore/manual-tests/contenteditable-link.html
+
+        * WebCore.exp: Exported HitTestResult::isLiveLink().
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::isLiveLink):
+        * html/HTMLAnchorElement.h: added m_wasShiftKeyDownOnMouseDown variable
+        to track shift key status.
+        * manual-tests/contenteditable-link.html: Added description about link
+        dragging behaviour.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isLiveLink): Added.
+        * rendering/HitTestResult.h:
+
 2006-11-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

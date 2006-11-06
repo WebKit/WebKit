@@ -66,6 +66,7 @@ public:
     KURL absoluteLinkURL() const;
     String titleDisplayString() const;
     String textContent() const;
+    bool isLiveLink() const;
 
 private:
     RefPtr<Node> m_innerNode;
