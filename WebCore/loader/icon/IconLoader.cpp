@@ -62,11 +62,13 @@ void IconLoader::startLoading()
     
     m_httpStatusCode = 0;
     
-    // A frame may be documentless - one example is viewing a PDF directly
+    // FIXME - http://bugs.webkit.org/show_bug.cgi?id=10902
+    // Once the loader infrastructure will cleanly let us load an icon without a DocLoader, we can implement this
+    // A frame may be documentless - one example is viewing a PDF directly.  Until the above FIXME is resolved,
+    // we must bail out early when we have no document
     if (!m_frame->document()) {
-        // FIXME - http://bugzilla.opendarwin.org/show_bug.cgi?id=10902
-        // Once the loader infrastructure will cleanly let us load an icon without a DocLoader, we can implement this
         LOG(IconDatabase, "Documentless-frame - icon won't be loaded");
+        return;
     } 
     
     m_url = m_frame->iconURL();

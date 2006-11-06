@@ -1,5 +1,16 @@
 2006-11-06  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Oliver
+
+        Fixes <rdar://problem/4812674> and http://bugs.webkit.org/show_bug.cgi?id=11530
+        For now, we have to not load favicons when we have no Document - linking directly 
+        to PDFs being the common case
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Check for the document and return if none
+
+2006-11-06  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Dave Harrison
 
         <rdar://problem/4801066>
