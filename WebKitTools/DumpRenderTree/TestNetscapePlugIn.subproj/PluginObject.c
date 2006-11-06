@@ -66,11 +66,13 @@ NPClass *getPluginClass(void)
 static bool identifiersInitialized = false;
 
 #define ID_PROPERTY_PROPERTY        0
-#define NUM_PROPERTY_IDENTIFIERS    1
+#define ID_PROPERTY_EVENT_LOGGING   1
+#define NUM_PROPERTY_IDENTIFIERS    2
 
 static NPIdentifier pluginPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
 static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
-    "property"
+    "property",
+    "eventLoggingEnabled"
 };
 
 #define ID_TEST_CALLBACK_METHOD     0
@@ -124,12 +126,19 @@ static bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *varia
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_PROPERTY]) {
         STRINGZ_TO_NPVARIANT("property", *variant);
         return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
+        BOOLEAN_TO_NPVARIANT(((PluginObject *)obj)->eventLogging, *variant);
+        return true;
     }
     return false;
 }
 
 static bool pluginSetProperty(NPObject *obj, NPIdentifier name, const NPVariant *variant)
 {
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
+        ((PluginObject *)obj)->eventLogging = NPVARIANT_TO_BOOLEAN(*variant);
+        return true;
+    }
     return false;
 }
 
@@ -225,6 +234,8 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     }
 
     newInstance->npp = npp;
+    
+    newInstance->eventLogging = FALSE;
     
     return (NPObject *)newInstance;
 }

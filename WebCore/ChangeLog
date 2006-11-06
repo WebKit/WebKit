@@ -1,3 +1,16 @@
+2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11517
+        REGRESSION: Flash clicks/interactivity not working properly
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::handleMouseReleaseEvent):
+        Restore parts of event dispatching that were removed when fixing
+        bug 7323 - just bypass those for subframes.
+
 2006-11-05  Darin Adler  <darin@apple.com>
 
         - quick attempt to fix the no-SVG build

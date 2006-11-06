@@ -1,3 +1,26 @@
+2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11517
+        REGRESSION: Flash clicks/interactivity not working properly
+
+        Teach TestNetscapePlugin to log events passed to it. To enable, set eventLoggingEnabled to true:
+
+        <embed name="plg" type="application/x-webkit-test-netscape" width=100 height=100></embed>
+        <script>
+            plg.eventLoggingEnabled = true;
+            // use eventSender to simulate events...
+        </script>
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginGetProperty):
+        (pluginSetProperty):
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_HandleEvent):
+
 2006-11-04  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.

@@ -1538,8 +1538,16 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     if ([_currentEvent type] == NSLeftMouseDragged) {
-        if (mouseDownViewIfStillGood())
-            return; // The event has been already dispatched to a subframe
+        NSView *view = mouseDownViewIfStillGood();
+
+        if (view) {
+            if (!_mouseDownWasInSubframe) {
+                _sendingEventToSubview = true;
+                [view mouseDragged:_currentEvent];
+                _sendingEventToSubview = false;
+            }
+            return;
+        }
 
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
@@ -1762,6 +1770,14 @@ void FrameMac::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event
         return;
     }
     stopAutoscrollTimer();
+
+    if (!_mouseDownWasInSubframe) {
+        _sendingEventToSubview = true;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [view mouseUp:_currentEvent];
+        END_BLOCK_OBJC_EXCEPTIONS;
+        _sendingEventToSubview = false;
+    }
 }
 
 bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)

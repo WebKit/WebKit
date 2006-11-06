@@ -1,3 +1,13 @@
+2006-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11517
+        REGRESSION: Flash clicks/interactivity not working properly
+
+        * plugins/mouse-events-expected.txt: Added.
+        * plugins/mouse-events.html: Added.
+
 2006-11-06  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by the wonderful Mitz Pettel.

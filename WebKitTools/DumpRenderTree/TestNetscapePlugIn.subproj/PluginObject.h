@@ -38,6 +38,7 @@ extern NPNetscapeFuncs *browser;
 typedef struct {
     NPObject header;
     NPP npp;
+    Boolean eventLogging;
 } PluginObject;
 
 extern NPClass *getPluginClass(void);

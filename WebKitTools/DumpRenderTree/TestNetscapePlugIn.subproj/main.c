@@ -121,6 +121,72 @@ void NPP_Print(NPP instance, NPPrint *platformPrint)
 
 int16 NPP_HandleEvent(NPP instance, void *event)
 {
+    PluginObject *obj = instance->pdata;
+    if (!obj->eventLogging)
+        return 0;
+    
+    EventRecord *evt = event;
+    Point pt = { evt->where.v, evt->where.h };
+    switch (evt->what) {
+        case nullEvent:
+            // these are delivered non-deterministically, don't log.
+            break;
+        case mouseDown:
+            GlobalToLocal(&pt);
+            printf("PLUGIN: mouseDown at (%d, %d)\n", pt.h, pt.v);
+            break;
+        case mouseUp:
+            GlobalToLocal(&pt);
+            printf("PLUGIN: mouseUp at (%d, %d)\n", pt.h, pt.v);
+            break;
+        case keyDown:
+            printf("PLUGIN: keyDown '%c'\n", (char)(evt->message & 0xFF));
+            break;
+        case keyUp:
+            printf("PLUGIN: keyUp '%c'\n", (char)(evt->message & 0xFF));
+            break;
+        case autoKey:
+            printf("PLUGIN: autoKey '%c'\n", (char)(evt->message & 0xFF));
+            break;
+        case updateEvt:
+            printf("PLUGIN: updateEvt\n");
+            break;
+        case diskEvt:
+            printf("PLUGIN: diskEvt\n");
+            break;
+        case activateEvt:
+            printf("PLUGIN: activateEvt\n");
+            break;
+        case osEvt:
+            printf("PLUGIN: osEvt - ");
+            switch ((evt->message & 0xFF000000) >> 24) {
+                case suspendResumeMessage:
+                    printf("%s\n", (evt->message & 0x1) ? "resume" : "suspend");
+                    break;
+                case mouseMovedMessage:
+                    printf("mouseMoved\n");
+                    break;
+                default:
+                    printf("%08lX\n", evt->message);
+            }
+            break;
+        case kHighLevelEvent:
+            printf("PLUGIN: kHighLevelEvent\n");
+            break;
+        // NPAPI events
+        case getFocusEvent:
+            printf("PLUGIN: getFocusEvent\n");
+            break;
+        case loseFocusEvent:
+            printf("PLUGIN: loseFocusEvent\n");
+            break;
+        case adjustCursorEvent:
+            printf("PLUGIN: adjustCursorEvent\n");
+            break;
+        default:
+            printf("PLUGIN: event %d\n", evt->what);
+    }
+    
     return 0;
 }
 
