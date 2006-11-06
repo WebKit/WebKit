@@ -28,6 +28,7 @@
 #include "config.h"
 #include "MediaQueryEvaluator.h"
 
+#include "Chrome.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "DeprecatedString.h"
@@ -207,7 +208,7 @@ static bool numberValue(CSSValue* value, float& result)
 
 static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
 {
-    int bitsPerComponent = screenDepthPerComponent(page);
+    int bitsPerComponent = page->screen()->depthPerComponent();
     float number;
     if (value)
         return numberValue(value, number) && cmpvalue(bitsPerComponent, (int)number, op);
@@ -217,7 +218,7 @@ static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* pag
 
 static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(page))
+    if (!page->screen()->isMonochrome())
         return false;
 
     return colorMediaFeatureEval(value, style, page, op);
@@ -226,7 +227,7 @@ static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Page
 static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page);
+        FloatRect sg = page->screen()->rect();
         int a = 0;
         int b = 0;
         if (parseAspectRatio(value, a, b))
@@ -242,9 +243,9 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* st
 static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle* style, Page* page, MediaFeaturePrefix op)
 {
     if (value)
-        return value->isPrimitiveValue() && cmpvalue(scaleFactor(page), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
+        return value->isPrimitiveValue() && cmpvalue(page->chrome()->scaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
 
-    return scaleFactor(page) != 0;
+    return page->chrome()->scaleFactor() != 0;
 }
 
 static bool gridMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
@@ -260,7 +261,7 @@ static bool gridMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page
 static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page);
+        FloatRect sg = page->screen()->rect();
         return value->isPrimitiveValue() && cmpvalue((int)sg.height(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
     }
     // ({,min-,max-}device-height)
@@ -271,7 +272,7 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, P
 static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page);
+        FloatRect sg = page->screen()->rect();
         return value->isPrimitiveValue() && cmpvalue((int)sg.width(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
     }
     // ({,min-,max-}device-width)

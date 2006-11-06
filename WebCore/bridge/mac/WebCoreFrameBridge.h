@@ -34,6 +34,7 @@ namespace WebCore {
     class EditorClient;
     class Element;
     class FrameMac;
+    class Page;
     class String;
 }
 
@@ -60,7 +61,6 @@ typedef WebCore::FrameMac WebCoreFrameMac;
 @class DOMNode;
 @class DOMRange;
 @class NSMenu;
-@class WebCorePageBridge;
 @class WebCoreSettings;
 @class WebFrame;
 @class WebScriptObject;
@@ -187,7 +187,7 @@ typedef enum {
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
-- (id)initMainFrameWithPage:(WebCorePageBridge *)page withEditorClient:(WebCoreEditorClient *)client;
+- (id)initMainFrameWithPage:(WebCore::Page*)page withEditorClient:(WebCoreEditorClient *)client;
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement withEditorClient:(WebCoreEditorClient *)client;
 
 - (void)close;
@@ -374,22 +374,11 @@ typedef enum {
 
 - (NSView *)documentView;
 
-- (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL;
-- (void)showWindow;
-
 - (void)setStatusText:(NSString *)status;
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer ownerElement:(WebCoreElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (NSWindow *)window;
-
-- (void)setToolbarsVisible:(BOOL)visible;
-- (void)setStatusbarVisible:(BOOL)visible;
-- (void)setScrollbarsVisible:(BOOL)visible;
-- (void)setWindowIsResizable:(BOOL)resizable;
-
-- (BOOL)areToolbarsVisible;
-- (BOOL)isStatusbarVisible;
 
 - (NSResponder *)firstResponder;
 - (void)makeFirstResponder:(NSResponder *)responder;
@@ -407,9 +396,6 @@ typedef enum {
 - (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message;
 - (void)addMessageToConsole:(NSDictionary *)message;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
-
-- (void)activateWindow;
-- (void)deactivateWindow;
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl;

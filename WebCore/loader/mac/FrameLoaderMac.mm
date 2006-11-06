@@ -30,6 +30,7 @@
 #import "FrameLoader.h"
 
 #import "Cache.h"
+#import "Chrome.h"
 #import "DOMElementInternal.h"
 #import "Document.h"
 #import "DocumentLoader.h"
@@ -56,7 +57,6 @@
 #import "TextResourceDecoder.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
-#import "WebCorePageBridge.h"
 #import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
@@ -169,7 +169,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
             request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), event, submitForm, formValues);
 
     if (targetFrame && targetFrame != m_frame)
-        [Mac(targetFrame)->bridge() activateWindow];
+        targetFrame->page()->chrome()->focus();
 }
 
 void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
@@ -371,58 +371,6 @@ bool FrameLoader::canTarget(Frame* target) const
         domain = parentDocument->domain();
     // Allow if the domain of the parent of the targeted frame equals this domain.
     return equalIgnoringCase(parentDomain, domain);
-}
-
-Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFeatures& features)
-{ 
-    ASSERT(!features.dialog || request.frameName().isEmpty());
-
-    if (!request.frameName().isEmpty())
-        if (Frame* frame = m_frame->tree()->find(request.frameName())) {
-            if (!request.resourceRequest().url().isEmpty())
-                frame->loader()->load(request, true, nil, 0, HashMap<String, String>());
-            [Mac(frame)->bridge() activateWindow];
-            return frame;
-        }
-
-    WebCorePageBridge *pageBridge;
-    if (features.dialog)
-        pageBridge = [m_frame->page()->bridge() createModalDialogWithURL:request.resourceRequest().url().getNSURL() referrer:m_frame->referrer()];
-    else
-        pageBridge = [Mac(m_frame)->bridge() createWindowWithURL:request.resourceRequest().url().getNSURL()];
-    if (!pageBridge)
-        return 0;
-
-    Page* page = [pageBridge impl];
-    Frame* frame = page->mainFrame();
-    frame->tree()->setName(request.frameName());
-
-    [Mac(frame)->bridge() setToolbarsVisible:features.toolBarVisible || features.locationBarVisible];
-    [Mac(frame)->bridge() setStatusbarVisible:features.statusBarVisible];
-    [Mac(frame)->bridge() setScrollbarsVisible:features.scrollbarsVisible];
-    [Mac(frame)->bridge() setWindowIsResizable:features.resizable];
-
-    // The width and 'height parameters specify the dimensions of the view, but we can only resize
-    // the window, so adjust for the difference between the window size and the view size.
-
-    FloatRect windowRect = page->windowRect();
-    
-    // FIXME: We'd like to get frameViewSize from the frame's view, but that doesn't
-    // get created until the frame loads its document.
-    IntSize frameViewSize = IntSize([[pageBridge outerView] frame].size);
-    if (features.xSet)
-        windowRect.setX(features.x);
-    if (features.ySet)
-        windowRect.setY(features.y);
-    if (features.widthSet)
-        windowRect.setWidth(features.width + (windowRect.width() - frameViewSize.width()));
-    if (features.heightSet)
-        windowRect.setHeight(features.height + (windowRect.height() - frameViewSize.height()));
-    page->setWindowRect(windowRect);
-
-    [Mac(frame)->bridge() showWindow];
-
-    return frame;
 }
 
 bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)

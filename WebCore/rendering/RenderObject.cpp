@@ -30,6 +30,7 @@
 #include "AXObjectCache.h" 
 #include "AffineTransform.h"
 #include "CachedImage.h"
+#include "Chrome.h"
 #include "CounterNode.h"
 #include "CounterResetNode.h"
 #include "TextResourceDecoder.h"
@@ -45,6 +46,7 @@
 #include "KURL.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
@@ -2883,7 +2885,7 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         region.bounds.setY(y + styleRegion.offset.top.value());
         
         if (document()->frame()) {
-            float pageScaleFactor = scaleFactor(document()->frame()->page());
+            float pageScaleFactor = document()->frame()->page()->chrome()->scaleFactor();
             if (pageScaleFactor != 1.0f) {
                 region.bounds.scale(pageScaleFactor);
                 region.clip.scale(pageScaleFactor);

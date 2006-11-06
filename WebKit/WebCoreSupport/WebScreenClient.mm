@@ -23,52 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Screen.h"
+#import "WebScreenClient.h"
 
-#import "FloatRect.h"
+#import "WebChromeClient.h"
+#import "WebView.h"
+#import <WebCore/FloatRect.h>
+#import <WebCore/Screen.h>
+#import <wtf/PassRefPtr.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-NSScreen *screen(NSWindow *window)
+PassRefPtr<WebScreenClient> WebScreenClient::create(WebView *webView)
 {
-    NSScreen *s = [window screen]; // nil if the window is off-screen
-    if (s)
-        return s;
-    
-    NSArray *screens = [NSScreen screens];
-    if ([screens count] > 0)
-        return [screens objectAtIndex:0]; // screen containing the menubar
-    
-    return nil;
+    return new WebScreenClient(webView);
 }
 
-FloatRect scaleFromScreen(const NSRect& rect, NSScreen *screen)
+WebScreenClient::WebScreenClient(WebView *webView)
+    : m_webView(webView)
 {
-    FloatRect scaledRect = rect;
-    scaledRect.scale(1 / [screen userSpaceScaleFactor]);
-    return scaledRect;
 }
 
-NSRect scaleToScreen(const FloatRect& rect, NSScreen *screen)
+int WebScreenClient::depth()
 {
-    FloatRect scaledRect = rect;
-    scaledRect.scale([screen userSpaceScaleFactor]);
-    return scaledRect;
+    return NSBitsPerPixelFromDepth([screen([m_webView window]) depth]);
 }
 
-NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
+int WebScreenClient::depthPerComponent()
 {
-    NSPoint flippedPoint = screenPoint;
-    flippedPoint.y = NSMaxY([screen frame]) - flippedPoint.y;
-    return flippedPoint;
+    return NSBitsPerSampleFromDepth([screen([m_webView window]) depth]);
 }
 
-NSRect flipScreenRect(const NSRect& rect, NSScreen *screen)
+bool WebScreenClient::isMonochrome()
 {
-    NSRect flippedRect = rect;
-    flippedRect.origin.y = NSMaxY([screen frame]) - NSMaxY(flippedRect);
-    return flippedRect;
+    NSString *colorSpace = NSColorSpaceFromDepth([screen([m_webView window]) depth]);
+    return colorSpace == NSCalibratedWhiteColorSpace
+        || colorSpace == NSCalibratedBlackColorSpace
+        || colorSpace == NSDeviceWhiteColorSpace
+        || colorSpace == NSDeviceBlackColorSpace;
 }
 
-} // namespace WebCore
+FloatRect WebScreenClient::rect()
+{
+    NSScreen *s = screen([m_webView window]);
+    return scaleFromScreen(flipScreenRect([s frame], s), s);
+}
+
+FloatRect WebScreenClient::usableRect()
+{
+    NSScreen *s = screen([m_webView window]);
+    return scaleFromScreen(flipScreenRect([s visibleFrame], s), s);
+}

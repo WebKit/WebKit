@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,33 +20,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Logging_H
-#define Logging_H
+#include "config.h"
+#include "Screen.h"
 
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "FloatRect.h"
+#include "Page.h"
+#include "ScreenClient.h"
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
+Screen::Screen(Page* page, PassRefPtr<ScreenClient> client)
+    : m_page(page)
+    , m_client(client)
+{
+    ASSERT(m_client);
+}
 
-    void InitializeLoggingChannelsIfNecessary();
+int Screen::depth()
+{
+    return m_client->depth();
+}
+
+int Screen::depthPerComponent()
+{
+    return m_client->depthPerComponent();
+}
+
+bool Screen::isMonochrome()
+{
+    return m_client->isMonochrome();
+}
+
+FloatRect Screen::rect()
+{
+    return m_client->rect();
+}
+
+FloatRect Screen::usableRect()
+{
+    return m_client->usableRect();
+}
 
 } // namespace WebCore
-
-#endif // Logging_H

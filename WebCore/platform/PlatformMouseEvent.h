@@ -32,8 +32,12 @@
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSEvent;
+@class NSScreen;
+@class NSWindow;
 #else
 class NSEvent;
+class NSScreen;
+class NSWindow;
 #endif
 #endif
 
@@ -56,7 +60,7 @@ namespace WebCore {
 
     // These button numbers match the one used in the DOM API.
     enum MouseButton { LeftButton, MiddleButton, RightButton };
-
+    
     class PlatformMouseEvent {
     public:
         static const struct CurrentEventTag {} currentEvent;
@@ -120,6 +124,12 @@ namespace WebCore {
         bool m_altKey;
         bool m_metaKey;
     };
+
+#if PLATFORM(MAC)
+    IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *window);
+    IntPoint pointForEvent(NSEvent *event);
+    IntPoint globalPointForEvent(NSEvent *event);
+#endif
 
 } // namespace WebCore
 

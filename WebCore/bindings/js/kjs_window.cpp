@@ -195,20 +195,20 @@ JSValue* Screen::getValueProperty(ExecState*, int token) const
 
   switch (token) {
   case Height:
-    return jsNumber(screenRect(page).height());
+    return jsNumber(page->screen()->rect().height());
   case Width:
-    return jsNumber(screenRect(page).width());
+    return jsNumber(page->screen()->rect().width());
   case ColorDepth:
   case PixelDepth:
-    return jsNumber(screenDepth(page));
+    return jsNumber(page->screen()->depth());
   case AvailLeft:
-    return jsNumber(usableScreenRect(page).x() - screenRect(page).x());
+    return jsNumber(page->screen()->usableRect().x() - page->screen()->rect().x());
   case AvailTop:
-    return jsNumber(usableScreenRect(page).y() - screenRect(page).y());
+    return jsNumber(page->screen()->usableRect().y() - page->screen()->rect().y());
   case AvailHeight:
-    return jsNumber(usableScreenRect(page).height());
+    return jsNumber(page->screen()->usableRect().height());
   case AvailWidth:
-    return jsNumber(usableScreenRect(page).width());
+    return jsNumber(page->screen()->usableRect().width());
   default:
     return jsUndefined();
   }
@@ -628,7 +628,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    FloatRect screenRect = usableScreenRect(openerWindow->frame()->page());
+    FloatRect screenRect = openerWindow->frame()->page()->screen()->usableRect();
 
     wargs.width = floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
@@ -745,9 +745,9 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       else
         return jsNull();
     case OuterHeight:
-        return jsNumber(m_frame->page()->windowRect().height());
+        return jsNumber(m_frame->page()->chrome()->windowRect().height());
     case OuterWidth:
-        return jsNumber(m_frame->page()->windowRect().width());
+        return jsNumber(m_frame->page()->chrome()->windowRect().width());
     case PageXOffset:
       if (!m_frame->view())
         return jsUndefined();
@@ -764,10 +764,10 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return personalbar(exec);
     case ScreenLeft:
     case ScreenX:
-      return jsNumber(m_frame->page()->windowRect().x());
+      return jsNumber(m_frame->page()->chrome()->windowRect().x());
     case ScreenTop:
     case ScreenY:
-      return jsNumber(m_frame->page()->windowRect().y());
+      return jsNumber(m_frame->page()->chrome()->windowRect().y());
     case ScrollX:
       if (!m_frame->view())
         return jsUndefined();
@@ -1568,7 +1568,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       WindowFeatures windowFeatures;
       String features = args[2]->isUndefinedOrNull() ? UString() : args[2]->toString(exec);
       parseWindowFeatures(features, windowFeatures);
-      constrainToVisible(screenRect(page), windowFeatures);
+      constrainToVisible(page->screen()->rect(), windowFeatures);
       
       // prepare arguments
       KURL url;
@@ -1647,44 +1647,44 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
   case Window::MoveBy:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->windowRect();
+      FloatRect r = page->chrome()->windowRect();
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (screenRect(page).contains(r))
-        page->setWindowRect(r);
+      if (page->screen()->rect().contains(r))
+        page->chrome()->setWindowRect(r);
     }
     return jsUndefined();
   case Window::MoveTo:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->windowRect();
-      FloatRect sr = screenRect(page);
+      FloatRect r = page->chrome()->windowRect();
+      FloatRect sr = page->screen()->rect();
       r.setLocation(sr.location());
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (sr.contains(r))
-        page->setWindowRect(r);
+        page->chrome()->setWindowRect(r);
     }
     return jsUndefined();
   case Window::ResizeBy:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->windowRect();
+      FloatRect r = page->chrome()->windowRect();
       FloatSize dest = r.size() + FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = screenRect(page);
+      FloatRect sg = page->screen()->rect();
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
            && dest.width() >= 100 && dest.height() >= 100)
-        page->setWindowRect(FloatRect(r.location(), dest));
+        page->chrome()->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::ResizeTo:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->windowRect();
+      FloatRect r = page->chrome()->windowRect();
       FloatSize dest = FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = screenRect(page);
+      FloatRect sg = page->screen()->rect();
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
            dest.width() >= 100 && dest.height() >= 100)
-        page->setWindowRect(FloatRect(r.location(), dest));
+        page->chrome()->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::SetTimeout:
@@ -2411,17 +2411,17 @@ JSValue *BarInfo::getValueProperty(ExecState *exec, int token) const
     ASSERT(token == Visible);
     switch (m_type) {
     case Locationbar:
-        return jsBoolean(m_frame->locationbarVisible());
-    case Menubar: 
-        return jsBoolean(m_frame->locationbarVisible());
-    case Personalbar:
-        return jsBoolean(m_frame->personalbarVisible());
-    case Scrollbars: 
-        return jsBoolean(m_frame->scrollbarsVisible());
-    case Statusbar:
-        return jsBoolean(m_frame->statusbarVisible());
+        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
     case Toolbar:
-        return jsBoolean(m_frame->toolbarVisible());
+        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
+    case Personalbar:
+        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
+    case Menubar: 
+        return jsBoolean(m_frame->page()->chrome()->menubarVisible());
+    case Scrollbars: 
+        return jsBoolean(m_frame->page()->chrome()->scrollbarsVisible());
+    case Statusbar:
+        return jsBoolean(m_frame->page()->chrome()->statusbarVisible());
     default:
         return jsBoolean(false);
     }

@@ -28,7 +28,10 @@
 
 #import <WebCore/WebCoreFrameBridge.h>
 
-@class WebPageBridge;
+namespace WebCore {
+    class Page;
+}
+
 @class WebFrame;
 @class WebFrameView;
 
@@ -49,7 +52,7 @@
     NSDictionary *lastDashboardRegions;
 }
 
-- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view;
+- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView;
 - (void)close;
 
 - (WebFrame *)webFrame;

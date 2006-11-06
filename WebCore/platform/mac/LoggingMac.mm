@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCorePageBridge.h"
+#include "Logging.h"
 
-#import "ChromeClient.h"
-#import "FrameMac.h"
-#import "Page.h"
-#import "WebCoreFrameBridge.h"
-#import "Logging.h"
-
-using namespace WebCore;
-
-@implementation WebCorePageBridge
+namespace WebCore {
 
 static inline void initializeLogChannel(WTFLogChannel &channel)
 {
@@ -49,7 +40,7 @@ static inline void initializeLogChannel(WTFLogChannel &channel)
     }
 }
 
-static void initializeLoggingChannelsIfNecessary()
+void InitializeLoggingChannelsIfNecessary()
 {
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)
@@ -68,63 +59,4 @@ static void initializeLoggingChannelsIfNecessary()
     initializeLogChannel(LogSpellingAndGrammar);
 }
 
-- (id)initWithChromeClient:(PassRefPtr<ChromeClient>)chromeClient
-{
-    initializeLoggingChannelsIfNecessary();
-    self = [super init];
-    if (self) {
-        _page = new Page(chromeClient);
-        _page->setBridge(self);
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(_closed);
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(_closed);
-    [super finalize];
-}
-
-- (void)close
-{
-    delete _page;
-    _page = 0;
-    _closed = YES;
-}
-
-- (WebCoreFrameBridge *)mainFrame
-{
-    if (!_page)
-        return nil;
-    return Mac(_page->mainFrame())->bridge();
-}
-
-- (void)setGroupName:(NSString *)groupName
-{
-    if (_page)
-        _page->setGroupName(groupName);
-}
-
-- (NSString *)groupName
-{
-    if (!_page)
-        return nil;
-    return _page->groupName();
-}
-
-@end
-
-@implementation WebCorePageBridge (WebCoreInternalUse)
-
-- (Page*)impl
-{
-    return _page;
-}
-
-@end
+} // namespace WebCore

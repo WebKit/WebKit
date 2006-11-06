@@ -24,14 +24,6 @@
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WebCorePageBridge;
-#else
-class WebCorePageBridge;
-#endif
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HWND__* HWND;
 typedef struct HINSTANCE__* HINSTANCE;
@@ -44,20 +36,19 @@ namespace WebCore {
     class Frame;
     class FrameNamespace;
     class FloatRect;
+    class Screen;
+    class ScreenClient;
     class Settings;
     class SelectionController;
     class Widget;
 
     class Page : Noncopyable {
     public:
-        Page(PassRefPtr<ChromeClient>);
+        Page(PassRefPtr<ChromeClient>, PassRefPtr<ScreenClient>);
         ~Page();
 
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
-
-        void setWindowRect(const FloatRect&);
-        FloatRect windowRect() const;
 
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
@@ -74,14 +65,10 @@ namespace WebCore {
 
         SelectionController* dragCaretController() { return m_dragCaretController; }
         Chrome* chrome() { return m_chrome; }
+        Screen* screen() { return m_screen; }
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
-
-#if PLATFORM(MAC)
-        void setBridge(WebCorePageBridge* bridge);
-        WebCorePageBridge* bridge() const { return m_bridge; }
-#endif
 
 #if PLATFORM(WIN)
         // The global DLL or application instance used for all windows.
@@ -90,20 +77,15 @@ namespace WebCore {
 #endif
 
     private:
-        void init();
-
         SelectionController* m_dragCaretController;
         Chrome* m_chrome;
+        Screen* m_screen;
 
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
         String m_groupName;
 
         bool m_defersLoading;
-
-#if PLATFORM(MAC)
-        WebCorePageBridge* m_bridge;
-#endif
 
 #if PLATFORM(WIN)
         static HINSTANCE s_instanceHandle;

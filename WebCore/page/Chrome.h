@@ -21,25 +21,53 @@
 #ifndef Chrome_h
 #define Chrome_h
 
-#include "ChromeClient.h"
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+    class ChromeClient;
+    class FloatRect;
     class Page;
+    struct FrameLoadRequest;
     
     class Chrome {
     public:
-        Chrome(Page* page, PassRefPtr<ChromeClient> client)
-            : m_page(page)
-            , m_client(client)
-        {
-        }
+        Chrome(Page*, PassRefPtr<ChromeClient>);
+
+        ChromeClient* client() { return m_client.get(); }
+
+        void setWindowRect(const FloatRect&) const;
+        FloatRect windowRect() const;
+
+        FloatRect pageRect() const;
         
-        bool canRunModal();
-        bool canRunModalNow();
-        void runModal();
+        float scaleFactor();
+
+        void focus() const;
+        void unfocus() const;
+
+        Page* createWindow(const FrameLoadRequest&) const;
+        Page* createModalDialog(const FrameLoadRequest&) const;
+        void show() const;
+
+        bool canRunModal() const;
+        bool canRunModalNow() const;
+        void runModal() const;
+
+        void setToolbarsVisible(bool) const;
+        bool toolbarsVisible() const;
+        
+        void setStatusbarVisible(bool) const;
+        bool statusbarVisible() const;
+        
+        void setScrollbarsVisible(bool) const;
+        bool scrollbarsVisible() const;
+        
+        void setMenubarVisible(bool) const;
+        bool menubarVisible() const;
+        
+        void setResizable(bool) const;
 
     private:
         Page* m_page;

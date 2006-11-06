@@ -1,3 +1,43 @@
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej, Anders, Darin.
+
+        Removed the Page bridge. Beefed up Chrome. Added Screen and ScreenClient.
+        Fixed a minor where WebCore would always assume it was displayed on the 
+        monitor containing the menubar. window.open and window.showModalDialog 
+        are now cross-platform. 
+        
+        Layout tests, manual-tests/show-modal-dialog, and manual-tests/
+        window-open-features-parsing all pass. I verified the new screen functionality
+        by running in DRT, and checking whether WebCore knew it was off-screen.
+        
+        Some refactoring remains, as all were not pleased by this design. I see
+        in my future another patch.
+
+        * bindings/js/kjs_window.cpp: Screen is now a stand-alone object with a
+        client, to encapsulate asking the platform questions about the screen occupied by
+        the page. (Previously, we always assumed we were on screen 0, which was a bug.)
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (createMouseEventFromDraggingInfo): Reversed argument order, to match other
+        functions.
+        (-[WebCoreFrameBridge dragSourceMovedTo:]): ditto
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]): ditto
+        * bridge/mac/WebCoreFrameNamespaces.h: Removed. Dead Code.
+        * bridge/mac/WebCoreFrameNamespaces.mm: Removed. Dead Code.
+        * bridge/mac/WebCorePageBridge.h: Removed. Dead Code.
+        * bridge/mac/WebCorePageBridge.mm: Removed. Dead Code.
+        * manual-tests/window-open-features-parsing.html: Updated for accuracy.
+        (In this case, neither size nor position is specified, so you should
+        get the default window size and position.)
+        * page/Screen.cpp: Added. Includes screen-related helper functions used
+        in WebCore and WebKit.
+        * platform/PlatformMouseEvent.h: Exported common code so it doesn't have
+        to be duplicated. Renamed "position" to "point" since both were used,
+        and "point" seemed clearer.
+        * platform/Screen.h: Removed. Dead Code.
+        * platform/mac/LoggingMac.mm: Added. Moved code here from WebCorePageBridge
+        initialization.
+
 2006-11-06  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Tim Hatcher.

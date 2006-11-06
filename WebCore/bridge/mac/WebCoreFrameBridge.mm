@@ -58,6 +58,7 @@
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
+#import "PlatformMouseEvent.h"
 #import "PlugInInfoStore.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
@@ -73,7 +74,6 @@
 #import "TextIterator.h"
 #import "TypingCommand.h"
 #import "WebCoreEditCommand.h"
-#import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
@@ -320,7 +320,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge([document _document]->frame());
 }
 
-- (id)initMainFrameWithPage:(WebCorePageBridge *)page withEditorClient:(WebCoreEditorClient *)client
+- (id)initMainFrameWithPage:(WebCore::Page*)page withEditorClient:(WebCoreEditorClient *)client
 {
     if (!initializedKJS) {
         mainThread = pthread_self();
@@ -332,7 +332,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
 
-    m_frame = new FrameMac([page impl], 0, client);
+    m_frame = new FrameMac(page, 0, client);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -1577,16 +1577,11 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
 }
 
-static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
-{
-    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint]));
-}
-
 static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
 {
     // FIXME: Fake modifier keys here.
     // [info draggingLocation] is in window coords
-    return PlatformMouseEvent(IntPoint([info draggingLocation]), globalPoint(window, [info draggingLocation]),
+    return PlatformMouseEvent(IntPoint([info draggingLocation]), globalPoint([info draggingLocation], window),
         LeftButton, 0, false, false, false, false);
 }
 
@@ -1663,7 +1658,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
 {
     if (m_frame) {
         // FIXME: Fake modifier keys here.
-        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
             LeftButton, 0, false, false, false, false);
         m_frame->dragSourceMovedTo(event);
     }
@@ -1673,7 +1668,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
 {
     if (m_frame) {
         // FIXME: Fake modifier keys here.
-        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
             LeftButton, 0, false, false, false, false);
         m_frame->dragSourceEndedAt(event, operation);
     }

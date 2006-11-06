@@ -1,3 +1,27 @@
+2006-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej, Darin, Anders.
+
+        Removed the Page bridge. Beefed up Chrome. Added Screen and ScreenClient.
+        
+        (WebChromeClient::pageRect): It may seem weird for the page to ask the Chrome/ChromeClient
+        about its own dimensions. The idea here is that we're asking the Chrome how
+        much space it has devoted to the page. We have API for this (-webViewContentRect), but 
+        it was documented incorrectly (even Safari used it wrong), so we don't use 
+        it anymore. Once we fix our API/documentation, we can return to making a
+        delegate callback to ask for the page's size.
+        (WebChromeClient::createWindow): Changed to take a FrameLoadRequest with
+        an appropriate referrer, instead of making up its own.
+        (WebChromeClient::createModalDialog): Changed to take a FrameLoadRequest with
+        an appropriate referrer, instead of broken out parcels.
+        * WebCoreSupport/WebPageBridge.h: Removed. Dead Code.
+        * WebCoreSupport/WebPageBridge.mm: Removed. Dead Code.
+        * WebCoreSupport/WebScreenClient.h: Added.
+        * WebCoreSupport/WebScreenClient.mm: Added.
+        * WebView/WebView.mm: Added NULL checks for new _private->page, since
+        it's not NULL-safe like the bridge was, and it gets cleared before
+        dealloc.
+
 2006-11-06  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Tim Hatcher.

@@ -30,6 +30,7 @@
 #import "AXObjectCache.h"
 #import "BeforeUnloadEvent.h"
 #import "BlockExceptions.h"
+#import "Chrome.h"
 #import "CSSComputedStyleDeclaration.h"
 #import "Cache.h"
 #import "ClipboardEvent.h"
@@ -552,7 +553,7 @@ void FrameMac::focusWindow()
 
     // If we're a top level window, bring the window to the front.
     if (!tree()->parent())
-        [_bridge activateWindow];
+        page()->chrome()->focus();
 
     // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
     // FIXME: Should remember that the frame needs focus.  See <rdar://problem/4645685>.
@@ -577,7 +578,7 @@ void FrameMac::unfocusWindow()
     if ([_bridge firstResponder] == view) {
         // If we're a top level window, deactivate the window.
         if (!tree()->parent())
-            [_bridge deactivateWindow];
+            page()->chrome()->unfocus();
         else {
             // We want to shift focus to our parent.
             FrameMac* parentFrame = static_cast<FrameMac*>(tree()->parent());
@@ -1197,32 +1198,6 @@ bool FrameMac::shouldInterruptJavaScript()
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return false;
-}
-
-bool FrameMac::locationbarVisible()
-{
-    return [_bridge areToolbarsVisible];
-}
-
-bool FrameMac::menubarVisible()
-{
-    // The menubar is always on in Mac OS X UI
-    return true;
-}
-
-bool FrameMac::personalbarVisible()
-{
-    return [_bridge areToolbarsVisible];
-}
-
-bool FrameMac::statusbarVisible()
-{
-    return [_bridge isStatusbarVisible];
-}
-
-bool FrameMac::toolbarVisible()
-{
-    return [_bridge areToolbarsVisible];
 }
 
 void FrameMac::addMessageToConsole(const String &message, unsigned lineNumber, const String &sourceURL)

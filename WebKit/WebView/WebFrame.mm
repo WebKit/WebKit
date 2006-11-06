@@ -34,6 +34,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
+#import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
@@ -48,7 +49,6 @@
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebPageBridge.h"
 #import "WebPolicyDelegatePrivate.h"
 #import "WebNetscapePluginEmbeddedView.h"
 #import "WebNullPluginView.h"
@@ -58,6 +58,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
@@ -223,10 +224,23 @@ WebFrame *kit(Frame* frame)
     return frame ? ((WebFrameBridge *)Mac(frame)->bridge())->_frame : nil;
 }
 
-static inline WebView *getWebView(WebFrame *webFrame)
+Page* core(WebView *webView)
 {
-   Frame* coreFrame = core(webFrame);
-   return coreFrame ? ((WebPageBridge *)coreFrame->page()->bridge())->_webView : nil;
+    return [webView page];
+}
+
+WebView *kit(Page* page)
+{
+    WebChromeClient* chromeClient = static_cast<WebChromeClient*>(page->chrome()->client());
+    return chromeClient->webView();
+}
+
+WebView *getWebView(WebFrame *webFrame)
+{
+    Frame* coreFrame = core(webFrame);
+    if (!coreFrame)
+        return nil;
+    return kit(coreFrame->page());
 }
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL

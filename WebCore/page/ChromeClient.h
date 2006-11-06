@@ -25,13 +25,45 @@
 
 namespace WebCore {
 
+    class FloatRect;
+    class Page;
+    struct FrameLoadRequest;
+    
     class ChromeClient : public Shared<ChromeClient> {
     public:
         virtual ~ChromeClient() { }
+
+        virtual void setWindowRect(const FloatRect&) = 0;
+        virtual FloatRect windowRect() = 0;
         
+        virtual FloatRect pageRect() = 0;
+        
+        virtual float scaleFactor() = 0;
+    
+        virtual void focus() = 0;
+        virtual void unfocus() = 0;
+
+        virtual Page* createWindow(const FrameLoadRequest&) = 0;
+        virtual Page* createModalDialog(const FrameLoadRequest&) = 0;
+        virtual void show() = 0;
+
         virtual bool canRunModal() = 0;
         virtual void runModal() = 0;
-    };
+
+        virtual void setToolbarsVisible(bool) = 0;
+        virtual bool toolbarsVisible() = 0;
+        
+        virtual void setStatusbarVisible(bool) = 0;
+        virtual bool statusbarVisible() = 0;
+        
+        virtual void setScrollbarsVisible(bool) = 0;
+        virtual bool scrollbarsVisible() = 0;
+        
+        virtual void setMenubarVisible(bool) = 0;
+        virtual bool menubarVisible() = 0;
+
+        virtual void setResizable(bool) = 0;
+};
 
 }
 

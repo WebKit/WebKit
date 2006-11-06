@@ -54,6 +54,7 @@ namespace WebCore {
     class FrameLoader;
     class HTMLElement;
     class Node;
+    class Page;
     class Range;
 }
 
@@ -74,6 +75,11 @@ DOMHTMLElement *kit(WebCore::HTMLElement*);
 
 WebCore::Range* core(DOMRange *);
 DOMRange *kit(WebCore::Range*);
+
+WebCore::Page* core(WebView *);
+WebView *kit(WebCore::Page*);
+
+WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFramePrivate : NSObject
 {

@@ -34,6 +34,7 @@
 #undef private
 
 #import "WebBackForwardList.h"
+#import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocumentInternal.h"
@@ -51,7 +52,6 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebPageBridge.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferences.h"
@@ -60,6 +60,7 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FormState.h>
@@ -91,13 +92,7 @@ using namespace WebCore;
 
 static inline WebView *getWebView(DocumentLoader* loader)
 {
-    return static_cast<WebPageBridge *>(loader->frameLoader()->frame()->page()->bridge())->_webView;
-}
-
-static inline WebView *getWebView(WebFrame *webFrame)
-{
-   Frame* coreFrame = core(webFrame);
-   return coreFrame ? static_cast<WebPageBridge *>(coreFrame->page()->bridge())->_webView : nil;
+    return kit(loader->frameLoader()->frame()->page());
 }
 
 static inline WebDataSource *dataSource(DocumentLoader* loader)

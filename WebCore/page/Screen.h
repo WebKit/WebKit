@@ -23,29 +23,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef Screen_h
+#define Screen_h
+
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+
+#if PLATFORM(MAC)
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    typedef struct CGPoint NSPoint;
+    typedef struct CGRect NSRect;
+#else
+    typedef struct _NSPoint NSPoint;
+    typedef struct _NSRect NSRect;
+#endif
+
+#ifdef __OBJC__
+    @class NSScreen;
+    @class NSWindow;
+#else
+    class NSScreen;
+    class NSWindow;
+#endif
+#endif
 
 namespace WebCore {
 
     class FloatRect;
     class Page;
+    class ScreenClient;
+    
+    class Screen {
+    public:
+        Screen(Page*, PassRefPtr<ScreenClient>);
+        
+        int depth();
+        int depthPerComponent();
 
-    int screenDepth(const Page*);
-    int screenDepthPerComponent(const Page*);
-    bool screenIsMonochrome(const Page*);
-    FloatRect screenRect(const Page*);
-    FloatRect usableScreenRect(const Page*);
+        bool isMonochrome();
 
-    FloatRect scaleScreenRectToPageCoordinates(const FloatRect&, const Page*);
-    FloatRect scalePageRectToScreenCoordinates(const FloatRect&, const Page*);
-    float scaleFactor(const Page*);
+        FloatRect rect();
+        FloatRect usableRect();
+
+    private:
+        Page* m_page;
+        RefPtr<ScreenClient> m_client;
+    };
 
 #if PLATFORM(MAC)
-    NSRect flipScreenRect(NSRect);
-    NSPoint flipScreenPoint(NSPoint);
-#endif
+    NSScreen *screen(NSWindow *window);
     
-}
+    FloatRect scaleFromScreen(const NSRect& rect, NSScreen *screen);
+    NSRect scaleToScreen(const FloatRect& rect, NSScreen *screen);
 
+    NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen);
+    NSRect flipScreenRect(const NSRect& rect, NSScreen *screen);
 #endif
+
+} // namespace WebCore
+
+#endif // Screen_h

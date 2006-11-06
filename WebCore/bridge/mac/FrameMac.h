@@ -147,11 +147,6 @@ public:
     virtual bool runJavaScriptConfirm(const String&);
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
     virtual bool shouldInterruptJavaScript();    
-    virtual bool locationbarVisible();
-    virtual bool menubarVisible();
-    virtual bool personalbarVisible();
-    virtual bool statusbarVisible();
-    virtual bool toolbarVisible();
 
     FloatRect customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect);
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);

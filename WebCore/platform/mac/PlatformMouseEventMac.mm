@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformMouseEvent.h"
+
 #import "Screen.h"
 
 namespace WebCore {
@@ -50,7 +51,30 @@ static MouseButton mouseButtonForEvent(NSEvent *event)
     }
 }
 
-static IntPoint positionForEvent(NSEvent *event)
+static int clickCountForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+            return [event clickCount];
+        default:
+            return 0;
+    }
+}
+
+IntPoint globalPoint(const NSPoint& windowPoint, NSWindow* window)
+{
+    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screen(window)));
+}
+
+IntPoint pointForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -73,7 +97,7 @@ static IntPoint positionForEvent(NSEvent *event)
     }
 }
 
-static IntPoint globalPositionForEvent(NSEvent *event)
+IntPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -87,33 +111,15 @@ static IntPoint globalPositionForEvent(NSEvent *event)
         case NSOtherMouseDragged:
         case NSMouseMoved:
         case NSScrollWheel:
-            return IntPoint(flipScreenPoint([[event window] convertBaseToScreen:[event locationInWindow]]));
+            return globalPoint([event locationInWindow], [event window]);
         default:
             return IntPoint();
     }
 }
 
-static int clickCountForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-            return [event clickCount];
-        default:
-            return 0;
-    }
-}
-
 PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
-    : m_position(positionForEvent(event))
-    , m_globalPosition(globalPositionForEvent(event))
+    : m_position(pointForEvent(event))
+    , m_globalPosition(globalPointForEvent(event))
     , m_button(mouseButtonForEvent(event))
     , m_clickCount(clickCountForEvent(event))
     , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
@@ -128,8 +134,8 @@ PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&)
 {
     NSEvent* event = [NSApp currentEvent];
     if (event) {
-        m_position = positionForEvent(event);
-        m_globalPosition = globalPositionForEvent(event);
+        m_position = pointForEvent(event);
+        m_globalPosition = globalPointForEvent(event);
         m_button = mouseButtonForEvent(event);
         m_clickCount = clickCountForEvent(event);
         m_shiftKey = [event modifierFlags] & NSShiftKeyMask;

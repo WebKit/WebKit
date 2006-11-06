@@ -59,7 +59,6 @@
 #import "WebNetscapePluginEmbeddedView.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebNullPluginView.h"
-#import "WebPageBridge.h"
 #import "WebPlugin.h"
 #import "WebPluginController.h"
 #import "WebPluginDatabase.h"
@@ -83,7 +82,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/SubresourceLoader.h>
-#import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebCore/WebCoreSettings.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
@@ -115,8 +113,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (WebView *)webView
 {
-    ASSERT([[self _frame]->page()->bridge() isKindOfClass:[WebPageBridge class]]);
-    return [(WebPageBridge *)[self _frame]->page()->bridge() webView];
+    return kit(m_frame->page());
 }
 
 - (void)finishInitializingWithFrameName:(NSString *)name view:(WebFrameView *)view
@@ -126,15 +123,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView coreFrame:m_frame];
     ++WebBridgeCount;
 
-    [self _frame]->tree()->setName(name);
-    [self _frame]->setSettings([[webView _settings] settings]);
+    m_frame->tree()->setName(name);
+    m_frame->setSettings([[webView _settings] settings]);
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 }
 
-- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
+- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView
 {
     // FIXME: Need to clear the WebView pointer in WebEditorClient when the WebView is deallocated.
-    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient([page webView])];
+    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient(webView)];
     [self finishInitializingWithFrameName:name view:view];
     return self;
 }
@@ -234,79 +231,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     ASSERT(_frame != nil);
     return [[_frame frameView] documentView];
-}
-
-- (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL
-{
-    ASSERT(_frame != nil);
-
-    NSMutableURLRequest *request = nil;
-    if (URL != nil && ![URL _web_isEmpty]) {
-        request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:m_frame->referrer()];
-    }
-
-    WebView *currentWebView = [self webView];
-    id wd = [currentWebView UIDelegate];
-    WebView *newWebView;
-    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        newWebView = [wd webView:currentWebView createWebViewWithRequest:request];
-    else
-        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
-    return [newWebView _pageBridge];
-}
-
-- (void)showWindow
-{
-    WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webViewShow:wv];
-}
-
-- (BOOL)areToolbarsVisible
-{
-    ASSERT(_frame != nil);
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    if ([wd respondsToSelector:@selector(webViewAreToolbarsVisible:)])
-        return [wd webViewAreToolbarsVisible:wv];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webViewAreToolbarsVisible:wv];
-}
-
-- (void)setToolbarsVisible:(BOOL)visible
-{
-    ASSERT(_frame != nil);
-    WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv setToolbarsVisible:visible];
-}
-
-- (void)setScrollbarsVisible:(BOOL)visible
-{
-    ASSERT(_frame != nil);
-    [[_frame frameView] setAllowsScrolling:visible];
-}
-
-- (BOOL)isStatusbarVisible
-{
-    ASSERT(_frame != nil);
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    if ([wd respondsToSelector:@selector(webViewIsStatusBarVisible:)])
-        return [wd webViewIsStatusBarVisible:wv];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:wv];
-}
-
-- (void)setStatusbarVisible:(BOOL)visible
-{
-    ASSERT(_frame != nil);
-    WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv setStatusBarVisible:visible];
-}
-
-- (void)setWindowIsResizable:(BOOL)resizable
-{
-    ASSERT(_frame != nil);
-    WebView *webView = [self webView];
-    [[webView _UIDelegateForwarder] webView:webView setResizable:resizable];
 }
 
 - (NSResponder *)firstResponder
@@ -472,16 +396,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [super close];
     [_frame release];
     _frame = nil;
-}
-
-- (void)activateWindow
-{
-    [[[self webView] _UIDelegateForwarder] webViewFocus:[self webView]];
-}
-
-- (void)deactivateWindow
-{
-   [[[self webView] _UIDelegateForwarder] webViewUnfocus:[self webView]];
 }
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl

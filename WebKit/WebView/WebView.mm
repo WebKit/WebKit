@@ -32,6 +32,7 @@
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
+#import "WebChromeClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDashboardRegion.h"
 #import "WebDataSourceInternal.h"
@@ -73,12 +74,12 @@
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPDFView.h"
-#import "WebPageBridge.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
+#import "WebScreenClient.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
@@ -87,11 +88,13 @@
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Document.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/Logging.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreEncodings.h>
@@ -100,12 +103,12 @@
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/DocumentLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
+#import <wtf/RefPtr.h>
 
 using namespace WebCore;
 
@@ -231,7 +234,7 @@ macro(yankAndSelect) \
 @interface WebViewPrivate : NSObject
 {
 @public
-    WebPageBridge *_pageBridge;
+    Page* page;
     
     id UIDelegate;
     id UIDelegateForwarder;
@@ -412,7 +415,7 @@ static BOOL grammarCheckingEnabled;
 
 - (void)dealloc
 {
-    ASSERT(!_pageBridge);
+    ASSERT(!page);
     ASSERT(draggingDocumentView == nil);
 
     delete userAgent;
@@ -647,9 +650,9 @@ static bool debugWidget = true;
     FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
     if (mainFrameLoader)
         mainFrameLoader->detachFromParent();
-    [_private->_pageBridge close];
-    [_private->_pageBridge release];
-    _private->_pageBridge = nil;
+    
+    delete _private->page;
+    _private->page = 0;
 
     // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
     // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
@@ -725,6 +728,11 @@ static bool debugWidget = true;
     [[newWindowWebView _UIDelegateForwarder] webViewShow: newWindowWebView];
 
     return newWindowWebView;
+}
+
+- (WebCore::Page*)page
+{
+    return _private->page;
 }
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items
@@ -1596,12 +1604,16 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (BOOL)defersCallbacks
 {
-    return [_private->_pageBridge impl]->defersLoading();
+    if (!_private->page)
+        return NO;
+    return _private->page->defersLoading();
 }
 
 - (void)setDefersCallbacks:(BOOL)defer
 {
-    return [_private->_pageBridge impl]->setDefersLoading(defer);
+    if (!_private->page)
+        return;
+    return _private->page->setDefersLoading(defer);
 }
 
 @end
@@ -1800,7 +1812,12 @@ NSMutableDictionary *countInvocations;
     [frameView release];
 
     WebKitInitializeLoggingChannelsIfNecessary();
-    _private->_pageBridge = [[WebPageBridge alloc] initWithMainFrameName:frameName webView:self frameView:frameView];
+    WebCore::InitializeLoggingChannelsIfNecessary();
+
+    _private->page = new Page(WebChromeClient::create(self), WebScreenClient::create(self));
+    WebFrameBridge *mainFrame = [[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName view:frameView webView:self];
+    _private->page->setMainFrame(adoptRef([mainFrame _frame]));
+    [mainFrame release];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
@@ -2104,7 +2121,9 @@ NS_ENDHANDLER
     // This can be called in initialization, before _private has been set up (3465613)
     if (!_private)
         return nil;
-    return [(WebFrameBridge *)[_private->_pageBridge mainFrame] webFrame];
+    if (!_private->page)
+        return nil;
+    return kit(_private->page->mainFrame());
 }
 
 - (WebFrame *)selectedFrame
@@ -2551,12 +2570,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setGroupName:(NSString *)groupName
 {
-    [[self _pageBridge] setGroupName:groupName];
+    if (!_private->page)
+        return;
+    _private->page->setGroupName(groupName);
 }
 
 - (NSString *)groupName
 {
-    return [[self _pageBridge] groupName];
+    if (!_private->page)
+        return nil;
+    return _private->page->groupName();
 }
 
 - (double)estimatedProgress
@@ -2613,7 +2636,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)removeDragCaret
 {
-    [_private->_pageBridge impl]->dragCaretController()->clear();
+    if (!_private->page)
+        return;
+    _private->page->dragCaretController()->clear();
 }
 
 - (void)setMainFrameURL:(NSString *)URLString
@@ -3649,11 +3674,6 @@ static WebFrameView *containingFrameView(NSView *view)
 @end
 
 @implementation WebView (WebViewInternal)
-
-- (WebPageBridge *)_pageBridge
-{
-    return _private->_pageBridge;
-}
 
 - (void)_computeUserAgent
 {

@@ -34,7 +34,9 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderHTMLCanvas.h"
+#include "Chrome.h"
 #include "Screen.h"
 #include <math.h>
 
@@ -155,7 +157,7 @@ void HTMLCanvasElement::createDrawingContext() const
 
     float unscaledWidth = width();
     float unscaledHeight = height();
-    float pageScaleFactor = document()->frame() ? scaleFactor(document()->frame()->page()) : 1.0f;
+    float pageScaleFactor = document()->frame() ? document()->frame()->page()->chrome()->scaleFactor() : 1.0f;
     float wf = ceilf(unscaledWidth * pageScaleFactor);
     float hf = ceilf(unscaledHeight * pageScaleFactor);
     

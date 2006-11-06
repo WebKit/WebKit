@@ -27,11 +27,13 @@
 #include "DOMWindow.h"
 
 #include "cssstyleselector.h"
+#include "Chrome.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
+#include "Page.h"
 #include "Screen.h"
 
 namespace WebCore {
@@ -86,7 +88,7 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String
 
 double DOMWindow::devicePixelRatio() const
 {
-    return scaleFactor(m_frame->page());
+    return m_frame->page()->chrome()->scaleFactor();
 }
 
 } // namespace WebCore

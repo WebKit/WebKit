@@ -3101,17 +3101,6 @@ void Frame::sendScrollEvent()
     }
 }
 
-bool Frame::scrollbarsVisible()
-{
-    if (!view())
-        return false;
-    
-    if (view()->hScrollbarMode() == ScrollbarAlwaysOff || view()->vScrollbarMode() == ScrollbarAlwaysOff)
-        return false;
-    
-    return true;
-}
-
 void Frame::addMetaData(const String& key, const String& value)
 {
     d->m_metaData.set(key, value);

@@ -29,12 +29,18 @@
 #include "config.h"
 #include "FrameLoader.h"
 
-#include "Element.h"
-#include "Frame.h"
-#include "FrameLoaderClient.h"
+#include "Chrome.h"
 #include "DocumentLoader.h"
+#include "Element.h"
+#include "FloatRect.h"
 #include "FormState.h"
+#include "Frame.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoaderClient.h"
+#include "FrameTree.h"
 #include "MainResourceLoader.h"
+#include "Page.h"
+#include "WindowFeatures.h"
 
 namespace WebCore {
 
@@ -76,11 +82,60 @@ void FrameLoader::setDefersLoading(bool defers)
     m_client->setDefersLoading(defers);
 }
 
-#if !PLATFORM(MAC)
-Frame* FrameLoader::createWindow(const FrameLoadRequest&, const WindowFeatures&)
-{
-    return 0;
-}
+Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFeatures& features)
+{ 
+    ASSERT(!features.dialog || request.frameName().isEmpty());
+
+    if (!request.frameName().isEmpty())
+        if (Frame* frame = m_frame->tree()->find(request.frameName())) {
+            if (!request.resourceRequest().url().isEmpty())
+#if PLATFORM(MAC)
+                frame->loader()->load(request, true, 0, 0, HashMap<String, String>());
 #endif
+            frame->page()->chrome()->focus();
+            return frame;
+        }
+
+    // FIXME: Setting the referrer should be the caller's responsibility.
+    FrameLoadRequest requestWithReferrer = request;
+    requestWithReferrer.resourceRequest().setHTTPReferrer(m_frame->referrer());
+    
+    Page* page;
+    if (features.dialog)
+        page = m_frame->page()->chrome()->createModalDialog(requestWithReferrer);
+    else
+        page = m_frame->page()->chrome()->createWindow(requestWithReferrer);
+    if (!page)
+        return 0;
+
+    Frame* frame = page->mainFrame();
+    frame->tree()->setName(request.frameName());
+
+    page->chrome()->setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
+    page->chrome()->setStatusbarVisible(features.statusBarVisible);
+    page->chrome()->setScrollbarsVisible(features.scrollbarsVisible);
+    page->chrome()->setMenubarVisible(features.menuBarVisible);
+    page->chrome()->setResizable(features.resizable);
+
+    // 'x' and 'y' specify the location of the window, while 'width' and 'height' 
+    // specify the size of the page. We can only resize the window, so 
+    // adjust for the difference between the window size and the page size.
+
+    FloatRect windowRect = page->chrome()->windowRect();
+    FloatSize pageSize = page->chrome()->pageRect().size();
+    if (features.xSet)
+        windowRect.setX(features.x);
+    if (features.ySet)
+        windowRect.setY(features.y);
+    if (features.widthSet)
+        windowRect.setWidth(features.width + (windowRect.width() - pageSize.width()));
+    if (features.heightSet)
+        windowRect.setHeight(features.height + (windowRect.height() - pageSize.height()));
+    page->chrome()->setWindowRect(windowRect);
+
+    page->chrome()->show();
+
+    return frame;
+}
 
 }

@@ -27,10 +27,22 @@
  */
 
 #import "WebChromeClient.h"
-#import "WebView.h"
-#import "WebUIDelegate.h"
+
 #import "WebDefaultUIDelegate.h"
+#import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebScreenClient.h"
+#import "WebUIDelegate.h"
+#import "WebView.h"
+#import "WebViewInternal.h"
+#import <WebCore/FloatRect.h>
+#import <WebCore/FrameLoadRequest.h>
+#import <WebCore/ResourceRequestMac.h>
+#import <WebCore/Screen.h>
 #import <wtf/PassRefPtr.h>
+
+using namespace WebCore;
 
 PassRefPtr<WebChromeClient> WebChromeClient::create(WebView *webView)
 {
@@ -41,7 +53,84 @@ WebChromeClient::WebChromeClient(WebView *webView)
     : m_webView(webView)
 {
 }
-    
+
+// These functions scale between window and WebView coordinates because JavaScript/DOM operations 
+// assume that the WebView and the window share the same coordinate system.
+
+void WebChromeClient::setWindowRect(const FloatRect& rect)
+{
+    NSScreen *screen = [[m_webView window] screen];
+    NSRect windowRect = flipScreenRect(scaleToScreen(rect, screen), screen);
+    [[m_webView _UIDelegateForwarder] webView:m_webView setFrame:windowRect];
+}
+
+FloatRect WebChromeClient::windowRect()
+{
+    NSScreen *screen = [[m_webView window] screen];
+    NSRect windowRect = [[m_webView _UIDelegateForwarder] webViewFrame:m_webView];
+    return scaleFromScreen(flipScreenRect(windowRect, screen), screen);
+}
+
+// FIXME: We need to add API for setting and getting this.
+FloatRect WebChromeClient::pageRect()
+{
+    return [m_webView frame];
+}
+
+float WebChromeClient::scaleFactor()
+{
+    return [[m_webView window] userSpaceScaleFactor];
+}
+
+void WebChromeClient::focus()
+{
+    [[m_webView _UIDelegateForwarder] webViewFocus:m_webView];
+}
+
+void WebChromeClient::unfocus()
+{
+    [[m_webView _UIDelegateForwarder] webViewUnfocus:m_webView];
+}
+
+Page* WebChromeClient::createWindow(const FrameLoadRequest& request)
+{
+    NSURLRequest *URLRequest = nil;
+    if (!request.isEmpty())
+        URLRequest = nsURLRequest(request.resourceRequest());
+
+    WebView *newWebView;
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        newWebView = [delegate webView:m_webView createWebViewWithRequest:URLRequest];
+    else
+        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView createWebViewWithRequest:URLRequest];
+
+    return core(newWebView);
+}
+
+Page* WebChromeClient::createModalDialog(const FrameLoadRequest& request)
+{
+    NSURLRequest *URLRequest = nil;
+    if (!request.isEmpty())
+        URLRequest = nsURLRequest(request.resourceRequest());
+
+    WebView *newWebView = nil;
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
+        newWebView = [delegate webView:m_webView createWebViewModalDialogWithRequest:URLRequest];
+    else if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        newWebView = [delegate webView:m_webView createWebViewWithRequest:URLRequest];
+    else
+        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView createWebViewWithRequest:URLRequest];
+
+    return core(newWebView);
+}
+
+void WebChromeClient::show()
+{
+    [[m_webView _UIDelegateForwarder] webViewShow:m_webView];
+}
+
 bool WebChromeClient::canRunModal()
 {
     return [[m_webView UIDelegate] respondsToSelector:@selector(webViewRunModal:)];
@@ -50,4 +139,58 @@ bool WebChromeClient::canRunModal()
 void WebChromeClient::runModal()
 {
     [[m_webView UIDelegate] webViewRunModal:m_webView];
+}
+
+void WebChromeClient::setToolbarsVisible(bool b)
+{
+    [[m_webView _UIDelegateForwarder] webView:m_webView setToolbarsVisible:b];
+}
+
+bool WebChromeClient::toolbarsVisible()
+{
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webViewAreToolbarsVisible:)])
+        return [delegate webViewAreToolbarsVisible:m_webView];
+    return [[WebDefaultUIDelegate sharedUIDelegate] webViewAreToolbarsVisible:m_webView];
+}
+
+void WebChromeClient::setStatusbarVisible(bool b)
+{
+    [[m_webView _UIDelegateForwarder] webView:m_webView setStatusBarVisible:b];
+}
+
+bool WebChromeClient::statusbarVisible()
+{
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webViewIsStatusBarVisible:)])
+        return [delegate webViewIsStatusBarVisible:m_webView];
+    return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:m_webView];
+}
+
+
+void WebChromeClient::setScrollbarsVisible(bool b)
+{
+    [[[m_webView mainFrame] frameView] setAllowsScrolling:b];
+}
+
+bool WebChromeClient::scrollbarsVisible()
+{
+    return [[[m_webView mainFrame] frameView] allowsScrolling];
+}
+
+void WebChromeClient::setMenubarVisible(bool)
+{
+    // The menubar is always visible in Mac OS X.
+    return;
+}
+
+bool WebChromeClient::menubarVisible()
+{
+    // The menubar is always visible in Mac OS X.
+    return true;
+}
+
+void WebChromeClient::setResizable(bool b)
+{
+    [[m_webView _UIDelegateForwarder] webView:m_webView setResizable:b];
 }

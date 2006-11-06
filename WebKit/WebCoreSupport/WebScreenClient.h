@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,33 +20,29 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Logging_H
-#define Logging_H
+#import <WebCore/ScreenClient.h>
 
-#include <wtf/Assertions.h>
+#import <wtf/Forward.h>
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+@class WebView;
 
-namespace WebCore {
+class WebScreenClient : public WebCore::ScreenClient {
+public:
+    static PassRefPtr<WebScreenClient> create(WebView *);
+    
+    int depth();
+    int depthPerComponent();
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
+    bool isMonochrome();
 
-    void InitializeLoggingChannelsIfNecessary();
+    WebCore::FloatRect rect();
+    WebCore::FloatRect usableRect();
 
-} // namespace WebCore
-
-#endif // Logging_H
+private:
+    WebScreenClient(WebView *);
+    
+    WebView *m_webView;
+};

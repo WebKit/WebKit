@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/ChromeClient.h>
+
 #import <wtf/Forward.h>
 
 @class WebView;
@@ -35,8 +36,38 @@ class WebChromeClient : public WebCore::ChromeClient {
 public:
     static PassRefPtr<WebChromeClient> create(WebView *webView);
     
+    WebView *webView() { return m_webView; }
+    
+    virtual void setWindowRect(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect windowRect();
+
+    virtual WebCore::FloatRect pageRect();
+
+    virtual float scaleFactor();
+
+    virtual void focus();
+    virtual void unfocus();
+
+    virtual WebCore::Page* createWindow(const WebCore::FrameLoadRequest&);
+    virtual WebCore::Page* createModalDialog(const WebCore::FrameLoadRequest&);
+    virtual void show();
+
     virtual bool canRunModal();
     virtual void runModal();
+
+    virtual void setToolbarsVisible(bool);
+    virtual bool toolbarsVisible();
+    
+    virtual void setStatusbarVisible(bool);
+    virtual bool statusbarVisible();
+    
+    virtual void setScrollbarsVisible(bool);
+    virtual bool scrollbarsVisible();
+    
+    virtual void setMenubarVisible(bool);
+    virtual bool menubarVisible();
+    
+    virtual void setResizable(bool);
 
 private:
     WebChromeClient(WebView *webView);

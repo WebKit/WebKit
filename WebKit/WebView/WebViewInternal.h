@@ -31,7 +31,15 @@
 #import "WebViewPrivate.h"
 #import "WebTypesInternal.h"
 
-@class WebPageBridge;
+#ifdef __cplusplus
+namespace WebCore {
+    class Page;
+}
+typedef WebCore::Page WebCorePage;
+#else
+@class WebCorePage;
+#endif
+
 @class WebBasePluginPackage;
 
 #ifdef __cplusplus
@@ -54,7 +62,6 @@ namespace WebCore {
 @end
 
 @interface WebView (WebViewInternal)
-- (WebPageBridge *)_pageBridge;
 #ifdef __cplusplus
 - (WebCore::String&)_userAgent;
 #endif
@@ -64,6 +71,7 @@ id WebViewGetResourceLoadDelegate(WebView *webView);
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView);
 
 @interface WebView (WebViewMiscInternal)
+- (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag;
 - (id)_UIDelegateForwarder;

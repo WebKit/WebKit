@@ -25,36 +25,14 @@
 
 #import "config.h"
 #import "PlatformWheelEvent.h"
-#import "Screen.h"
+
+#import "PlatformMouseEvent.h"
 
 namespace WebCore {
 
-static IntPoint positionForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            // Note: This has its origin at the bottom left of the window.
-            // The Y coordinate gets flipped by ScrollView::viewportToContents.
-            // We should probably change both this and that to not use "bottom left origin" coordinates at all.
-            return IntPoint([event locationInWindow]);
-        default:
-            return IntPoint();
-    }
-}
-
-static IntPoint globalPositionForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            return IntPoint(flipScreenPoint([[event window] convertBaseToScreen:[event locationInWindow]]));
-        default:
-            return IntPoint();
-    }
-}
-
 PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
-    : m_position(positionForEvent(event))
-    , m_globalPosition(globalPositionForEvent(event))
+    : m_position(pointForEvent(event))
+    , m_globalPosition(globalPointForEvent(event))
     , m_deltaX([event deltaX])
     , m_deltaY([event deltaY])
     , m_isAccepted(false)
@@ -65,4 +43,4 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
 {
 }
 
-}
+} // namespace WebCore
