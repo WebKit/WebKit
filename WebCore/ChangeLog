@@ -1,3 +1,13 @@
+2006-11-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dave Harrison
+
+        <rdar://problem/4801066>
+        Added a critical null frameLoader() check
+
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::loadNow):
+
 2006-11-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

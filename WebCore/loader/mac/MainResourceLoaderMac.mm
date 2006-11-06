@@ -349,6 +349,12 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
     r = willSendRequest(r, nil);
+    
+    // <rdar://problem/4801066>
+    // willSendRequest() is liable to make the call to frameLoader() return NULL, so we need to check that here
+    if (!frameLoader())
+        return nil;
+    
     NSURL *URL = [r URL];
     bool shouldLoadEmpty = shouldLoadAsEmptyDocument(URL);
 
