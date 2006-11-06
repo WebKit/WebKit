@@ -1,3 +1,13 @@
+2006-11-05  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed & landed by Maciej.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11265
+
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::transferJobStatusCallback):
+        (WebCore::ResourceLoader::start):
+
 2006-11-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

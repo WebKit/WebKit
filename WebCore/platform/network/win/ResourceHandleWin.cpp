@@ -152,7 +152,10 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
                                                    "POST", urlStr.latin1(), 0, 0, accept,
                                                    INTERNET_FLAG_KEEP_CONNECTION | 
                                                    INTERNET_FLAG_FORMS_SUBMIT |
-                                                   INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE,
+                                                   INTERNET_FLAG_RELOAD |
+                                                   INTERNET_FLAG_NO_CACHE_WRITE |
+                                                   INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS |
+                                                   INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP,
                                                    (DWORD_PTR)d->m_jobId);
             if (urlHandle == INVALID_HANDLE_VALUE) {
                 InternetCloseHandle(d->m_resourceHandle);
@@ -258,7 +261,7 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     if (d->m_secondaryHandle)
         InternetCloseHandle(d->m_secondaryHandle);
     InternetCloseHandle(d->m_resourceHandle);
-    
+
     client()->receivedAllData(this, &platformData);
     client()->didFinishLoading(this);
     delete this;
@@ -270,6 +273,13 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
                                                 LPVOID statusInformation,
                                                 DWORD statusInformationLength)
 {
+#ifdef RESOURCE_LOADER_DEBUG
+    char buf[64];
+    _snprintf(buf, sizeof(buf), "status-callback: status=%u, job=%p\n",
+              internetStatus, jobId);
+    OutputDebugStringA(buf);
+#endif
+
     UINT msg;
     LPARAM lParam;
 
@@ -280,6 +290,12 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
         lParam = (LPARAM) LPINTERNET_ASYNC_RESULT(statusInformation)->dwResult;
         break;
     case INTERNET_STATUS_REQUEST_COMPLETE:
+#ifdef RESOURCE_LOADER_DEBUG
+        _snprintf(buf, sizeof(buf), "request-complete: result=%p, error=%u\n",
+            LPINTERNET_ASYNC_RESULT(statusInformation)->dwResult,
+            LPINTERNET_ASYNC_RESULT(statusInformation)->dwError);
+        OutputDebugStringA(buf);
+#endif
         // tell the main thread that the request is done
         msg = requestCompleteMessage;
         lParam = 0;
@@ -335,21 +351,31 @@ bool ResourceHandle::start(DocLoader* docLoader)
             delete this;
             return false;
         }
-        static INTERNET_STATUS_CALLBACK callbackHandle = InternetSetStatusCallback(internetHandle, transferJobStatusCallback);
+        static INTERNET_STATUS_CALLBACK callbackHandle = 
+            InternetSetStatusCallback(internetHandle, transferJobStatusCallback);
 
         initializeOffScreenResourceHandleWindow();
         d->m_jobId = addToOutstandingJobs(this);
 
-        // For form posting, we can't use InternetOpenURL.  We have to use InternetConnect followed by
-        // HttpSendRequest.
+        DWORD flags =
+            INTERNET_FLAG_KEEP_CONNECTION |
+            INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS |
+            INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP;
+
+        // For form posting, we can't use InternetOpenURL.  We have to use
+        // InternetConnect followed by HttpSendRequest.
         HINTERNET urlHandle;
         String referrer = docLoader->frame()->referrer();
         if (method() == "POST") {
             d->m_postReferrer = referrer;
             DeprecatedString host = url().host();
             host += "\0";
-            urlHandle = InternetConnectA(internetHandle, host.ascii(), url().port(), 0, 0, 
-                                         INTERNET_SERVICE_HTTP, 0, (DWORD_PTR)d->m_jobId);
+            urlHandle = InternetConnectA(internetHandle, host.ascii(),
+                                         d->URL.port(),
+                                         NULL, // no username
+                                         NULL, // no password
+                                         INTERNET_SERVICE_HTTP,
+                                         flags, (DWORD_PTR)d->m_jobId);
         } else {
             DeprecatedString urlStr = url().url();
             int fragmentIndex = urlStr.find('#');
@@ -359,8 +385,9 @@ bool ResourceHandle::start(DocLoader* docLoader)
             if (!referrer.isEmpty())
                 headers += String("Referer: ") + referrer + "\r\n";
 
-            urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(), headers.latin1(), headers.length(),
-                                         INTERNET_FLAG_KEEP_CONNECTION, (DWORD_PTR)d->m_jobId);
+            urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(),
+                                         headers.latin1(), headers.length(),
+                                         flags, (DWORD_PTR)d->m_jobId);
         }
 
         if (urlHandle == INVALID_HANDLE_VALUE) {
