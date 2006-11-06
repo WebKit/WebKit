@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SVGResourceClipper.h"
 
+#ifdef SVG_SUPPORT
+
 #include "SVGRenderTreeAsText.h"
 #include "TextStream.h"
 
@@ -95,3 +97,5 @@ SVGResourceClipper* getClipperById(Document* document, const AtomicString& id)
 }
 
 } // namespace WebCore
+
+#endif

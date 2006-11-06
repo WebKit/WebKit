@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SVGResourceMasker.h"
 
+#ifdef SVG_SUPPORT
+
 #include "TextStream.h"
 #include "SVGResourceImage.h"
 
@@ -66,3 +68,5 @@ SVGResourceMasker* getMaskerById(Document* document, const AtomicString& id)
 }
 
 } // namespace WebCore
+
+#endif

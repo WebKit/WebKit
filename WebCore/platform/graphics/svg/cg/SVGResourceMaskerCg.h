@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifdef SVG_SUPPORT
+
 #include "KCanvasMasker.h"
 #include "KCanvasImage.h"
 
@@ -37,3 +39,5 @@ public:
 };
 
 }
+
+#endif

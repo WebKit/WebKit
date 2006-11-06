@@ -26,6 +26,8 @@
 #ifndef SVGResourceMarker_H
 #define SVGResourceMarker_H
 
+#ifdef SVG_SUPPORT
+
 #include "SVGResource.h"
 
 namespace WebCore {
@@ -67,5 +69,7 @@ namespace WebCore {
     SVGResourceMarker* getMarkerById(Document*, const AtomicString&);
 
 } // namespace WebCore
+
+#endif
 
 #endif // SVGResourceMarker_H

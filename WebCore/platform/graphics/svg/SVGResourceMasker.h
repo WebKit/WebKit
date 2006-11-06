@@ -26,6 +26,8 @@
 #ifndef SVGResourceMasker_H
 #define SVGResourceMasker_H
 
+#ifdef SVG_SUPPORT
+
 #include "SVGResource.h"
 
 namespace WebCore {
@@ -54,5 +56,7 @@ namespace WebCore {
     SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
 
 } // namespace WebCore
+
+#endif
 
 #endif // SVGResourceMasker_H

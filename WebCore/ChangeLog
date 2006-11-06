@@ -1,3 +1,22 @@
+2006-11-05  Darin Adler  <darin@apple.com>
+
+        - quick attempt to fix the no-SVG build
+
+        * platform/graphics/svg/SVGResource.cpp:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceClipper.cpp:
+        * platform/graphics/svg/SVGResourceClipper.h:
+        * platform/graphics/svg/SVGResourceImage.h:
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        * platform/graphics/svg/SVGResourceMarker.h:
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.h:
+        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp:
+        * platform/graphics/svg/qt/SVGResourceImageQt.cpp:
+        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp:
+        Added #ifdef SVG_SUPPORT to these files.
+
 2006-11-05  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed & landed by Maciej.

@@ -24,6 +24,8 @@
 #include "config.h"
 #include "SVGResourceClipper.h"
 
+#ifdef SVG_SUPPORT
+
 #include "KRenderingDeviceQt.h"
 
 namespace WebCore {
@@ -114,5 +116,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
 }
 
 } // namespace WebCore
+
+#endif
 
 // vim:ts=4:noet

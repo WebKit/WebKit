@@ -22,6 +22,8 @@
 #include "config.h"
 #include "SVGResourceMasker.h"
 
+#ifdef SVG_SUPPORT
+
 namespace WebCore {
 
 void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
@@ -30,5 +32,7 @@ void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
 }
 
 } // namespace WebCore
+
+#endif
 
 // vim:ts=4:noet

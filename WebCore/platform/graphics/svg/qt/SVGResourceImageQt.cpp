@@ -22,6 +22,8 @@
 #include "config.h"
 #include "SVGResourceImage.h"
 
+#ifdef SVG_SUPPORT
+
 #include "IntSize.h"
 
 namespace WebCore {
@@ -45,5 +47,7 @@ IntSize SVGResourceImage::size() const
 }
 
 } // namespace WebCore
+
+#endif
 
 // vim:ts=4:noet
