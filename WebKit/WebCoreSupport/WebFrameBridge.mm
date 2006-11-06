@@ -76,7 +76,6 @@
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/FormDataStream.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
