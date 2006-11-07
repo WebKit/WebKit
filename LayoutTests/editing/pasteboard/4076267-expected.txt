@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertText: this text should have a single leading space before it replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 55 of #text > DIV > DIV > DIV > BODY > HTML > #document to 55 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 55 of #text > DIV > DIV > BODY > HTML > #document to 55 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -28,8 +28,6 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,44) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderBlock {DIV} at (0,0) size 784x18
-            RenderText {#text} at (0,0) size 330x18
-              text run at (0,0) width 330: " this text should have a single leading space before it"
-          RenderBlock (anonymous) at (0,18) size 784x0
-caret: position 55 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 330x18
+            text run at (0,0) width 330: " this text should have a single leading space before it"
+caret: position 55 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -12,7 +12,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertText:this text should end up bold replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 28 of #text > DIV > B > DIV > DIV > BODY > HTML > #document to 28 of #text > DIV > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 28 of #text > B > DIV > DIV > BODY > HTML > #document to 28 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -30,16 +30,11 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 784x40
         RenderBlock {DIV} at (0,0) size 784x20 [border: (1px solid #FF0000)]
-          RenderBlock (anonymous) at (1,1) size 782x0
-            RenderInline {B} at (0,0) size 0x0
-          RenderBlock (anonymous) at (1,1) size 782x18
-            RenderBlock {DIV} at (0,0) size 782x18
-              RenderText {#text} at (0,0) size 187x18
-                text run at (0,0) width 187: "this text should end up bold"
-          RenderBlock (anonymous) at (1,19) size 782x0
-            RenderInline {B} at (0,0) size 0x0
+          RenderInline {B} at (0,0) size 187x18
+            RenderText {#text} at (1,1) size 187x18
+              text run at (1,1) width 187: "this text should end up bold"
         RenderBlock {DIV} at (0,20) size 784x20 [border: (1px solid #FF0000)]
           RenderInline {B} at (0,0) size 187x18
             RenderText {#text} at (1,1) size 187x18
               text run at (1,1) width 187: "this text should end up bold"
-caret: position 28 of child 0 {#text} of child 0 {DIV} of child 0 {B} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 28 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document

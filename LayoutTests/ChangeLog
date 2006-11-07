@@ -1,3 +1,20 @@
+2006-11-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4714993> REGRESSION: After replacing a misspelled word in a sentence, the selected word wraps down to next line (10428)
+
+        * editing/pasteboard/3976872-expected.txt:
+        * editing/pasteboard/4076267-2-expected.txt:
+        * editing/pasteboard/4076267-3-expected.txt:
+        * editing/pasteboard/4076267-expected.txt:
+        * editing/pasteboard/8145-1-expected.txt:
+        * editing/pasteboard/paste-empty-startcontainer-expected.txt: Removed.
+        * editing/pasteboard/paste-match-style-001-expected.txt:
+        * editing/pasteboard/paste-match-style-002-expected.txt:
+        * editing/pasteboard/paste-text-019-expected.txt:
+        * editing/pasteboard/pasting-tabs-expected.txt:
+
 2006-11-07  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.

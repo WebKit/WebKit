@@ -54,17 +54,13 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,132) size 756x28
             RenderText {#text} at (0,0) size 155x28
               text run at (0,0) width 155: "(case sensitive)."
-      RenderBlock {DIV} at (0,364) size 784x60 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (2,2) size 780x28
-          RenderInline {SPAN} at (0,0) size 118x28
-            RenderInline {SPAN} at (0,0) size 78x28
-              RenderText {#text} at (0,0) size 78x28
-                text run at (0,0) width 78: "Foo Bar"
-            RenderText {#text} at (78,0) size 40x28
-              text run at (78,0) width 40: " baz"
-        RenderBlock (anonymous) at (2,30) size 780x0
-        RenderBlock (anonymous) at (2,30) size 780x28
-          RenderInline {SPAN} at (0,0) size 35x28
-            RenderText {#text} at (0,0) size 35x28
-              text run at (0,0) width 35: "Bar"
+      RenderBlock {DIV} at (0,364) size 784x32 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 153x28
+          RenderInline {SPAN} at (0,0) size 78x28
+            RenderText {#text} at (2,2) size 78x28
+              text run at (2,2) width 78: "Foo Bar"
+          RenderText {#text} at (80,2) size 40x28
+            text run at (80,2) width 40: " baz"
+          RenderText {#text} at (120,2) size 35x28
+            text run at (120,2) width 35: "Bar"
 caret: position 3 of child 2 {#text} of child 1 {SPAN} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

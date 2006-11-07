@@ -492,7 +492,7 @@ DeprecatedString createMarkup(const Node* node, EChildrenOnly includeChildren,
     return markup(const_cast<Node*>(node), includeChildren, false, nodes);
 }
 
-static void createParagraphContentsFromString(Element* paragraph, const DeprecatedString& string)
+static void fillContainerFromString(ContainerNode* paragraph, const DeprecatedString& string)
 {
     Document* document = paragraph->document();
 
@@ -573,6 +573,12 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         return fragment.release();
     }
 
+    // A string with no newlines gets added inline, rather than being put into a paragraph.
+    if (string.find('\n') == -1) {
+        fillContainerFromString(fragment.get(), string);
+        return fragment.release();
+    }
+
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
     DeprecatedStringList list = DeprecatedStringList::split('\n', string, true); // true gets us empty strings in the list
     while (!list.isEmpty()) {
@@ -587,7 +593,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
             element->setAttribute(classAttr, AppleInterchangeNewline);            
         } else {
             element = createDefaultParagraphElement(document);
-            createParagraphContentsFromString(element.get(), s);
+            fillContainerFromString(element.get(), s);
         }
         fragment->appendChild(element.release(), ec);
         ASSERT(ec == 0);
