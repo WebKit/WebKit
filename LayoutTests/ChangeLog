@@ -1,3 +1,20 @@
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        New results. The originals were incorrect.
+
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+
 2006-11-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
