@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
@@ -38,9 +39,11 @@ using namespace std;
 
 namespace WebCore {
 
+const size_t defaultBufferSize = 4096; // bigger than most icons
+
 IconLoader::IconLoader(Frame* frame)
     : m_frame(frame)
-    , m_httpStatusCode(0)
+    , m_loadIsInProgress(false)
 {
 }
 
@@ -51,88 +54,90 @@ auto_ptr<IconLoader> IconLoader::create(Frame* frame)
 
 IconLoader::~IconLoader()
 {
-    if (m_resourceLoader)
-        m_resourceLoader->kill();
+    if (m_handle)
+        m_handle->kill();
 }
 
 void IconLoader::startLoading()
 {    
-    if (m_resourceLoader)
+    if (m_handle)
         return;
-    
-    m_httpStatusCode = 0;
-    
-    // FIXME - http://bugs.webkit.org/show_bug.cgi?id=10902
-    // Once the loader infrastructure will cleanly let us load an icon without a DocLoader, we can implement this
-    // A frame may be documentless - one example is viewing a PDF directly.  Until the above FIXME is resolved,
-    // we must bail out early when we have no document
+
+    // FIXME: http://bugs.webkit.org/show_bug.cgi?id=10902
+    // Once ResourceHandle will load without a DocLoader, we can remove this check.
+    // A frame may be documentless - one example is a frame containing only a PDF.
     if (!m_frame->document()) {
         LOG(IconDatabase, "Documentless-frame - icon won't be loaded");
         return;
-    } 
-    
-    m_url = m_frame->iconURL();
-    m_resourceLoader = ResourceHandle::create(m_url, this, m_frame->document()->docLoader());
+    }
 
-    if (!m_resourceLoader)
+    // Set flag so we can detect the case where the load completes before
+    // ResourceHandle::create returns.
+    m_loadIsInProgress = true;
+    m_buffer.reserveCapacity(defaultBufferSize);
+
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(m_frame->iconURL(),
+        this, m_frame->document()->docLoader());
+    if (!loader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->iconURL().url().ascii());
+
+    // Store the handle so we can cancel the load if stopLoading is called later.
+    // But only do it if the load hasn't already completed.
+    if (m_loadIsInProgress)
+        m_handle = loader.release();
 }
 
 void IconLoader::stopLoading()
 {
-    if (m_resourceLoader)
-        m_resourceLoader->kill();
-    m_resourceLoader = 0;
-    m_data.clear();
+    if (m_handle)
+        m_handle->kill();
+    clearLoadingState();
 }
 
-void IconLoader::didReceiveResponse(ResourceHandle* resourceLoader, const ResourceResponse& response)
+void IconLoader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
-    ASSERT(resourceLoader);
-    m_httpStatusCode = response.httpStatusCode();
-}
-
-void IconLoader::didReceiveData(ResourceHandle* resourceLoader, const char* data, int size)
-{
-    ASSERT(resourceLoader == m_resourceLoader);
-    ASSERT(data);
-    ASSERT(size > -1);
-    m_data.append(data, size);
-}
-
-void IconLoader::didFinishLoading(ResourceHandle* resourceLoader)
-{
-    ASSERT(resourceLoader == m_resourceLoader);
-
-    const char* data;
-    int size;
-    
-    // If we logged an HTTP response, only set the icon data if it was a valid response
-    if (m_httpStatusCode && (m_httpStatusCode < 200 || m_httpStatusCode > 299)) {
-        data = 0;
-        size = 0;
-    } else {
-        data = m_data.data();
-        size = m_data.size();
+    // If we got a status code indicating an invalid response, then lets
+    // ignore the data and do not try to decode the error page as an icon.
+    int status = response.httpStatusCode();
+    if (status && (status < 200 || status > 299)) {
+        KURL iconURL = handle->url();
+        handle->kill();
+        finishLoading(iconURL);
     }
-        
-    IconDatabase* iconDatabase = IconDatabase::sharedIconDatabase();
-    ASSERT(iconDatabase);
-    
-    if (data)
-        iconDatabase->setIconDataForIconURL(data, size, m_url.url());
-    else
-        iconDatabase->setHaveNoIconForIconURL(m_url.url());
-        
-    // Tell the frame to map its url(s) to its iconURL in the database
-    m_frame->commitIconURLToIconDatabase();
-    
-    // Send the notification to the app that this icon is finished loading
-    notifyIconChanged(m_url);
+}
 
-    // ResourceLoaders delete themselves after they deliver their last data, so we can just forget about it
-    m_resourceLoader = 0;
-    m_data.clear();
+void IconLoader::didReceiveData(ResourceHandle*, const char* data, int size)
+{
+    ASSERT(data || size == 0);
+    ASSERT(size >= 0);
+    m_buffer.append(data, size);
+}
+
+void IconLoader::didFinishLoading(ResourceHandle* handle)
+{
+    finishLoading(handle->url());
+}
+
+void IconLoader::finishLoading(const KURL& iconURL)
+{
+    IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_buffer.data(), m_buffer.size(), iconURL.url());
+
+    // Tell the frame to map its URL(s) to its iconURL in the database.
+    m_frame->commitIconURLToIconDatabase(iconURL);
+
+    // Send the notification to the app that this icon is finished loading.
+#if PLATFORM(MAC) // turn this on for other platforms when FrameLoader is deployed more fully
+    m_frame->loader()->notifyIconChanged();
+#endif
+
+    clearLoadingState();
+}
+
+void IconLoader::clearLoadingState()
+{
+    m_handle = 0;
+    m_buffer.clear();
+    m_loadIsInProgress = false;
 }
 
 }

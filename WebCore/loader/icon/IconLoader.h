@@ -28,13 +28,14 @@
 
 #include "KURL.h"
 #include "ResourceHandleClient.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Frame;
 
-class IconLoader : public ResourceHandleClient {
+class IconLoader : public ResourceHandleClient, Noncopyable {
 public:
     static std::auto_ptr<IconLoader> create(Frame*);
     ~IconLoader();
@@ -43,22 +44,21 @@ public:
     void stopLoading();
 
 private:
+    IconLoader(Frame*);
+
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int);
     virtual void didFinishLoading(ResourceHandle*);
 
-    IconLoader(Frame*);
-    
-    void notifyIconChanged(const KURL&);
+    void finishLoading(const KURL&);
+    void clearLoadingState();
 
-    KURL m_url;
-    RefPtr<ResourceHandle> m_resourceLoader;
     Frame* m_frame;
-    
-    static const int IconLoaderDefaultBuffer = 4096;
-    Vector<char, IconLoaderDefaultBuffer> m_data;
-    int m_httpStatusCode;
-}; // class Iconloader
+
+    RefPtr<ResourceHandle> m_handle;
+    Vector<char> m_buffer;
+    bool m_loadIsInProgress;
+}; // class IconLoader
 
 } // namespace WebCore
 

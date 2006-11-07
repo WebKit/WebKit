@@ -390,7 +390,7 @@ public:
     void didExplicitOpen();
 
     KURL iconURL();
-    void commitIconURLToIconDatabase();
+    void commitIconURLToIconDatabase(const KURL&);
 
     void setAutoLoadImages(bool enable);
     bool autoLoadImages() const;

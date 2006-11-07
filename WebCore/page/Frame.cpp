@@ -1040,7 +1040,7 @@ void Frame::endIfNotLoading()
         
         // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
         if (sharedIconDatabase->hasEntryForIconURL(url) && !isLoadTypeReload() && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
-            commitIconURLToIconDatabase();
+            commitIconURLToIconDatabase(iconURL());
             return;
         }
         
@@ -1050,10 +1050,8 @@ void Frame::endIfNotLoading()
     }
 }
 
-void Frame::commitIconURLToIconDatabase()
+void Frame::commitIconURLToIconDatabase(const KURL& icon)
 {
-    KURL icon = iconURL();
-    
     IconDatabase* iconDatabase = IconDatabase::sharedIconDatabase();
     ASSERT(iconDatabase);
     iconDatabase->setIconURLForPageURL(icon.url(), this->url().url());

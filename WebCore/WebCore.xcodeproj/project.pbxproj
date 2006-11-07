@@ -278,7 +278,6 @@
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		5186C0560A9C21470034FE94 /* IconDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5186C0550A9C21470034FE94 /* IconDataCache.cpp */; };
-		51A1D2C60AB69120000D732C /* IconLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A1D2C50AB69120000D732C /* IconLoaderMac.mm */; };
 		51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */; };
 		51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3EA140A3D24D300BADA35 /* SQLDatabase.h */; };
 		51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */; };
@@ -3177,7 +3176,6 @@
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5186C0550A9C21470034FE94 /* IconDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDataCache.cpp; sourceTree = "<group>"; };
-		51A1D2C50AB69120000D732C /* IconLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconLoaderMac.mm; sourceTree = "<group>"; };
 		51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLDatabase.cpp; sourceTree = "<group>"; };
 		51D3EA140A3D24D300BADA35 /* SQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLDatabase.h; sourceTree = "<group>"; };
 		51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
@@ -7528,7 +7526,6 @@
 				654F68870AF1B7C50065BDD6 /* CachedResourceMac.mm */,
 				656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */,
 				656D37250ADBA5DE00A4554D /* FrameLoaderMac.mm */,
-				51A1D2C50AB69120000D732C /* IconLoaderMac.mm */,
 				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
 				93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */,
 				F587850302DE375901EA4122 /* LoaderFunctionsMac.mm */,
@@ -10547,6 +10544,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10560,6 +10558,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11440,7 +11440,6 @@
 				85E9E0A60AB3A0C700069CD0 /* DOMXPathResult.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
-				51A1D2C60AB69120000D732C /* IconLoaderMac.mm in Sources */,
 				066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
 				066C773E0AB6053F00238CC4 /* IconMac.mm in Sources */,

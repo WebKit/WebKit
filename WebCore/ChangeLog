@@ -1,3 +1,51 @@
+2006-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - fix <rdar://problem/4752069> 9A274: World of Warcraft Launcher
+          crashes on launch in WebCore::ResourceLoader::start
+
+        No layout test, because this depends on cached icons, although there's
+        perhaps a way to write a test for it with some further ingenuity.
+
+        * loader/icon/IconLoader.h: Make IconLoader inherit from Noncopyable
+        to make explicit the fact that it can't be successfully copied.
+        Remove notifyIconChanged function and put the contents in the caller.
+        This eliminates the need for IconLoaderMac.mm. Added finishedLoading
+        and clearLoadingState functions to share code. Removed m_url, since the
+        resource handle already stores the URL. Renamed m_resourceLoader to
+        m_handle to reflect the class's name change. Removed the 4096-byte
+        inline buffer from m_data, since the malloc savings is not sufficient
+        to offset the additional memory use. Removed m_httpStatusCode because
+        we can instead cancel the load when we get a status code that reflects
+        failure. Added m_loadIsInProgress boolean because we need to detect
+        loads that complete during the ResourceHandle::create function call.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::IconLoader): Initialize m_loadIsInProgress.
+        Don't initialize m_httpStatusCode.
+        (WebCore::IconLoader::~IconLoader): Updated for name change.
+        (WebCore::IconLoader::startLoading): Added code to use the
+        m_loadIsInProgress flag to detect if the load completed while inside
+        the ResourceHandle::create function. Removed code to set m_url.
+        (WebCore::IconLoader::stopLoading): Call clearLoadingState to share
+        more code.
+        (WebCore::IconLoader::didReceiveResponse): Kill the ResourceHandle
+        and finish loading if the HTTP status code indicates failure.
+        (WebCore::IconLoader::didReceiveData): Removed assertion that checks
+        the ResourceHandle, since we can't do that any more.
+        (WebCore::IconLoader::didFinishLoading): Changed to call finishLoading
+        so we can share code with the new didReceiveResponse code path.
+        (WebCore::IconLoader::finishLoading): Moved code here from the
+        didFinishLoading callback. Pass a URL when calling
+        commitIconURLToIconDatabase. Call notifyIconChanged directly here
+        instead of using a separate function. Call clearLoadingState to
+        share more code with stopLoading.
+        (WebCore::IconLoader::clearLoadingState): Added.
+
+        * loader/mac/IconLoaderMac.mm: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Removed IconLoaderMac.mm.
+
 2006-11-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
