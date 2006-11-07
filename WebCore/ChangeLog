@@ -1,5 +1,11 @@
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
+        build fix.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej, Anders, Darin.
 
         Removed the Page bridge. Beefed up Chrome. Added Screen and ScreenClient.

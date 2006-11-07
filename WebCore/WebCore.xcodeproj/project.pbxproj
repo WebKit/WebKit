@@ -397,7 +397,7 @@
 		65DAD9FC0AFD86B400CE53ED /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DAD9FA0AFD86B400CE53ED /* FormData.cpp */; };
 		65DADA000AFD86BF00CE53ED /* FormDataStreamMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DAD9FE0AFD86BF00CE53ED /* FormDataStreamMac.h */; };
 		65DADA010AFD86BF00CE53ED /* FormDataStreamMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DAD9FF0AFD86BF00CE53ED /* FormDataStreamMac.mm */; };
-		65DADA180AFD878000CE53ED /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DADA170AFD878000CE53ED /* FormData.h */; };
+		65DADA180AFD878000CE53ED /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DADA170AFD878000CE53ED /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DF31DA09D1C123000BE325 /* JSAttr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31D809D1C122000BE325 /* JSAttr.cpp */; };
 		65DF31DB09D1C123000BE325 /* JSAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31D909D1C123000BE325 /* JSAttr.h */; };
 		65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */; };
