@@ -154,7 +154,7 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
     return UString(buffer, length);
 }
 
-#else if PLATFORM(WIN_OS)
+#else
 
 enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
  

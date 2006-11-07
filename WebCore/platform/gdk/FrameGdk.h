@@ -30,12 +30,14 @@
 
 #include "Frame.h"
 #include "ResourceHandleClient.h"
+#include "EditorClient.h"
 #include <gdk/gdk.h>
 
 namespace WebCore {
 
 class Element;
 class FrameGdk;
+class EditorClient;
 
 class FrameGdkClient {
 public:
@@ -73,7 +75,7 @@ private:
 
 class FrameGdk : public Frame {
 public:
-    FrameGdk(Page*, Element*);
+    FrameGdk(Page*, Element*, PassRefPtr<EditorClient>);
     FrameGdk(GdkDrawable*);
     virtual ~FrameGdk();
 
@@ -146,6 +148,10 @@ public:
     virtual void partClearedInBegin();
 
     virtual bool canGoBackOrForward(int distance) const;
+    virtual void goBackOrForward(int distance);
+    virtual int getHistoryLength();
+    virtual KURL historyURL(int distance);
+
     virtual void handledOnloadEvents();
 
     virtual bool canPaste() const;
@@ -161,6 +167,8 @@ public:
     void setFrameGeometry(const IntRect&);
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
     Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&);
+
+    FrameGdkClient* client() const { return m_client; }
 
 private:
     virtual bool isLoadTypeReload();

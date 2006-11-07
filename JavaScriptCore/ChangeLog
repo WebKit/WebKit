@@ -1,3 +1,12 @@
+2006-11-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Remove warning about garbage after #else. #else clause applies for all
+        non-mac platforms, not only win.
+
+        * kjs/date_object.cpp:
+
 2006-11-06  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by the wonderful Mitz Pettel.

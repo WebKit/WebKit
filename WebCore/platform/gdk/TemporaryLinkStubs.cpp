@@ -27,45 +27,49 @@
 
 #include "config.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "AXObjectCache.h"
+#include "CachedResource.h"
+#include "ChromeClientGdk.h"
+#include "CookieJar.h"
 #include "CString.h"
-#include "Node.h"
-#include "TextField.h"
+#include "Cursor.h"
+#include "EditCommand.h"
 #include "FileChooser.h"
 #include "Font.h"
-#include "ListBox.h"
-#include "IntPoint.h"
-#include "Widget.h"
-#include "GraphicsContext.h"
-#include "Slider.h"
-#include "Cursor.h"
-#include "loader.h"
-#include "FrameView.h"
-#include "KURL.h"
-#include "PlatformScrollBar.h"
-#include "ScrollBar.h"
-#include "Path.h"
-#include "PlatformMouseEvent.h"
-#include "CookieJar.h"
-#include "Screen.h"
-#include "History.h"
-#include "Language.h"
-#include "LocalizedStrings.h"
-#include "PlugInInfoStore.h"
-#include "RenderTheme.h"
 #include "FrameGdk.h"
 #include "FrameLoadRequest.h"
-#include "RenderThemeGdk.h"
-#include "TextBoundaries.h"
-#include "AXObjectCache.h"
-#include "EditCommand.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "History.h"
 #include "Icon.h"
-#include "IconLoader.h"
 #include "IconDatabase.h"
-#include "CachedResource.h"
+#include "IconLoader.h"
+#include "IntPoint.h"
+#include "KURL.h"
+#include "Language.h"
+#include "loader.h"
+#include "LocalizedStrings.h"
+#include "Node.h"
+#include "Page.h"
+#include "Path.h"
+#include "PlatformMouseEvent.h"
+#include "PlatformScrollBar.h"
+#include "PlugInInfoStore.h"
+#include "RenderTheme.h"
+#include "RenderThemeGdk.h"
+#include "ResourceLoader.h"
+#include "Screen.h"
+#include "ScrollBar.h"
+#include "Slider.h"
+#include "TextBoundaries.h"
+#include "TextField.h"
+#include "Widget.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace WebCore;
+
+#define notImplemented() do { fprintf(stderr, "%s FIXME: UNIMPLEMENTED %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 struct PlatformDataStruct
@@ -76,8 +80,6 @@ struct PlatformResponseStruct
 {
 };
 }
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s in %s:%d\n", __FUNCTION__, __FILE__, __LINE__); } while(0)
 
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { return false; }
@@ -114,18 +116,7 @@ Slider::~Slider() { notImplemented(); }
 void Slider::setFont(WebCore::Font const&) { notImplemented(); }
 double Slider::value() const { notImplemented(); return 0; }
 
-void ListBox::setSelected(int, bool) { notImplemented(); }
-IntSize ListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
-bool ListBox::isSelected(int) const { notImplemented(); return 0; }
-void ListBox::appendItem(DeprecatedString const&, ListBoxItemType, bool) { notImplemented(); }
-void ListBox::doneAppendingItems() { notImplemented(); }
-void ListBox::setWritingDirection(TextDirection) { notImplemented(); }
-void ListBox::setEnabled(bool) { notImplemented(); }
-void ListBox::clear() { notImplemented(); }
-bool ListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
-
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
-Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
 
 Cursor::Cursor(Image*, const IntPoint&) { notImplemented(); }
@@ -138,9 +129,7 @@ void WebCore::findSentenceBoundary(UChar const*, int, int, int*, int*) { notImpl
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 
 namespace WebCore {
-
-Vector<char> ServeSynchronousRequest(Loader*,DocLoader*,ResourceHandle*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
-
+Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const ResourceRequest& request, ResourceResponse& response) { notImplemented(); return Vector<char>(); }
 }
 
 void FrameGdk::focusWindow() { notImplemented(); }
@@ -179,6 +168,12 @@ bool FrameGdk::isLoadTypeReload() { notImplemented(); return false; }
 KURL FrameGdk::originalRequestURL() const { return KURL(); }
 Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
 
+void FrameGdk::goBackOrForward(int distance) { notImplemented(); }
+int FrameGdk::getHistoryLength() {notImplemented(); return 0; }
+KURL FrameGdk::historyURL(int distance) { notImplemented(); return KURL(); }
+bool ChromeClientGdk::canRunModal() { notImplemented(); return 0; }
+void ChromeClientGdk::runModal() { notImplemented(); }
+
 int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
 bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
 
@@ -206,9 +201,6 @@ unsigned PlugInInfoStore::pluginCount() const { return 0; }
 bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
 void WebCore::refreshPlugins(bool) { }
 
-void WebCore::ResourceHandle::assembleResponseHeaders() const { }
-void WebCore::ResourceHandle::retrieveCharset() const { }
-
 void FrameGdk::restoreDocumentState() { }
 void FrameGdk::partClearedInBegin() { }
 void FrameGdk::createEmptyDocument() { }
@@ -231,6 +223,8 @@ void FrameGdk::respondToChangedContents(const Selection&) { }
 
 namespace WebCore {
 
+void systemBeep() { notImplemented(); }
+
 bool CheckIfReloading(DocLoader*) { return false; }
 time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse) { return 0; }
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
@@ -238,7 +232,7 @@ DeprecatedString ResponseURL(PlatformResponse) { return DeprecatedString(); }
 bool IsResponseURLEqualToURL(PlatformResponse , const String& URL) { return false; }
 bool ResponseIsMultipart(PlatformResponse) { return false; }
 DeprecatedString ResponseMIMEType(PlatformResponse) { return DeprecatedString(); }
-void CachedResource::setResponse(PlatformResponse) { notImplemented(); }
+void CachedResource::setPlatformResponse(PlatformResponse) { notImplemented(); }
 void CachedResource::setAllData(PlatformData) { notImplemented(); }
 
 }
@@ -296,6 +290,7 @@ void Path::closeSubpath() { }
 void Path::addArc(const FloatPoint&, float, float, float, bool) { }
 void Path::addRect(const FloatRect&) { }
 void Path::addEllipse(const FloatRect&) { }
+void Path::transform(const AffineTransform& transform) {}
 
 TextField::TextField(TextField::Type) { }
 TextField::~TextField() { }
@@ -326,11 +321,6 @@ void PlatformScrollbar::updateThumbPosition() { }
 void PlatformScrollbar::updateThumbProportion() { }
 void PlatformScrollbar::setRect(const IntRect&) { }
 
-ListBox::ListBox() { }
-ListBox::~ListBox() { }
-void ListBox::setSelectionMode(ListBox::SelectionMode) { }
-void ListBox::setFont(WebCore::Font const&) { }
-
 FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
 PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
@@ -352,19 +342,14 @@ void RenderThemeGdk::setRadioSize(RenderStyle*) const { }
 void RenderThemeGdk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const {}
 bool RenderThemeGdk::paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
 
+bool ResourceLoader::loadsBlocked() { notImplemented(); return false; }
+
 Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 
-void IconLoader::stopLoading() { notImplemented(); } 
-void IconLoader::startLoading() { notImplemented(); } 
-IconLoader* IconLoader::createForFrame(Frame *frame) { return 0; } 
-
-bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
-bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
-IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
-bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
+void IconLoader::notifyIconChanged(const KURL&) { notImplemented(); }
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { return FloatRect(); }
 void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplemented(); }

@@ -38,6 +38,8 @@
 #if PLATFORM(WIN)
 #include <windows.h>
 #include <winbase.h>
+#else
+#include <sys/stat.h>
 #endif
 
 namespace WebCore {

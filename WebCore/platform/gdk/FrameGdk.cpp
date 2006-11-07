@@ -27,34 +27,35 @@
 
 #include "config.h"
 #include "FrameGdk.h"
-
-#include "Element.h"
-#include "RenderObject.h"
-#include "RenderWidget.h"
-#include "RenderLayer.h"
-#include "Page.h"
+#include "ChromeClientGdk.h"
 #include "Document.h"
-#include "DOMWindow.h"
 #include "DOMImplementation.h"
-#include "Document.h"
-#include "Settings.h"
-#include "Plugin.h"
+#include "DOMWindow.h"
+#include "Element.h"
+#include "FrameView.h"
+#include "FrameLoadRequest.h"
 #include "FramePrivate.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
+#include "HitTestRequest.h"
 #include "HTMLDocument.h"
-#include "ResourceHandle.h"
-#include "ResourceHandleInternal.h"
+#include "KeyboardCodes.h"
+#include "MouseEventWithHitTestResults.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
-#include "MouseEventWithHitTestResults.h"
+#include "Plugin.h"
+#include "RenderObject.h"
+#include "RenderWidget.h"
+#include "RenderLayer.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleInternal.h"
 #include "SelectionController.h"
-#include "TypingCommand.h"
+#include "Settings.h"
 #include "SSLKeyGenerator.h"
-#include "KeyboardCodes.h"
-#include "FrameLoadRequest.h"
+#include "TypingCommand.h"
 #include <gdk/gdk.h>
-
 
 // This function loads resources from WebKit
 // This does not belong here and I'm not sure where
@@ -151,13 +152,13 @@ static void doScroll(const RenderObject* r, float deltaX, float deltaY)
     if (!r->layer())
         return;
 
-    int x = r->layer()->scrollXOffset() + deltaX;
-    int y = r->layer()->scrollYOffset() + deltaY;
+    int x = r->layer()->scrollXOffset() + (int)deltaX;
+    int y = r->layer()->scrollYOffset() + (int)deltaY;
     r->layer()->scrollToOffset(x, y, true, true);
 }
 
 FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
-    : Frame(new Page, 0), m_drawable(gdkdrawable)
+    : Frame(new Page(new ChromeClientGdk()), 0, 0), m_drawable(gdkdrawable)
 {
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
@@ -182,8 +183,8 @@ FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
     m_client->setFrame(this);
 }
 
-FrameGdk::FrameGdk(Page* page, Element* element)
-    : Frame(page,element)
+FrameGdk::FrameGdk(Page* page, Element* element, PassRefPtr<EditorClient> editorClient)
+    : Frame(page,element, editorClient)
 {
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
@@ -199,7 +200,7 @@ FrameGdk::~FrameGdk()
 
 void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
 {
-    ResourceRequest request = frameLoadRequest.m_request;
+    ResourceRequest request = frameLoadRequest.resourceRequest();
 
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     if (d->m_submittedFormURL == request.url())
@@ -208,19 +209,28 @@ void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
     d->m_submittedFormURL = request.url();
 
     if (m_client)
-        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
+        m_client->submitForm(request.httpMethod(), request.url(), &request.httpBody());
+
     clearRecordedFormValues();
 }
 
 void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
 {
-    ResourceRequest request = frameLoadRequest.m_request;
+    ResourceRequest request = frameLoadRequest.resourceRequest();
 
     if (!m_client)
         return;
 
     m_client->openURL(request.url());
 }
+
+#if 0
+void FrameGdk::openURL(const KURL& url)
+{
+    ASSERT(m_client);
+    m_client->openURL(url);
+}
+#endif
 
 String FrameGdk::userAgent() const
 {
@@ -261,9 +271,11 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             if (wheelEvent.isAccepted()) {
                 return;
             }
-            RenderObject::NodeInfo nodeInfo(true, true);
-            renderer()->layer()->hitTest(nodeInfo, wheelEvent.pos());
-            Node* node = nodeInfo.innerNode();
+
+            HitTestRequest hitTestRequest(true, true);
+            HitTestResult hitTestResult(wheelEvent.pos());
+            renderer()->layer()->hitTest(hitTestRequest, hitTestResult);
+            Node* node = hitTestResult.innerNode();
             if (!node)
                 return;
             //Default to scrolling the page

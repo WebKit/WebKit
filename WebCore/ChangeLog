@@ -1,3 +1,46 @@
+2006-11-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Linux\Gdk build fixes.
+
+        * loader/icon/IconDatabase.cpp:
+        * loader/icon/SQLStatement.h:
+        * platform/gdk/ChromeClientGdk.h: Added.
+        (WebCore::ChromeClientGdk::~ChromeClientGdk):
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::pointerCursor):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::doScroll):
+        (WebCore::FrameGdk::FrameGdk):
+        (WebCore::FrameGdk::submitForm):
+        (WebCore::FrameGdk::urlSelected):
+        (WebCore::FrameGdk::openURL):
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/FrameGdk.h:
+        (WebCore::FrameGdk::client):
+        * platform/gdk/RenderPopupMenuGdk.cpp:
+        (WebCore::PopupMenu::updateFromElement):
+        * platform/gdk/ScreenGdk.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Slider::focusPolicy):
+        (WebCore::ServeSynchronousRequest):
+        (FrameGdk::goBackOrForward):
+        (FrameGdk::getHistoryLength):
+        (FrameGdk::historyURL):
+        (ChromeClientGdk::canRunModal):
+        (ChromeClientGdk::runModal):
+        (WebCore::systemBeep):
+        (WebCore::CachedResource::setPlatformResponse):
+        (Path::transform):
+        (ResourceLoader::loadsBlocked):
+        (IconLoader::notifyIconChanged):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::remove):
+        (WebCore::ResourceHandleManager::add):
+
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         build fix.

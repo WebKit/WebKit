@@ -28,7 +28,7 @@ using namespace WebCore;
 class LauncherFrameGdk : public FrameGdk
 {
 public:
-    LauncherFrameGdk(Page* page, Element* element) : FrameGdk(page, element), m_exitAfterLoading(false) {}
+    LauncherFrameGdk(Page* page, Element* element, PassRefPtr<EditorClient> editorClient) : FrameGdk(page, element, editorClient), m_exitAfterLoading(false) {}
     LauncherFrameGdk(GdkDrawable* drawable) : FrameGdk(drawable), m_exitAfterLoading(false) {}
     virtual void handledOnloadEvents();
     void setExitAfterLoading(bool exitAfterLoading) { m_exitAfterLoading = exitAfterLoading; }
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     frame->setExitAfterLoading(exitAfterLoading);
     if (url) {
         printf("OPENING URL == %s \n", url);
-        frame->openURL(url);
+        frame->client()->openURL(url);
     } else {
 #if 0
         char *pg = " <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ";

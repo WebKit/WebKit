@@ -100,4 +100,4 @@ private:
 
 } // namespace WebCore
 
-#endif SQLStatement_H
+#endif // SQLStatement_H

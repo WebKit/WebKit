@@ -63,7 +63,7 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
     ResourceHandle* job = static_cast<ResourceHandle*>(obj);
     ResourceHandleInternal* d = job->getInternal();
     int totalSize = size * nmemb;
-    d->client->didReceiveData(job, static_cast<char*>(ptr), totalSize);
+    d->m_client->didReceiveData(job, static_cast<char*>(ptr), totalSize);
     return totalSize;
 }
 
@@ -86,8 +86,8 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             CURLcode res = curl_easy_perform(d->m_handle);
             if (res != CURLE_OK)
                 printf("Error WITH JOB %d\n", res);
-            d->client->receivedAllData(job, 0);
-            d->client->didFinishLoading(job);
+            d->m_client->receivedAllData(job, 0);
+            d->m_client->didFinishLoading(job);
             curl_easy_cleanup(d->m_handle);
             d->m_handle = 0;
         }
@@ -169,8 +169,8 @@ void ResourceHandleManager::remove(ResourceHandle* job)
         jobs->remove(job);
     if (jobs->isEmpty())
         m_downloadTimer.stop();
-    d->client->receivedAllData(job, 0);
-    d->client->didFinishLoading(job);
+    d->m_client->receivedAllData(job, 0);
+    d->m_client->didFinishLoading(job);
     if (d->m_handle) {
         curl_multi_remove_handle(curlMultiHandle, d->m_handle);
         curl_easy_cleanup(d->m_handle);
@@ -182,7 +182,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
 {
     bool startTimer = jobs->isEmpty();
     ResourceHandleInternal* d = job->getInternal();
-    DeprecatedString url = d->URL.url();
+    DeprecatedString url = job->url().url();
     d->m_handle = curl_easy_init();
     curl_easy_setopt(d->m_handle, CURLOPT_PRIVATE, job);
     curl_easy_setopt(d->m_handle, CURLOPT_ERRORBUFFER, error_buffer);
@@ -203,7 +203,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
         // don't call perform, because events must be async
         // timeout will occur and do curl_multi_perform
         if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
-            printf("Error %d starting job %s\n", ret, d->URL.url().ascii());
+            printf("Error %d starting job %s\n", ret, job->url().url().ascii());
             job->setError(1);
             startTimer =false;
         } else
