@@ -1,5 +1,10 @@
 2006-11-07  Darin Adler  <darin@apple.com>
 
+        * loader/icon/IconLoader.cpp: (WebCore::IconLoader::didReceiveResponse):
+        Comment grammar fix.
+
+2006-11-07  Darin Adler  <darin@apple.com>
+
         Rolled out change for <rdar://problem/4820814>.
 
         Beth's planning on landing a new change for it soon, but in the mean time

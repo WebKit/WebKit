@@ -97,7 +97,7 @@ void IconLoader::stopLoading()
 void IconLoader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
     // If we got a status code indicating an invalid response, then lets
-    // ignore the data and do not try to decode the error page as an icon.
+    // ignore the data and not try to decode the error page as an icon.
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
         KURL iconURL = handle->url();
