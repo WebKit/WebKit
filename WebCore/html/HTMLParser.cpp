@@ -305,16 +305,6 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
     if (n->isTextNode()) {
         if (current->hasTagName(selectTag))
             return false;
-    } else if (n->isCommentNode() && !head) { 
-        head = new HTMLHeadElement(document);
-        e = head;
-        insertNode(e);
-        if (head) {
-            head->addChild(n);
-            if (!n->attached() && !m_fragment)
-                n->attach();
-        }
-        return true;
     } else if (n->isHTMLElement()) {
         HTMLElement* h = static_cast<HTMLElement*>(n);
         if (h->hasLocalName(trTag) || h->hasLocalName(thTag) || h->hasLocalName(tdTag)) {

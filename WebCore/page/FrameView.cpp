@@ -595,11 +595,6 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
 
-    if (!mev.targetNode()) {
-        invalidateClick();
-        return;
-    }
-
     Frame* subframe = subframeForTargetNode(mev.targetNode());
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         invalidateClick();

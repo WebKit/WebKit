@@ -1,3 +1,10 @@
+2006-11-07  Darin Adler  <darin@apple.com>
+
+        Rolled out change for <rdar://problem/4820814>.
+
+        Beth's planning on landing a new change for it soon, but in the mean time
+        we need layout tests succeeding again.
+
 2006-11-07  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
