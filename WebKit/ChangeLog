@@ -1,3 +1,13 @@
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        Accidentally rolled out this change when removing the WebPageBridge. Now
+        putting it back.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2006-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej, Darin, Anders.
