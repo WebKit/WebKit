@@ -1,3 +1,13 @@
+2006-11-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sarge
+
+        <rdar://problem/4822911> - ASSERTION was a little overzealous.  
+        Toned it down a bit.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):  Toned down assertion
+
 2006-11-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.
