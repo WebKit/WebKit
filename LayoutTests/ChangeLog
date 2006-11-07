@@ -1,3 +1,18 @@
+2006-11-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/4820814> A crash occurs at 
+        WebCore::HitTestResult::spellingToolTip() when mousing down on 
+        iframe at www.macsurfer.com
+
+        * fast/frames/onlyCommentInIFrame-expected.checksum: Added.
+        * fast/frames/onlyCommentInIFrame-expected.png: Added.
+        * fast/frames/onlyCommentInIFrame-expected.txt: Added.
+        * fast/frames/onlyCommentInIFrame.html: Added.
+        * fast/frames/resources/comment.html: Added.
+        * fast/frames/resources/commentX.xhtml: Added.
+
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         New results. The originals were incorrect.

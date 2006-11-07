@@ -126,7 +126,7 @@ Tokenizer *HTMLDocument::createTokenizer()
 
 bool HTMLDocument::childAllowed( Node *newChild )
 {
-    return newChild->hasTagName(htmlTag) || newChild->isCommentNode();
+    return newChild->hasTagName(htmlTag);
 }
 
 PassRefPtr<Element> HTMLDocument::createElement(const String &name, ExceptionCode& ec)

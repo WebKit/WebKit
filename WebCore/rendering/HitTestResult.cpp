@@ -129,11 +129,14 @@ String HitTestResult::spellingToolTip() const
 {
     // Return the tool tip string associated with this point, if any. Only markers associated with bad grammar
     // currently supply strings, but maybe someday markers associated with misspelled words will also.
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markerContainingPoint(m_point, DocumentMarker::Grammar);
-    if (marker)
-        return marker->description;
+    if (!m_innerNonSharedNode)
+        return String();
     
-    return String();
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markerContainingPoint(m_point, DocumentMarker::Grammar);
+    if (!marker)
+        return String();
+    
+    return marker->description;
 }
 
 String HitTestResult::title() const

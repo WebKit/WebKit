@@ -1,3 +1,31 @@
+2006-11-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4820814> A crash occurs at 
+        WebCore::HitTestResult::spellingToolTip() when mousing down on 
+        iframe at www.macsurfer.com
+
+        The bug here is that the source of the iframe is only a comment, 
+        and we were not properly constructing the frame because it was 
+        sort-of empty but not.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::childAllowed): newChild is NOT allowed if 
+        it is a comment node.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): if n is a comment node and 
+        there is no head, we create a head, insert in the document, and add 
+        the comment node as a child. This is what Firefox does too. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent): Safe-guard for the 
+        fix. It is possible to get a mouse event without a target node, so 
+        we null check it. (Of course, in the case of this bug, it should 
+        not have been null, but it is a good thing to check for anyway.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip): Null-check 
+        m_innerNonSharedNode.
+
 2006-11-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
