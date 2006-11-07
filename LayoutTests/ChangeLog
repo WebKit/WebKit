@@ -1,3 +1,11 @@
+2006-11-07  David Harrison  <harrison@apple.com>
+
+        Updated.
+        
+        * editing/pasteboard/4076267-2-expected.checksum:
+        * editing/pasteboard/4076267-2-expected.png:
+        * editing/pasteboard/4076267-2-expected.txt:
+
 2006-11-07  Darin Adler  <darin@apple.com>
 
         Rolled out change for <rdar://problem/4820814>.
