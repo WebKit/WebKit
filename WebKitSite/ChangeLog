@@ -1,3 +1,10 @@
+2006-11-07  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        * projects/javascript/index.html: Update link to non-existent JavaScript Bugzilla
+        component to the correct JavaScriptCore.
+
 2006-11-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.
