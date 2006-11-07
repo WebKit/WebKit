@@ -1,3 +1,19 @@
+2006-11-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Beth.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11505
+        REGRESSION: Null pointer deref in HitTestResult::spellingToolTip() (assertion failure in Node::document)
+
+        The null check was added as part for the fix for <rdar://problem/4820814>,
+        however the test that was committed with the fix avoids the case of a null
+        m_innerNonSharedNode, which this test covers.
+
+        * fast/css-generated-content/spellingToolTip-assert-expected.checksum: Added.
+        * fast/css-generated-content/spellingToolTip-assert-expected.png: Added.
+        * fast/css-generated-content/spellingToolTip-assert-expected.txt: Added.
+        * fast/css-generated-content/spellingToolTip-assert.html: Added.
+
 2006-11-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

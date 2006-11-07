@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 121x18
+          text run at (0,0) width 121: "Regression test for "
+        RenderInline {I} at (0,0) size 659x36
+          RenderInline {A} at (0,0) size 301x18 [color=#0000EE]
+            RenderText {#text} at (121,0) size 301x18
+              text run at (121,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11505"
+          RenderText {#text} at (422,0) size 659x36
+            text run at (422,0) width 4: " "
+            text run at (426,0) width 233: "REGRESSION: Null pointer deref in"
+            text run at (0,18) width 446: "HitTestResult::spellingToolTip() (assertion failure in Node::document)"
+        RenderText {#text} at (446,18) size 4x18
+          text run at (446,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 175x18
+          text run at (0,0) width 175: "No assert means test PASS."
+layer at (0,100) size 60x60
+  RenderBlock (positioned) at (0,100) size 60x60 [border: (5px solid #000000)]
+    RenderText at (0,0) size 0x0
