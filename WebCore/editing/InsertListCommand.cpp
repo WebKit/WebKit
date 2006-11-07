@@ -87,11 +87,24 @@ void InsertListCommand::doApply()
 {
     if (endingSelection().isNone())
         return;
-
-    if (endingSelection().isRange() && modifyRange())
-        return;
     
     if (!endingSelection().rootEditableElement())
+        return;
+    
+    VisiblePosition visibleEnd = endingSelection().visibleEnd();
+    VisiblePosition visibleStart = endingSelection().visibleStart();
+    // When a selection ends at the start of a paragraph, we rarely paint 
+    // the selection gap before that paragraph, because there often is no gap.  
+    // In a case like this, it's not obvious to the user that the selection 
+    // ends "inside" that paragraph, so it would be confusing if InsertUn{Ordered}List 
+    // operated on that paragraph.
+    // FIXME: We paint the gap before some paragraphs that are indented with left 
+    // margin/padding, but not others.  We should make the gap painting more consistent and 
+    // then use a left margin/padding rule here.
+    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
+        setEndingSelection(Selection(visibleStart, visibleEnd.previous(true)));
+
+    if (endingSelection().isRange() && modifyRange())
         return;
     
     Node* selectionNode = endingSelection().start().node();

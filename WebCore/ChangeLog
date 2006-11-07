@@ -1,3 +1,25 @@
+2006-11-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4641880>
+        Setting bullets to existing text grabs subsequent paragraph
+        
+        When a selection ends at the start of a paragraph, we rarely paint 
+        the selection gap before that paragraph, because there often is no gap.  
+        In a case like this, it's not obvious to the user that the selection 
+        ends "inside" that paragraph, so it would be confusing if 
+        InsertUn{Ordered}List and Indent/Outdent operated on that paragraph.
+        
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply): Moved the check for editability of
+        the selection to a more appropriate place.  Change the endingSelection
+        if it ends at the start of a paragraph.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::doApply): Ditto.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Ditto.
+
 2006-11-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sarge
