@@ -61,6 +61,7 @@
 #include "DocumentType.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
@@ -87,8 +88,8 @@ HTMLDocument::~HTMLDocument()
 
 String HTMLDocument::lastModified() const
 {
-    if ( frame() )
-        return frame()->lastModified();
+    if (frame())
+        return frame()->loader()->lastModified();
     return String();
 }
 

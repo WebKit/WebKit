@@ -34,6 +34,7 @@
 #include "DocumentFragment.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLViewSourceDocument.h"
 #include "HTMLElement.h"
@@ -497,7 +498,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
 #endif
 
     m_state = state;
-    m_doc->frame()->executeScript(url,baseLine,0,str);
+    m_doc->frame()->loader()->executeScript(url, baseLine, 0, str);
     state = m_state;
 
     state.setAllowYield(true);
@@ -1159,7 +1160,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().domString().stripWhiteSpace();
                     if (scriptSrcCharset.isEmpty())
-                        scriptSrcCharset = m_doc->frame()->encoding();
+                        scriptSrcCharset = m_doc->frame()->loader()->encoding();
                     /* Check type before language, since language is deprecated */
                     if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
                         foundTypeAttribute = true;
@@ -1364,7 +1365,7 @@ bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 
     State state = m_state;
 
-    while (!src.isEmpty() && (!frame || !frame->isScheduledLocationChangePending())) {
+    while (!src.isEmpty() && (!frame || !frame->loader()->isScheduledLocationChangePending())) {
         if (!continueProcessing(processedCount, startTime, state))
             break;
 
@@ -1494,7 +1495,7 @@ void HTMLTokenizer::stopParsing()
     // The part needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
     if (!m_fragment && m_doc->frame())
-        m_doc->frame()->tokenizerProcessedData();
+        m_doc->frame()->loader()->tokenizerProcessedData();
 }
 
 bool HTMLTokenizer::processingData() const
@@ -1523,7 +1524,7 @@ void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
   
     // If we called end() during the write,  we need to let WebKit know that we're done processing the data.
     if (didCallEnd && frame)
-        frame->tokenizerProcessedData();
+        frame->loader()->tokenizerProcessedData();
 }
 
 void HTMLTokenizer::end()

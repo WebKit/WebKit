@@ -1115,7 +1115,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     // Workaround for bug where trailing \n is included in the result of textContent.
     // The assert macro above may also be simplified to:  value == constrainValue(value)
-    // http://bugzilla.opendarwin.org/show_bug.cgi?id=9661
+    // http://bugs.webkit.org/show_bug.cgi?id=9661
     if (value == "\n")
         m_value = "";
     else

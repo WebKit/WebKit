@@ -35,6 +35,7 @@
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "LoaderFunctions.h"
 #include "loader.h"
 
@@ -172,7 +173,7 @@ void DocLoader::setLoadInProgress(bool load)
 {
     m_loadInProgress = load;
     if (!load)
-        m_frame->loadDone();
+        m_frame->loader()->loadDone();
 }
 
 }

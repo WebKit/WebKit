@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSEvent.h"
@@ -281,7 +282,7 @@ void JSLazyEventListener::parseCode() const
         JSObject* constr = interpreter->builtinFunction();
         List args;
 
-        UString sourceURL(frame->url().url());
+        UString sourceURL(frame->loader()->url().url());
         args.append(eventParameterName());
         args.append(jsString(code));
         listener = constr->construct(exec, args, m_functionName, sourceURL, lineNumber); // ### is globalExec ok ?

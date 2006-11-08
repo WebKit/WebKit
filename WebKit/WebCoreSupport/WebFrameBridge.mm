@@ -581,7 +581,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                     loadManually:(BOOL)loadManually
 {
     bool hideReferrer;
-    if (!m_frame->loader()->canLoad(URL, m_frame->referrer(), hideReferrer))
+    if (!m_frame->loader()->canLoad(URL, m_frame->loader()->outgoingReferrer(), hideReferrer))
         return nil;
 
     ASSERT([attributeNames count] == [attributeValues count]);

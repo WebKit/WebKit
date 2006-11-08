@@ -146,7 +146,6 @@ typedef enum {
 - (NSURL *)baseURL;
 
 - (void)installInFrame:(NSView *)view;
-- (void)removeFromFrame;
 
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity;
 
@@ -302,8 +301,6 @@ typedef enum {
 - (BOOL)canProvideDocumentSource;
 - (BOOL)canSaveAsWebArchive;
 
-- (NSURL*)originalRequestURL;
-- (void)frameDetached;
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
 
 @end

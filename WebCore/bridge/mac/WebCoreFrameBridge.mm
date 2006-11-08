@@ -372,7 +372,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)close
 {
-    [self removeFromFrame];
     [self clearFrame];
     _closed = YES;
 }
@@ -387,7 +386,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // has been created. 
     if (doc) {
         doc->setShouldCreateRenderers([self shouldCreateRenderers]);
-        m_frame->addData((const char *)[data bytes], [data length]);
+        m_frame->loader()->addData((const char *)[data bytes], [data length]);
     }
 }
 
@@ -439,7 +438,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
 {
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
-    [self removeFromFrame];
+    if (m_frame)
+        m_frame->setView(0);
 
     FrameView* frameView = new FrameView(m_frame);
     m_frame->setView(frameView);
@@ -504,11 +504,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
-    m_frame->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
+    if (m_frame->view())
+        m_frame->view()->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
     Document *doc = m_frame->document();
     if (doc)
         doc->setPrinting(deviceType == WebCoreDevicePrinter);
-    return m_frame->reparseConfiguration();
+    m_frame->reparseConfiguration();
 }
 
 static BOOL nowPrinting(WebCoreFrameBridge *self)
@@ -656,12 +657,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
         return nil;
     }
     return [self copyRenderNode:renderer copier:copier];
-}
-
-- (void)removeFromFrame
-{
-    if (m_frame)
-        m_frame->setView(0);
 }
 
 - (void)installInFrame:(NSView *)view
@@ -893,8 +888,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
-    m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, string, forceUserGesture);
+    m_frame->loader()->createEmptyDocument();
+    JSValue* result = m_frame->loader()->executeScript(0, string, forceUserGesture);
     if (!result || !result->isString())
         return 0;
     JSLock lock;
@@ -903,8 +898,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
 {
-    m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, string, true);
+    m_frame->loader()->createEmptyDocument();
+    JSValue* result = m_frame->loader()->executeScript(0, string, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
@@ -951,7 +946,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSURL *)baseURL
 {
-    return m_frame->completeURL(m_frame->document()->baseURL()).getNSURL();
+    return m_frame->loader()->completeURL(m_frame->document()->baseURL()).getNSURL();
 }
 
 - (NSString *)stringWithData:(NSData *)data
@@ -1587,7 +1582,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     if (m_frame) {
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
-            ClipboardAccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
+            ClipboardAccessPolicy policy = m_frame->loader()->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
@@ -1625,7 +1620,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            ClipboardAccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
+            ClipboardAccessPolicy policy = m_frame->loader()->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);            
             v->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
@@ -1786,7 +1781,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)canProvideDocumentSource
 {
-    String mimeType = m_frame->responseMIMEType();
+    String mimeType = m_frame->loader()->responseMIMEType();
     
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
         Image::supportsType(mimeType) ||
@@ -1803,17 +1798,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [self canProvideDocumentSource];
 }
 
-- (NSURL*)originalRequestURL
-{
-    return [m_frame->loader()->activeDocumentLoader()->initialRequest() URL];
-}
-
-- (void)frameDetached
-{
-    m_frame->loader()->stopLoading();
-    m_frame->loader()->detachFromParent();
-}
-
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
@@ -1823,7 +1807,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     bool userChosen = !encoding.isNull();
     if (encoding.isNull())
         encoding = textEncodingName;
-    m_frame->setEncoding(encoding, userChosen);
+    m_frame->loader()->setEncoding(encoding, userChosen);
     [self addData:data];
 }
 

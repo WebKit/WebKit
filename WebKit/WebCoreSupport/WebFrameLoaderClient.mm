@@ -969,7 +969,7 @@ void WebFrameLoaderClient::provisionalLoadStarted()
             }
         } else
             // Put the document into a null state, so it can be restored correctly.
-            core(m_webFrame.get())->clear();
+            core(m_webFrame.get())->loader()->clear();
     }
 }
 

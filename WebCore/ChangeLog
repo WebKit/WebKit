@@ -1,3 +1,386 @@
+2006-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - moved loader code from Frame/FrameMac to FrameLoader
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::putValueProperty):
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Screen::Screen):
+        (KJS::createNewWindow):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::execute):
+        (KJS::Location::getValueProperty):
+        (KJS::Location::put):
+        (KJS::Location::toString):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::History::getValueProperty):
+        (KJS::HistoryFunc::callAsFunction):
+        * bindings/objc/DOM.mm:
+        (+[DOMNode _nodeWith:WebCore::]):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::~FrameMac):
+        (WebCore::FrameMac::setView):
+        (WebCore::FrameMac::setStatusBarText):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge close]):
+        (-[WebCoreFrameBridge addData:]):
+        (-[WebCoreFrameBridge createFrameViewWithNSView:marginWidth:marginHeight:]):
+        (-[WebCoreFrameBridge reapplyStylesForDeviceType:]):
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]):
+        (-[WebCoreFrameBridge baseURL]):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreFrameBridge canProvideDocumentSource]):
+        (-[WebCoreFrameBridge receivedData:textEncodingName:]):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseContent):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::readyState):
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::open):
+        (WebCore::Document::close):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::referrer):
+        (WebCore::Document::finishedParsing):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::ignorableWhitespaceHandler):
+        (WebCore::XMLTokenizer::notifyFinished):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::process):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::lastModified):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+        (WebCore::HTMLFrameElementBase::openURL):
+        (WebCore::HTMLFrameElementBase::willRemove):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        * html/HTMLPreElement.idl:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::stopParsing):
+        (WebCore::HTMLTokenizer::timerFired):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::prepareFilter):
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::setLoadInProgress):
+        * loader/FrameLoader.cpp:
+        (WebCore::FormSubmission::FormSubmission):
+        (WebCore::ScheduledRedirection::):
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+        (WebCore::cancelAll):
+        (WebCore::getString):
+        (WebCore::isBackForwardLoadType):
+        (WebCore::numRequests):
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::submitFormAgain):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::stop):
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::cancelRedirection):
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::replaceContentsWithScriptResult):
+        (WebCore::FrameLoader::executeScript):
+        (WebCore::FrameLoader::cancelAndClear):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::responseMIMEType):
+        (WebCore::FrameLoader::setResponseMIMEType):
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::end):
+        (WebCore::FrameLoader::endIfNotLoading):
+        (WebCore::FrameLoader::startIconLoader):
+        (WebCore::FrameLoader::commitIconURLToIconDatabase):
+        (WebCore::FrameLoader::gotoAnchor):
+        (WebCore::FrameLoader::finishedParsing):
+        (WebCore::FrameLoader::loadDone):
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::checkEmitLoadEvent):
+        (WebCore::FrameLoader::baseURL):
+        (WebCore::FrameLoader::baseTarget):
+        (WebCore::FrameLoader::completeURL):
+        (WebCore::FrameLoader::scheduleRedirection):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::FrameLoader::isScheduledLocationChangePending):
+        (WebCore::FrameLoader::scheduleHistoryNavigation):
+        (WebCore::FrameLoader::redirectionTimerFired):
+        (WebCore::FrameLoader::encoding):
+        (WebCore::FrameLoader::requestObject):
+        (WebCore::FrameLoader::shouldUsePlugin):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::clearRecordedFormValues):
+        (WebCore::FrameLoader::recordFormValue):
+        (WebCore::FrameLoader::parentCompleted):
+        (WebCore::FrameLoader::outgoingReferrer):
+        (WebCore::FrameLoader::lastModified):
+        (WebCore::FrameLoader::opener):
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::FrameLoader::openedByJavaScript):
+        (WebCore::FrameLoader::setOpenedByJavaScript):
+        (WebCore::FrameLoader::handleFallbackContent):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::userGestureHint):
+        (WebCore::FrameLoader::didNotOpenURL):
+        (WebCore::FrameLoader::resetMultipleFormSubmissionProtection):
+        (WebCore::FrameLoader::setEncoding):
+        (WebCore::FrameLoader::addData):
+        (WebCore::FrameLoader::canCachePage):
+        (WebCore::FrameLoader::updatePolicyBaseURL):
+        (WebCore::FrameLoader::setPolicyBaseURL):
+        (WebCore::FrameLoader::scrollToAnchor):
+        (WebCore::FrameLoader::isComplete):
+        (WebCore::FrameLoader::isLoadingMainResource):
+        (WebCore::FrameLoader::url):
+        (WebCore::FrameLoader::startRedirectionTimer):
+        (WebCore::FrameLoader::stopRedirectionTimer):
+        (WebCore::FrameLoader::updateBaseURLForEmptyDocument):
+        (WebCore::FrameLoader::completed):
+        (WebCore::FrameLoader::started):
+        (WebCore::FrameLoader::containsPlugins):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::setupForReplaceByMIMEType):
+        (WebCore::FrameLoader::finalSetupForReplace):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::canTarget):
+        (WebCore::FrameLoader::stopLoadingPlugIns):
+        (WebCore::FrameLoader::stopLoadingSubresources):
+        (WebCore::FrameLoader::stopLoadingSubframes):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::cancelPendingArchiveLoad):
+        (WebCore::FrameLoader::activeDocumentLoader):
+        (WebCore::FrameLoader::addPlugInStreamLoader):
+        (WebCore::FrameLoader::removePlugInStreamLoader):
+        (WebCore::FrameLoader::hasMainResourceLoader):
+        (WebCore::FrameLoader::isLoadingSubresources):
+        (WebCore::FrameLoader::isLoadingPlugIns):
+        (WebCore::FrameLoader::isLoading):
+        (WebCore::FrameLoader::addSubresourceLoader):
+        (WebCore::FrameLoader::removeSubresourceLoader):
+        (WebCore::FrameLoader::releaseMainResourceLoader):
+        (WebCore::FrameLoader::setDocumentLoader):
+        (WebCore::FrameLoader::documentLoader):
+        (WebCore::FrameLoader::setPolicyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        (WebCore::FrameLoader::setProvisionalDocumentLoader):
+        (WebCore::FrameLoader::state):
+        (WebCore::FrameLoader::timeOfLastCompletedLoad):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::markLoadComplete):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::privateBrowsingEnabled):
+        (WebCore::FrameLoader::clientRedirectCancelledOrFinished):
+        (WebCore::FrameLoader::clientRedirected):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::closeOldDataSources):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::isStopping):
+        (WebCore::FrameLoader::finishedLoading):
+        (WebCore::FrameLoader::URL):
+        (WebCore::FrameLoader::isArchiveLoadPending):
+        (WebCore::FrameLoader::isHostedByObjectElement):
+        (WebCore::FrameLoader::isLoadingMainFrame):
+        (WebCore::FrameLoader::canShowMIMEType):
+        (WebCore::FrameLoader::representationExistsForURLScheme):
+        (WebCore::FrameLoader::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoader::cancelContentPolicyCheck):
+        (WebCore::FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        (WebCore::FrameLoader::isReplacing):
+        (WebCore::FrameLoader::setReplacing):
+        (WebCore::FrameLoader::revertToProvisional):
+        (WebCore::FrameLoader::subframeIsLoading):
+        (WebCore::FrameLoader::willChangeTitle):
+        (WebCore::FrameLoader::loadType):
+        (WebCore::FrameLoader::stopPolicyCheck):
+        (WebCore::FrameLoader::continueAfterContentPolicy):
+        (WebCore::FrameLoader::continueAfterWillSubmitForm):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::frameLoadCompleted):
+        (WebCore::FrameLoader::firstLayoutDone):
+        (WebCore::FrameLoader::isQuickRedirectComing):
+        (WebCore::FrameLoader::closeDocument):
+        (WebCore::FrameLoader::detachChildren):
+        (WebCore::FrameLoader::checkLoadComplete):
+        (WebCore::FrameLoader::numPendingOrLoadingRequests):
+        (WebCore::FrameLoader::setClient):
+        (WebCore::FrameLoader::client):
+        (WebCore::FrameLoader::userAgent):
+        (WebCore::FrameLoader::createEmptyDocument):
+        (WebCore::FrameLoader::tokenizerProcessedData):
+        (WebCore::FrameLoader::didTellBridgeAboutLoad):
+        (WebCore::FrameLoader::haveToldBridgeAboutLoad):
+        (WebCore::FrameLoader::handledOnloadEvents):
+        (WebCore::FrameLoader::frameDetached):
+        (WebCore::FrameLoader::setTitle):
+        (WebCore::FrameLoaderClient::~FrameLoaderClient):
+        * loader/FrameLoader.h:
+        (WebCore::):
+        * loader/FrameLoaderClient.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure):
+        (WebCore::PluginTokenizer::writeRawData):
+        * loader/ResourceLoader.h:
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::finishLoading):
+        * loader/loader.cpp:
+        (WebCore::Loader::didReceiveResponse):
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoader::objectContentType):
+        (WebCore::nsArray):
+        (WebCore::FrameLoader::createPlugin):
+        (WebCore::FrameLoader::redirectDataToPlugin):
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        (WebCore::FrameLoader::partClearedInBegin):
+        (WebCore::FrameLoader::saveDocumentState):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::overrideMediaType):
+        (WebCore::FrameLoader::mainResourceData):
+        (WebCore::FrameLoader::canGoBackOrForward):
+        (WebCore::FrameLoader::originalRequestURL):
+        (WebCore::FrameLoader::getHistoryLength):
+        (WebCore::FrameLoader::goBackOrForward):
+        (WebCore::FrameLoader::historyURL):
+        (WebCore::FrameLoader::didFinishLoad):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::CheckCacheObjectStatus):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::cancel):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::create):
+        * loader/qt/FrameLoaderQt.cpp: Added.
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::setTitle):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoader::objectContentType):
+        (WebCore::FrameLoader::createPlugin):
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        (WebCore::FrameLoader::originalRequestURL):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::document):
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::reparseConfiguration):
+        (WebCore::Frame::shouldDragAutoNode):
+        (WebCore::Frame::prepareForUserAction):
+        (WebCore::FramePrivate::FramePrivate):
+        (WebCore::FramePrivate::~FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::mediaType):
+        * page/FrameView.h:
+        * page/PageState.cpp:
+        (WebCore::PageState::PageState):
+        (WebCore::PageState::restoreJavaScriptState):
+        * platform/mac/CookieJar.mm:
+        (WebCore::setCookies):
+        * platform/mac/TextCodecMac.cpp:
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache fontWithFamily:traits:size:]):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        * platform/qt/FrameQt.cpp:
+        * platform/qt/FrameQt.h:
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/RenderBlock.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::isURLAllowed):
+        (WebCore::RenderPartObject::updateWidget):
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML):
+
 2006-11-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

@@ -171,7 +171,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         if (sendParentLoadEvents)
             parent = currentTarget->parentNode(); // save the next parent to dispatch too incase dispatching the event changes the tree
         
-        // FIXME: This malloc could be avoided by walking the tree first to check if any listeners are present: http://bugzilla.opendarwin.org/show_bug.cgi?id=10264
+        // FIXME: This malloc could be avoided by walking the tree first to check if any listeners are present: http://bugs.webkit.org/show_bug.cgi?id=10264
         RefPtr<Event> event = new Event(loadEvent, false, false);
         event->setTarget(currentTarget.get());
         ExceptionCode ignored = 0;

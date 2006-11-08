@@ -48,15 +48,6 @@ public:
     FrameQt(Page*, Element*, FrameQtClient*, EditorClient* client = 0);
     virtual ~FrameQt();
 
-    virtual void submitForm(const FrameLoadRequest&, Event*);
-    virtual void urlSelected(const FrameLoadRequest&, Event*);
-
-    virtual void setTitle(const String&);
-
-    virtual ObjectContentType objectContentType(const KURL&, const String& mimeType);
-    virtual Plugin* createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&);
-    virtual Frame* createFrame(const KURL&, const String& name, Element*, const String& referrer);
- 
     virtual void scheduleClose();
 
     virtual void unfocusWindow();
@@ -77,11 +68,7 @@ public:
     virtual bool statusbarVisible();
     virtual bool toolbarVisible();
 
-    virtual void createEmptyDocument();
     virtual Range* markedTextRange() const;
-
-    virtual String incomingReferrer() const;
-    virtual String userAgent() const;
 
     virtual String mimeTypeForFileName(const String&) const;
 
@@ -93,15 +80,11 @@ public:
     virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe = 0);
     virtual bool passWheelEventToChildWidget(Node*);
 
-    virtual String overrideMediaType() const;
-
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     virtual KJS::Bindings::RootObject* bindingRootObject();
     void addPluginRootObject(KJS::Bindings::RootObject*);
-
-    virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
 
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
@@ -116,23 +99,16 @@ public:
     virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
     virtual void respondToChangedContents(const Selection& endingSelection);
     virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const;
-    virtual void partClearedInBegin();
-
-    virtual bool canGoBackOrForward(int distance) const;
-    virtual void handledOnloadEvents();
 
     virtual bool canPaste() const;
     virtual bool canRedo() const;
     virtual bool canUndo() const;
     virtual void print();
     virtual bool shouldInterruptJavaScript();
-    virtual KURL originalRequestURL() const;
 
     bool keyEvent(const PlatformKeyboardEvent& keyEvent);
 
     void setFrameGeometry(const IntRect&);
-
-    virtual void tokenizerProcessedData();
 
     FrameQtClient* client() const;
 

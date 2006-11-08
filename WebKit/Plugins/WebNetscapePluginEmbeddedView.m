@@ -42,6 +42,7 @@
 #import "WebView.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/FrameLoader.h>
 
 @implementation WebNetscapePluginEmbeddedView
 
@@ -100,7 +101,7 @@
     // Check for this and don't start a load in this case.
     if (URL != nil && ![URL _web_isEmpty]) {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-        [request _web_setHTTPReferrer:core([self webFrame])->referrer()];
+        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     } 
 }

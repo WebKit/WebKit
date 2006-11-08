@@ -32,6 +32,7 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLFormCollection.h"
 #include "HTMLImageElement.h"
@@ -198,7 +199,7 @@ bool HTMLFormElement::formData(FormData& result) const
             break;
     if (!encoding.isValid()) {
         if (frame)
-            encoding = frame->encoding();
+            encoding = frame->loader()->encoding();
         else
             encoding = Latin1Encoding();
     }
@@ -347,13 +348,13 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
     HTMLGenericFormElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
-    frame->clearRecordedFormValues();
+    frame->loader()->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElement* current = formElements[i];
         if (current->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(current);
             if (input->isTextField()) {
-                frame->recordFormValue(input->name(), input->value(), this);
+                frame->loader()->recordFormValue(input->name(), input->value(), this);
                 if (input->renderer() && input->inputType() == HTMLInputElement::SEARCH)
                     static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
             }
@@ -375,9 +376,9 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
     FormData postData;
     if (formData(postData)) {
         if (m_post)
-            frame->submitForm("POST", m_url, postData, m_target, enctype(), boundary(), event);
+            frame->loader()->submitForm("POST", m_url, postData, m_target, enctype(), boundary(), event);
         else
-            frame->submitForm("GET", m_url, postData, m_target, String(), String(), event);
+            frame->loader()->submitForm("GET", m_url, postData, m_target, String(), String(), event);
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

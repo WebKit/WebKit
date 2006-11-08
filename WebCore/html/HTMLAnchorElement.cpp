@@ -29,6 +29,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
@@ -208,7 +209,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
         }
 
         if (!evt->defaultPrevented() && document()->frame())
-            document()->frame()->urlSelected(document()->completeURL(url), target, evt);
+            document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt);
 
         evt->setDefaultHandled();
     } else if (m_isLink && isContentEditable()) {

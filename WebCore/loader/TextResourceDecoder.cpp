@@ -481,10 +481,10 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     // We stop scanning when a tag that is not permitted in <head>
     // is seen, rather when </head> is seen, because that more closely
     // matches behavior in other browsers; more details in
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=3590>.
+    // <http://bugs.webkit.org/show_bug.cgi?id=3590>.
     
     // Additionally, we ignore things that looks like tags in <title>; see
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=4560>.
+    // <http://bugs.webkit.org/show_bug.cgi?id=4560>.
     
     bool withinTitle = false;
 

@@ -195,7 +195,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 
     // There are some malformed fonts that will be correctly returned by -fontWithFamily:traits:weight:size: as a match for a particular trait,
     // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 
-    // synthetic bold on top of an already-bold font, as reported in <http://bugzilla.opendarwin.org/show_bug.cgi?id=6146>. To work around this
+    // synthetic bold on top of an already-bold font, as reported in <http://bugs.webkit.org/show_bug.cgi?id=6146>. To work around this
     // problem, if we got an apparent exact match, but the requested traits aren't present in the matched font, we'll try to get a font from 
     // the same family without those traits (to apply the synthetic traits to later).
     NSFontTraitMask nonSyntheticTraits = desiredTraits;

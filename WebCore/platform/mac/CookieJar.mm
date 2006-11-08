@@ -51,7 +51,7 @@ void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookie
 
     NSURL *URL = url.getNSURL();
     
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=6531>, <rdar://4409034>
+    // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
     

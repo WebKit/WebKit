@@ -36,7 +36,7 @@ namespace WebCore {
 
 // Eventually we should implement XSLTException:
 // http://lxr.mozilla.org/seamonkey/source/content/xsl/public/nsIXSLTException.idl
-// http://bugzilla.opendarwin.org/show_bug.cgi?id=5446
+// http://bugs.webkit.org/show_bug.cgi?id=5446
 
 namespace KJS {
 

@@ -116,7 +116,7 @@ public:
     virtual KJS::Bindings::RootObject* bindingRootObject();
 
     void addPluginRootObject(KJS::Bindings::RootObject*);
-    
+
     KJS::Bindings::RootObject* executionContextForDOM();
     
     WebScriptObject* windowScriptObject();
@@ -126,6 +126,9 @@ public:
     void dashboardRegionsChanged();
 
     void willPopupMenu(NSMenu *);
+
+    void cleanupPluginObjects();
+    bool shouldClose();
 
 private:    
     KJS::Bindings::RootObject* _bindingRoot; // The root object used for objects bound outside the context of a plugin.
@@ -152,6 +155,8 @@ public:
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
 
     virtual void print();
+
+    virtual void scheduleClose();
 
 // === to be moved into Editor
 
@@ -297,66 +302,6 @@ private:
     int _activationEventNumber;
     
     static NSEvent* _currentEvent;
-
-// === to be moved into FrameLoader
-
-public:
-    virtual void urlSelected(const FrameLoadRequest&, Event*);
-    virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
-    virtual void submitForm(const FrameLoadRequest&, Event*);
-
-    virtual Plugin* createPlugin(Element*, const KURL&,
-        const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
-
-    virtual void clear(bool clearWindowProperties = true);
-
-    virtual void frameDetached();
-
-    virtual void setTitle(const String&);
-
-    virtual void scheduleClose();
-
-    virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
-    virtual void redirectDataToPlugin(Widget* pluginWidget);
-
-    virtual void saveDocumentState();
-    virtual void restoreDocumentState();
-    
-    bool shouldClose();
-
-    virtual void createEmptyDocument();
-
-    virtual String userAgent() const;
-
-    virtual void tokenizerProcessedData();
-
-    virtual String overrideMediaType() const;
-    
-    void didTellBridgeAboutLoad(const String& URL);
-    bool haveToldBridgeAboutLoad(const String& URL);
-
-    virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
-
-    virtual void partClearedInBegin();
-    
-    virtual void didFirstLayout();
-
-    virtual void handledOnloadEvents();
-
-    virtual KURL originalRequestURL() const;
-
-    virtual bool canGoBackOrForward(int distance) const;
-    virtual void goBackOrForward(int distance);
-    virtual int getHistoryLength();
-    virtual KURL historyURL(int distance);
-
-private:
-    virtual void startRedirectionTimer();
-    virtual void stopRedirectionTimer();
-    virtual void cleanupPluginObjects();
-    virtual bool isLoadTypeReload();
-
-    HashSet<String> urlsBridgeKnowsAbout;
 
 // === to be moved into the Platform directory
 

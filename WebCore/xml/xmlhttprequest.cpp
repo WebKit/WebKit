@@ -155,7 +155,7 @@ Document* XMLHttpRequest::getResponseXML() const
 
     if (!m_createdDocument) {
         if (responseIsXML()) {
-            m_responseXML = m_doc->implementation()->createDocument();
+            m_responseXML = m_doc->implementation()->createDocument(0);
             m_responseXML->open();
             m_responseXML->write(m_responseText);
             m_responseXML->finishParsing();

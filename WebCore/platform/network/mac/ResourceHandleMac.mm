@@ -60,7 +60,7 @@ bool ResourceHandle::start(DocLoader* docLoader)
         return false;
     }
 
-    frame->didTellBridgeAboutLoad(url().url());
+    frame->loader()->didTellBridgeAboutLoad(url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

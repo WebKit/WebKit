@@ -128,8 +128,7 @@ FrameLoader* DocumentLoader::frameLoader() const
 DocumentLoader::~DocumentLoader()
 {
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
-}    
-
+}
 
 void DocumentLoader::setMainResourceData(NSData *data)
 {
@@ -269,7 +268,7 @@ void DocumentLoader::stopLoading()
     // Always attempt to stop the frame because it may still be loading/parsing after the data source
     // is done loading and not stopping it can cause a world leak.
     if (m_committed)
-        m_frame->stopLoading();
+        m_frame->loader()->stopLoading(false);
     
     if (!m_loading)
         return;
@@ -281,7 +280,7 @@ void DocumentLoader::stopLoading()
 
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
-    if (frameLoader->isLoadingMainResource())
+    if (frameLoader->hasMainResourceLoader())
         // Stop the main resource loader and let it send the cancelled message.
         frameLoader->cancelMainResourceLoad();
     else if (frameLoader->isLoadingSubresources())
@@ -318,7 +317,7 @@ void DocumentLoader::finishedLoading()
     m_gotFirstByte = true;   
     commitIfReady();
     frameLoader()->finishedLoadingDocument(this);
-    m_frame->end();
+    m_frame->loader()->end();
 }
 
 void DocumentLoader::setCommitted(bool f)
@@ -378,7 +377,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     }
     
     frameLoader()->finishedLoadingDocument(this);
-    m_frame->end();
+    m_frame->loader()->end();
     
     frameLoader()->setReplacing();
     m_gotFirstByte = false;
@@ -459,7 +458,7 @@ void DocumentLoader::setPrimaryLoadComplete(bool flag)
 {
     m_primaryLoadComplete = flag;
     if (flag) {
-        if (frameLoader()->isLoadingMainResource()) {
+        if (frameLoader()->hasMainResourceLoader()) {
             setMainResourceData(frameLoader()->mainResourceData());
             frameLoader()->releaseMainResourceLoader();
         }

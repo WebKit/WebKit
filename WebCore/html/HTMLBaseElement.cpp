@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "KURL.h"
 #include "csshelper.h"
@@ -78,7 +79,7 @@ void HTMLBaseElement::process()
         return;
 
     if (!m_href.isEmpty() && document()->frame())
-        document()->setBaseURL(KURL(document()->frame()->url(), m_href.deprecatedString()).url());
+        document()->setBaseURL(KURL(document()->frame()->loader()->url(), m_href.deprecatedString()).url());
 
     if (!m_target.isEmpty())
         document()->setBaseTarget(m_target.deprecatedString());

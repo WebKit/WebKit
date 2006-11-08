@@ -1767,7 +1767,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request _web_setHTTPReferrer:core([self webFrame])->referrer()];
+    [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
     return request;
 }
 

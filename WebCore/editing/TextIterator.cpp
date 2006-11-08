@@ -1031,7 +1031,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
 
     TextIterator it(rangeOfContents(scope).get());
     
-    // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugzilla.opendarwin.org/show_bug.cgi?id=6289>.
+    // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (rangeLocation == 0 && rangeLength == 0 && it.atEnd()) {
         int exception = 0;
         textRunRange = it.range();

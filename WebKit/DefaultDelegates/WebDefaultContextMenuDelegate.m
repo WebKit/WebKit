@@ -45,6 +45,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebKit/DOM.h>
@@ -382,7 +383,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     WebView *webView = [webFrame webView];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    NSString *referrer = core(webFrame)->referrer();
+    NSString *referrer = core(webFrame)->loader()->outgoingReferrer();
     if (referrer)
         [request _web_setHTTPReferrer:referrer];
     

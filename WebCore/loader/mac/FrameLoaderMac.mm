@@ -29,12 +29,12 @@
 #import "config.h"
 #import "FrameLoader.h"
 
+#import "BlockExceptions.h"
 #import "Cache.h"
 #import "Chrome.h"
 #import "DOMElementInternal.h"
 #import "Document.h"
 #import "DocumentLoader.h"
-#import "Element.h"
 #import "FloatRect.h"
 #import "FormDataStreamMac.h"
 #import "FormState.h"
@@ -42,24 +42,29 @@
 #import "FrameLoaderClient.h"
 #import "FrameMac.h"
 #import "FramePrivate.h"
-#import "PageState.h"
 #import "FrameTree.h"
+#import "FrameView.h"
+#import "HTMLFormElement.h"
+#import "HTMLFrameElement.h"
 #import "HTMLNames.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
 #import "MainResourceLoader.h"
 #import "NavigationAction.h"
 #import "Page.h"
+#import "PageState.h"
 #import "Plugin.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
+#import "SystemTime.h"
 #import "TextResourceDecoder.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreIconDatabaseBridge.h"
 #import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
+#import "Widget.h"
 #import "WindowFeatures.h"
 #import <kjs/JSLock.h>
 #import <wtf/Assertions.h>
@@ -67,71 +72,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static double storedTimeOfLastCompletedLoad;
-
-static void cancelAll(const ResourceLoaderSet& loaders)
-{
-    const ResourceLoaderSet copy = loaders;
-    ResourceLoaderSet::const_iterator end = copy.end();
-    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
-        (*it)->cancel();
-}
-
-bool isBackForwardLoadType(FrameLoadType type)
-{
-    switch (type) {
-        case FrameLoadTypeStandard:
-        case FrameLoadTypeReload:
-        case FrameLoadTypeReloadAllowingStaleData:
-        case FrameLoadTypeSame:
-        case FrameLoadTypeInternal:
-        case FrameLoadTypeReplace:
-            return false;
-        case FrameLoadTypeBack:
-        case FrameLoadTypeForward:
-        case FrameLoadTypeIndexedBackForward:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-static int numRequests(Document* document)
-{
-    if (document)
-        return cache()->loader()->numRequests(document->docLoader());
-    return 0;
-}
-
-void FrameLoader::prepareForLoadStart()
-{
-    m_client->progressStarted();
-    m_client->dispatchDidStartProvisionalLoad();
-}
-
-void FrameLoader::setupForReplace()
-{
-    setState(FrameStateProvisional);
-    m_provisionalDocumentLoader = m_documentLoader;
-    m_documentLoader = nil;
-    detachChildren();
-}
-
-void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
-{
-    activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
-}
-
-void FrameLoader::finalSetupForReplace(DocumentLoader* loader)
-{
-    m_client->clearUnarchivingState(loader);
-}
-
-void FrameLoader::load(const KURL& URL, Event* event)
-{
-    load(ResourceRequest(URL), true, event, 0, HashMap<String, String>());
-}
 
 void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
     Element* submitForm, const HashMap<String, String>& formValues)
@@ -141,7 +81,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
-        referrer = m_frame->referrer();
+        referrer = outgoingReferrer();
  
     bool hideReferrer;
     if (!canLoad(request.resourceRequest().url().getNSURL(), referrer, hideReferrer))
@@ -210,7 +150,7 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
     if (!isFormSubmission
         && newLoadType != FrameLoadTypeReload
         && newLoadType != FrameLoadTypeSame
-        && !shouldReload(URL, m_frame->url())
+        && !shouldReload(URL, url())
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && !m_frame->isFrameSet()) {
@@ -342,37 +282,6 @@ bool FrameLoader::canLoad(NSURL *URL, const String& referrer, bool& hideReferrer
     return !URLIsFileURL || referrerIsLocalURL;
 }
 
-bool FrameLoader::canTarget(Frame* target) const
-{
-    // This method prevents this exploit:
-    // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
-
-    if (!target)
-        return true;
-
-    // Allow with navigation within the same page/frameset.
-    if (m_frame->page() == target->page())
-        return true;
-
-    String domain;
-    if (Document* document = m_frame->document())
-        domain = document->domain();
-    // Allow if the request is made from a local file.
-    if (domain.isEmpty())
-        return true;
-    
-    Frame* parent = target->tree()->parent();
-    // Allow if target is an entire window.
-    if (!parent)
-        return true;
-    
-    String parentDomain;
-    if (Document* parentDocument = parent->document())
-        domain = parentDocument->domain();
-    // Allow if the domain of the parent of the targeted frame equals this domain.
-    return equalIgnoringCase(parentDomain, domain);
-}
-
 bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)
 {
     ASSERT(!m_mainResourceLoader);
@@ -394,7 +303,7 @@ void FrameLoader::startLoading()
 {
     m_provisionalDocumentLoader->prepareForLoadStart();
 
-    if (isLoadingMainResource())
+    if (m_mainResourceLoader)
         return;
 
     m_client->clearLoadingFromPageCache(m_provisionalDocumentLoader.get());
@@ -406,227 +315,9 @@ void FrameLoader::startLoading()
         m_provisionalDocumentLoader->updateLoading();
 }
 
-void FrameLoader::stopLoadingPlugIns()
-{
-    cancelAll(m_plugInStreamLoaders);
-}
-
-void FrameLoader::stopLoadingSubresources()
-{
-    cancelAll(m_subresourceLoaders);
-}
-
-void FrameLoader::stopLoading(NSError *error)
+void FrameLoader::cancelMainResourceLoad(NSError *error)
 {
     m_mainResourceLoader->cancel(error);
-}
-
-void FrameLoader::stopLoadingSubframes()
-{
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopLoading();
-}
-
-void FrameLoader::stopLoading()
-{
-    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
-    if (m_isStoppingLoad)
-        return;
-
-    m_isStoppingLoad = true;
-
-    stopPolicyCheck();
-
-    stopLoadingSubframes();
-    if (m_provisionalDocumentLoader)
-        m_provisionalDocumentLoader->stopLoading();
-    if (m_documentLoader)
-        m_documentLoader->stopLoading();
-    setProvisionalDocumentLoader(0);
-    m_client->clearArchivedResources();
-
-    m_isStoppingLoad = false;    
-}
-
-void FrameLoader::cancelMainResourceLoad()
-{
-    if (m_mainResourceLoader)
-        m_mainResourceLoader->cancel();
-}
-
-void FrameLoader::cancelPendingArchiveLoad(ResourceLoader* loader)
-{
-    m_client->cancelPendingArchiveLoad(loader);
-}
-
-DocumentLoader* FrameLoader::activeDocumentLoader() const
-{
-    if (m_state == FrameStateProvisional)
-        return m_provisionalDocumentLoader.get();
-    return m_documentLoader.get();
-}
-
-void FrameLoader::addPlugInStreamLoader(ResourceLoader* loader)
-{
-    m_plugInStreamLoaders.add(loader);
-    activeDocumentLoader()->setLoading(true);
-}
-
-void FrameLoader::removePlugInStreamLoader(ResourceLoader* loader)
-{
-    m_plugInStreamLoaders.remove(loader);
-    activeDocumentLoader()->updateLoading();
-}
-
-bool FrameLoader::isLoadingMainResource() const
-{
-    return m_mainResourceLoader;
-}
-
-bool FrameLoader::isLoadingSubresources() const
-{
-    return !m_subresourceLoaders.isEmpty();
-}
-
-bool FrameLoader::isLoadingPlugIns() const
-{
-    return !m_plugInStreamLoaders.isEmpty();
-}
-
-bool FrameLoader::isLoading() const
-{
-    return isLoadingMainResource() || isLoadingSubresources() || isLoadingPlugIns();
-}
-
-void FrameLoader::addSubresourceLoader(ResourceLoader* loader)
-{
-    ASSERT(!m_provisionalDocumentLoader);
-    m_subresourceLoaders.add(loader);
-    activeDocumentLoader()->setLoading(true);
-}
-
-void FrameLoader::removeSubresourceLoader(ResourceLoader* loader)
-{
-    m_subresourceLoaders.remove(loader);
-    activeDocumentLoader()->updateLoading();
-    checkLoadComplete();
-}
-
-NSData *FrameLoader::mainResourceData() const
-{
-    if (!m_mainResourceLoader)
-        return nil;
-    return m_mainResourceLoader->resourceData();
-}
-
-void FrameLoader::releaseMainResourceLoader()
-{
-    m_mainResourceLoader = 0;
-}
-
-void FrameLoader::setDocumentLoader(DocumentLoader* loader)
-{
-    if (!loader && !m_documentLoader)
-        return;
-    
-    ASSERT(loader != m_documentLoader);
-    ASSERT(!loader || loader->frameLoader() == this);
-
-    m_client->prepareForDataSourceReplacement();
-    if (m_documentLoader)
-        m_documentLoader->detachFromFrame();
-
-    m_documentLoader = loader;
-}
-
-DocumentLoader* FrameLoader::documentLoader() const
-{
-    return m_documentLoader.get();
-}
-
-void FrameLoader::setPolicyDocumentLoader(DocumentLoader* loader)
-{
-    if (m_policyDocumentLoader == loader)
-        return;
-
-    ASSERT(m_frame);
-    if (loader)
-        loader->setFrame(m_frame);
-    if (m_policyDocumentLoader
-            && m_policyDocumentLoader != m_provisionalDocumentLoader
-            && m_policyDocumentLoader != m_documentLoader)
-        m_policyDocumentLoader->detachFromFrame();
-
-    m_policyDocumentLoader = loader;
-}
-   
-DocumentLoader* FrameLoader::provisionalDocumentLoader()
-{
-    return m_provisionalDocumentLoader.get();
-}
-
-void FrameLoader::setProvisionalDocumentLoader(DocumentLoader* loader)
-{
-    ASSERT(!loader || !m_provisionalDocumentLoader);
-    ASSERT(!loader || loader->frameLoader() == this);
-
-    if (m_provisionalDocumentLoader && m_provisionalDocumentLoader != m_documentLoader)
-        m_provisionalDocumentLoader->detachFromFrame();
-
-    m_provisionalDocumentLoader = loader;
-}
-
-FrameState FrameLoader::state() const
-{
-    return m_state;
-}
-
-double FrameLoader::timeOfLastCompletedLoad()
-{
-    return storedTimeOfLastCompletedLoad;
-}
-
-void FrameLoader::provisionalLoadStarted()
-{
-    m_firstLayoutDone = false;
-    m_frame->provisionalLoadStarted();
-    m_client->provisionalLoadStarted();
-}
-
-void FrameLoader::setState(FrameState newState)
-{    
-    m_state = newState;
-    
-    if (newState == FrameStateProvisional)
-        provisionalLoadStarted();
-    else if (newState == FrameStateComplete) {
-        frameLoadCompleted();
-        storedTimeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        if (m_documentLoader)
-            m_documentLoader->stopRecordingResponses();
-    }
-}
-
-void FrameLoader::clearProvisionalLoad()
-{
-    setProvisionalDocumentLoader(0);
-    m_client->progressCompleted();
-    setState(FrameStateComplete);
-}
-
-void FrameLoader::markLoadComplete()
-{
-    setState(FrameStateComplete);
-}
-
-void FrameLoader::commitProvisionalLoad()
-{
-    stopLoadingSubresources();
-    stopLoadingPlugIns();
-
-    setDocumentLoader(m_provisionalDocumentLoader.get());
-    setProvisionalDocumentLoader(0);
-    setState(FrameStateCommittedPage);
 }
 
 id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
@@ -679,22 +370,11 @@ void FrameLoader::didReceiveData(ResourceLoader* loader, NSData *data, int lengt
     m_client->dispatchDidReceiveContentLength(activeDocumentLoader(), loader->identifier(), lengthReceived);
 }
 
-void FrameLoader::didFinishLoad(ResourceLoader* loader)
-{    
-    m_client->completeProgress(loader->identifier());
-    m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
-}
-
 void FrameLoader::didFailToLoad(ResourceLoader* loader, NSError *error)
 {
     m_client->completeProgress(loader->identifier());
     if (error)
         m_client->dispatchDidFailLoading(activeDocumentLoader(), loader->identifier(), error);
-}
-
-bool FrameLoader::privateBrowsingEnabled() const
-{
-    return m_client->privateBrowsingEnabled();
 }
 
 NSURLRequest *FrameLoader::originalRequest() const
@@ -712,14 +392,14 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
     if (isComplete) {
         // FIXME: Don't want to do this if an entirely new load is going, so should check
         // that both data sources on the frame are either this or nil.
-        m_frame->stop();
+        stop();
         if (m_client->shouldFallBack(error))
-            m_frame->handleFallbackContent();
+            handleFallbackContent();
     }
     
     if (m_state == FrameStateProvisional) {
         NSURL *failedURL = [m_provisionalDocumentLoader->originalRequestCopy() URL];
-        m_frame->didNotOpenURL(failedURL);
+        didNotOpenURL(failedURL);
 
         // We might have made a page cache item, but now we're bailing out due to an error before we ever
         // transitioned to the new page (before WebFrameState == commit).  The goal here is to restore any state
@@ -740,43 +420,6 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
     
     
     loader->mainReceivedError(error, isComplete);
-}
-
-void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress)
-{
-    // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
-    // the redirect succeeded.  We should either rename this API, or add a new method, like
-    // -webView:didFinishClientRedirectForFrame:
-    m_client->dispatchDidCancelClientRedirect();
-
-    if (!cancelWithLoadInProgress)
-        m_quickRedirectComing = false;
-
-    m_sentRedirectNotification = false;
-}
-
-void FrameLoader::clientRedirected(const KURL& URL, double seconds, double fireDate, bool lockHistory, bool isJavaScriptFormAction)
-{
-    m_client->dispatchWillPerformClientRedirect(URL, seconds, fireDate);
-    
-    // Remember that we sent a redirect notification to the frame load delegate so that when we commit
-    // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
-    m_sentRedirectNotification = true;
-    
-    // If a "quick" redirect comes in an, we set a special mode so we treat the next
-    // load as part of the same navigation. If we don't have a document loader, we have
-    // no "original" load on which to base a redirect, so we treat the redirect as a normal load.
-    m_quickRedirectComing = lockHistory && m_documentLoader && !isJavaScriptFormAction;
-}
-
-bool FrameLoader::shouldReload(const KURL& currentURL, const KURL& destinationURL)
-{
-    // This function implements the rule: "Don't reload if navigating by fragment within
-    // the same URL, but do reload if going to a new URL or to the same URL with no
-    // fragment identifier at all."
-    if (!currentURL.hasRef() && !destinationURL.hasRef())
-        return true;
-    return !equalIgnoringRef(currentURL, destinationURL);
 }
 
 void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument,
@@ -812,7 +455,7 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(NSURLRequest *requ
         m_client->addHistoryItemForFragmentScroll();
     }
     
-    m_frame->scrollToAnchor(URL);
+    scrollToAnchor(URL);
     
     if (!isRedirect)
         // This will clear previousItem from the rest of the frame tree that didn't
@@ -822,75 +465,6 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(NSURLRequest *requ
  
     m_client->dispatchDidChangeLocationWithinPage();
     m_client->didFinishLoad();
-}
-
-void FrameLoader::closeOldDataSources()
-{
-    // FIXME: Is it important for this traversal to be postorder instead of preorder?
-    // If so, add helpers for postorder traversal, and use them. If not, then lets not
-    // use a recursive algorithm here.
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->closeOldDataSources();
-    
-    if (m_documentLoader)
-        m_client->dispatchWillClose();
-
-    m_client->setMainFrameDocumentReady(false); // stop giving out the actual DOMDocument to observers
-}
-
-void FrameLoader::open(PageState& state)
-{
-    ASSERT(m_frame->page()->mainFrame() == m_frame);
-
-    FramePrivate* d = m_frame->d;
-
-    m_frame->cancelRedirection();
-
-    // We still have to close the previous part page.
-    m_frame->closeURL();
-
-    d->m_bComplete = false;
-    
-    // Don't re-emit the load event.
-    d->m_bLoadEventEmitted = true;
-    
-    // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->javaScriptEnabled()) {
-        d->m_kjsStatusBarText = String();
-        d->m_kjsDefaultStatusBarText = String();
-    }
-
-    KURL URL = state.URL();
-
-    if (URL.protocol().startsWith("http") && !URL.host().isEmpty() && URL.path().isEmpty())
-        URL.setPath("/");
-    
-    d->m_url = URL;
-    d->m_workingURL = URL;
-
-    m_frame->started();
-
-    m_frame->clear();
-
-    Document* document = state.document();
-    document->setInPageCache(false);
-
-    d->m_bCleared = false;
-    d->m_bComplete = false;
-    d->m_bLoadEventEmitted = false;
-    d->m_referrer = URL.url();
-    
-    m_frame->setView(document->view());
-    
-    d->m_doc = document;
-    d->m_mousePressNode = state.mousePressNode();
-    d->m_decoder = document->decoder();
-
-    m_frame->updatePolicyBaseURL();
-
-    state.restoreJavaScriptState(m_frame->page());
-
-    m_frame->checkCompleted();
 }
 
 void FrameLoader::opened()
@@ -956,13 +530,13 @@ void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
         if (!URL || urlIsEmpty(URL))
             URL = [NSURL URLWithString:@"about:blank"];    
 
-        m_frame->setResponseMIMEType([response MIMEType]);
-        if (m_frame->didOpenURL(URL)) {
+        m_responseMIMEType = [response MIMEType];
+        if (didOpenURL(URL)) {
             if ([response isKindOfClass:[NSHTTPURLResponse class]])
                 if (NSString *refresh = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Refresh"])
-                    m_frame->addMetaData("http-refresh", refresh);
-            m_frame->addMetaData("modified", [wkGetNSURLResponseLastModifiedDate(response)
-                descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil]);
+                    m_responseRefreshHeader = refresh;
+            m_responseModifiedHeader = [wkGetNSURLResponseLastModifiedDate(response)
+                descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
         }
     }
     opened();
@@ -983,16 +557,6 @@ void FrameLoader::setRequest(NSURLRequest *request)
     activeDocumentLoader()->setRequest(request);
 }
 
-void FrameLoader::handleFallbackContent()
-{
-    m_frame->handleFallbackContent();
-}
-
-bool FrameLoader::isStopping() const
-{
-    return activeDocumentLoader()->isStopping();
-}
-
 void FrameLoader::setResponse(NSURLResponse *response)
 {
     activeDocumentLoader()->setResponse(response);
@@ -1003,20 +567,6 @@ void FrameLoader::mainReceivedError(NSError *error, bool isComplete)
     activeDocumentLoader()->mainReceivedError(error, isComplete);
 }
 
-void FrameLoader::finishedLoading()
-{
-    // Retain because the stop may release the last reference to it.
-    RefPtr<Frame> protect(m_frame);
-
-    RefPtr<DocumentLoader> dl = activeDocumentLoader();
-    dl->finishedLoading();
-    if (dl->mainDocumentError() || !dl->frameLoader())
-        return;
-    dl->setPrimaryLoadComplete(true);
-    m_client->dispatchDidLoadMainResource(dl.get());
-    checkLoadComplete();
-}
-
 void FrameLoader::notifyIconChanged()
 {
     ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
@@ -1024,11 +574,6 @@ void FrameLoader::notifyIconChanged()
         iconForPageURL:urlOriginalDataAsString(activeDocumentLoader()->URL().getNSURL())
         withSize:NSMakeSize(16, 16)];
     m_client->dispatchDidReceiveIcon(icon);
-}
-
-KURL FrameLoader::URL() const
-{
-    return activeDocumentLoader()->URL();
 }
 
 NSError *FrameLoader::cancelledError(NSURLRequest *request) const
@@ -1044,11 +589,6 @@ NSError *FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
 bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
-}
-
-bool FrameLoader::isArchiveLoadPending(ResourceLoader* loader) const
-{
-    return m_client->isArchiveLoadPending(loader);
 }
 
 void FrameLoader::handleUnimplementablePolicy(NSError *error)
@@ -1068,33 +608,6 @@ NSError *FrameLoader::interruptionForPolicyChangeError(NSURLRequest *request)
     return m_client->interruptForPolicyChangeError(request);
 }
 
-bool FrameLoader::isHostedByObjectElement() const
-{
-    Element* owner = m_frame->ownerElement();
-    return owner && owner->hasTagName(objectTag);
-}
-
-bool FrameLoader::isLoadingMainFrame() const
-{
-    Page* page = m_frame->page();
-    return page && m_frame == page->mainFrame();
-}
-
-bool FrameLoader::canShowMIMEType(const String& MIMEType) const
-{
-    return m_client->canShowMIMEType(MIMEType);
-}
-
-bool FrameLoader::representationExistsForURLScheme(const String& URLScheme)
-{
-    return m_client->representationExistsForURLScheme(URLScheme);
-}
-
-String FrameLoader::generatedMIMETypeForURLScheme(const String& URLScheme)
-{
-    return m_client->generatedMIMETypeForURLScheme(URLScheme);
-}
-
 void FrameLoader::checkNavigationPolicy(NSURLRequest *newRequest,
     NavigationPolicyDecisionFunction function, void* argument)
 {
@@ -1106,12 +619,6 @@ void FrameLoader::checkContentPolicy(const String& MIMEType, ContentPolicyDecisi
     m_policyCheck.set(function, argument);
     m_client->dispatchDecidePolicyForMIMEType(&FrameLoader::continueAfterContentPolicy,
         MIMEType, activeDocumentLoader()->request());
-}
-
-void FrameLoader::cancelContentPolicyCheck()
-{
-    m_client->cancelPolicyCheck();
-    m_policyCheck.clear();
 }
 
 bool FrameLoader::shouldReloadToHandleUnreachableURL(NSURLRequest *request)
@@ -1192,34 +699,9 @@ void FrameLoader::reload()
     load(loader.get(), FrameLoadTypeReload, 0);
 }
 
-void FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame()
-{
-    m_client->dispatchDidReceiveServerRedirectForProvisionalLoad();
-}
-
-void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
-{
-    m_client->finishedLoading(loader);
-}
-
 void FrameLoader::committedLoad(DocumentLoader* loader, NSData *data)
 {
     m_client->committedLoad(loader, data);
-}
-
-bool FrameLoader::isReplacing() const
-{
-    return m_loadType == FrameLoadTypeReplace;
-}
-
-void FrameLoader::setReplacing()
-{
-    m_loadType = FrameLoadTypeReplace;
-}
-
-void FrameLoader::revertToProvisional(DocumentLoader* loader)
-{
-    m_client->revertToProvisionalState(loader);
 }
 
 void FrameLoader::setMainDocumentError(DocumentLoader* loader, NSError *error)
@@ -1232,26 +714,6 @@ void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, NSError *err
     loader->setPrimaryLoadComplete(true);
     m_client->dispatchDidLoadMainResource(activeDocumentLoader());
     checkLoadComplete();
-}
-
-bool FrameLoader::subframeIsLoading() const
-{
-    // It's most likely that the last added frame is the last to load so we walk backwards.
-    for (Frame* child = m_frame->tree()->lastChild(); child; child = child->tree()->previousSibling()) {
-        FrameLoader* childLoader = child->loader();
-        DocumentLoader* documentLoader = childLoader->documentLoader();
-        if (documentLoader && documentLoader->isLoadingInAPISense())
-            return true;
-        documentLoader = childLoader->provisionalDocumentLoader();
-        if (documentLoader && documentLoader->isLoadingInAPISense())
-            return true;
-    }
-    return false;
-}
-
-void FrameLoader::willChangeTitle(DocumentLoader* loader)
-{
-    m_client->willChangeTitle(loader);
 }
 
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
@@ -1267,20 +729,6 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
             m_client->setMainFrameDocumentReady(true); // update observers with new DOMDocument
             m_client->dispatchDidReceiveTitle(loader->title());
         }
-}
-
-FrameLoadType FrameLoader::loadType() const
-{
-    return m_loadType;
-}
-
-void FrameLoader::stopPolicyCheck()
-{
-    m_client->cancelPolicyCheck();
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-    check.clearRequest();
-    check.call();
 }
 
 void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, NSURLRequest *request,
@@ -1371,18 +819,6 @@ void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
     check.call();
 }
 
-void FrameLoader::continueAfterContentPolicy(PolicyAction policy)
-{
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-    check.call(policy);
-}
-
-void FrameLoader::continueAfterWillSubmitForm(PolicyAction)
-{
-    startLoading();
-}
-
 void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,
     NSURLRequest *request, PassRefPtr<FormState> formState)
 {
@@ -1425,7 +861,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(NSURLRequest *request,
     }
 
     FrameLoadType type = m_policyLoadType;
-    stopLoading();
+    stopAllLoaders();
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);
@@ -1439,41 +875,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(NSURLRequest *request,
         m_client->dispatchWillSubmitForm(&FrameLoader::continueAfterWillSubmitForm, formState);
     else
         continueAfterWillSubmitForm();
-}
-
-void FrameLoader::didFirstLayout()
-{
-    if (isBackForwardLoadType(m_loadType) && m_client->hasBackForwardList())
-        m_client->restoreScrollPositionAndViewState();
-
-    m_firstLayoutDone = true;
-    m_client->dispatchDidFirstLayout();
-}
-
-void FrameLoader::frameLoadCompleted()
-{
-    m_client->frameLoadCompleted();
-
-    // After a canceled provisional load, firstLayoutDone is false.
-    // Reset it to true if we're displaying a page.
-    if (m_documentLoader)
-        m_firstLayoutDone = true;
-}
-
-bool FrameLoader::firstLayoutDone() const
-{
-    return m_firstLayoutDone;
-}
-
-bool FrameLoader::isQuickRedirectComing() const
-{
-    return m_quickRedirectComing;
-}
-
-void FrameLoader::closeDocument()
-{
-    m_client->willCloseDocument();
-    m_frame->closeURL();
 }
 
 void FrameLoader::transitionToCommitted(NSDictionary *pageCache)
@@ -1579,7 +980,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
                 // FIXME: can stopping loading here possibly have any effect, if isLoading is false,
                 // which it must be to be in this branch of the if? And is it OK to just do a full-on
-                // stopLoading instead of stopLoadingSubframes?
+                // stopAllLoaders instead of stopLoadingSubframes?
                 stopLoadingSubframes();
                 pdl->stopLoading();
 
@@ -1657,8 +1058,8 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(NSURLRequest *request,
         return;
 
     mainFrame->tree()->setName(frameName);
-    mainFrame->loader()->client()->dispatchShow();
-    mainFrame->setOpener(frame.get());
+    mainFrame->loader()->m_client->dispatchShow();
+    mainFrame->loader()->setOpener(frame.get());
     mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
@@ -1736,22 +1137,12 @@ void FrameLoader::post(const KURL& URL, const String& referrer, const String& fr
     [request release];
 }
 
-void FrameLoader::detachChildren()
-{
-    // FIXME: Is it really necessary to do this in reverse order?
-    Frame* previous;
-    for (Frame* child = m_frame->tree()->lastChild(); child; child = previous) {
-        previous = child->tree()->previousSibling();
-        child->loader()->detachFromParent();
-    }
-}
-
 void FrameLoader::detachFromParent()
 {
     RefPtr<Frame> protect(m_frame);
 
     closeDocument();
-    stopLoading();
+    stopAllLoaders();
     m_client->detachedFromParent1();
     detachChildren();
     m_client->detachedFromParent2();
@@ -1759,6 +1150,7 @@ void FrameLoader::detachFromParent()
     m_client->detachedFromParent3();
     if (Frame* parent = m_frame->tree()->parent())
         parent->tree()->removeChild(m_frame);
+    m_frame->setView(0);
     [Mac(m_frame)->bridge() close];
     m_client->detachedFromParent4();
 }
@@ -1775,34 +1167,11 @@ void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mai
         if (mainResource && (isLoadingMainFrame() || alwaysFromRequest))
             [request setMainDocumentURL:[request URL]];
         else
-            [request setMainDocumentURL:m_frame->page()->mainFrame()->url().getNSURL()];
+            [request setMainDocumentURL:m_frame->page()->mainFrame()->loader()->url().getNSURL()];
     }
     
     if (mainResource)
         [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
-}
-
-// Called every time a resource is completely loaded, or an error is received.
-void FrameLoader::checkLoadComplete()
-{
-    ASSERT(m_client->hasWebView());
-
-    for (RefPtr<Frame> frame = m_frame; frame; frame = frame->tree()->parent())
-        frame->loader()->checkLoadCompleteForThisFrame();
-}
-
-int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
-{
-    int count = 0;
-    const Frame* frame = m_frame;
-
-    count += numRequests(frame->document());
-
-    if (recurse)
-        while ((frame = frame->tree()->traverseNext(frame)))
-            count += numRequests(frame->document());
-
-    return count;
 }
 
 bool FrameLoader::isReloading() const
@@ -1826,26 +1195,11 @@ void FrameLoader::loadEmptyDocumentSynchronously()
 
 void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r)
 {
-#if 0
-    NSDictionary *headerDict = nil;
-    const HTTPHeaderMap& requestHeaders = request.httpHeaderFields();
-
-    if (!requestHeaders.isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderMap:requestHeaders];
-    
-    FormData postData;
-    if (!request.httpBody().elements().isEmpty())
-        postData = request.httpBody();
-    Vector<char> results([resultData length]);
-
-    memcpy(results.data(), [resultData bytes], [resultData length]);
-#endif
-
     NSURL *URL = request.url().getNSURL();
 
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = m_frame->referrer();
+    String referrer = outgoingReferrer();
     bool hideReferrer;
     canLoad(URL, referrer, hideReferrer);
     if (hideReferrer)
@@ -1903,16 +1257,179 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     memcpy(data.data(), [result bytes], [result length]);
 }
 
-void FrameLoader::setClient(FrameLoaderClient* client)
+Frame* FrameLoader::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
 {
-    ASSERT(client);
-    ASSERT(!m_client);
-    m_client = client;
+    BOOL allowsScrolling = YES;
+    int marginWidth = -1;
+    int marginHeight = -1;
+    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
+        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
+        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
+        marginWidth = o->getMarginWidth();
+        marginHeight = o->getMarginHeight();
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    return [[Mac(m_frame)->bridge() createChildFrameNamed:name
+                                                             withURL:url.getNSURL()
+                                                            referrer:referrer 
+                                                          ownerElement:ownerElement
+                                                     allowsScrolling:allowsScrolling
+                                                         marginWidth:marginWidth
+                                                        marginHeight:marginHeight] _frame];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return 0;
 }
 
-FrameLoaderClient* FrameLoader::client() const
+ObjectContentType FrameLoader::objectContentType(const KURL& url, const String& mimeType)
 {
-    return m_client;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return (ObjectContentType)[Mac(m_frame)->bridge() determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return ObjectContentNone;
+}
+
+static NSArray* nsArray(const Vector<String>& vector)
+{
+    unsigned len = vector.size();
+    NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
+    for (unsigned x = 0; x < len; x++)
+        [array addObject:vector[x]];
+    return array;
+}
+
+Widget* FrameLoader::createPlugin(Element* element, const KURL& url,
+    const Vector<String>& paramNames, const Vector<String>& paramValues,
+    const String& mimeType)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return new Widget([Mac(m_frame)->bridge() viewForPluginWithURL:url.getNSURL()
+                                  attributeNames:nsArray(paramNames)
+                                  attributeValues:nsArray(paramValues)
+                                  MIMEType:mimeType
+                                  DOMElement:[DOMElement _elementWith:element]
+                                loadManually:m_frame->document()->isPluginDocument()]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return 0;
+}
+
+void FrameLoader::redirectDataToPlugin(Widget* pluginWidget)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [Mac(m_frame)->bridge() redirectDataToPlugin:pluginWidget->getView()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)
+{
+    Widget* result = new Widget;
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSMutableArray *attributeNames = [[NSMutableArray alloc] init];
+    NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
+    
+    DeprecatedString baseURLString;
+    HashMap<String, String>::const_iterator end = args.end();
+    for (HashMap<String, String>::const_iterator it = args.begin(); it != end; ++it) {
+        if (it->first.lower() == "baseurl")
+            baseURLString = it->second.deprecatedString();
+        [attributeNames addObject:it->first];
+        [attributeValues addObject:it->second];
+    }
+    
+    if (baseURLString.isEmpty())
+        baseURLString = m_frame->document()->baseURL();
+
+    result->setView([Mac(m_frame)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                                         attributeNames:attributeNames
+                                        attributeValues:attributeValues
+                                                baseURL:completeURL(baseURLString).getNSURL()
+                                             DOMElement:[DOMElement _elementWith:element]]);
+    [attributeNames release];
+    [attributeValues release];
+    m_frame->view()->addChild(result);
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return result;
+}
+
+void FrameLoader::partClearedInBegin()
+{
+    if (m_frame->javaScriptEnabled())
+        [Mac(m_frame)->bridge() windowObjectCleared];
+}
+
+void FrameLoader::saveDocumentState()
+{
+    // Do not save doc state if the page has a password field and a form that would be submitted via https.
+    Document* document = m_frame->document();
+    if (!(document && document->hasPasswordField() && document->hasSecureForm())) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [Mac(m_frame)->bridge() saveDocumentState];
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+}
+
+void FrameLoader::restoreDocumentState()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [Mac(m_frame)->bridge() restoreDocumentState];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+String FrameLoader::overrideMediaType() const
+{
+    NSString *overrideType = [Mac(m_frame)->bridge() overrideMediaType];
+    if (overrideType)
+        return overrideType;
+    return String();
+}
+
+NSData *FrameLoader::mainResourceData() const
+{
+    if (!m_mainResourceLoader)
+        return nil;
+    return m_mainResourceLoader->resourceData();
+}
+
+bool FrameLoader::canGoBackOrForward(int distance) const
+{
+    return [Mac(m_frame)->bridge() canGoBackOrForward:distance];
+}
+
+KURL FrameLoader::originalRequestURL() const
+{
+    return [activeDocumentLoader()->initialRequest() URL];
+}
+
+int FrameLoader::getHistoryLength()
+{
+    return [Mac(m_frame)->bridge() historyLength];
+}
+
+void FrameLoader::goBackOrForward(int distance)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [Mac(m_frame)->bridge() goBackOrForward:distance];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+KURL FrameLoader::historyURL(int distance)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [Mac(m_frame)->bridge() historyURL:distance];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return KURL();
+}
+
+void FrameLoader::didFinishLoad(ResourceLoader* loader)
+{    
+    m_client->completeProgress(loader->identifier());
+    m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
 }
 
 PolicyCheck::PolicyCheck()
@@ -1990,10 +1507,6 @@ void PolicyCheck::clearRequest()
     m_request = nil;
     m_formState = 0;
     m_frameName = String();
-}
-
-FrameLoaderClient::~FrameLoaderClient()
-{
 }
 
 }

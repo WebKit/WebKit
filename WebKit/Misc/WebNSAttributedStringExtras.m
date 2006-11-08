@@ -38,6 +38,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/FontData.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/Image.h>
@@ -435,7 +436,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && currentNode == linkStartNode) {
                     String href = parseURL(linkStartNode->getAttribute(hrefAttr));
-                    KURL kURL = Mac(linkStartNode->document()->frame())->completeURL(href.deprecatedString());
+                    KURL kURL = linkStartNode->document()->frame()->loader()->completeURL(href.deprecatedString());
                     
                     NSURL *URL = kURL.getNSURL();
                     NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314

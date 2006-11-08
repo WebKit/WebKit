@@ -74,7 +74,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
             return;
 
         // FIXME: Evaluate scripts in viewless documents.
-        // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
+        // See http://bugs.webkit.org/show_bug.cgi?id=5727
         if (!document()->frame())
             return;
     
@@ -109,7 +109,7 @@ void HTMLScriptElement::insertedIntoDocument()
     
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
     // viewless document but this'll do for now.
-    // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
+    // See http://bugs.webkit.org/show_bug.cgi?id=5727
     if (!document()->frame())
         return;
     

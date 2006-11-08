@@ -1,3 +1,31 @@
+2006-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - udpated for changes to move from Frame/FrameMac to FrameLoader
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate openNewWindowWithURL:element:]):
+        * Misc/WebNSAttributedStringExtras.m:
+        (+[NSAttributedString _web_attributedStringFromRange:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]):
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _canCachePage]):
+        (+[WebFrame _timeOfLastCompletedLoad]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _reloadForPluginChanges]):
+        (-[WebFrame stopLoading]):
+
 2006-11-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

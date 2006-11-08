@@ -25,41 +25,22 @@
 #include "DocLoader.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
-#include "HTMLAppletElement.h"
-#include "HTMLAreaElement.h"
-#include "HTMLBRElement.h"
-#include "HTMLBaseFontElement.h"
-#include "HTMLBlockquoteElement.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLEmbedElement.h"
-#include "HTMLFieldSetElement.h"
-#include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
-#include "HTMLHRElement.h"
-#include "HTMLHeadingElement.h"
-#include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
-#include "HTMLIsIndexElement.h"
-#include "HTMLLIElement.h"
 #include "HTMLLabelElement.h"
-#include "HTMLLegendElement.h"
-#include "HTMLMapElement.h"
-#include "HTMLMenuElement.h"
-#include "HTMLModElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
-#include "HTMLParagraphElement.h"
-#include "HTMLParamElement.h"
-#include "HTMLPreElement.h"
-#include "HTMLQuoteElement.h"
-#include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
@@ -67,7 +48,6 @@
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
-#include "JSHTMLImageElement.h"
 #include "JSHTMLOptionsCollection.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
@@ -356,25 +336,22 @@ void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value
   case Cookie:
     doc.setCookie(value->toString(exec));
     break;
-  case Location: {
-    Frame *frame = doc.frame();
-    if (frame)
-    {
+  case Location:
+    if (Frame* frame = doc.frame()) {
       DeprecatedString str = value->toString(exec);
 
       // When assigning location, IE and Mozilla both resolve the URL
       // relative to the frame where the JavaScript is executing not
       // the target frame.
-      Frame *activePart = static_cast<ScriptInterpreter*>( exec->dynamicInterpreter() )->frame();
-      if (activePart)
-        str = activePart->document()->completeURL(str);
+      Frame* activeFrame = static_cast<ScriptInterpreter*>( exec->dynamicInterpreter() )->frame();
+      if (activeFrame)
+        str = activeFrame->document()->completeURL(str);
 
       // We want a new history item if this JS was called via a user gesture
       bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
-      frame->scheduleLocationChange(str, activePart->referrer(), !userGesture);
+      frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), !userGesture);
     }
     break;
-  }
   case BgColor:
     if (bodyElement)
       bodyElement->setBgColor(value->toString(exec));
@@ -894,33 +871,6 @@ JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
     }
     return jsUndefined();
 }
-
-#ifdef FIXME
-    HTMLAreaElement& area = *static_cast<HTMLAreaElement*>(impl());
-    switch (token) {
-        case AreaAccessKey:       return jsString(area.accessKey());
-        case AreaAlt:             return jsString(area.alt());
-        case AreaCoords:          return jsString(area.coords());
-        case AreaHref:            return jsString(area.href());
-        case AreaHash:            return jsString('#'+KURL(area.href().deprecatedString()).ref());
-        case AreaHost:            return jsString(KURL(area.href().deprecatedString()).host());
-        case AreaHostName: {
-            KURL url(area.href().deprecatedString());
-            if (url.port()==0)
-                return jsString(url.host());
-            else
-                return jsString(url.host() + ":" + DeprecatedString::number(url.port()));
-        }
-        case AreaPathName:        return jsString(KURL(area.href().deprecatedString()).path());
-        case AreaPort:            return jsString(DeprecatedString::number(KURL(area.href().deprecatedString()).port()));
-        case AreaProtocol:        return jsString(KURL(area.href().deprecatedString()).protocol()+":");
-        case AreaSearch:          return jsString(KURL(area.href().deprecatedString()).query());
-        case AreaNoHref:          return jsBoolean(area.noHref());
-        case AreaShape:           return jsString(area.shape());
-        case AreaTabIndex:        return jsNumber(area.tabIndex());
-        case AreaTarget:          return jsString(area.target());
-    }
-#endif
 
 JSValue *JSHTMLElement::tableGetter(ExecState* exec, int token) const
 {

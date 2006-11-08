@@ -124,8 +124,8 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     // Use of CGBegin/EndTransparencyLayer around this call causes over release
     // of cgContext due to it being created on an autorelease pool, and released
     // after CGEndTransparencyLayer. Create local pool to fix.
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=8425>
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=6947>
+    // <http://bugs.webkit.org/show_bug.cgi?id=8425>
+    // <http://bugs.webkit.org/show_bug.cgi?id=6947>
     // <rdar://problem/4647735>
     NSAutoreleasePool *filterContextPool = [[NSAutoreleasePool alloc] init];
     m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:contextOptions]);

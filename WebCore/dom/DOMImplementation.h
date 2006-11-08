@@ -36,11 +36,7 @@ class Document;
 class DocumentType;
 class FrameView;
 class HTMLDocument;
-#ifdef SVG_SUPPORT
-class SVGDocument;
-#endif
 class String;
-class TextDocument;
 
 typedef int ExceptionCode;
 
@@ -62,18 +58,16 @@ public:
     PassRefPtr<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
-    PassRefPtr<Document> createDocument(FrameView* = 0);
-    PassRefPtr<HTMLDocument> createHTMLDocument(FrameView* = 0);
-#ifdef SVG_SUPPORT
-    PassRefPtr<SVGDocument> createSVGDocument(FrameView* = 0);
-#endif
+    PassRefPtr<Document> createDocument(const String& MIMEType, FrameView*, bool inViewSourceMode);
+    PassRefPtr<Document> createDocument(FrameView*);
+    PassRefPtr<HTMLDocument> createHTMLDocument(FrameView*);
 
     // Returns the static instance of this class - only one instance of this class should
     // ever be present, and is used as a factory method for creating Document objects
     static DOMImplementation* instance();
 
-    static bool isXMLMIMEType(const String& mimeType);
-    static bool isTextMIMEType(const String& mimeType);
+    static bool isXMLMIMEType(const String& MIMEType);
+    static bool isTextMIMEType(const String& MIMEType);
 };
 
 } //namespace

@@ -27,6 +27,7 @@
 #include "AtomicString.h"
 #include "CookieJar.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "Language.h"
 #include "PlugInInfoStore.h"
 
@@ -170,7 +171,7 @@ JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
     return jsString("Netscape");
   case AppVersion: {
     // Version is everything in the user agent string past the "Mozilla/" prefix.
-    const String userAgent = m_frame->userAgent();
+    const String userAgent = m_frame->loader()->userAgent();
     return jsString(userAgent.substring(userAgent.find('/') + 1));
   }
   case Product:
@@ -184,7 +185,7 @@ JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
   case Language:
     return jsString(defaultLanguage());
   case UserAgent:
-    return jsString(m_frame->userAgent());
+    return jsString(m_frame->loader()->userAgent());
   case Platform:
     return jsString(WEBCORE_NAVIGATOR_PLATFORM);
   case _Plugins:

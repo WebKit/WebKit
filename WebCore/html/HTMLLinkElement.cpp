@@ -28,6 +28,7 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
@@ -178,7 +179,7 @@ void HTMLLinkElement::process()
             
             String chset = getAttribute(charsetAttr);
             if (chset.isEmpty() && document()->frame())
-                chset = document()->frame()->encoding();
+                chset = document()->frame()->loader()->encoding();
             
             if (m_cachedSheet) {
                 if (m_loading) {

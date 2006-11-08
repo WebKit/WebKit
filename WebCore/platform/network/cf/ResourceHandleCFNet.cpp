@@ -29,6 +29,7 @@
 
 #include "DocLoader.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequestCFNet.h"
@@ -224,8 +225,8 @@ void runLoaderThread(void *unused)
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
-    d->m_request.setHTTPUserAgent(docLoader->frame()->userAgent());
-    String referrer = docLoader->frame()->referrer();
+    d->m_request.setHTTPUserAgent(docLoader->frame()->loader()->userAgent());
+    String referrer = docLoader->frame()->loader()->referrer();
     if (!referrer.isEmpty() && referrer.find("file:", 0, false) != 0)
         d->m_request.setHTTPReferrer(referrer);
 

@@ -502,7 +502,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     Node *node = current;
                     Node *parent = node->parentNode();
                     // A script may have removed the current node's parent from the DOM
-                    // http://bugzilla.opendarwin.org/show_bug.cgi?id=7137
+                    // http://bugs.webkit.org/show_bug.cgi?id=7137
                     // FIXME: we should do real recovery here and re-parent with the correct node.
                     if (!parent)
                         return false;
@@ -1060,7 +1060,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
          
     // Check if the block is still in the tree. If it isn't, then we don't
     // want to remove it from its parent (that would crash) or insert it into
-    // a new parent later. See http://bugzilla.opendarwin.org/show_bug.cgi?id=6778
+    // a new parent later. See http://bugs.webkit.org/show_bug.cgi?id=6778
     bool isBlockStillInTree = blockElem->parentNode();
 
     // We need to make a clone of |residualElem| and place it just inside |blockElem|.

@@ -38,7 +38,7 @@ using std::min;
 namespace WebCore {
 
 // We need to keep this because ICU doesn't support some of the encodings that we need:
-// <http://bugzilla.opendarwin.org/show_bug.cgi?id=4195>.
+// <http://bugs.webkit.org/show_bug.cgi?id=4195>.
 
 const size_t ConversionBufferSize = 16384;
 

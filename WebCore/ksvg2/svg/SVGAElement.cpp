@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "KRenderingDevice.h"
 #include "MouseEvent.h"
 #include "MouseEvent.h"
@@ -101,7 +102,7 @@ void SVGAElement::defaultEventHandler(Event *evt)
 
         if (!evt->defaultPrevented())
             if (document() && document()->frame())
-                document()->frame()->urlSelected(document()->completeURL(url), target, evt);
+                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt);
 
         evt->setDefaultHandled();
     }

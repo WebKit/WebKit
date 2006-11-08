@@ -29,6 +29,7 @@
 #include "DocLoader.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "XSLStyleSheet.h"
 #include "XMLTokenizer.h" // for parseAttributes()
 
@@ -161,7 +162,7 @@ bool ProcessingInstruction::checkStyleSheet()
                     {
                         String charset = attrs.get("charset");
                         if (charset.isEmpty())
-                            charset = document()->frame()->encoding();
+                            charset = document()->frame()->loader()->encoding();
 
                         m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href), charset);
                     }

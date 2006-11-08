@@ -343,7 +343,7 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
             break;
         case WebCore::Node::XPATH_NAMESPACE_NODE:
             // FIXME: Create an XPath objective C wrapper
-            // See http://bugzilla.opendarwin.org/show_bug.cgi?id=8755
+            // See http://bugs.webkit.org/show_bug.cgi?id=8755
             return nil;
     }
     return [[[wrapperClass alloc] _initWithNode:impl] autorelease];

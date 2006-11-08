@@ -341,7 +341,7 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (BOOL)_canCachePage
 {
-    return [[getWebView(self) backForwardList] _usesPageCache] && core(self)->canCachePage();
+    return [[getWebView(self) backForwardList] _usesPageCache] && core(self)->loader()->canCachePage();
 }
 
 - (void)_purgePageCache
@@ -372,7 +372,7 @@ WebView *getWebView(WebFrame *webFrame)
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad
 {
-    return FrameLoader::timeOfLastCompletedLoad();
+    return FrameLoader::timeOfLastCompletedLoad() - kCFAbsoluteTimeIntervalSince1970;
 }
 
 - (WebFrameBridge *)_bridge
@@ -453,7 +453,7 @@ WebView *getWebView(WebFrame *webFrame)
 
         // We always call scrollToAnchor here, even if the URL doesn't have an
         // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
-        core(self)->scrollToAnchor([item URL]);
+        core(self)->loader()->scrollToAnchor([item URL]);
     
         // must do this maintenance here, since we don't go through a real page reload
         [self _setCurrentItem:item];
@@ -777,7 +777,7 @@ WebView *getWebView(WebFrame *webFrame)
     Frame* coreFrame = core(self);
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
         NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if (([documentView isKindOfClass:[WebHTMLView class]] && coreFrame->containsPlugins()))
+        if (([documentView isKindOfClass:[WebHTMLView class]] && coreFrame->loader()->containsPlugins()))
             [kit(frame) reload];
     }
 }
@@ -1232,7 +1232,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)stopLoading
 {
-    [self _frameLoader]->stopLoading();
+    [self _frameLoader]->stopAllLoaders();
 }
 
 - (void)reload

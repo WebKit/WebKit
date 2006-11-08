@@ -35,6 +35,7 @@
 #include "DocumentType.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
@@ -845,7 +846,7 @@ void XMLTokenizer::endElementNs()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->executeScript(m_doc->URL(), m_scriptStartLine - 1, 0, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->URL(), m_scriptStartLine - 1, 0, scriptCode);
         }
         
         m_requestingScript = false;
@@ -1183,7 +1184,7 @@ static void ignorableWhitespaceHandler(void *ctx, const xmlChar *ch, int len)
 {
     // nothing to do, but we need this to work around a crasher
     // http://bugzilla.gnome.org/show_bug.cgi?id=172255
-    // http://bugzilla.opendarwin.org/show_bug.cgi?id=5792
+    // http://bugs.webkit.org/show_bug.cgi?id=5792
 }
 
 void XMLTokenizer::initializeParserContext()
@@ -1339,7 +1340,7 @@ void XMLTokenizer::notifyFinished(CachedResource *finishedObj)
     if (errorOccurred) 
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(errorEvent, true, false);
     else {
-        m_view->frame()->executeScript(cachedScriptUrl, 0, 0, scriptSource);
+        m_view->frame()->loader()->executeScript(cachedScriptUrl, 0, 0, scriptSource);
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(loadEvent, false, false);
     }
     

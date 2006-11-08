@@ -403,6 +403,11 @@ void ResourceLoader::didCancel(NSError *error)
     releaseResources();
 }
 
+void ResourceLoader::cancel()
+{
+    cancel(nil);
+}
+
 void ResourceLoader::cancel(NSError *error)
 {
     if (m_reachedTerminalState)

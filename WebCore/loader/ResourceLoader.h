@@ -72,12 +72,14 @@ namespace WebCore {
     public:
         virtual ~ResourceLoader();
 
+        void cancel();
+
 #if PLATFORM(MAC)
         virtual bool load(NSURLRequest *);
 
         FrameLoader *frameLoader() const;
 
-        virtual void cancel(NSError * = nil);
+        virtual void cancel(NSError *);
         NSError *cancelledError();
 #endif
 

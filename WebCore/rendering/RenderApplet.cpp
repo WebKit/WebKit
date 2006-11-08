@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLAppletElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
@@ -64,10 +65,12 @@ int RenderApplet::intrinsicHeight() const
 
 void RenderApplet::createWidgetIfNecessary()
 {
+    HTMLAppletElement* element = static_cast<HTMLAppletElement*>(node());
     if (m_widget)
         return;
-    if (!static_cast<HTMLAppletElement*>(node())->allParamsAvailable())
+    if (!element->allParamsAvailable())
         return;
+
     // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).
     // In order to work around this problem and have a correct size from the start, we will
     // use fixed widths/heights from the style system when we can, since the widget might
@@ -76,7 +79,7 @@ void RenderApplet::createWidgetIfNecessary()
         m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
     int height = style()->height().isFixed() ? style()->height().value() :
         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
+    for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(paramTag)) {
             HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
             if (!p->name().isEmpty())
@@ -86,7 +89,7 @@ void RenderApplet::createWidgetIfNecessary()
 
     Frame* frame = document()->frame();
     ASSERT(frame);
-    setWidget(frame->createJavaAppletWidget(IntSize(width, height), static_cast<Element*>(node()), m_args));
+    setWidget(frame->loader()->createJavaAppletWidget(IntSize(width, height), element, m_args));
 }
 
 void RenderApplet::layout()

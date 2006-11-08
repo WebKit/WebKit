@@ -28,17 +28,18 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "SVGDocumentExtensions.h"
+#include "kjs_proxy.h"
+#include "kjs_window.h"
 #include "kjs_window.h"
 #include <kjs/JSLock.h>
-#include <kjs/property_map.h>
 #include <kjs/SavedBuiltins.h>
+#include <kjs/property_map.h>
 
-using KJS::Collector;
-using KJS::JSLock;
-using KJS::SavedBuiltins;
-using KJS::SavedProperties;
+using namespace KJS;
 
 namespace WebCore {
 
@@ -51,23 +52,32 @@ PageState::PageState(Page* page)
     : m_document(page->mainFrame()->document())
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->mousePressNode())
-    , m_URL(page->mainFrame()->url())
+    , m_URL(page->mainFrame()->loader()->url())
     , m_windowProperties(new SavedProperties)
     , m_locationProperties(new SavedProperties)
     , m_interpreterBuiltins(new SavedBuiltins)
 {
     Frame* mainFrame = page->mainFrame();
+    KJSProxy* proxy = mainFrame->scriptProxy();
+    Window* window = Window::retrieveWindow(mainFrame);
 
     mainFrame->clearTimers();
 
     JSLock lock;
 
-    mainFrame->saveWindowProperties(m_windowProperties.get());
-    mainFrame->saveLocationProperties(m_locationProperties.get());
-    mainFrame->saveInterpreterBuiltins(*m_interpreterBuiltins.get());
-    m_pausedTimeouts.set(mainFrame->pauseTimeouts());
+    if (proxy && window) {
+        proxy->interpreter()->saveBuiltins(*m_interpreterBuiltins.get());
+        window->saveProperties(*m_windowProperties.get());
+        window->location()->saveProperties(*m_locationProperties.get());
+        m_pausedTimeouts.set(window->pauseTimeouts());
+    }
 
     m_document->setInPageCache(true);
+
+#ifdef SVG_SUPPORT
+    if (m_document && m_document->svgExtensions())
+        m_document->accessSVGExtensions()->pauseAnimations();
+#endif
 }
 
 PageState::~PageState()
@@ -78,12 +88,22 @@ PageState::~PageState()
 void PageState::restoreJavaScriptState(Page* page)
 {
     Frame* mainFrame = page->mainFrame();
+    KJSProxy* proxy = mainFrame->scriptProxy();
+    Window* window = Window::retrieveWindow(mainFrame);
 
     JSLock lock;
-    mainFrame->restoreWindowProperties(m_windowProperties.get());
-    mainFrame->restoreLocationProperties(m_locationProperties.get());
-    mainFrame->restoreInterpreterBuiltins(*m_interpreterBuiltins.get());
-    mainFrame->resumeTimeouts(m_pausedTimeouts.get());
+
+    if (proxy && window) {
+        proxy->interpreter()->restoreBuiltins(*m_interpreterBuiltins.get());
+        window->restoreProperties(*m_windowProperties.get());
+        window->location()->restoreProperties(*m_locationProperties.get());
+        window->resumeTimeouts(m_pausedTimeouts.get());
+    }
+
+#ifdef SVG_SUPPORT
+    if (m_document && m_document->svgExtensions())
+        m_document->accessSVGExtensions()->unpauseAnimations();
+#endif
 }
 
 void PageState::clear()

@@ -24,6 +24,7 @@
 #include "kjs_events.h"
 #include "kjs_window.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "JSDOMWindow.h"
 
 #ifdef SVG_SUPPORT
@@ -136,7 +137,7 @@ void KJSProxy::initScriptIfNeeded()
   // Create a KJS interpreter for this frame
   m_script = new ScriptInterpreter(globalObject, m_frame);
 
-  String userAgent = m_frame->userAgent();
+  String userAgent = m_frame->loader()->userAgent();
   if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
     m_script->setCompatMode(Interpreter::IECompat);
   else

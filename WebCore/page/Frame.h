@@ -107,36 +107,31 @@ struct MarkedTextUnderline {
     bool thick;
 };
 
-enum ObjectContentType {
-    ObjectContentNone,
-    ObjectContentImage,
-    ObjectContentFrame,
-    ObjectContentPlugin
-};
-
 class Frame : public Shared<Frame> {
 public:
     Frame(Page*, Element*, PassRefPtr<EditorClient>);
-    void pageDestroyed();
+    virtual void setView(FrameView*);
     virtual ~Frame();
 
-    virtual void setView(FrameView*);
-
     Page* page() const;
+    Element* ownerElement();
+
+    void pageDestroyed();
+    void disconnectOwnerElement();
+
     Document* document() const;
     FrameView* view() const;
-    RenderObject* renderer() const; // root renderer for the document contained in this frame
 
-    Element* ownerElement();
-    RenderPart* ownerRenderer(); // renderer for the element that contains this frame
-
-    FrameTree* tree() const;
-    SelectionController* selectionController() const;
+    CommandByName* command() const;
     DOMWindow* domWindow() const;
     Editor* editor() const;
-    CommandByName* command() const;
     FrameLoader* loader() const;
+    SelectionController* selectionController() const;
     const Settings* settings() const;
+    FrameTree* tree() const;
+
+    RenderObject* renderer() const; // root renderer for the document contained in this frame
+    RenderPart* ownerRenderer(); // renderer for the element that contains this frame
 
     friend class FrameGdk;
     friend class FrameLoader;
@@ -154,6 +149,9 @@ public:
     bool javaScriptEnabled() const;
     bool javaEnabled() const;
     bool pluginsEnabled() const;
+
+    void setSettings(Settings*);
+    void reparseConfiguration();
 
     void paint(GraphicsContext*, const IntRect&);
 
@@ -188,8 +186,6 @@ public:
     void setDocument(Document*);
 
     KJSProxy* scriptProxy();
-
-    void setSettings(Settings*);
 
     bool isFrameSet() const;
 
@@ -299,8 +295,6 @@ public:
     virtual void respondToChangedContents(const Selection& endingSelection) = 0;
     virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const = 0;
 
-    void caretBlinkTimerFired(Timer<Frame>*);
-
     RenderStyle* styleForSelectionStart(Node* &nodeToRemove) const;
 
     const Vector<MarkedTextUnderline>& markedTextUnderlines() const;  
@@ -353,10 +347,6 @@ public:
     bool prohibitsScrolling() const;
     void setProhibitsScrolling(const bool);
   
-protected:
-    virtual void startRedirectionTimer();
-    virtual void stopRedirectionTimer();
-
 private:
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
@@ -367,189 +357,6 @@ private:
     void handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
     void handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     void handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
-
-// === to be moved into FrameLoader
-
-public:
-    void changeLocation(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-    void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory = false);
-    virtual void urlSelected(const FrameLoadRequest&, Event*) = 0;
-  
-    bool requestFrame(Element* ownerElement, const String& URL, const AtomicString& frameName);
-    virtual Frame* createFrame(const KURL& URL, const String& name, Element* ownerElement, const String& referrer) = 0;
-    Frame* loadSubframe(Element* ownerElement, const KURL& URL, const String& name, const String& referrer);
-
-    void submitForm(const char* action, const String& URL, const FormData&, const String& target, const String& contentType, const String& boundary, Event*);
-    void submitFormAgain();
-    virtual void submitForm(const FrameLoadRequest&, Event*) = 0;
-
-    void stop();
-    void stopLoading(bool sendUnload = false);
-    virtual bool closeURL();
-
-    void didExplicitOpen();
-
-    KURL iconURL();
-    void commitIconURLToIconDatabase(const KURL&);
-
-    void setAutoLoadImages(bool enable);
-    bool autoLoadImages() const;
-
-    KURL baseURL() const;
-    String baseTarget() const;
-
-    void scheduleRedirection(double delay, const DeprecatedString& URL, bool lockHistory = true);
-
-    void scheduleLocationChange(const DeprecatedString& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-    void scheduleRefresh(bool userGesture = false);
-    bool isScheduledLocationChangePending() const;
-
-    void scheduleHistoryNavigation(int steps);
-
-    virtual bool canGoBackOrForward(int distance) const = 0;
-    virtual void goBackOrForward(int distance) = 0;
-    virtual int getHistoryLength() = 0;
-    virtual KURL historyURL(int distance) = 0;
-
-    void begin();
-    virtual void begin(const KURL&);
-    virtual void write(const char* str, int len = -1);
-    virtual void write(const String&);
-    virtual void end();
-
-    void endIfNotLoading();
-
-    void setEncoding(const String& encoding, bool userChosen);
-    String encoding() const;
-
-    KJS::JSValue* executeScript(Node*, const String& script, bool forceUserGesture = false);
-
-    bool gotoAnchor(const String& name); // returns true if the anchor was found
-    void scrollToAnchor(const KURL&);
-
-    virtual void tokenizerProcessedData() {}
-
-    String referrer() const;
-    String lastModified() const;
-
-    virtual void setTitle(const String&) = 0;
-    virtual void handledOnloadEvents() = 0;
-    virtual String userAgent() const = 0;
-
-    virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args) = 0;
-
-    virtual void createEmptyDocument() = 0;
-
-    virtual void partClearedInBegin() = 0; 
-    virtual void saveDocumentState() = 0;
-    virtual void restoreDocumentState() = 0;
-
-    virtual String overrideMediaType() const = 0;
-
-    virtual void redirectDataToPlugin(Widget* /*pluginWidget*/) { }
-
-    Frame* opener();
-    void setOpener(Frame*);
-    bool openedByJS();
-    void setOpenedByJS(bool);
-
-    void provisionalLoadStarted();
-
-    bool userGestureHint();
-
-    void didNotOpenURL(const KURL&);
-    void addData(const char* bytes, int length);
-    void addMetaData(const String& key, const String& value);
-    void setMediaType(const String&);
-
-    bool canCachePage();
-
-    KJS::PausedTimeouts* pauseTimeouts();
-    void resumeTimeouts(KJS::PausedTimeouts*);
-    void saveWindowProperties(KJS::SavedProperties*);
-    void saveLocationProperties(KJS::SavedProperties*);
-    void restoreWindowProperties(KJS::SavedProperties*);
-    void restoreLocationProperties(KJS::SavedProperties*);
-    void saveInterpreterBuiltins(KJS::SavedBuiltins&);
-    void restoreInterpreterBuiltins(const KJS::SavedBuiltins&);
-
-    void checkEmitLoadEvent();
-    bool didOpenURL(const KURL&);
-    virtual void didFirstLayout() {}
-
-    virtual void frameDetached();
-
-    void detachChildren();
-
-    KURL url() const;
-
-    void updateBaseURLForEmptyDocument();
-
-    void setResponseMIMEType(const String&);
-    const String& responseMIMEType() const;
-
-    bool containsPlugins() const;
-
-    void disconnectOwnerElement();
-
-    void loadDone();
-    void finishedParsing();
-    void checkCompleted();
-    void reparseConfiguration();
-
-    KJS::JSValue* executeScript(const String& filename, int baseLine, Node*, const String& script);
-
-    void clearRecordedFormValues();
-    void recordFormValue(const String& name, const String& value, PassRefPtr<HTMLFormElement>);
-
-    bool isComplete() const;
-    bool isLoadingMainResource() const;
-
-    bool requestObject(RenderPart* frame, const String& URL, const AtomicString& frameName,
-        const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
-
-    KURL completeURL(const DeprecatedString& URL);
-
-protected:
-    virtual Plugin* createPlugin(Element* node, const KURL& URL, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
-    virtual ObjectContentType objectContentType(const KURL& URL, const String& mimeType) = 0;
-
-    virtual void redirectionTimerFired(Timer<Frame>*);
-
-    virtual bool isLoadTypeReload() = 0;
-    virtual KURL originalRequestURL() const = 0;
-
-    void cancelAndClear();
-
-private:
-    void cancelRedirection(bool newLoadInProgress = false);
-
-    void childBegin();
-
-    void started();
-
-    void completed(bool);
-    void childCompleted(bool);
-    void parentCompleted();
-
-    virtual void clear(bool clearWindowProperties = true);
-
-    bool shouldUsePlugin(Node* element, const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
-    bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
-    const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
-
-    void handleFallbackContent();
-
-    void emitLoadEvent();
-
-    void receivedFirstData();
-
-    void gotoAnchor();
-
-    void updatePolicyBaseURL();
-    void setPolicyBaseURL(const String&);
-
-    void replaceContentsWithScriptResult(const KURL&);
 
 // === to be moved into SelectionController
 
@@ -603,6 +410,9 @@ public:
     void revealSelection(const RenderLayer::ScrollAlignment& = RenderLayer::gAlignCenterIfNeeded) const;
     void revealCaret(const RenderLayer::ScrollAlignment& = RenderLayer::gAlignCenterIfNeeded) const;
     void setSelectionFromNone();
+
+private:
+    void caretBlinkTimerFired(Timer<Frame>*);
 
 // === to be moved into the Platform directory
 

@@ -126,32 +126,6 @@ FrameQt::~FrameQt()
     cancelAndClear();
 }
 
-void FrameQt::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
-{
-    const ResourceRequest& request = frameLoadRequest.resourceRequest();
-
-    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    if (d->m_submittedFormURL == request.url())
-        return;
-
-    d->m_submittedFormURL = request.url();
-
-    if (m_client)
-        m_client->submitForm(request.httpMethod(), request.url(), &request.httpBody());
-
-    clearRecordedFormValues();
-}
-
-void FrameQt::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
-{
-    const ResourceRequest& request = frameLoadRequest.resourceRequest();
-
-    if (!m_client)
-        return;
-
-    m_client->openURL(request.url());
-}
-
 String FrameQt::userAgent() const
 {
     return "Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)";
@@ -194,18 +168,6 @@ bool FrameQt::passSubframeEventToSubframe(MouseEventWithHitTestResults& mev, Fra
 {
     notImplemented();
     return false;
-}
-
-ObjectContentType FrameQt::objectContentType(const KURL&, const String& mimeType)
-{
-    notImplemented();
-    return ObjectContentType();
-}
-
-Plugin* FrameQt::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&)
-{
-    notImplemented();
-    return 0;
 }
 
 bool FrameQt::passMouseDownEventToWidget(Widget*)
@@ -504,12 +466,6 @@ bool FrameQt::shouldInterruptJavaScript()
 {
     notImplemented();
     return false;
-}
-
-KURL FrameQt::originalRequestURL() const
-{
-    notImplemented();
-    return KURL();
 }
 
 bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)

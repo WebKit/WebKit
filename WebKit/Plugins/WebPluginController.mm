@@ -367,14 +367,13 @@ static void cancelOutstandingCheck(const void *item, void *context)
         [pluginView webPlugInMainResourceDidReceiveResponse:response];
     else {
         // Cancel the load since this plug-in does its own loading.
-
-        // FIXME: See <rdar://problem/4258008>
+        // FIXME: See <rdar://problem/4258008> for a problem with this.
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                         contentURL:[response URL]
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]];
-        [_dataSource _documentLoader]->frameLoader()->stopLoading(error);
+        [_dataSource _documentLoader]->frameLoader()->cancelMainResourceLoad(error);
         [error release];
     }        
 }

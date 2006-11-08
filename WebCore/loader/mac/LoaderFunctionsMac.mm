@@ -93,7 +93,7 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const
     if (!frame)
         return Vector<char>();
     
-    frame->didTellBridgeAboutLoad(request.url().url());
+    frame->loader()->didTellBridgeAboutLoad(request.url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -134,7 +134,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
     // Notify the caller that we "loaded".
     FrameMac *frame = static_cast<FrameMac *>(loader->frame());
 
-    if (!frame || frame->haveToldBridgeAboutLoad(cachedResource->url()))
+    if (!frame || frame->loader()->haveToldBridgeAboutLoad(cachedResource->url()))
         return;
         
     NSURLRequest *request = cachedResource->getNSURLRequest();
@@ -144,7 +144,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     frame->loader()->loadedResourceFromMemoryCache(request, response, [data length]);
     
-    frame->didTellBridgeAboutLoad(cachedResource->url());
+    frame->loader()->didTellBridgeAboutLoad(cachedResource->url());
 }
 
 bool IsResponseURLEqualToURL(PlatformResponse response, const String& m_url)

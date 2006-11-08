@@ -124,18 +124,18 @@ public:
     void updateDashboardRegions();
 #endif
 
+    void restoreScrollbar();
+
+    void setMediaType(const String&);
+
 private:
     void init();
 
     virtual bool isFrameView() const;
 
-    void setMediaType(const String&);
-
     bool scrollTo(const IntRect&);
 
     bool useSlowRepaints() const;
-
-    void restoreScrollbar();
 
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
 

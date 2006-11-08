@@ -65,9 +65,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     // FIXME: is that really the rule we want for subresources?
     bool hideReferrer;
-    fl->canLoad(request.url().getNSURL(), frame->loader()->referrer(), hideReferrer);
+    fl->canLoad(request.url().getNSURL(), fl->outgoingReferrer(), hideReferrer);
     if (!hideReferrer && !request.httpReferrer())
-        request.setHTTPReferrer(fl->referrer());
+        request.setHTTPReferrer(fl->outgoingReferrer());
 
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
 

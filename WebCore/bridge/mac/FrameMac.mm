@@ -181,91 +181,14 @@ FrameMac::~FrameMac()
 {
     setView(0);
     freeClipboard();
-    clearRecordedFormValues();    
+    loader()->clearRecordedFormValues();    
     
     [_bridge clearFrame];
     HardRelease(_bridge);
     _bridge = nil;
 
-    cancelAndClear();
+    loader()->cancelAndClear();
 }
-
-#pragma mark BEGIN LOADING FUNCTIONS
-
-void FrameMac::submitForm(const FrameLoadRequest& request, Event* event)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
-    // We do not want to submit more than one form from the same page,
-    // nor do we want to submit a single form more than once.
-    // This flag prevents these from happening; not sure how other browsers prevent this.
-    // The flag is reset in each time we start handle a new mouse or key down event, and
-    // also in setView since this part may get reused for a page from the back/forward cache.
-    // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
-    // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
-    // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
-    // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    Frame* target = request.frameName().isEmpty() ? this : tree()->find(request.frameName());
-    bool willReplaceThisFrame = false;
-    for (Frame* p = this; p; p = p->tree()->parent()) {
-        if (p == target) {
-            willReplaceThisFrame = true;
-            break;
-        }
-    }
-    if (willReplaceThisFrame) {
-        if (d->m_submittedFormURL == request.resourceRequest().url())
-            return;
-        d->m_submittedFormURL = request.resourceRequest().url();
-    }
-
-    loader()->load(request, true, event,
-        d->m_formAboutToBeSubmitted.get(), d->m_formValuesAboutToBeSubmitted);
-
-    clearRecordedFormValues();
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void FrameMac::urlSelected(const FrameLoadRequest& request, Event* event)
-{
-    FrameLoadRequest copy = request;
-    if (copy.resourceRequest().httpReferrer().isEmpty())
-        copy.resourceRequest().setHTTPReferrer(referrer());
-
-    // FIXME: How do we know that userGesture is always true?
-    loader()->load(copy, true, event, 0, HashMap<String, String>());
-}
-
-Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    BOOL allowsScrolling = YES;
-    int marginWidth = -1;
-    int marginHeight = -1;
-    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
-        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
-        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
-        marginWidth = o->getMarginWidth();
-        marginHeight = o->getMarginHeight();
-    }
-
-    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name
-                                                             withURL:url.getNSURL()
-                                                            referrer:referrer 
-                                                          ownerElement:ownerElement
-                                                     allowsScrolling:allowsScrolling
-                                                         marginWidth:marginWidth
-                                                        marginHeight:marginHeight];
-    return [childBridge _frame];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-#pragma mark END LOADING FUNCTIONS
 
 void FrameMac::freeClipboard()
 {
@@ -462,50 +385,6 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
-void FrameMac::frameDetached()
-{
-    Frame::frameDetached();
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge frameDetached];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-ObjectContentType FrameMac::objectContentType(const KURL& url, const String& mimeType)
-{
-    return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
-}
-
-static NSArray* nsArray(const Vector<String>& vector)
-{
-    unsigned len = vector.size();
-    NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
-    for (unsigned x = 0; x < len; x++)
-        [array addObject:vector[x]];
-    return array;
-}
-
-Plugin* FrameMac::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    return new Plugin(new Widget([_bridge viewForPluginWithURL:url.getNSURL()
-                                  attributeNames:nsArray(paramNames)
-                                  attributeValues:nsArray(paramValues)
-                                  MIMEType:mimeType
-                                  DOMElement:(element ? [DOMElement _elementWith:element] : nil)
-                                loadManually:d->m_doc->isPluginDocument()]));
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-void FrameMac::redirectDataToPlugin(Widget* pluginWidget)
-{
-    [_bridge redirectDataToPlugin:pluginWidget->getView()];
-}
-
-
 void FrameMac::setView(FrameView *view)
 {
     Frame::setView(view);
@@ -513,13 +392,7 @@ void FrameMac::setView(FrameView *view)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    d->m_submittedFormURL = KURL();
-}
-
-// FIXME: Remove this method; it's superfluous.
-void FrameMac::setTitle(const String &title)
-{
-    loader()->documentLoader()->setTitle(title);
+    loader()->resetMultipleFormSubmissionProtection();
 }
 
 void FrameMac::setStatusBarText(const String& status)
@@ -528,7 +401,7 @@ void FrameMac::setStatusBarText(const String& status)
     text.replace('\\', backslashAsCurrencySymbol());
     
     // We want the temporaries allocated here to be released even before returning to the 
-    // event loop; see <http://bugzilla.opendarwin.org/show_bug.cgi?id=9880>.
+    // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
     NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -781,36 +654,6 @@ bool FrameMac::wheelEvent(NSEvent *event)
     }
     
     return false;
-}
-
-void FrameMac::startRedirectionTimer()
-{
-    stopRedirectionTimer();
-
-    Frame::startRedirectionTimer();
-
-    // Don't report history navigations, just actual redirection.
-    if (d->m_scheduledRedirection != historyNavigationScheduled) {
-        double fireDate = currentTime() + d->m_redirectionTimer.nextFireInterval();
-        loader()->clientRedirected(KURL(d->m_redirectURL).getNSURL(),
-            d->m_delayRedirect, fireDate, d->m_redirectLockHistory, d->m_executingJavaScriptFormAction);
-    }
-}
-
-void FrameMac::stopRedirectionTimer()
-{
-    bool wasActive = d->m_redirectionTimer.isActive();
-
-    Frame::stopRedirectionTimer();
-
-    // Don't report history navigations, just actual redirection.
-    if (wasActive && d->m_scheduledRedirection != historyNavigationScheduled)
-        loader()->clientRedirectCancelledOrFinished(d->m_cancelWithLoadInProgress);
-}
-
-String FrameMac::userAgent() const
-{
-    return loader()->client()->userAgent();
 }
 
 String FrameMac::mimeTypeForFileName(const String& fileName) const
@@ -1071,47 +914,6 @@ NPObject *FrameMac::windowScriptNPObject()
     return _windowScriptNPObject;
 }
 
-Widget* FrameMac::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)
-{
-    Widget* result = new Widget;
-    
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    NSMutableArray *attributeNames = [[NSMutableArray alloc] init];
-    NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
-    
-    DeprecatedString baseURLString;
-    HashMap<String, String>::const_iterator end = args.end();
-    for (HashMap<String, String>::const_iterator it = args.begin(); it != end; ++it) {
-        if (it->first.lower() == "baseurl")
-            baseURLString = it->second.deprecatedString();
-        [attributeNames addObject:it->first];
-        [attributeValues addObject:it->second];
-    }
-    
-    if (baseURLString.isEmpty())
-        baseURLString = document()->baseURL();
-
-    result->setView([_bridge viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                                         attributeNames:attributeNames
-                                        attributeValues:attributeValues
-                                                baseURL:completeURL(baseURLString).getNSURL()
-                                             DOMElement:[DOMElement _elementWith:element]]);
-    [attributeNames release];
-    [attributeValues release];
-    view()->addChild(result);
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return result;
-}
-
-void FrameMac::partClearedInBegin()
-{
-    if (javaScriptEnabled())
-        [_bridge windowObjectCleared];
-}
-
 WebCoreFrameBridge *FrameMac::bridgeForWidget(const Widget *widget)
 {
     ASSERT_ARG(widget, widget);
@@ -1125,24 +927,6 @@ NSView *FrameMac::documentViewForNode(Node *node)
 {
     WebCoreFrameBridge *bridge = Mac(frameForNode(node))->_bridge;
     return [bridge documentView];
-}
-
-void FrameMac::saveDocumentState()
-{
-    // Do not save doc state if the page has a password field and a form that would be submitted
-    // via https
-    if (!(d->m_doc && d->m_doc->hasPasswordField() && d->m_doc->hasSecureForm())) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [_bridge saveDocumentState];
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-}
-
-void FrameMac::restoreDocumentState()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge restoreDocumentState];
-    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void FrameMac::runJavaScriptAlert(const String& message)
@@ -1208,17 +992,6 @@ void FrameMac::addMessageToConsole(const String &message, unsigned lineNumber, c
         (NSString *)sourceURL, @"sourceURL",
         NULL];
     [_bridge addMessageToConsole:dictionary];
-}
-
-void FrameMac::createEmptyDocument()
-{
-    // Although it's not completely clear from the name of this function,
-    // it does nothing if we already have a document, and just creates an
-    // empty one if we have no document at all.
-    if (!d->m_doc) {
-        loader()->loadEmptyDocumentSynchronously();
-        updateBaseURLForEmptyDocument();
-    }
 }
 
 bool FrameMac::keyEvent(NSEvent *event)
@@ -2267,13 +2040,6 @@ NSWritingDirection FrameMac::baseWritingDirectionForSelectionStart() const
     return result;
 }
 
-void FrameMac::tokenizerProcessedData()
-{
-    if (d->m_doc)
-        checkCompleted();
-    loader()->checkLoadComplete();
-}
-
 void FrameMac::setBridge(WebCoreFrameBridge *bridge)
 { 
     if (_bridge == bridge)
@@ -2284,14 +2050,6 @@ void FrameMac::setBridge(WebCoreFrameBridge *bridge)
     _bridge = bridge;
 }
 
-String FrameMac::overrideMediaType() const
-{
-    NSString *overrideType = [_bridge overrideMediaType];
-    if (overrideType)
-        return overrideType;
-    return String();
-}
-
 WebCoreKeyboardUIMode FrameMac::keyboardUIMode() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -2299,25 +2057,6 @@ WebCoreKeyboardUIMode FrameMac::keyboardUIMode() const
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return WebCoreKeyboardAccessDefault;
-}
-
-void FrameMac::didTellBridgeAboutLoad(const String& URL)
-{
-    urlsBridgeKnowsAbout.add(URL);
-}
-
-bool FrameMac::haveToldBridgeAboutLoad(const String& URL)
-{
-    return urlsBridgeKnowsAbout.contains(URL);
-}
-
-void FrameMac::clear(bool clearWindowProperties)
-{
-    // FIXME: commenting the below line causes <http://bugs.webkit.org/show_bug.cgi?id=11212>, but putting it
-    // back causes a measurable performance regression which we will need to fix to restore the correct behavior
-    // urlsBridgeKnowsAbout.clear();
-    setMarkedTextRange(0, nil, nil);
-    Frame::clear();
 }
 
 void FrameMac::print()
@@ -2846,16 +2585,6 @@ void FrameMac::setMarkedTextRange(const Range *range, NSArray *attributes, NSArr
         m_markedTextRange->startContainer(exception)->renderer()->repaint();
 }
 
-bool FrameMac::canGoBackOrForward(int distance) const
-{
-    return [_bridge canGoBackOrForward:distance];
-}
-
-void FrameMac::didFirstLayout()
-{
-    loader()->didFirstLayout();
-}
-
 NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
 {
     Document *doc = document();
@@ -2908,11 +2637,6 @@ void FrameMac::willPopupMenu(NSMenu * menu)
 bool FrameMac::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
 {
     return [_bridge isCharacterSmartReplaceExempt:c isPreviousCharacter:isPreviousChar];
-}
-
-void FrameMac::handledOnloadEvents()
-{
-    loader()->client()->dispatchDidHandleOnloadEvents();
 }
 
 bool FrameMac::shouldClose()
@@ -2986,36 +2710,6 @@ FloatRect FrameMac::customHighlightLineRect(const AtomicString& type, const Floa
 void FrameMac::paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line)
 {
     [_bridge paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line];
-}
-
-KURL FrameMac::originalRequestURL() const
-{
-    return [_bridge originalRequestURL];
-}
-
-bool FrameMac::isLoadTypeReload()
-{
-    return loader()->loadType() == FrameLoadTypeReload;
-}
-
-int FrameMac::getHistoryLength()
-{
-    return [_bridge historyLength];
-}
-
-void FrameMac::goBackOrForward(int distance)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge goBackOrForward:distance];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-KURL FrameMac::historyURL(int distance)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return KURL([_bridge historyURL:distance]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return KURL();
 }
 
 } // namespace WebCore
