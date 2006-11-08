@@ -1026,10 +1026,9 @@ void Frame::endIfNotLoading()
     // 3) We have no valid icon URL
     // 4) We already have an unexpired icon
     
-    if (tree()->parent())
+    if (page()->mainFrame() != this)
         return;
         
-    
     if (IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase()) {
         if (!sharedIconDatabase->enabled())
             return;
