@@ -272,7 +272,7 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
 
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
-    requestWithReferrer.resourceRequest().setHTTPReferrer(outgoingReferrer());
+    requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
     
     Page* page;
     if (features.dialog)
@@ -356,15 +356,13 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
     urlSelected(frameRequest, triggeringEvent);
 }
 
-bool FrameLoader::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)
+bool FrameLoader::requestFrame(Element* ownerElement, const String& urlString, const AtomicString& frameName)
 {
-    DeprecatedString urlString = urlParam.deprecatedString();
-
     // Support for <frame src="javascript:string">
     KURL scriptURL;
     KURL url;
     if (urlString.startsWith("javascript:", false)) {
-        scriptURL = urlString;
+        scriptURL = urlString.deprecatedString();
         url = "about:blank";
     } else
         url = completeURL(urlString);
@@ -738,6 +736,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_containsPlugIns = false;
     m_frame->cleanupPluginObjects();
   
+    m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
 
     m_receivedData = false;
@@ -755,44 +754,45 @@ void FrameLoader::receivedFirstData()
     m_frame->document()->docLoader()->setCachePolicy(m_cachePolicy);
     m_workingURL = KURL();
 
-    DeprecatedString refresh = m_responseRefreshHeader.deprecatedString();
-    if (!refresh.isEmpty()) {
-        double delay;
-        String URL;
+    const String& refresh = m_responseRefreshHeader;
+    if (refresh.isEmpty())
+        return;
 
-        int pos = refresh.find(';');
-        if (pos == -1)
-            pos = refresh.find(',');
-        if (pos == -1) {
-            delay = refresh.stripWhiteSpace().toDouble();
-            URL = m_URL.url();
-        } else {
-            int end_pos = refresh.length();
-            delay = refresh.left(pos).stripWhiteSpace().toDouble();
-            while (refresh[++pos] == ' ')
-                ;
-            if (refresh.find("url", pos, false) == pos) {
-                pos += 3;
-                while (refresh[pos] == ' ' || refresh[pos] == '=')
-                    pos++;
-                if (refresh[pos] == '"') {
-                    pos++;
-                    int index = end_pos-1;
-                    while (index > pos) {
-                        if (refresh[index] == '"')
-                            break;
-                        index--;
-                    }
-                    if (index > pos)
-                        end_pos = index;
+    double delay;
+    String URL;
+
+    int pos = refresh.find(';');
+    if (pos == -1)
+        pos = refresh.find(',');
+    if (pos == -1) {
+        delay = refresh.stripWhiteSpace().toDouble();
+        URL = m_URL.url();
+    } else {
+        int endPos = refresh.length();
+        delay = refresh.left(pos).stripWhiteSpace().toDouble();
+        while (refresh[++pos] == ' ')
+            ;
+        if (refresh.find("url", pos, false) == pos) {
+            pos += 3;
+            while (refresh[pos] == ' ' || refresh[pos] == '=')
+                pos++;
+            if (refresh[pos] == '"') {
+                pos++;
+                int index = endPos - 1;
+                while (index > pos) {
+                    if (refresh[index] == '"')
+                        break;
+                    index--;
                 }
+                if (index > pos)
+                    endPos = index;
             }
-            URL = m_frame->document()->completeURL(refresh.mid(pos, end_pos));
         }
-
-        // We want a new history item if the refresh timeout > 1 second
-        scheduleRedirection(delay, URL, delay <= 1);
+        URL = m_frame->document()->completeURL(refresh.substring(pos, endPos - pos));
     }
+
+    // We want a new history item if the refresh timeout > 1 second
+    scheduleRedirection(delay, URL, delay <= 1);
 }
 
 const String& FrameLoader::responseMIMEType() const
@@ -1140,7 +1140,7 @@ void FrameLoader::scheduleLocationChange(const String& url, const String& referr
         stopLoading(true);   
 
     ScheduledRedirection::Type type = duringLoad
-        ? ScheduledRedirection::locationChange : ScheduledRedirection::locationChangeDuringLoad;
+        ? ScheduledRedirection::locationChangeDuringLoad : ScheduledRedirection::locationChange;
     scheduleRedirection(new ScheduledRedirection(type, url, referrer, lockHistory, wasUserGesture));
 }
 
@@ -1157,7 +1157,7 @@ void FrameLoader::scheduleRefresh(bool wasUserGesture)
         stopLoading(true);   
 
     ScheduledRedirection::Type type = duringLoad
-        ? ScheduledRedirection::locationChange : ScheduledRedirection::locationChangeDuringLoad;
+        ? ScheduledRedirection::locationChangeDuringLoad : ScheduledRedirection::locationChange;
     scheduleRedirection(new ScheduledRedirection(type, m_URL.url(), m_outgoingReferrer, true, wasUserGesture));
     m_cachePolicy = CachePolicyRefresh;
 }
@@ -2192,7 +2192,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event)
 {
     FrameLoadRequest copy = request;
     if (copy.resourceRequest().httpReferrer().isEmpty())
-        copy.resourceRequest().setHTTPReferrer(outgoingReferrer());
+        copy.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
 
     // FIXME: Why do we always pass true for userGesture?
     load(copy, true, event, 0, HashMap<String, String>());

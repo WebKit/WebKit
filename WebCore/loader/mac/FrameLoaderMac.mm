@@ -81,7 +81,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
-        referrer = outgoingReferrer();
+        referrer = m_outgoingReferrer;
  
     bool hideReferrer;
     if (!canLoad(request.resourceRequest().url().getNSURL(), referrer, hideReferrer))
@@ -1199,7 +1199,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
 
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
-    String referrer = outgoingReferrer();
+    String referrer = m_outgoingReferrer;
     bool hideReferrer;
     canLoad(URL, referrer, hideReferrer);
     if (hideReferrer)

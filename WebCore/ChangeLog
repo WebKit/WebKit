@@ -1,3 +1,24 @@
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - stray bits of my FrameLoader patch that I left out by accident
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow): Use m_outgoingReferrer instead of outgoingReferrer()
+        inside the FrameLoader class.
+        (WebCore::FrameLoader::requestFrame): Use less DeprecatedString.
+        (WebCore::FrameLoader::clear): Stop the redirection timer.
+        (WebCore::FrameLoader::receivedFirstData): Added an early return instead of nesting the
+        entire function in an if statement. Use less DeprecatedString.
+        (WebCore::FrameLoader::scheduleLocationChange): Fix backwards ? : operator.
+        (WebCore::FrameLoader::scheduleRefresh): Ditto.
+        (WebCore::FrameLoader::urlSelected): Use m_outgoingReferrer instead of outgoingReferrer()
+        inside the FrameLoader class.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::loadResourceSynchronously): Ditto.
+
 2006-11-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
