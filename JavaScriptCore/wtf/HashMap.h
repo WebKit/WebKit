@@ -320,6 +320,21 @@ namespace WTF {
         deleteAllPairSeconds<typename HashMap<T, U, V, W, X>::MappedType>(collection);
     }
 
+    template<typename KeyType, typename HashTableType>
+    void deleteAllPairFirsts(HashTableType& collection)
+    {
+        typedef typename HashTableType::const_iterator iterator;
+        iterator end = collection.end();
+        for (iterator it = collection.begin(); it != end; ++it)
+            delete *(KeyType*)&it->first;
+    }
+
+    template<typename T, typename U, typename V, typename W, typename X>
+    inline void deleteAllKeys(const HashMap<T, U, V, W, X>& collection)
+    {
+        deleteAllPairFirsts<typename HashMap<T, U, V, W, X>::KeyType>(collection);
+    }
+
 } // namespace WTF
 
 using WTF::HashMap;
