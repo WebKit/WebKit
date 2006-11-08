@@ -1,0 +1,36 @@
+    <html>
+<head>
+<script>
+var rq;
+
+function loadXMLDoc()
+{
+    url = 'endlessxml.php';
+
+    rq = false;
+    
+    try {
+      if (window.XMLHttpRequest) {
+        rq = new XMLHttpRequest();
+        rq.overrideMimeType('text/xml');
+        rq.onreadystatechange = readyStateChanged
+        rq.open('GET', url, true);
+        rq.send();
+      }
+    } catch (ex) {
+        rq = false;
+        alert(ex);
+    }
+}
+
+function readyStateChanged()
+{
+    window.parent.dumpRequestStatus(rq);
+}
+
+</script>
+</head>
+<body onload="loadXMLDoc(); window.parent.subframeLoaded();" onunload="window.parent.log('Iframe unloaded');">
+<p>This should have an XMLHttpRequest going on inside it</p>
+</body>
+</html>

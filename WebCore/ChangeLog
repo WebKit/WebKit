@@ -1,3 +1,14 @@
+2006-11-08  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        If the request has already been aborted, bail out of didFinishLoading()
+        immediately.  This prevents state change notifications that aren't
+        needed.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2006-11-08  Darin Adler  <darin@apple.com>
 
         - another attempt to fix Qt build

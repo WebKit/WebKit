@@ -1,3 +1,16 @@
+2006-11-08  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Added test to cover bug http://bugs.webkit.org/show_bug.cgi?id=11450
+        -Confirm there is no assert when nuking a frame with an active XMLHttpRequest load
+        -Confirm the correct state-change notifications for the request are dispatched
+
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort-expected.txt: Added.
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort.html: Added.
+        * http/tests/xmlhttprequest/resources/endlessxml.php: Added.
+        * http/tests/xmlhttprequest/resources/frame-load-to-cancel.html: Added.
+
 2006-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
