@@ -27,7 +27,6 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "Screen.h"
-#include "ScreenClient.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Widget.h"
@@ -42,10 +41,10 @@ namespace WebCore {
 static HashSet<Page*>* allPages;
 static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 
-Page::Page(PassRefPtr<ChromeClient> chromeClient, PassRefPtr<ScreenClient> screenClient)
+Page::Page(PassRefPtr<ChromeClient> chromeClient)
     : m_dragCaretController(new SelectionController(0, true))
     , m_chrome(new Chrome(this, chromeClient))
-    , m_screen(new Screen(this, screenClient))
+    , m_screen(new Screen(this))
     , m_frameCount(0)
     , m_defersLoading(false)
 {

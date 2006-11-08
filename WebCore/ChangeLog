@@ -1,3 +1,47 @@
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        Removed ScreenClient. It was highly unpopular, risking my midterm re-election.
+        
+        None of Screen's responsibilities require up-calls to WebKit or delegates, 
+        so WebCore can handle it all.
+        
+        Moved Screen back from page/ to platform/ because it's a platform
+        abstraction again.
+
+        Merged scaling and flipping functions into 'toUserSpace' and 'toDeviceSpace',
+        since the two were always used together.
+        
+        Changed pixel depth queries to query the deepest screen. Darin mentioned
+        that it might have been a feature, not a bug, to use the main/menubar screen
+        regardless of the screen you were on. For scaling and flipping that's not
+        the case, but for querying pixel depth I think it is. You want to know
+        about the highest pixel depth your content may display on.
+        
+        Tests still pass.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/Screen.cpp: Removed.
+        * page/Screen.h: Removed.
+        * page/ScreenClient.h: Removed.
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::globalPoint):
+        * platform/mac/ScreenMac.mm:
+        (WebCore::window):
+        (WebCore::bestScreen):
+        (WebCore::Screen::depth):
+        (WebCore::Screen::depthPerComponent):
+        (WebCore::Screen::isMonochrome):
+        (WebCore::Screen::rect):
+        (WebCore::Screen::usableRect):
+        (WebCore::toUserSpace):
+        (WebCore::toDeviceSpace):
+
 2006-11-07  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build

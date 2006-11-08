@@ -123,6 +123,24 @@
 
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Removed ScreenClient. It was highly unpopular, risking my midterm re-election.
+        
+        None of Screen's responsibilities require up-calls to WebKit or delegates, 
+        so WebCore can handle it all.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setWindowRect):
+        (WebChromeClient::windowRect):
+        * WebCoreSupport/WebScreenClient.h: Removed.
+        * WebCoreSupport/WebScreenClient.mm: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2006-11-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
         
         Accidentally rolled out this change when removing the WebPageBridge. Now

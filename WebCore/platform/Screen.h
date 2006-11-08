@@ -26,17 +26,9 @@
 #ifndef Screen_h
 #define Screen_h
 
+#include "FloatRect.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-
-#if PLATFORM(MAC)
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    typedef struct CGPoint NSPoint;
-    typedef struct CGRect NSRect;
-#else
-    typedef struct _NSPoint NSPoint;
-    typedef struct _NSRect NSRect;
-#endif
 
 #ifdef __OBJC__
     @class NSScreen;
@@ -45,39 +37,35 @@
     class NSScreen;
     class NSWindow;
 #endif
-#endif
 
 namespace WebCore {
 
     class FloatRect;
     class Page;
-    class ScreenClient;
     
     class Screen {
     public:
-        Screen(Page*, PassRefPtr<ScreenClient>);
+        Screen(Page* page)
+            : m_page(page)
+        {
+        }
         
-        int depth();
-        int depthPerComponent();
+        int depth() const;
+        int depthPerComponent() const;
+        bool isMonochrome() const;
 
-        bool isMonochrome();
-
-        FloatRect rect();
-        FloatRect usableRect();
+        FloatRect rect() const;
+        FloatRect usableRect() const;
 
     private:
         Page* m_page;
-        RefPtr<ScreenClient> m_client;
     };
 
 #if PLATFORM(MAC)
-    NSScreen *screen(NSWindow *window);
-    
-    FloatRect scaleFromScreen(const NSRect& rect, NSScreen *screen);
-    NSRect scaleToScreen(const FloatRect& rect, NSScreen *screen);
+    FloatRect toUserSpace(const NSRect&, NSWindow *destination);
+    NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
     NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen);
-    NSRect flipScreenRect(const NSRect& rect, NSScreen *screen);
 #endif
 
 } // namespace WebCore

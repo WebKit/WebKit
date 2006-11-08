@@ -32,7 +32,6 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebScreenClient.h"
 #import "WebUIDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
@@ -59,16 +58,14 @@ WebChromeClient::WebChromeClient(WebView *webView)
 
 void WebChromeClient::setWindowRect(const FloatRect& rect)
 {
-    NSScreen *screen = [[m_webView window] screen];
-    NSRect windowRect = flipScreenRect(scaleToScreen(rect, screen), screen);
+    NSRect windowRect = toDeviceSpace(rect, [m_webView window]);
     [[m_webView _UIDelegateForwarder] webView:m_webView setFrame:windowRect];
 }
 
 FloatRect WebChromeClient::windowRect()
 {
-    NSScreen *screen = [[m_webView window] screen];
     NSRect windowRect = [[m_webView _UIDelegateForwarder] webViewFrame:m_webView];
-    return scaleFromScreen(flipScreenRect(windowRect, screen), screen);
+    return toUserSpace(windowRect, [m_webView window]);
 }
 
 // FIXME: We need to add API for setting and getting this.

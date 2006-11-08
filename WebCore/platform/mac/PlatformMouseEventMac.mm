@@ -71,7 +71,7 @@ static int clickCountForEvent(NSEvent *event)
 
 IntPoint globalPoint(const NSPoint& windowPoint, NSWindow* window)
 {
-    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screen(window)));
+    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], [window screen]));
 }
 
 IntPoint pointForEvent(NSEvent *event)

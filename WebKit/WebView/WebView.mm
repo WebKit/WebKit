@@ -79,7 +79,6 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
-#import "WebScreenClient.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
@@ -1814,7 +1813,7 @@ NSMutableDictionary *countInvocations;
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
-    _private->page = new Page(WebChromeClient::create(self), WebScreenClient::create(self));
+    _private->page = new Page(WebChromeClient::create(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName view:frameView webView:self] release];
 
     [self _addToAllWebViewsSet];
