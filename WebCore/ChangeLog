@@ -1,3 +1,12 @@
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        - fix bug caused by last-minute change to my check-in last night
+          that is causing layout tests to hang
+
+        * dom/Document.cpp: (WebCore::Document::completeURL): Added comments.
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::submitForm): Turn
+        a null string into an empty string before calling completeURL.
+
 2006-11-08  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej

@@ -426,7 +426,7 @@ void FrameLoader::submitFormAgain()
 void FrameLoader::submitForm(const char* action, const String& url, const FormData& formData,
     const String& target, const String& contentType, const String& boundary, Event* event)
 {
-    KURL u = completeURL(url);
+    KURL u = completeURL(url.isNull() ? "" : url);
     if (!u.isValid())
         return;
 
