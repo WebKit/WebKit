@@ -28,6 +28,7 @@
 
 #include "KURL.h"
 #include "ResourceHandleClient.h"
+#include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
