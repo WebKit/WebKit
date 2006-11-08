@@ -1764,7 +1764,7 @@ static WebHTMLView *lastHitView = nil;
     typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
     static ServiceWindowShowFunction dictionaryServiceWindowShow;
     if (!lookedForFunction) {
-        const struct mach_header *frameworkImageHeader;
+        const struct mach_header *frameworkImageHeader = 0;
         dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
             _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
         lookedForFunction = true;

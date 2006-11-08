@@ -1,3 +1,14 @@
+2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/4825370>
+        REGRESSION: Selecting "Look Up In Dictionary" from contextual menu fails to open the Dictionary app
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        Initialize the framework pointer to 0.
+        
 2006-11-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
