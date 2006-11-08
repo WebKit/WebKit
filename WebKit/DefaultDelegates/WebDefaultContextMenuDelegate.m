@@ -360,15 +360,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 
 - (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
 {
-    BOOL contentEditible = NO;
-    id domElement = [element objectForKey:WebElementDOMNodeKey];
-    if ([wv isEditable] || [domElement isKindOfClass:[DOMHTMLTextAreaElement class]] || [domElement isKindOfClass:[DOMHTMLIsIndexElement class]])
-        contentEditible = YES;
-    else if ([domElement isKindOfClass:[DOMHTMLInputElement class]])
-        contentEditible = [(DOMHTMLInputElement *)domElement _isTextField];
-    else if ([domElement isKindOfClass:[DOMNode class]])
-        contentEditible = [(DOMNode *)domElement isContentEditable];
-
+    BOOL contentEditible = [wv isEditable] || [[element objectForKey:WebElementIsContentEditableKey] boolValue];
     NSView *documentView = [[[element objectForKey:WebElementFrameKey] frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]] && contentEditible) {
         return [self editingContextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];

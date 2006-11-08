@@ -1,3 +1,15 @@
+2006-11-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Add ability to HitTestResult to ask if the inner non-shared node is 
+        content editable.
+
+        * WebCore.exp: Export HitTestResult::isContentEditable()
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isContentEditable):
+        * rendering/HitTestResult.h:
+
 2006-11-08  Anders Carlsson  <acarlsson@apple.com>
 
         Build fix.

@@ -1,3 +1,21 @@
+2006-11-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Add WebElementIsContentEditableKey to the WebElementDictionary, and 
+        use it!
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate 
+        webView:contextMenuItemsForElement:defaultMenuItems:]): Use new 
+        WebElementIsContentEditableKey.
+        * Misc/WebElementDictionary.m:
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary _isContentEditable]): Call into 
+        HitTestResult::isContentEditable()
+        * WebView/WebView.mm: Add new key.
+        * WebView/WebViewPrivate.h: Add new key.
+
 2006-11-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.

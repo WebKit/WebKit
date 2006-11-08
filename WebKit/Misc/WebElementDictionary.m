@@ -80,6 +80,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementLinkTitleKey, @selector(_titleDisplayString));
     addLookupKey(WebElementLinkLabelKey, @selector(_textContent));
     addLookupKey(WebElementLinkIsLiveKey, @selector(_isLiveLink));
+    addLookupKey(WebElementIsContentEditableKey, @selector(_isContentEditable));
 }
 
 - (id)initWithHitTestResult:(const HitTestResult&)result
@@ -222,6 +223,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 - (NSNumber *)_isLiveLink
 {
     return [NSNumber numberWithBool:_result->isLiveLink()];
+}
+
+- (NSNumber *)_isContentEditable
+{
+    return [NSNumber numberWithBool:_result->isContentEditable()];
 }
 
 @end
