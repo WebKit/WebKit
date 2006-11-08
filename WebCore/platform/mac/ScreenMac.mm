@@ -46,7 +46,7 @@ static NSWindow *windowForPage(Page* page)
     return [frameView->getView() window];
 }
 
-static NSScreen *screenForWindow(NSWindow *window)
+NSScreen *screenForWindow(NSWindow *window)
 {
     NSScreen *s = [window screen]; // nil if the window is off-screen
     if (s)

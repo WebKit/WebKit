@@ -1,3 +1,18 @@
+2006-11-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Fixed regression in fast/events/objc-event-api. DumpRenderTree expects to
+        be able to dispatch user events even when off-screen, so we have to support
+        off-screen windows when handling mouse events.
+
+        * platform/Screen.h:
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::globalPoint): Grab the best screen instead of the screen you're
+        on, since you might be off-screen.
+        * platform/mac/ScreenMac.mm:
+        (WebCore::screenForWindow):
+
 2006-11-08  Darin Adler  <darin@apple.com>
 
         - fix bug caused by last-minute change to my check-in last night
