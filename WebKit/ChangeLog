@@ -1,3 +1,98 @@
+2006-11-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Use the WebCore editing enums.
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge undoNameForEditAction:]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:granularity:]):
+        (-[WebHTMLView _deleteSelection]):
+        (-[WebHTMLView moveBackward:]):
+        (-[WebHTMLView moveBackwardAndModifySelection:]):
+        (-[WebHTMLView moveDown:]):
+        (-[WebHTMLView moveDownAndModifySelection:]):
+        (-[WebHTMLView moveForward:]):
+        (-[WebHTMLView moveForwardAndModifySelection:]):
+        (-[WebHTMLView moveLeft:]):
+        (-[WebHTMLView moveLeftAndModifySelection:]):
+        (-[WebHTMLView moveRight:]):
+        (-[WebHTMLView moveRightAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfDocument:]):
+        (-[WebHTMLView moveToBeginningOfDocumentAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfSentence:]):
+        (-[WebHTMLView moveToBeginningOfSentenceAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfLine:]):
+        (-[WebHTMLView moveToBeginningOfLineAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfParagraph:]):
+        (-[WebHTMLView moveToBeginningOfParagraphAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfDocument:]):
+        (-[WebHTMLView moveToEndOfDocumentAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfSentence:]):
+        (-[WebHTMLView moveToEndOfSentenceAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfLine:]):
+        (-[WebHTMLView moveToEndOfLineAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfParagraph:]):
+        (-[WebHTMLView moveToEndOfParagraphAndModifySelection:]):
+        (-[WebHTMLView moveParagraphBackwardAndModifySelection:]):
+        (-[WebHTMLView moveParagraphForwardAndModifySelection:]):
+        (-[WebHTMLView moveUp:]):
+        (-[WebHTMLView moveUpAndModifySelection:]):
+        (-[WebHTMLView moveWordBackward:]):
+        (-[WebHTMLView moveWordBackwardAndModifySelection:]):
+        (-[WebHTMLView moveWordForward:]):
+        (-[WebHTMLView moveWordForwardAndModifySelection:]):
+        (-[WebHTMLView moveWordLeft:]):
+        (-[WebHTMLView moveWordLeftAndModifySelection:]):
+        (-[WebHTMLView moveWordRight:]):
+        (-[WebHTMLView moveWordRightAndModifySelection:]):
+        (-[WebHTMLView pageUp:]):
+        (-[WebHTMLView pageDown:]):
+        (-[WebHTMLView pageUpAndModifySelection:]):
+        (-[WebHTMLView pageDownAndModifySelection:]):
+        (-[WebHTMLView _expandSelectionToGranularity:]):
+        (-[WebHTMLView selectParagraph:]):
+        (-[WebHTMLView selectLine:]):
+        (-[WebHTMLView selectSentence:]):
+        (-[WebHTMLView selectWord:]):
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _applyParagraphStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _toggleBold]):
+        (-[WebHTMLView _toggleItalic]):
+        (-[WebHTMLView pasteFont:]):
+        (-[WebHTMLView changeFont:]):
+        (-[WebHTMLView changeAttributes:]):
+        (-[WebHTMLView _undoActionFromColorPanelWithSelector:]):
+        (-[WebHTMLView changeColor:]):
+        (-[WebHTMLView _alignSelectionUsingCSSValue:withUndoAction:]):
+        (-[WebHTMLView alignCenter:]):
+        (-[WebHTMLView alignJustified:]):
+        (-[WebHTMLView alignLeft:]):
+        (-[WebHTMLView alignRight:]):
+        (-[WebHTMLView _deleteWithDirection:SelectionController::granularity:killRing:isTypingAction:]):
+        (-[WebHTMLView deleteForward:]):
+        (-[WebHTMLView deleteBackward:]):
+        (-[WebHTMLView deleteWordForward:]):
+        (-[WebHTMLView deleteWordBackward:]):
+        (-[WebHTMLView deleteToBeginningOfLine:]):
+        (-[WebHTMLView deleteToEndOfLine:]):
+        (-[WebHTMLView deleteToBeginningOfParagraph:]):
+        (-[WebHTMLView deleteToEndOfParagraph:]):
+        (-[WebHTMLView subscript:]):
+        (-[WebHTMLView superscript:]):
+        (-[WebHTMLView unscript:]):
+        (-[WebHTMLView underline:]):
+        (-[WebHTMLView deleteToMark:]):
+        (-[WebHTMLView toggleBaseWritingDirection:]):
+        (-[WebHTMLView changeBaseWritingDirection:]):
+        (-[WebHTMLView _canSmartCopyOrDelete]):
+        (-[WebTextCompleteController doCompletion]):
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]):
+        * WebView/WebView.mm:
+        (-[WebView setTypingStyle:]):
+        (-[WebView applyStyle:]):
+
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

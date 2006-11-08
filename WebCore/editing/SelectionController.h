@@ -40,7 +40,7 @@ class VisiblePosition;
 
 class SelectionController : Noncopyable {
 public:
-    enum EAlter { MOVE, EXTEND };
+    enum EAlteration { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
 
     SelectionController(Frame* = 0, bool isDragCaretController = false);
@@ -70,8 +70,8 @@ public:
 
     EAffinity affinity() const { return m_sel.affinity(); }
 
-    bool modify(EAlter, EDirection, TextGranularity, bool userTriggered = false);
-    bool modify(EAlter, int verticalDistance, bool userTriggered = false);
+    bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered = false);
+    bool modify(EAlteration, int verticalDistance, bool userTriggered = false);
     bool expandUsingGranularity(TextGranularity);
 
     void setBase(const VisiblePosition&, bool userTriggered = false);
@@ -88,7 +88,7 @@ public:
     void setNeedsLayout(bool flag = true);
 
     void clearModifyBias() { m_modifyBiasSet = false; }
-    void setModifyBias(EAlter, EDirection);
+    void setModifyBias(EAlteration, EDirection);
     
     bool isNone() const { return m_sel.isNone(); }
     bool isCaret() const { return m_sel.isCaret(); }
@@ -174,7 +174,7 @@ private:
     
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
-                                  // modified with EAlter::EXTEND
+                                  // modified with EAlteration::EXTEND
     Frame* m_frame;
     bool m_isDragCaretController;
 };

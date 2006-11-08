@@ -214,7 +214,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK
       deletionAction:(WebDeletionAction)deletionAction
-         granularity:(WebBridgeSelectionGranularity)granularity;
+         granularity:(TextGranularity)granularity;
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
@@ -609,7 +609,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK 
       deletionAction:(WebDeletionAction)deletionAction
-         granularity:(WebBridgeSelectionGranularity)granularity
+         granularity:(TextGranularity)granularity
 {
     WebFrameBridge *bridge = [self _bridge];
     Frame* coreFrame = core([self _frame]);
@@ -639,11 +639,11 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
                 editor->deleteSelectionWithSmartDelete(smartDelete);
                 break;
             case deleteKeyAction:
-                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != WebBridgeSelectByCharacter));
+                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != CharacterGranularity));
                 [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
                 break;
             case forwardDeleteKeyAction:
-                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != WebBridgeSelectByCharacter));
+                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != CharacterGranularity));
                 [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
                 break;
         }
@@ -659,7 +659,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
                prepend:NO
          smartDeleteOK:YES
         deletionAction:deleteSelectionAction
-           granularity:WebBridgeSelectByCharacter];
+           granularity:CharacterGranularity];
 }
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
@@ -3540,229 +3540,229 @@ done:
 - (void)moveBackward:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:CharacterGranularity];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:CharacterGranularity];
 }
 
 - (void)moveDown:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:LineGranularity];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:LineGranularity];
 }
 
 - (void)moveForward:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:CharacterGranularity];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:CharacterGranularity];
 }
 
 - (void)moveLeft:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::LEFT granularity:CharacterGranularity];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::LEFT granularity:CharacterGranularity];
 }
 
 - (void)moveRight:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::RIGHT granularity:CharacterGranularity];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::RIGHT granularity:CharacterGranularity];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:DocumentBoundary];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:DocumentBoundary];
 }
 
 - (void)moveToBeginningOfSentence:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:SentenceBoundary];
 }
 
 - (void)moveToBeginningOfSentenceAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:SentenceBoundary];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:LineBoundary];
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:LineBoundary];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:ParagraphBoundary];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:ParagraphBoundary];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:DocumentBoundary];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:DocumentBoundary];
 }
 
 - (void)moveToEndOfSentence:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:SentenceBoundary];
 }
 
 - (void)moveToEndOfSentenceAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:SentenceBoundary];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:LineBoundary];
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:LineBoundary];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:ParagraphBoundary];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:ParagraphBoundary];
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByParagraph];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:ParagraphGranularity];
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByParagraph];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:ParagraphGranularity];
 }
 
 - (void)moveUp:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:LineGranularity];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:LineGranularity];
 }
 
 - (void)moveWordBackward:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:WordGranularity];
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:WordGranularity];
 }
 
 - (void)moveWordForward:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:WordGranularity];
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:WordGranularity];
 }
 
 - (void)moveWordLeft:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::LEFT granularity:WordGranularity];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::LEFT granularity:WordGranularity];
 }
 
 - (void)moveWordRight:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::RIGHT granularity:WordGranularity];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::RIGHT granularity:WordGranularity];
 }
 
 - (void)pageUp:(id)sender
@@ -3771,7 +3771,7 @@ done:
     if (!frameView)
         return;
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving verticalDistance:-[frameView _verticalPageScrollDistance]];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE verticalDistance:-[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageDown:(id)sender
@@ -3780,7 +3780,7 @@ done:
     if (!frameView)
         return;
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByMoving verticalDistance:[frameView _verticalPageScrollDistance]];
+        [[self _bridge] alterCurrentSelection:SelectionController::MOVE verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageUpAndModifySelection:(id)sender
@@ -3789,7 +3789,7 @@ done:
     if (!frameView)
         return;
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending verticalDistance:-[frameView _verticalPageScrollDistance]];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND verticalDistance:-[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageDownAndModifySelection:(id)sender
@@ -3798,10 +3798,10 @@ done:
     if (frameView == nil)
         return;
     if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
+        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
-- (void)_expandSelectionToGranularity:(WebBridgeSelectionGranularity)granularity
+- (void)_expandSelectionToGranularity:(TextGranularity)granularity
 {
     if (![self _canAlterCurrentSelection])
         return;
@@ -3828,22 +3828,22 @@ done:
 
 - (void)selectParagraph:(id)sender
 {
-    [self _expandSelectionToGranularity:WebBridgeSelectByParagraph];
+    [self _expandSelectionToGranularity:ParagraphGranularity];
 }
 
 - (void)selectLine:(id)sender
 {
-    [self _expandSelectionToGranularity:WebBridgeSelectByLine];
+    [self _expandSelectionToGranularity:LineGranularity];
 }
 
 - (void)selectSentence:(id)sender
 {
-    [self _expandSelectionToGranularity:WebBridgeSelectBySentence];
+    [self _expandSelectionToGranularity:SentenceGranularity];
 }
 
 - (void)selectWord:(id)sender
 {
-    [self _expandSelectionToGranularity:WebBridgeSelectByWord];
+    [self _expandSelectionToGranularity:WordGranularity];
 }
 
 - (void)delete:(id)sender
@@ -3981,7 +3981,7 @@ done:
     return style;
 }
 
-- (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+- (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (style == nil || [style length] == 0 || ![self _canEditRichly])
         return;
@@ -3992,7 +3992,7 @@ done:
     }
 }
 
-- (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+- (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (style == nil || [style length] == 0 || ![self _canEditRichly])
         return;
@@ -4008,7 +4008,7 @@ done:
     [style setFontWeight:@"bold"];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setFontWeight:@"normal"];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSetFont];
+    [self _applyStyleToSelection:style withUndoAction:EditActionSetFont];
 }
 
 - (void)_toggleItalic
@@ -4017,7 +4017,7 @@ done:
     [style setFontStyle:@"italic"];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setFontStyle:@"normal"];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSetFont];
+    [self _applyStyleToSelection:style withUndoAction:EditActionSetFont];
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
@@ -4079,7 +4079,7 @@ done:
 {
     // Read RTF with font attributes from the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
-    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:WebUndoActionPasteFont];
+    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:EditActionPasteFont];
 }
 
 - (void)pasteAsRichText:(id)sender
@@ -4183,7 +4183,7 @@ done:
 
 - (void)changeFont:(id)sender
 {
-    [self _applyStyleToSelection:[self _styleFromFontManagerOperation] withUndoAction:WebUndoActionSetFont];
+    [self _applyStyleToSelection:[self _styleFromFontManagerOperation] withUndoAction:EditActionSetFont];
 }
 
 - (DOMCSSStyleDeclaration *)_styleForAttributeChange:(id)sender
@@ -4292,7 +4292,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeAttributes:(id)sender
 {
-    [self _applyStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:WebUndoActionChangeAttributes];
+    [self _applyStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:EditActionChangeAttributes];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromColorPanelWithSelector:(SEL)selector
@@ -4305,11 +4305,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     return style;
 }
 
-- (WebUndoAction)_undoActionFromColorPanelWithSelector:(SEL)selector
+- (EditAction)_undoActionFromColorPanelWithSelector:(SEL)selector
 {
     if (selector == @selector(setBackgroundColor:))
-        return WebUndoActionSetBackgroundColor;    
-    return WebUndoActionSetColor;
+        return EditActionSetBackgroundColor;    
+    return EditActionSetColor;
 }
 
 - (void)_changeCSSColorUsingSelector:(SEL)selector inRange:(DOMRange *)range
@@ -4344,10 +4344,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // NSTextView. However, this might not be required for Tiger, since the background-color 
     // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
     [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)] 
-                  withUndoAction:WebUndoActionSetColor];
+                  withUndoAction:EditActionSetColor];
 }
 
-- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue withUndoAction:(WebUndoAction)undoAction
+- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue withUndoAction:(EditAction)undoAction
 {
     if (![self _canEditRichly])
         return;
@@ -4359,22 +4359,22 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)alignCenter:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"center" withUndoAction:WebUndoActionCenter];
+    [self _alignSelectionUsingCSSValue:@"center" withUndoAction:EditActionCenter];
 }
 
 - (void)alignJustified:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"justify" withUndoAction:WebUndoActionJustify];
+    [self _alignSelectionUsingCSSValue:@"justify" withUndoAction:EditActionJustify];
 }
 
 - (void)alignLeft:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"left" withUndoAction:WebUndoActionAlignLeft];
+    [self _alignSelectionUsingCSSValue:@"left" withUndoAction:EditActionAlignLeft];
 }
 
 - (void)alignRight:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"right" withUndoAction:WebUndoActionAlignRight];
+    [self _alignSelectionUsingCSSValue:@"right" withUndoAction:EditActionAlignRight];
 }
 
 - (void)insertTab:(id)sender
@@ -4457,7 +4457,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
-- (BOOL)_deleteWithDirection:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity killRing:(BOOL)killRing isTypingAction:(BOOL)isTypingAction
+- (BOOL)_deleteWithDirection:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity killRing:(BOOL)killRing isTypingAction:(BOOL)isTypingAction
 {
     // Delete the selection, if there is one.
     // If not, make a selection using the passed-in direction and granularity.
@@ -4476,12 +4476,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             deletionAction = deleteKeyAction;
     } else {
         switch (direction) {
-            case WebBridgeSelectForward:
-            case WebBridgeSelectRight:
+            case SelectionController::FORWARD:
+            case SelectionController::RIGHT:
                 deletionAction = forwardDeleteKeyAction;
                 break;
-            case WebBridgeSelectBackward:
-            case WebBridgeSelectLeft:
+            case SelectionController::BACKWARD:
+            case SelectionController::LEFT:
                 deletionAction = deleteKeyAction;
                 break;
         }
@@ -4497,14 +4497,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:NO isTypingAction:YES];
+    [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:NO isTypingAction:YES];
 }
 
 - (void)deleteBackward:(id)sender
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter killRing:NO isTypingAction:YES];
+    [self _deleteWithDirection:SelectionController::BACKWARD granularity:CharacterGranularity killRing:NO isTypingAction:YES];
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
@@ -4515,38 +4515,38 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteWordForward:(id)sender
 {
-    [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByWord killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:SelectionController::FORWARD granularity:WordGranularity killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectByWord killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:SelectionController::BACKWARD granularity:WordGranularity killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:SelectionController::BACKWARD granularity:LineBoundary killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
     // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
-    if (![self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:YES isTypingAction:NO];
+    if (![self _deleteWithDirection:SelectionController::FORWARD granularity:LineBoundary killRing:YES isTypingAction:NO])
+        [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:SelectionController::BACKWARD granularity:ParagraphBoundary killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
     // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
     // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
-    if (![self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:YES isTypingAction:NO];
+    if (![self _deleteWithDirection:SelectionController::FORWARD granularity:ParagraphBoundary killRing:YES isTypingAction:NO])
+        [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:YES isTypingAction:NO];
 }
 
 - (void)complete:(id)sender
@@ -4665,21 +4665,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"sub"];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSubscript];
+    [self _applyStyleToSelection:style withUndoAction:EditActionSubscript];
 }
 
 - (void)superscript:(id)sender
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"super"];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSuperscript];
+    [self _applyStyleToSelection:style withUndoAction:EditActionSuperscript];
 }
 
 - (void)unscript:(id)sender
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"baseline"];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnscript];
+    [self _applyStyleToSelection:style withUndoAction:EditActionUnscript];
 }
 
 - (void)underline:(id)sender
@@ -4690,7 +4690,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
-    [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnderline];
+    [self _applyStyleToSelection:style withUndoAction:EditActionUnderline];
 }
 
 - (void)yank:(id)sender
@@ -4754,7 +4754,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         NS_HANDLER
             r = selection;
         NS_ENDHANDLER
-        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction granularity:WebBridgeSelectByCharacter];
+        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction granularity:CharacterGranularity];
     }
     [self setMark:sender];
 }
@@ -4845,7 +4845,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setDirection:direction];
-    [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
+    [self _applyParagraphStyleToSelection:style withUndoAction:EditActionSetWritingDirection];
 }
 
 - (void)changeBaseWritingDirection:(id)sender
@@ -4861,7 +4861,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
-    [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
+    [self _applyParagraphStyleToSelection:style withUndoAction:EditActionSetWritingDirection];
 }
 
 - (void)indent:(id)sender
@@ -5105,7 +5105,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (BOOL)_canSmartCopyOrDelete
 {
-    return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebBridgeSelectByWord;
+    return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WordGranularity;
 }
 
 - (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
@@ -5691,8 +5691,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         // Get preceeding word stem
         WebFrameBridge *bridge = [_view _bridge];
         DOMRange *selection = kit(core([_view _frame])->selectionController()->toRange().get());
-        DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending
-            direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+        DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:SelectionController::EXTEND
+            direction:SelectionController::BACKWARD granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
 
@@ -6068,7 +6068,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         [[webView _UIDelegateForwarder] webView:webView
             willPerformDragDestinationAction:WebDragDestinationActionEdit
             forDraggingInfo:draggingInfo];
-        [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];
+        [innerBridge applyStyle:style withUndoAction:EditActionSetColor];
         return YES;
     }
 
@@ -6083,7 +6083,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                 if ([innerView _isMoveDrag:draggingInfo]) {
-                    BOOL smartMove = [innerBridge selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
+                    BOOL smartMove = [innerBridge selectionGranularity] == WordGranularity && [self _canSmartReplaceWithPasteboard:pasteboard];
                     [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                 } else {
                     [innerBridge setSelectionToDragCaret];

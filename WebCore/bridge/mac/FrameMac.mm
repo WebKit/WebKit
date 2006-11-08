@@ -2414,10 +2414,10 @@ void FrameMac::cleanupPluginObjects()
 void FrameMac::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)
 {
     ASSERT(cmd);
-    WebUndoAction action = static_cast<WebUndoAction>(cmd->editingAction());
+    EditAction editAction = cmd->editingAction();
     NSUndoManager* undoManager = [_bridge undoManager];
     WebCoreEditCommand* command = [WebCoreEditCommand commandWithEditCommand:cmd];
-    NSString* actionName = [_bridge nameForUndoAction:action];
+    NSString* actionName = [_bridge undoNameForEditAction:editAction];
     [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
     if (actionName)
         [undoManager setActionName:actionName];

@@ -1,3 +1,29 @@
+2006-11-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Get rid of some duplicate editing enums. Also rename EAlter to EAlteration.
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::registerCommandForUndoOrRedo):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:SelectionController::verticalDistance:]):
+        (-[WebCoreFrameBridge selectionGranularity]):
+        (-[WebCoreFrameBridge deleteKeyPressedWithSmartDelete:granularity:]):
+        (-[WebCoreFrameBridge forwardDeleteKeyPressedWithSmartDelete:granularity:]):
+        (-[WebCoreFrameBridge setTypingStyle:withUndoAction:]):
+        (-[WebCoreFrameBridge applyStyle:withUndoAction:]):
+        (-[WebCoreFrameBridge applyParagraphStyle:withUndoAction:]):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setModifyBias):
+        (WebCore::SelectionController::modify):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::):
+        * editing/TextGranularity.h:
+
 2006-11-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

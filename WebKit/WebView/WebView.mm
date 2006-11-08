@@ -3227,7 +3227,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
-    [[self _bridgeForSelectedOrMainFrame] setTypingStyle:style withUndoAction:WebUndoActionUnspecified];
+    [[self _bridgeForSelectedOrMainFrame] setTypingStyle:style withUndoAction:EditActionUnspecified];
 }
 
 - (DOMCSSStyleDeclaration *)typingStyle
@@ -3397,7 +3397,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
-    [[self _bridgeForSelectedOrMainFrame] applyStyle:style withUndoAction:WebUndoActionUnspecified];
+    [[self _bridgeForSelectedOrMainFrame] applyStyle:style withUndoAction:EditActionUnspecified];
 }
 
 @end

@@ -1045,7 +1045,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     [arg command]->reapply();
 }
 
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
+- (DOMRange *)rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity
 {
     if (m_frame->selectionController()->isNone())
         return nil;
@@ -1053,36 +1053,32 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController selectionController;
     selectionController.setSelection(m_frame->selectionController()->selection());
-    selectionController.modify(static_cast<SelectionController::EAlter>(alteration), 
-                               static_cast<SelectionController::EDirection>(direction), 
-                               static_cast<TextGranularity>(granularity));
+    selectionController.modify(alteration, direction, granularity);
     return [DOMRange _rangeWith:selectionController.toRange().get()];
 }
 
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
+- (void)alterCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity
 {
     if (m_frame->selectionController()->isNone())
         return;
 
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController* selectionController = m_frame->selectionController();
-    selectionController->modify(static_cast<SelectionController::EAlter>(alteration), 
-                                static_cast<SelectionController::EDirection>(direction), 
-                                static_cast<TextGranularity>(granularity), true);
+    selectionController->modify(alteration, direction, granularity, true);
 }
 
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
+- (void)alterCurrentSelection:(SelectionController::EAlteration)alteration verticalDistance:(float)verticalDistance
 {
     if (m_frame->selectionController()->isNone())
         return;
     SelectionController* selectionController = m_frame->selectionController();
-    selectionController->modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance), true);
+    selectionController->modify(alteration, static_cast<int>(verticalDistance), true);
 }
 
-- (WebBridgeSelectionGranularity)selectionGranularity
+- (TextGranularity)selectionGranularity
 {
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    return static_cast<WebBridgeSelectionGranularity>(m_frame->selectionGranularity());
+    return m_frame->selectionGranularity();
 }
 
 - (NSRange)convertToNSRange:(Range *)range
@@ -1493,21 +1489,21 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(TextGranularity)granularity
 {
     if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
+    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(TextGranularity)granularity
 {
     if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
+    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
@@ -1518,25 +1514,25 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:m_frame->typingStyle()->copy().get()];
 }
 
-- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->computeAndSetTypingStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->computeAndSetTypingStyle([style _CSSStyleDeclaration], undoAction);
 }
 
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->applyStyle([style _CSSStyleDeclaration], undoAction);
 }
 
-- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyParagraphStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->applyParagraphStyle([style _CSSStyleDeclaration], undoAction);
 }
 
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style

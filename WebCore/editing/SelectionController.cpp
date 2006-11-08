@@ -188,7 +188,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
         setSelection(Selection(), false, false);
 }
 
-void SelectionController::setModifyBias(EAlter alter, EDirection direction)
+void SelectionController::setModifyBias(EAlteration alter, EDirection direction)
 {
     switch (alter) {
         case MOVE:
@@ -406,7 +406,7 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity gr
 bool SelectionController::modify(const String &alterString, const String &directionString, const String &granularityString, bool userTriggered)
 {
     String alterStringLower = alterString.lower();
-    EAlter alter;
+    EAlteration alter;
     if (alterStringLower == "extend")
         alter = EXTEND;
     else if (alterStringLower == "move")
@@ -451,7 +451,7 @@ bool SelectionController::modify(const String &alterString, const String &direct
     return modify(alter, direction, granularity, userTriggered);
 }
 
-bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity granularity, bool userTriggered)
+bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranularity granularity, bool userTriggered)
 {
     if (userTriggered) {
         SelectionController trialSelectionController;
@@ -530,7 +530,7 @@ static bool caretY(const VisiblePosition &c, int &y)
     return true;
 }
 
-bool SelectionController::modify(EAlter alter, int verticalDistance, bool userTriggered)
+bool SelectionController::modify(EAlteration alter, int verticalDistance, bool userTriggered)
 {
     if (verticalDistance == 0)
         return false;

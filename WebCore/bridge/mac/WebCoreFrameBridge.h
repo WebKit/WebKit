@@ -27,7 +27,11 @@
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardAccess.h>
+#import <WebCore/EditAction.h>
+#import <WebCore/SelectionController.h>
 #import <WebCore/TextAffinity.h>
+#import <WebCore/TextGranularity.h>
+
 #ifdef __cplusplus
 
 namespace WebCore {
@@ -76,30 +80,6 @@ typedef enum {
 } WebCoreDeviceType;
 
 typedef enum {
-    WebSelectByMoving,
-    WebSelectByExtending
-} WebSelectionAlteration;
-
-typedef enum {
-    WebBridgeSelectForward,
-    WebBridgeSelectBackward,
-    WebBridgeSelectRight,
-    WebBridgeSelectLeft
-} WebBridgeSelectionDirection;
-
-typedef enum {
-    WebBridgeSelectByCharacter,
-    WebBridgeSelectByWord,
-    WebBridgeSelectBySentence,
-    WebBridgeSelectByLine,
-    WebBridgeSelectByParagraph,
-    WebBridgeSelectToSentenceBoundary,
-    WebBridgeSelectToLineBoundary,
-    WebBridgeSelectToParagraphBoundary,
-    WebBridgeSelectToDocumentBoundary
-} WebBridgeSelectionGranularity;
-
-typedef enum {
     WebScrollUp,
     WebScrollDown,
     WebScrollLeft,
@@ -112,46 +92,6 @@ typedef enum {
     WebScrollDocument,
     WebScrollWheel
 } WebScrollGranularity;
-
-typedef enum {
-    WebUndoActionUnspecified,
-    WebUndoActionSetColor,
-    WebUndoActionSetBackgroundColor,
-    WebUndoActionTurnOffKerning,
-    WebUndoActionTightenKerning,
-    WebUndoActionLoosenKerning,
-    WebUndoActionUseStandardKerning,
-    WebUndoActionTurnOffLigatures,
-    WebUndoActionUseStandardLigatures,
-    WebUndoActionUseAllLigatures,
-    WebUndoActionRaiseBaseline,
-    WebUndoActionLowerBaseline,
-    WebUndoActionSetTraditionalCharacterShape,
-    WebUndoActionSetFont,
-    WebUndoActionChangeAttributes,
-    WebUndoActionAlignLeft,
-    WebUndoActionAlignRight,
-    WebUndoActionCenter,
-    WebUndoActionJustify,
-    WebUndoActionSetWritingDirection,
-    WebUndoActionSubscript,
-    WebUndoActionSuperscript,
-    WebUndoActionUnderline,
-    WebUndoActionOutline,
-    WebUndoActionUnscript,
-    WebUndoActionDrag,
-    WebUndoActionCut,
-    WebUndoActionPaste,
-    WebUndoActionPasteFont,
-    WebUndoActionPasteRuler,
-    WebUndoActionTyping,
-    WebUndoActionCreateLink,
-    WebUndoActionUnlink,
-    WebUndoActionFormatBlock,
-    WebUndoActionInsertList,
-    WebUndoActionIndent,
-    WebUndoActionOutdent
-} WebUndoAction;
 
 typedef enum {
     ObjectElementNone,
@@ -297,10 +237,10 @@ typedef enum {
 - (void)redoEditing:(id)arg;
 
 - (DOMRange *)rangeOfCharactersAroundCaret;
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
-- (WebBridgeSelectionGranularity)selectionGranularity;
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
+- (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
+- (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration verticalDistance:(float)distance;
+- (WebCore::TextGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 - (void)selectNSRange:(NSRange)range;
@@ -338,13 +278,13 @@ typedef enum {
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point;
 
-- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
-- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebCore::TextGranularity)granularity;
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebCore::TextGranularity)granularity;
 
 - (DOMCSSStyleDeclaration *)typingStyle;
-- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;
-- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
+- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
 - (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style;
 
@@ -456,7 +396,7 @@ typedef enum {
 - (jobject)pollForAppletInView:(NSView *)view;
 
 - (NSUndoManager *)undoManager;
-- (NSString *)nameForUndoAction:(WebUndoAction)undoAction;
+- (NSString *)undoNameForEditAction:(WebCore::EditAction)editAction;
 - (void)issueCutCommand;
 - (void)issueCopyCommand;
 - (void)issuePasteCommand;
