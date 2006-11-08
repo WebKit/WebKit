@@ -26,6 +26,7 @@
 #include "HTMLHeadElement.h"
 
 #include "HTMLNames.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -48,6 +49,15 @@ String HTMLHeadElement::profile() const
 void HTMLHeadElement::setProfile(const String &value)
 {
     setAttribute(profileAttr, value);
+}
+
+bool HTMLHeadElement::childAllowed(Node* newChild)
+{
+    // Do not allow non-whitespace text nodes in the head
+    if (newChild->isTextNode())
+        return static_cast<Text*>(newChild)->containsOnlyWhitespace();
+    
+    return HTMLElement::childAllowed(newChild);
 }
 
 bool HTMLHeadElement::checkDTD(const Node* newChild)

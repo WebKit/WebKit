@@ -426,6 +426,16 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return insertNode(n);
             }
         }
+    } else if (n->isCommentNode() && !head) { 
+        head = new HTMLHeadElement(document);
+        e = head;
+        insertNode(e);
+        if (head) {
+            head->addChild(n);
+            if (!n->attached() && !m_fragment)
+                n->attach();
+        }
+        return true;
     }
     
     // 2. Next we examine our currently active element to do some further error handling.

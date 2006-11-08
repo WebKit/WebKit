@@ -1,3 +1,31 @@
+2006-11-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Another go at fix for <rdar://problem/4820814> A crash occurs at 
+        WebCore::HitTestResult::spellingToolTip() when mousing down on 
+        iframe at www.macsurfer.com
+
+        The fix from yesterday caused a layout test regression which 
+        exposed an existing bug. The existing bug was that we allowed text 
+        nodes to stay in the head tag, but other browsers move them to the 
+        body. The previous fix also caused a performance regression, which 
+        was seemingly easy to fix by moving the new clause in 
+        HTMLParser::handleError() to be below the HTMLElement case.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::childAllowed): Don't allow comment nodes to 
+        be the child of the document.
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::childAllowed): Do not allow non-
+        whitespace text nodes to be children of the head.
+        * html/HTMLHeadElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Error case for comment nodes.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent): Safety-net null check 
+        for the original crash. 
+
 2006-11-07  Darin Adler  <darin@apple.com>
 
         - another attempt to fix Qt build

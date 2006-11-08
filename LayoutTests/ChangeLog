@@ -1,3 +1,43 @@
+2006-11-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test cases for <rdar://problem/4820814> A crash occurs at 
+        WebCore::HitTestResult::spellingToolTip() when mousing down on 
+        iframe at www.macsurfer.com
+
+        And for the found-bug of moving text nodes within the head to the  
+        body.
+
+        * fast/dom/HTMLHeadElement/textInHead1-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/textInHead1-expected.png: Added.
+        * fast/dom/HTMLHeadElement/textInHead1-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/textInHead1.html: Added.
+        * fast/dom/HTMLHeadElement/textInHead2-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/textInHead2-expected.png: Added.
+        * fast/dom/HTMLHeadElement/textInHead2-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/textInHead2.html: Added.
+        * fast/dom/HTMLHeadElement/textInHead3-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/textInHead3-expected.png: Added.
+        * fast/dom/HTMLHeadElement/textInHead3-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/textInHead3.html: Added.
+        * fast/dom/HTMLHeadElement/textInHead4-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/textInHead4-expected.png: Added.
+        * fast/dom/HTMLHeadElement/textInHead4-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/textInHead4.html: Added.
+        * fast/dom/HTMLHeadElement/textInHead5-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/textInHead5-expected.png: Added.
+        * fast/dom/HTMLHeadElement/textInHead5-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/textInHead5.html: Added.
+        * fast/frames/onlyCommentInIFrame-expected.checksum: Added.
+        * fast/frames/onlyCommentInIFrame-expected.txt: Added.
+        * fast/frames/onlyCommentInIFrame.html: Added.
+        * fast/frames/resources/comment.html: Added.
+        * fast/frames/resources/commentX.xhtml: Added.
+        * tables/mozilla/bugs/bug1224-expected.checksum:
+        * tables/mozilla/bugs/bug1224-expected.png:
+        * tables/mozilla/bugs/bug1224-expected.txt:
+
 2006-11-07  David Harrison  <harrison@apple.com>
 
         Updated.
