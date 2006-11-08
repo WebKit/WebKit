@@ -1,3 +1,11 @@
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * fast/forms/submit-nil-value-field-assert.html: Update test so it
+        no longer relies on incorrect "submit form right away during JavaScript
+        execution" behavior.
+
 2006-11-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
