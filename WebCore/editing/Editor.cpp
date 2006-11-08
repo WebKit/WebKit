@@ -28,6 +28,8 @@
 
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSProperty.h"
+#include "CSSPropertyNames.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -229,10 +231,10 @@ Frame::TriState Editor::selectionOrderedListState() const
 
 void Editor::removeFormattingAndStyle()
 {
-    Document* document = frame()->document();
+    Document* document = m_frame->document();
     
     // Make a plain text string from the selection to remove formatting like tables and lists.
-    RefPtr<DocumentFragment> text = createFragmentFromText(frame()->selectionController()->toRange().get(), frame()->selectionController()->toString());
+    RefPtr<DocumentFragment> text = createFragmentFromText(m_frame->selectionController()->toRange().get(), m_frame->selectionController()->toString());
     
     // Put the fragment made from that string into a style span with the document's
     // default style to make sure that it is unstyled regardless of where it is inserted.
@@ -257,6 +259,105 @@ void Editor::removeFormattingAndStyle()
 void Editor::setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand) 
 {
     m_lastEditCommand = lastEditCommand;
+}
+
+void Editor::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
+{
+    switch (m_frame->selectionController()->state()) {
+        case Selection::NONE:
+            // do nothing
+            break;
+        case Selection::CARET: {
+            m_frame->computeAndSetTypingStyle(style, editingAction);
+            break;
+        }
+        case Selection::RANGE:
+            if (m_frame->document() && style)
+                applyCommand(new ApplyStyleCommand(m_frame->document(), style, editingAction));
+            break;
+    }
+}
+
+void Editor::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAction)
+{
+    switch (m_frame->selectionController()->state()) {
+        case Selection::NONE:
+            // do nothing
+            break;
+        case Selection::CARET:
+        case Selection::RANGE:
+            if (m_frame->document() && style)
+                applyCommand(new ApplyStyleCommand(m_frame->document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
+            break;
+    }
+}
+
+void Editor::applyStyleToSelection(CSSStyleDeclaration* style, EditAction editingAction)
+{
+    if (!style || style->length() == 0 || !canEditRichly())
+        return;
+
+    if (m_client->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
+        applyStyle(style, editingAction);
+}
+
+void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditAction editingAction)
+{
+    if (!style || style->length() == 0 || !canEditRichly())
+        return;
+    
+    if (m_client->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
+        applyParagraphStyle(style, editingAction);
+}
+
+void Editor::toggleBold()
+{
+    ExceptionCode ec;
+    
+    RefPtr<CSSStyleDeclaration> style = m_frame->document()->createCSSStyleDeclaration();
+    style->setProperty(CSS_PROP_FONT_WEIGHT, "bold", false, ec);
+    if (selectionStartHasStyle(style.get()))
+        style->setProperty(CSS_PROP_FONT_WEIGHT, "normal", false, ec);
+    applyStyleToSelection(style.get(), EditActionSetFont);
+}
+
+void Editor::toggleItalic()
+{
+    ExceptionCode ec;
+    
+    RefPtr<CSSStyleDeclaration> style = m_frame->document()->createCSSStyleDeclaration();
+    style->setProperty(CSS_PROP_FONT_STYLE, "italic", false, ec);
+    if (selectionStartHasStyle(style.get()))
+        style->setProperty(CSS_PROP_FONT_STYLE, "normal", false, ec);
+    applyStyleToSelection(style.get(), EditActionSetFont);
+}
+
+bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
+{
+    Node* nodeToRemove;
+    RefPtr<CSSStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
+    if (!selectionStyle)
+        return false;
+    
+    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
+    
+    bool match = true;
+    DeprecatedValueListConstIterator<CSSProperty> end;
+    for (DeprecatedValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
+        int propertyID = (*it).id();
+        if (!equalIgnoringCase(mutableStyle->getPropertyValue(propertyID), selectionStyle->getPropertyValue(propertyID))) {
+            match = false;
+            break;
+        }
+    }
+    
+    if (nodeToRemove) {
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        assert(ec == 0);
+    }
+    
+    return match;
 }
 
 // =============================================================================

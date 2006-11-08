@@ -1,3 +1,27 @@
+2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+        
+        Move methods from the bridge and frame into editor.
+        
+        * WebCore.exp:
+        * bridge/EditorClient.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * editing/Editor.cpp:
+        (WebCore::Editor::removeFormattingAndStyle):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::applyStyleToSelection):
+        (WebCore::Editor::applyParagraphStyleToSelection):
+        (WebCore::Editor::toggleBold):
+        (WebCore::Editor::toggleItalic):
+        (WebCore::Editor::selectionStartHasStyle):
+        * editing/Editor.h:
+        * editing/JSEditor.cpp:
+        * page/Frame.cpp:
+        * page/Frame.h:
+
 2006-11-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.

@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CSSStyleDeclaration;
 class Range;
 class HTMLElement;
 
@@ -49,7 +50,7 @@ public:
 //    virtual bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) = 0;
 //    virtual bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertAction givenAction) = 0;
 //    virtual bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) = 0;
-//    virtual bool shouldApplyStyle(CSSStyleDeclaration *style, Range *toElementsInDOMRange) = 0;
+    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
 //    virtual bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle) = 0;
 //    virtual bool doCommandBySelector(SEL selector) = 0;
 //

@@ -50,7 +50,7 @@ public:
 //    bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction);
 //    bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction);
 //    bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting);
-//    bool shouldApplyStyle(CSSStyleDeclaration *style, Range *toElementsInDOMRange);
+    bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
 //    bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle);
 //    bool doCommandBySelector(SEL selector);
 

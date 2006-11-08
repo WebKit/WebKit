@@ -28,6 +28,7 @@
 
 #import "WebFrameInternal.h"
 
+#import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLElementInternal.h"
@@ -149,6 +150,16 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 }
 
 @end
+
+CSSStyleDeclaration* core(DOMCSSStyleDeclaration *declaration)
+{
+    return [declaration _CSSStyleDeclaration];
+}
+
+DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* declaration)
+{
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:declaration];
+}
 
 Element* core(DOMElement *element)
 {

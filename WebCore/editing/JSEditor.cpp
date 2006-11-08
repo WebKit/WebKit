@@ -155,7 +155,7 @@ bool execStyleChange(Frame* frame, int propertyID, const String& propertyValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
     style->setProperty(propertyID, propertyValue);
-    frame->applyStyle(style.get());
+    frame->editor()->applyStyle(style.get());
     return true;
 }
 
@@ -175,7 +175,7 @@ bool selectionStartHasStyle(Frame* frame, int propertyID, const char* desiredVal
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
     style->setProperty(propertyID, desiredValue);
-    return frame->selectionStartHasStyle(style.get());
+    return frame->editor()->selectionStartHasStyle(style.get());
 }
 
 String valueStyle(Frame* frame, int propertyID)

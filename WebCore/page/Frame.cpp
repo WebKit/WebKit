@@ -1020,37 +1020,6 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
     d->m_typingStyle = mutableStyle.release();
 }
 
-void Frame::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
-{
-    switch (selectionController()->state()) {
-        case Selection::NONE:
-            // do nothing
-            break;
-        case Selection::CARET: {
-            computeAndSetTypingStyle(style, editingAction);
-            break;
-        }
-        case Selection::RANGE:
-            if (document() && style)
-                applyCommand(new ApplyStyleCommand(document(), style, editingAction));
-            break;
-    }
-}
-
-void Frame::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAction)
-{
-    switch (selectionController()->state()) {
-        case Selection::NONE:
-            // do nothing
-            break;
-        case Selection::CARET:
-        case Selection::RANGE:
-            if (document() && style)
-                applyCommand(new ApplyStyleCommand(document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
-            break;
-    }
-}
-
 void Frame::indent()
 {
     applyCommand(new IndentOutdentCommand(document(), IndentOutdentCommand::Indent));
@@ -1111,34 +1080,6 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclaration *style) const
     }
 
     return state;
-}
-
-bool Frame::selectionStartHasStyle(CSSStyleDeclaration *style) const
-{
-    Node* nodeToRemove;
-    RefPtr<CSSStyleDeclaration> selectionStyle = selectionComputedStyle(nodeToRemove);
-    if (!selectionStyle)
-        return false;
-
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-
-    bool match = true;
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
-        int propertyID = (*it).id();
-        if (!equalIgnoringCase(mutableStyle->getPropertyValue(propertyID), selectionStyle->getPropertyValue(propertyID))) {
-            match = false;
-            break;
-        }
-    }
-
-    if (nodeToRemove) {
-        ExceptionCode ec = 0;
-        nodeToRemove->remove(ec);
-        assert(ec == 0);
-    }
-
-    return match;
 }
 
 String Frame::selectionStartStylePropertyValue(int stylePropertyID) const

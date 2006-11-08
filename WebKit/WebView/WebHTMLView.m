@@ -3983,41 +3983,30 @@ done:
 
 - (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
-    if (style == nil || [style length] == 0 || ![self _canEditRichly])
-        return;
-    WebView *webView = [self _webView];
-    WebFrameBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
-        [bridge applyStyle:style withUndoAction:undoAction];
-    }
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->applyStyleToSelection(core(style), undoAction);
 }
 
 - (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
-    if (style == nil || [style length] == 0 || ![self _canEditRichly])
-        return;
-    WebView *webView = [self _webView];
-    WebFrameBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]])
-        [bridge applyParagraphStyle:style withUndoAction:undoAction];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->applyParagraphStyleToSelection(core(style), undoAction);
 }
 
 - (void)_toggleBold
 {
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setFontWeight:@"bold"];
-    if ([[self _bridge] selectionStartHasStyle:style])
-        [style setFontWeight:@"normal"];
-    [self _applyStyleToSelection:style withUndoAction:EditActionSetFont];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->toggleBold();
 }
 
 - (void)_toggleItalic
 {
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setFontStyle:@"italic"];
-    if ([[self _bridge] selectionStartHasStyle:style])
-        [style setFontStyle:@"normal"];
-    [self _applyStyleToSelection:style withUndoAction:EditActionSetFont];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->toggleItalic();
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
@@ -4317,7 +4306,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     DOMCSSStyleDeclaration *style = [self _styleFromColorPanelWithSelector:selector];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range])
-        [[self _bridge] applyStyle:style withUndoAction:[self _undoActionFromColorPanelWithSelector:selector]];
+        core([self _frame])->editor()->applyStyle(core(style), [self _undoActionFromColorPanelWithSelector:selector]);
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
@@ -4684,11 +4673,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)underline:(id)sender
 {
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
     // Despite the name, this method is actually supposed to toggle underline.
     // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
-    if ([[self _bridge] selectionStartHasStyle:style])
+    if (coreFrame->editor()->selectionStartHasStyle(core(style)))
         [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
     [self _applyStyleToSelection:style withUndoAction:EditActionUnderline];
 }
@@ -6068,7 +6060,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         [[webView _UIDelegateForwarder] webView:webView
             willPerformDragDestinationAction:WebDragDestinationActionEdit
             forDraggingInfo:draggingInfo];
-        [innerBridge applyStyle:style withUndoAction:EditActionSetColor];
+        coreFrame->editor()->applyStyle(core(style), EditActionSetColor);
         return YES;
     }
 

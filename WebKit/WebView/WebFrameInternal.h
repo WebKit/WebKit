@@ -34,6 +34,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #endif
 
+@class DOMCSSStyleDeclaration;
 @class DOMElement;
 @class DOMNode;
 @class DOMRange;
@@ -46,6 +47,7 @@
 #ifdef __cplusplus
 
 namespace WebCore {
+    class CSSStyleDeclaration;
     class Document;
     class DocumentLoader;
     class Element;
@@ -57,6 +59,9 @@ namespace WebCore {
     class Page;
     class Range;
 }
+
+WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *);
+DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration*);
 
 WebCore::FrameMac* core(WebFrame *);
 WebFrame *kit(WebCore::Frame *);

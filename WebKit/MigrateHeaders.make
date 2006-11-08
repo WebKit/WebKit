@@ -47,6 +47,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMCSSRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSRuleList.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleDeclaration.h \
+    $(INTERNAL_HEADERS_DIR)/DOMCSSStyleDeclarationInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleSheet.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSUnknownRule.h \

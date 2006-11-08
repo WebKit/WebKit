@@ -1516,27 +1516,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->computeAndSetTypingStyle([style _CSSStyleDeclaration], undoAction);
 }
 
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
-{
-    if (!m_frame)
-        return;
-    m_frame->applyStyle([style _CSSStyleDeclaration], undoAction);
-}
-
-- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
-{
-    if (!m_frame)
-        return;
-    m_frame->applyParagraphStyle([style _CSSStyleDeclaration], undoAction);
-}
-
-- (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
-{
-    if (!m_frame)
-        return NO;
-    return m_frame->selectionStartHasStyle([style _CSSStyleDeclaration]);
-}
-
 - (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)

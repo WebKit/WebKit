@@ -32,6 +32,8 @@
 #import "WebViewInternal.h"
 #import "WebEditingDelegatePrivate.h"
 
+using namespace WebCore;
+
 WebEditorClient::WebEditorClient()
     : m_webView(nil) 
 {
@@ -70,16 +72,22 @@ int WebEditorClient::spellCheckerDocumentTag()
     return [m_webView spellCheckerDocumentTag];
 }
 
-bool WebEditorClient::shouldDeleteRange(WebCore::Range* range)
+bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldDeleteDOMRange:kit(range)];
 }
 
-bool WebEditorClient::shouldShowDeleteInterface(WebCore::HTMLElement* element)
+bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldShowDeleteInterfaceForElement:kit(element)];
+}
+
+bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
+{
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
+        shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
 }
 
 /*
@@ -88,7 +96,6 @@ bool WebEditorClient::shouldEndEditingInRange(Range *range) { return false; }
 bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) { return false; }
 bool WebEditorClient::shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction) { return false; }
 bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) { return false; }
-bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration *style, Range *toElementsInDOMRange) { return false; }
 bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle) { return false; }
 bool WebEditorClient::doCommandBySelector(SEL selector) { return false; }
 
