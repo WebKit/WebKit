@@ -131,7 +131,6 @@
     loader/CachedXSLStyleSheet.cpp
     loader/DocLoader.cpp
     loader/DocumentLoader.cpp
-    loader/FormData.cpp
     loader/FormState.cpp
     loader/FrameLoader.cpp
     loader/ImageDocument.cpp
@@ -189,6 +188,7 @@
 		platform/TextStream.cpp
 		platform/Timer.cpp
 		platform/network/ResourceHandle.cpp
+                platform/network/FormData.cpp
 		platform/Widget.cpp
 
 	</set>

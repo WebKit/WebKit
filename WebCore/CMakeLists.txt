@@ -968,7 +968,6 @@ set(WebCore_SRCS
     loader/CachedXSLStyleSheet.cpp
     loader/DocLoader.cpp
     loader/DocumentLoader.cpp
-    loader/FormData.cpp
     loader/FormState.cpp
     loader/FrameLoader.cpp
     loader/ImageDocument.cpp
@@ -981,6 +980,7 @@ set(WebCore_SRCS
     loader/TextDocument.cpp
     loader/TextResourceDecoder.cpp
     loader/loader.cpp
+    loader/qt/FrameLoaderQt.cpp
     platform/CString.cpp
     platform/AtomicString.cpp
     platform/AffineTransform.cpp
@@ -1036,6 +1036,7 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/PopupMenuQt.cpp
+    platform/network/FormData.cpp
     platform/network/ResourceHandle.cpp
     platform/network/qt/ResourceHandleManager.cpp
     platform/network/qt/ResourceHandleQt.cpp
