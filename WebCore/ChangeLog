@@ -1,5 +1,11 @@
 2006-11-08  Darin Adler  <darin@apple.com>
 
+        - another attempt to fix Qt build
+
+        * loader/qt/FrameLoaderQt.cpp: Added missing include of FrameLoader.h.
+
+2006-11-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - stray bits of my FrameLoader patch that I left out by accident
