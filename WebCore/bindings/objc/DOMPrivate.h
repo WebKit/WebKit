@@ -73,6 +73,11 @@
 - (NSString *)_text;
 @end
 
+@interface DOMRange (DOMRangeExtensions)
+- (NSRect)boundingBox;
+- (NSArray *)lineBoxRects;
+@end
+
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;

@@ -1590,7 +1590,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         p->restore(); // Undo the clip.
 }
 
-void RenderObject::lineBoxRects(Vector<IntRect>&)
+void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsigned endOffset)
 {
 }
 

@@ -216,11 +216,24 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
         rects.append(IntRect(tx + box->xPos(), ty + box->yPos(), box->width(), box->height()));
 }
 
-void RenderText::lineBoxRects(Vector<IntRect>& rects)
+void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end)
 {
     int x, y;
     absolutePositionForContent(x, y);
-    absoluteRects(rects, x, y);
+
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (start <= box->start() && box->end() <= end)
+            rects.append(IntRect(x + box->xPos(), y + box->yPos(), box->width(), box->height()));
+        else {
+            IntRect r = box->selectionRect(x, y, start, end);
+            if (!r.isEmpty()) {
+                // change the height and y position because selectionRect uses selection-specific values
+                r.setHeight(box->height());
+                r.setY(y + box->yPos());
+                rects.append(r);
+            }
+        }
+    }
 }
 
 InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos) const

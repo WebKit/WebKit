@@ -250,6 +250,15 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
     return objcClass;
 }
 
+static NSArray *kit(const Vector<IntRect>& rects)
+{
+    size_t size = rects.size();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [array addObject:[NSValue valueWithRect:rects[i]]];
+    return array;
+}
+
 } // namespace WebCore
 
 @implementation DOMNode (WebCoreInternal)
@@ -367,7 +376,8 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
 
 @implementation DOMNode (DOMNodeExtensions)
 
-// FIXME: this should be implemented in the implementation
+// FIXME: This should be implemented in Node so we don't have to fetch the renderer.
+// If it was, we could even autogenerate.
 - (NSRect)boundingBox
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
@@ -376,20 +386,33 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
     return NSZeroRect;
 }
 
-// FIXME: this should be implemented in the implementation
+// FIXME: This should be implemented in Node so we don't have to fetch the renderer.
+// If it was, we could even autogenerate.
 - (NSArray *)lineBoxRects
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer) {
         Vector<WebCore::IntRect> rects;
-        renderer->lineBoxRects(rects);
-        size_t size = rects.size();
-        NSMutableArray *results = [NSMutableArray arrayWithCapacity:size];
-        for (size_t i = 0; i < size; ++i)
-            [results addObject:[NSValue valueWithRect:rects[i]]];
-        return results;
+        renderer->addLineBoxRects(rects);
+        return kit(rects);
     }
     return nil;
+}
+
+@end
+
+@implementation DOMRange (DOMRangeExtensions)
+
+- (NSRect)boundingBox
+{
+    return [self _range]->boundingBox();
+}
+
+- (NSArray *)lineBoxRects
+{
+    Vector<WebCore::IntRect> rects;
+    [self _range]->addLineBoxRects(rects);
+    return kit(rects);
 }
 
 @end

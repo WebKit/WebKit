@@ -1,3 +1,32 @@
+2006-11-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4713280> Would like to get an array of bounding rects rather than just the union of them for a DOMRange
+        <rdar://problem/4804317> Would like SPI to get bounding box for a DOM range without having to change the selection
+
+        Added lineBoxRects and boundingBox to Range and DOMRange. These methods correspond to the DOMNode methods.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::kit):
+        (-[DOMNode lineBoxRects]):
+        (-[DOMRange boundingBox]):
+        (-[DOMRange lineBoxRects]):
+        * bindings/objc/DOMPrivate.h:
+        * dom/Range.cpp:
+        (WebCore::Range::boundingBox):
+        (WebCore::Range::addLineBoxRects):
+        * dom/Range.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addLineBoxRects):
+        * rendering/RenderContainer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addLineBoxRects):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        * rendering/RenderText.h:
+
 2006-11-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.

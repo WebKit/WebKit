@@ -1494,6 +1494,38 @@ Node *Range::pastEndNode() const
     return m_endContainer->traverseNextSibling();
 }
 
+IntRect Range::boundingBox()
+{
+    IntRect result;
+    Vector<IntRect> rects;
+    addLineBoxRects(rects);
+    const size_t n = rects.size();
+    for (size_t i = 0; i < n; ++i)
+        result.unite(rects[i]);
+    return result;
+}
+
+void Range::addLineBoxRects(Vector<IntRect>& rects)
+{
+    if (!m_startContainer || !m_endContainer)
+        return;
+
+    RenderObject* start = m_startContainer->renderer();
+    RenderObject* end = m_endContainer->renderer();
+    if (!start || !end)
+        return;
+
+    RenderObject* stop = end->nextInPreOrderAfterChildren();
+    for (RenderObject* r = start; r && r != stop; r = r->nextInPreOrder()) {
+        // only ask leaf render objects for their line box rects
+        if (!r->firstChild()) {
+            int startOffset = r == start ? m_startOffset : 0;
+            int endOffset = r == end ? m_endOffset : UINT_MAX;
+            r->addLineBoxRects(rects, startOffset, endOffset);
+        }
+    }
+}
+
 #ifndef NDEBUG
 #define FormatBufferSize 1024
 void Range::formatForDebugger(char *buffer, unsigned length) const
