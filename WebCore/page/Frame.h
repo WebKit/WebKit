@@ -250,12 +250,6 @@ public:
 
     void transpose();
 
-    virtual bool shouldBeginEditing(const Range*) const;
-    virtual bool shouldEndEditing(const Range*) const;
-
-    virtual void didBeginEditing() const {}
-    virtual void didEndEditing() const {}
-
     void copyToPasteboard();
     void cutToPasteboard();
     void pasteFromPasteboard();
@@ -265,8 +259,6 @@ public:
     virtual bool canRedo() const = 0;
     virtual bool canUndo() const = 0;
     void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
-    void indent();
-    void outdent();
     enum TriState { falseTriState, trueTriState, mixedTriState };
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
     String selectionStartStylePropertyValue(int stylePropertyID) const;

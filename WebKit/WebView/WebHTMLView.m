@@ -4858,12 +4858,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)indent:(id)sender
 {
-    core([self _frame])->indent();
+    core([self _frame])->editor()->indent();
 }
 
 - (void)outdent:(id)sender
 {
-    core([self _frame])->outdent();
+    core([self _frame])->editor()->outdent();
 }
 
 #if 0

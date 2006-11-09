@@ -51,8 +51,6 @@ namespace WebCore {
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
-- (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range;
-- (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range;
 @end
 
 @interface WebView (AllWebViews)

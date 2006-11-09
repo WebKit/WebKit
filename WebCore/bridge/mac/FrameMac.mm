@@ -2424,28 +2424,6 @@ bool FrameMac::isContentEditable() const
     return Frame::isContentEditable() || [_bridge isEditable];
 }
 
-bool FrameMac::shouldBeginEditing(const Range *range) const
-{
-    ASSERT(range);
-    return [_bridge shouldBeginEditing:[DOMRange _rangeWith:const_cast<Range*>(range)]];
-}
-
-bool FrameMac::shouldEndEditing(const Range *range) const
-{
-    ASSERT(range);
-    return [_bridge shouldEndEditing:[DOMRange _rangeWith:const_cast<Range*>(range)]];
-}
-
-void FrameMac::didBeginEditing() const
-{
-    [_bridge didBeginEditing];
-}
-
-void FrameMac::didEndEditing() const
-{
-    [_bridge didEndEditing];
-}
-
 void FrameMac::textFieldDidBeginEditing(Element* input)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

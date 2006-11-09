@@ -90,9 +90,31 @@ bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
         shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
 }
 
+bool WebEditorClient::shouldBeginEditing(Range* range)
+{
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
+        shouldBeginEditingInDOMRange:kit(range)];
+
+    return false;
+}
+
+bool WebEditorClient::shouldEndEditing(Range* range)
+{
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
+                             shouldEndEditingInDOMRange:kit(range)];
+}
+
+void WebEditorClient::didBeginEditing()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
+}
+
+void WebEditorClient::didEndEditing()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
+}
+
 /*
-bool WebEditorClient::shouldBeginEditingInRange(Range *range) { return false; }
-bool WebEditorClient::shouldEndEditingInRange(Range *range) { return false; }
 bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) { return false; }
 bool WebEditorClient::shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction) { return false; }
 bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) { return false; }

@@ -36,6 +36,8 @@
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
+#include "Editor.h"
+#include "EditorClient.h"
 #include "EntityReference.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -1969,7 +1971,7 @@ bool Document::relinquishesEditingFocus(Node *node)
     if (!frame() || !root)
         return false;
 
-    return frame()->shouldEndEditing(rangeOfContents(root).get());
+    return frame()->editor()->client()->shouldEndEditing(rangeOfContents(root).get());
 }
 
 bool Document::acceptsEditingFocus(Node *node)
@@ -1981,7 +1983,7 @@ bool Document::acceptsEditingFocus(Node *node)
     if (!frame() || !root)
         return false;
 
-    return frame()->shouldBeginEditing(rangeOfContents(root).get());
+    return frame()->editor()->client()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
 void Document::didBeginEditing()
@@ -1989,7 +1991,7 @@ void Document::didBeginEditing()
     if (!frame())
         return;
     
-    frame()->didBeginEditing();
+    frame()->editor()->client()->didBeginEditing();
 }
 
 void Document::didEndEditing()
@@ -1997,7 +1999,7 @@ void Document::didEndEditing()
     if (!frame())
         return;
     
-    frame()->didEndEditing();
+    frame()->editor()->client()->didEndEditing();
 }
 
 #if PLATFORM(MAC)

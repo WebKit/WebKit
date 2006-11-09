@@ -1,3 +1,22 @@
+2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move more code into editor.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldBeginEditing):
+        (WebEditorClient::shouldEndEditing):
+        (WebEditorClient::didBeginEditing):
+        (WebEditorClient::didEndEditing):
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebView/WebHTMLView.m:
+        (-[NSArray indent:]):
+        (-[NSArray outdent:]):
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+
 2006-11-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

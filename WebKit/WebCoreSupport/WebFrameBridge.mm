@@ -1070,26 +1070,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
 }
 
-- (BOOL)shouldBeginEditing:(DOMRange *)range
-{
-    return [[self webView] _shouldBeginEditingInDOMRange:range];
-}
-
-- (BOOL)shouldEndEditing:(DOMRange *)range
-{
-    return [[self webView] _shouldEndEditingInDOMRange:range];
-}
-
-- (void)didBeginEditing
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:[_frame webView]];
-}
-
-- (void)didEndEditing
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[_frame webView]];
-}
-
 - (void)windowObjectCleared
 {
     WebView *wv = [self webView];

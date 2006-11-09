@@ -45,8 +45,8 @@ public:
     bool shouldDeleteRange(WebCore::Range*);    
     bool shouldShowDeleteInterface(WebCore::HTMLElement*);
 
-//    bool shouldBeginEditingInRange(Range *range);
-//    bool shouldEndEditingInRange(Range *range);
+    bool shouldBeginEditing(WebCore::Range*);
+    bool shouldEndEditing(WebCore::Range*);
 //    bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction);
 //    bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction);
 //    bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting);
@@ -54,9 +54,9 @@ public:
 //    bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle);
 //    bool doCommandBySelector(SEL selector);
 
-//    void webViewDidBeginEditing:(NSNotification *)notification;
+    void didBeginEditing();
 //    void webViewDidChange:(NSNotification *)notification;
-//    void webViewDidEndEditing:(NSNotification *)notification;
+    void didEndEditing();
 //    void webViewDidChangeTypingStyle:(NSNotification *)notification;
 //    void webViewDidChangeSelection:(NSNotification *)notification;
 //    NSUndoManager* undoManagerForWebView:(WebView *)webView;

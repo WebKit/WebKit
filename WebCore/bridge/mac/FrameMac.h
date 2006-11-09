@@ -193,10 +193,6 @@ public:
     virtual bool isContentEditable() const;
     virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const;
     virtual bool shouldDeleteSelection(const Selection&) const;
-    virtual bool shouldBeginEditing(const Range*) const;
-    virtual bool shouldEndEditing(const Range*) const;
-    virtual void didBeginEditing() const;
-    virtual void didEndEditing() const;
     
     virtual void setSecureKeyboardEntry(bool);
     virtual bool isSecureKeyboardEntry();

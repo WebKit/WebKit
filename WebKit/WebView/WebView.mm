@@ -3148,16 +3148,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
-- (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range
-{
-    return [[self _editingDelegateForwarder] webView:self shouldBeginEditingInDOMRange:range];
-}
-
-- (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range
-{
-    return [[self _editingDelegateForwarder] webView:self shouldEndEditingInDOMRange:range];
-}
-
 - (BOOL)maintainsInactiveSelection
 {
     return NO;

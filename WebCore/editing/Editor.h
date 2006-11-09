@@ -67,6 +67,9 @@ public:
     void paste();
     void performDelete();
 
+    void indent();
+    void outdent();
+
     bool shouldShowDeleteInterface(HTMLElement*) const;
     bool shouldDeleteRange(Range*) const;
 
