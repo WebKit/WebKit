@@ -3086,19 +3086,27 @@ unsigned RenderObject::caretMaxRenderedOffset() const
 
 int RenderObject::previousOffset(int current) const
 {
-    int previousOffset = current - 1;
-    return previousOffset;
+    return current - 1;
 }
 
 int RenderObject::nextOffset(int current) const
 {
-    int nextOffset = current + 1;
-    return nextOffset;
+    return current + 1;
 }
 
 InlineBox* RenderObject::inlineBox(int offset, EAffinity affinity)
 {
     return inlineBoxWrapper();
+}
+
+int RenderObject::maxTopMargin(bool positive) const
+{
+    return positive ? max(0, marginTop()) : min(0, -marginTop());
+}
+
+int RenderObject::maxBottomMargin(bool positive) const
+{
+    return positive ? max(0, marginBottom()) : min(0, -marginBottom());
 }
 
 #ifdef SVG_SUPPORT

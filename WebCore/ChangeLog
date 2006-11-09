@@ -1,3 +1,12 @@
+2006-11-09  Darin Adler  <darin@apple.com>
+
+        - improved version of last night's build fix (should not do using namespace in a header)
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::maxTopMargin):
+        (WebCore::RenderObject::maxBottomMargin):
+
 2006-11-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

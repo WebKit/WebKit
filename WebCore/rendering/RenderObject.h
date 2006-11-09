@@ -28,23 +28,15 @@
 #define RenderObject_h
 
 #include "CachedResourceClient.h"
+#if 0
 #include "DeprecatedValueList.h"
 #include "RenderStyle.h"
 #include "ScrollBar.h"
 #include "VisiblePosition.h"
 #include <algorithm>
 #include <wtf/HashMap.h>
-
-using namespace std;
-
-/*
- *  The painting of a layer occurs in three distinct phases.  Each phase involves
- *  a recursive descent into the layer's render objects. The first phase is the background phase.
- *  The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
- *  Floats must paint above block backgrounds but entirely below inline content that can overlap them.
- *  In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
- *  three phases invoked on them during this phase.
- */
+#endif
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -75,6 +67,15 @@ class String;
 class TextStream;
 class VisiblePosition;
 struct HitTestRequest;
+
+/*
+ *  The painting of a layer occurs in three distinct phases.  Each phase involves
+ *  a recursive descent into the layer's render objects. The first phase is the background phase.
+ *  The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
+ *  Floats must paint above block backgrounds but entirely below inline content that can overlap them.
+ *  In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
+ *  three phases invoked on them during this phase.
+ */
 
 enum PaintPhase {
     PaintPhaseBlockBackground,
@@ -656,8 +657,8 @@ public:
     virtual bool isTopMarginQuirk() const { return false; }
     virtual bool isBottomMarginQuirk() const { return false; }
 
-    virtual int maxTopMargin(bool positive) const { return positive ? max(0, marginTop()) : min(0, -marginTop()); }
-    virtual int maxBottomMargin(bool positive) const { return positive ? max(0, marginBottom()) : min(0, -marginBottom()); }
+    virtual int maxTopMargin(bool positive) const;
+    virtual int maxBottomMargin(bool positive) const;
 
     virtual int marginTop() const { return 0; }
     virtual int marginBottom() const { return 0; }
