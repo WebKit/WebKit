@@ -31,6 +31,7 @@
 #import "DocLoader.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
+#import "ResourceError.h"
 #import "ResourceRequestMac.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
@@ -130,10 +131,11 @@ void ResourceHandle::finishJobAndHandle(NSData *data)
     kill();
 }
 
-void ResourceHandle::reportError()
+void ResourceHandle::reportError(NSError* error)
 {
-    setError(1);
-    finishJobAndHandle(nil);
+    if (ResourceHandleClient* c = client())
+        c->didFailWithError(this, error);
+    kill();
 }
 
 } // namespace WebCore

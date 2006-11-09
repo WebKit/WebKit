@@ -29,6 +29,7 @@
 
 #include "DocLoader.h"
 #include "Frame.h"
+#include "ResourceError.h"
 #include "FrameLoader.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
@@ -119,7 +120,7 @@ void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo)
 
 void didFail(CFURLConnectionRef conn, CFStreamError error, const void* clientInfo) 
 {
-    ResourceHandle* job = (ResourceHandle*)clientInfo;
+    ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
 #if defined(LOG_RESOURCELOADER_EVENTS)
     CFStringRef str = CFStringCreateWithFormat(0, 0, CFSTR("didFail(conn=%p, job = %p, error = {%d, %d})\n"), conn, job, error.domain, error.error);
@@ -127,10 +128,20 @@ void didFail(CFURLConnectionRef conn, CFStreamError error, const void* clientInf
     CFRelease(str);
 #endif
 
-    job->setError(1);
-    job->client()->receivedAllData(job, 0);
-    job->client()->didFinishLoading(job);
-    job->kill();
+    String domain;
+    switch(error.domain) {
+    case kCFStreamErrorDomainPOSIX:
+        domain = "NSPOSIXErrorDomain";
+        break;
+    case kCFStreamErrorDomainMacOSStatus:
+        domain = "NSOSStatusErrorDomain";
+        break;
+    }
+
+    // FIXME: we'd really like to include a failing URL and a localized description but you can't
+    // get a CFErrorRef out of an NSURLConnection, only a CFStreamError
+    handle->client()->didFailWithError(handle, ResourceError(domain, error.error, String(), String()));
+    handle->kill();
 }
 
 CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef conn, CFCachedURLResponseRef cachedResponse, const void* clientInfo) 
@@ -269,10 +280,8 @@ void ResourceHandle::cancel()
         d->m_connection = 0;
     }
 
-    // Copied directly from ResourceHandleWin.cpp
-    setError(1);
-    d->m_client->receivedAllData(this, 0);
-    d->m_client->didFinishLoading(this);
+    // FIXME: need real cancel error
+    d->m_client->didFailWithError(this, ResourceError());
 }
 
 } // namespace WebCore

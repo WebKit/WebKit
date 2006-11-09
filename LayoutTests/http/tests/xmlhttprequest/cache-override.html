@@ -110,7 +110,7 @@ Conditional XMLHttpRequest gets should pass 304 responses unchanged.</p>
             if (req.responseText == '<?xml version="1.0" encoding="windows-1251"?>\n<node>Проверка</node>\n')
                 log("async: Automatically cached response body is correct; status = " + req.status);
             else
-                log("async: Automatically cached response body is different from the expected one; status = " + req.status);
+                log("async: Automatically cached response body is different from the expected one; status = " + req.status + "; req.responseText='" + req.responseText + "' (expected '<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<node>Проверка</node>\n')");
 
             req = new XMLHttpRequest();
             req.onreadystatechange = processStateChange;

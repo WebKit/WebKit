@@ -183,7 +183,7 @@ void SubresourceLoader::didFail(NSError *error)
     RefPtr<SubresourceLoader> protect(this);
 
     if (RefPtr<ResourceHandle> handle = m_handle.release())
-        handle->reportError();
+        handle->reportError(error);
 
     if (cancelled())
         return;
@@ -199,7 +199,7 @@ void SubresourceLoader::didCancel(NSError *error)
     RefPtr<SubresourceLoader> protect(this);
     
     if (RefPtr<ResourceHandle> handle = m_handle.release())
-        handle->reportError();
+        handle->reportError(error);
 
     if (cancelled())
         return;

@@ -103,18 +103,33 @@ void Loader::receivedAllData(ResourceHandle* job, PlatformData allData)
     CachedResource* object = req->cachedResource();
     DocLoader* docLoader = req->docLoader();
 
-    if (job->error() || job->isErrorPage()) {
-        docLoader->setLoadInProgress(true);
-        object->error();
-        docLoader->setLoadInProgress(false);
-        cache()->remove(object);
-    } else {
-        docLoader->setLoadInProgress(true);
-        object->data(req->buffer(), true);
-        object->setAllData(allData);
-        docLoader->setLoadInProgress(false);
-        object->finish();
-    }
+    docLoader->setLoadInProgress(true);
+    object->data(req->buffer(), true);
+    object->setAllData(allData);
+    docLoader->setLoadInProgress(false);
+    object->finish();
+
+    delete req;
+
+    servePendingRequests();
+}
+
+void Loader::didFailWithError(ResourceHandle* handle, const ResourceError& error)
+{
+    RequestMap::iterator i = m_requestsLoading.find(handle);
+    if (i == m_requestsLoading.end())
+        return;
+
+    Request* req = i->second;
+    m_requestsLoading.remove(i);
+
+    CachedResource* object = req->cachedResource();
+    DocLoader* docLoader = req->docLoader();
+
+    docLoader->setLoadInProgress(true);
+    object->error();
+    docLoader->setLoadInProgress(false);
+    cache()->remove(object);
 
     delete req;
 

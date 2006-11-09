@@ -85,6 +85,7 @@ private:
     virtual void willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse);
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char* data, int size);
+    virtual void didFailWithError(ResourceHandle*, const ResourceError&);
     virtual void didFinishLoading(ResourceHandle*);
 
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&);

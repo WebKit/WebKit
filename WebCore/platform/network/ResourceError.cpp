@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -23,45 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ICONLOADER_H_
-#define ICONLOADER_H_
+#import "config.h"
+#import "ResourceError.h"
 
-#include "KURL.h"
-#include "ResourceHandleClient.h"
-#include <memory>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
-
-namespace WebCore {
-
-class Frame;
-
-class IconLoader : public ResourceHandleClient, Noncopyable {
-public:
-    static std::auto_ptr<IconLoader> create(Frame*);
-    ~IconLoader();
-    
-    void startLoading();
-    void stopLoading();
-
-private:
-    IconLoader(Frame*);
-
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int);
-    virtual void didFinishLoading(ResourceHandle*);
-    virtual void didFailWithError(ResourceHandle*, const ResourceError&);
-
-    void finishLoading(const KURL&);
-    void clearLoadingState();
-
-    Frame* m_frame;
-
-    RefPtr<ResourceHandle> m_handle;
-    Vector<char> m_buffer;
-    bool m_loadIsInProgress;
-}; // class IconLoader
-
-} // namespace WebCore
-
-#endif

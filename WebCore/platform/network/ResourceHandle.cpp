@@ -47,21 +47,6 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request
     return 0;
 }
 
-bool ResourceHandle::isErrorPage() const
-{
-    return d->status != 0;
-}
-
-int ResourceHandle::error() const
-{
-    return d->status;
-}
-
-void ResourceHandle::setError(int e)
-{
-    d->status = e;
-}
-
 void ResourceHandle::kill()
 {
     if (d->m_loading){

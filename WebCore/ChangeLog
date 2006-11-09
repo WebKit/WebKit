@@ -1,3 +1,50 @@
+2006-11-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - added ResourceError class and didFailWithError client method
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didFailWithError):
+        (WebCore::IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::didFailWithError):
+        * loader/loader.h:
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * platform/cf/RetainPtr.h:
+        (WebCore::):
+        (WebCore::adoptCFReference):
+        (WebCore::RetainPtr::RetainPtr):
+        (WebCore::::adopt):
+        * platform/network/ResourceError.cpp: Added.
+        * platform/network/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::domain):
+        (WebCore::ResourceError::errorCode):
+        (WebCore::ResourceError::failingURL):
+        (WebCore::ResourceError::localizedDescription):
+        (WebCore::ResourceError::unpackPlatformErrorIfNeeded):
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didFailWithError):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didFail):
+        (WebCore::ResourceHandle::cancel):
+        * platform/network/mac/ResourceErrorMac.mm: Added.
+        (-[NSError WebCore]):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::reportError):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::didFailWithError):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/xmlhttprequest.h:
+
 2006-11-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.
