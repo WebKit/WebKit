@@ -270,6 +270,7 @@ int main(int argc, const char *argv[])
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptCanOpenWindowsAutomatically:NO];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
+    [preferences setTabsToLinks:NO];
 
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)

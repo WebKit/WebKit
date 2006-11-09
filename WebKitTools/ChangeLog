@@ -2,6 +2,18 @@
 
         Reviewed by Anders.
 
+        - same change as below, only tested this time
+
+        * DumpRenderTree/DumpRenderTree.m: (main): Explicitly turn "tab to links"
+        mode off. I think we need to do this because WebPreferences saves things
+        for us automatically. It would be good to turn that off for DumpRenderTree,
+        but for now lets handle this like the other preferences (set it explicitly
+        each time).
+
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
         * DumpRenderTree/DumpRenderTree.m: (main): Get rid of code to turn on
         "tab to links" mode. No current tests depend on this, and there's a new
         test I want to land that depends on the default setting.
