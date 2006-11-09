@@ -645,7 +645,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
                         decidePolicyForMIMEType:MIMEType
                                         request:request
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(function)];
+                               decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function,
@@ -656,7 +656,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
             decidePolicyForNewWindowAction:actionDictionary(action)
                                    request:request
                               newFrameName:frameName
-                          decisionListener:setUpPolicyListener(function)];
+                          decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function,
@@ -667,7 +667,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
                 decidePolicyForNavigationAction:actionDictionary(action)
                                         request:request
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(function)];
+                               decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -702,7 +702,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
             sourceFrame:kit(formState->sourceFrame())
          willSubmitForm:kit(formState->form())
              withValues:dictionary
-     submissionListener:setUpPolicyListener(function)];
+     submissionListener:setUpPolicyListener(function).get()];
 
     [dictionary release];
 }
@@ -1122,7 +1122,7 @@ bool WebFrameLoaderClient::createPageCache(WebHistoryItem *item)
     return true;
 }
 
-WebFramePolicyListener *WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
+RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
 {
     ASSERT(!m_policyListener);
     ASSERT(!m_policyFunction);
@@ -1229,7 +1229,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 {
     RefPtr<Frame> frame = adoptRef(m_frame);
     m_frame = 0;
-    static_cast<WebFrameLoaderClient*>(frame->loader()->client())->receivedPolicyDecison(action);
+    if (frame)
+        static_cast<WebFrameLoaderClient*>(frame->loader()->client())->receivedPolicyDecison(action);
 }
 
 - (void)ignore

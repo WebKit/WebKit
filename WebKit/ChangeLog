@@ -1,3 +1,19 @@
+2006-11-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4829080>
+        More loader re-factoring cleanup - WebFramePolicyListener was over-released
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Changed vanilla ptr to a RetainPtr<> 
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForMIMEType): Ditto
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Ditto
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Ditto
+        (WebFrameLoaderClient::setUpPolicyListener): Ditto
+        (-[WebFramePolicyListener receivedPolicyDecision:]): Ditto 
+
 2006-11-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam, Oliver.
