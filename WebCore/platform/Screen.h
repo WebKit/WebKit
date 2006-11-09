@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(MAC)
 #ifdef __OBJC__
     @class NSScreen;
     @class NSWindow;
@@ -37,30 +38,20 @@
     class NSScreen;
     class NSWindow;
 #endif
+#endif
 
 namespace WebCore {
 
     class FloatRect;
-    class Page;
+    class Widget;
     
-    class Screen {
-    public:
-        Screen(Page* page)
-            : m_page(page)
-        {
-        }
-        
-        int depth() const;
-        int depthPerComponent() const;
-        bool isMonochrome() const;
+    int screenDepth(Widget*);
+    int screenDepthPerComponent(Widget*);
+    bool screenIsMonochrome(Widget*);
 
-        FloatRect rect() const;
-        FloatRect usableRect() const;
-
-    private:
-        Page* m_page;
-    };
-
+    FloatRect screenRect(Widget*);
+    FloatRect screenAvailableRect(Widget*);
+    
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);
 

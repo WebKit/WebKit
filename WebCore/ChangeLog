@@ -1,3 +1,13 @@
+2006-11-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Made Screen a good platform citizen by removing its reference to Page. This
+        made a class unnecessary, so all screen fuctions are stand-alone now.
+
+        * bindings/js/kjs_window.cpp: Removed unnecessary subtractions
+        when computing the screen's available dimensions.
+
 2006-11-08  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Mitz.

@@ -33,43 +33,17 @@
 
 namespace WebCore {
 
-static NSWindow *windowForPage(Page* page)
-{
-    Frame* frame = page->mainFrame();
-    if (!frame)
-        return nil;
-    
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return nil;
-    
-    return [frameView->getView() window];
-}
-
-NSScreen *screenForWindow(NSWindow *window)
-{
-    NSScreen *s = [window screen]; // nil if the window is off-screen
-    if (s)
-        return s;
-    
-    NSArray *screens = [NSScreen screens];
-    if ([screens count] > 0)
-        return [screens objectAtIndex:0]; // screen containing the menubar
-    
-    return nil;
-}
-
-int Screen::depth() const
+int screenDepth(Widget*)
 {
     return NSBitsPerPixelFromDepth([[NSScreen deepestScreen] depth]);
 }
 
-int Screen::depthPerComponent() const
+int screenDepthPerComponent(Widget*)
 {
     return NSBitsPerSampleFromDepth([[NSScreen deepestScreen] depth]);
 }
 
-bool Screen::isMonochrome() const
+bool screenIsMonochrome(Widget*)
 {
     NSString *colorSpace = NSColorSpaceFromDepth([[NSScreen deepestScreen] depth]);
     return colorSpace == NSCalibratedWhiteColorSpace
@@ -81,16 +55,29 @@ bool Screen::isMonochrome() const
 // These functions scale between screen and page coordinates because JavaScript/DOM operations 
 // assume that the screen and the page share the same coordinate system.
 
-FloatRect Screen::rect() const
+FloatRect screenRect(Widget* widget)
 {
-    NSWindow *w = windowForPage(m_page);
-    return toUserSpace([screenForWindow(w) frame], w);
+    NSWindow *window = widget ? [widget->getView() window] : nil;
+    return toUserSpace([screenForWindow(window) frame], window);
 }
 
-FloatRect Screen::usableRect() const
+FloatRect screenAvailableRect(Widget* widget)
 {
-    NSWindow *w = windowForPage(m_page);
-    return toUserSpace([screenForWindow(w) visibleFrame], w);
+    NSWindow *window = widget ? [widget->getView() window] : nil;
+    return toUserSpace([screenForWindow(window) visibleFrame], window);
+}
+
+NSScreen *screenForWindow(NSWindow *window)
+{
+    NSScreen *screen = [window screen]; // nil if the window is off-screen
+    if (screen)
+        return screen;
+    
+    NSArray *screens = [NSScreen screens];
+    if ([screens count] > 0)
+        return [screens objectAtIndex:0]; // screen containing the menubar
+    
+    return nil;
 }
 
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)

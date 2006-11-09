@@ -191,24 +191,24 @@ bool Screen::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
 
 JSValue* Screen::getValueProperty(ExecState*, int token) const
 {
-  Page* page = m_frame ? m_frame->page() : 0;
+  Widget* widget = m_frame ? m_frame->view() : 0;  
 
   switch (token) {
   case Height:
-    return jsNumber(page->screen()->rect().height());
+    return jsNumber(screenRect(widget).height());
   case Width:
-    return jsNumber(page->screen()->rect().width());
+    return jsNumber(screenRect(widget).width());
   case ColorDepth:
   case PixelDepth:
-    return jsNumber(page->screen()->depth());
+    return jsNumber(screenDepth(widget));
   case AvailLeft:
-    return jsNumber(page->screen()->usableRect().x() - page->screen()->rect().x());
+    return jsNumber(screenAvailableRect(widget).x());
   case AvailTop:
-    return jsNumber(page->screen()->usableRect().y() - page->screen()->rect().y());
+    return jsNumber(screenAvailableRect(widget).y());
   case AvailHeight:
-    return jsNumber(page->screen()->usableRect().height());
+    return jsNumber(screenAvailableRect(widget).height());
   case AvailWidth:
-    return jsNumber(page->screen()->usableRect().width());
+    return jsNumber(screenAvailableRect(widget).width());
   default:
     return jsUndefined();
   }
@@ -628,7 +628,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    FloatRect screenRect = openerWindow->frame()->page()->screen()->usableRect();
+    FloatRect screenRect = screenAvailableRect(openerWindow->frame()->view());
 
     wargs.width = floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
@@ -1564,7 +1564,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       WindowFeatures windowFeatures;
       String features = args[2]->isUndefinedOrNull() ? UString() : args[2]->toString(exec);
       parseWindowFeatures(features, windowFeatures);
-      constrainToVisible(page->screen()->rect(), windowFeatures);
+      constrainToVisible(screenRect(page->mainFrame()->view()), windowFeatures);
       
       // prepare arguments
       KURL url;
@@ -1646,14 +1646,14 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       FloatRect r = page->chrome()->windowRect();
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (page->screen()->rect().contains(r))
+      if (screenRect(page->mainFrame()->view()).contains(r))
         page->chrome()->setWindowRect(r);
     }
     return jsUndefined();
   case Window::MoveTo:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
-      FloatRect sr = page->screen()->rect();
+      FloatRect sr = screenRect(page->mainFrame()->view());
       r.setLocation(sr.location());
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
@@ -1665,7 +1665,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = r.size() + FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = page->screen()->rect();
+      FloatRect sg = screenRect(page->mainFrame()->view());
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
            && dest.width() >= 100 && dest.height() >= 100)
@@ -1676,7 +1676,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = page->screen()->rect();
+      FloatRect sg = screenRect(page->mainFrame()->view());
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
            dest.width() >= 100 && dest.height() >= 100)

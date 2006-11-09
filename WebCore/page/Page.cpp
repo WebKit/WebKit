@@ -26,7 +26,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "Screen.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Widget.h"
@@ -44,7 +43,6 @@ static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 Page::Page(PassRefPtr<ChromeClient> chromeClient)
     : m_dragCaretController(new SelectionController(0, true))
     , m_chrome(new Chrome(this, chromeClient))
-    , m_screen(new Screen(this))
     , m_frameCount(0)
     , m_defersLoading(false)
 {
@@ -77,7 +75,6 @@ Page::~Page()
     
     delete m_dragCaretController;
     delete m_chrome;
-    delete m_screen;
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)

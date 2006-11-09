@@ -25,7 +25,6 @@
 #include <wtf/HashSet.h>
 
 #if PLATFORM(WIN)
-typedef struct HWND__* HWND;
 typedef struct HINSTANCE__* HINSTANCE;
 #endif
 
@@ -36,7 +35,6 @@ namespace WebCore {
     class Frame;
     class FrameNamespace;
     class FloatRect;
-    class Screen;
     class Settings;
     class SelectionController;
     class Widget;
@@ -64,7 +62,6 @@ namespace WebCore {
 
         SelectionController* dragCaretController() { return m_dragCaretController; }
         Chrome* chrome() { return m_chrome; }
-        Screen* screen() { return m_screen; }
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
@@ -78,7 +75,6 @@ namespace WebCore {
     private:
         SelectionController* m_dragCaretController;
         Chrome* m_chrome;
-        Screen* m_screen;
 
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
