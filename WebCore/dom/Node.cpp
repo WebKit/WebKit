@@ -363,7 +363,7 @@ bool Node::isFocusable() const
     return false;
 }
 
-bool Node::isKeyboardFocusable() const
+bool Node::isKeyboardFocusable(KeyboardEvent*) const
 {
     return isFocusable();
 }

@@ -55,11 +55,9 @@ NSControlSize ControlSizeForFont(const Font& f)
     return NSMiniControlSize;
 }
 
-TextField::TextField(Type type)
-    : m_type(type)
+TextField::TextField()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    ASSERT(type == Search);
     id view = [WebCoreSearchField alloc];
     [view initWithWidget:this];
     m_controller = [view controller];
@@ -95,18 +93,10 @@ int TextField::cursorPosition() const
 void TextField::setFont(const Font &font)
 {
     Widget::setFont(font);
-    if (m_type == Search) {
-        const NSControlSize size = ControlSizeForFont(font);    
-        NSControl * const searchField = static_cast<NSControl *>(getView());
-        [[searchField cell] setControlSize:size];
-        [searchField setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
-    }
-    else {
-        NSTextField *textField = (NSTextField *)getView();
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [textField setFont:font.primaryFont()->getNSFont()];
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
+    const NSControlSize size = ControlSizeForFont(font);    
+    NSControl * const searchField = static_cast<NSControl *>(getView());
+    [[searchField cell] setControlSize:size];
+    [searchField setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
 }
 
 void TextField::setColors(const Color& background, const Color& foreground)
@@ -333,18 +323,12 @@ NSTextAlignment TextAlignment(HorizontalAlignment a)
 
 void TextField::setLiveSearch(bool liveSearch)
 {
-    if (m_type != Search)
-        return;
-    
     NSSearchField *searchField = (NSSearchField *)getView();
     [[searchField cell] setSendsWholeSearchString:!liveSearch];
 }
 
 void TextField::setAutoSaveName(const String& name)
 {
-    if (m_type != Search)
-        return;
-    
     String autosave;
     if (!name.isEmpty())
         autosave = "com.apple.WebKit.searchField:" + name;
@@ -355,9 +339,6 @@ void TextField::setAutoSaveName(const String& name)
 
 void TextField::setMaxResults(int maxResults)
 {
-    if (m_type != Search)
-        return;
-    
     NSSearchField *searchField = (NSSearchField *)getView();
     id searchCell = [searchField cell];
     if (maxResults == -1) {
@@ -386,9 +367,6 @@ void TextField::setPlaceholderString(const String& placeholder)
 
 void TextField::addSearchResult()
 {
-    if (m_type != Search)
-        return;
-    
     NSSearchField *searchField = (NSSearchField *)getView();
     [[searchField cell] _addStringToRecentSearches:[searchField stringValue]];
 }

@@ -107,7 +107,7 @@ bool HTMLAnchorElement::isMouseFocusable() const
     return false;
 }
 
-bool HTMLAnchorElement::isKeyboardFocusable() const
+bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (!isFocusable())
         return false;
@@ -115,7 +115,7 @@ bool HTMLAnchorElement::isKeyboardFocusable() const
     if (!document()->frame())
         return false;
 
-    return document()->frame()->tabsToLinks();
+    return document()->frame()->tabsToLinks(event);
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* evt)

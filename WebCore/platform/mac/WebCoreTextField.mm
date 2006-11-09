@@ -62,8 +62,6 @@ using namespace HTMLNames;
 
 // The three cell subclasses allow us to tell when we get focus without an editor subclass,
 // and override the base writing direction.
-@interface KWQTextFieldCell : NSTextFieldCell
-@end
 @interface WebCoreSearchFieldCell : NSSearchFieldCell
 @end
 
@@ -107,12 +105,10 @@ using namespace HTMLNames;
     [[field cell] setScrollable:YES];
     [field setFormatter:formatter];
     [field setDelegate:self];
-    
-    if (widget->type() == TextField::Search) {
-        [field setTarget:self];
-        [field setAction:@selector(action:)];
-    }
-    
+
+    [field setTarget:self];
+    [field setAction:@selector(action:)];
+
     return self;
 }
 
@@ -203,9 +199,6 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
 - (void)controlTextDidChange:(NSNotification *)notification
 {
     if (!widget)
-        return;
-    
-    if (FrameMac::handleKeyboardOptionTabInView(field))
         return;
     
     if (![[field _webcore_currentEditor] hasMarkedText])
@@ -496,185 +489,6 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
 
 @end
 
-@implementation WebCoreTextField
-
-+ (Class)cellClass
-{
-    return [KWQTextFieldCell class];
-}
-
-- (id)initWithWidget:(TextField *)w 
-{
-    self = [self init];
-    if (!self)
-        return nil;
-    controller = [[WebCoreTextFieldController alloc] initWithTextField:self TextField:w];
-    return self;
-}
-
-- (void)dealloc
-{
-    [controller release];
-    [super dealloc];
-}
-
-- (WebCoreTextFieldController *)controller
-{
-    return controller;
-}
-
-- (Widget *)widget
-{
-    return [controller widget];
-}
-
-- (void)selectText:(id)sender
-{
-    // Don't call the NSTextField's selectText if the field is already first responder.
-    // If we do, we'll end up deactivating and then reactivating, which will send
-    // unwanted onBlur events.
-    NSText *editor = [self currentEditor];
-    if (editor) {
-        [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
-        return;
-    }
-    
-    [super selectText:sender];
-}
-
-- (void)setStringValue:(NSString *)string
-{
-    [super setStringValue:[controller preprocessString:string]];
-    [controller textChanged];
-}
-
-- (NSView *)nextKeyView
-{
-    if (!inNextValidKeyView)
-        return [super nextKeyView];
-    Widget* widget = [controller widget];
-    if (!widget)
-        return [super nextKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, SelectingNext);
-}
-
-- (NSView *)previousKeyView
-{
-    if (!inNextValidKeyView)
-        return [super previousKeyView];
-    Widget* widget = [controller widget];
-    if (!widget)
-        return [super previousKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, SelectingPrevious);
-}
-
-- (NSView *)nextValidKeyView
-{
-    inNextValidKeyView = YES;
-    NSView *view = [super nextValidKeyView];
-    inNextValidKeyView = NO;
-    return view;
-}
-
-- (NSView *)previousValidKeyView
-{
-    inNextValidKeyView = YES;
-    NSView *view = [super previousValidKeyView];
-    inNextValidKeyView = NO;
-    return view;
-}
-
-- (BOOL)acceptsFirstResponder
-{
-    return [self isEnabled];
-}
-
-- (void)display
-{
-    // This is a workaround for Radar 2753974.
-    // Also, in the web page context, it's never OK to just display.
-    [self setNeedsDisplay:YES];
-}
-
-// This is the only one of the display family of calls that we use, and the way we do
-// displaying in WebCore means this is called on this NSView explicitly, so this catches
-// all cases where we are inside the normal display machinery. (Used only by the insertion
-// point method below.)
-- (void)displayRectIgnoringOpacity:(NSRect)rect
-{
-    [controller setInDrawingMachinery:YES];
-    [super displayRectIgnoringOpacity:rect];
-    [controller setInDrawingMachinery:NO];
-}
-
-- (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
-{
-    return [controller textView:view shouldDrawInsertionPointInRect:rect color:color turnedOn:drawInsteadOfErase];
-}
-
-- (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event
-{
-    return [controller textView:view shouldHandleEvent:event];
-}
-
-- (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
-{
-    [controller textView:view didHandleEvent:event];
-}
-
-- (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
-{
-    return [controller textView:view shouldChangeTextInRange:range replacementString:string]
-        && [super textView:view shouldChangeTextInRange:range replacementString:string];
-}
-
-- (void)textViewDidChangeSelection:(NSNotification *)notification
-{
-    [super textViewDidChangeSelection:notification];
-    [controller textViewDidChangeSelection:notification];
-}
-
-- (void)textDidEndEditing:(NSNotification *)notification
-{
-    [controller setHasFocus:NO];
-    [super textDidEndEditing:notification];
-}
-
-@end
-
-@implementation KWQTextFieldCell
-
-- (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
-{
-    [super editWithFrame:frame inView:view editor:editor delegate:delegate event:event];
-    ASSERT([delegate isKindOfClass:[WebCoreTextField class]]);
-    [[(WebCoreTextField *)delegate controller] setHasFocus:YES];
-}
-
-- (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
-{
-    [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
-    ASSERT([delegate isKindOfClass:[WebCoreTextField class]]);
-    [[(WebCoreTextField *)delegate controller] setHasFocus:YES];
-}
-
-- (NSMutableDictionary *)_textAttributes
-{
-    ASSERT([[self controlView] isKindOfClass:[WebCoreTextField class]]);
-    NSMutableDictionary* attributes = [super _textAttributes];
-    [[(WebCoreTextField*)[self controlView] controller] updateTextAttributes:attributes];
-    return attributes;
-}
-
-// Ignore the per-application typesetter setting and instead always use the latest behavior for
-// text fields in web pages. This fixes the "text fields too tall" problem.
-- (NSTypesetterBehavior)_typesetterBehavior
-{
-    return NSTypesetterLatestBehavior;
-}
-
-@end
-
 @implementation WebCoreSearchField
 
 + (Class)cellClass
@@ -815,6 +629,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
 
 - (void)textDidEndEditing:(NSNotification *)notification
 {
+    Widget::setDeferFirstResponderChanges(false);
     [controller setHasFocus:NO];
     [super textDidEndEditing:notification];
 }

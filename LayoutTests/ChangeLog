@@ -1,3 +1,12 @@
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - added test for option-tab
+
+        * fast/events/option-tab.html: Added.
+        * fast/events/option-tab-expected.txt: Added.
+
 2006-11-08  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej

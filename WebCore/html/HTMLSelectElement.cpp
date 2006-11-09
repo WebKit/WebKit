@@ -340,11 +340,11 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
-bool HTMLSelectElement::isKeyboardFocusable() const
+bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (renderer())
         return isFocusable();
-    return HTMLGenericFormElement::isKeyboardFocusable();
+    return HTMLGenericFormElement::isKeyboardFocusable(event);
 }
 
 bool HTMLSelectElement::isMouseFocusable() const

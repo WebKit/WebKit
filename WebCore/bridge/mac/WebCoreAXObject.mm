@@ -30,11 +30,12 @@
 #import "Document.h"
 #import "EventNames.h"
 #import "FontData.h"
+#import "FrameLoader.h"
 #import "FrameMac.h"
 #import "FrameView.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
-#import "HTMLFrameElement.h"
+#import "HTMLFrameElementBase.h"
 #import "HTMLInputElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLMapElement.h"
@@ -646,7 +647,7 @@ static HTMLLabelElement* labelForElement(Element* element)
     return nil;
 }
 
--(NSString*)accessibilityDescription
+- (NSString*)accessibilityDescription
 {
     if (!m_renderer || m_areaElement)
         return nil;
@@ -664,8 +665,8 @@ static HTMLLabelElement* labelForElement(Element* element)
     if ([self isWebArea]) {
         Node* owner = m_renderer->document()->ownerElement();
         if (owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag))) {
-            HTMLFrameElement* frameElement = static_cast<HTMLFrameElement*>(owner);
-            return (NSString*)frameElement->name();
+            HTMLFrameElementBase* frameElement = static_cast<HTMLFrameElementBase*>(owner);
+            return frameElement->name();
         }
     }
     
@@ -881,7 +882,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             return;
 
         if (Frame* f = actionElement->document()->frame())
-            Mac(f)->prepareForUserAction();
+            f->loader()->resetMultipleFormSubmissionProtection();
 
         actionElement->accessKeyAction(true);
     }

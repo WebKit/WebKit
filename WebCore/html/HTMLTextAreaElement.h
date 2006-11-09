@@ -69,7 +69,7 @@ public:
     virtual void reset();
     virtual void defaultEventHandler(Event*);
     virtual bool isMouseFocusable() const;
-    virtual bool isKeyboardFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual void focus();
     virtual void updateFocusAppearance();
 

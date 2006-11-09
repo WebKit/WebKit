@@ -50,7 +50,7 @@ public:
 
     virtual const AtomicString& type() const;
     
-    virtual bool isKeyboardFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
     virtual void recalcStyle(StyleChange);

@@ -29,6 +29,7 @@
 #import "BlockExceptions.h"
 #import "TextField.h"
 #import "FrameMac.h"
+#import "KeyboardEvent.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
@@ -161,10 +162,12 @@ using namespace WebCore;
 {
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
-    if (slider && !FrameMac::frameForWidget(slider)->tabsToAllControls()) {
-        return NO;
+    if (slider) {
+        FrameMac* frame = Mac(Frame::frameForWidget(slider));
+        if (!frame->tabsToAllControls(frame->currentKeyboardEvent().get()))
+            return NO;
     }
-    return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
+    return [self window] != nil && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
 }
 
 -(NSView *)nextValidKeyView
@@ -225,8 +228,8 @@ Widget::FocusPolicy Slider::focusPolicy() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
-    if (!bridge || ![bridge _frame] || ![bridge _frame]->tabsToAllControls())
+    FrameMac* frame = Mac(Frame::frameForWidget(this));
+    if (!frame || !frame->tabsToAllControls(frame->currentKeyboardEvent().get()))
         return NoFocus;
     
     END_BLOCK_OBJC_EXCEPTIONS;

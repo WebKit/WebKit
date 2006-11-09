@@ -42,7 +42,7 @@ public:
 
     virtual bool supportsFocus() const;
     virtual bool isMouseFocusable() const;
-    virtual bool isKeyboardFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isFocusable() const;
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void defaultEventHandler(Event*);

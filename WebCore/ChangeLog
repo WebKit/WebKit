@@ -1,3 +1,103 @@
+2006-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - added event parameters to focus-related functions so we can
+          implement the "option-tab to all links" behavior without relying
+          on a global "current event" -- also makes it work with DOM events
+
+        * page/Frame.h: Removed unneeded includes. Moved some functions
+        that were misplaced into the appropriate sections.
+        * page/Frame.cpp:
+        (WebCore::Frame::doTextFieldCommandFromEvent): Changed parameter from
+        PlatformKeyboardEvent to the DOM keyboard event class.
+        (WebCore::Frame::tabsToLinks): Added event parameter.
+        (WebCore::Frame::tabsToAllControls): Ditto.
+        (WebCore::scanForForm): Fixed code that incorrectly assumes
+        that an iframe is an HTMLFrameElement (no longer true since Geoff
+        changed the class hierarchy a bit).
+        (WebCore::Frame::hitTestResultAtPoint): Ditto.
+
+        * bridge/mac/FrameMac.h: Removed unneeded includes. Moved some functions
+        that were misplaced into the appropriate sections.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::selectorForKeyEvent): Changed to use a DOM event instead of
+        a PlatformKeyboardEvent.
+        (WebCore::FrameMac::nextKeyViewInFrame): Changed to use currentKeyboardEvent()
+        and pass event into next/previousFocusNode.
+        (WebCore::FrameMac::currentKeyboardEvent): Added. Creates a DOM event from
+        the AppKit current event, if it's a keyboard event. Really just a hack that's
+        needed to preserve some code we can remove once we deal with the last NSView-
+        based form control.
+        (WebCore::isKeyboardOptionTab): Added.
+        (WebCore::FrameMac::tabsToLinks): Added event parameter, used to check if the
+        option (alt) key is down.
+        (WebCore::FrameMac::tabsToAllControls): Ditto.
+        (WebCore::FrameMac::keyEvent): Changed call to prepareForUserAction() to just
+        call resetMultipleFormSubmissionProtection() explicitly instead.
+        (WebCore::FrameMac::mouseDown): Ditto.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityDescription]): Fixed code that incorrectly
+        assumes that an iframe is an HTMLFrameElement (no longer true since Geoff
+        changed the class hierarchy a bit).
+        (-[WebCoreAXObject accessibilityPerformAction:]): Changed call to
+        prepareForUserAction() to call resetMultipleFormSubmissionProtection()
+        explicitly instead.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::advanceFocus): Changed function to take an
+        event parameter, and decide the direction based on the shift key
+        modifier instead of a passed-in boolean.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::nextFocusNode): Added event parameter.
+        (WebCore::Document::previousFocusNode): Ditto.
+        * dom/Node.h:
+        * dom/Node.cpp:
+        (WebCore::Node::isKeyboardFocusable): Ditto.
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable): Ditto.
+        * html/HTMLGenericFormElement.h:
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::isKeyboardFocusable): Ditto.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): Ditto.
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::isKeyboardFocusable): Ditto.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::isKeyboardFocusable): Ditto.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler): Pass event to the
+        advanceFocus function.
+
+        * platform/TextField.h:
+        * platform/mac/TextFieldMac.mm: Removed the non-search field code.
+
+        * platform/mac/WebCoreTextField.h:
+        * platform/mac/WebCoreTextField.mm: Removed the non-search field code.
+        (-[WebCoreTextFieldController controlTextDidChange:]): Removed the
+        call to FrameMac::handleKeyboardOptionTabInView, which is no longer
+        needed since the default handler in HTMLInputElement takes care of
+        option-tab.
+
+        * platform/mac/SliderMac.mm:
+        (-[WebCoreSlider canBecomeKeyView]): Changed to use currentKeyboardEvent()
+        and pass event into tabsToAllControls.
+        (Slider::focusPolicy): Ditto.
+
+        * rendering/RenderLineEdit.cpp:
+        (WebCore::RenderLineEdit::RenderLineEdit): Removed the non-search field code.
+        (WebCore::RenderLineEdit::updateFromElement): Ditto.
+
 2006-11-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dave Harrison, Oliver, and Darin 

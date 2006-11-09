@@ -203,7 +203,7 @@ bool HTMLGenericFormElement::isFocusable() const
     return true;
 }
 
-bool HTMLGenericFormElement::isKeyboardFocusable() const
+bool HTMLGenericFormElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (isFocusable()) {
         if (renderer()->isWidget()) {
@@ -211,7 +211,7 @@ bool HTMLGenericFormElement::isKeyboardFocusable() const
                 (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & Widget::TabFocus);
         }
         if (document()->frame())
-            return document()->frame()->tabsToAllControls();
+            return document()->frame()->tabsToAllControls(event);
     }
     return false;
 }

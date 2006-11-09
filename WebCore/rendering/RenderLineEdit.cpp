@@ -42,21 +42,9 @@ RenderLineEdit::RenderLineEdit(HTMLInputElement* element)
     : RenderFormElement(element)
     , m_updating(false)
 {
-    TextField::Type type;
-    switch (element->inputType()) {
-        case HTMLInputElement::PASSWORD:
-            type = TextField::Password;
-            break;
-        case HTMLInputElement::SEARCH:
-            type = TextField::Search;
-            break;
-        default:
-            ASSERT(false);
-            type = TextField::Normal;
-    }
-    TextField* edit = new TextField(type);
-    if (type == TextField::Search)
-        edit->setLiveSearch(false);
+    ASSERT(element->inputType() == HTMLInputElement::SEARCH);
+    TextField* edit = new TextField();
+    edit->setLiveSearch(false);
     setWidget(edit);
 }
 
@@ -152,11 +140,9 @@ void RenderLineEdit::updateFromElement()
 
     // Handle updating the search attributes.
     w->setPlaceholderString(e->getAttribute(placeholderAttr).deprecatedString());
-    if (w->type() == TextField::Search) {
-        w->setLiveSearch(!e->getAttribute(incrementalAttr).isNull());
-        w->setAutoSaveName(e->getAttribute(autosaveAttr));
-        w->setMaxResults(e->maxResults());
-    }
+    w->setLiveSearch(!e->getAttribute(incrementalAttr).isNull());
+    w->setAutoSaveName(e->getAttribute(autosaveAttr));
+    w->setMaxResults(e->maxResults());
 
     w->setColors(style()->backgroundColor(), style()->color());
 

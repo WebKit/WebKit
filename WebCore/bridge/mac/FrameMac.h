@@ -29,7 +29,6 @@
 #import "ClipboardAccessPolicy.h"
 #import "Frame.h"
 #import "PlatformMouseEvent.h"
-#import "StringHash.h"
 #import "WebCoreKeyboardAccess.h"
 
 class NPObject;
@@ -77,9 +76,8 @@ typedef int NSWritingDirection;
 namespace WebCore {
 
 class ClipboardMac;
-class EditorClient;
 class HTMLTableCellElement;
-class VisiblePosition;
+class RenderWidget;
 
 enum SelectionDirection {
     SelectingNext,
@@ -171,6 +169,9 @@ public:
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const Selection&);
 
+    virtual bool canRedo() const;
+    virtual bool canUndo() const;
+
     bool canDHTMLCut();
     bool canDHTMLCopy();
     bool canDHTMLPaste();
@@ -200,8 +201,15 @@ public:
     void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
     virtual Range* markedTextRange() const { return m_markedTextRange.get(); }
 
+    virtual void textFieldDidBeginEditing(Element*);
+    virtual void textFieldDidEndEditing(Element*);
+    virtual void textDidChangeInTextField(Element*);
+    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
+    virtual void textWillBeDeletedInTextField(Element*);
+    virtual void textDidChangeInTextArea(Element*);
+    
 private:
-    bool dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy);
+    bool dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPolicy);
 
     void freeClipboard();
 
@@ -216,11 +224,11 @@ public:
     NSView* nextKeyView(Node* startingPoint, SelectionDirection);
     NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, SelectionDirection);
     static NSView* nextKeyViewForWidget(Widget* startingPoint, SelectionDirection);
-    static bool currentEventIsKeyboardOptionTab();
-    static bool handleKeyboardOptionTabInView(NSView* view);
-    
-    virtual bool tabsToLinks() const;
-    virtual bool tabsToAllControls() const;
+
+    PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
+
+    virtual bool tabsToLinks(KeyboardEvent*) const;
+    virtual bool tabsToAllControls(KeyboardEvent*) const;
     
     static bool currentEventIsMouseDownInWidget(Widget* candidate);
 
@@ -256,20 +264,9 @@ public:
     
     WebCoreKeyboardUIMode keyboardUIMode() const;
 
-    virtual void textFieldDidBeginEditing(Element*);
-    virtual void textFieldDidEndEditing(Element*);
-    virtual void textDidChangeInTextField(Element*);
-    virtual bool doTextFieldCommandFromEvent(Element*, const PlatformKeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(Element*);
-    virtual void textDidChangeInTextArea(Element*);
-    
     virtual bool inputManagerHasMarkedText() const;
     
-    // Implementation of CSS property -webkit-user-drag == auto
-    virtual bool shouldDragAutoNode(Node*, const IntPoint&) const;
-
-    virtual bool canRedo() const;
-    virtual bool canUndo() const;
+    virtual bool shouldDragAutoNode(Node*, const IntPoint&) const; // -webkit-user-drag == auto
 
     virtual bool mouseDownMayStartSelect() const { return _mouseDownMayStartSelect; }
     

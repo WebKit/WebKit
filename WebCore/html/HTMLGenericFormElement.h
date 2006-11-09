@@ -73,7 +73,7 @@ public:
 
     virtual bool supportsFocus() const { return isFocusable() || (!disabled() && document() && !document()->haveStylesheetsLoaded()); }
     virtual bool isFocusable() const;
-    virtual bool isKeyboardFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return false; }
 

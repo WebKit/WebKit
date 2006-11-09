@@ -62,7 +62,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    virtual bool isKeyboardFocusable() const;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
     virtual void focus();

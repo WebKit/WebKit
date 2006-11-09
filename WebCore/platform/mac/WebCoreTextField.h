@@ -65,18 +65,6 @@ namespace WebCore {
 
 @end
 
-@interface WebCoreTextField : NSTextField <WebCoreWidgetHolder>
-{
-@private
-    WebCoreTextFieldController* controller;
-    BOOL inNextValidKeyView;
-}
-
-- (id)initWithWidget:(WebCore::TextField *)widget;
-- (WebCoreTextFieldController *)controller;
-
-@end
-
 @interface WebCoreSearchField : NSSearchField <WebCoreWidgetHolder>
 {
 @private

@@ -31,7 +31,6 @@
 #import "BeforeUnloadEvent.h"
 #import "BlockExceptions.h"
 #import "Chrome.h"
-#import "CSSComputedStyleDeclaration.h"
 #import "Cache.h"
 #import "ClipboardEvent.h"
 #import "ClipboardMac.h"
@@ -54,13 +53,13 @@
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
-#import "HTMLFrameElement.h"
 #import "HTMLGenericFormElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
+#import "KeyboardEvent.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
@@ -131,35 +130,26 @@ struct FrameMacDragInfo {
 
 static FrameMacDragInfo* sharedDragInfo;
 
-static const unsigned int escChar = 27;
-static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
+static SEL selectorForKeyEvent(KeyboardEvent* event)
 {
-    // FIXME: This helper function is for the autofill code so the bridge can pass a selector to the form delegate.  
-    // Eventually, we should move all of the autofill code down to WebKit and remove the need for this function by
+    // FIXME: This helper function is for the auto-fill code so the bridge can pass a selector to the form delegate.  
+    // Eventually, we should move all of the auto-fill code down to WebKit and remove the need for this function by
     // not relying on the selector in the new implementation.
-    String key = event->unmodifiedText();
-    if (key.length() != 1)
-        return 0;
-
-    SEL selector = NULL;
-    switch (key[0U]) {
-    case NSUpArrowFunctionKey:
-        selector = @selector(moveUp:); break;
-    case NSDownArrowFunctionKey:
-        selector = @selector(moveDown:); break;
-    case escChar:
-        selector = @selector(cancel:); break;
-    case NSTabCharacter:
-        selector = @selector(insertTab:); break;
-    case NSBackTabCharacter:
-        selector = @selector(insertBacktab:); break;
-    case NSNewlineCharacter:
-    case NSCarriageReturnCharacter:
-    case NSEnterCharacter:
-        selector = @selector(insertNewline:); break;
-        break;
+    String key = event->keyIdentifier();
+    if (key == "Up")
+        return @selector(moveUp:);
+    if (key == "Down")
+        return @selector(moveDown:);
+    if (key == "U+00001B")
+        return @selector(cancel:);
+    if (key == "U+000009") {
+        if (event->shiftKey())
+            return @selector(insertBacktab:);
+        return @selector(insertTab:);
     }
-    return selector;
+    if (key == "Enter")
+        return @selector(insertNewline:);
+    return 0;
 }
 
 FrameMac::FrameMac(Page* page, Element* ownerElement, PassRefPtr<EditorClient> client)
@@ -636,20 +626,18 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 
 bool FrameMac::wheelEvent(NSEvent *event)
 {
-    FrameView *v = d->m_view.get();
-
-    if (v) {
+    if (d->m_view) {
         NSEvent *oldCurrentEvent = _currentEvent;
         _currentEvent = HardRetain(event);
 
-        PlatformWheelEvent qEvent(event);
-        v->handleWheelEvent(qEvent);
+        PlatformWheelEvent wheelEvent(event);
+        d->m_view->handleWheelEvent(wheelEvent);
 
         ASSERT(_currentEvent == event);
         HardRelease(event);
         _currentEvent = oldCurrentEvent;
 
-        if (qEvent.isAccepted())
+        if (wheelEvent.isAccepted())
             return true;
     }
     
@@ -670,11 +658,14 @@ NSView* FrameMac::nextKeyViewInFrame(Node* n, SelectionDirection direction, bool
     Document* doc = document();
     if (!doc)
         return nil;
-    
+
+    RefPtr<KeyboardEvent> event = currentKeyboardEvent();
+
     RefPtr<Node> node = n;
     for (;;) {
         node = direction == SelectingNext
-            ? doc->nextFocusNode(node.get()) : doc->previousFocusNode(node.get());
+            ? doc->nextFocusNode(node.get(), event.get())
+            : doc->previousFocusNode(node.get(), event.get());
         if (!node)
             return nil;
         
@@ -770,7 +761,7 @@ NSView *FrameMac::nextKeyViewForWidget(Widget *startingWidget, SelectionDirectio
     return Mac(frameForNode(node))->nextKeyView(node, direction);
 }
 
-bool FrameMac::currentEventIsMouseDownInWidget(Widget *candidate)
+bool FrameMac::currentEventIsMouseDownInWidget(Widget* candidate)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     switch ([[NSApp currentEvent] type]) {
@@ -788,73 +779,51 @@ bool FrameMac::currentEventIsMouseDownInWidget(Widget *candidate)
     return frameForNode(node)->d->m_view->nodeUnderMouse() == node;
 }
 
-bool FrameMac::currentEventIsKeyboardOptionTab()
+PassRefPtr<KeyboardEvent> FrameMac::currentKeyboardEvent() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSEvent *evt = [NSApp currentEvent];
-    if ([evt type] != NSKeyDown) {
-        return NO;
+    NSEvent *event = [NSApp currentEvent];
+    if (!event)
+        return 0;
+    switch ([event type]) {
+        case NSKeyDown:
+        case NSKeyUp:
+            return new KeyboardEvent(event, document() ? document()->defaultView() : 0);
+        default:
+            return 0;
     }
-
-    if (([evt modifierFlags] & NSAlternateKeyMask) == 0) {
-        return NO;
-    }
-    
-    NSString *chars = [evt charactersIgnoringModifiers];
-    if ([chars length] != 1)
-        return NO;
-    
-    const unichar tabKey = 0x0009;
-    const unichar shiftTabKey = 0x0019;
-    unichar c = [chars characterAtIndex:0];
-    if (c != tabKey && c != shiftTabKey)
-        return NO;
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return YES;
 }
 
-bool FrameMac::handleKeyboardOptionTabInView(NSView *view)
+static bool isKeyboardOptionTab(KeyboardEvent* event)
 {
-    if (FrameMac::currentEventIsKeyboardOptionTab()) {
-        if (([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) != 0) {
-            [[view window] selectKeyViewPrecedingView:view];
-        } else {
-            [[view window] selectKeyViewFollowingView:view];
-        }
-        return YES;
-    }
-    
-    return NO;
+    return event
+        && (event->type() == keydownEvent || event->type() == keypressEvent)
+        && event->altKey()
+        && event->keyIdentifier() == "U+000009";
 }
 
-bool FrameMac::tabsToLinks() const
+bool FrameMac::tabsToLinks(KeyboardEvent* event) const
 {
     if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessTabsToLinks)
-        return !FrameMac::currentEventIsKeyboardOptionTab();
-    else
-        return FrameMac::currentEventIsKeyboardOptionTab();
+        return !isKeyboardOptionTab(event);
+    return isKeyboardOptionTab(event);
 }
 
-bool FrameMac::tabsToAllControls() const
+bool FrameMac::tabsToAllControls(KeyboardEvent* event) const
 {
     WebCoreKeyboardUIMode keyboardUIMode = [_bridge keyboardUIMode];
-    BOOL handlingOptionTab = FrameMac::currentEventIsKeyboardOptionTab();
+    bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls
-    if ((keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) == 0 && handlingOptionTab) {
-        return YES;
-    }
+    if ((keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
+        return true;
     
     // If system preferences say to include all controls, we always include all controls
-    if (keyboardUIMode & WebCoreKeyboardAccessFull) {
-        return YES;
-    }
+    if (keyboardUIMode & WebCoreKeyboardAccessFull)
+        return true;
     
     // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
-    if (keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) {
+    if (keyboardUIMode & WebCoreKeyboardAccessTabsToLinks)
         return !handlingOptionTab;
-    }
     
     return handlingOptionTab;
 }
@@ -1017,25 +986,21 @@ bool FrameMac::keyEvent(NSEvent *event)
             return false;
     }
     
-    if ([event type] == NSKeyDown) {
-        prepareForUserAction();
-    }
+    if ([event type] == NSKeyDown)
+        loader()->resetMultipleFormSubmissionProtection();
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = HardRetain(event);
 
-    PlatformKeyboardEvent qEvent(event);
-    result = !EventTargetNodeCast(node)->dispatchKeyEvent(qEvent);
+    result = !EventTargetNodeCast(node)->dispatchKeyEvent(event);
 
     // We want to send both a down and a press for the initial key event.
-    // To get KHTML to do this, we send a second KeyPress with "is repeat" set to true,
+    // To get the rest of WebCore to do this, we send a second KeyPress with "is repeat" set to true,
     // which causes it to send a press to the DOM.
-    // That's not a great hack; it would be good to do this in a better way.
-    if ([event type] == NSKeyDown && ![event isARepeat]) {
-        PlatformKeyboardEvent repeatEvent(event, true);
-        if (!EventTargetNodeCast(node)->dispatchKeyEvent(repeatEvent))
+    // We should do this a better way.
+    if ([event type] == NSKeyDown && ![event isARepeat])
+        if (!EventTargetNodeCast(node)->dispatchKeyEvent(PlatformKeyboardEvent(event, true)))
             result = true;
-    }
 
     ASSERT(_currentEvent == event);
     HardRelease(event);
@@ -1615,7 +1580,7 @@ void FrameMac::mouseDown(NSEvent *event)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    prepareForUserAction();
+    loader()->resetMultipleFormSubmissionProtection();
 
     _mouseDownView = nil;
     sharedDragInfo->m_dragSrc = 0;
@@ -1757,10 +1722,9 @@ void FrameMac::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
 void FrameMac::mouseMoved(NSEvent *event)
 {
-    FrameView *v = d->m_view.get();
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!v || d->m_bMousePressed || _sendingEventToSubview)
+    if (!d->m_view || d->m_bMousePressed || _sendingEventToSubview)
         return;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1768,7 +1732,7 @@ void FrameMac::mouseMoved(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = HardRetain(event);
     
-    v->handleMouseMoveEvent(event);
+    d->m_view->handleMouseMoveEvent(event);
     
     ASSERT(_currentEvent == event);
     HardRelease(event);
@@ -1784,11 +1748,9 @@ bool FrameMac::shouldDragAutoNode(Node* node, const IntPoint& point) const
     // This saves a bunch of expensive calls (creating WC and WK element dicts) as we walk farther up
     // the node hierarchy, and we also don't have to cook up a way to ask WK about non-leaf nodes
     // (since right now WK just hit-tests using a cached lastMouseDown).
-    if (!node->hasChildNodes() && d->m_view) {
-        NSPoint eventLoc = d->m_view->contentsToWindow(point);
-        return [_bridge mayStartDragAtEventLocation:eventLoc];
-    } else
-        return NO;
+    if (node->hasChildNodes() || !d->m_view)
+        return false;
+    return [_bridge mayStartDragAtEventLocation:d->m_view->contentsToWindow(point)];
 }
 
 bool FrameMac::sendContextMenuEvent(NSEvent *event)
@@ -2452,14 +2414,9 @@ void FrameMac::textDidChangeInTextArea(Element* textarea)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool FrameMac::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboardEvent* event)
+bool FrameMac::doTextFieldCommandFromEvent(Element* input, KeyboardEvent* event)
 {
-    // FIXME: We might eventually need to make sure key bindings for editing work even with
-    // events created with the DOM API. Those don't have a PlatformKeyboardEvent.
-    if (!event)
-        return false;
-
-    BOOL result = false;
+    bool result = false;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     SEL selector = selectorForKeyEvent(event);
     if (selector)

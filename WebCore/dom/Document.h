@@ -458,7 +458,7 @@ public:
      *
      * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
      */
-    Node* nextFocusNode(Node* fromNode);
+    Node* nextFocusNode(Node* fromNode, KeyboardEvent*);
 
     /**
      * Searches through the document, starting from fromNode, for the previous selectable element (that comes _before_)
@@ -471,7 +471,7 @@ public:
      *
      * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
      */
-    Node* previousFocusNode(Node* fromNode);
+    Node* previousFocusNode(Node* fromNode, KeyboardEvent*);
 
     int nodeAbsIndex(Node*);
     Node* nodeWithAbsIndex(int absIndex);

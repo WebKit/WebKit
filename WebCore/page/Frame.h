@@ -57,13 +57,11 @@ class CSSStyleDeclaration;
 class CommandByName;
 class DOMWindow;
 class Document;
-class DrawContentsEvent;
 class EditCommand;
 class Editor;
 class EditorClient;
 class Element;
 class FloatRect;
-class FormData;
 class FrameLoader;
 class FramePrivate;
 class FrameTree;
@@ -77,15 +75,10 @@ class KURL;
 class MouseEventWithHitTestResults;
 class Node;
 class Page;
-class PlatformKeyboardEvent;
-class Plugin;
 class Range;
-class RenderLayer;
 class RenderObject;
 class RenderPart;
 class RenderStyle;
-class RenderWidget;
-class ResourceRequest;
 class Selection;
 class SelectionController;
 class Settings;
@@ -295,6 +288,13 @@ public:
   
     CSSComputedStyleDeclaration* selectionComputedStyle(Node*& nodeToRemove) const;
 
+    virtual void textFieldDidBeginEditing(Element*);
+    virtual void textFieldDidEndEditing(Element*);
+    virtual void textDidChangeInTextField(Element*);
+    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
+    virtual void textWillBeDeletedInTextField(Element* input);
+    virtual void textDidChangeInTextArea(Element*);
+
 // === to be moved into EventHandler
 
 public:
@@ -302,8 +302,8 @@ public:
 
     virtual bool lastEventIsMouseUp() const = 0;
 
-    virtual bool tabsToLinks() const;
-    virtual bool tabsToAllControls() const;
+    virtual bool tabsToLinks(KeyboardEvent*) const;
+    virtual bool tabsToAllControls(KeyboardEvent*) const;
     virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
@@ -323,9 +323,6 @@ public:
     static Node* nodeForWidget(const Widget*);
     static Frame* frameForNode(Node*);
 
-    // Call this method before handling a new user action, like on a mouse down or key down.
-    // Currently, all this does is clear the "don't submit form twice" data member.
-    void prepareForUserAction();
     Node* mousePressNode();
 
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
@@ -336,6 +333,8 @@ public:
     bool prohibitsScrolling() const;
     void setProhibitsScrolling(const bool);
   
+    virtual bool inputManagerHasMarkedText() const { return false; }
+
 private:
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
@@ -370,15 +369,6 @@ public:
     int xPosForVerticalArrowNavigation() const;
 
     virtual bool isContentEditable() const; // if true, everything in frame is editable
-
-    virtual void textFieldDidBeginEditing(Element*);
-    virtual void textFieldDidEndEditing(Element*);
-    virtual void textDidChangeInTextField(Element*);
-    virtual bool doTextFieldCommandFromEvent(Element*, const PlatformKeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(Element* input);
-    virtual void textDidChangeInTextArea(Element*);
-
-    virtual bool inputManagerHasMarkedText() const { return false; }
 
     virtual void setSecureKeyboardEntry(bool) { }
     virtual bool isSecureKeyboardEntry() { return false; }

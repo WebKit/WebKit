@@ -134,14 +134,14 @@ const AtomicString& HTMLInputElement::name() const
     return m_name.isNull() ? emptyAtom : m_name;
 }
 
-bool HTMLInputElement::isKeyboardFocusable() const
+bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     // If text fields can be focused, then they should always be keyboard focusable
     if (isNonWidgetTextField())
         return HTMLGenericFormElement::isFocusable();
         
     // If the base class says we can't be focused, then we can stop now.
-    if (!HTMLGenericFormElement::isKeyboardFocusable())
+    if (!HTMLGenericFormElement::isKeyboardFocusable(event))
         return false;
 
     if (inputType() == RADIO) {
@@ -1265,7 +1265,8 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         bool clickElement = false;
         bool clickDefaultFormButton = false;
     
-        if (isNonWidgetTextField() && document()->frame() && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt)->keyEvent())) {
+        if (isNonWidgetTextField() && document()->frame()
+                && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
             evt->setDefaultHandled();
             return;
         }
