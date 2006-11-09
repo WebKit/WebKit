@@ -1,4 +1,14 @@
-2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+2006-11-09  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix the change in behavior I caused in r17680 with my build fix.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::maxTopMargin):
+        (WebCore::RenderObject::maxBottomMargin):
+
+2006-11-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam, Oliver.
 

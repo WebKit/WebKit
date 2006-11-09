@@ -1,3 +1,14 @@
+2006-11-09  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        New test to keep the mistake I made in r17680 from happening again.
+
+        * fast/block/margin-collapse/negative-margins-expected.checksum: Added.
+        * fast/block/margin-collapse/negative-margins-expected.png: Added.
+        * fast/block/margin-collapse/negative-margins-expected.txt: Added.
+        * fast/block/margin-collapse/negative-margins.html: Added.
+
 2006-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

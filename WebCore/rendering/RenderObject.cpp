@@ -3101,12 +3101,12 @@ InlineBox* RenderObject::inlineBox(int offset, EAffinity affinity)
 
 int RenderObject::maxTopMargin(bool positive) const
 {
-    return positive ? max(0, marginTop()) : min(0, -marginTop());
+    return positive ? max(0, marginTop()) : -min(0, marginTop());
 }
 
 int RenderObject::maxBottomMargin(bool positive) const
 {
-    return positive ? max(0, marginBottom()) : min(0, -marginBottom());
+    return positive ? max(0, marginBottom()) : -min(0, marginBottom());
 }
 
 #ifdef SVG_SUPPORT
