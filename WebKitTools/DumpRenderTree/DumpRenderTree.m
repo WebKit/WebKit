@@ -307,8 +307,6 @@ int main(int argc, const char *argv[])
 
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setEditingDelegate:editingDelegate];
-
-    [[webView preferences] setTabsToLinks:YES];
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
