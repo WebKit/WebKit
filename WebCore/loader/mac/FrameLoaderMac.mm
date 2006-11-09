@@ -301,6 +301,9 @@ bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id iden
 // FIXME: Poor method name; also, why is this not part of startProvisionalLoad:?
 void FrameLoader::startLoading()
 {
+    if (!m_provisionalDocumentLoader)
+        return;
+
     m_provisionalDocumentLoader->prepareForLoadStart();
 
     if (m_mainResourceLoader)
@@ -964,7 +967,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 return;
 
             RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
-
+            if (!pdl)
+                return;
+                
             // If we've received any errors we may be stuck in the provisional state and actually complete.
             NSError *error = pdl->mainDocumentError();
             if (!error)
