@@ -35,6 +35,8 @@
 #include <algorithm>
 #include <wtf/HashMap.h>
 
+using namespace std;
+
 /*
  *  The painting of a layer occurs in three distinct phases.  Each phase involves
  *  a recursive descent into the layer's render objects. The first phase is the background phase.
@@ -654,8 +656,8 @@ public:
     virtual bool isTopMarginQuirk() const { return false; }
     virtual bool isBottomMarginQuirk() const { return false; }
 
-    virtual int maxTopMargin(bool positive) const { return positive ? std::max(0, marginTop()) : -std::min(0, marginTop()); }
-    virtual int maxBottomMargin(bool positive) const { return positive ? std::max(0, marginBottom()) : -std::min(0, marginBottom()); }
+    virtual int maxTopMargin(bool positive) const { return positive ? max(0, marginTop()) : min(0, -marginTop()); }
+    virtual int maxBottomMargin(bool positive) const { return positive ? max(0, marginBottom()) : min(0, -marginBottom()); }
 
     virtual int marginTop() const { return 0; }
     virtual int marginBottom() const { return 0; }

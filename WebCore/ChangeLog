@@ -1,3 +1,11 @@
+2006-11-08  Adam Roben  <aroben@apple.com>
+
+        Build fix.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::maxTopMargin):
+        (WebCore::RenderObject::maxBottomMargin):
+
 2006-11-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.
