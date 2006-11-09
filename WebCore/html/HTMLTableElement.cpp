@@ -274,7 +274,7 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
     if (!found && m_foot)
         section = static_cast<HTMLTableSectionElement*>(m_foot);
 
-    if (lastRow)
+    if (lastRow && lastSection)
         lastSection->deleteRow(-1, ec);
     else if (section && index >= 0 && index < section->numRows())
         section->deleteRow(index, ec);

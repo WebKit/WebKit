@@ -1,3 +1,14 @@
+2006-11-09  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/4808720> Hamachi test tool crashes Safari in WebCore::HTMLTableSectionElement::deleteRow
+        All existing layout tests pass
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::deleteRow):
+        check lastSection before deleting row
+
 2006-11-09  Darin Adler  <darin@apple.com>
 
         - improved version of last night's build fix (should not do using namespace in a header)
