@@ -35,47 +35,5 @@
 
 namespace WebCore {
 
-static GdkDrawable* rootWindowForFrame(Frame* frame)
-{
-    if (!frame)
-        return 0;
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return 0;
-    GdkDrawable* drawable = frameView->drawable();
-    if (!drawable)
-        return 0;
-    if (!GDK_WINDOW(drawable))
-        return drawable;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    return gdk_window_get_toplevel(window);
 }
 
-FloatRect Page::windowRect() const
-{
-    GdkDrawable* drawable = rootWindowForFrame(mainFrame());
-    if (!drawable)
-        return FloatRect();
-
-    gint x, y, width, height, depth;
-
-    if (!GDK_IS_WINDOW(drawable)) {
-        gdk_drawable_get_size(drawable, &width, &height);
-        return FloatRect(0, 0, width, height);
-    }
-
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_get_geometry(window, &x, &y, &width, &height, &depth);
-    return FloatRect(x, y, width, height);
-}
-
-void Page::setWindowRect(const FloatRect& r)
-{
-    GdkDrawable* drawable = rootWindowForFrame(mainFrame());
-    if (!drawable || !GDK_IS_WINDOW(drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_move_resize(window, (int)r.x(), (int)r.y(), (int)r.width(), (int)r.height());
-}
-
-}

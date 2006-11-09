@@ -30,7 +30,11 @@
 
 #include "DeprecatedString.h"
 #include <gdk/gdk.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <wtf/Assertions.h>
+
+#define notImplemented() do { fprintf(stderr, "%s FIXME: UNIMPLEMENTED %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
@@ -39,6 +43,11 @@ Cursor::Cursor(const Cursor& other)
 {
     if (m_impl)
         gdk_cursor_ref(m_impl);
+}
+
+Cursor::Cursor(Image*, const IntPoint&)
+{
+    notImplemented(); 
 }
 
 Cursor::~Cursor()
@@ -79,6 +88,12 @@ const Cursor& handCursor()
 {
     static Cursor c = gdk_cursor_new(GDK_HAND2);
     return c;
+}
+
+const Cursor& moveCursor() 
+{
+    static Cursor c = gdk_cursor_new(GDK_FLEUR);
+    return c; 
 }
 
 const Cursor& iBeamCursor()

@@ -1,3 +1,56 @@
+2006-11-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Linux\Gdk fixes.
+
+        * platform/gdk/ChromeClientGdk.h:
+        (WebCore::ChromeClientGdk::~ChromeClientGdk):
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::moveCursor):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::FrameGdk):
+        (WebCore::FrameGdk::submitForm):
+        (WebCore::FrameGdk::urlSelected):
+        * platform/gdk/PageGdk.cpp:
+        * platform/gdk/ScreenClientGdk.h: Added.
+        (WebCore::ScreenClientGdk::~ScreenClientGdk):
+        * platform/gdk/ScreenGdk.cpp:
+        (WebCore::ScreenClientGdk::depth):
+        (WebCore::ScreenClientGdk::depthPerComponent):
+        (WebCore::ScreenClientGdk::isMonochrome):
+        (WebCore::ScreenClientGdk::rect):
+        (WebCore::ScreenClientGdk::usableRect):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::historyURL):
+        (ChromeClientGdk::windowRect):
+        (ChromeClientGdk::setWindowRect):
+        (ChromeClientGdk::pageRect):
+        (ChromeClientGdk::scaleFactor):
+        (ChromeClientGdk::focus):
+        (ChromeClientGdk::unfocus):
+        (ChromeClientGdk::createWindow):
+        (ChromeClientGdk::createModalDialog):
+        (ChromeClientGdk::show):
+        (ChromeClientGdk::canRunModal):
+        (ChromeClientGdk::runModal):
+        (ChromeClientGdk::setToolbarsVisible):
+        (ChromeClientGdk::toolbarsVisible):
+        (ChromeClientGdk::setStatusbarVisible):
+        (ChromeClientGdk::statusbarVisible):
+        (ChromeClientGdk::setScrollbarsVisible):
+        (ChromeClientGdk::scrollbarsVisible):
+        (ChromeClientGdk::setMenubarVisible):
+        (ChromeClientGdk::menubarVisible):
+        (ChromeClientGdk::setResizable):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::client):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::remove):
+
 2006-11-08  Adam Roben  <aroben@apple.com>
 
         Build fix.

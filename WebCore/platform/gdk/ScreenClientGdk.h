@@ -1,8 +1,4 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
- *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -22,27 +18,29 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: should be renamed to ScreenClientGdk.cpp
+#ifndef ScreenClientGdk_h
+#define ScreenClientGdk_h
 
-#include "config.h"
-#include "ScreenClientGdk.h"
-
-#include "FloatRect.h"
-#include <gdk/gdk.h>
-
-#define notImplemented() do { fprintf(stderr, "%s FIXME: UNIMPLEMENTED %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#include "ScreenClient.h"
 
 namespace WebCore {
 
-int ScreenClientGdk::depth() { notImplemented(); return 32; }
-int ScreenClientGdk::depthPerComponent() { notImplemented(); return 8; }
+    class ScreenClientGdk : public ScreenClient {
 
-bool ScreenClientGdk::isMonochrome() { notImplemented(); return false; }
+        virtual ~ScreenClientGdk() { }
 
-FloatRect ScreenClientGdk::rect() { notImplemented(); return FloatRect(); }
-FloatRect ScreenClientGdk::usableRect() { notImplemented(); return FloatRect(); }
+        virtual int depth();
+        virtual int depthPerComponent();
+
+        virtual bool isMonochrome();
+
+        virtual FloatRect rect();
+        virtual FloatRect usableRect();
+    };
 
 }
+
+#endif // ScreenClientGdk_h

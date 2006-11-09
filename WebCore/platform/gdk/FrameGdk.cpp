@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "FrameLoadRequest.h"
 #include "FramePrivate.h"
+#include <gdk/gdk.h>
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "HitTestRequest.h"
@@ -51,11 +52,11 @@
 #include "RenderLayer.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "ScreenClientGdk.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SSLKeyGenerator.h"
 #include "TypingCommand.h"
-#include <gdk/gdk.h>
 
 // This function loads resources from WebKit
 // This does not belong here and I'm not sure where
@@ -158,7 +159,7 @@ static void doScroll(const RenderObject* r, float deltaX, float deltaY)
 }
 
 FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
-    : Frame(new Page(new ChromeClientGdk()), 0, 0), m_drawable(gdkdrawable)
+    : Frame(new Page(new ChromeClientGdk(), new ScreenClientGdk()), 0, 0), m_drawable(gdkdrawable)
 {
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
@@ -208,8 +209,8 @@ void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
 
     d->m_submittedFormURL = request.url();
 
-    if (m_client)
-        m_client->submitForm(request.httpMethod(), request.url(), &request.httpBody());
+    if (client())
+        client()->submitForm(request.httpMethod(), request.url(), &request.httpBody());
 
     clearRecordedFormValues();
 }
@@ -218,19 +219,11 @@ void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
 {
     ResourceRequest request = frameLoadRequest.resourceRequest();
 
-    if (!m_client)
+    if (!client())
         return;
 
-    m_client->openURL(request.url());
+    client()->openURL(request.url());
 }
-
-#if 0
-void FrameGdk::openURL(const KURL& url)
-{
-    ASSERT(m_client);
-    m_client->openURL(url);
-}
-#endif
 
 String FrameGdk::userAgent() const
 {

@@ -63,7 +63,8 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
     ResourceHandle* job = static_cast<ResourceHandle*>(obj);
     ResourceHandleInternal* d = job->getInternal();
     int totalSize = size * nmemb;
-    d->m_client->didReceiveData(job, static_cast<char*>(ptr), totalSize);
+    if (d->client())
+        d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize);
     return totalSize;
 }
 
@@ -86,8 +87,10 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             CURLcode res = curl_easy_perform(d->m_handle);
             if (res != CURLE_OK)
                 printf("Error WITH JOB %d\n", res);
-            d->m_client->receivedAllData(job, 0);
-            d->m_client->didFinishLoading(job);
+            if (d->client()) {
+                d->client()->receivedAllData(job, 0);
+                d->client()->didFinishLoading(job);
+            }
             curl_easy_cleanup(d->m_handle);
             d->m_handle = 0;
         }
@@ -169,8 +172,10 @@ void ResourceHandleManager::remove(ResourceHandle* job)
         jobs->remove(job);
     if (jobs->isEmpty())
         m_downloadTimer.stop();
-    d->m_client->receivedAllData(job, 0);
-    d->m_client->didFinishLoading(job);
+    if (d->client()) {
+        d->client()->receivedAllData(job, 0);
+        d->client()->didFinishLoading(job);
+    }
     if (d->m_handle) {
         curl_multi_remove_handle(curlMultiHandle, d->m_handle);
         curl_easy_cleanup(d->m_handle);

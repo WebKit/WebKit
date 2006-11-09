@@ -28,13 +28,42 @@
 
 namespace WebCore {
 
-class ChromeClientGdk : public ChromeClient {
-public:
-    virtual ~ChromeClientGdk() { }
+    class ChromeClientGdk : public ChromeClient {
+    public:
+        virtual ~ChromeClientGdk() { }
+            
+        virtual void setWindowRect(const FloatRect& r);
+        virtual FloatRect windowRect();
+
+        virtual FloatRect pageRect();
+
+        virtual float scaleFactor();
+
+        virtual void focus();
+        virtual void unfocus();
+
+        virtual Page* createWindow(const FrameLoadRequest&);
+        virtual Page* createModalDialog(const FrameLoadRequest&);
+        virtual void show();
+
+        virtual bool canRunModal();
+        virtual void runModal();
+
+        virtual void setToolbarsVisible(bool);
+        virtual bool toolbarsVisible();
         
-    virtual bool canRunModal();
-    virtual void runModal();
-};
+        virtual void setStatusbarVisible(bool);
+        virtual bool statusbarVisible();
+        
+        virtual void setScrollbarsVisible(bool);
+        virtual bool scrollbarsVisible();
+        
+        virtual void setMenubarVisible(bool);
+        virtual bool menubarVisible();
+
+        virtual void setResizable(bool);
+
+    };
 
 }
 
