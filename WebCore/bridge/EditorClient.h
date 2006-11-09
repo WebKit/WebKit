@@ -55,7 +55,7 @@ public:
 //    virtual bool doCommandBySelector(SEL selector) = 0;
 //
     virtual void didBeginEditing() = 0;
-//    virtual void webViewDidChange:(NSNotification *)notification = 0;
+    virtual void respondToChangedContents() = 0;
     virtual void didEndEditing() = 0;
 //    virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
 //    virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;

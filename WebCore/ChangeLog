@@ -1,3 +1,29 @@
+2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam, Oliver.
+
+        Move more functions to Editor.
+
+        * bridge/EditorClient.h:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        (WebCore::dispatchEditableContentChangedEvents):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        * page/Frame.cpp:
+        * page/Frame.h:
+
 2006-11-09  Darin Adler  <darin@apple.com>
 
         * rendering/RenderObject.h: Oops! Fixed accidentally checked-in ifdef.
@@ -305,6 +331,7 @@
         (WebCore::RenderObject::calcVerticalMargins):
         (WebCore::RenderObject::font):
 
+>>>>>>> .r17689
 2006-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

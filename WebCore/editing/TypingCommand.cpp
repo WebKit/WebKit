@@ -238,7 +238,7 @@ void TypingCommand::typingAddedToOpenCommand()
     // But since this command stays open and is used for additional typing, 
     // we need to tell the frame here as other commands are added.
     if (m_applyEditing)
-        document()->frame()->appliedEditing(this);
+        document()->frame()->editor()->appliedEditing(this);
     m_applyEditing = true;
 }
 

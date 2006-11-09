@@ -130,9 +130,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView
 {
-    // FIXME: Need to clear the WebView pointer in WebEditorClient when the WebView is deallocated.
-    self = [super initMainFrameWithPage:page withEditorClient:new WebEditorClient(webView)];
+    RefPtr<WebEditorClient> editorClient = new WebEditorClient;
+    self = [super initMainFrameWithPage:page withEditorClient:editorClient.get()];
     [self finishInitializingWithFrameName:name view:view];
+    
+    // FIXME: Need to clear the WebFrame pointer in WebEditorClient when the WebView is deallocated.
+    editorClient->setWebFrame([view webFrame]);
+
     return self;
 }
 
@@ -140,9 +144,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     RefPtr<WebEditorClient> editorClient = new WebEditorClient;
     self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:editorClient.get()];
-    // FIXME: Need to clear the WebView pointer in WebEditorClient when the WebView is deallocated.
-    editorClient->setWebView([self webView]);
     [self finishInitializingWithFrameName:name view:view];
+
+    // FIXME: Need to clear the WebFrame pointer in WebEditorClient when the WebView is deallocated.
+    editorClient->setWebFrame([view webFrame]);
+
     return self;
 }
 

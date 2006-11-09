@@ -274,7 +274,6 @@ public:
     virtual void issuePasteAndMatchStyleCommand() = 0;
     virtual void issueTransposeCommand() = 0;
     virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping) = 0;
-    virtual void respondToChangedContents(const Selection& endingSelection) = 0;
     virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const = 0;
 
     RenderStyle* styleForSelectionStart(Node* &nodeToRemove) const;
@@ -285,7 +284,7 @@ public:
     unsigned markAllMatchesForText(const String&, bool caseFlag, unsigned limit);
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool flag);
-  
+
     CSSComputedStyleDeclaration* selectionComputedStyle(Node*& nodeToRemove) const;
 
     virtual void textFieldDidBeginEditing(Element*);
@@ -372,10 +371,6 @@ public:
 
     virtual void setSecureKeyboardEntry(bool) { }
     virtual bool isSecureKeyboardEntry() { return false; }
-
-    void appliedEditing(PassRefPtr<EditCommand>);
-    void unappliedEditing(PassRefPtr<EditCommand>);
-    void reappliedEditing(PassRefPtr<EditCommand>);
 
     CSSMutableStyleDeclaration* typingStyle() const;
     void setTypingStyle(CSSMutableStyleDeclaration*);

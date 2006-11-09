@@ -1,5 +1,30 @@
 2006-11-08  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Adam, Oliver.
+
+        Update for changes to WebCore. Pass a specific WebFrame to WebEditorClient
+        instead of just passing the WebView.
+        
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::setWebFrame):
+        (WebEditorClient::isContinuousSpellCheckingEnabled):
+        (WebEditorClient::spellCheckerDocumentTag):
+        (WebEditorClient::shouldDeleteRange):
+        (WebEditorClient::shouldShowDeleteInterface):
+        (WebEditorClient::shouldApplyStyle):
+        (WebEditorClient::shouldBeginEditing):
+        (WebEditorClient::shouldEndEditing):
+        (WebEditorClient::didBeginEditing):
+        (WebEditorClient::respondToChangedContents):
+        (WebEditorClient::didEndEditing):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge initMainFrameWithPage:WebCore::frameName:view:webView:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+
+2006-11-08  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         Move more code into editor.

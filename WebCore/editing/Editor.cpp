@@ -27,6 +27,7 @@
 #include "Editor.h"
 
 #include "ApplyStyleCommand.h"
+#include "AXObjectCache.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -37,6 +38,8 @@
 #include "EditCommand.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -50,6 +53,7 @@
 
 namespace WebCore {
 
+using namespace EventNames;
 using namespace HTMLNames;
 
 // implement as platform-specific
@@ -193,8 +197,15 @@ void Editor::respondToChangedSelection(const Selection& oldSelection)
     m_deleteButtonController->respondToChangedSelection(oldSelection);
 }
 
-void Editor::respondToChangedContents()
+void Editor::respondToChangedContents(const Selection& endingSelection)
 {
+    if (AXObjectCache::accessibilityEnabled()) {
+        Node* node = endingSelection.start().node();
+        if (node)
+            m_frame->renderer()->document()->axObjectCache()->postNotification(node->renderer(), "AXValueChanged");
+    }
+    
+    m_client->respondToChangedContents();  
     m_deleteButtonController->respondToChangedContents();
 }
 
@@ -371,6 +382,73 @@ void Editor::outdent()
     applyCommand(new IndentOutdentCommand(m_frame->document(), IndentOutdentCommand::Outdent));
 }
 
+static void dispatchEditableContentChangedEvents(const EditCommand& command)
+{
+    Element* startRoot = command.startingRootEditableElement();
+    Element* endRoot = command.endingRootEditableElement();
+    ExceptionCode ec;
+    if (startRoot)
+        startRoot->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
+    if (endRoot && endRoot != startRoot)
+        endRoot->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
+}
+
+void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
+{
+    dispatchEditableContentChangedEvents(*cmd);
+    
+    Selection newSelection(cmd->endingSelection());
+    if (m_frame->shouldChangeSelection(newSelection))
+        m_frame->selectionController()->setSelection(newSelection, false);
+    
+    // Now set the typing style from the command. Clear it when done.
+    // This helps make the case work where you completely delete a piece
+    // of styled text and then type a character immediately after.
+    // That new character needs to take on the style of the just-deleted text.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    if (cmd->typingStyle()) {
+        m_frame->setTypingStyle(cmd->typingStyle());
+        cmd->setTypingStyle(0);
+    }
+    
+    // Command will be equal to last edit command only in the case of typing
+    if (m_lastEditCommand.get() == cmd)
+        ASSERT(cmd->isTypingCommand());
+    else {
+        // Only register a new undo command if the command passed in is
+        // different from the last command
+        m_lastEditCommand = cmd;
+        m_frame->registerCommandForUndo(m_lastEditCommand);
+    }
+    respondToChangedContents(newSelection);    
+}
+
+void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
+{
+    dispatchEditableContentChangedEvents(*cmd);
+    
+    Selection newSelection(cmd->startingSelection());
+    if (m_frame->shouldChangeSelection(newSelection))
+        m_frame->selectionController()->setSelection(newSelection, true);
+    
+    m_lastEditCommand = 0;
+    m_frame->registerCommandForRedo(cmd);
+    respondToChangedContents(newSelection);    
+}
+
+void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
+{
+    dispatchEditableContentChangedEvents(*cmd);
+    
+    Selection newSelection(cmd->endingSelection());
+    if (m_frame->shouldChangeSelection(newSelection))
+        m_frame->selectionController()->setSelection(newSelection, true);
+    
+    m_lastEditCommand = 0;
+    m_frame->registerCommandForUndo(cmd);
+    respondToChangedContents(newSelection);    
+}
 
 // =============================================================================
 //

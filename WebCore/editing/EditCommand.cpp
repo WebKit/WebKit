@@ -30,6 +30,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -92,7 +93,7 @@ void EditCommand::apply()
 
     if (!m_parent) {
         updateLayout();
-        frame->appliedEditing(this);
+        frame->editor()->appliedEditing(this);
     }
 }
 
@@ -107,7 +108,7 @@ void EditCommand::unapply()
 
     if (!m_parent) {
         updateLayout();
-        frame->unappliedEditing(this);
+        frame->editor()->unappliedEditing(this);
     }
 }
 
@@ -122,7 +123,7 @@ void EditCommand::reapply()
 
     if (!m_parent) {
         updateLayout();
-        frame->reappliedEditing(this);
+        frame->editor()->reappliedEditing(this);
     }
 }
 

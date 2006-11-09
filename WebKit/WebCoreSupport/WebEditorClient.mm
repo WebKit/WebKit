@@ -28,19 +28,22 @@
 
 #import "WebEditorClient.h"
 
+#import "WebDocument.h"
 #import "WebFrameInternal.h"
+#import "WebHTMLView.h"
+#import "WebHTMLViewInternal.h"
 #import "WebViewInternal.h"
 #import "WebEditingDelegatePrivate.h"
 
 using namespace WebCore;
 
 WebEditorClient::WebEditorClient()
-    : m_webView(nil) 
+    : m_webFrame(nil) 
 {
 }
 
-WebEditorClient::WebEditorClient(WebView* webView)
-    : m_webView(webView) 
+WebEditorClient::WebEditorClient(WebFrame *webFrame)
+    : m_webFrame(webFrame) 
 {
 }
 
@@ -48,14 +51,14 @@ WebEditorClient::~WebEditorClient()
 {
 }
 
-void WebEditorClient::setWebView(WebView* webView)
+void WebEditorClient::setWebFrame(WebFrame *webFrame)
 { 
-    m_webView = webView; 
+    m_webFrame = webFrame;
 }
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
 {
-    return [m_webView isContinuousSpellCheckingEnabled];
+    return [[m_webFrame webView] isContinuousSpellCheckingEnabled];
 }
 
 bool WebEditorClient::isGrammarCheckingEnabled()
@@ -69,30 +72,30 @@ bool WebEditorClient::isGrammarCheckingEnabled()
 
 int WebEditorClient::spellCheckerDocumentTag()
 {
-    return [m_webView spellCheckerDocumentTag];
+    return [[m_webFrame webView] spellCheckerDocumentTag];
 }
 
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
+    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
         shouldDeleteDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
+    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
         shouldShowDeleteInterfaceForElement:kit(element)];
 }
 
 bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
+    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
         shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldBeginEditing(Range* range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
+    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
         shouldBeginEditingInDOMRange:kit(range)];
 
     return false;
@@ -100,18 +103,26 @@ bool WebEditorClient::shouldBeginEditing(Range* range)
 
 bool WebEditorClient::shouldEndEditing(Range* range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
+    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
                              shouldEndEditingInDOMRange:kit(range)];
 }
 
 void WebEditorClient::didBeginEditing()
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:[m_webFrame webView]];
+}
+
+void WebEditorClient::respondToChangedContents()
+{
+    NSView <WebDocumentView> *view = [[m_webFrame frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)view _updateFontPanel];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[m_webFrame webView]];    
 }
 
 void WebEditorClient::didEndEditing()
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[m_webFrame webView]];
 }
 
 /*
