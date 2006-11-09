@@ -1,3 +1,22 @@
+2006-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4805409> REGRESSION: Reproducible crash in 
+        WebCore::RenderBlock::skipWhitespace
+
+        Note that this will still crash on Debug builds because it will hit 
+        an assertion failure in editing. (One of the reasons there is no 
+        layout test along with this fix.) There is definitely some editing 
+        wackiness happening. See http://bugs.webkit.org/show_bug.cgi?
+        id=10144 for updates on the assertion failure bug.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::childRemoved): It is possible for a 
+        prevRootBox and its prevRootBox to share a lineBreakObj. So instead 
+        of just clearing the lineBreakObj of the prevRootBox, cycle through 
+        all prevRootBoxs with the same lineBreakObj. 
+
 2006-11-09  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.
