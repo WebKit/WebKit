@@ -66,7 +66,7 @@ bool WebEditorClient::isGrammarCheckingEnabled()
 #ifdef BUILDING_ON_TIGER
     return false;
 #else
-    return [m_webView isGrammarCheckingEnabled];
+    return [[m_webFrame webView] isGrammarCheckingEnabled];
 #endif
 }
 
