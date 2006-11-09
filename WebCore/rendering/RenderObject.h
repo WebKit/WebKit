@@ -28,15 +28,12 @@
 #define RenderObject_h
 
 #include "CachedResourceClient.h"
-#if 0
 #include "DeprecatedValueList.h"
 #include "RenderStyle.h"
 #include "ScrollBar.h"
 #include "VisiblePosition.h"
 #include <algorithm>
 #include <wtf/HashMap.h>
-#endif
-#include "PlatformString.h"
 
 namespace WebCore {
 

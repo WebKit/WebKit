@@ -1,3 +1,7 @@
+2006-11-09  Darin Adler  <darin@apple.com>
+
+        * rendering/RenderObject.h: Oops! Fixed accidentally checked-in ifdef.
+
 2006-11-09  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Beth Dakin.
