@@ -3982,30 +3982,26 @@ done:
 
 - (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
+    if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->applyStyleToSelection(core(style), undoAction);
 }
 
 - (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
+    if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->applyParagraphStyleToSelection(core(style), undoAction);
 }
 
 - (void)_toggleBold
 {
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->toggleBold();
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("ToggleBold");
 }
 
 - (void)_toggleItalic
 {
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->toggleItalic();
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("ToggleItalic");
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event

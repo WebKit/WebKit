@@ -1,5 +1,30 @@
 2006-11-10  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Geoff.
+
+        Add more commands, make toggleBold and toggleItalic executable commands.
+
+        * WebCore.exp:
+        * editing/Editor.cpp:
+        (WebCore::execCopy):
+        (WebCore::execCut):
+        (WebCore::execDelete):
+        (WebCore::execForwardDelete):
+        (WebCore::execPaste):
+        (WebCore::execSelectAll):
+        (WebCore::execToggleBold):
+        (WebCore::execToggleItalic):
+        (WebCore::enabled):
+        (WebCore::canPaste):
+        (WebCore::hasEditableSelection):
+        (WebCore::hasEditableRangeSelection):
+        (WebCore::hasRangeSelection):
+        (WebCore::hasRichlyEditableSelection):
+        (WebCore::CommandEntry::):
+        * editing/Editor.h:
+
+2006-11-10  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej, Geoff.
 
         Added an execCommand method to Editor. The idea is that this should replace the CommandByName object. Get rid of

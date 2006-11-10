@@ -1,3 +1,14 @@
+2006-11-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Update for changes to WebCore
+        * WebView/WebHTMLView.m:
+        (-[NSArray _applyStyleToSelection:withUndoAction:]):
+        (-[NSArray _applyParagraphStyleToSelection:withUndoAction:]):
+        (-[NSArray _toggleBold]):
+        (-[NSArray _toggleItalic]):
+
 2006-11-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej, Geoff.
