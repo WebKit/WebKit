@@ -42,6 +42,7 @@
 #import "WebDownloadInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
+#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
@@ -49,6 +50,7 @@
 #import "WebHTMLView.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebHistoryPrivate.h"
+#import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
@@ -67,6 +69,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/IconDatabase.h>
 #import <WebCore/PageState.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/MouseEvent.h>
@@ -559,12 +562,20 @@ void WebFrameLoaderClient::dispatchWillClose()
     [[webView _frameLoadDelegateForwarder] webView:webView willCloseFrame:m_webFrame.get()];
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveIcon(NSImage *icon)
+void WebFrameLoaderClient::dispatchDidReceiveIcon()
 {
     WebView *webView = getWebView(m_webFrame.get());   
     ASSERT([m_webFrame.get() _isMainFrame]);
+    // FIXME: This willChangeValueForKey call is too late, because the icon has already changed by now.
     [webView _willChangeValueForKey:_WebMainFrameIconKey];
-    [[webView _frameLoadDelegateForwarder] webView:webView didReceiveIcon:icon forFrame:m_webFrame.get()];
+    id delegate = [webView frameLoadDelegate];
+    if ([delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)]) {
+        Image* image = IconDatabase::sharedIconDatabase()->
+            iconForPageURL(core(m_webFrame.get())->loader()->url().url(), IntSize(16, 16));
+        NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16));
+        if (icon)
+            [delegate webView:webView didReceiveIcon:icon forFrame:m_webFrame.get()];
+    }
     [webView _didChangeValueForKey:_WebMainFrameIconKey];
 }
 

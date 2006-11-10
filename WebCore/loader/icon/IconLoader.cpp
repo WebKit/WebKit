@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
@@ -133,15 +134,8 @@ void IconLoader::didFinishLoading(ResourceHandle* handle)
 void IconLoader::finishLoading(const KURL& iconURL)
 {
     IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_buffer.data(), m_buffer.size(), iconURL.url());
-
-    // Tell the frame to map its URL(s) to its iconURL in the database.
     m_frame->loader()->commitIconURLToIconDatabase(iconURL);
-
-    // Send the notification to the app that this icon is finished loading.
-#if PLATFORM(MAC) // turn this on for other platforms when FrameLoader is deployed more fully
-    m_frame->loader()->notifyIconChanged();
-#endif
-
+    m_frame->loader()->client()->dispatchDidReceiveIcon();
     clearLoadingState();
 }
 

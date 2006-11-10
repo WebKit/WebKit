@@ -1,3 +1,24 @@
+2006-11-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Took out WebIconDatabaseBridge and made WebKit call IconDatabase directly
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Removed.
+        * bridge/mac/WebCoreIconDatabaseBridge.mm: Removed.
+        * loader/FrameLoaderClient.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::sharedIconDatabase):
+        (WebCore::IconDatabase::~IconDatabase):
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDatabase::isPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::enabled):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::finishLoading):
+        * loader/mac/FrameLoaderMac.mm:
+
 2006-11-10  Zack Rusin  <zack@kde.org>
 
         Reviewed and landed by Anders.

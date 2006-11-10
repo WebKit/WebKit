@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
 #import <WebKit/WebIconDatabase.h>
 
+// FIXME: Some of the following is not API and should be moved
+// either inside WebIconDatabase.mm, or to WebIconDatabaseInternal.h.
 
-@class WebCoreIconDatabaseBridge;
-@class WebDataSource;
-
-@interface WebIconDatabasePrivate : NSObject {
-
-@public
-    WebCoreIconDatabaseBridge *databaseBridge;
-    id delegate;
-    
-    BOOL delegateDefaultIconForURL;
-    
-    NSMutableDictionary *htmlIcons;
-    NSMutableDictionary *defaultIcons;
-}
-
-@end
-
-// Sent when all icons are removed from the databse. The object of the notification is 
+// Sent when all icons are removed from the database. The object of the notification is 
 // the icon database. There is no userInfo. Clients should react by removing any cached
 // icon images from the user interface. Clients need not and should not call 
 // releaseIconForURL: in response to this notification.
 extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 
 @interface WebIconDatabase (WebPendingPublic)
+
 /*!
    @method removeAllIcons:
    @discussion Causes the icon database to delete all of the images that it has stored,
@@ -71,11 +56,12 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 
 @interface WebIconDatabase (WebPrivate)
 
+// None of these are used in WebKit outside WebIconDatabase.m, so if we can verify that
+// they are not used outside WebKit, then we can just remove these declarations and
+// make them "file internal".
+
 - (BOOL)_isEnabled;
-
-// Called by WebDataSource to bind a web site URL to a icon URL and icon image.
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
-
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
 - (void)_sendNotificationForURL:(NSString *)URL;
 

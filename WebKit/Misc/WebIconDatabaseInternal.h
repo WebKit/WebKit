@@ -26,9 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebCoreIconDatabaseBridge.h>
+#import "WebIconDatabasePrivate.h"
 
-@interface WebIconDatabaseBridge : WebCoreIconDatabaseBridge <WebCoreIconDatabaseBridge>
-{
+namespace WebCore {
+    class Image;
+}
+
+@interface WebIconDatabasePrivate : NSObject {
+@public
+    id delegate;
+    BOOL delegateImplementsDefaultIconForURL;
+    NSMutableDictionary *htmlIcons;
 }
 @end
+
+NSImage *webGetNSImage(WebCore::Image*, NSSize);

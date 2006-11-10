@@ -30,7 +30,6 @@
 #include "IconDataCache.h"
 #include "Image.h"
 #include "Logging.h"
-#include "PlatformString.h"
 #include "SQLStatement.h"
 #include "SQLTransaction.h"
 #include "SystemTime.h"
@@ -44,21 +43,21 @@
 
 namespace WebCore {
 
-IconDatabase* IconDatabase::m_sharedInstance = 0;
+static IconDatabase* sharedInstance = 0;
 
 // This version number is in the DB and marks the current generation of the schema
 // Theoretically once the switch is flipped this should never change
 // Currently, an out-of-date schema causes the DB to be wiped and reset.  This isn't 
 // so bad during development but in the future, we would need to write a conversion
 // function to advance older released schemas to "current"
-const int IconDatabase::currentDatabaseVersion = 5;
+const int currentDatabaseVersion = 5;
 
 // Icons expire once a day
-const int IconDatabase::iconExpirationTime = 60*60*24; 
+const int iconExpirationTime = 60*60*24; 
 // Absent icons are rechecked once a week
-const int IconDatabase::missingIconExpirationTime = 60*60*24*7; 
+const int missingIconExpirationTime = 60*60*24*7; 
 
-const int IconDatabase::updateTimerDelay = 5; 
+const int updateTimerDelay = 5; 
 
 const String& IconDatabase::defaultDatabaseFilename()
 {
@@ -68,10 +67,9 @@ const String& IconDatabase::defaultDatabaseFilename()
 
 IconDatabase* IconDatabase::sharedIconDatabase()
 {
-    if (!m_sharedInstance)
-        m_sharedInstance = new IconDatabase();
-        
-    return m_sharedInstance;
+    if (!sharedInstance)
+        sharedInstance = new IconDatabase;
+    return sharedInstance;
 }
 
 IconDatabase::IconDatabase()
@@ -920,8 +918,8 @@ IconDatabase::~IconDatabase()
     close();
     m_startupTimer.stop();
     m_updateTimer.stop();
-    if (m_sharedInstance == this)
-        m_sharedInstance = 0;
+    if (sharedInstance == this)
+        sharedInstance = 0;
 }
 
 // readySQLStatement() handles two things
@@ -1078,4 +1076,4 @@ bool IconDatabase::hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL
     return result == SQLResultRow;
 }
 
-} //namespace WebCore
+} // namespace WebCore

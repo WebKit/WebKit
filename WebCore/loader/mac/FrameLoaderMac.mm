@@ -47,6 +47,7 @@
 #import "HTMLFormElement.h"
 #import "HTMLFrameElement.h"
 #import "HTMLNames.h"
+#import "IconDatabase.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
 #import "MainResourceLoader.h"
@@ -60,7 +61,6 @@
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreIconDatabaseBridge.h"
 #import "WebCorePageState.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
@@ -568,15 +568,6 @@ void FrameLoader::setResponse(NSURLResponse *response)
 void FrameLoader::mainReceivedError(NSError *error, bool isComplete)
 {
     activeDocumentLoader()->mainReceivedError(error, isComplete);
-}
-
-void FrameLoader::notifyIconChanged()
-{
-    ASSERT([[WebCoreIconDatabaseBridge sharedInstance] _isEnabled]);
-    NSImage *icon = [[WebCoreIconDatabaseBridge sharedInstance]
-        iconForPageURL:urlOriginalDataAsString(activeDocumentLoader()->URL().getNSURL())
-        withSize:NSMakeSize(16, 16)];
-    m_client->dispatchDidReceiveIcon(icon);
 }
 
 NSError *FrameLoader::cancelledError(NSURLRequest *request) const

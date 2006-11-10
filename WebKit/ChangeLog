@@ -1,3 +1,38 @@
+2006-11-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+  
+        Took out WebIconDatabaseBridge and made WebKit call IconDatabase directly
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase iconURLForURL:]):
+        (-[WebIconDatabase defaultIconWithSize:]):
+        (-[WebIconDatabase defaultIconForURL:withSize:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (-[WebIconDatabase setDelegate:]):
+        (-[WebIconDatabase removeAllIcons]):
+        (-[WebIconDatabase isIconExpiredForIconURL:]):
+        (-[WebIconDatabase _isEnabled]):
+        (-[WebIconDatabase _setIconData:forIconURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _hasEntryForIconURL:]):
+        (-[WebIconDatabase _applicationWillTerminate:]):
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+        (-[WebIconDatabase _convertToWebCoreFormat]):
+        (webGetNSImage):
+        * Misc/WebIconDatabaseInternal.h: Added.
+        * Misc/WebIconDatabasePrivate.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveIcon):
+        * WebCoreSupport/WebIconDatabaseBridge.h: Removed.
+        * WebCoreSupport/WebIconDatabaseBridge.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-11-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.

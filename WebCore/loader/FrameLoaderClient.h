@@ -125,9 +125,7 @@ namespace WebCore {
         virtual void dispatchWillPerformClientRedirect(const KURL&, double interval, double fireDate) = 0;
         virtual void dispatchDidChangeLocationWithinPage() = 0;
         virtual void dispatchWillClose() = 0;
-#if PLATFORM(MAC)
-        virtual void dispatchDidReceiveIcon(NSImage *) = 0;
-#endif
+        virtual void dispatchDidReceiveIcon() = 0;
         virtual void dispatchDidStartProvisionalLoad() = 0;
         virtual void dispatchDidReceiveTitle(const String& title) = 0;
         virtual void dispatchDidCommitLoad() = 0;
