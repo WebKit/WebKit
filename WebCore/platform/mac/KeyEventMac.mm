@@ -322,7 +322,7 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            return String::sprintf("U+%06X", toupper(c));
+            return String::format("U+%06X", toupper(c));
     }
 }
 

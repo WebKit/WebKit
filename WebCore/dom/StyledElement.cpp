@@ -384,7 +384,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
             colors[2] >>= 4*maxDigit;
             // assert(colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100);
             
-            color = String::sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2]);
+            color = String::format("#%02x%02x%02x", colors[0], colors[1], colors[2]);
             if (attr->decl()->setProperty(id, color, false))
                 return;
         }

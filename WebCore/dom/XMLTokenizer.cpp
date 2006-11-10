@@ -902,11 +902,11 @@ void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, in
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
         switch (type) {
             case warning:
-                m_errorMessages += String::sprintf("warning on line %d at column %d: %s", lineNumber, columnNumber, m);
+                m_errorMessages += String::format("warning on line %d at column %d: %s", lineNumber, columnNumber, m);
                 break;
             case fatal:
             case nonFatal:
-                m_errorMessages += String::sprintf("error on line %d at column %d: %s", lineNumber, columnNumber, m);
+                m_errorMessages += String::format("error on line %d at column %d: %s", lineNumber, columnNumber, m);
         }
         
         m_lastErrorLine = lineNumber;

@@ -1736,41 +1736,43 @@ DeprecatedString &DeprecatedString::setLatin1(const char *str, int len)
 
 DeprecatedString &DeprecatedString::setNum(short n)
 {
-    return sprintf("%d", n);
+    return format("%d", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(unsigned short n)
 {
-    return sprintf("%u", n);
+    return format("%u", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(int n)
 {
-    return sprintf("%d", n);
+    return format("%d", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(unsigned n)
 {
-    return sprintf("%u", n);
+    return format("%u", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(long n)
 {
-    return sprintf("%ld", n);
+    return format("%ld", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(unsigned long n)
 {
-    return sprintf("%lu", n);
+    return format("%lu", n);
 }
 
 DeprecatedString &DeprecatedString::setNum(double n)
 {
-    return sprintf("%.6lg", n);
+    return format("%.6lg", n);
 }
 
-DeprecatedString &DeprecatedString::sprintf(const char *format, ...)
+DeprecatedString &DeprecatedString::format(const char *format, ...)
 {
+    // FIXME: this needs the same windows compat fixes as String::format
+
     va_list args;
     va_start(args, format);
     

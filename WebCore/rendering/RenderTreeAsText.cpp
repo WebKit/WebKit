@@ -244,7 +244,7 @@ static String quoteAndEscapeNonPrintables(const String& s)
             else {
                 DeprecatedString hex;
                 unsigned u = c;
-                hex.sprintf("\\x{%X}", u);
+                hex.format("\\x{%X}", u);
                 result += hex;
             }
         }

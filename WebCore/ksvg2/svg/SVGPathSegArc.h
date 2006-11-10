@@ -36,7 +36,7 @@ namespace WebCore
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
         virtual String pathSegTypeAsLetter() const { return "A"; }
-        virtual String toString() const { return String::sprintf("A %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
+        virtual String toString() const { return String::format("A %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
 
         void setX(double x);
         double x() const;
@@ -78,7 +78,7 @@ namespace WebCore
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }
         virtual String pathSegTypeAsLetter() const { return "a"; }
-        virtual String toString() const { return String::sprintf("a %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
+        virtual String toString() const { return String::format("a %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
 
         void setX(double x);
         double x() const;

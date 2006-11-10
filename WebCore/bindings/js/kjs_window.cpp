@@ -1213,7 +1213,7 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
         printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
              targetDocument->URL().latin1(), originDocument->URL().latin1());
     }
-    String message = String::sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+    String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                   targetDocument->URL().latin1(), originDocument->URL().latin1());
     targetFrame->addMessageToConsole(message, 1, String()); //fixme: provide a real line number and sourceurl
 
@@ -1273,7 +1273,7 @@ bool Window::isSafeScript(ExecState *exec) const
       printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
              thisDocument->URL().latin1(), actDocument->URL().latin1());
   }
-  String message = String::sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                   thisDocument->URL().latin1(), actDocument->URL().latin1());
   m_frame->addMessageToConsole(message, 1, String());
   

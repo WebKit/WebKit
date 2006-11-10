@@ -268,7 +268,7 @@ DeprecatedString String::deprecatedString() const
     return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(m_impl->characters()), m_impl->length());
 }
 
-String String::sprintf(const char *format, ...)
+String String::format(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -312,45 +312,45 @@ String String::sprintf(const char *format, ...)
 
 String String::number(int n)
 {
-    return String::sprintf("%d", n);
+    return String::format("%d", n);
 }
 
 String String::number(unsigned n)
 {
-    return String::sprintf("%u", n);
+    return String::format("%u", n);
 }
 
 String String::number(long n)
 {
-    return String::sprintf("%ld", n);
+    return String::format("%ld", n);
 }
 
 String String::number(unsigned long n)
 {
-    return String::sprintf("%lu", n);
+    return String::format("%lu", n);
 }
 
 String String::number(long long n)
 {
 #if PLATFORM(WIN_OS)
-    return String::sprintf("%I64i", n);
+    return String::format("%I64i", n);
 #else
-    return String::sprintf("%lli", n);
+    return String::format("%lli", n);
 #endif
 }
 
 String String::number(unsigned long long n)
 {
 #if PLATFORM(WIN_OS)
-    return String::sprintf("%I64u", n);
+    return String::format("%I64u", n);
 #else
-    return String::sprintf("%llu", n);
+    return String::format("%llu", n);
 #endif
 }
     
 String String::number(double n)
 {
-    return String::sprintf("%.6lg", n);
+    return String::format("%.6lg", n);
 }
 
 int String::toInt(bool* ok) const

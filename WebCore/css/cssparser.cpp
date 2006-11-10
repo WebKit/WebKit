@@ -2439,7 +2439,7 @@ CSSPrimitiveValue *CSSParser::parseColorFromValue(Value* value)
     if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000.) {
         DeprecatedString str;
-        str.sprintf("%06d", (int)(value->fValue+.5));
+        str.format("%06d", (int)(value->fValue+.5));
         if (!CSSParser::parseColor(str, c))
             return 0;
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||

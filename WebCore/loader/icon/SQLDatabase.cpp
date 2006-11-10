@@ -84,7 +84,7 @@ void SQLDatabase::setFullsync(bool fsync)
 
 void SQLDatabase::setSynchronous(SynchronousPragma sync)
 {
-    executeCommand(String::sprintf("PRAGMA synchronous = %i", sync));
+    executeCommand(String::format("PRAGMA synchronous = %i", sync));
 }
 
 void SQLDatabase::setBusyTimeout(int ms)

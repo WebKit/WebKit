@@ -130,7 +130,7 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
         case VK_DELETE:
             return "U+00007F";
         default:
-            return String::sprintf("U+%06X", toupper(keyCode));
+            return String::format("U+%06X", toupper(keyCode));
     }
 }
 

@@ -36,7 +36,7 @@ namespace WebCore
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_ABS; }
         virtual String pathSegTypeAsLetter() const { return "V"; }
-        virtual String toString() const { return String::sprintf("V %.6lg", m_y); }
+        virtual String toString() const { return String::format("V %.6lg", m_y); }
 
         void setY(double);
         double y() const;
@@ -53,7 +53,7 @@ namespace WebCore
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_REL; }
         virtual String pathSegTypeAsLetter() const { return "v"; }
-        virtual String toString() const { return String::sprintf("v %.6lg", m_y); }
+        virtual String toString() const { return String::format("v %.6lg", m_y); }
 
         void setY(double);
         double y() const;

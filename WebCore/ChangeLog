@@ -1,5 +1,76 @@
 2006-11-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+
+        - rename String::sprintf and DeprecatedString::sprintf to ...::format to avoid needlessly tweaking a search
+        for insecure functions. Neither of these has risk of buffer overruns since they calculate the buffer size
+        for you and use vsnprintf.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColorFromValue):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::handleError):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArcAbs::toString):
+        (WebCore::SVGPathSegArcRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        (WebCore::SVGPathSegCurvetoCubicAbs::toString):
+        (WebCore::SVGPathSegCurvetoCubicRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::toString):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::toString):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::toString):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::toString):
+        * ksvg2/svg/SVGPathSegLineto.h:
+        (WebCore::SVGPathSegLinetoAbs::toString):
+        (WebCore::SVGPathSegLinetoRel::toString):
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::toString):
+        (WebCore::SVGPathSegLinetoHorizontalRel::toString):
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        (WebCore::SVGPathSegLinetoVerticalAbs::toString):
+        (WebCore::SVGPathSegLinetoVerticalRel::toString):
+        * ksvg2/svg/SVGPathSegMoveto.h:
+        (WebCore::SVGPathSegMovetoAbs::toString):
+        (WebCore::SVGPathSegMovetoRel::toString):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::closeRenderer):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::forgetIconForIconURLFromDatabase):
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::setSynchronous):
+        * platform/Color.cpp:
+        (WebCore::Color::name):
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::setNum):
+        (WebCore::DeprecatedString::format):
+        * platform/DeprecatedString.h:
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::format):
+        (WebCore::String::number):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::calcMinMaxWidth):
+
+2006-11-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
 
         - fixed "Regression: Can't log into gmail.com"

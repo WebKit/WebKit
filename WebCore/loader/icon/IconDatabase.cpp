@@ -610,9 +610,9 @@ void IconDatabase::forgetIconForIconURLFromDatabase(const String& iconURL)
         return;
     }
     
-    if (!m_currentDB->executeCommand(String::sprintf("DELETE FROM Icon WHERE Icon.iconID = %lli;", iconID)))
+    if (!m_currentDB->executeCommand(String::format("DELETE FROM Icon WHERE Icon.iconID = %lli;", iconID)))
         LOG_ERROR("Unable to drop Icon for IconURL", iconURL.ascii().data()); 
-    if (!m_currentDB->executeCommand(String::sprintf("DELETE FROM PageURL WHERE PageURL.iconID = %lli", iconID)))
+    if (!m_currentDB->executeCommand(String::format("DELETE FROM PageURL WHERE PageURL.iconID = %lli", iconID)))
         LOG_ERROR("Unable to drop all PageURL for IconURL", iconURL.ascii().data()); 
 }
 

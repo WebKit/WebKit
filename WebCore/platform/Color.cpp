@@ -143,8 +143,8 @@ Color::Color(const char* name)
 String Color::name() const
 {
     if (alpha() < 0xFF)
-        return String::sprintf("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
-    return String::sprintf("#%02X%02X%02X", red(), green(), blue());
+        return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
+    return String::format("#%02X%02X%02X", red(), green(), blue());
 }
 
 void Color::setNamedColor(const String& name)
