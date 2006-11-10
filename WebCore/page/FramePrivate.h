@@ -27,6 +27,7 @@
 #ifndef FramePrivate_h
 #define FramePrivate_h
 
+#include "CommandByName.h"
 #include "Editor.h"
 #include "FormData.h"
 #include "FrameTree.h"
@@ -75,6 +76,7 @@ namespace WebCore {
         Selection m_mark;
         Timer<Frame> m_caretBlinkTimer;
         Editor m_editor;
+        CommandByName m_command;
 
         bool m_caretVisible : 1;
         bool m_caretPaint : 1;

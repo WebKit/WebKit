@@ -115,6 +115,7 @@ public:
     Document* document() const;
     FrameView* view() const;
 
+    CommandByName* command() const;
     DOMWindow* domWindow() const;
     Editor* editor() const;
     FrameLoader* loader() const;

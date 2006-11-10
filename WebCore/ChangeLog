@@ -1,3 +1,15 @@
+2006-11-10  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Anders.
+
+        Back out some accidentally-committed changes from r17711.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::command):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+
 2006-11-10  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
