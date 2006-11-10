@@ -132,10 +132,6 @@ typedef enum {
 
 - (void)close;
 
-+ (NSArray *)supportedNonImageMIMETypes;
-+ (NSArray *)supportedImageMIMETypes;
-+ (NSArray *)supportedImageResourceMIMETypes; // includes types like PDF
-
 - (void)addData:(NSData *)data;
 
 - (void)saveDocumentState;

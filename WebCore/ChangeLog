@@ -1,3 +1,42 @@
+2006-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        Pulled MIME type handling out of WebFrameBridge and added
+        a general C++ class to store/query MIME info
+        Added an Obj-C bridge to provide WebKit with access to the
+        MimeTypeRegistry for non-Obj-C++ classes.
+        
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * bridge/mac/WebMimeTypeRegistryBridge.h: Added.
+        * bridge/mac/WebMimeTypeRegistryBridge.mm: Added.
+        (+[WebMimeTypeRegistryBridge supportsImageWithMIMEType:]):
+        (+[WebMimeTypeRegistryBridge supportsNonImageWithMIMEType:]):
+        (+[WebMimeTypeRegistryBridge supportedNonImageMIMETypes]):
+        (+[WebMimeTypeRegistryBridge supportedImageMIMETypes]):
+        (+[WebMimeTypeRegistryBridge supportedImageResourceMIMETypes]):
+        * platform/Image.cpp:
+        (WebCore::Image::supportsType):
+        * platform/Image.h:
+        * platform/MimeTypeRegistry.cpp: Added.
+        (WebCore::initialiseSupportedImageMIMETypes):
+        (WebCore::initialiseSupportedNonImageMimeTypes):
+        (WebCore::initialiseMimeTypeRegistry):
+        (WebCore::MimeTypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MimeTypeRegistry::isSupportedImageResourceMIMEType):
+        (WebCore::MimeTypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MimeTypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MimeTypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MimeTypeRegistry::getSupportedNonImageMIMETypes):
+        * platform/MimeTypeRegistry.h: Added.
+        * platform/mac/ImageMac.mm:
+        * platform/mac/MimeTypeRegistryMac.mm: Added.
+        (WebCore::getMIMETypeForUTI):
+        (WebCore::MimeTypeRegistry::getMIMETypeForExtension):
+
 2006-11-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

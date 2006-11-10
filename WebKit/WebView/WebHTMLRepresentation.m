@@ -48,6 +48,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/Range.h>
+#import <WebCore/WebMimeTypeRegistryBridge.h>
 
 using namespace WebCore;
 
@@ -90,12 +91,12 @@ using namespace WebCore;
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    return [WebCoreFrameBridge supportedNonImageMIMETypes];
+    return [WebMimeTypeRegistryBridge supportedNonImageMIMETypes];
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    return [WebCoreFrameBridge supportedImageMIMETypes];
+    return [WebMimeTypeRegistryBridge supportedImageMIMETypes];
 }
 
 - init

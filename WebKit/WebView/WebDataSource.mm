@@ -56,6 +56,7 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <WebCore/MimeTypeRegistry.h>
 
 using namespace WebCore;
 
@@ -247,7 +248,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
-        } else if ([[WebFrameBridge supportedImageResourceMIMETypes] containsObject:MIMEType]) {
+        } else if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType)) {
             return [self _documentFragmentWithImageResource:mainResource];
             
         }

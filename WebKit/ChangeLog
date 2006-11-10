@@ -1,3 +1,22 @@
+2006-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+        
+        Updated to make use of MimeTypeRegistry/bridge
+
+        * Misc/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        * WebView/WebHTMLRepresentation.m:
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _imageExistsAtPaths:]):
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+
 2006-11-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

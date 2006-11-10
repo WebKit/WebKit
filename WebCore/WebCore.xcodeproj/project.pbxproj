@@ -1626,6 +1626,9 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
+		A70023FD0B02BEAB00170215 /* MimeTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */; };
+		A70023FE0B02BEAB00170215 /* MimeTypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A70024000B02BECC00170215 /* MimeTypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */; };
 		A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */; };
 		A7638A8C09958EA50007E14F /* WKDisplacementMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */; };
 		A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */; };
@@ -1648,6 +1651,8 @@
 		A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */; };
 		A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */; };
 		A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */; };
+		A7D23C540B03E41300582A4F /* WebMimeTypeRegistryBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D23C550B03E41300582A4F /* WebMimeTypeRegistryBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4441,6 +4446,9 @@
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
 		93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLStructure.pm; path = scripts/IDLStructure.pm; sourceTree = "<group>"; };
+		A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MimeTypeRegistry.cpp; sourceTree = "<group>"; };
+		A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MimeTypeRegistry.h; sourceTree = "<group>"; };
+		A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypeRegistryMac.mm; sourceTree = "<group>"; };
 		A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDisplacementMapFilter.h; sourceTree = "<group>"; };
 		A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDisplacementMapFilter.m; sourceTree = "<group>"; };
 		A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
@@ -4463,6 +4471,8 @@
 		A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKTableTransferFilter.cikernel; sourceTree = "<group>"; };
 		A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
 		A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
+		A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMimeTypeRegistryBridge.h; sourceTree = "<group>"; };
+		A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMimeTypeRegistryBridge.mm; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
@@ -6436,6 +6446,7 @@
 				935207BF09BD412000F2038D /* LocalizedStringsMac.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
 				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
+				A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */,
 				BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */,
@@ -6552,6 +6563,8 @@
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
 				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
+				A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */,
+				A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -8571,6 +8584,8 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
+				A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */,
+				A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */,
 				AA98B87C0AAA02F8001A44C2 /* Path.cpp */,
 				93032CC909AEC34B00F82A18 /* Path.h */,
 				BCC8D1710988301200140BF2 /* Pen.cpp */,
@@ -9127,6 +9142,8 @@
 				93F1996D08245E59001E9ABC /* DeprecatedPtrListImpl.h in Headers */,
 				93F1996E08245E59001E9ABC /* LoaderFunctions.h in Headers */,
 				93F1997708245E59001E9ABC /* WebCorePageState.h in Headers */,
+				A70023FE0B02BEAB00170215 /* MimeTypeRegistry.h in Headers */,
+				A7D23C540B03E41300582A4F /* WebMimeTypeRegistryBridge.h in Headers */,
 				93F1998208245E59001E9ABC /* DeprecatedPtrList.h in Headers */,
 				93F1998308245E59001E9ABC /* DeprecatedPtrQueue.h in Headers */,
 				93F1998A08245E59001E9ABC /* RegularExpression.h in Headers */,
@@ -11756,8 +11773,11 @@
 				1402692D0AFE72D8005919E2 /* ScreenMac.mm in Sources */,
 				65DAD9FC0AFD86B400CE53ED /* FormData.cpp in Sources */,
 				65DADA010AFD86BF00CE53ED /* FormDataStreamMac.mm in Sources */,
+				A70023FD0B02BEAB00170215 /* MimeTypeRegistry.cpp in Sources */,
+				A70024000B02BECC00170215 /* MimeTypeRegistryMac.mm in Sources */,
 				651888880AFF3BF700164720 /* ResourceError.cpp in Sources */,
 				6518888B0AFF3C1400164720 /* ResourceErrorMac.mm in Sources */,
+				A7D23C550B03E41300582A4F /* WebMimeTypeRegistryBridge.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

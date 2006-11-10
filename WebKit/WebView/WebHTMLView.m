@@ -84,6 +84,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h> 
+#import <WebCore/WebMimeTypeRegistryBridge.h>
 
 using namespace WebCore;
 
@@ -297,13 +298,12 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
 {
-    NSArray *imageMIMETypes = [WebFrameBridge supportedImageResourceMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
         NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if ([imageMIMETypes containsObject:MIMEType]) {
+        if ([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:MIMEType]) {
             return YES;
         }
     }
@@ -334,7 +334,6 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 - (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
 {
     DOMDocumentFragment *fragment;
-    NSArray *imageMIMETypes = [WebFrameBridge supportedImageResourceMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     WebDataSource *dataSource = [self _dataSource];
     NSMutableArray *domNodes = [[NSMutableArray alloc] init];
@@ -342,7 +341,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     
     while ((path = [enumerator nextObject]) != nil) {
         NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if ([imageMIMETypes containsObject:MIMEType]) {
+        if ([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:MIMEType]) {
             WebResource *resource = [[WebResource alloc] initWithData:[NSData dataWithContentsOfFile:path]
                                                                   URL:[NSURL fileURLWithPath:path]
                                                              MIMEType:MIMEType 

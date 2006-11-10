@@ -85,6 +85,7 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
+#import <WebCore/MimeTypeRegistry.h>
 
 // For compatibility with old SPI. 
 @interface NSView (OldWebPlugin)
@@ -797,7 +798,7 @@ static BOOL loggedObjectCacheSize = NO;
     if ([MIMEType length] == 0)
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
 
-    if ([[WebCoreFrameBridge supportedImageMIMETypes] containsObject:MIMEType])
+    if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType))
         return ObjectElementFrame;
 
     if ([[self webView] _isMIMETypeRegisteredAsPlugin:MIMEType])

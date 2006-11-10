@@ -103,7 +103,7 @@ public:
     ~Image();
     
     static Image* loadPlatformResource(const char *name);
-    static bool supportsType(const String& type);
+    static bool supportsType(const String& type); 
 
     bool isNull() const;
 

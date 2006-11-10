@@ -75,13 +75,6 @@ Image* Image::loadPlatformResource(const char *name)
     return 0;
 }
 
-bool Image::supportsType(const String& type)
-{
-    // FIXME: Would be better if this was looking in a set rather than an NSArray.
-    // FIXME: Would be better not to convert to an NSString just to check if a type is supported.
-    return [[WebCoreFrameBridge supportedImageResourceMIMETypes] containsObject:type];
-}
-
 CFDataRef Image::getTIFFRepresentation()
 {
     if (m_tiffRep)

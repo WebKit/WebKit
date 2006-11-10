@@ -37,6 +37,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <WebCore/WebMimeTypeRegistryBridge.h>
 
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
@@ -240,13 +241,12 @@ static NSArray *_writableTypesForImageWithArchive (void)
         if ([types containsObject:NSRTFDPboardType]) {
             // This image data is either the only subresource of an archive (HTML image case)
             // or the main resource (standalone image case).
-            NSArray *imageTypes = [WebFrameBridge supportedImageResourceMIMETypes];
             NSArray *subresources = [archive subresources];
             WebResource *mainResource = [archive mainResource];
-            WebResource *resource = ![imageTypes containsObject:[mainResource MIMEType]] && [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
+            WebResource *resource = ![WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:[mainResource MIMEType]] && [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
             ASSERT(resource != nil);
             
-            ASSERT([imageTypes containsObject:[resource MIMEType]]);
+            ASSERT([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:[resource MIMEType]]);
             [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }
         if ([types containsObject:WebArchivePboardType]) {
