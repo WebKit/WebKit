@@ -1,3 +1,58 @@
+2006-11-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej, Geoff.
+
+        Added an execCommand method to Editor. The idea is that this should replace the CommandByName object. Get rid of
+        the alterCurrentSelection method in the bridge. WebKit can just call execCommand directly.
+
+        * WebCore.exp:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * editing/Editor.cpp:
+        (WebCore::execMoveBackward):
+        (WebCore::execMoveBackwardAndModifySelection):
+        (WebCore::execMoveDown):
+        (WebCore::execMoveDownAndModifySelection):
+        (WebCore::execMoveForward):
+        (WebCore::execMoveForwardAndModifySelection):
+        (WebCore::execMoveLeft):
+        (WebCore::execMoveLeftAndModifySelection):
+        (WebCore::execMoveRight):
+        (WebCore::execMoveRightAndModifySelection):
+        (WebCore::execMoveToBeginningOfDocument):
+        (WebCore::execMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::execMoveToBeginningOfSentence):
+        (WebCore::execMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::execMoveToBeginningOfLine):
+        (WebCore::execMoveToBeginningOfLineAndModifySelection):
+        (WebCore::execMoveToBeginningOfParagraph):
+        (WebCore::execMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::execMoveToEndOfDocument):
+        (WebCore::execMoveToEndOfDocumentAndModifySelection):
+        (WebCore::execMoveToEndOfSentence):
+        (WebCore::execMoveToEndOfSentenceAndModifySelection):
+        (WebCore::execMoveToEndOfLine):
+        (WebCore::execMoveToEndOfLineAndModifySelection):
+        (WebCore::execMoveToEndOfParagraph):
+        (WebCore::execMoveToEndOfParagraphAndModifySelection):
+        (WebCore::execMoveParagraphBackwardAndModifySelection):
+        (WebCore::execMoveParagraphForwardAndModifySelection):
+        (WebCore::execMoveUp):
+        (WebCore::execMoveUpAndModifySelection):
+        (WebCore::execMoveWordBackward):
+        (WebCore::execMoveWordBackwardAndModifySelection):
+        (WebCore::execMoveWordForward):
+        (WebCore::execMoveWordForwardAndModifySelection):
+        (WebCore::execMoveWordLeft):
+        (WebCore::execMoveWordLeftAndModifySelection):
+        (WebCore::execMoveWordRight):
+        (WebCore::execMoveWordRightAndModifySelection):
+        (WebCore::enabledAnySelection):
+        (WebCore::createCommandMap):
+        (WebCore::CommandEntry::):
+        (WebCore::Editor::execCommand):
+        * editing/Editor.h:
+
 2006-11-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
@@ -734,7 +789,6 @@
         (WebCore::RenderObject::calcVerticalMargins):
         (WebCore::RenderObject::font):
 
->>>>>>> .r17689
 2006-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

@@ -233,7 +233,6 @@ typedef enum {
 
 - (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
-- (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
 - (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration verticalDistance:(float)distance;
 - (WebCore::TextGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;

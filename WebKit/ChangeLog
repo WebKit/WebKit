@@ -1,3 +1,49 @@
+2006-11-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej, Geoff.
+
+        Call execCommand directly here instead of going through the bridge.
+        
+        * WebView/WebHTMLView.m:
+        (-[NSArray moveBackward:]):
+        (-[NSArray moveBackwardAndModifySelection:]):
+        (-[NSArray moveDown:]):
+        (-[NSArray moveDownAndModifySelection:]):
+        (-[NSArray moveForward:]):
+        (-[NSArray moveForwardAndModifySelection:]):
+        (-[NSArray moveLeft:]):
+        (-[NSArray moveLeftAndModifySelection:]):
+        (-[NSArray moveRight:]):
+        (-[NSArray moveRightAndModifySelection:]):
+        (-[NSArray moveToBeginningOfDocument:]):
+        (-[NSArray moveToBeginningOfDocumentAndModifySelection:]):
+        (-[NSArray moveToBeginningOfSentence:]):
+        (-[NSArray moveToBeginningOfSentenceAndModifySelection:]):
+        (-[NSArray moveToBeginningOfLine:]):
+        (-[NSArray moveToBeginningOfLineAndModifySelection:]):
+        (-[NSArray moveToBeginningOfParagraph:]):
+        (-[NSArray moveToBeginningOfParagraphAndModifySelection:]):
+        (-[NSArray moveToEndOfDocument:]):
+        (-[NSArray moveToEndOfDocumentAndModifySelection:]):
+        (-[NSArray moveToEndOfSentence:]):
+        (-[NSArray moveToEndOfSentenceAndModifySelection:]):
+        (-[NSArray moveToEndOfLine:]):
+        (-[NSArray moveToEndOfLineAndModifySelection:]):
+        (-[NSArray moveToEndOfParagraph:]):
+        (-[NSArray moveToEndOfParagraphAndModifySelection:]):
+        (-[NSArray moveParagraphBackwardAndModifySelection:]):
+        (-[NSArray moveParagraphForwardAndModifySelection:]):
+        (-[NSArray moveUp:]):
+        (-[NSArray moveUpAndModifySelection:]):
+        (-[NSArray moveWordBackward:]):
+        (-[NSArray moveWordBackwardAndModifySelection:]):
+        (-[NSArray moveWordForward:]):
+        (-[NSArray moveWordForwardAndModifySelection:]):
+        (-[NSArray moveWordLeft:]):
+        (-[NSArray moveWordLeftAndModifySelection:]):
+        (-[NSArray moveWordRight:]):
+        (-[NSArray moveWordRightAndModifySelection:]):
+
 2006-11-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

@@ -3532,236 +3532,236 @@ done:
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-    if (FrameMac* coreFrame = core([self _frame]))
+    if (Frame* coreFrame = core([self _frame]))
         coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
 }
 
 - (void)moveBackward:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveBackward");
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveBackwardAndModifySelection");
 }
 
 - (void)moveDown:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:LineGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveDown");
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:LineGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveDownAndModifySelection");
 }
 
 - (void)moveForward:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveForward");
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveForwardAndModifySelection");
 }
 
 - (void)moveLeft:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::LEFT granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveLeft");
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::LEFT granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveLeftAndModifySelection");
 }
 
 - (void)moveRight:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::RIGHT granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveRight");
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::RIGHT granularity:CharacterGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveRightAndModifySelection");
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:DocumentBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfDocument");
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:DocumentBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfDocumentAndModifySelection");
 }
 
 - (void)moveToBeginningOfSentence:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:SentenceBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfSentence");
 }
 
 - (void)moveToBeginningOfSentenceAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:SentenceBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfSentenceAndModifySelection");
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:LineBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfLine");
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:LineBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfLineAndModifySelection");
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:ParagraphBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfParagraph");
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:ParagraphBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToBeginningOfParagraphAndModifySelection");
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:DocumentBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfDocument");
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:DocumentBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfDocumentAndModifySelection");
 }
 
 - (void)moveToEndOfSentence:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:SentenceBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfSentence");
 }
 
 - (void)moveToEndOfSentenceAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:SentenceBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfSentenceAndModifySelection");
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:LineBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfLine");
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:LineBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfLineAndModifySelection");
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:ParagraphBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfParagraph");
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:ParagraphBoundary];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveToEndOfParagraphAndModifySelection");
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:ParagraphGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveParagraphBackwardAndModifySelection");
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:ParagraphGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveParagraphForwardAndModifySelection");
 }
 
 - (void)moveUp:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:LineGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveUp");
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:LineGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveUpAndModifySelection");
 }
 
 - (void)moveWordBackward:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::BACKWARD granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordBackward");
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::BACKWARD granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordBackwardAndModifySelection");
 }
 
 - (void)moveWordForward:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::FORWARD granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordForward");
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::FORWARD granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordForwardAndModifySelection");
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::LEFT granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordLeft");
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::LEFT granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordLeftAndModifySelection");
 }
 
 - (void)moveWordRight:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE direction:SelectionController::RIGHT granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordRight");
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND direction:SelectionController::RIGHT granularity:WordGranularity];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("MoveWordRightAndModifySelection");
 }
 
 - (void)pageUp:(id)sender

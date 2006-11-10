@@ -984,16 +984,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWith:selectionController.toRange().get()];
 }
 
-- (void)alterCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    SelectionController* selectionController = m_frame->selectionController();
-    selectionController->modify(alteration, direction, granularity, true);
-}
-
 - (void)alterCurrentSelection:(SelectionController::EAlteration)alteration verticalDistance:(float)verticalDistance
 {
     if (m_frame->selectionController()->isNone())

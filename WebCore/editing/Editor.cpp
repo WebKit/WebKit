@@ -450,6 +450,303 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
     respondToChangedContents(newSelection);    
 }
 
+// Execute command functions
+
+static bool execMoveBackward(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveBackwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveDown(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, LineGranularity, true);
+    return true;
+}
+
+static bool execMoveDownAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineGranularity, true);
+    return true;
+}
+
+static bool execMoveForward(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveForwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveLeft(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveLeftAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::LEFT, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveRight(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveRightAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::RIGHT, CharacterGranularity, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfDocument(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, DocumentBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfDocumentAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, DocumentBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfSentence(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, SentenceBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfSentenceAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, SentenceBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfLine(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, LineBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfLineAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, LineBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfParagraph(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphBoundary, true);
+    return true;
+}
+
+static bool execMoveToBeginningOfParagraphAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, ParagraphBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfDocument(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, DocumentBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfDocumentAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, DocumentBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfSentence(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, SentenceBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfSentenceAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, SentenceBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfLine(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, LineBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfLineAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfParagraph(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphBoundary, true);
+    return true;
+}
+
+static bool execMoveToEndOfParagraphAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, ParagraphBoundary, true);
+    return true;
+}
+
+static bool execMoveParagraphBackwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, ParagraphGranularity, true);
+    return true;
+}
+
+static bool execMoveParagraphForwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, ParagraphGranularity, true);
+    return true;
+}
+
+static bool execMoveUp(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, LineGranularity, true);
+    return true;
+}
+
+static bool execMoveUpAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, LineGranularity, true);
+    return true;
+}
+
+static bool execMoveWordBackward(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordBackwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordForward(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordForwardAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordLeft(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordLeftAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::LEFT, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordRight(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, WordGranularity, true);
+    return true;
+}
+
+static bool execMoveWordRightAndModifySelection(Frame* frame)
+{
+    frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::RIGHT, WordGranularity, true);
+    return true;
+}
+
+// Enabled functions
+
+bool canAlterCurrentSelection(Frame* frame)
+{
+    return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentEditable();
+}
+
+struct Command {
+    bool (*enabled)(Frame* frame);
+    bool (*exec)(Frame* frame);
+};
+
+typedef HashMap<String, const Command*> CommandMap;
+
+static CommandMap* createCommandMap()
+{
+    struct CommandEntry { const char* name; Command command; };
+    
+    static const CommandEntry commands[] = {
+        { "MoveBackward", { canAlterCurrentSelection, execMoveBackward } },
+        { "MoveBackwardAndModifySelection", { canAlterCurrentSelection, execMoveBackwardAndModifySelection } },
+        { "MoveDown", { canAlterCurrentSelection, execMoveDown } },
+        { "MoveDownAndModifySelection", { canAlterCurrentSelection, execMoveDownAndModifySelection } },
+        { "MoveForward", { canAlterCurrentSelection, execMoveForward } },
+        { "MoveForwardAndModifySelection", { canAlterCurrentSelection, execMoveForwardAndModifySelection } },
+        { "MoveLeft", { canAlterCurrentSelection, execMoveLeft } },
+        { "MoveLeftAndModifySelection", { canAlterCurrentSelection, execMoveLeftAndModifySelection } },
+        { "MoveRight", { canAlterCurrentSelection, execMoveRight } },
+        { "MoveRightAndModifySelection", { canAlterCurrentSelection, execMoveRightAndModifySelection } },
+        { "MoveToBeginningOfDocument", { canAlterCurrentSelection, execMoveToBeginningOfDocument } },
+        { "MoveToBeginningOfDocumentAndModifySelection", { canAlterCurrentSelection, execMoveToBeginningOfDocumentAndModifySelection } },
+        { "MoveToBeginningOfSentence", { canAlterCurrentSelection, execMoveToBeginningOfSentence } },
+        { "MoveToBeginningOfSentenceAndModifySelection", { canAlterCurrentSelection, execMoveToBeginningOfSentenceAndModifySelection } },
+        { "MoveToBeginningOfLine", { canAlterCurrentSelection, execMoveToBeginningOfLine } },
+        { "MoveToBeginningOfLineAndModifySelection", { canAlterCurrentSelection, execMoveToBeginningOfLineAndModifySelection } },
+        { "MoveToBeginningOfParagraph", { canAlterCurrentSelection, execMoveToBeginningOfParagraph } },
+        { "MoveToBeginningOfLineAndModifySelection", { canAlterCurrentSelection, execMoveToBeginningOfParagraphAndModifySelection } },
+        { "MoveToEndOfDocument", { canAlterCurrentSelection, execMoveToEndOfDocument } },
+        { "MoveToEndOfDocumentAndModifySelection", { canAlterCurrentSelection, execMoveToEndOfDocumentAndModifySelection } },
+        { "MoveToEndOfSentence", { canAlterCurrentSelection, execMoveToEndOfSentence } },
+        { "MoveToEndOfSentenceAndModifySelection", { canAlterCurrentSelection, execMoveToEndOfSentenceAndModifySelection } },
+        { "MoveToEndOfLine", { canAlterCurrentSelection, execMoveToEndOfLine } },
+        { "MoveToEndOfLineAndModifySelection", { canAlterCurrentSelection, execMoveToEndOfLineAndModifySelection } },
+        { "MoveToEndOfParagraph", { canAlterCurrentSelection, execMoveToEndOfParagraph } },
+        { "MoveToEndOfLineAndModifySelection", { canAlterCurrentSelection, execMoveToEndOfParagraphAndModifySelection } },
+        { "MoveParagraphBackwardAndModifySelection", { canAlterCurrentSelection, execMoveParagraphBackwardAndModifySelection } },
+        { "MoveParagraphForwardAndModifySelection", { canAlterCurrentSelection, execMoveParagraphForwardAndModifySelection } },
+        { "MoveUp", { canAlterCurrentSelection, execMoveUp } },
+        { "MoveUpAndModifySelection", { canAlterCurrentSelection, execMoveUpAndModifySelection } },
+        { "MoveWordBackward", { canAlterCurrentSelection, execMoveWordBackward } },
+        { "MoveWordBackwardAndModifySelection", { canAlterCurrentSelection, execMoveWordBackwardAndModifySelection } },
+        { "MoveWordForward", { canAlterCurrentSelection, execMoveWordForward } },
+        { "MoveWordForwardAndModifySelection", { canAlterCurrentSelection, execMoveWordForwardAndModifySelection } },
+        { "MoveWordLeft", { canAlterCurrentSelection, execMoveWordLeft } },
+        { "MoveWordLeftAndModifySelection", { canAlterCurrentSelection, execMoveWordLeftAndModifySelection } },
+        { "MoveWordRight", { canAlterCurrentSelection, execMoveWordRight } },
+        { "MoveWordRightAndModifySelection", { canAlterCurrentSelection, execMoveWordRightAndModifySelection } },
+    };
+    
+    CommandMap* commandMap = new CommandMap;
+    
+    const unsigned numCommands = sizeof(commands) / sizeof(commands[0]);
+    for (unsigned i = 0; i < numCommands; i++)
+        commandMap->set(commands[i].name, &commands[i].command);
+    return commandMap;
+}
+
 // =============================================================================
 //
 // public editing commands
@@ -465,6 +762,25 @@ Editor::Editor(Frame* frame, PassRefPtr<EditorClient> client)
 
 Editor::~Editor()
 {
+}
+
+bool Editor::execCommand(const String& command)
+{
+    static CommandMap* commandMap;
+    if (!commandMap)
+        commandMap = createCommandMap();
+    
+    const Command* c = commandMap->get(command);
+    ASSERT(c);
+    
+    bool handled = false;
+    
+    if (c->enabled(m_frame)) {
+        m_frame->document()->updateLayoutIgnorePendingStylesheets();
+        handled = c->exec(m_frame);
+    }
+    
+    return handled;
 }
 
 void Editor::cut()
