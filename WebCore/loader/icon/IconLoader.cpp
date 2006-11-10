@@ -115,13 +115,19 @@ void IconLoader::didReceiveData(ResourceHandle*, const char* data, int size)
 
 void IconLoader::didFailWithError(ResourceHandle* handle, const ResourceError&)
 {
+    ASSERT(m_loadIsInProgress);
+    m_buffer.clear();
     finishLoading(handle->url());
 }
 
 void IconLoader::didFinishLoading(ResourceHandle* handle)
 {
-    ASSERT(handle == m_handle);
-    finishLoading(handle->url());
+    // If the icon load resulted in an error-response earlier, the ResourceHandle was killed and icon data commited via finishLoading().
+    // In that case this didFinishLoading callback is pointless and we bail.  Otherwise, finishLoading() as expected
+    if (m_loadIsInProgress) {
+        ASSERT(handle == m_handle);
+        finishLoading(handle->url());
+    }
 }
 
 void IconLoader::finishLoading(const KURL& iconURL)

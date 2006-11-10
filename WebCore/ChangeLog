@@ -1,3 +1,17 @@
+2006-11-10  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Mitz
+
+        http://bugs.webkit.org/show_bug.cgi?id=11554
+        Fix the above bug (in didFinishLoading) and also another potential bug in didFailWithError
+        in case the icon load fails after some data has been received. 
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didFailWithError): Clear the buffer so half-an-image isn't commited to the DB
+        on error.  Also, as a loader re-factoring sanity check, added an assertion
+        (WebCore::IconLoader::didFinishLoading): If an icon loader resulted in an error-response, the icon 
+        is already committed to the DB.  Skip doing that step twice.
+
 2006-11-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.
