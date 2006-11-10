@@ -1,3 +1,13 @@
+2006-11-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - fixed "Regression: Can't log into gmail.com"
+        - fixed "iBench doesn't report results - tests run but no number is recorded"
+        
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody): Removed extra ! character.
+
 2006-11-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
