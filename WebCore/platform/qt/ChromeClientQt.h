@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org> 
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * All rights reserved.
  *
@@ -27,78 +25,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "EditorClientQt.h"
+#ifndef ChromeClientQt_H
+#define ChromeClientQt_H
 
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#include "ChromeClient.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 
-bool EditorClientQt::shouldDeleteRange(Range*)
-{
-    notImplemented();
-    return false;
-}
+    class FloatRect;
+    class Page;
+    struct FrameLoadRequest;
+    
+    class ChromeClientQt : public ChromeClient
+    {
+    public:
+        ChromeClientQt();
+        virtual ~ChromeClientQt();
 
-bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
-{
-    return false;
-}
+        virtual void setWindowRect(const FloatRect&);
+        virtual FloatRect windowRect();
+        
+        virtual FloatRect pageRect();
+        
+        virtual float scaleFactor();
+    
+        virtual void focus();
+        virtual void unfocus();
 
-bool EditorClientQt::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
+        virtual Page* createWindow(const FrameLoadRequest&);
+        virtual Page* createModalDialog(const FrameLoadRequest&);
+        virtual void show();
 
-bool EditorClientQt::isGrammarCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
+        virtual bool canRunModal();
+        virtual void runModal();
 
-int EditorClientQt::spellCheckerDocumentTag()
-{
-    notImplemented();
-    return 0;
-}
+        virtual void setToolbarsVisible(bool);
+        virtual bool toolbarsVisible();
+        
+        virtual void setStatusbarVisible(bool);
+        virtual bool statusbarVisible();
+        
+        virtual void setScrollbarsVisible(bool);
+        virtual bool scrollbarsVisible();
+        
+        virtual void setMenubarVisible(bool);
+        virtual bool menubarVisible();
 
-bool EditorClientQt::shouldBeginEditing(WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldEndEditing(WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                      WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-void EditorClientQt::didBeginEditing()
-{
-    notImplemented();
-}
-
-void EditorClientQt::respondToChangedContents()
-{
-    notImplemented();
-}
-
-void EditorClientQt::didEndEditing()
-{
-    notImplemented();
-}
+        virtual void setResizable(bool);
+    };
 
 }
 
-// vim: ts=4 sw=4 et
+#endif

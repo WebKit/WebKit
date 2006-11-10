@@ -43,6 +43,10 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FramePrivate.h"
+#include "FrameLoaderClient.h"
+#include "DocumentLoader.h"
+#include "FrameView.h"
+#include "FormState.h"
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
@@ -82,16 +86,17 @@ void FrameLoader::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset m_submittedFormURL on each mouse or key down event.
-    Frame* target = m_frame->tree()->find(request.frameName());
+    Frame* target = m_frame->tree()->find(frameLoadRequest.frameName());
     if (m_frame->tree()->isDescendantOf(target)) {
-        if (m_submittedFormURL == request.resourceRequest().url())
+        if (m_submittedFormURL == frameLoadRequest.resourceRequest().url())
             return;
-        m_submittedFormURL = request.resourceRequest().url();
+        m_submittedFormURL = frameLoadRequest.resourceRequest().url();
     }
 
     if (QtFrame(m_frame)->client())
-        QtFrame(m_frame)->client()->submitForm(request.resourceRequest().httpMethod(),
-            request.resourceRequest().url(), &request.resourceRequest().httpBody());
+        QtFrame(m_frame)->client()->submitForm(frameLoadRequest.resourceRequest().httpMethod(),
+                                               frameLoadRequest.resourceRequest().url(),
+                                               &frameLoadRequest.resourceRequest().httpBody());
 
     clearRecordedFormValues();
 }
@@ -140,6 +145,176 @@ KURL FrameLoader::originalRequestURL() const
 {
     notImplemented();
     return KURL();
+}
+
+String FrameLoader::overrideMediaType() const
+{
+    // no-op
+    return String();
+}
+
+int FrameLoader::getHistoryLength()
+{
+    notImplemented();
+    return 0;
+}
+
+String FrameLoader::referrer() const
+{
+    notImplemented();
+    return String();
+}
+
+
+void FrameLoader::detachFromParent()
+{
+    RefPtr<Frame> protect(m_frame);
+
+    closeDocument();
+    stopAllLoaders();
+    m_client->detachedFromParent1();
+    detachChildren();
+    m_client->detachedFromParent2();
+    setDocumentLoader(0);
+    m_client->detachedFromParent3();
+
+    if (Frame* parent = m_frame->tree()->parent())
+        parent->tree()->removeChild(m_frame);
+    m_frame->setView(0);
+    
+    m_client->detachedFromParent4();
+}
+
+
+void FrameLoader::checkLoadCompleteForThisFrame()
+{
+    ASSERT(m_client->hasWebView());
+    notImplemented();
+    
+    switch (m_state) {
+    case FrameStateProvisional: {
+    }
+        
+    case FrameStateCommittedPage: {
+        DocumentLoader* dl = m_documentLoader.get();            
+        if (dl->isLoadingInAPISense())
+            return;
+
+        markLoadComplete();
+
+        // FIXME: Is this subsequent work important if we already navigated away?
+        // Maybe there are bugs because of that, or extra work we can skip because
+        // the new page is ready.
+
+        m_client->forceLayoutForNonHTML();
+             
+        // If the user had a scroll point, scroll to it, overriding the anchor point if any.
+        if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload)
+            && m_client->hasBackForwardList())
+            m_client->restoreScrollPositionAndViewState();
+
+        m_client->progressCompleted();
+        return;
+    }
+        
+    case FrameStateComplete:
+        // Even if already complete, we might have set a previous item on a frame that
+        // didn't do any data loading on the past transaction. Make sure to clear these out.
+        m_client->frameLoadCompleted();
+        return;
+    }
+
+}
+
+void FrameLoader::goBackOrForward(int distance)
+{
+    notImplemented();
+}
+
+KURL FrameLoader::historyURL(int distance)
+{
+    notImplemented();
+    return KURL();
+}
+
+void FrameLoader::didFirstLayout()
+{
+    if (isBackForwardLoadType(m_loadType) && m_client->hasBackForwardList())
+        m_client->restoreScrollPositionAndViewState();
+
+    m_firstLayoutDone = true;
+    m_client->dispatchDidFirstLayout();
+}
+
+bool FrameLoader::canGoBackOrForward(int distance) const
+{
+    notImplemented();
+    return false;
+}
+
+void FrameLoader::partClearedInBegin()
+{
+    notImplemented();
+}
+
+void FrameLoader::saveDocumentState()
+{
+    // Do not save doc state if the page has a password field and a form that would be submitted via https.
+    notImplemented();
+}
+
+void FrameLoader::restoreDocumentState()
+{
+    notImplemented();
+}
+
+void FrameLoader::didChangeTitle(DocumentLoader* loader)
+{
+    notImplemented();
+    m_client->didChangeTitle(loader);
+}
+
+void FrameLoader::redirectDataToPlugin(Widget* pluginWidget)
+{
+    notImplemented();
+}
+
+PolicyCheck::PolicyCheck()
+    : m_contentFunction(0)
+{
+}
+
+void PolicyCheck::clear()
+{
+    clearRequest();
+    m_contentFunction = 0;
+}
+
+
+void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
+{
+    m_formState = 0;
+    m_frameName = String();
+
+    m_contentFunction = function;
+    m_argument = argument;
+}
+
+void PolicyCheck::call()
+{
+    notImplemented();
+}
+
+void PolicyCheck::call(PolicyAction action)
+{
+    ASSERT(m_contentFunction);
+    m_contentFunction(m_argument, action);
+}
+
+void PolicyCheck::clearRequest()
+{
+    m_formState = 0;
+    m_frameName = String();
 }
 
 }

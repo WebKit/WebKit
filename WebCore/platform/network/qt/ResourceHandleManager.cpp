@@ -144,7 +144,8 @@ void ResourceHandleManager::slotResult(KJob* kjob)
     if (!job)
         return;
 
-    job->setError(kjob->error());
+    //FIXME: should report an error
+    //job->setError(kjob->error());
     remove(job);
 
     ASSERT(m_frameClient);
@@ -223,7 +224,8 @@ void ResourceHandleManager::add(ResourceHandle* job, FrameQtClient* frameClient)
 void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     remove(job);
-    job->setError(1);
+    //FIXME set an error state
+    //job->setError(1);
 }
 
 // Qt Resource Handle Manager

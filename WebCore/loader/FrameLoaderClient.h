@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef FrameLoaderClient_h
+#define FrameLoaderClient_j
 
 #include "FrameLoaderTypes.h"
 #include <wtf/Forward.h>
@@ -233,3 +235,5 @@ namespace WebCore {
     };
 
 }
+
+#endif

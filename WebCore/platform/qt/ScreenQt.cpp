@@ -31,6 +31,7 @@
 
 #include "Page.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "Widget.h"
 #include "IntRect.h"
 #include "FloatRect.h"

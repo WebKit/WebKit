@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org> 
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * All rights reserved.
  *
@@ -28,77 +27,56 @@
  */
 
 #include "config.h"
-#include "EditorClientQt.h"
+#include "NavigationAction.h"
 
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#include "FrameLoader.h"
 
 namespace WebCore {
 
-bool EditorClientQt::shouldDeleteRange(Range*)
+static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)
 {
-    notImplemented();
-    return false;
+    if (isFormSubmission)
+        return NavigationTypeFormSubmitted;
+    if (haveEvent)
+        return NavigationTypeLinkClicked;
+    if (frameLoadType == FrameLoadTypeReload)
+        return NavigationTypeReload;
+    if (isBackForwardLoadType(frameLoadType))
+        return NavigationTypeBackForward;
+    return NavigationTypeOther;
 }
 
-bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
+NavigationAction::NavigationAction()
+    : m_type(NavigationTypeOther)
 {
-    return false;
 }
 
-bool EditorClientQt::isContinuousSpellCheckingEnabled()
+NavigationAction::NavigationAction(const KURL& URL, NavigationType type)
+    : m_URL(URL)
+    , m_type(type)
 {
-    notImplemented();
-    return false;
 }
 
-bool EditorClientQt::isGrammarCheckingEnabled()
+NavigationAction::NavigationAction(const KURL& URL, FrameLoadType frameLoadType,
+                                   bool isFormSubmission)
+    : m_URL(URL)
+    , m_type(navigationType(frameLoadType, isFormSubmission, 0))
 {
-    notImplemented();
-    return false;
 }
 
-int EditorClientQt::spellCheckerDocumentTag()
+NavigationAction::NavigationAction(const KURL& URL, NavigationType type, PassRefPtr<Event> event)
+    : m_URL(URL)
+    , m_type(type)
+    , m_event(event)
 {
-    notImplemented();
-    return 0;
 }
 
-bool EditorClientQt::shouldBeginEditing(WebCore::Range*)
+NavigationAction::NavigationAction(const KURL& URL, FrameLoadType frameLoadType,
+                                   bool isFormSubmission, PassRefPtr<Event> event)
+    : m_URL(URL)
+    , m_type(navigationType(frameLoadType, isFormSubmission, event))
+    , m_event(event)
 {
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldEndEditing(WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                      WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-void EditorClientQt::didBeginEditing()
-{
-    notImplemented();
-}
-
-void EditorClientQt::respondToChangedContents()
-{
-    notImplemented();
-}
-
-void EditorClientQt::didEndEditing()
-{
-    notImplemented();
 }
 
 }
-
-// vim: ts=4 sw=4 et

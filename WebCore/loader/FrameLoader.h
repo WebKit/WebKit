@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef FrameLoader_h
+#define FrameLoader_h
 
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
@@ -644,3 +646,5 @@ namespace WebCore {
     };
 
 }
+
+#endif

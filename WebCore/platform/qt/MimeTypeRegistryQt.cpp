@@ -1,9 +1,6 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org> 
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
- *
- * All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,77 +25,30 @@
  */
 
 #include "config.h"
-#include "EditorClientQt.h"
-
-#include <stdio.h>
+#include "MimeTypeRegistry.h"
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
-namespace WebCore {
+namespace WebCore 
+{
 
-bool EditorClientQt::shouldDeleteRange(Range*)
+#if 0
+String getMIMETypeForUTI(const String & uti)
+{
+    CFStringRef utiref = uti.createCFString();
+    CFStringRef mime = UTTypeCopyPreferredTagWithClass(utiref, kUTTagClassMIMEType);
+    String mimeType = mime;
+    if (mime)
+        CFRelease(mime);
+    CFRelease(utiref);
+    return mimeType;
+}
+#endif
+
+String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
-{
-    return false;
-}
-
-bool EditorClientQt::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::isGrammarCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-int EditorClientQt::spellCheckerDocumentTag()
-{
-    notImplemented();
-    return 0;
-}
-
-bool EditorClientQt::shouldBeginEditing(WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldEndEditing(WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                      WebCore::Range*)
-{
-    notImplemented();
-    return false;
-}
-
-void EditorClientQt::didBeginEditing()
-{
-    notImplemented();
-}
-
-void EditorClientQt::respondToChangedContents()
-{
-    notImplemented();
-}
-
-void EditorClientQt::didEndEditing()
-{
-    notImplemented();
+    return ext;
 }
 
 }
-
-// vim: ts=4 sw=4 et

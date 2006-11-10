@@ -32,6 +32,8 @@
 #include "FrameQt.h"
 #include "Document.h"
 #include "FrameTree.h"
+#include "FrameView.h"
+#include "FrameLoader.h"
 #include "ResourceHandle.h"
 #include "LoaderFunctions.h"
 #include "ResourceHandleInternal.h"
@@ -69,11 +71,11 @@ void FrameQtClientDefault::openURL(const KURL& url)
 {
     ASSERT(m_frame);
 
-    m_frame->didOpenURL(url);
+    m_frame->loader()->didOpenURL(url);
     m_assignedMimetype = false;
 
     if (!m_frame->document())
-        m_frame->createEmptyDocument();
+        m_frame->loader()->createEmptyDocument();
 
     ASSERT(m_frame->document());
 
@@ -183,15 +185,15 @@ void FrameQtClientDefault::didReceiveData(ResourceHandle* job, const char* data,
         m_assignedMimetype = true;
 
         // Assign correct mimetype _before_ calling begin()!
-        m_frame->setResponseMIMEType(d->m_mimetype);
+        m_frame->loader()->setResponseMIMEType(d->m_mimetype);
     }
 
     // TODO: Allow user overrides of the encoding...
     // This calls begin() for us, despite the misleading name
-    m_frame->setEncoding(d->m_charset, false);
+    m_frame->loader()->setEncoding(d->m_charset, false);
 
     // Feed with new data
-    m_frame->write(data, length);
+    m_frame->loader()->write(data, length);
 }
 
 FrameQt* FrameQtClientDefault::traverseNextFrameStayWithin(FrameQt* frame) const
@@ -223,7 +225,7 @@ void FrameQtClientDefault::receivedAllData(ResourceHandle* job, PlatformData dat
 {
     ASSERT(m_frame);
   
-    m_frame->end();
+    m_frame->loader()->end();
     m_assignedMimetype = false;
 }
 

@@ -28,6 +28,11 @@
 #include "config.h"
 #include "WebKitPart.h"
 
+#include "FrameLoader.h"
+#include "FrameView.h"
+#include "ChromeClientQt.h"
+#include "KURL.h"
+
 #include <QDebug>
 
 #include "Page.h"
@@ -76,7 +81,7 @@ bool WebKitPart::openUrl(const KUrl& url)
 
 bool WebKitPart::closeUrl()
 {
-    return m_frame->closeURL();
+    return m_frame->loader()->closeURL();
 }
 
 WebKitPart* WebKitPart::parentPart()
@@ -99,7 +104,7 @@ void WebKitPart::initView(QWidget* parentWidget, GUIProfile prof)
     m_client = new WebKitPartClient(this);
  
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page();
+    Page* page = new Page(new ChromeClientQt());
     Frame* frame = new FrameQt(page, 0, m_client);
 
     m_frame = frame;

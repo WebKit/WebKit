@@ -2214,6 +2214,11 @@ void FrameLoader::createEmptyDocument()
         loadEmptyDocumentSynchronously();
         updateBaseURLForEmptyDocument();
     }
+#elif PLATFORM(QT)
+    if (!m_frame->document()) {
+        begin();
+        end();
+    }
 #endif
 }
 

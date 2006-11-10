@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * All rights reserved.
@@ -40,7 +41,17 @@ public:
 
     virtual bool isContinuousSpellCheckingEnabled();
     virtual bool isGrammarCheckingEnabled();
-    virtual int spellCheckerDocumentTag();
+    virtual int  spellCheckerDocumentTag();
+
+    virtual bool shouldBeginEditing(WebCore::Range*);
+    virtual bool shouldEndEditing(WebCore::Range*);
+    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*,
+                                  WebCore::Range*);
+    
+    virtual void didBeginEditing();
+    virtual void respondToChangedContents();
+    virtual void didEndEditing();
+
 };
 
 }

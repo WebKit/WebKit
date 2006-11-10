@@ -27,9 +27,10 @@
 #include "MimeTypeRegistry.h"
 #include "wtf/HashMap.h"
 #include "wtf/HashSet.h"
+#if PLATFORM(MAC)
 #include <ApplicationServices/ApplicationServices.h>
 #include "WebCoreSystemInterface.h"
-
+#endif
 #include "StringHash.h"
 
 namespace WebCore
@@ -72,12 +73,12 @@ static void initialiseSupportedImageMIMETypes()
 
 #else
     //assume that all implementations at least support
-    supportedImageMIMETypes->add("jpg", "image/jpeg");
-    supportedImageMIMETypes->add("jpeg", "image/jpeg");
-    supportedImageMIMETypes->add("png", "image/png");
-    supportedImageMIMETypes->add("gif", "image/gif");
-    supportedImageMIMETypes->add("bmp", "image/bmp");
-#endif;
+    supportedImageMIMETypes->add("image/jpeg");
+    supportedImageMIMETypes->add("image/jpeg");
+    supportedImageMIMETypes->add("image/png");
+    supportedImageMIMETypes->add("image/gif");
+    supportedImageMIMETypes->add("image/bmp");
+#endif
 }
 
 static void initialiseSupportedNonImageMimeTypes()

@@ -116,8 +116,6 @@ public:
     void goBackOrForward(int);
 
     KURL historyURL(int distance);
-    int getHistoryLength();
-
 private:
     void init();
 

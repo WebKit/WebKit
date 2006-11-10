@@ -1,3 +1,222 @@
+2006-11-10  Zack Rusin  <zack@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Adjust platform Qt/KDE code to the recent loader
+        changes. 
+
+        * CMakeLists.txt:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createEmptyDocument):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/qt/DocumentLoaderQt.cpp: Added.
+        (WebCore::canonicalizedTitle):
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::frameLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::unreachableURL):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::isStopping):
+        (WebCore::DocumentLoader::clearErrors):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::setupForReplace):
+        (WebCore::DocumentLoader::commitIfReady):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::setCommitted):
+        (WebCore::DocumentLoader::isCommitted):
+        (WebCore::DocumentLoader::setLoading):
+        (WebCore::DocumentLoader::isLoading):
+        (WebCore::DocumentLoader::doesProgressiveLoad):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::updateLoading):
+        (WebCore::DocumentLoader::setFrame):
+        (WebCore::DocumentLoader::attachToFrame):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        (WebCore::DocumentLoader::loadingStartedTime):
+        (WebCore::DocumentLoader::setIsClientRedirect):
+        (WebCore::DocumentLoader::isClientRedirect):
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::stopRecordingResponses):
+        (WebCore::DocumentLoader::title):
+        (WebCore::DocumentLoader::triggeringAction):
+        (WebCore::DocumentLoader::setTriggeringAction):
+        (WebCore::DocumentLoader::setOverrideEncoding):
+        (WebCore::DocumentLoader::overrideEncoding):
+        (WebCore::DocumentLoader::setTitle):
+        (WebCore::DocumentLoader::URLForHistory):
+        * loader/qt/FrameLoaderClientQt.cpp: Added.
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::~FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::detachFrameLoader):
+        (WebCore::FrameLoaderClientQt::hasWebView):
+        (WebCore::FrameLoaderClientQt::hasFrameView):
+        (WebCore::FrameLoaderClientQt::hasBackForwardList):
+        (WebCore::FrameLoaderClientQt::resetBackForwardList):
+        (WebCore::FrameLoaderClientQt::provisionalItemIsTarget):
+        (WebCore::FrameLoaderClientQt::loadProvisionalItemFromPageCache):
+        (WebCore::FrameLoaderClientQt::invalidateCurrentItemPageCache):
+        (WebCore::FrameLoaderClientQt::privateBrowsingEnabled):
+        (WebCore::FrameLoaderClientQt::makeDocumentView):
+        (WebCore::FrameLoaderClientQt::makeRepresentation):
+        (WebCore::FrameLoaderClientQt::forceLayout):
+        (WebCore::FrameLoaderClientQt::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientQt::updateHistoryForCommit):
+        (WebCore::FrameLoaderClientQt::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoaderClientQt::updateHistoryForReload):
+        (WebCore::FrameLoaderClientQt::updateHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientQt::updateHistoryForInternalLoad):
+        (WebCore::FrameLoaderClientQt::updateHistoryAfterClientRedirect):
+        (WebCore::FrameLoaderClientQt::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientQt::tokenForLoadErrorReset):
+        (WebCore::FrameLoaderClientQt::resetAfterLoadError):
+        (WebCore::FrameLoaderClientQt::doNotResetAfterLoadError):
+        (WebCore::FrameLoaderClientQt::willCloseDocument):
+        (WebCore::FrameLoaderClientQt::detachedFromParent1):
+        (WebCore::FrameLoaderClientQt::detachedFromParent2):
+        (WebCore::FrameLoaderClientQt::detachedFromParent3):
+        (WebCore::FrameLoaderClientQt::detachedFromParent4):
+        (WebCore::FrameLoaderClientQt::loadedFromPageCache):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchWillClose):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientQt::dispatchShow):
+        (WebCore::FrameLoaderClientQt::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientQt::clearLoadingFromPageCache):
+        (WebCore::FrameLoaderClientQt::isLoadingFromPageCache):
+        (WebCore::FrameLoaderClientQt::revertToProvisionalState):
+        (WebCore::FrameLoaderClientQt::clearUnarchivingState):
+        (WebCore::FrameLoaderClientQt::progressStarted):
+        (WebCore::FrameLoaderClientQt::progressCompleted):
+        (WebCore::FrameLoaderClientQt::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientQt::willChangeTitle):
+        (WebCore::FrameLoaderClientQt::didChangeTitle):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::finalSetupForReplace):
+        (WebCore::FrameLoaderClientQt::setDefersLoading):
+        (WebCore::FrameLoaderClientQt::isArchiveLoadPending):
+        (WebCore::FrameLoaderClientQt::cancelPendingArchiveLoad):
+        (WebCore::FrameLoaderClientQt::clearArchivedResources):
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+        (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientQt::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientQt::frameLoadCompleted):
+        (WebCore::FrameLoaderClientQt::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoaderClientQt::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientQt::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoaderClientQt::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoaderClientQt::didFinishLoad):
+        (WebCore::FrameLoaderClientQt::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientQt::setTitle):
+        (WebCore::FrameLoaderClientQt::userAgent):
+        * loader/qt/FrameLoaderClientQt.h: Added.
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::overrideMediaType):
+        (WebCore::FrameLoader::getHistoryLength):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::goBackOrForward):
+        (WebCore::FrameLoader::historyURL):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::canGoBackOrForward):
+        (WebCore::FrameLoader::partClearedInBegin):
+        (WebCore::FrameLoader::saveDocumentState):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::redirectDataToPlugin):
+        (WebCore::PolicyCheck::PolicyCheck):
+        (WebCore::PolicyCheck::clear):
+        (WebCore::PolicyCheck::set):
+        (WebCore::PolicyCheck::call):
+        (WebCore::PolicyCheck::clearRequest):
+        * loader/qt/NavigationActionQt.cpp: Added.
+        (WebCore::navigationType):
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/qt/ResourceLoaderQt.cpp: Added.
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::setDefersLoading):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::loadsBlocked):
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedImageMIMETypes):
+        * platform/network/qt/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::slotResult):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/qt/ChromeClientQt.cpp: Added.
+        (WebCore::rootWindowForFrame):
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        (WebCore::ChromeClientQt::setWindowRect):
+        (WebCore::ChromeClientQt::windowRect):
+        (WebCore::ChromeClientQt::pageRect):
+        (WebCore::ChromeClientQt::scaleFactor):
+        (WebCore::ChromeClientQt::focus):
+        (WebCore::ChromeClientQt::unfocus):
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::createModalDialog):
+        (WebCore::ChromeClientQt::show):
+        (WebCore::ChromeClientQt::canRunModal):
+        (WebCore::ChromeClientQt::runModal):
+        (WebCore::ChromeClientQt::setToolbarsVisible):
+        (WebCore::ChromeClientQt::toolbarsVisible):
+        (WebCore::ChromeClientQt::setStatusbarVisible):
+        (WebCore::ChromeClientQt::statusbarVisible):
+        (WebCore::ChromeClientQt::setScrollbarsVisible):
+        (WebCore::ChromeClientQt::scrollbarsVisible):
+        (WebCore::ChromeClientQt::setMenubarVisible):
+        (WebCore::ChromeClientQt::menubarVisible):
+        (WebCore::ChromeClientQt::setResizable):
+        * platform/qt/ChromeClientQt.h: Added.
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldBeginEditing):
+        (WebCore::EditorClientQt::shouldEndEditing):
+        (WebCore::EditorClientQt::shouldApplyStyle):
+        (WebCore::EditorClientQt::didBeginEditing):
+        (WebCore::EditorClientQt::respondToChangedContents):
+        (WebCore::EditorClientQt::didEndEditing):
+        * platform/qt/EditorClientQt.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::~FrameQt):
+        (WebCore::FrameQt::keyEvent):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::didReceiveData):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/ImageQt.cpp:
+        * platform/qt/MimeTypeRegistryQt.cpp: Added.
+        (WebCore::getMIMETypeForUTI):
+        (WebCore::MimeTypeRegistry::getMIMETypeForExtension):
+        * platform/qt/PageQt.cpp:
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::keyIdentifierForQtKeyCode):
+        * platform/qt/ScreenQt.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::TextField::TextField):
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2006-11-10  Brady Eidson <beidson@apple.com>
 
         Reviewed by Mitz

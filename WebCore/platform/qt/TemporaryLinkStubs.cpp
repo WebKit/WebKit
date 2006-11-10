@@ -60,7 +60,6 @@
 #include "RenderTheme.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
-#include "IconDatabase.h"
 #include "IconLoader.h"
 
 using namespace WebCore;
@@ -90,7 +89,7 @@ void TextField::setSelection(int,int) { notImplemented(); }
 void TextField::setMaxResults(int) { notImplemented(); }
 bool TextField::edited() const { notImplemented(); return 0; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
-TextField::TextField(TextField::Type) { notImplemented(); }
+TextField::TextField() { notImplemented(); }
 TextField::~TextField() { notImplemented(); }
 void TextField::setFont(WebCore::Font const&) { notImplemented(); }
 void TextField::setAlignment(HorizontalAlignment) { notImplemented(); }
@@ -137,15 +136,6 @@ void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 
-void IconLoader::stopLoading() { notImplemented(); }
-void IconLoader::startLoading() { notImplemented(); }
-IconLoader* IconLoader::createForFrame(Frame *frame) { return 0; }
-
-bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
-bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
-IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
-bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
-
 }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
@@ -159,8 +149,13 @@ String WebCore::fileButtonNoFileSelectedLabel() { return "No file selected"; }
 
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
-int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
-bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
+int WebCore::screenDepth(Widget*) { notImplemented(); return 0; }
+int WebCore::screenDepthPerComponent(Widget*) { notImplemented(); return 0; }
+bool WebCore::screenIsMonochrome(Widget*) { notImplemented(); return false; }
+FloatRect WebCore::screenRect(Widget*)
+{ notImplemented(); return FloatRect(); }
+FloatRect WebCore::screenAvailableRect(Widget*)
+{ notImplemented(); return FloatRect(); }
 
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
@@ -183,7 +178,7 @@ namespace WebCore {
     
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
-
+    
 }
 
 // vim: ts=4 sw=4 et

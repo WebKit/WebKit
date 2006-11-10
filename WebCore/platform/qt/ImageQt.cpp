@@ -77,17 +77,6 @@ Image* Image::loadPlatformResource(const char* name)
     return img;
 }
 
-bool Image::supportsType(const String& type)
-{
-    QList<QByteArray> formats = QImageReader::supportedImageFormats();
-    foreach(QByteArray format, formats) {
-        if (format == QString(type))
-            return true;
-    }
-
-    return false;
-}
-
 // Drawing Routines
 void Image::draw(GraphicsContext* ctxt, const FloatRect& dst,
                  const FloatRect& src, CompositeOperator op)

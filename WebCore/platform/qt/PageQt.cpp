@@ -41,48 +41,6 @@
 
 namespace WebCore {
 
-static QWidget* rootWindowForFrame(const Frame* frame)
-{
-    FrameView* frameView = (frame ? frame->view() : 0);
-    if (!frameView)
-        return 0;
-
-    return frameView->qwidget();
-}
-
-FloatRect Page::windowRect() const
-{
-    QWidget* widget = rootWindowForFrame(mainFrame());
-    if (!widget)
-        return FloatRect();
-
-    return IntRect(widget->geometry());
-}
-
-void Page::setWindowRect(const FloatRect& r)
-{
-    QWidget* widget = rootWindowForFrame(mainFrame());
-    if (widget)
-        widget->setGeometry(QRect(qRound(r.x()), qRound(r.y()), qRound(r.width()), qRound(r.height())));
-}
-
-bool Page::canRunModal()
-{
-    notImplemented();
-    return false;
-}
-
-bool Page::canRunModalNow()
-{
-    notImplemented();
-    return false;
-}
-
-void Page::runModal() 
-{
-    notImplemented();
-}
-
 }
 
 // vim: ts=4 sw=4 et

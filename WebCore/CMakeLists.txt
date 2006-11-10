@@ -8,6 +8,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/ForwardingHeaders
    ${CMAKE_CURRENT_SOURCE_DIR}/loader
    ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
+   ${CMAKE_CURRENT_SOURCE_DIR}/loader/qt
    ${CMAKE_CURRENT_BINARY_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/dom
@@ -944,7 +945,9 @@ set(WebCore_SRCS
     page/MouseEventWithHitTestResults.cpp
     page/Frame.cpp
     page/Page.cpp
-    page/FrameView.cpp
+    page/Chrome.cpp
+    page/FrameView.cpp    
+    page/PageState.cpp
     xml/XPathUtil.cpp
     xml/XPathPredicate.cpp
     xml/XPathVariableReference.cpp
@@ -980,7 +983,17 @@ set(WebCore_SRCS
     loader/TextDocument.cpp
     loader/TextResourceDecoder.cpp
     loader/loader.cpp
+    loader/icon/IconLoader.cpp
+    loader/icon/IconDatabase.cpp
+    loader/icon/IconDataCache.cpp
+    loader/icon/SQLTransaction.cpp
+    loader/icon/SQLStatement.cpp
+    loader/icon/SQLDatabase.cpp
     loader/qt/FrameLoaderQt.cpp
+    loader/qt/FrameLoaderClientQt.cpp
+    loader/qt/DocumentLoaderQt.cpp
+    loader/qt/NavigationActionQt.cpp
+    loader/qt/ResourceLoaderQt.cpp
     platform/CString.cpp
     platform/AtomicString.cpp
     platform/AffineTransform.cpp
@@ -1014,6 +1027,8 @@ set(WebCore_SRCS
     platform/StringImpl.cpp
     platform/FloatRect.cpp
     platform/Path.cpp
+    platform/MimeTypeRegistry.cpp
+    platform/qt/MimeTypeRegistryQt.cpp
     platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
@@ -1036,12 +1051,12 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/PopupMenuQt.cpp
+    platform/qt/ChromeClientQt.cpp
     platform/network/FormData.cpp
     platform/network/ResourceHandle.cpp
     platform/network/qt/ResourceHandleManager.cpp
     platform/network/qt/ResourceHandleQt.cpp
     platform/qt/FloatPointQt.cpp
-    platform/qt/ListBoxQt.cpp
     platform/qt/FloatRectQt.cpp
     platform/qt/IntPointQt.cpp
     platform/qt/IntRectQt.cpp
@@ -1209,6 +1224,7 @@ target_link_libraries(WebCore-unity
   kjs-unity
   pcre-unity
   z
+  sqlite3
 )
 ELSE (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
@@ -1221,6 +1237,7 @@ target_link_libraries(WebCore-unity
   kjs-unity
   pcre-unity
   z
+  sqlite3
 )
 ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
