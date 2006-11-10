@@ -1,3 +1,14 @@
+2006-11-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - remove some unnecessary uses of WebDataProtocol
+
+        * WebView/WebDataSource.mm: Remove the unneeded include.
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:]): Don't bother to check for unreachable URL here.
+        Any request that has one will be an applewebdata: request, which will pass the check anyway.
+
 2006-11-10  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

@@ -52,7 +52,6 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
-#import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>

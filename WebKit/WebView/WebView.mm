@@ -101,7 +101,6 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
-#import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -1043,11 +1042,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 + (BOOL)_canHandleRequest:(NSURLRequest *)request
 {
     if ([NSURLConnection canHandleRequest:request]) {
-        return YES;
-    }
-    
-    // We're always willing to load alternate content for unreachable URLs
-    if ([request _webDataRequestUnreachableURL]) {
         return YES;
     }
 
