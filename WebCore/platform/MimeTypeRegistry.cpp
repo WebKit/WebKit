@@ -25,13 +25,15 @@
 
 #include "config.h"
 #include "MimeTypeRegistry.h"
-#include "wtf/HashMap.h"
-#include "wtf/HashSet.h"
-#if PLATFORM(MAC)
+#include "StringHash.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
+#endif
+#if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #endif
-#include "StringHash.h"
 
 namespace WebCore
 {
