@@ -1,5 +1,14 @@
 2006-11-10  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Hyatt.
+
+        Check for BHIDDEN in isVisible() also.
+
+        * rendering/RenderStyle.h:
+        (WebCore::BorderValue::isVisible):
+
+2006-11-10  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/4821423> element deletion UI appears for Mail blockquote and others with less than three visible borders

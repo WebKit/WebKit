@@ -149,7 +149,7 @@ public:
     }
 
     bool isVisible(bool checkStyle = true) const {
-        return nonZero(checkStyle) && !isTransparent();
+        return nonZero(checkStyle) && !isTransparent() && (!checkStyle || m_style != BHIDDEN);
     }
 
     bool operator==(const BorderValue& o) const
