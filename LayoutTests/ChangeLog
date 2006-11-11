@@ -1,3 +1,19 @@
+2006-11-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4069359>
+        Deleting hyperlink text, then typing uses link typing style but loses the link itself
+
+        * editing/deleting/delete-link-1-expected.checksum: Added.
+        * editing/deleting/delete-link-1-expected.png: Added.
+        * editing/deleting/delete-link-1-expected.txt: Added.
+        * editing/deleting/delete-link-1.html: Added.
+        * editing/inserting/insert-before-link-1-expected.checksum: Added.
+        * editing/inserting/insert-before-link-1-expected.png: Added.
+        * editing/inserting/insert-before-link-1-expected.txt: Added.
+        * editing/inserting/insert-before-link-1.html: Added.
+
 2006-11-09  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.

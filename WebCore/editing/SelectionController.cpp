@@ -109,8 +109,10 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
 
-    if (clearTypingStyle)
+    if (clearTypingStyle) {
         m_frame->clearTypingStyle();
+        m_frame->editor()->setRemovedAnchor(0);
+    }
         
     if (m_sel == s)
         return;
@@ -184,7 +186,6 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     }
 
     if (clearDOMTreeSelection)
-        // FIXME (6498): This doesn't notify the editing delegate of a selection change.
         setSelection(Selection(), false, false);
 }
 

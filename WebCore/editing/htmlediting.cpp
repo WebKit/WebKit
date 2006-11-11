@@ -386,18 +386,6 @@ const String& nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-// FIXME: Why use this instead of maxDeepOffset?
-static int maxRangeOffset(Node *n)
-{
-    if (n->offsetInCharacters())
-        return n->maxOffset();
-
-    if (n->isElementNode())
-        return n->childNodeCount();
-
-    return 1;
-}
-
 // FIXME: need to dump this
 bool isSpecialElement(const Node *n)
 {
@@ -730,31 +718,32 @@ Position positionAfterFollowingTableElement(const Position &pos)
 // offset 0 and table offset childNodeCount are valid VisiblePostions,
 // but we can not add more content right there... it needs to go before
 // or after the table.
-// FIXME: Consider editable/non-editable boundaries?
-Position positionAvoidingSpecialElementBoundary(const Position &pos)
+Position positionAvoidingSpecialElementBoundary(const Position &pos, bool avoidAnchor)
 {
-    Node *compNode = pos.node();
-    if (!compNode)
-        return pos;
-    
-    if (compNode->parentNode() && compNode->parentNode()->isLink())
-        compNode = compNode->parentNode();
-    else if (!isTableElement(compNode))
-        return pos;
-    
-    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
-    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
-
-    Position result;
-    if (VisiblePosition(compNode, maxRangeOffset(compNode), DOWNSTREAM) == vPos)
-        result = positionAfterNode(compNode);
-    else if (VisiblePosition(compNode, 0, DOWNSTREAM) == vPos)
-        result = positionBeforeNode(compNode);
-    else
+    if (pos.isNull())
         return pos;
         
-    if (result.isNull() || !result.node()->rootEditableElement())
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+    Node* enclosingAnchor = enclosingNodeWithTag(pos.node(), aTag);
+    Position result;
+    if (enclosingAnchor) {
+        // If the caret is after an anchor, do insertion inside the anchor unless it's the last 
+        // VisiblePosition in the document, to match TextEdit.
+        if (VisiblePosition(Position(enclosingAnchor, maxDeepOffset(enclosingAnchor))) == vPos && (isEndOfDocument(vPos) || avoidAnchor))
+            result = positionAfterNode(enclosingAnchor);
+        // If the caret is before an anchor, do insertion outside the anchor unless it's the first
+        // VisiblePosition in a paragraph, to match TextEdit.
+        if (VisiblePosition(Position(enclosingAnchor, 0)) == vPos && (!isStartOfParagraph(vPos) || avoidAnchor))
+            result = positionBeforeNode(enclosingAnchor);
+    } else if (isTableElement(pos.node())) {
+        if (VisiblePosition(Position(pos.node(), maxDeepOffset(pos.node()))) == vPos)
+            result = positionAfterNode(pos.node());
+        if (VisiblePosition(Position(pos.node(), 0)) == vPos)
+            result = positionBeforeNode(pos.node());
+    } else
+        return pos;
+        
+    if (result.isNull() || !editableRootForPosition(result))
         result = pos;
     
     return result;

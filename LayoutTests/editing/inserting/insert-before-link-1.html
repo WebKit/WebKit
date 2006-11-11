@@ -1,0 +1,24 @@
+<p>This tests insertion before/after links in certain situations.  Inserting before a link should always put the text outside the link unless insertion is happening at the start of a paragraph.  Inserting after should always insert inside the link, unless insertion is happening at the end of the document.</p>
+<div id="div" contenteditable="true"><a id="link" href="http://www.google.com/">link.</a> This <a href="http://www.google.com/">This should.</a></div>
+
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+    
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+
+document.execCommand("InsertText", false, "This text should be in a ");
+sel.modify("move", "forward", "word");
+sel.modify("move", "forward", "word");
+
+document.execCommand("InsertText", false, " should not.");
+
+sel.modify("move", "forward", "line");
+
+document.execCommand("InsertText", false, " This should not.");
+
+</script>

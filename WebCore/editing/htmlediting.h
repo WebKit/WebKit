@@ -116,7 +116,7 @@ bool isFirstVisiblePositionAfterTableElement(const Position&);
 Position positionBeforePrecedingTableElement(const Position&);
 bool isLastVisiblePositionBeforeTableElement(const Position&);
 Position positionAfterFollowingTableElement(const Position&);
-Position positionAvoidingSpecialElementBoundary(const Position&);
+Position positionAvoidingSpecialElementBoundary(const Position&, bool avoidAnchor = true);
 
 }
 

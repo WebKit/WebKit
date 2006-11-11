@@ -1,3 +1,42 @@
+2006-11-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4069359>
+        Deleting hyperlink text, then typing uses link typing style but loses the link itself
+        
+        The removed anchor element needs to stick around temporarily, in the same way
+        that the typing style hangs off the caret until the user moves it.  Also text
+        insertion around anchors didn't match TextEdit.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveFullySelectedAnchor): Added.
+        (WebCore::DeleteSelectionCommand::doApply): Call saveFullySelectedAnchor.
+        * editing/DeleteSelectionCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): Clear the removed anchor after any top level
+        editing command that doesn't preserve the typing style (matches TextEdit).
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Added a fixme: we shouldn't call 
+        setSelection with a message telling it to clear the typing style 
+        (and the saved anchor) here.  Save/restore the saved anchor because of this.
+        * editing/Editor.h:
+        (WebCore::Editor::removedAnchor): Getter.
+        (WebCore::Editor::setRemovedAnchor): Setter.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::prepareForTextInsertion): Insert the saved anchor
+        if one exists.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Clear the removed anchor whenever
+        we make a selection change that clears the typing style.
+        (WebCore::SelectionController::nodeWillBeRemoved): Removed an old outdated FIXME.
+        * editing/htmlediting.cpp:
+        (WebCore::positionAvoidingSpecialElementBoundary): Cleaned up and
+        made some changes to match TextEdit's behavior.  First, insert content
+        inside the anchor when the caret is after it, unless the caret is at the
+        end of the document, or if the caret is before it and at the start of a 
+        paragraph.
+
 === Safari-521.30 ===
 
 2006-11-10  Timothy Hatcher  <timothy@apple.com>

@@ -88,8 +88,11 @@ void EditCommand::apply()
 
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (!preservesTypingStyle())
+    if (!preservesTypingStyle()) {
         setTypingStyle(0);
+        if (!m_parent)
+            frame->editor()->setRemovedAnchor(0);
+    }
 
     if (!m_parent) {
         updateLayout();

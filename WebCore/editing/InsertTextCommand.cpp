@@ -31,11 +31,13 @@
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "Logging.h"
 #include "HTMLInterchange.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
+#include "TypingCommand.h"
 #include "visible_units.h"
 
 namespace WebCore {
@@ -49,8 +51,16 @@ void InsertTextCommand::doApply()
 {
 }
 
-Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
+Position InsertTextCommand::prepareForTextInsertion(const Position& p)
 {
+    Position pos = p;
+    // If an anchor was removed and the selection hasn't changed, we restore it.
+    RefPtr<Node> anchor = document()->frame()->editor()->removedAnchor();
+    if (anchor) {
+        insertNodeAt(anchor.get(), pos.node(), pos.offset());
+        document()->frame()->editor()->setRemovedAnchor(0);
+        pos = Position(anchor.get(), 0);
+    }
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     // FIXME: What is the rootEditable() check about?  Seems like it
@@ -98,8 +108,11 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
     if (!startPosition.inRenderedContent())
         startPosition = startPosition.downstream();
-        
-    startPosition = positionAvoidingSpecialElementBoundary(startPosition);
+    
+    // FIXME: This typing around anchor behavior doesn't exactly match TextEdit.  In TextEdit,
+    // you won't be placed inside a link when typing after it if you've just placed the caret
+    // there with the mouse.
+    startPosition = positionAvoidingSpecialElementBoundary(startPosition, false);
     
     Position endPosition;
     

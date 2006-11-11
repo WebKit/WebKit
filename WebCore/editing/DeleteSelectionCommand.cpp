@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
 #include "Logging.h"
@@ -509,6 +510,22 @@ void DeleteSelectionCommand::clearTransientState()
     m_trailingWhitespace.clear();
 }
 
+void DeleteSelectionCommand::saveFullySelectedAnchor()
+{
+    // If we're deleting an entire anchor element, save it away so that it can be restored
+    // when the user begins entering text.
+    VisiblePosition visibleStart = m_selectionToDelete.visibleStart();
+    VisiblePosition visibleEnd = m_selectionToDelete.visibleEnd();
+    Node* startAnchor = enclosingNodeWithTag(visibleStart.deepEquivalent().downstream().node(), aTag);
+    Node* endAnchor = enclosingNodeWithTag(visibleEnd.deepEquivalent().upstream().node(), aTag);
+
+    Node* beforeStartAnchor = enclosingNodeWithTag(visibleStart.previous().deepEquivalent().downstream().node(), aTag);
+    Node* afterEndAnchor = enclosingNodeWithTag(visibleEnd.next().deepEquivalent().upstream().node(), aTag);
+
+    if (startAnchor && startAnchor == endAnchor && startAnchor != beforeStartAnchor && endAnchor != afterEndAnchor)
+        document()->frame()->editor()->setRemovedAnchor(startAnchor->cloneNode(false).get());
+}
+
 void DeleteSelectionCommand::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -552,6 +569,8 @@ void DeleteSelectionCommand::doApply()
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
 
     saveTypingStyleState();
+    
+    saveFullySelectedAnchor();
     
     // deleting just a BR is handled specially, at least because we do not
     // want to replace it with a placeholder BR!
