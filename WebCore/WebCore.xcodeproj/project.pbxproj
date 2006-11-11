@@ -10534,6 +10534,7 @@
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
+				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
 			);
@@ -10552,6 +10553,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10566,6 +10568,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -10618,6 +10621,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/WebCore.exp",
+			);
+			name = "Generate 64-bit Export File";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ \"${SRCROOT}/WebCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
+		};
 		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -11782,7 +11801,12 @@
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
+				EXPORTED_SYMBOLS_FILE_x86_64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11814,7 +11838,12 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
+				EXPORTED_SYMBOLS_FILE_x86_64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11846,7 +11875,12 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
+				EXPORTED_SYMBOLS_FILE_x86_64 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
