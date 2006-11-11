@@ -996,20 +996,20 @@ set(WebCore_SRCS
     loader/qt/ResourceLoaderQt.cpp
     platform/CString.cpp
     platform/AtomicString.cpp
-    platform/AffineTransform.cpp
+    platform/graphics/AffineTransform.cpp
     platform/TextStream.cpp
     platform/Widget.cpp
     platform/GlyphWidthMap.cpp
-    platform/Pen.cpp
-    platform/Image.cpp
+    platform/graphics/Pen.cpp
+    platform/graphics/Image.cpp
     platform/DeprecatedStringList.cpp
-    platform/FloatSize.cpp
+    platform/graphics/FloatSize.cpp
     platform/String.cpp
     platform/DeprecatedValueListImpl.cpp
-    platform/IntRect.cpp
+    platform/graphics/IntRect.cpp
     platform/Arena.cpp
     platform/ArrayImpl.cpp
-    platform/FloatPoint.cpp
+    platform/graphics/FloatPoint.cpp
     platform/SegmentedString.cpp
     platform/TextCodec.cpp
     platform/TextCodecICU.cpp
@@ -1021,22 +1021,22 @@ set(WebCore_SRCS
     platform/TextEncoding.cpp
     platform/TextEncodingRegistry.cpp
     platform/Logging.cpp
-    platform/Color.cpp
+    platform/graphics/Color.cpp
     platform/DeprecatedPtrListImpl.cpp
     platform/KURL.cpp
     platform/StringImpl.cpp
-    platform/FloatRect.cpp
-    platform/Path.cpp
+    platform/graphics/FloatRect.cpp
+    platform/graphics/Path.cpp
     platform/MimeTypeRegistry.cpp
     platform/qt/MimeTypeRegistryQt.cpp
     platform/qt/EditorClientQt.cpp
     platform/qt/SoundQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/FileChooserQt.cpp
-    platform/qt/IconQt.cpp
-    platform/qt/AffineTransformQt.cpp
+    platform/graphics/qt/IconQt.cpp
+    platform/graphics/qt/AffineTransformQt.cpp
     platform/qt/StringQt.cpp
-    platform/qt/ColorQt.cpp
+    platform/graphics/qt/ColorQt.cpp
     platform/qt/GlyphMapQt.cpp
     platform/qt/CookieJarQt.cpp
     platform/qt/FontPlatformDataQt.cpp
@@ -1056,15 +1056,15 @@ set(WebCore_SRCS
     platform/network/ResourceHandle.cpp
     platform/network/qt/ResourceHandleManager.cpp
     platform/network/qt/ResourceHandleQt.cpp
-    platform/qt/FloatPointQt.cpp
-    platform/qt/FloatRectQt.cpp
-    platform/qt/IntPointQt.cpp
-    platform/qt/IntRectQt.cpp
-    platform/qt/IntSizeQt.cpp
+    platform/graphics/qt/FloatPointQt.cpp
+    platform/graphics/qt/FloatRectQt.cpp
+    platform/graphics/qt/IntPointQt.cpp
+    platform/graphics/qt/IntRectQt.cpp
+    platform/graphics/qt/IntSizeQt.cpp
     platform/qt/PageQt.cpp
     platform/qt/PathQt.cpp
-    platform/qt/ImageQt.cpp
-    platform/qt/ImageSourceQt.cpp
+    platform/graphics/qt/ImageQt.cpp
+    platform/graphics/qt/ImageSourceQt.cpp
     platform/qt/FontCacheQt.cpp
     platform/qt/FontQt.cpp
 #   platform/qt/LineEditQt.cpp

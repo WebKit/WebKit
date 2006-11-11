@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
-#import "../cg/GraphicsContextPlatformPrivate.h"
+#import "../graphics/cg/GraphicsContextPlatformPrivate.h"
 
 #import "WebCoreSystemInterface.h"
 
