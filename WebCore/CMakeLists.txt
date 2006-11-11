@@ -5,38 +5,34 @@ include (CheckCXXCompilerFlag)
 
 include_directories(
    BEFORE ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/ForwardingHeaders
-   ${CMAKE_CURRENT_SOURCE_DIR}/loader
-   ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
-   ${CMAKE_CURRENT_SOURCE_DIR}/loader/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/../
+   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/
+   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/bindings
+   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
+   ${CMAKE_CURRENT_SOURCE_DIR}/bindings/js
+   ${CMAKE_CURRENT_SOURCE_DIR}/bridge
    ${CMAKE_CURRENT_BINARY_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/dom
-   ${CMAKE_CURRENT_SOURCE_DIR}/page
-   ${CMAKE_CURRENT_SOURCE_DIR}/bridge
    ${CMAKE_CURRENT_SOURCE_DIR}/editing
-   ${CMAKE_CURRENT_SOURCE_DIR}/kwq
-   ${CMAKE_CURRENT_SOURCE_DIR}/rendering
-   ${CMAKE_CURRENT_SOURCE_DIR}/xml
-   ${CMAKE_CURRENT_BINARY_DIR}/xml
-   ${CMAKE_CURRENT_SOURCE_DIR}/html
-   ${CMAKE_CURRENT_SOURCE_DIR}/bindings/js
    ${CMAKE_CURRENT_BINARY_DIR}/html
+   ${CMAKE_CURRENT_SOURCE_DIR}/html
    ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas
    ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas/device
    ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas/device/qt 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/css
-   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/svg
-   ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg
-   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/misc 
+   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/events 
    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc 
-   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/events
+   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/misc
+   ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg
+   ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/svg
+   ${CMAKE_CURRENT_SOURCE_DIR}/loader
+   ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
+   ${CMAKE_CURRENT_SOURCE_DIR}/loader/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/page
    ${CMAKE_CURRENT_BINARY_DIR}/platform
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network
-   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform 
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/svg
@@ -47,264 +43,265 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/xbm
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/bmp
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/png
-   ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG
-   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
-   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/bindings
-   ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/
-   ${CMAKE_CURRENT_SOURCE_DIR}/../
-   )
-
-include_directories( ${LIBXML2_INCLUDE_DIR} ${QT_INCLUDES}
-  # don't. pulls in kjs
-  # ${KDE4_KDECORE_INCLUDES}
-  )
-
-add_definitions ( -DQT3_SUPPORT -Wno-undef -Wno-unused-parameter )
-check_cxx_compiler_flag(-Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS)
-
-IF(__KDE_HAVE_WVARIADIC_MACROS)
-  add_definitions ( -Wno-variadic-macros )
-ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
-
-kde4_automoc(WebCore platform/qt/SharedTimerQt.cpp)
-kde4_automoc(WebCore platform/qt/ScrollViewCanvasQt.cpp)
-kde4_automoc(WebCore platform/network/qt/ResourceHandleManager.cpp)
-
-SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
-
-IF (WEBKIT_USE_XPATH_SUPPORT)
-SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XPATH_SUPPORT)
-
-set(IDL_BINDINGS_XPATH
-  xml/XPathExpression.idl
-  xml/XPathNSResolver.idl
-  xml/XPathEvaluator.idl
-  xml/XPathResult.idl
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/network/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
+   ${CMAKE_CURRENT_SOURCE_DIR}/rendering
+   ${CMAKE_CURRENT_BINARY_DIR}/xml
+   ${CMAKE_CURRENT_SOURCE_DIR}/xml
 )
 
+include_directories( ${LIBXML2_INCLUDE_DIR} ${QT_INCLUDES} )
+
+add_definitions( -DQT3_SUPPORT -Wno-undef -Wno-unused-parameter )
+check_cxx_compiler_flag( -Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS )
+
+IF ( __KDE_HAVE_WVARIADIC_MACROS )
+  add_definitions( -Wno-variadic-macros )
+ENDIF (__KDE_HAVE_WVARIADIC_MACROS)
+
+kde4_automoc( WebCore platform/network/qt/ResourceHandleManager.cpp )
+kde4_automoc( WebCore platform/qt/ScrollViewCanvasQt.cpp )
+kde4_automoc( WebCore platform/qt/SharedTimerQt.cpp )
+
+SET (FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
+
+IF (WEBKIT_USE_XPATH_SUPPORT)
+SET (FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XPATH_SUPPORT)
+
+set(IDL_BINDINGS_XPATH
+    xml/XPathEvaluator.idl
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
+)
 ENDIF (WEBKIT_USE_XPATH_SUPPORT)
 
 IF (WEBKIT_USE_XSLT_SUPPORT)
-SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XSLT_SUPPORT)
+SET (FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XSLT_SUPPORT)
 ENDIF (WEBKIT_USE_XSLT_SUPPORT)
 
 IF (WEBKIT_USE_XBL_SUPPORT)
-SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XBL_SUPPORT)
+SET (FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XBL_SUPPORT)
 ENDIF (WEBKIT_USE_XBL_SUPPORT)
 
 # rules for generated files
 IF (WEBKIT_USE_SVG_SUPPORT)
-SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} SVG_SUPPORT)
+SET (FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} SVG_SUPPORT)
 
 set(IDL_BINDINGS_SVG
-  ksvg2/svg/SVGAElement.idl
-  ksvg2/svg/SVGAngle.idl
-  ksvg2/svg/SVGAnimateColorElement.idl
-  ksvg2/svg/SVGAnimateElement.idl
-  ksvg2/svg/SVGAnimateTransformElement.idl
-  ksvg2/svg/SVGAnimatedAngle.idl
-  ksvg2/svg/SVGAnimatedBoolean.idl
-  ksvg2/svg/SVGAnimatedEnumeration.idl
-  ksvg2/svg/SVGAnimatedInteger.idl
-  ksvg2/svg/SVGAnimatedLength.idl
-  ksvg2/svg/SVGAnimatedLengthList.idl
-  ksvg2/svg/SVGAnimatedNumber.idl
-  ksvg2/svg/SVGAnimatedNumberList.idl
-  ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl
-  ksvg2/svg/SVGAnimatedRect.idl
-  ksvg2/svg/SVGAnimatedString.idl
-  ksvg2/svg/SVGAnimatedTransformList.idl
-  ksvg2/svg/SVGAnimationElement.idl
-  ksvg2/svg/SVGCircleElement.idl
-  ksvg2/svg/SVGClipPathElement.idl
-  ksvg2/svg/SVGColor.idl
-  ksvg2/svg/SVGComponentTransferFunctionElement.idl
-  ksvg2/svg/SVGCursorElement.idl
-  ksvg2/svg/SVGDefsElement.idl
-  ksvg2/svg/SVGDescElement.idl
-  ksvg2/svg/SVGDocument.idl
-  ksvg2/svg/SVGElement.idl
-  ksvg2/svg/SVGEllipseElement.idl
-  ksvg2/svg/SVGFEBlendElement.idl
-  ksvg2/svg/SVGFEColorMatrixElement.idl
-  ksvg2/svg/SVGFEComponentTransferElement.idl
-  ksvg2/svg/SVGFECompositeElement.idl
-  ksvg2/svg/SVGFEDiffuseLightingElement.idl
-  ksvg2/svg/SVGFEDisplacementMapElement.idl
-  ksvg2/svg/SVGFEDistantLightElement.idl
-  ksvg2/svg/SVGFEFloodElement.idl
-  ksvg2/svg/SVGFEFuncAElement.idl
-  ksvg2/svg/SVGFEFuncBElement.idl
-  ksvg2/svg/SVGFEFuncGElement.idl
-  ksvg2/svg/SVGFEFuncRElement.idl
-  ksvg2/svg/SVGFEGaussianBlurElement.idl
-  ksvg2/svg/SVGFEImageElement.idl
-  ksvg2/svg/SVGFEMergeElement.idl
-  ksvg2/svg/SVGFEMergeNodeElement.idl
-  ksvg2/svg/SVGFEOffsetElement.idl
-  ksvg2/svg/SVGFEPointLightElement.idl
-  ksvg2/svg/SVGFESpecularLightingElement.idl
-  ksvg2/svg/SVGFESpotLightElement.idl
-  ksvg2/svg/SVGFETileElement.idl
-  ksvg2/svg/SVGFETurbulenceElement.idl
-  ksvg2/svg/SVGFilterElement.idl
-  ksvg2/svg/SVGForeignObjectElement.idl
-  ksvg2/svg/SVGGElement.idl
-  ksvg2/svg/SVGGradientElement.idl 
-  ksvg2/svg/SVGImageElement.idl
-  ksvg2/svg/SVGLength.idl
-  ksvg2/svg/SVGLengthList.idl
-  ksvg2/svg/SVGLineElement.idl
-  ksvg2/svg/SVGLinearGradientElement.idl
-  ksvg2/svg/SVGMaskElement.idl
-  ksvg2/svg/SVGMarkerElement.idl
-  ksvg2/svg/SVGMatrix.idl
-  ksvg2/svg/SVGMetadataElement.idl
-  ksvg2/svg/SVGNumberList.idl
-  ksvg2/svg/SVGPaint.idl
-  ksvg2/svg/SVGPathElement.idl
-  ksvg2/svg/SVGPathSeg.idl
-  ksvg2/svg/SVGPathSegArcAbs.idl
-  ksvg2/svg/SVGPathSegArcRel.idl
-  ksvg2/svg/SVGPathSegClosePath.idl
-  ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl
-  ksvg2/svg/SVGPathSegCurvetoCubicRel.idl
-  ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl
-  ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl
-  ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl
-  ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl
-  ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl
-  ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl
-  ksvg2/svg/SVGPathSegLinetoAbs.idl
-  ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl
-  ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl
-  ksvg2/svg/SVGPathSegLinetoRel.idl
-  ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl
-  ksvg2/svg/SVGPathSegLinetoVerticalRel.idl
-  ksvg2/svg/SVGPathSegList.idl
-  ksvg2/svg/SVGPathSegMovetoAbs.idl
-  ksvg2/svg/SVGPathSegMovetoRel.idl
-  ksvg2/svg/SVGPatternElement.idl
-  ksvg2/svg/SVGPointList.idl
-  ksvg2/svg/SVGPolygonElement.idl
-  ksvg2/svg/SVGPolylineElement.idl
-  ksvg2/svg/SVGPreserveAspectRatio.idl
-  ksvg2/svg/SVGRadialGradientElement.idl
-  ksvg2/svg/SVGRectElement.idl
-  ksvg2/svg/SVGRenderingIntent.idl
-  ksvg2/svg/SVGSetElement.idl
-  ksvg2/svg/SVGScriptElement.idl
-  ksvg2/svg/SVGStyleElement.idl
-  ksvg2/svg/SVGSwitchElement.idl
-  ksvg2/svg/SVGStopElement.idl
-  ksvg2/svg/SVGStringList.idl
-  ksvg2/svg/SVGSymbolElement.idl
-  ksvg2/svg/SVGSVGElement.idl
-  ksvg2/svg/SVGTRefElement.idl
-  ksvg2/svg/SVGTSpanElement.idl
-  ksvg2/svg/SVGTextElement.idl
-  ksvg2/svg/SVGTextContentElement.idl
-  ksvg2/svg/SVGTextPositioningElement.idl
-  ksvg2/svg/SVGTitleElement.idl
-  ksvg2/svg/SVGTransform.idl
-  ksvg2/svg/SVGTransformList.idl
-  ksvg2/svg/SVGUnitTypes.idl
-  ksvg2/svg/SVGUseElement.idl
-  ksvg2/svg/SVGViewElement.idl
-  ksvg2/events/SVGZoomEvent.idl
+    ksvg2/events/SVGZoomEvent.idl
+
+    ksvg2/svg/SVGAElement.idl
+    ksvg2/svg/SVGAngle.idl
+    ksvg2/svg/SVGAnimateColorElement.idl
+    ksvg2/svg/SVGAnimatedAngle.idl
+    ksvg2/svg/SVGAnimatedBoolean.idl
+    ksvg2/svg/SVGAnimatedEnumeration.idl
+    ksvg2/svg/SVGAnimatedInteger.idl
+    ksvg2/svg/SVGAnimatedLength.idl
+    ksvg2/svg/SVGAnimatedLengthList.idl
+    ksvg2/svg/SVGAnimatedNumber.idl
+    ksvg2/svg/SVGAnimatedNumberList.idl
+    ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl
+    ksvg2/svg/SVGAnimatedRect.idl
+    ksvg2/svg/SVGAnimatedString.idl
+    ksvg2/svg/SVGAnimatedTransformList.idl
+    ksvg2/svg/SVGAnimateElement.idl
+    ksvg2/svg/SVGAnimateTransformElement.idl
+    ksvg2/svg/SVGAnimationElement.idl
+    ksvg2/svg/SVGCircleElement.idl
+    ksvg2/svg/SVGClipPathElement.idl
+    ksvg2/svg/SVGColor.idl
+    ksvg2/svg/SVGComponentTransferFunctionElement.idl
+    ksvg2/svg/SVGCursorElement.idl
+    ksvg2/svg/SVGDefsElement.idl
+    ksvg2/svg/SVGDescElement.idl
+    ksvg2/svg/SVGDocument.idl
+    ksvg2/svg/SVGElement.idl
+    ksvg2/svg/SVGEllipseElement.idl
+    ksvg2/svg/SVGFEBlendElement.idl
+    ksvg2/svg/SVGFEColorMatrixElement.idl
+    ksvg2/svg/SVGFEComponentTransferElement.idl
+    ksvg2/svg/SVGFECompositeElement.idl
+    ksvg2/svg/SVGFEDiffuseLightingElement.idl
+    ksvg2/svg/SVGFEDisplacementMapElement.idl
+    ksvg2/svg/SVGFEDistantLightElement.idl
+    ksvg2/svg/SVGFEFloodElement.idl
+    ksvg2/svg/SVGFEFuncAElement.idl
+    ksvg2/svg/SVGFEFuncBElement.idl
+    ksvg2/svg/SVGFEFuncGElement.idl
+    ksvg2/svg/SVGFEFuncRElement.idl
+    ksvg2/svg/SVGFEGaussianBlurElement.idl
+    ksvg2/svg/SVGFEImageElement.idl
+    ksvg2/svg/SVGFEMergeElement.idl
+    ksvg2/svg/SVGFEMergeNodeElement.idl
+    ksvg2/svg/SVGFEOffsetElement.idl
+    ksvg2/svg/SVGFEPointLightElement.idl
+    ksvg2/svg/SVGFESpecularLightingElement.idl
+    ksvg2/svg/SVGFESpotLightElement.idl
+    ksvg2/svg/SVGFETileElement.idl
+    ksvg2/svg/SVGFETurbulenceElement.idl
+    ksvg2/svg/SVGFilterElement.idl
+    ksvg2/svg/SVGForeignObjectElement.idl
+    ksvg2/svg/SVGGElement.idl
+    ksvg2/svg/SVGGradientElement.idl
+    ksvg2/svg/SVGImageElement.idl
+    ksvg2/svg/SVGLength.idl
+    ksvg2/svg/SVGLengthList.idl
+    ksvg2/svg/SVGLinearGradientElement.idl
+    ksvg2/svg/SVGLineElement.idl
+    ksvg2/svg/SVGMarkerElement.idl
+    ksvg2/svg/SVGMaskElement.idl
+    ksvg2/svg/SVGMatrix.idl
+    ksvg2/svg/SVGMetadataElement.idl
+    ksvg2/svg/SVGNumberList.idl
+    ksvg2/svg/SVGPaint.idl
+    ksvg2/svg/SVGPathElement.idl
+    ksvg2/svg/SVGPathSegArcAbs.idl
+    ksvg2/svg/SVGPathSegArcRel.idl
+    ksvg2/svg/SVGPathSegClosePath.idl
+    ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl
+    ksvg2/svg/SVGPathSegCurvetoCubicRel.idl
+    ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl
+    ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl
+    ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl
+    ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl
+    ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl
+    ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl
+    ksvg2/svg/SVGPathSeg.idl
+    ksvg2/svg/SVGPathSegLinetoAbs.idl
+    ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl
+    ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl
+    ksvg2/svg/SVGPathSegLinetoRel.idl
+    ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl
+    ksvg2/svg/SVGPathSegLinetoVerticalRel.idl
+    ksvg2/svg/SVGPathSegList.idl
+    ksvg2/svg/SVGPathSegMovetoAbs.idl
+    ksvg2/svg/SVGPathSegMovetoRel.idl
+    ksvg2/svg/SVGPatternElement.idl
+    ksvg2/svg/SVGPointList.idl
+    ksvg2/svg/SVGPolygonElement.idl
+    ksvg2/svg/SVGPolylineElement.idl
+    ksvg2/svg/SVGPreserveAspectRatio.idl
+    ksvg2/svg/SVGRadialGradientElement.idl
+    ksvg2/svg/SVGRectElement.idl
+    ksvg2/svg/SVGRenderingIntent.idl
+    ksvg2/svg/SVGScriptElement.idl
+    ksvg2/svg/SVGSetElement.idl
+    ksvg2/svg/SVGStopElement.idl
+    ksvg2/svg/SVGStringList.idl
+    ksvg2/svg/SVGStyleElement.idl
+    ksvg2/svg/SVGSVGElement.idl
+    ksvg2/svg/SVGSwitchElement.idl
+    ksvg2/svg/SVGSymbolElement.idl
+    ksvg2/svg/SVGTextContentElement.idl
+    ksvg2/svg/SVGTextElement.idl
+    ksvg2/svg/SVGTextPositioningElement.idl
+    ksvg2/svg/SVGTitleElement.idl
+    ksvg2/svg/SVGTransform.idl
+    ksvg2/svg/SVGTransformList.idl
+    ksvg2/svg/SVGTRefElement.idl
+    ksvg2/svg/SVGTSpanElement.idl
+    ksvg2/svg/SVGUnitTypes.idl
+    ksvg2/svg/SVGUseElement.idl
+    ksvg2/svg/SVGViewElement.idl
 )
+
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 set(IDL_BINDINGS
-  css/CSSValue.idl
-  css/CSSRuleList.idl
-  css/CSSValueList.idl
-  css/CSSStyleDeclaration.idl
-  css/CSSPrimitiveValue.idl
-  css/CSSRule.idl
-  css/Counter.idl
-  css/MediaList.idl
-  dom/Event.idl
-  dom/Range.idl
-  dom/Text.idl
-  dom/DOMImplementation.idl
-  dom/NodeFilter.idl
-  dom/MouseEvent.idl
-  dom/CharacterData.idl
-  dom/DocumentFragment.idl
-  dom/Entity.idl
-  dom/UIEvent.idl
-  dom/Node.idl
-  dom/ProcessingInstruction.idl
-  dom/Notation.idl
-  dom/Element.idl
-  dom/DocumentType.idl
-  dom/Document.idl
-  dom/Attr.idl
-  dom/MutationEvent.idl
-  dom/KeyboardEvent.idl
-  dom/WheelEvent.idl
-  dom/OverflowEvent.idl
-  dom/NodeIterator.idl
-  dom/TreeWalker.idl
-  dom/RangeException.idl
-  html/CanvasGradient.idl
-  html/CanvasPattern.idl
-  html/CanvasRenderingContext2D.idl
-  html/HTMLAnchorElement.idl
-  html/HTMLAppletElement.idl
-  html/HTMLAreaElement.idl
-  html/HTMLBaseElement.idl
-  html/HTMLBaseFontElement.idl
-  html/HTMLBlockquoteElement.idl
-  html/HTMLBodyElement.idl
-  html/HTMLBRElement.idl
-  html/HTMLButtonElement.idl
-  html/HTMLCanvasElement.idl
-  html/HTMLDirectoryElement.idl
-  html/HTMLDivElement.idl
-  html/HTMLDListElement.idl
-  html/HTMLDocument.idl
-  html/HTMLElement.idl
-  html/HTMLFieldSetElement.idl
-  html/HTMLFontElement.idl
-  html/HTMLFormElement.idl
-  html/HTMLHeadElement.idl
-  html/HTMLHeadingElement.idl
-  html/HTMLHRElement.idl
-  html/HTMLHtmlElement.idl
-  html/HTMLImageElement.idl
-  html/HTMLInputElement.idl
-  html/HTMLIsIndexElement.idl
-  html/HTMLLabelElement.idl
-  html/HTMLLegendElement.idl
-  html/HTMLLIElement.idl
-  html/HTMLLinkElement.idl
-  html/HTMLMapElement.idl
-  html/HTMLMenuElement.idl
-  html/HTMLMetaElement.idl
-  html/HTMLModElement.idl
-  html/HTMLOListElement.idl
-  html/HTMLOptGroupElement.idl
-  html/HTMLOptionElement.idl
-  html/HTMLParagraphElement.idl
-  html/HTMLParamElement.idl
-  html/HTMLPreElement.idl
-  html/HTMLQuoteElement.idl
-  html/HTMLScriptElement.idl
-  html/HTMLStyleElement.idl
-  html/HTMLTextAreaElement.idl
-  html/HTMLTitleElement.idl
-  html/HTMLUListElement.idl
-  html/HTMLOptionsCollection.idl
+    css/Counter.idl
+    css/CSSPrimitiveValue.idl
+    css/CSSRule.idl
+    css/CSSRuleList.idl
+    css/CSSStyleDeclaration.idl
+    css/CSSValue.idl
+    css/CSSValueList.idl
+    css/MediaList.idl
 
-  xml/DOMParser.idl
-  xml/XMLSerializer.idl
+    dom/Attr.idl
+    dom/CharacterData.idl
+    dom/DocumentFragment.idl
+    dom/Document.idl
+    dom/DocumentType.idl
+    dom/DOMImplementation.idl
+    dom/Element.idl
+    dom/Entity.idl
+    dom/Event.idl
+    dom/KeyboardEvent.idl
+    dom/MouseEvent.idl
+    dom/MutationEvent.idl
+    dom/NodeFilter.idl
+    dom/Node.idl
+    dom/NodeIterator.idl
+    dom/Notation.idl
+    dom/OverflowEvent.idl
+    dom/ProcessingInstruction.idl
+    dom/RangeException.idl
+    dom/Range.idl
+    dom/Text.idl
+    dom/TreeWalker.idl
+    dom/UIEvent.idl
+    dom/WheelEvent.idl
 
-  page/DOMWindow.idl
+    html/CanvasGradient.idl
+    html/CanvasPattern.idl
+    html/CanvasRenderingContext2D.idl
+    html/HTMLAnchorElement.idl
+    html/HTMLAppletElement.idl
+    html/HTMLAreaElement.idl
+    html/HTMLBaseElement.idl
+    html/HTMLBaseFontElement.idl
+    html/HTMLBlockquoteElement.idl
+    html/HTMLBodyElement.idl
+    html/HTMLBRElement.idl
+    html/HTMLButtonElement.idl
+    html/HTMLCanvasElement.idl
+    html/HTMLDirectoryElement.idl
+    html/HTMLDivElement.idl
+    html/HTMLDListElement.idl
+    html/HTMLDocument.idl
+    html/HTMLElement.idl
+    html/HTMLFieldSetElement.idl
+    html/HTMLFontElement.idl
+    html/HTMLFormElement.idl
+    html/HTMLHeadElement.idl
+    html/HTMLHeadingElement.idl
+    html/HTMLHRElement.idl
+    html/HTMLHtmlElement.idl
+    html/HTMLImageElement.idl
+    html/HTMLInputElement.idl
+    html/HTMLIsIndexElement.idl
+    html/HTMLLabelElement.idl
+    html/HTMLLegendElement.idl
+    html/HTMLLIElement.idl
+    html/HTMLLinkElement.idl
+    html/HTMLMapElement.idl
+    html/HTMLMenuElement.idl
+    html/HTMLMetaElement.idl
+    html/HTMLModElement.idl
+    html/HTMLOListElement.idl
+    html/HTMLOptGroupElement.idl
+    html/HTMLOptionElement.idl
+    html/HTMLOptionsCollection.idl
+    html/HTMLParagraphElement.idl
+    html/HTMLParamElement.idl
+    html/HTMLPreElement.idl
+    html/HTMLQuoteElement.idl
+    html/HTMLScriptElement.idl
+    html/HTMLStyleElement.idl
+    html/HTMLTextAreaElement.idl
+    html/HTMLTitleElement.idl
+    html/HTMLUListElement.idl
 
-  ${IDL_BINDINGS_SVG}
-  ${IDL_BINDINGS_XPATH}
+    page/DOMWindow.idl
+
+    xml/DOMParser.idl
+    xml/XMLSerializer.idl
+
+    ${IDL_BINDINGS_SVG}
+    ${IDL_BINDINGS_XPATH}
 )
 
 set(WebCore-unity-IDLGeneratedSources )
@@ -334,15 +331,16 @@ macro(CREATE_CPP_LUT _in_FILE _out_FILE _dep_FILE)
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_in_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/${_dep_FILE} )
 endmacro(CREATE_CPP_LUT)
 
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_window.cpp kjs_window.lut.h bindings/js/kjs_window.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_css.cpp kjs_css.lut.h bindings/js/kjs_css.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_dom.cpp kjs_dom.lut.h bindings/js/kjs_dom.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_html.cpp kjs_html.lut.h bindings/js/kjs_html.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_events.cpp kjs_events.lut.h bindings/js/kjs_events.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_navigator.cpp kjs_navigator.lut.h bindings/js/kjs_navigator.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/kjs_traversal.cpp kjs_traversal.lut.h bindings/js/kjs_traversal.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/JSXMLHttpRequest.cpp JSXMLHttpRequest.lut.h bindings/js/JSXMLHttpRequest.cpp)
-create_lut(WebCore-unity_LIB_SRCS bindings/js/JSXSLTProcessor.cpp JSXSLTProcessor.lut.h bindings/js/JSXSLTProcessor.cpp)
+
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_css.cpp kjs_css.lut.h bindings/js/kjs_css.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_dom.cpp kjs_dom.lut.h bindings/js/kjs_dom.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_events.cpp kjs_events.lut.h bindings/js/kjs_events.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_html.cpp kjs_html.lut.h bindings/js/kjs_html.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_navigator.cpp kjs_navigator.lut.h bindings/js/kjs_navigator.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_traversal.cpp kjs_traversal.lut.h bindings/js/kjs_traversal.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/kjs_window.cpp kjs_window.lut.h bindings/js/kjs_window.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/JSXMLHttpRequest.cpp JSXMLHttpRequest.lut.h bindings/js/JSXMLHttpRequest.cpp )
+create_lut( WebCore-unity_LIB_SRCS bindings/js/JSXSLTProcessor.cpp JSXSLTProcessor.lut.h bindings/js/JSXSLTProcessor.cpp )
 
 # now this is ugly
 # WebKit sources include some generated files which have the suffix ".cpp"
@@ -372,24 +370,24 @@ macro(CREATE_GENERATED_CPP_HELPER  _inlName)
    set(WebCore-unity_LIB_SRCS ${WebCore-unity_LIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/${_inlName})
 endmacro(CREATE_GENERATED_CPP_HELPER  _inlName)
 
-
-create_cpp_lut(bindings/js/JSHTMLInputElementBase.cpp JSHTMLInputElementBaseTable.inl bindings/js/JSHTMLInputElementBase.cpp)
-create_generated_cpp_helper(JSHTMLInputElementBaseTable.inl)
-
+create_cpp_lut( bindings/js/JSHTMLInputElementBase.cpp JSHTMLInputElementBaseTable.inl bindings/js/JSHTMLInputElementBase.cpp )
+create_generated_cpp_helper( JSHTMLInputElementBaseTable.inl)
 
 IF (WEBKIT_USE_SVG_SUPPORT)
-    create_cpp_lut(bindings/js/JSSVGNumber.cpp JSSVGNumberTable.inl bindings/js/JSSVGNumber.cpp)
-    create_cpp_lut(bindings/js/JSSVGPoint.cpp JSSVGPointTable.inl bindings/js/JSSVGPoint.cpp)
-    create_generated_cpp_helper(JSSVGPointTable.inl)
-    create_cpp_lut(bindings/js/JSSVGRect.cpp JSSVGRectTable.inl bindings/js/JSSVGRect.cpp)
-    create_generated_cpp_helper(JSSVGRectTable.inl)
+    create_cpp_lut( bindings/js/JSSVGNumber.cpp JSSVGNumberTable.inl bindings/js/JSSVGNumber.cpp )
+
+    create_cpp_lut( bindings/js/JSSVGPoint.cpp JSSVGPointTable.inl bindings/js/JSSVGPoint.cpp )
+    create_generated_cpp_helper( JSSVGPointTable.inl )
+
+    create_cpp_lut( bindings/js/JSSVGRect.cpp JSSVGRectTable.inl bindings/js/JSSVGRect.cpp )
+    create_generated_cpp_helper( JSSVGRectTable.inl )
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.inl
   COMMAND flex -t < ${CMAKE_CURRENT_SOURCE_DIR}/css/tokenizer.flex | perl ${CMAKE_CURRENT_SOURCE_DIR}/css/maketokenizer > ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.inl
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/css/tokenizer.flex
 )
-create_generated_cpp_helper(tokenizer.inl)
+create_generated_cpp_helper( tokenizer.inl )
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CSSPropertyNames.h ${CMAKE_CURRENT_BINARY_DIR}/CSSPropertyNames.c
 
@@ -507,159 +505,164 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h ${C
 # source stuff
 if (WEBKIT_USE_XPATH_SUPPORT)
 SET (XPATH_SOURCES
-    ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.h
     ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.h
 )
 ENDIF (WEBKIT_USE_XPATH_SUPPORT)
 
 IF (WEBKIT_USE_SVG_SUPPORT)
 set (SVG_SOURCES
-    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGNames.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGElementFactory.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc/XLinkNames.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGElementFactory.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGNames.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/xml/XMLNames.cpp
 
+    bindings/js/JSSVGElementWrapperFactory.cpp
+    bindings/js/JSSVGNumber.cpp
     bindings/js/JSSVGPoint.cpp
     bindings/js/JSSVGRect.cpp
-    bindings/js/JSSVGNumber.cpp
-    bindings/js/JSSVGElementWrapperFactory.cpp 
 
-    ksvg2/css/SVGCSSParser.cpp
-    ksvg2/css/SVGRenderStyleDefs.cpp
-    ksvg2/css/SVGRenderStyle.cpp
-    ksvg2/css/SVGCSSStyleSelector.cpp
-    ksvg2/svg/SVGHelper.cpp
-    ksvg2/svg/SVGFEFuncBElement.cpp
-    ksvg2/svg/SVGPathSeg.cpp
-    ksvg2/svg/SVGColor.cpp
-    ksvg2/svg/SVGSwitchElement.cpp
-    ksvg2/svg/SVGFETileElement.cpp
-    ksvg2/svg/SVGDOMImplementation.cpp
-    ksvg2/svg/SVGMarkerElement.cpp
-    ksvg2/svg/SVGFECompositeElement.cpp
-    ksvg2/svg/SVGImageElement.cpp
-    ksvg2/svg/SVGAnimateElement.cpp
-    ksvg2/svg/SVGURIReference.cpp
-    ksvg2/svg/SVGLength.cpp
-    ksvg2/svg/SVGPathSegCurvetoCubic.cpp
-    ksvg2/svg/SVGExternalResourcesRequired.cpp
-    ksvg2/svg/SVGPolylineElement.cpp
-    ksvg2/svg/SVGFEOffsetElement.cpp
-    ksvg2/svg/SVGFETurbulenceElement.cpp
-    ksvg2/svg/SVGZoomAndPan.cpp
-    ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp
-    ksvg2/svg/SVGStyledLocatableElement.cpp
-    ksvg2/svg/SVGLineElement.cpp
-    ksvg2/svg/SVGTransform.cpp
-    ksvg2/svg/SVGPathSegLinetoVertical.cpp
-    ksvg2/svg/SVGFitToViewBox.cpp
-    ksvg2/svg/SVGRadialGradientElement.cpp
-    ksvg2/svg/SVGMatrix.cpp
-    ksvg2/svg/SVGMaskElement.cpp
-    ksvg2/svg/SVGTitleElement.cpp
-    ksvg2/svg/SVGTRefElement.cpp
-    ksvg2/svg/SVGLangSpace.cpp
-    ksvg2/svg/SVGTransformList.cpp
-    ksvg2/svg/SVGStylable.cpp
-    ksvg2/svg/SVGPolyElement.cpp
-    ksvg2/svg/SVGPolygonElement.cpp
-#   ksvg2/svg/SVGElementInstanceList.cpp
-    ksvg2/svg/SVGTSpanElement.cpp
-    ksvg2/svg/SVGFEFuncRElement.cpp
-    ksvg2/svg/SVGFEFloodElement.cpp
-    ksvg2/svg/SVGPointList.cpp
-    ksvg2/svg/SVGAnimatedPoints.cpp
-    ksvg2/svg/SVGAnimatedPathData.cpp
-    ksvg2/svg/SVGUseElement.cpp
-    ksvg2/svg/SVGNumberList.cpp
-    ksvg2/svg/SVGFEPointLightElement.cpp
-    ksvg2/svg/SVGPathSegLineto.cpp
-    ksvg2/svg/SVGRectElement.cpp
-    ksvg2/svg/SVGTextContentElement.cpp
-    ksvg2/svg/SVGFESpotLightElement.cpp
-    ksvg2/svg/SVGLocatable.cpp
-    ksvg2/svg/SVGEllipseElement.cpp
-    ksvg2/svg/SVGPathElement.cpp
-    ksvg2/svg/SVGStyledElement.cpp
-    ksvg2/svg/SVGFEMergeNodeElement.cpp
-    ksvg2/svg/svgpathparser.cpp
-    ksvg2/svg/SVGFEGaussianBlurElement.cpp
-    ksvg2/svg/SVGLinearGradientElement.cpp
-    ksvg2/svg/SVGFEDisplacementMapElement.cpp
-    ksvg2/svg/SVGFEImageElement.cpp
-    ksvg2/svg/SVGFEDiffuseLightingElement.cpp
-    ksvg2/svg/SVGSymbolElement.cpp
-    ksvg2/svg/SVGForeignObjectElement.cpp
-    ksvg2/svg/SVGAngle.cpp
-    ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp
-    ksvg2/svg/SVGSVGElement.cpp
-    ksvg2/svg/SVGFESpecularLightingElement.cpp
-    ksvg2/svg/SVGAnimateColorElement.cpp
-    ksvg2/svg/SVGGElement.cpp
-    ksvg2/svg/SVGFEFuncGElement.cpp
-    ksvg2/svg/SVGFEComponentTransferElement.cpp
-    ksvg2/svg/SVGSetElement.cpp
-    ksvg2/svg/SVGFEBlendElement.cpp
-    ksvg2/svg/SVGFEMergeElement.cpp
-    ksvg2/svg/SVGCursorElement.cpp
-    ksvg2/svg/SVGStringList.cpp
-#   ksvg2/svg/SVGElementInstance.cpp
-    ksvg2/svg/SVGFilterElement.cpp
-    ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp
-    ksvg2/svg/SVGPatternElement.cpp
-    ksvg2/svg/SVGPathSegList.cpp
-    ksvg2/svg/SVGStyleElement.cpp
-    ksvg2/svg/SVGPaint.cpp
-    ksvg2/svg/SVGFEDistantLightElement.cpp
-    ksvg2/svg/SVGTextPositioningElement.cpp
-    ksvg2/svg/SVGPreserveAspectRatio.cpp
-    ksvg2/svg/SVGScriptElement.cpp
-    ksvg2/svg/SVGComponentTransferFunctionElement.cpp
-    ksvg2/svg/SVGTextElement.cpp
-    ksvg2/svg/SVGViewElement.cpp
-    ksvg2/svg/SVGLengthList.cpp
-    ksvg2/svg/SVGStyledTransformableElement.cpp
-    ksvg2/svg/SVGPathSegArc.cpp
-    ksvg2/svg/SVGDescElement.cpp
-    ksvg2/svg/SVGTransformable.cpp
-    ksvg2/svg/SVGDocument.cpp
-    ksvg2/svg/SVGClipPathElement.cpp
-    ksvg2/svg/SVGPathSegMoveto.cpp
-    ksvg2/svg/SVGAElement.cpp
-    ksvg2/svg/SVGCircleElement.cpp
-    ksvg2/svg/SVGFEFuncAElement.cpp
-    ksvg2/svg/SVGTests.cpp
-    ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp
-    ksvg2/svg/SVGElement.cpp
-    ksvg2/svg/SVGAnimateTransformElement.cpp
-    ksvg2/svg/SVGFEColorMatrixElement.cpp
-    ksvg2/svg/SVGGradientElement.cpp
-    ksvg2/svg/SVGAnimationElement.cpp
-    ksvg2/svg/SVGFELightElement.cpp
-    ksvg2/svg/SVGPathSegClosePath.cpp
-    ksvg2/svg/SVGPathSegLinetoHorizontal.cpp
-    ksvg2/svg/SVGStopElement.cpp
-    ksvg2/svg/SVGDefsElement.cpp
-    ksvg2/svg/SVGMetadataElement.cpp
-    ksvg2/misc/SVGImageLoader.cpp
-    ksvg2/misc/SVGDocumentExtensions.cpp
-    ksvg2/misc/KSVGTimeScheduler.cpp
-    ksvg2/misc/KCanvasRenderingStyle.cpp
-    ksvg2/events/JSSVGLazyEventListener.cpp
-    ksvg2/events/SVGZoomEvent.cpp
-    kcanvas/KCanvasFilters.cpp
-    kcanvas/device/KRenderingPaintServerGradient.cpp
-    kcanvas/device/KRenderingPaintServerSolid.cpp
-    kcanvas/device/KRenderingPaintServerPattern.cpp
     kcanvas/device/KRenderingDevice.cpp
-    kcanvas/device/qt/RenderPathQt.cpp
+    kcanvas/device/KRenderingPaintServerGradient.cpp
+    kcanvas/device/KRenderingPaintServerPattern.cpp
+    kcanvas/device/KRenderingPaintServerSolid.cpp
+#   kcanvas/device/qt/KCanvasFilterQt.cpp
+#   kcanvas/device/qt/KCanvasImageItemQt.cpp
     kcanvas/device/qt/KRenderingDeviceQt.cpp
-    kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp
     kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp
     kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp
     kcanvas/device/qt/KRenderingPaintServerQt.cpp
-#   kcanvas/device/qt/KCanvasFilterQt.cpp
-#   kcanvas/device/qt/KCanvasImageItemQt.cpp
+kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp
+kcanvas/device/qt/RenderPathQt.cpp
+kcanvas/KCanvasFilters.cpp
+
+    ksvg2/css/SVGCSSParser.cpp
+    ksvg2/css/SVGCSSStyleSelector.cpp
+    ksvg2/css/SVGRenderStyle.cpp
+    ksvg2/css/SVGRenderStyleDefs.cpp
+
+    ksvg2/events/JSSVGLazyEventListener.cpp
+    ksvg2/events/SVGZoomEvent.cpp
+
+    ksvg2/misc/KCanvasRenderingStyle.cpp
+    ksvg2/misc/KSVGTimeScheduler.cpp
+    ksvg2/misc/SVGDocumentExtensions.cpp
+    ksvg2/misc/SVGImageLoader.cpp
+
+    ksvg2/svg/SVGAElement.cpp
+    ksvg2/svg/SVGAngle.cpp
+    ksvg2/svg/SVGAnimateColorElement.cpp
+    ksvg2/svg/SVGAnimatedPathData.cpp
+    ksvg2/svg/SVGAnimatedPoints.cpp
+    ksvg2/svg/SVGAnimateElement.cpp
+    ksvg2/svg/SVGAnimateTransformElement.cpp
+    ksvg2/svg/SVGAnimationElement.cpp
+    ksvg2/svg/SVGCircleElement.cpp
+    ksvg2/svg/SVGClipPathElement.cpp
+    ksvg2/svg/SVGColor.cpp
+    ksvg2/svg/SVGComponentTransferFunctionElement.cpp
+    ksvg2/svg/SVGCursorElement.cpp
+    ksvg2/svg/SVGDefsElement.cpp
+    ksvg2/svg/SVGDescElement.cpp
+    ksvg2/svg/SVGDocument.cpp
+    ksvg2/svg/SVGDOMImplementation.cpp
+    ksvg2/svg/SVGElement.cpp
+#   ksvg2/svg/SVGElementInstance.cpp
+#   ksvg2/svg/SVGElementInstanceList.cpp
+    ksvg2/svg/SVGEllipseElement.cpp
+    ksvg2/svg/SVGExternalResourcesRequired.cpp
+    ksvg2/svg/SVGFEBlendElement.cpp
+    ksvg2/svg/SVGFEColorMatrixElement.cpp
+    ksvg2/svg/SVGFEComponentTransferElement.cpp
+    ksvg2/svg/SVGFECompositeElement.cpp
+    ksvg2/svg/SVGFEDiffuseLightingElement.cpp
+    ksvg2/svg/SVGFEDisplacementMapElement.cpp
+    ksvg2/svg/SVGFEDistantLightElement.cpp
+    ksvg2/svg/SVGFEFloodElement.cpp
+    ksvg2/svg/SVGFEFuncAElement.cpp
+    ksvg2/svg/SVGFEFuncBElement.cpp
+    ksvg2/svg/SVGFEFuncGElement.cpp
+    ksvg2/svg/SVGFEFuncRElement.cpp
+    ksvg2/svg/SVGFEGaussianBlurElement.cpp
+    ksvg2/svg/SVGFEImageElement.cpp
+    ksvg2/svg/SVGFELightElement.cpp
+    ksvg2/svg/SVGFEMergeElement.cpp
+    ksvg2/svg/SVGFEMergeNodeElement.cpp
+    ksvg2/svg/SVGFEOffsetElement.cpp
+    ksvg2/svg/SVGFEPointLightElement.cpp
+    ksvg2/svg/SVGFESpecularLightingElement.cpp
+    ksvg2/svg/SVGFESpotLightElement.cpp
+    ksvg2/svg/SVGFETileElement.cpp
+    ksvg2/svg/SVGFETurbulenceElement.cpp
+    ksvg2/svg/SVGFilterElement.cpp
+    ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp
+    ksvg2/svg/SVGFitToViewBox.cpp
+    ksvg2/svg/SVGForeignObjectElement.cpp
+    ksvg2/svg/SVGGElement.cpp
+    ksvg2/svg/SVGGradientElement.cpp
+    ksvg2/svg/SVGHelper.cpp
+    ksvg2/svg/SVGImageElement.cpp
+    ksvg2/svg/SVGLangSpace.cpp
+    ksvg2/svg/SVGLength.cpp
+    ksvg2/svg/SVGLengthList.cpp
+    ksvg2/svg/SVGLinearGradientElement.cpp
+    ksvg2/svg/SVGLineElement.cpp
+    ksvg2/svg/SVGLocatable.cpp
+    ksvg2/svg/SVGMarkerElement.cpp
+    ksvg2/svg/SVGMaskElement.cpp
+    ksvg2/svg/SVGMatrix.cpp
+    ksvg2/svg/SVGMetadataElement.cpp
+    ksvg2/svg/SVGNumberList.cpp
+    ksvg2/svg/SVGPaint.cpp
+    ksvg2/svg/SVGPathElement.cpp
+    ksvg2/svg/svgpathparser.cpp
+    ksvg2/svg/SVGPathSegArc.cpp
+    ksvg2/svg/SVGPathSegClosePath.cpp
+    ksvg2/svg/SVGPathSeg.cpp
+    ksvg2/svg/SVGPathSegCurvetoCubic.cpp
+    ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp
+    ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp
+    ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp
+    ksvg2/svg/SVGPathSegLineto.cpp
+    ksvg2/svg/SVGPathSegLinetoHorizontal.cpp
+    ksvg2/svg/SVGPathSegLinetoVertical.cpp
+    ksvg2/svg/SVGPathSegList.cpp
+    ksvg2/svg/SVGPathSegMoveto.cpp
+    ksvg2/svg/SVGPatternElement.cpp
+    ksvg2/svg/SVGPointList.cpp
+    ksvg2/svg/SVGPolyElement.cpp
+    ksvg2/svg/SVGPolygonElement.cpp
+    ksvg2/svg/SVGPolylineElement.cpp
+    ksvg2/svg/SVGPreserveAspectRatio.cpp
+    ksvg2/svg/SVGRadialGradientElement.cpp
+    ksvg2/svg/SVGRectElement.cpp
+    ksvg2/svg/SVGScriptElement.cpp
+    ksvg2/svg/SVGSetElement.cpp
+    ksvg2/svg/SVGStopElement.cpp
+    ksvg2/svg/SVGStringList.cpp
+    ksvg2/svg/SVGStylable.cpp
+    ksvg2/svg/SVGStyledElement.cpp
+    ksvg2/svg/SVGStyledLocatableElement.cpp
+    ksvg2/svg/SVGStyledTransformableElement.cpp
+    ksvg2/svg/SVGStyleElement.cpp
+    ksvg2/svg/SVGSVGElement.cpp
+    ksvg2/svg/SVGSwitchElement.cpp
+    ksvg2/svg/SVGSymbolElement.cpp
+    ksvg2/svg/SVGTests.cpp
+    ksvg2/svg/SVGTextContentElement.cpp
+    ksvg2/svg/SVGTextElement.cpp
+    ksvg2/svg/SVGTextPositioningElement.cpp
+    ksvg2/svg/SVGTitleElement.cpp
+    ksvg2/svg/SVGTransformable.cpp
+    ksvg2/svg/SVGTransform.cpp
+    ksvg2/svg/SVGTransformList.cpp
+    ksvg2/svg/SVGTRefElement.cpp
+    ksvg2/svg/SVGTSpanElement.cpp
+    ksvg2/svg/SVGURIReference.cpp
+    ksvg2/svg/SVGUseElement.cpp
+    ksvg2/svg/SVGViewElement.cpp
+    ksvg2/svg/SVGZoomAndPan.cpp
+
     rendering/RenderForeignObject.cpp
     rendering/RenderPath.cpp
     rendering/RenderSVGContainer.cpp
@@ -670,26 +673,27 @@ set (SVG_SOURCES
     rendering/RenderSVGTSpan.cpp
     rendering/SVGInlineFlowBox.cpp
     rendering/SVGRootInlineBox.cpp
- )
+)
 ENDIF(WEBKIT_USE_SVG_SUPPORT)
 
 set(WebCore_SRCS
-
     ${WebCore-unity_LIB_SRCS}
 
+    # Generated files first
+    ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.h
     ${CMAKE_CURRENT_BINARY_DIR}/CSSPropertyNames.h
     ${CMAKE_CURRENT_BINARY_DIR}/CSSValueKeywords.h
-    ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.h
-    ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h
-    ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheetsData.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLNames.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLEntityNames.c
     ${CMAKE_CURRENT_BINARY_DIR}/html/DocTypeStrings.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/platform/ColorData.c
+    ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLEntityNames.c
+    ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLNames.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/ksvgcssproperties.h
     ${CMAKE_CURRENT_BINARY_DIR}/ksvgcssvalues.h
+    ${CMAKE_CURRENT_BINARY_DIR}/platform/ColorData.c
+    ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheetsData.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h
 
+    # Hand-written JavaScript bindings
     bindings/js/kjs_binding.cpp
     bindings/js/kjs_css.cpp
     bindings/js/kjs_dom.cpp
@@ -700,273 +704,242 @@ set(WebCore_SRCS
     bindings/js/kjs_traversal.cpp
     bindings/js/kjs_window.cpp
 
+    # Custom JavaScript object implementations
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
     bindings/js/JSHTMLElementWrapperFactory.cpp
     bindings/js/JSHTMLFormElementCustom.cpp
+    bindings/js/JSHTMLInputElementBase.cpp
     bindings/js/JSHTMLOptionElementConstructor.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
-    bindings/js/JSHTMLInputElementBase.cpp
-    bindings/js/JSXMLHttpRequest.cpp
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSXMLHttpRequest.cpp
     bindings/js/JSXSLTProcessor.cpp
 
-    css/cssparser.cpp
-    css/cssstyleselector.cpp
-    css/csshelper.cpp
-    css/FontValue.cpp
-    css/CSSSelector.cpp
-    css/MediaFeatureNames.cpp
-    css/CSSRuleList.cpp
+    css/CSSBorderImageValue.cpp
     css/CSSCharsetRule.cpp
-    css/MediaQueryExp.cpp
+    css/CSSComputedStyleDeclaration.cpp
+    css/CSSCursorImageValue.cpp
+    css/CSSFontFaceRule.cpp
+    css/csshelper.cpp
+    css/CSSImageValue.cpp
     css/CSSImportRule.cpp
-    css/CSSValueList.cpp
-    css/CSSStyleDeclaration.cpp
+    css/CSSInheritedValue.cpp
+    css/CSSInitialValue.cpp
+    css/CSSMediaRule.cpp
+    css/CSSMutableStyleDeclaration.cpp
+    css/CSSPageRule.cpp
+    css/cssparser.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
-    css/CSSCursorImageValue.cpp
-    css/CSSBorderImageValue.cpp
-    css/MediaQuery.cpp
-    css/StyleSheet.cpp
-    css/CSSPageRule.cpp
-    css/StyleSheetList.cpp
-    css/MediaQueryEvaluator.cpp
-    css/StyleBase.cpp
     css/CSSRule.cpp
-    css/CSSStyleSheet.cpp
-    css/CSSInitialValue.cpp
-    css/CSSImageValue.cpp
+    css/CSSRuleList.cpp
+    css/CSSSelector.cpp
+    css/CSSStyleDeclaration.cpp
     css/CSSStyleRule.cpp
-    css/CSSInheritedValue.cpp
-    css/StyleList.cpp
+    css/cssstyleselector.cpp
+    css/CSSStyleSheet.cpp
+    css/CSSValueList.cpp
     css/FontFamilyValue.cpp
-    css/CSSMediaRule.cpp
-    css/CSSComputedStyleDeclaration.cpp
-    css/CSSMutableStyleDeclaration.cpp
+    css/FontValue.cpp
+    css/MediaFeatureNames.cpp
     css/MediaList.cpp
-    css/CSSFontFaceRule.cpp
+    css/MediaQuery.cpp
+    css/MediaQueryEvaluator.cpp
+    css/MediaQueryExp.cpp
     css/ShadowValue.cpp
-    dom/Event.cpp
-    dom/Range.cpp
-    dom/Text.cpp
-    dom/DOMImplementation.cpp
-    dom/NodeFilter.cpp
-    dom/MouseEvent.cpp
-    dom/EntityReference.cpp
-    dom/NameNodeList.cpp
-    dom/CharacterData.cpp
-    dom/XMLTokenizer.cpp
-    dom/StyledElement.cpp
-    dom/MappedAttribute.cpp
-    dom/NamedAttrMap.cpp
-    dom/ContainerNode.cpp
-    dom/NamedMappedAttrMap.cpp
-    dom/EventNames.cpp
-    dom/Comment.cpp
-    dom/EditingText.cpp
-    dom/DocumentFragment.cpp
-    dom/ChildNodeList.cpp
-    dom/Entity.cpp
-    dom/BeforeTextInsertedEvent.cpp
-    dom/UIEvent.cpp
-    dom/Node.cpp
+    css/StyleBase.cpp
+    css/StyleList.cpp
+    css/StyleSheet.cpp
+    css/StyleSheetList.cpp
+
+    dom/Attr.cpp
     dom/Attribute.cpp
+    dom/BeforeTextInsertedEvent.cpp
+    dom/BeforeUnloadEvent.cpp
+    dom/CDATASection.cpp
+    dom/CharacterData.cpp
+    dom/ChildNodeList.cpp
+    dom/ClipboardEvent.cpp
+    dom/Comment.cpp
+    dom/ContainerNode.cpp
+    dom/CSSMappedAttributeDeclaration.cpp
+    dom/Document.cpp
+    dom/DocumentFragment.cpp
+    dom/DocumentType.cpp
+    dom/DOMImplementation.cpp
+    dom/EditingText.cpp
+    dom/Element.cpp
+    dom/Entity.cpp
+    dom/EntityReference.cpp
+    dom/Event.cpp
+    dom/EventNames.cpp
+    dom/EventTargetNode.cpp
+    dom/KeyboardEvent.cpp
+    dom/MappedAttribute.cpp
+    dom/MouseEvent.cpp
+    dom/MouseRelatedEvent.cpp
+    dom/MutationEvent.cpp
+    dom/NamedAttrMap.cpp
+    dom/NamedMappedAttrMap.cpp
+    dom/NameNodeList.cpp
+    dom/Node.cpp
+    dom/NodeFilterCondition.cpp
+    dom/NodeFilter.cpp
+    dom/NodeIterator.cpp
+    dom/NodeList.cpp
+    dom/Notation.cpp
+    dom/OverflowEvent.cpp
     dom/Position.cpp
     dom/ProcessingInstruction.cpp
-    dom/TreeWalker.cpp
-    dom/Notation.cpp
-    dom/Element.cpp
-    dom/NodeFilterCondition.cpp
-    dom/CDATASection.cpp
-    dom/DocumentType.cpp
-    dom/NodeList.cpp
-    dom/CSSMappedAttributeDeclaration.cpp
     dom/QualifiedName.cpp
-    dom/Document.cpp
-    dom/Attr.cpp
-    dom/OverflowEvent.cpp
+    dom/Range.cpp
     dom/RegisteredEventListener.cpp
-    dom/EventTargetNode.cpp
-    dom/BeforeUnloadEvent.cpp
-    dom/MutationEvent.cpp
-    dom/MouseRelatedEvent.cpp
-    dom/KeyboardEvent.cpp
-    dom/NodeIterator.cpp
-    dom/ClipboardEvent.cpp
+    dom/StyledElement.cpp
+    dom/Text.cpp
     dom/Traversal.cpp
+    dom/TreeWalker.cpp
+    dom/UIEvent.cpp
     dom/WheelEvent.cpp
-#   kwq/KWQWMatrix.cpp
-#   kwq/KWQCString.cpp
+    dom/XMLTokenizer.cpp
 
-    ${SVG_SOURCES}
-    ${XPATH_SOURCES}
-
+    editing/AppendNodeCommand.cpp
+    editing/ApplyStyleCommand.cpp
+    editing/BreakBlockquoteCommand.cpp
+    editing/CommandByName.cpp
+    editing/CompositeEditCommand.cpp
+    editing/CreateLinkCommand.cpp
     editing/DeleteButtonController.cpp
     editing/DeleteButton.cpp
-    editing/Editor.cpp
-    editing/CommandByName.cpp
-    editing/InsertIntoTextNodeCommand.cpp
-    editing/WrapContentsInDummySpanCommand.cpp
-    editing/ReplaceSelectionCommand.cpp
-    editing/MoveSelectionCommand.cpp
-    editing/RemoveNodePreservingChildrenCommand.cpp
-    editing/HTMLInterchange.cpp
-    editing/UnlinkCommand.cpp
-    editing/InsertLineBreakCommand.cpp
-    editing/FormatBlockCommand.cpp
-    editing/AppendNodeCommand.cpp
-    editing/BreakBlockquoteCommand.cpp
-    editing/htmlediting.cpp
-    editing/RebalanceWhitespaceCommand.cpp
-    editing/markup.cpp
-    editing/InsertParagraphSeparatorCommand.cpp
-    editing/ModifySelectionListLevel.cpp
-    editing/JSEditor.cpp
-    editing/Selection.cpp
-    editing/TextIterator.cpp
-    editing/InsertListCommand.cpp
-    editing/IndentOutdentCommand.cpp
-    editing/InsertNodeBeforeCommand.cpp
-    editing/SplitTextNodeContainingElementCommand.cpp
-    editing/TypingCommand.cpp
-    editing/MergeIdenticalElementsCommand.cpp
-    editing/EditCommand.cpp
-    editing/SplitTextNodeCommand.cpp
-    editing/RemoveCSSPropertyCommand.cpp
-    editing/JoinTextNodesCommand.cpp
-    editing/InsertTextCommand.cpp
-    editing/SelectionController.cpp
-    editing/DeleteSelectionCommand.cpp
-    editing/SplitElementCommand.cpp
-    editing/VisiblePosition.cpp
-    editing/ApplyStyleCommand.cpp
-    editing/visible_units.cpp
-    editing/RemoveNodeAttributeCommand.cpp
     editing/DeleteFromTextNodeCommand.cpp
+    editing/DeleteSelectionCommand.cpp
+    editing/EditCommand.cpp
+    editing/Editor.cpp
+    editing/FormatBlockCommand.cpp
+    editing/htmlediting.cpp
+    editing/HTMLInterchange.cpp
+    editing/IndentOutdentCommand.cpp
+    editing/InsertIntoTextNodeCommand.cpp
+    editing/InsertLineBreakCommand.cpp
+    editing/InsertListCommand.cpp
+    editing/InsertNodeBeforeCommand.cpp
+    editing/InsertParagraphSeparatorCommand.cpp
+    editing/InsertTextCommand.cpp
+    editing/JoinTextNodesCommand.cpp
+    editing/JSEditor.cpp
+    editing/markup.cpp
+    editing/MergeIdenticalElementsCommand.cpp
+    editing/ModifySelectionListLevel.cpp
+    editing/MoveSelectionCommand.cpp
+    editing/RebalanceWhitespaceCommand.cpp
+    editing/RemoveCSSPropertyCommand.cpp
+    editing/RemoveNodeAttributeCommand.cpp
     editing/RemoveNodeCommand.cpp
-    editing/CompositeEditCommand.cpp
+    editing/RemoveNodePreservingChildrenCommand.cpp
+    editing/ReplaceSelectionCommand.cpp
+    editing/SelectionController.cpp
+    editing/Selection.cpp
     editing/SetNodeAttributeCommand.cpp
-    editing/CreateLinkCommand.cpp
+    editing/SplitElementCommand.cpp
+    editing/SplitTextNodeCommand.cpp
+    editing/SplitTextNodeContainingElementCommand.cpp
+    editing/TextIterator.cpp
+    editing/TypingCommand.cpp
+    editing/UnlinkCommand.cpp
+    editing/VisiblePosition.cpp
+    editing/visible_units.cpp
+    editing/WrapContentsInDummySpanCommand.cpp
 
-
-#   kwq/KWQTextStream.cpp
-    xml/XSLStyleSheet.cpp
-    xml/XSLTProcessor.cpp
-    xml/XSLImportRule.cpp
-    xml/DOMParser.cpp
-    xml/XMLSerializer.cpp
-    xml/xmlhttprequest.cpp
-#   icon/IconDatabase.cpp
-#   icon/SQLTransaction.cpp
-#   icon/SQLStatement.cpp
-#   icon/SiteIcon.cpp
-#   icon/SQLDatabase.cpp
-    html/HTMLParser.cpp
-    html/HTMLFontElement.cpp
-    html/HTMLEmbedElement.cpp
-    html/HTMLLinkElement.cpp
-    html/HTMLOptGroupElement.cpp
-    html/HTMLCanvasElement.cpp
-    html/HTMLTitleElement.cpp
+    html/CanvasGradient.cpp
+    html/CanvasPattern.cpp
     html/CanvasRenderingContext2D.cpp
-    html/HTMLObjectElement.cpp
-    html/HTMLAppletElement.cpp
-    html/HTMLKeygenElement.cpp
-    html/HTMLDivElement.cpp
-    html/HTMLMapElement.cpp
-    html/HTMLScriptElement.cpp
-    html/HTMLHtmlElement.cpp
-    html/HTMLTokenizer.cpp
-    html/HTMLOptionElement.cpp
-    html/HTMLTableCaptionElement.cpp
-    html/HTMLImageLoader.cpp
+    html/CanvasStyle.cpp
     html/FormDataList.cpp
-    html/HTMLLabelElement.cpp
-    html/HTMLTableColElement.cpp
+    html/HTMLAnchorElement.cpp
+    html/HTMLAppletElement.cpp
+    html/HTMLAreaElement.cpp
+    html/HTMLBaseElement.cpp
+    html/HTMLBaseFontElement.cpp
+    html/HTMLBlockquoteElement.cpp
+    html/HTMLBodyElement.cpp
+    html/HTMLBRElement.cpp
+    html/HTMLButtonElement.cpp
+    html/HTMLCanvasElement.cpp
+    html/HTMLCollection.cpp
+    html/HTMLDirectoryElement.cpp
+    html/HTMLDivElement.cpp
     html/HTMLDListElement.cpp
+    html/HTMLDocument.cpp
+    html/HTMLElement.cpp
+    html/HTMLElementFactory.cpp
+    html/HTMLEmbedElement.cpp
+    html/HTMLFieldSetElement.cpp
+    html/HTMLFontElement.cpp
+    html/HTMLFormCollection.cpp
+    html/HTMLFormElement.cpp
+    html/HTMLFrameElementBase.cpp
+    html/HTMLFrameElement.cpp
+    html/HTMLFrameSetElement.cpp
+    html/HTMLGenericFormElement.cpp
+    html/HTMLHeadElement.cpp
+    html/HTMLHeadingElement.cpp
+    html/HTMLHRElement.cpp
+    html/HTMLHtmlElement.cpp
+    html/HTMLIFrameElement.cpp
+    html/HTMLImageElement.cpp
+    html/HTMLImageLoader.cpp
+    html/HTMLInputElement.cpp
+    html/HTMLIsIndexElement.cpp
+    html/HTMLKeygenElement.cpp
+    html/HTMLLabelElement.cpp
+    html/HTMLLegendElement.cpp
+    html/HTMLLIElement.cpp
+    html/HTMLLinkElement.cpp
+    html/HTMLMapElement.cpp
+    html/HTMLMarqueeElement.cpp
+    html/HTMLMenuElement.cpp
+    html/HTMLMetaElement.cpp
+    html/HTMLModElement.cpp
+    html/HTMLNameCollection.cpp
+    html/HTMLObjectElement.cpp
+    html/HTMLOListElement.cpp
+    html/HTMLOptGroupElement.cpp
+    html/HTMLOptionElement.cpp
+    html/HTMLOptionsCollection.cpp
+    html/HTMLParagraphElement.cpp
+    html/HTMLParamElement.cpp
+    html/HTMLParser.cpp
+    html/HTMLPlugInElement.cpp
+    html/HTMLPreElement.cpp
+    html/HTMLQuoteElement.cpp
+    html/HTMLScriptElement.cpp
+    html/HTMLSelectElement.cpp
+    html/HTMLStyleElement.cpp
+    html/HTMLTableCaptionElement.cpp
+    html/HTMLTableCellElement.cpp
+    html/HTMLTableColElement.cpp
+    html/HTMLTableElement.cpp
     html/HTMLTablePartElement.cpp
+    html/HTMLTableRowElement.cpp
     html/HTMLTableSectionElement.cpp
     html/HTMLTextAreaElement.cpp
     html/HTMLTextFieldInnerElement.cpp
-    html/HTMLAreaElement.cpp
-    html/CanvasStyle.cpp
-    html/HTMLIsIndexElement.cpp
-    html/HTMLHeadElement.cpp
-    html/HTMLFrameSetElement.cpp
-    html/HTMLBodyElement.cpp
-    html/HTMLBRElement.cpp
-    html/HTMLNameCollection.cpp
-    html/HTMLLegendElement.cpp
-    html/HTMLLIElement.cpp
-    html/HTMLParamElement.cpp
-    html/HTMLMetaElement.cpp
-    html/HTMLHeadingElement.cpp
+    html/HTMLTitleElement.cpp
+    html/HTMLTokenizer.cpp
     html/HTMLUListElement.cpp
-    html/HTMLInputElement.cpp
-    html/HTMLElementFactory.cpp
-    html/HTMLPlugInElement.cpp
-    html/HTMLFieldSetElement.cpp
-    html/HTMLParagraphElement.cpp
-    html/HTMLStyleElement.cpp
-    html/HTMLMarqueeElement.cpp
-    html/HTMLGenericFormElement.cpp
-    html/HTMLElement.cpp
-    html/HTMLDocument.cpp
-    html/HTMLOListElement.cpp
-    html/HTMLFormElement.cpp
-    html/HTMLPreElement.cpp
-    html/HTMLTableElement.cpp
-    html/CanvasGradient.cpp
     html/HTMLViewSourceDocument.cpp
-    html/HTMLFrameElement.cpp
-    html/HTMLFrameElementBase.cpp
-    html/HTMLAnchorElement.cpp
-    html/HTMLTableCellElement.cpp
-    html/CanvasPattern.cpp
-    html/HTMLBlockquoteElement.cpp
-    html/HTMLIFrameElement.cpp
-    html/HTMLMenuElement.cpp
-    html/HTMLCollection.cpp
-    html/HTMLModElement.cpp
-    html/HTMLQuoteElement.cpp
-    html/HTMLDirectoryElement.cpp
-    html/HTMLSelectElement.cpp
-    html/HTMLImageElement.cpp
-    html/HTMLOptionsCollection.cpp
-    html/HTMLTableRowElement.cpp
-    html/HTMLBaseFontElement.cpp
-    html/HTMLHRElement.cpp
-    html/HTMLButtonElement.cpp
-    html/HTMLFormCollection.cpp
-    html/HTMLBaseElement.cpp
-    page/FrameTree.cpp
-    page/DOMWindow.cpp
-    page/MouseEventWithHitTestResults.cpp
-    page/Frame.cpp
-    page/Page.cpp
-    page/Chrome.cpp
-    page/FrameView.cpp    
-    page/PageState.cpp
-    xml/XPathUtil.cpp
-    xml/XPathPredicate.cpp
-    xml/XPathVariableReference.cpp
-    xml/XPathValue.cpp
-    xml/XPathPath.cpp
-    xml/XPathFunctions.cpp
-    xml/XPathParser.cpp
-    xml/XPathStep.cpp
-    xml/XPathExpressionNode.cpp
-    xml/XPathNamespace.cpp
-    xml/XPathNSResolver.cpp
-    xml/XPathExpression.cpp
-    xml/XPathResult.cpp
-    xml/XPathEvaluator.cpp
+ 
+#   icon/IconDatabase.cpp
+#   icon/SiteIcon.cpp
+#   icon/SQLDatabase.cpp
+#   icon/SQLStatement.cpp
+#   icon/SQLTransaction.cpp
+
     loader/Cache.cpp
     loader/CachedCSSStyleSheet.cpp
     loader/CachedImage.cpp
-    loader/CachedResource.cpp
     loader/CachedResourceClientWalker.cpp
+    loader/CachedResource.cpp
     loader/CachedScript.cpp
     loader/CachedXSLStyleSheet.cpp
     loader/DocLoader.cpp
@@ -974,6 +947,7 @@ set(WebCore_SRCS
     loader/FormState.cpp
     loader/FrameLoader.cpp
     loader/ImageDocument.cpp
+    loader/loader.cpp
     loader/MainResourceLoader.cpp
     loader/NetscapePlugInStreamLoader.cpp
     loader/PluginDocument.cpp
@@ -982,199 +956,99 @@ set(WebCore_SRCS
     loader/SubresourceLoader.cpp
     loader/TextDocument.cpp
     loader/TextResourceDecoder.cpp
-    loader/loader.cpp
-    loader/icon/IconLoader.cpp
     loader/icon/IconDatabase.cpp
     loader/icon/IconDataCache.cpp
-    loader/icon/SQLTransaction.cpp
-    loader/icon/SQLStatement.cpp
+    loader/icon/IconLoader.cpp
     loader/icon/SQLDatabase.cpp
-    loader/qt/FrameLoaderQt.cpp
-    loader/qt/FrameLoaderClientQt.cpp
+    loader/icon/SQLStatement.cpp
+    loader/icon/SQLTransaction.cpp
     loader/qt/DocumentLoaderQt.cpp
+    loader/qt/FrameLoaderClientQt.cpp
+    loader/qt/FrameLoaderQt.cpp
     loader/qt/NavigationActionQt.cpp
     loader/qt/ResourceLoaderQt.cpp
-    platform/CString.cpp
-    platform/AtomicString.cpp
-    platform/graphics/AffineTransform.cpp
-    platform/TextStream.cpp
-    platform/Widget.cpp
-    platform/GlyphWidthMap.cpp
-    platform/graphics/Pen.cpp
-    platform/graphics/Image.cpp
-    platform/DeprecatedStringList.cpp
-    platform/graphics/FloatSize.cpp
-    platform/String.cpp
-    platform/DeprecatedValueListImpl.cpp
-    platform/graphics/IntRect.cpp
+
+    page/Chrome.cpp
+    page/DOMWindow.cpp
+    page/Frame.cpp
+    page/FrameTree.cpp
+    page/FrameView.cpp
+    page/MouseEventWithHitTestResults.cpp
+    page/Page.cpp
+    page/PageState.cpp    
+
     platform/Arena.cpp
     platform/ArrayImpl.cpp
-    platform/graphics/FloatPoint.cpp
+    platform/AtomicString.cpp
+    platform/CString.cpp
+    platform/DeprecatedCString.cpp
+    platform/DeprecatedPtrListImpl.cpp
+    platform/DeprecatedString.cpp
+    platform/DeprecatedStringList.cpp
+    platform/DeprecatedValueListImpl.cpp
+    platform/FontCache.cpp
+    platform/Font.cpp
+    platform/FontData.cpp
+    platform/FontFallbackList.cpp
+    platform/FontFamily.cpp
+    platform/GlyphMap.cpp
+    platform/GlyphWidthMap.cpp
+    platform/KURL.cpp
+    platform/Logging.cpp
+    platform/MimeTypeRegistry.cpp
+    platform/RegularExpression.cpp
     platform/SegmentedString.cpp
+    platform/String.cpp
+    platform/StringImpl.cpp
     platform/TextCodec.cpp
     platform/TextCodecICU.cpp
-    platform/DeprecatedString.cpp
-    platform/DeprecatedCString.cpp
     platform/TextCodecLatin1.cpp
     platform/TextCodecUTF16.cpp
     platform/TextDecoder.cpp
     platform/TextEncoding.cpp
     platform/TextEncodingRegistry.cpp
-    platform/Logging.cpp
+    platform/TextStream.cpp
+    platform/Timer.cpp
+    platform/Widget.cpp
+
+    platform/graphics/AffineTransform.cpp
     platform/graphics/Color.cpp
-    platform/DeprecatedPtrListImpl.cpp
-    platform/KURL.cpp
-    platform/StringImpl.cpp
+    platform/graphics/FloatPoint.cpp
     platform/graphics/FloatRect.cpp
+    platform/graphics/FloatSize.cpp
+    platform/graphics/GraphicsContext.cpp
+    platform/graphics/GraphicsTypes.cpp
+    platform/graphics/Image.cpp
+    platform/graphics/IntRect.cpp
     platform/graphics/Path.cpp
-    platform/MimeTypeRegistry.cpp
-    platform/qt/MimeTypeRegistryQt.cpp
-    platform/qt/EditorClientQt.cpp
-    platform/qt/SoundQt.cpp
-    platform/qt/LoaderFunctionsQt.cpp
-    platform/qt/FileChooserQt.cpp
-    platform/graphics/qt/IconQt.cpp
+    platform/graphics/Pen.cpp
+
     platform/graphics/qt/AffineTransformQt.cpp
-    platform/qt/StringQt.cpp
     platform/graphics/qt/ColorQt.cpp
-    platform/qt/GlyphMapQt.cpp
-    platform/qt/CookieJarQt.cpp
-    platform/qt/FontPlatformDataQt.cpp
-    platform/qt/GraphicsContextQt.cpp
-    platform/qt/ScrollViewQt.cpp
-    platform/qt/TemporaryLinkStubs.cpp
-    platform/qt/TextBoundaries.cpp
-    platform/qt/CursorQt.cpp
-    platform/qt/WidgetQt.cpp
-    platform/qt/SystemTimeQt.cpp
-    platform/qt/RenderThemeQt.cpp
-    platform/qt/FontDataQt.cpp
-    platform/qt/SharedTimerQt.cpp
-    platform/qt/PopupMenuQt.cpp
-    platform/qt/ChromeClientQt.cpp
-    platform/network/FormData.cpp
-    platform/network/ResourceHandle.cpp
-    platform/network/qt/ResourceHandleManager.cpp
-    platform/network/qt/ResourceHandleQt.cpp
     platform/graphics/qt/FloatPointQt.cpp
     platform/graphics/qt/FloatRectQt.cpp
+    platform/graphics/qt/IconQt.cpp
+    platform/graphics/qt/ImageQt.cpp
+    platform/graphics/qt/ImageSourceQt.cpp
     platform/graphics/qt/IntPointQt.cpp
     platform/graphics/qt/IntRectQt.cpp
     platform/graphics/qt/IntSizeQt.cpp
-    platform/qt/PageQt.cpp
     platform/graphics/qt/PathQt.cpp
-    platform/graphics/qt/ImageQt.cpp
-    platform/graphics/qt/ImageSourceQt.cpp
-    platform/qt/FontCacheQt.cpp
-    platform/qt/FontQt.cpp
-#   platform/qt/LineEditQt.cpp
-    platform/qt/ScreenQt.cpp
-#   platform/qt/FileButtonQt.cpp
-    platform/qt/FrameQt.cpp
-    platform/qt/FrameQtClient.cpp
-#   platform/qt/TextEditQt.cpp
-    platform/qt/ScrollViewCanvasQt.cpp
-    platform/qt/PlatformMouseEventQt.cpp
-    platform/qt/PlatformKeyboardEventQt.cpp
-    platform/graphics/GraphicsTypes.cpp
-    platform/graphics/GraphicsContext.cpp
+
     platform/graphics/svg/SVGResource.cpp
     platform/graphics/svg/SVGResourceClipper.cpp
-    platform/graphics/svg/SVGResourceMasker.cpp
     platform/graphics/svg/SVGResourceMarker.cpp
+    platform/graphics/svg/SVGResourceMasker.cpp
+
     platform/graphics/svg/qt/SVGResourceClipperQt.cpp
     platform/graphics/svg/qt/SVGResourceImageQt.cpp
     platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
+
     platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
     platform/image-decoders/gif/GIFImageDecoder.cpp
+    platform/image-decoders/gif/GIFImageReader.cpp
     platform/image-decoders/ico/ICOImageDecoder.cpp
-    platform/image-decoders/png/PNGImageDecoder.cpp
-    platform/image-decoders/xbm/XBMImageDecoder.cpp
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-    platform/FontFamily.cpp
-    platform/Timer.cpp
-    platform/FontCache.cpp
-    platform/FontFallbackList.cpp
-    platform/RegularExpression.cpp
-    platform/GlyphMap.cpp
-    platform/Font.cpp
-    platform/FontData.cpp
-    rendering/HitTestResult.cpp
-    rendering/RenderCounter.cpp
-    rendering/CounterNode.cpp
-    rendering/CounterResetNode.cpp
-    rendering/RenderListBox.cpp
-    rendering/RenderReplaced.cpp
-    rendering/RenderPartObject.cpp
-    rendering/RenderView.cpp
-    rendering/RenderMenuList.cpp
-    rendering/InlineFlowBox.cpp
-    rendering/RenderListMarker.cpp
-    rendering/RenderImage.cpp
-    rendering/RenderTheme.cpp
-    rendering/RenderLayer.cpp
-    rendering/RenderTableCell.cpp
-    rendering/RenderListItem.cpp
-    rendering/AutoTableLayout.cpp
-    rendering/RenderArena.cpp
-    rendering/RenderWidget.cpp
-    rendering/break_lines.cpp
-    rendering/RenderStyle.cpp
-    rendering/RenderContainer.cpp
-    rendering/EllipsisBox.cpp
-    rendering/RenderFieldset.cpp
-    rendering/RenderFrameSet.cpp
-    rendering/RenderTable.cpp
-    rendering/RenderPart.cpp
-    rendering/RenderBlock.cpp
-    rendering/DeprecatedSlider.cpp
-    rendering/InlineBox.cpp
-    rendering/RenderText.cpp
-    rendering/RenderFrame.cpp
-    rendering/RenderLineEdit.cpp
-    rendering/FixedTableLayout.cpp
-    rendering/RenderTableCol.cpp
-    rendering/RenderObject.cpp
-    rendering/RenderTreeAsText.cpp
-    rendering/SVGRenderTreeAsText.cpp
-    rendering/RootInlineBox.cpp
-    rendering/RenderFormElement.cpp
-    rendering/RenderBox.cpp
-    rendering/RenderButton.cpp
-    rendering/RenderTableSection.cpp
-    rendering/ListMarkerBox.cpp
-    rendering/RenderLabel.cpp
-    rendering/RenderTableRow.cpp
-    rendering/RenderInline.cpp
-    rendering/RenderFileUploadControl.cpp
-    rendering/RenderHTMLCanvas.cpp
-    rendering/bidi.cpp
-    rendering/RenderFlexibleBox.cpp
-    rendering/RenderApplet.cpp
-    rendering/RenderLegend.cpp
-    rendering/RenderTextControl.cpp
-    rendering/RenderTextFragment.cpp
-    rendering/RenderBR.cpp
-    rendering/InlineTextBox.cpp
-    rendering/RenderFlow.cpp
-    platform/image-decoders/png/png.c
-    platform/image-decoders/png/pngget.c
-    platform/image-decoders/png/pngread.c
-    platform/image-decoders/png/pngrutil.c
-    platform/image-decoders/png/pngvcrd.c
-    platform/image-decoders/png/pngwtran.c
-    platform/image-decoders/png/pngerror.c
-    platform/image-decoders/png/pngmem.c
-    platform/image-decoders/png/pngrio.c
-    platform/image-decoders/png/pngset.c
-    platform/image-decoders/png/pngwio.c
-    platform/image-decoders/png/pngwutil.c
-    platform/image-decoders/png/pnggccrd.c
-    platform/image-decoders/png/pngpread.c
-    platform/image-decoders/png/pngrtran.c
-    platform/image-decoders/png/pngtrans.c
-    platform/image-decoders/png/pngwrite.c
+
     platform/image-decoders/jpeg/jcomapi.c
     platform/image-decoders/jpeg/jdapimin.c
     platform/image-decoders/jpeg/jdapistd.c
@@ -1201,44 +1075,193 @@ set(WebCore_SRCS
     platform/image-decoders/jpeg/jidctint.c
     platform/image-decoders/jpeg/jmemmgr.c
     platform/image-decoders/jpeg/jmemnobs.c
+    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
     platform/image-decoders/jpeg/jquant1.c
     platform/image-decoders/jpeg/jquant2.c
     platform/image-decoders/jpeg/jutils.c
 
+    platform/image-decoders/png/png.c
+    platform/image-decoders/png/pngerror.c
+    platform/image-decoders/png/pnggccrd.c
+    platform/image-decoders/png/pngget.c
+    platform/image-decoders/png/PNGImageDecoder.cpp
+    platform/image-decoders/png/pngmem.c
+    platform/image-decoders/png/pngpread.c
+    platform/image-decoders/png/pngread.c
+    platform/image-decoders/png/pngrio.c
+    platform/image-decoders/png/pngrtran.c
+    platform/image-decoders/png/pngrutil.c
+    platform/image-decoders/png/pngset.c
+    platform/image-decoders/png/pngtrans.c
+    platform/image-decoders/png/pngvcrd.c
+    platform/image-decoders/png/pngwio.c
+    platform/image-decoders/png/pngwrite.c
+    platform/image-decoders/png/pngwtran.c
+    platform/image-decoders/png/pngwutil.c
+
+    platform/image-decoders/xbm/XBMImageDecoder.cpp
+
+    platform/network/FormData.cpp
+    platform/network/ResourceHandle.cpp
+    
+    platform/network/qt/ResourceHandleManager.cpp
+    platform/network/qt/ResourceHandleQt.cpp
+    
+    platform/qt/ChromeClientQt.cpp
+    platform/qt/CookieJarQt.cpp
+    platform/qt/CursorQt.cpp
+    platform/qt/EditorClientQt.cpp
+#   platform/qt/FileButtonQt.cpp
+    platform/qt/FileChooserQt.cpp
+    platform/qt/FontCacheQt.cpp
+    platform/qt/FontDataQt.cpp
+    platform/qt/FontPlatformDataQt.cpp
+    platform/qt/FontQt.cpp
+    platform/qt/FrameQtClient.cpp
+    platform/qt/FrameQt.cpp
+    platform/qt/GlyphMapQt.cpp
+    platform/qt/GraphicsContextQt.cpp
+#   platform/qt/LineEditQt.cpp
+    platform/qt/LoaderFunctionsQt.cpp
+    platform/qt/MimeTypeRegistryQt.cpp
+    platform/qt/PageQt.cpp
+    platform/qt/PlatformKeyboardEventQt.cpp
+    platform/qt/PlatformMouseEventQt.cpp
+    platform/qt/PopupMenuQt.cpp
+    platform/qt/RenderThemeQt.cpp
+    platform/qt/ScreenQt.cpp
+    platform/qt/ScrollViewCanvasQt.cpp
+    platform/qt/ScrollViewQt.cpp
+    platform/qt/SharedTimerQt.cpp
+    platform/qt/SoundQt.cpp
+    platform/qt/StringQt.cpp
+    platform/qt/SystemTimeQt.cpp
+    platform/qt/TemporaryLinkStubs.cpp
+    platform/qt/TextBoundaries.cpp
+#   platform/qt/TextEditQt.cpp
+    platform/qt/WidgetQt.cpp
+
+    xml/DOMParser.cpp
+    xml/xmlhttprequest.cpp
+    xml/XMLSerializer.cpp
+    xml/XPathEvaluator.cpp
+    xml/XPathExpression.cpp
+    xml/XPathExpressionNode.cpp
+    xml/XPathFunctions.cpp
+    xml/XPathNamespace.cpp
+    xml/XPathNSResolver.cpp
+    xml/XPathParser.cpp
+    xml/XPathPath.cpp
+    xml/XPathPredicate.cpp
+    xml/XPathResult.cpp
+    xml/XPathStep.cpp
+    xml/XPathUtil.cpp
+    xml/XPathValue.cpp
+    xml/XPathVariableReference.cpp
+    xml/XSLImportRule.cpp
+    xml/XSLStyleSheet.cpp
+    xml/XSLTProcessor.cpp
+
+    rendering/AutoTableLayout.cpp
+    rendering/bidi.cpp
+    rendering/break_lines.cpp
+    rendering/CounterNode.cpp
+    rendering/CounterResetNode.cpp
+    rendering/DeprecatedSlider.cpp
+    rendering/EllipsisBox.cpp
+    rendering/FixedTableLayout.cpp
+    rendering/HitTestResult.cpp
+    rendering/InlineBox.cpp
+    rendering/InlineFlowBox.cpp
+    rendering/InlineTextBox.cpp
+    rendering/ListMarkerBox.cpp
+    rendering/RenderApplet.cpp
+    rendering/RenderArena.cpp
+    rendering/RenderBlock.cpp
+    rendering/RenderBox.cpp
+    rendering/RenderBR.cpp
+    rendering/RenderButton.cpp
+    rendering/RenderContainer.cpp
+    rendering/RenderCounter.cpp
+    rendering/RenderFieldset.cpp
+    rendering/RenderFileUploadControl.cpp
+    rendering/RenderFlexibleBox.cpp
+    rendering/RenderFlow.cpp
+    rendering/RenderFormElement.cpp
+    rendering/RenderFrame.cpp
+    rendering/RenderFrameSet.cpp
+    rendering/RenderHTMLCanvas.cpp
+    rendering/RenderImage.cpp
+    rendering/RenderInline.cpp
+    rendering/RenderLabel.cpp
+    rendering/RenderLayer.cpp
+    rendering/RenderLegend.cpp
+    rendering/RenderLineEdit.cpp
+    rendering/RenderListBox.cpp
+    rendering/RenderListItem.cpp
+    rendering/RenderListMarker.cpp
+    rendering/RenderMenuList.cpp
+    rendering/RenderObject.cpp
+    rendering/RenderPart.cpp
+    rendering/RenderPartObject.cpp
+    rendering/RenderReplaced.cpp
+    rendering/RenderStyle.cpp
+    rendering/RenderTableCell.cpp
+    rendering/RenderTableCol.cpp
+    rendering/RenderTable.cpp
+    rendering/RenderTableRow.cpp
+    rendering/RenderTableSection.cpp
+    rendering/RenderTextControl.cpp
+    rendering/RenderText.cpp
+    rendering/RenderTextFragment.cpp
+    rendering/RenderTheme.cpp
+    rendering/RenderTreeAsText.cpp
+    rendering/RenderView.cpp
+    rendering/RenderWidget.cpp
+    rendering/RootInlineBox.cpp
+    rendering/SVGRenderTreeAsText.cpp
+
+    # Optional SVG/XPath support
+    ${SVG_SOURCES}
+    ${XPATH_SOURCES}
+
+    # Generated JavaScript bindings
     ${WebCore-unity-IDLGeneratedSources}
 )
 
-kde4_add_library(WebCore-unity SHARED  ${WebCore_SRCS})
+kde4_add_library( WebCore-unity SHARED  ${WebCore_SRCS} )
 
 IF (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
-  ${QT_QT3SUPPORT_LIBRARY}
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTSVG_LIBRARY}
-  ${QT_QTGUI_LIBRARY}
-  ${LIBXSLT_LIBRARIES}
-  ${LIBXML2_LIBRARIES}
-  icuuc
-  kio
-  wtf-unity
-  kjs-unity
-  pcre-unity
-  z
-  sqlite3
+    ${LIBXML2_LIBRARIES}
+    ${LIBXSLT_LIBRARIES}
+
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+
+    icuuc
+    kio
+    kjs-unity
+    pcre-unity
+    sqlite3
+    wtf-unity
+    z
 )
 ELSE (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTGUI_LIBRARY}
-  ${LIBXSLT_LIBRARIES}
-  ${LIBXML2_LIBRARIES}
-  icuuc
-  wtf-unity
-  kjs-unity
-  pcre-unity
-  z
-  sqlite3
+    ${LIBXSLT_LIBRARIES}
+    ${LIBXML2_LIBRARIES}
+
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+
+    icuuc
+    kjs-unity
+    pcre-unity
+    sqlite3
+    wtf-unity
+    z
 )
 ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
-install (TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR})
+install( TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR} )
