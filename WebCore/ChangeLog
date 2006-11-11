@@ -1,5 +1,21 @@
 2006-11-11  Graham Dennis  <graham.dennis@gmail.com>
 
+        Reviewed by hyatt.
+
+        A layout test was added when this bug was fixed, so none needed now.
+        
+        Cleanup after:
+        REGRESSION (r16122): min/max widths incorrectly calculated for contentEditable text
+        http://bugs.webkit.org/show_bug.cgi?id=11570
+        
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::isSpace): Removed.
+        * rendering/RenderText.cpp:
+        (WebCore::isSpace): Added.
+        (WebCore::RenderText::calcMinMaxWidth): Use inline function instead of polluting RenderStyle.
+
+2006-11-11  Graham Dennis  <graham.dennis@gmail.com>
+
         Reviewed by mitz.
         
         REGRESSION (r16122): min/max widths incorrectly calculated for contentEditable text

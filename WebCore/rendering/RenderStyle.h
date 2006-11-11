@@ -1328,7 +1328,6 @@ public:
         }
         return false;
     }
-    bool isSpace(UChar c) const { return c == ' ' || (c == 0xa0 && nbspMode() == SPACE); }
     bool breakOnlyAfterWhiteSpace() const {
         return whiteSpace() == PRE_WRAP || khtmlLineBreak() == AFTER_WHITE_SPACE;
     }
