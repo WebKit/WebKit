@@ -74,6 +74,7 @@ namespace WebCore {
         ResourceRequest()
             : m_cachePolicy(UseProtocolCachePolicy)
             , m_timeoutInterval(defaultTimeoutInterval)
+            , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
         {
         }
