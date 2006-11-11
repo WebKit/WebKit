@@ -6574,8 +6574,8 @@ licitly cast or change the input and return types of functions to avoid conversi
         Reviewed by Darin, with help from Eric, Maciej.
 
         - More changes to support super-accurate JS iBench. Doesn't work on 
-        Windows. (Doesn't break Windows, either.) I've filed [http://bugzilla.
-        opendarwin.org/show_bug.cgi?id= 7399] about that. 
+        Windows. (Doesn't break Windows, either.) I've filed 
+        [http://bugs.webkit.org/show_bug.cgi?id=7399] about that. 
 
         * kjs/interpreter.cpp:
         (KJS::Interpreter::evaluate): Print line numbers with exception output
