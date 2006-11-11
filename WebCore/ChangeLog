@@ -29,7 +29,7 @@
 
         Reviewed by hyatt.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10893
+        http://bugs.webkit.org/show_bug.cgi?id=10893
         InsertRule can not handle @import statements
 
         Allow @import as part of a css rule.
@@ -3228,7 +3228,7 @@
 
         Reviewed by Tim H, landed by Anders.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10840
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=10840
         REGRESSION: Shadow of file upload button is clipped
 
         * rendering/RenderFileUploadControl.cpp:
@@ -13035,7 +13035,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         Reviewed by Eric.
 
         Bug 10837: REGRESSION: Yahoo New Charts Crashes WebKit
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10837
+        http://bugs.webkit.org/show_bug.cgi?id=10837
 
         Return null when there is no frame. This matches Firefox.
 

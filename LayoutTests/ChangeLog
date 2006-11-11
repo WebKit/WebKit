@@ -3,7 +3,7 @@
         Reviewed by hyatt.
 
         Testcase for:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10893
+        http://bugs.webkit.org/show_bug.cgi?id=10893
         InsertRule can not handle @import statements
 
         * fast/dom/css-insert-import-rule-expected.txt: Added.
@@ -1578,7 +1578,7 @@ text-clip was an incorrect test, rather than an incorrect result
 
         Reviewed by Eric.
 
-        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10837
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10837
         Bug 10837: REGRESSION: Yahoo New Charts Crashes WebKit
 
         * fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.checksum: Added.
