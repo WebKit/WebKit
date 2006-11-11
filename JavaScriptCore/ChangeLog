@@ -1,3 +1,16 @@
+2006-11-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11508
+        Undisable some warnings for JSImmediate.h
+
+        Fix suggested by Don Gibson.
+
+        * kjs/JSImmediate.h:
+        Re-enable all MSVC warnings, move the remaining runtime checks
+        to compile-time.
+
 2006-11-10  Zalan Bujtas  <zalan.bujtas@nokia.com>
 
         Reviewed by Maciej.
