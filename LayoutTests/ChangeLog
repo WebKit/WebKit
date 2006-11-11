@@ -1,3 +1,15 @@
+2006-11-11  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by mitz.
+
+        REGRESSION (r16122): min/max widths incorrectly calculated for contentEditable text
+        http://bugs.webkit.org/show_bug.cgi?id=11570
+
+        * fast/text/whitespace/nbsp-mode-and-linewraps-expected.checksum: Added.
+        * fast/text/whitespace/nbsp-mode-and-linewraps-expected.png: Added.
+        * fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt: Added.
+        * fast/text/whitespace/nbsp-mode-and-linewraps.html: Added.
+
 2006-11-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

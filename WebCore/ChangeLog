@@ -1,3 +1,16 @@
+2006-11-11  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by mitz.
+        
+        REGRESSION (r16122): min/max widths incorrectly calculated for contentEditable text
+        http://bugs.webkit.org/show_bug.cgi?id=11570
+
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::isSpace): Added.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcMinMaxWidth): For the purposes of calculating the line widths, 
+        treat non-breaking spaces the same as normal spaces if -webkit-nbsp-mode is 'space'
+
 2006-11-10  Zalan Bujtas <zalan.bujtas@nokia.com>
 
         Reviewed by Maciej.

@@ -5,6 +5,7 @@
  * (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
+ * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -621,6 +622,8 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     bool firstWord = true;
     bool firstLine = true;
     int nextBreakable = -1;
+    bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
+    
     for (int i = 0; i < len; i++) {
         UChar c = txt[i];
         
@@ -660,14 +663,14 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             continue;
         }
         
-        bool hasBreak = isBreakable(txt, i, len, nextBreakable);
+        bool hasBreak = isBreakable(txt, i, len, nextBreakable, breakNBSP);
         int j = i;
-        while (c != '\n' && c != ' ' && c != '\t' && c != SOFT_HYPHEN) {
+        while (c != '\n' && !style()->isSpace(c) && c != '\t' && c != SOFT_HYPHEN) {
             j++;
             if (j == len)
                 break;
             c = txt[j];
-            if (isBreakable(txt, j, len, nextBreakable))
+            if (isBreakable(txt, j, len, nextBreakable, breakNBSP))
                 break;
         }
             
@@ -677,7 +680,7 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             currMinWidth += w;
             currMaxWidth += w;
             
-            bool isSpace = (j < len) && c == ' ';
+            bool isSpace = (j < len) && style()->isSpace(c);
             bool isCollapsibleWhiteSpace = (j < len) && style()->isCollapsibleWhiteSpace(c);
             if (j < len && style()->autoWrap())
                 m_hasBreakableChar = true;

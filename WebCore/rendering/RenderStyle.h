@@ -5,6 +5,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1327,6 +1328,7 @@ public:
         }
         return false;
     }
+    bool isSpace(UChar c) const { return c == ' ' || (c == 0xa0 && nbspMode() == SPACE); }
     bool breakOnlyAfterWhiteSpace() const {
         return whiteSpace() == PRE_WRAP || khtmlLineBreak() == AFTER_WHITE_SPACE;
     }
