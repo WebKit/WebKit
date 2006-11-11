@@ -1,3 +1,9 @@
+2006-11-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Attempt to fix Qt build.
+
+        * CMakeLists.txt: PathQt.cpp is in graphics/qt now.
+
 2006-11-11  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
 
         Tortured by Sam Weinig, Tim H., Maciej, Mitz and Alexey :-)

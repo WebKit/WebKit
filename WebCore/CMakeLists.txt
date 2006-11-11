@@ -1062,7 +1062,7 @@ set(WebCore_SRCS
     platform/graphics/qt/IntRectQt.cpp
     platform/graphics/qt/IntSizeQt.cpp
     platform/qt/PageQt.cpp
-    platform/qt/PathQt.cpp
+    platform/graphics/qt/PathQt.cpp
     platform/graphics/qt/ImageQt.cpp
     platform/graphics/qt/ImageSourceQt.cpp
     platform/qt/FontCacheQt.cpp
