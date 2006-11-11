@@ -1,3 +1,15 @@
+2006-11-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by hyatt.
+
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10893
+        InsertRule can not handle @import statements
+
+        * fast/dom/css-insert-import-rule-expected.txt: Added.
+        * fast/dom/css-insert-import-rule.html: Added.
+        * fast/dom/resources/css-insert-import-rule-red.css: Added.
+
 2006-11-11  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by mitz.

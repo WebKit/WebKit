@@ -1,3 +1,21 @@
+2006-11-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10893
+        InsertRule can not handle @import statements
+
+        Allow @import as part of a css rule.
+
+        * css/CSSGrammar.y:
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::loadCompleted):
+
 2006-11-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Attempt to fix Qt build.

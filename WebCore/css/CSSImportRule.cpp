@@ -26,6 +26,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CSSStyleSheet.h"
 #include "DocLoader.h"
+#include "Document.h"
 #include "KURL.h"
 #include "MediaList.h"
 
@@ -100,6 +101,11 @@ void CSSImportRule::insertedIntoParent()
     
     m_cachedSheet = docLoader->requestCSSStyleSheet(absHref, parentSheet->charset());
     if (m_cachedSheet) {
+        // if the import rule is issued dynamically, the sheet may be
+        // removed from the pending sheet count, so let the doc know
+        // the sheet being imported is pending.
+        if (parentSheet && parentSheet->loadCompleted())
+            parentSheet->doc()->addPendingSheet();
         m_loading = true;
         m_cachedSheet->ref(this);
     }

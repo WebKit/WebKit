@@ -70,10 +70,13 @@ public:
     Document* doc() { return m_doc; }
     const String& charset() const { return m_charset; }
 
+    bool loadCompleted() const { return m_loadCompleted; }
+
 protected:
     Document* m_doc;
     CSSNamespace* m_namespaces;
     String m_charset;
+    bool m_loadCompleted;
 };
 
 } // namespace
