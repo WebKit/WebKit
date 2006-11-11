@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #ifndef FrameLoaderClient_h
-#define FrameLoaderClient_j
+#define FrameLoaderClient_h
 
 #include "FrameLoaderTypes.h"
 #include <wtf/Forward.h>

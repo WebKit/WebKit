@@ -1,3 +1,11 @@
+2006-11-11  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Fixed header guard
+
+        * loader/FrameLoaderClient.h:
+
 2006-11-11  Darin Adler  <darin@apple.com>
 
         - attempt to fix Qt build
