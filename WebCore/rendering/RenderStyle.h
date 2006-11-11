@@ -147,7 +147,11 @@ public:
     bool isTransparent() const {
         return color.isValid() && color.alpha() == 0;
     }
-    
+
+    bool isVisible(bool checkStyle = true) const {
+        return nonZero(checkStyle) && !isTransparent();
+    }
+
     bool operator==(const BorderValue& o) const
     {
         return width == o.width && m_style == o.m_style && color == o.color;

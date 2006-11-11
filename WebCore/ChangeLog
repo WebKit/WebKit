@@ -1,3 +1,16 @@
+2006-11-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4821423> element deletion UI appears for Mail blockquote and others with less than three visible borders
+
+        Added a new function to BorderValue called isVisible(). This checks nonZero() and !isTransparent().
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * rendering/RenderStyle.h:
+        (WebCore::BorderValue::isVisible):
+
 2006-11-10  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Anders.

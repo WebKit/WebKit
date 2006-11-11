@@ -86,7 +86,7 @@ static bool isDeletableElement(Node* node)
     if (renderer->isRenderBlock() && !renderer->isTableCell()) {
         RenderStyle* style = renderer->style();
         if (style && style->hasBorder()) {
-            unsigned visibleBorders = !style->borderTop().isTransparent() + !style->borderBottom().isTransparent() + !style->borderLeft().isTransparent() + !style->borderRight().isTransparent();
+            unsigned visibleBorders = style->borderTop().isVisible() + style->borderBottom().isVisible() + style->borderLeft().isVisible() + style->borderRight().isVisible();
             if (visibleBorders >= minimumVisibleBorders)
                 return true;
         }
