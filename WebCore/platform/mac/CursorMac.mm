@@ -128,6 +128,24 @@ const Cursor& moveCursor()
     return c;
 }
 
+const Cursor& verticalTextCursor()
+{
+    static Cursor c = leakNamedCursor("verticalTextCursor", 7, 7);
+    return c;
+}
+
+const Cursor& cellCursor()
+{
+    static Cursor c = leakNamedCursor("cellCursor", 7, 7);
+    return c;
+}
+
+const Cursor& contextMenuCursor()
+{
+    static Cursor c = leakNamedCursor("contextMenuCursor", 1, 1);
+    return c;
+}
+
 const Cursor& iBeamCursor()
 {
     static Cursor c = [NSCursor IBeamCursor];

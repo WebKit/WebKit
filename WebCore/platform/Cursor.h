@@ -105,6 +105,10 @@ namespace WebCore {
     const Cursor& columnResizeCursor();
     const Cursor& rowResizeCursor();
 
+    const Cursor& verticalTextCursor();
+    const Cursor& cellCursor();
+    const Cursor& contextMenuCursor();
+
 } // namespace WebCore
 
 #endif // CURSOR_H

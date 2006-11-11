@@ -266,6 +266,9 @@ crosshair
 default
 pointer
 move
+vertical-text
+cell
+context-menu
 e-resize
 ne-resize
 nw-resize

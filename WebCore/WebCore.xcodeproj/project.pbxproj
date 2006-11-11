@@ -251,6 +251,9 @@
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
+		46D4F2490AF97E810035385A /* cellCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2460AF97E810035385A /* cellCursor.png */; };
+		46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2470AF97E810035385A /* contextMenuCursor.png */; };
+		46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2480AF97E810035385A /* verticalTextCursor.png */; };
 		4B3043B60AE0363200A82647 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043B50AE0363200A82647 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3043C70AE0370300A82647 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043C60AE0370300A82647 /* Sound.h */; };
 		4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043C80AE0371D00A82647 /* SoundMac.mm */; };
@@ -3152,6 +3155,9 @@
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
+		46D4F2460AF97E810035385A /* cellCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cellCursor.png; sourceTree = "<group>"; };
+		46D4F2470AF97E810035385A /* contextMenuCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = contextMenuCursor.png; sourceTree = "<group>"; };
+		46D4F2480AF97E810035385A /* verticalTextCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = verticalTextCursor.png; sourceTree = "<group>"; };
 		4B3043B50AE0363200A82647 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
 		4B3043C60AE0370300A82647 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
 		4B3043C80AE0371D00A82647 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundMac.mm; sourceTree = "<group>"; };
@@ -5849,6 +5855,9 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				46D4F2460AF97E810035385A /* cellCursor.png */,
+				46D4F2470AF97E810035385A /* contextMenuCursor.png */,
+				46D4F2480AF97E810035385A /* verticalTextCursor.png */,
 				1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */,
 				1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */,
 				85136C890AED665800F90A3D /* eastResizeCursor.png */,
@@ -10628,6 +10637,9 @@
 				85136CA60AED665900F90A3D /* southWestResizeCursor.png in Resources */,
 				85136CA70AED665900F90A3D /* waitCursor.png in Resources */,
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
+				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
+				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
+				46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

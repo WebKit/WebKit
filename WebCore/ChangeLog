@@ -1,3 +1,28 @@
+2006-11-11  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Tortured by Sam Weinig, Tim H., Maciej, Mitz and Alexey :-)
+
+        [CSS 3] support for vertical-text, cell and context-menu cursors
+        http://bugs.webkit.org/show_bug.cgi?id=11494
+
+        * Resources/cellCursor.png: Added.
+        * Resources/contextMenuCursor.png: Added.
+        * Resources/verticalTextCursor.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * manual-tests/cursor.html:
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+
 2006-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by aroben and ap, landed by ap.
