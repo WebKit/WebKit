@@ -1,3 +1,14 @@
+2006-11-10  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Anders.
+
+        Making the Qt code work after refactorings in WebCore.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::checkLoaded):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+
 2006-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

@@ -33,7 +33,11 @@
 #include "Page.h"
 #include "markup.h"
 #include "Document.h"
+#include "FrameView.h"
+#include "KURL.h"
+#include "FrameLoader.h"
 #include "RenderTreeAsText.h"
+#include "ChromeClientQt.h"
 
 #include <QDir>
 #include <QFile>
@@ -57,7 +61,7 @@ DumpRenderTree::DumpRenderTree()
     , m_notifier()
 {
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page();
+    Page* page = new Page(new ChromeClientQt());
     m_frame = new FrameQt(page, 0, m_client);
 
     page->setMainFrame(m_frame);
@@ -157,7 +161,7 @@ void DumpRenderTree::readSkipFile()
 
 void DumpRenderTree::checkLoaded()
 {
-    if (m_frame->isComplete()) {
+    if (m_frame->loader()->isComplete()) {
         if (!m_notifier) {
             // Dump markup in single file mode...
             DeprecatedString markup = createMarkup(m_frame->document());

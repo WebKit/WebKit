@@ -1,3 +1,13 @@
+2006-11-10  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Anders.
+
+        Adjust to the changes Brady made in the Qt code.
+
+        * loader/qt/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveIcon):
+        * loader/qt/FrameLoaderClientQt.h:
+
 2006-11-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "DumpRenderTree.h"
+#include "KURL.h"
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

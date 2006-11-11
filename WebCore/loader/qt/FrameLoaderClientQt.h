@@ -98,7 +98,7 @@ namespace WebCore {
         virtual void dispatchWillPerformClientRedirect(const KURL&, double interval, double fireDate);
         virtual void dispatchDidChangeLocationWithinPage();
         virtual void dispatchWillClose();
-
+        virtual void dispatchDidReceiveIcon();
         virtual void dispatchDidStartProvisionalLoad();
         virtual void dispatchDidReceiveTitle(const String& title);
         virtual void dispatchDidCommitLoad();
