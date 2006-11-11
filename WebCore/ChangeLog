@@ -3,7 +3,7 @@
         Reviewed/landed by Adam.
 
         Complete cleanup of the CMakeLists.txt.
-        Now all files to be build are sorted in alphabetic order.
+        Now all files to be built are sorted in alphabetic order.
 
         General style cleanup, remove all tabs etc.
 
