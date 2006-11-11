@@ -82,6 +82,10 @@ public:
     AtomicString(NSString* s) : m_string(add(String(s).impl())) { }
     operator NSString*() const { return m_string; }
 #endif
+#if PLATFORM(SYMBIAN)
+    AtomicString(const TDesC& s) : m_string(add(String(s).impl())) { }
+    operator TPtrC() const { return m_string; }
+#endif
 
     AtomicString(const DeprecatedString&);
     DeprecatedString deprecatedString() const;

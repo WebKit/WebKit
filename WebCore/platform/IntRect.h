@@ -46,6 +46,9 @@ typedef struct tagRECT RECT;
 #elif PLATFORM(QT)
 class QRect;
 #endif
+#if PLATFORM(SYMBIAN)
+class TRect;
+#endif
 
 namespace WebCore {
 
@@ -112,6 +115,11 @@ public:
 #elif PLATFORM(QT)
     IntRect(const QRect&);
     operator QRect() const;
+#endif
+#if PLATFORM(SYMBIAN)
+    IntRect(const TRect&);
+    operator TRect() const;
+    TRect Rect() const;
 #endif
 
 #if PLATFORM(CG)

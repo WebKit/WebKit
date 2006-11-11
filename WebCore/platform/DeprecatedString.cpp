@@ -52,6 +52,12 @@ namespace WebCore {
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
+#if PLATFORM(SYMBIAN)
+#undef CHECK_FOR_HANDLE_LEAKS
+// symbian:fixme need page aligned allocations as Symbian platform does not have support for valloc
+#define CHECK_FOR_HANDLE_LEAKS 1
+#endif
+
 #define ALLOC_QCHAR_GOOD_SIZE(X) (X)
 #define ALLOC_CHAR_GOOD_SIZE(X) (X)
 
@@ -2449,6 +2455,9 @@ static HandleNode *initializeHandleNodeBlock(HandlePageNode *pageNode)
 
 #if PLATFORM(WIN_OS)
     block = (HandleNode*)VirtualAlloc(0, pageSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+#elif PLATFORM(SYMBIAN)
+    // symbian::fixme needs to do page aligned allocation as valloc is not supported.
+    block = NULL;
 #else
     block = (HandleNode*)valloc(pageSize);
 #endif

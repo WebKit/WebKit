@@ -45,6 +45,9 @@ typedef struct tagSIZE SIZE;
 #elif PLATFORM(QT)
 class QSize;
 #endif
+#if PLATFORM(SYMBIAN)
+class TSize;
+#endif
 
 namespace WebCore {
 
@@ -96,6 +99,10 @@ public:
 #if PLATFORM(QT)
     IntSize(const QSize&);
     operator QSize() const;
+#endif
+#if PLATFORM(SYMBIAN)
+    IntSize(const TSize&);
+    operator TSize() const;
 #endif
 
 

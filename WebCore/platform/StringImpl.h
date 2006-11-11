@@ -142,6 +142,10 @@ public:
     StringImpl(NSString*);
     operator NSString*() const;
 #endif
+#if PLATFORM(SYMBIAN)
+    StringImpl(const TDesC&);
+    TPtrC des() const;
+#endif
 
     StringImpl(const DeprecatedString&);
 

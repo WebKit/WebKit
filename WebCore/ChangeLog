@@ -1,3 +1,56 @@
+2006-11-10  Zalan Bujtas <zalan.bujtas@nokia.com>
+
+        Reviewed by Maciej.
+
+        Added basic types for symbian platform.
+        http://bugs.webkit.org/show_bug.cgi?id=11540
+
+        * config.h:
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::AtomicString):
+        (WebCore::AtomicString::operator TPtrC):
+        * platform/DeprecatedString.cpp:
+        (WebCore::initializeHandleNodeBlock):
+        * platform/DeprecatedString.h: char _internalBuffer has to be in front of
+          the bitfields as Codewarrior (3.2.5 build 461) compiler cannot cope with
+          bitfields and breaks byte aligment
+        * platform/FloatPoint.h:
+        * platform/FloatRect.h:
+        * platform/IntPoint.h:
+        * platform/IntRect.h:
+        * platform/IntSize.h:
+        * platform/PlatformString.h:
+        (WebCore::String::operator TPtrC):
+        (WebCore::String::des):
+        * platform/StringImpl.h:
+        * platform/symbian/DeprecatedStringSymbian.cpp: Added.
+        (WebCore::DeprecatedString::setBufferFromDes):
+        (WebCore::DeprecatedString::fromDes):
+        (WebCore::DeprecatedString::des):
+        (WebCore::DeprecatedString::des8):
+        * platform/symbian/FloatPointSymbian.cpp: Added.
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::FloatPoint::operator TPoint):
+        * platform/symbian/FloatRectSymbian.cpp: Added.
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::operator TRect):
+        (WebCore::FloatRect::rect):
+        * platform/symbian/IntPointSymbian.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator TPoint):
+        * platform/symbian/IntRectSymbian.cpp: Added.
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator TRect):
+        (WebCore::IntRect::Rect):
+        * platform/symbian/IntSizeSymbian.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator TSize):
+        * platform/symbian/StringImplSymbian.cpp: Added.
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::des):
+        * platform/symbian/StringSymbian.cpp: Added.
+        (WebCore::String::String):
+
 2006-11-10  Zack Rusin  <zack@kde.org>
 
         Reviewed by Anders.

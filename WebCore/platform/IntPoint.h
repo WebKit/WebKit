@@ -47,6 +47,9 @@ typedef struct tagPOINTS POINTS;
 #elif PLATFORM(QT)
 class QPoint;
 #endif
+#if PLATFORM(SYMBIAN)
+class TPoint;
+#endif
 
 namespace WebCore {
 
@@ -81,6 +84,10 @@ public:
 #elif PLATFORM(QT)
     IntPoint(const QPoint&);
     operator QPoint() const;
+#endif
+#if PLATFORM(SYMBIAN)
+    IntPoint(const TPoint&);
+    operator TPoint() const;
 #endif
 
 private:

@@ -215,14 +215,14 @@ struct DeprecatedStringData
     unsigned _length;
     mutable DeprecatedChar *_unicode;
     mutable char *_ascii;
+    char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
+
     unsigned _maxUnicode : 30;
     bool _isUnicodeValid : 1;
     bool _isHeapAllocated : 1; // Fragile, but the only way we can be sure the instance was created with 'new'.
     unsigned _maxAscii : 31;
     bool _isAsciiValid : 1;
     
-    char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
-
 private:
     DeprecatedStringData(const DeprecatedStringData &);
     DeprecatedStringData &operator=(const DeprecatedStringData &);
@@ -267,6 +267,10 @@ public:
 #endif
 #if PLATFORM(MAC)
     static DeprecatedString fromNSString(NSString*);
+#endif
+#if PLATFORM(SYMBIAN)
+    static DeprecatedString fromDes(const TDesC&);
+    static DeprecatedString fromDes(const TDesC8&);
 #endif
     DeprecatedString &operator=(char);
     DeprecatedString &operator=(DeprecatedChar);
@@ -402,6 +406,13 @@ public:
     operator NSString*() const { return getNSString(); }
 #endif
 
+#endif
+
+#if PLATFORM(SYMBIAN)
+    TPtrC des() const;
+    TPtrC8 des8() const;
+    void setBufferFromDes(const TDesC&);
+    void setBufferFromDes(const TDesC8&);
 #endif
 
 private:

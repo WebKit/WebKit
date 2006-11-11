@@ -95,6 +95,16 @@
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
+
+#ifdef __S60__
+// we are cross-compiling, it is not really windows
+#undef WTF_PLATFORM_WIN_OS
+#undef WTF_PLATFORM_WIN
+#undef WTF_PLATFORM_CAIRO
+#define WTF_PLATFORM_S60 1
+#define WTF_PLATFORM_SYMBIAN 1
+#endif
+
 /* CPU */
 
 /* PLATFORM(PPC) */
@@ -169,6 +179,8 @@
 #if PLATFORM(KDE)
 /* FIXME: Not using Qt4 unicode for now! */
 #define WTF_USE_ICU_UNICODE 1
+#elif PLATFORM(SYMBIAN)
+#define WTF_USE_SYMBIAN_UNICODE 1
 #else
 #define WTF_USE_ICU_UNICODE 1
 #endif

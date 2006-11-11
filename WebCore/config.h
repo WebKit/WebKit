@@ -59,6 +59,10 @@ typedef float CGFloat;
 
 #endif /* PLATFORM(WIN_OS) */
 
+#if !PLATFORM(SYMBIAN)
+#define IMPORT_C
+#define EXPORT_C
+#endif
 
 #ifdef __cplusplus
 
@@ -77,4 +81,24 @@ typedef float CGFloat;
 #if PLATFORM(MAC)
 #define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
 #define WTF_USE_NPOBJECT 1
+#endif
+
+#if PLATFORM(SYMBIAN)
+#define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
+#define WTF_USE_NPOBJECT 1
+#undef XSLT_SUPPORT
+#undef WIN32
+#undef _WIN32
+#undef AVOID_STATIC_CONSTRUCTORS
+#define USE_SYSTEM_MALLOC 1
+#define U_HAVE_INT8_T 0
+#define U_HAVE_INT16_T 0
+#define U_HAVE_INT32_T 0
+#define U_HAVE_INT64_T 0
+#define U_HAVE_INTTYPES_H 0
+
+#include <stdio.h>
+#include <snprintf.h>
+#include <limits.h>
+#include <wtf/MathExtras.h>
 #endif
