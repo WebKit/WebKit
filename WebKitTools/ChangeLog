@@ -1,3 +1,24 @@
+2006-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Make DRT work again on Qt/Linux.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
+2006-11-10  Zack Rusin  <zack@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Adjusting to the recent loader changes, making it compile
+        and work.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::checkLoaded):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+
 2006-11-10  Zack Rusin  <zack@kde.org>
 
         Reviewed by Anders.

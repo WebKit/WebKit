@@ -64,8 +64,6 @@ DumpRenderTree::DumpRenderTree()
     Page* page = new Page(new ChromeClientQt());
     m_frame = new FrameQt(page, 0, m_client);
 
-    page->setMainFrame(m_frame);
-
     FrameView* view = new FrameView(m_frame);
     view->setScrollbarsMode(ScrollbarAlwaysOff);
 
