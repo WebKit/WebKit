@@ -1,3 +1,13 @@
+2006-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Added project-wide setting to disable Microsoft's made-up deprecation 
+        warnings related to std:: functions. (Doesn't have any affect yet,
+        since we currently disable all deprecation warnings.)
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2006-11-12  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.
