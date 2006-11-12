@@ -46,7 +46,7 @@
         <define>BUILDING_GDK__</define>
         <define>BUILDING_CAIRO__</define>
         <include>platform/gdk</include>
-        <include>platform/grahpics/cairo</include>
+        <include>platform/graphics/cairo</include>
         <include>$(SRCDIR)/kcanvas/device/cairo</include>
         <define>XPATH_SUPPORT</define>
         <!-- gdk build broken with without NDEBUG defined -->
@@ -61,20 +61,22 @@
             platform/gdk/FontPlatformDataGdk.cpp
             platform/gdk/FrameGdk.cpp
             platform/gdk/GlyphMapGdk.cpp
-            platform/gdk/ImageGdk.cpp
             platform/gdk/KeyEventGdk.cpp
             platform/gdk/MouseEventGdk.cpp
             platform/gdk/PageGdk.cpp
-            platform/network/gdk/ResourceHandleManager.cpp
-            platform/gdk/RenderThemeGdk.cpp
             platform/gdk/RenderPopupMenuGdk.cpp
+            platform/gdk/RenderThemeGdk.cpp
             platform/gdk/ScrollViewGdk.cpp
             platform/gdk/SharedTimerLinux.cpp
             platform/gdk/SystemTimeLinux.cpp
             platform/gdk/TemporaryLinkStubs.cpp
-            platform/network/gdk/ResourceHandleCurl.cpp
             platform/gdk/WheelEventGdk.cpp
             platform/gdk/WidgetGdk.cpp
+            platform/graphics/gdk/ImageGdk.cpp
+            platform/network/gdk/ResourceHandleCurl.cpp
+            platform/network/gdk/ResourceHandleManager.cpp
+
+            $(WEBCORE_SOURCES_PLATFORM_CAIRO)
         </sources>
 
         <clean-files>

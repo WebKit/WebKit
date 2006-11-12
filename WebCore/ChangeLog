@@ -1,3 +1,14 @@
+2006-11-13  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Fix some Linux/Gdk build issues noted by Alp Toker.
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCoreSources.bkl:
+        * platform/graphics/gdk/ImageGdk.cpp:
+        (WebCore::Image::loadPlatformResource):
+
 2006-11-12  Brady Eidson <beidson@apple.com>
 
         Reviewed by Anders
