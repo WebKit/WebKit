@@ -27,14 +27,17 @@
  */
 
 #import <WebCore/EditorClient.h>
+#import <WebCore/Shared.h>
+#import <wtf/Forward.h>
 
 @class WebFrame;
 
-class WebEditorClient : public WebCore::EditorClient {
+class WebEditorClient : public WebCore::EditorClient, public WebCore::Shared<WebEditorClient> {
 public:
-    WebEditorClient();
-    WebEditorClient(WebFrame *webFrame);
-    ~WebEditorClient();
+    static PassRefPtr<WebEditorClient> create();
+    
+    virtual void ref();
+    virtual void deref();
 
     void setWebFrame(WebFrame *webFrame);
     
@@ -47,20 +50,16 @@ public:
 
     bool shouldBeginEditing(WebCore::Range*);
     bool shouldEndEditing(WebCore::Range*);
-//    bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction);
-//    bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction);
-//    bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting);
+
     bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
-//    bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle);
-//    bool doCommandBySelector(SEL selector);
 
     void didBeginEditing();
-    void respondToChangedContents();
     void didEndEditing();
-//    void webViewDidChangeTypingStyle:(NSNotification *)notification;
-//    void webViewDidChangeSelection:(NSNotification *)notification;
-//    NSUndoManager* undoManagerForWebView:(WebView *)webView;
+
+    void respondToChangedContents();
 
 private:
+    WebEditorClient();
+    
     WebFrame *m_webFrame;
 };

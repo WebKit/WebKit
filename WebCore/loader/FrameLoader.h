@@ -330,7 +330,7 @@ namespace WebCore {
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
 #endif
 
-        void setClient(FrameLoaderClient*);
+        void setClient(PassRefPtr<FrameLoaderClient>);
         FrameLoaderClient* client() const;
 
         void setDefersLoading(bool);
@@ -569,7 +569,7 @@ namespace WebCore {
         void startIconLoader();
 
         Frame* m_frame;
-        FrameLoaderClient* m_client;
+        RefPtr<FrameLoaderClient> m_client;
 
         FrameState m_state;
         FrameLoadType m_loadType;

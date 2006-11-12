@@ -21,7 +21,7 @@
 #ifndef ChromeClient_h
 #define ChromeClient_h
 
-#include "Shared.h"
+#include "AbstractShared.h"
 
 namespace WebCore {
 
@@ -29,10 +29,8 @@ namespace WebCore {
     class Page;
     struct FrameLoadRequest;
     
-    class ChromeClient : public Shared<ChromeClient> {
+    class ChromeClient : public AbstractShared {
     public:
-        virtual ~ChromeClient() { }
-
         virtual void setWindowRect(const FloatRect&) = 0;
         virtual FloatRect windowRect() = 0;
         

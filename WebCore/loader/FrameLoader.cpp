@@ -229,9 +229,6 @@ FrameLoader::FrameLoader(Frame* frame)
 
 FrameLoader::~FrameLoader()
 {
-    if (m_client)
-        m_client->detachFrameLoader();
-
     setOpener(0);
 
     HashSet<Frame*>::iterator end = m_openedFrames.end();
@@ -2148,7 +2145,7 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
     return count;
 }
 
-void FrameLoader::setClient(FrameLoaderClient* client)
+void FrameLoader::setClient(PassRefPtr<FrameLoaderClient> client)
 {
     ASSERT(client);
     ASSERT(!m_client);
@@ -2157,7 +2154,7 @@ void FrameLoader::setClient(FrameLoaderClient* client)
 
 FrameLoaderClient* FrameLoader::client() const
 {
-    return m_client;
+    return m_client.get();
 }
 
 #if PLATFORM(MAC)
@@ -2257,8 +2254,4 @@ void FrameLoader::setTitle(const String& title)
 }
 #endif
 
-FrameLoaderClient::~FrameLoaderClient()
-{
-}
-
-}
+} // namespace WebCore

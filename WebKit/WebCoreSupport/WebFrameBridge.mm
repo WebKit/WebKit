@@ -131,7 +131,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView
 {
-    RefPtr<WebEditorClient> editorClient = new WebEditorClient;
+    RefPtr<WebEditorClient> editorClient = WebEditorClient::create();
     self = [super initMainFrameWithPage:page withEditorClient:editorClient.get()];
     [self finishInitializingWithFrameName:name view:view];
     
@@ -143,7 +143,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    RefPtr<WebEditorClient> editorClient = new WebEditorClient;
+    RefPtr<WebEditorClient> editorClient = WebEditorClient::create();
     self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:editorClient.get()];
     [self finishInitializingWithFrameName:name view:view];
 

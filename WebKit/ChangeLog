@@ -1,3 +1,39 @@
+2006-11-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        - Fixed loader crash by clarifying ownership of WebKit client objects. 
+        WebCore objects own their WebKit clients, and ref and deref through 
+        virtual methods, leaving WebKit free to use whatever client / reference-counting 
+        implementation it likes.
+        
+        WebKit on Mac just uses the same refcounting class that WebCore uses (Shared),
+        but other platforms may choose to do other things.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::ref):
+        (WebChromeClient::deref):
+        (WebChromeClient::refCount):
+        * WebCoreSupport/WebEditorClient.h: Nixed commented-out function prototypes.
+        The ones in WebCore make clear what remains to be implemented. Replaced constructor
+        with factory function to avoid leaks.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::create):
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::setWebFrame):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge initMainFrameWithPage:WebCore::frameName:view:webView:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        * WebCoreSupport/WebFrameLoaderClient.h: Replaced constructor with factory
+        function to avoid leaks.
+        (WebFrameLoaderClient::ref):
+        (WebFrameLoaderClient::deref):
+        (WebFrameLoaderClient::refCount):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::create):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _initWithWebFrameView:webView:coreFrame:]):
+
 === Safari-521.30 ===
 
 2006-11-10  Maciej Stachowiak  <mjs@apple.com>

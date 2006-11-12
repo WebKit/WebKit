@@ -53,6 +53,16 @@ WebChromeClient::WebChromeClient(WebView *webView)
 {
 }
 
+void WebChromeClient::ref() 
+{
+    Shared<WebChromeClient>::ref();
+}
+
+void WebChromeClient::deref()
+{
+    Shared<WebChromeClient>::deref();
+}
+
 // These functions scale between window and WebView coordinates because JavaScript/DOM operations 
 // assume that the WebView and the window share the same coordinate system.
 

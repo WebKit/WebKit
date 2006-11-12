@@ -34,25 +34,34 @@
 #import "WebHTMLViewInternal.h"
 #import "WebViewInternal.h"
 #import "WebEditingDelegatePrivate.h"
+#import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
+
+PassRefPtr<WebEditorClient> WebEditorClient::create()
+{
+    return new WebEditorClient;
+}
 
 WebEditorClient::WebEditorClient()
     : m_webFrame(nil) 
 {
 }
 
-WebEditorClient::WebEditorClient(WebFrame *webFrame)
-    : m_webFrame(webFrame) 
+void WebEditorClient::ref()
 {
+    Shared<WebEditorClient>::ref();
 }
 
-WebEditorClient::~WebEditorClient()
+void WebEditorClient::deref()
 {
+    Shared<WebEditorClient>::deref();
 }
 
 void WebEditorClient::setWebFrame(WebFrame *webFrame)
-{ 
+{
+    ASSERT(!m_webFrame); // Should only be called during initialization
+    ASSERT(webFrame);
     m_webFrame = webFrame;
 }
 

@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Editor_Client_h__
-#define Editor_Client_h__
+#ifndef Editor_Client_h
+#define Editor_Client_h
 
-#include "Shared.h"
+#include "AbstractShared.h"
 
 namespace WebCore {
 
@@ -34,10 +34,8 @@ class CSSStyleDeclaration;
 class Range;
 class HTMLElement;
 
-class EditorClient : public Shared<EditorClient>{
+class EditorClient : public AbstractShared {
 public:
-    virtual ~EditorClient() { }
-
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
     
@@ -47,22 +45,21 @@ public:
 
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;
-//    virtual bool shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) = 0;
-//    virtual bool shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertAction givenAction) = 0;
-//    virtual bool shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) = 0;
+//  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) = 0;
+//  virtual bool shouldInsertText(NSString*, Range *replacingRange, WebViewInsertAction) = 0;
+//  virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, NSSelectionAffinity, bool stillSelecting) = 0;
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
-//    virtual bool shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle) = 0;
-//    virtual bool doCommandBySelector(SEL selector) = 0;
+//  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;
+//  virtual bool doCommandBySelector(SEL selector) = 0;
 //
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void didEndEditing() = 0;
-//    virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
-//    virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;
-//    virtual NSUndoManager* undoManagerForWebView:(WebView *)webView = 0;
-
+//  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
+//  virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;
+//  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView = 0;
 };
 
 }
 
-#endif // Editor_Client_h__
+#endif // Editor_Client_h
