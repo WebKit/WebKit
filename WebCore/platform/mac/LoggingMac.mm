@@ -57,6 +57,8 @@ void InitializeLoggingChannelsIfNecessary()
     initializeLogChannel(LogIconDatabase);
     initializeLogChannel(LogSQLDatabase);
     initializeLogChannel(LogSpellingAndGrammar);
+    initializeLogChannel(LogBackForward);
+    initializeLogChannel(LogHistory);
 }
 
 } // namespace WebCore
