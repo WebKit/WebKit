@@ -30,18 +30,21 @@
 
 #include "ChromeClient.h"
 #include "FloatRect.h"
+#include "Shared.h"
 
 namespace WebCore {
 
     class FloatRect;
     class Page;
     struct FrameLoadRequest;
-    
-    class ChromeClientQt : public ChromeClient
-    {
+
+    class ChromeClientQt : public ChromeClient, public Shared<ChromeClientQt> {
     public:
         ChromeClientQt();
         virtual ~ChromeClientQt();
+
+        virtual void ref();
+        virtual void deref();
 
         virtual void setWindowRect(const FloatRect&);
         virtual FloatRect windowRect();

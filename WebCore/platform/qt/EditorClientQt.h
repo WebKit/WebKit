@@ -31,11 +31,15 @@
 #define EditorClientQt_H
 
 #include "EditorClient.h"
+#include "Shared.h"
 
 namespace WebCore {
 
-class EditorClientQt : public EditorClient {
+class EditorClientQt : public EditorClient, public Shared<EditorClientQt> {
 public:
+    virtual void ref();
+    virtual void deref();
+
     virtual bool shouldDeleteRange(Range*);
     virtual bool shouldShowDeleteInterface(HTMLElement*);
 

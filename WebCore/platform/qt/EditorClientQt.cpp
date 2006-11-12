@@ -36,6 +36,16 @@
 
 namespace WebCore {
 
+void EditorClientQt::ref()
+{
+    Shared<EditorClientQt>::ref();
+}
+
+void EditorClientQt::deref()
+{
+    Shared<EditorClientQt>::deref();
+}
+
 bool EditorClientQt::shouldDeleteRange(Range*)
 {
     notImplemented();

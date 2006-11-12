@@ -32,6 +32,7 @@
 #include "KURL.h"
 #include "FrameQt.h"
 #include "FrameLoader.h"
+#include "Shared.h"
 
 namespace WebCore {
 
@@ -44,12 +45,14 @@ namespace WebCore {
 
     struct LoadErrorResetToken;
 
-    class FrameLoaderClientQt : public FrameLoaderClient
-    {
+    class FrameLoaderClientQt : public FrameLoaderClient, public Shared<FrameLoaderClientQt> {
     public:
         FrameLoaderClientQt();
         ~FrameLoaderClientQt();
         virtual void detachFrameLoader();
+
+        virtual void ref();
+        virtual void deref();
 
         virtual bool hasWebView() const; // mainly for assertions
         virtual bool hasFrameView() const; // ditto

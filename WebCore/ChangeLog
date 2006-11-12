@@ -1,3 +1,23 @@
+2006-11-12  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix Qt build. Missing AbstractShared implementation.
+        http://bugs.webkit.org/show_bug.cgi?id=11581
+
+        * loader/qt/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::ref):
+        (WebCore::FrameLoaderClientQt::deref):
+        * loader/qt/FrameLoaderClientQt.h:
+        * platform/qt/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ref):
+        (WebCore::ChromeClientQt::deref):
+        * platform/qt/ChromeClientQt.h:
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::ref):
+        (WebCore::EditorClientQt::deref):
+        * platform/qt/EditorClientQt.h:
+
 2006-11-13  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.
