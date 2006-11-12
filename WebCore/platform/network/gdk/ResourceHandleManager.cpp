@@ -147,7 +147,7 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
                         }
                         default:
                             printf("Curl ERROR %s\n", curl_easy_strerror(msg->data.result));
-                            job->setError(msg->data.result);
+                            // FIXME: report an error?
                             remove(job);
                             break;
                     }
@@ -209,7 +209,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
         // timeout will occur and do curl_multi_perform
         if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
             printf("Error %d starting job %s\n", ret, job->url().url().ascii());
-            job->setError(1);
+            // FIXME: report an error?
             startTimer =false;
         } else
             jobs->add(job);
@@ -221,7 +221,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
 void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     remove(job);
-    job->setError(1);
+    // FIXME: report an error?
 }
 
 } // namespace WebCore

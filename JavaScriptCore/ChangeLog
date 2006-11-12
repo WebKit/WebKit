@@ -1,3 +1,12 @@
+2006-11-12  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Clean up of JavaScriptCore bakefiles.
+
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+
 2006-11-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

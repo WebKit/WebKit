@@ -29,15 +29,15 @@
 #define FrameGdk_H_
 
 #include "Frame.h"
-#include "ResourceHandleClient.h"
 #include "EditorClient.h"
+#include "ResourceHandleClient.h"
 #include <gdk/gdk.h>
 
 namespace WebCore {
 
 class Element;
 class FrameGdk;
-class EditorClient;
+class FormData;
 
 class FrameGdkClient {
 public:
@@ -84,9 +84,6 @@ public:
     virtual void urlSelected(const FrameLoadRequest&, Event*);
 
     virtual void setTitle(const String&);
-
-    virtual ObjectContentType objectContentType(const KURL&, const String& mimeType);
-    virtual Plugin* createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&);
 
     virtual void scheduleClose();
 

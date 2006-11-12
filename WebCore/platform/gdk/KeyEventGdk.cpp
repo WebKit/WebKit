@@ -132,7 +132,7 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
         case GDK_Delete:
             return "U+00007F";
         default:
-            return String::sprintf("U+%06X", toupper(keyCode));
+            return String::format("U+%06X", toupper(keyCode));
     }
 }
 

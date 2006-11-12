@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-    class ChromeClientGdk : public ChromeClient {
+    class ChromeClientGdk : public ChromeClient, public Shared<ChromeClientGdk> {
     public:
         virtual ~ChromeClientGdk() { }
             
@@ -38,6 +38,9 @@ namespace WebCore {
         virtual FloatRect pageRect();
 
         virtual float scaleFactor();
+
+        virtual void ref() { Shared<ChromeClientGdk>::ref(); }
+        virtual void deref() { Shared<ChromeClientGdk>::deref(); }
 
         virtual void focus();
         virtual void unfocus();

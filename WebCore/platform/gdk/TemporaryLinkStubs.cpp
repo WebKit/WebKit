@@ -161,12 +161,10 @@ bool FrameGdk::statusbarVisible() { notImplemented(); return 0; }
 bool FrameGdk::toolbarVisible() { notImplemented(); return 0; }
 void FrameGdk::issueTransposeCommand() { notImplemented(); }
 bool FrameGdk::canPaste() const { notImplemented(); return 0; }
-enum WebCore::ObjectContentType FrameGdk::objectContentType(KURL const&, String const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameGdk::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameGdk::issuePasteAndMatchStyleCommand() { notImplemented(); }
 bool FrameGdk::isLoadTypeReload() { notImplemented(); return false; }
 KURL FrameGdk::originalRequestURL() const { return KURL(); }
-Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
 
 void FrameGdk::goBackOrForward(int distance) { notImplemented(); }
 int FrameGdk::getHistoryLength() {notImplemented(); return 0; }
@@ -305,7 +303,7 @@ void Path::addRect(const FloatRect&) { }
 void Path::addEllipse(const FloatRect&) { }
 void Path::transform(const AffineTransform& transform) {}
 
-TextField::TextField(TextField::Type) { }
+TextField::TextField() { }
 TextField::~TextField() { }
 void TextField::setFont(WebCore::Font const&) { }
 void TextField::setAlignment(HorizontalAlignment) { }
@@ -361,8 +359,6 @@ Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
-
-void IconLoader::notifyIconChanged(const KURL&) { notImplemented(); }
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { return FloatRect(); }
 void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplemented(); }

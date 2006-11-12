@@ -31,7 +31,9 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "Page.h"
+#ifdef SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
+#endif
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include "kjs_window.h"

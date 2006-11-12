@@ -1,3 +1,36 @@
+2006-11-12  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Linux/Gdk compilation fixes, and bakefile cleanups.  Based on patches by
+        Alp Toker.
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCoreSources.bkl:
+        * page/PageState.cpp:
+        * platform/gdk/ChromeClientGdk.h:
+        (WebCore::ChromeClientGdk::ref):
+        (WebCore::ChromeClientGdk::deref):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdkClientDefault::openURL):
+        (WebCore::FrameGdkClientDefault::didReceiveData):
+        (WebCore::FrameGdkClientDefault::receivedAllData):
+        (WebCore::FrameGdk::FrameGdk):
+        (WebCore::FrameGdk::~FrameGdk):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/KeyEventGdk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        * platform/gdk/ScreenClientGdk.h: Removed.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::canPaste):
+        (FrameGdk::originalRequestURL):
+        (TextField::TextField):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        * webcore-base.bkl:
+
 2006-11-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

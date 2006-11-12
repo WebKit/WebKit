@@ -1,26 +1,21 @@
 <?xml version="1.0" ?>
-<!-- generate GnuMakefile with
-	bakefile -f gnu gdkwebcore.bkl
-	consider forcing includes agian
-	CXX = g++  -I. include config.h
--->
+<!-- generate GNUmakefile with 'bakefile -f gnu gdklauncher.bkl' -->
 
 <makefile>
-	<include file="../../Bakefiles/presets.bkl"/>
+    <include file="../../Bakefiles/presets.bkl" />
 
-   <template id="webcore_gdk_link" template="gtk,freetype">
-   		
+    <template id="webcore_gdk_link" template="gtk,freetype">
         <define>APPLE_CHANGES=1</define>
         <!-- this GC version requires Mach's thread suspend/resume: -->
-        <if cond="PLATFORM_MACOSX=='1'">
+        <if cond="PLATFORM_MACOSX!='1'">
             <define>USE_CONSERVATIVE_GC=0</define>
         </if>
-        
+
         <if cond="PLATFORM_MACOSX=='1'">
             <define>USE_CONSERVATIVE_GC=1</define>
-        </if> 
+        </if>
 
-        <define>KHTML_XSLT=1</define>
+        <define>XSLT_SUPPORT=1</define>
 
         <if cond="FORMAT=='gnu'">
             <!-- FIXME: we need proper configure checks -->
@@ -36,29 +31,30 @@
 
         <include>$(TOPDIR)/JavaScriptCore</include>
 
-        <include>$(TOPDIR)/WebCore/.</include>
-        <include>$(TOPDIR)/WebCore/include</include>
+        <include>$(TOPDIR)/WebCore</include>
         <include>$(TOPDIR)/WebCore/DerivedSources/WebCore</include>
         <include>$(TOPDIR)/WebCore/bindings/js</include>
         <include>$(TOPDIR)/WebCore/bridge</include>
-        <include>$(TOPDIR)/WebCore/editing</include>
-        <include>$(TOPDIR)/WebCore/html</include>
         <include>$(TOPDIR)/WebCore/css</include>
         <include>$(TOPDIR)/WebCore/dom</include>
-        <include>$(TOPDIR)/WebCore/kwq</include>
+        <include>$(TOPDIR)/WebCore/editing</include>
+        <include>$(TOPDIR)/WebCore/html</include>
+        <include>$(TOPDIR)/WebCore/include</include>
         <include>$(TOPDIR)/WebCore/loader</include>
         <include>$(TOPDIR)/WebCore/page</include>
-        <include>$(TOPDIR)/WebCore/platform</include>
-        <include>$(TOPDIR)/WebCore/platform/image-decoders</include>
+        <include>$(TOPDIR)/WebCore/platform/gdk</include>
+        <include>$(TOPDIR)/WebCore/platform/graphics/cairo</include>
+        <include>$(TOPDIR)/WebCore/platform/graphics</include>
         <include>$(TOPDIR)/WebCore/platform/image-decoders/gif</include>
         <include>$(TOPDIR)/WebCore/platform/image-decoders/jpeg</include>
         <include>$(TOPDIR)/WebCore/platform/image-decoders/png</include>
         <include>$(TOPDIR)/WebCore/platform/image-decoders/zlib</include>
+        <include>$(TOPDIR)/WebCore/platform/image-decoders</include>
+        <include>$(TOPDIR)/WebCore/platform/network</include>
+        <include>$(TOPDIR)/WebCore/platform</include>
         <include>$(TOPDIR)/WebCore/rendering</include>
         <include>$(TOPDIR)/WebCore/xml</include>
 
-        <include>$(TOPDIR)/WebCore/platform/cairo</include>
-        <include>$(TOPDIR)/WebCore/platform/gdk</include>
         <pic>on</pic>
         <threading>multi</threading>
         <warnings>default</warnings>
@@ -69,16 +65,16 @@
 
    </template>
 
-	<set var="TOPDIR">../..</set>
-    <exe id="gdklauncher" template="webcore_gdk_link">        
-		<ldflags>-L$(TOPDIR)/WebCore/Projects/gdk -lwebcore-gdk</ldflags>
+    <set var="TOPDIR">../..</set>
+    <exe id="gdklauncher" template="webcore_gdk_link">
+        <ldflags>-L$(TOPDIR)/WebCore/Projects/gdk -lwebcore-gdk</ldflags>
         <warnings>default</warnings>
         <cxx-rtti>off</cxx-rtti>
         <cxx-exceptions>off</cxx-exceptions>
         <debug-info>on</debug-info>
-        <sources>		
-          main.cpp
-		</sources>
+        <sources>
+            main.cpp
+        </sources>
     </exe>
 </makefile>
 

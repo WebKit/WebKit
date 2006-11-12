@@ -27,36 +27,38 @@
 
 #include "config.h"
 #include "FrameGdk.h"
+
 #include "ChromeClientGdk.h"
-#include "Document.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
+#include "Document.h"
+#include "EditorClient.h"
 #include "Element.h"
-#include "FrameView.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "FramePrivate.h"
-#include <gdk/gdk.h>
+#include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HitTestResult.h"
-#include "HitTestRequest.h"
 #include "HTMLDocument.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "KeyboardCodes.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
-#include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "Plugin.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
-#include "RenderLayer.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
-#include "ScreenClientGdk.h"
+#include "SSLKeyGenerator.h"
 #include "SelectionController.h"
 #include "Settings.h"
-#include "SSLKeyGenerator.h"
 #include "TypingCommand.h"
+#include <gdk/gdk.h>
 
 // This function loads resources from WebKit
 // This does not belong here and I'm not sure where
@@ -91,7 +93,7 @@ void FrameGdkClientDefault::setFrame(const FrameGdk* frame)
 
 void FrameGdkClientDefault::openURL(const KURL& url)
 {
-    m_frame->didOpenURL(url);
+    m_frame->loader()->didOpenURL(url);
     m_beginCalled = false;
 
     ResourceRequest request(url);
@@ -128,15 +130,15 @@ void FrameGdkClientDefault::didReceiveData(ResourceHandle* job, const char* data
             m_frame->setResourceRequest(request);
         }
 #endif
-        m_frame->begin(job->url());
+        m_frame->loader()->begin(job->url());
     }
 
-    m_frame->write(data, length);
+    m_frame->loader()->write(data, length);
 }
 
 void FrameGdkClientDefault::receivedAllData(ResourceHandle* job, PlatformData data)
 {
-    m_frame->end();
+    m_frame->loader()->end();
     m_beginCalled = false;
 }
 
@@ -159,7 +161,7 @@ static void doScroll(const RenderObject* r, float deltaX, float deltaY)
 }
 
 FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
-    : Frame(new Page(new ChromeClientGdk(), new ScreenClientGdk()), 0, 0), m_drawable(gdkdrawable)
+    : Frame(new Page(new ChromeClientGdk()), 0, 0), m_drawable(gdkdrawable)
 {
     Settings* settings = new Settings;
     settings->setAutoLoadImages(true);
@@ -196,24 +198,9 @@ FrameGdk::FrameGdk(Page* page, Element* element, PassRefPtr<EditorClient> editor
 
 FrameGdk::~FrameGdk()
 {
-    cancelAndClear();
+    loader()->cancelAndClear();
 }
 
-void FrameGdk::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
-{
-    ResourceRequest request = frameLoadRequest.resourceRequest();
-
-    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    if (d->m_submittedFormURL == request.url())
-        return;
-
-    d->m_submittedFormURL = request.url();
-
-    if (client())
-        client()->submitForm(request.httpMethod(), request.url(), &request.httpBody());
-
-    clearRecordedFormValues();
-}
 
 void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
 {
