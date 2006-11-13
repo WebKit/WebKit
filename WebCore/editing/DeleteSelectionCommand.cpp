@@ -523,7 +523,7 @@ void DeleteSelectionCommand::saveFullySelectedAnchor()
     Node* afterEndAnchor = enclosingNodeWithTag(visibleEnd.next().deepEquivalent().upstream().node(), aTag);
 
     if (startAnchor && startAnchor == endAnchor && startAnchor != beforeStartAnchor && endAnchor != afterEndAnchor)
-        document()->frame()->editor()->setRemovedAnchor(startAnchor->cloneNode(false).get());
+        document()->frame()->editor()->setRemovedAnchor(startAnchor->cloneNode(false));
 }
 
 void DeleteSelectionCommand::doApply()

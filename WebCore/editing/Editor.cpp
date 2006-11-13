@@ -385,7 +385,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     if (m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection, false);
     
-    m_frame->editor()->setRemovedAnchor(anchor.get());
+    m_frame->editor()->setRemovedAnchor(anchor);
     
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece

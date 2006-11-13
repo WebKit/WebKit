@@ -1,3 +1,14 @@
+2006-11-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveFullySelectedAnchor):
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        * editing/Editor.h:
+        (WebCore::Editor::setRemovedAnchor): Pass a PassRefPtr.
+
 2006-11-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver
