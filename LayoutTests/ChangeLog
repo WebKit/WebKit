@@ -1,3 +1,12 @@
+2006-11-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver
+
+        * editing/pasteboard/paste-unrendered-select-expected.checksum: Added.
+        * editing/pasteboard/paste-unrendered-select-expected.png: Added.
+        * editing/pasteboard/paste-unrendered-select-expected.txt: Added.
+        * editing/pasteboard/paste-unrendered-select.html: Added.
+
 2006-11-11  Rob Buis  <buis@kde.org>
 
         Reviewed by hyatt.

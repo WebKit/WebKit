@@ -354,22 +354,32 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     Node *next;
     for (Node *n = startNode; n != pastEnd; n = next) {
         next = n->traverseNextNode();
+        bool skipDescendants = false;
+        bool addMarkupForNode = true;
+        
+        if (!n->renderer() && !enclosingNodeWithTag(n, selectTag)) {
+            skipDescendants = true;
+            addMarkupForNode = false;
+            next = n->traverseNextSibling();
+            // Don't skip over pastEnd.
+            if (pastEnd && pastEnd->isDescendantOf(n))
+                next = pastEnd;
+        }
 
         if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
             // Don't write out empty block containers that aren't fully selected.
             continue;
         
         // Add the node to the markup.
-        // FIXME: Add markup for nodes without renderers?  Also see the three checks below.
-        if (n->renderer() || enclosingNodeWithTag(n, selectTag)) {
+        if (addMarkupForNode) {
             markups.append(startMarkup(n, range, annotate, defaultStyle.get()));
             if (nodes)
                 nodes->append(n);
         }
         
-        if (n->firstChild() == 0) {
-            // Node has no children, add its close tag now.
-            if (n->renderer() || enclosingNodeWithTag(n, selectTag)) {
+        if (n->firstChild() == 0 || skipDescendants) {
+            // Node has no children, or we are skipping it's descendants, add its close tag now.
+            if (addMarkupForNode) {
                 markups.append(endMarkup(n));
                 lastClosed = n;
             }
@@ -407,8 +417,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                     }
                 }
             }
-        } else if (n->renderer() || enclosingNodeWithTag(n, selectTag))
-            // Node is an ancestor, set it to close eventually.
+        } else if (addMarkupForNode && !skipDescendants)
+            // We added markup for this node, and we're descending into it.  Set it to close eventually.
             ancestorsToClose.append(n);
     }
     

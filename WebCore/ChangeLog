@@ -1,3 +1,16 @@
+2006-11-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver
+        
+        <rdar://problem/4820026>
+        copy/paste of news.google.com yields text from hidden select element options
+
+        We were adding descendants of unrendered select elements. 
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Don't traverse into nodes without renderers, unless 
+        they are grandfathered in by a rendered select element.
+        
 2006-11-12  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Sam Weinig.
