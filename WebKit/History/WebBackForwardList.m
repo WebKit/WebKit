@@ -27,12 +27,12 @@
  */
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebKitSystemBits.h>
+#import "WebBackForwardList.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebKitLogging.h"
+#import "WebNSObjectExtras.h"
+#import "WebPreferencesPrivate.h"
+#import "WebKitSystemBits.h"
 
 #import "WebTypesInternal.h"
 

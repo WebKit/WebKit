@@ -26,14 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHistory.h>
-#import <WebKit/WebHistoryPrivate.h>
+#import "WebHistory.h"
+#import "WebHistoryPrivate.h"
 
-#import <WebKit/WebHistoryItem.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSCalendarDateExtras.h>
-#import <WebKit/WebNSURLExtras.h>
+#import "WebHistoryItem.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebKitLogging.h"
+#import "WebNSCalendarDateExtras.h"
+#import "WebNSURLExtras.h"
 #import <Foundation/NSError.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreHistory.h>
