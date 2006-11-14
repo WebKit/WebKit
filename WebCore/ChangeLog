@@ -1,3 +1,18 @@
+2006-11-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Brady
+
+        Fix Qt/Linux build.
+
+        * ChangeLog:
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::submitForm):
+        * platform/network/qt/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::add):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::submitForm):
+        * platform/qt/FrameQtClient.h:
+
 2006-11-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

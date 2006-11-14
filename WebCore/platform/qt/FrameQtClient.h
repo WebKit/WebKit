@@ -28,6 +28,7 @@
 #ifndef FrameQtClient_H
 #define FrameQtClient_H
 
+#include <wtf/PassRefPtr.h>
 #include "ResourceHandleClient.h"
 
 namespace WebCore {
@@ -43,7 +44,7 @@ public:
     virtual void setFrame(const FrameQt*) = 0;
 
     virtual void openURL(const KURL&) = 0;
-    virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
+    virtual void submitForm(const String& method, const KURL&, PassRefPtr<FormData>) = 0;
 
     // This is invoked after any ResourceHandle is done,
     // to check wheter all items to be loaded are finished.
@@ -74,7 +75,7 @@ public:
     virtual void setFrame(const FrameQt*);
 
     virtual void openURL(const KURL&);
-    virtual void submitForm(const String& method, const KURL&, const FormData*);
+    virtual void submitForm(const String& method, const KURL&, PassRefPtr<FormData>);
 
     virtual void checkLoaded();
 

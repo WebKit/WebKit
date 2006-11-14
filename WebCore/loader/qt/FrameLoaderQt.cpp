@@ -93,10 +93,11 @@ void FrameLoader::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
         m_submittedFormURL = frameLoadRequest.resourceRequest().url();
     }
 
-    if (QtFrame(m_frame)->client())
+    RefPtr<FormData> formData = frameLoadRequest.resourceRequest().httpBody();
+    if (formData && !formData->isEmpty() && QtFrame(m_frame)->client())
         QtFrame(m_frame)->client()->submitForm(frameLoadRequest.resourceRequest().httpMethod(),
                                                frameLoadRequest.resourceRequest().url(),
-                                               &frameLoadRequest.resourceRequest().httpBody());
+                                               formData);
 
     clearRecordedFormValues();
 }
