@@ -52,10 +52,10 @@ namespace WebCore {
             request.setHTTPHeaderField(name, [headers objectForKey:name]);
 
         if (NSData* bodyData = [nsRequest HTTPBody])
-            request.setHTTPBody(FormData([bodyData bytes], [bodyData length]));
+            request.setHTTPBody(PassRefPtr<FormData>(new FormData([bodyData bytes], [bodyData length])));
         else if (NSInputStream* bodyStream = [nsRequest HTTPBodyStream])
-            if (const FormData* formData = httpBodyFromStream(bodyStream))
-                request.setHTTPBody(*formData);
+            if (const PassRefPtr<FormData> formData = httpBodyFromStream(bodyStream))
+                request.setHTTPBody(formData);
         // FIXME: what to do about arbitrary body streams?
     }
 
@@ -74,8 +74,9 @@ namespace WebCore {
         for (HTTPHeaderMap::const_iterator it = request.httpHeaderFields().begin(); it != end; ++it)
             [nsRequest setValue:it->second forHTTPHeaderField:it->first];
 
-        if (!request.httpBody().isEmpty())
-            setHTTPBody(nsRequest, request.httpBody());
+        RefPtr<FormData> formData = request.httpBody();
+        if (formData && !formData->isEmpty())
+            setHTTPBody(nsRequest, formData);
 
         return [nsRequest autorelease];
     }

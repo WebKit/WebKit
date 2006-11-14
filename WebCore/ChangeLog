@@ -1,3 +1,45 @@
+2006-11-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Made FormData Shared, and pass it around as such.
+
+        * WebCore.xcodeproj/project.pbxproj: Reordered some items
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FormSubmission::FormSubmission):
+        (WebCore::FrameLoader::submitForm):
+        * loader/FrameLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::create):
+        * platform/network/FormData.h: Made FormData shared
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::postData): 
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::httpBody):
+        (WebCore::ResourceRequest::setHTTPBody): 
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::getResourceRequest):
+        (WebCore::nsURLRequest): 
+
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::getStreamFormDatas): Hash Streams to RefPtr<FormData>s
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        (WebCore::setHTTPBody):
+        (WebCore::httpBodyFromStream):
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2006-11-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -114,9 +114,9 @@ namespace WebCore {
         String httpAccept() const { return httpHeaderField("Accept"); }
         void setHTTPAccept(const String& httpUserAgent) { setHTTPHeaderField("Accept", httpUserAgent); }
 
-        const FormData& httpBody() const { return m_httpBody; }
-        FormData& httpBody() { return m_httpBody; }
-        void setHTTPBody(const FormData& httpBody) { m_httpBody = httpBody; } 
+        const PassRefPtr<FormData> httpBody() const { return m_httpBody; }
+        PassRefPtr<FormData> httpBody() { return m_httpBody; }
+        void setHTTPBody(PassRefPtr<FormData> httpBody) { m_httpBody = httpBody; } 
         
         bool allowHTTPCookies() const { return m_allowHTTPCookies; }
         void setAllowHTTPCookies(bool allowHTTPCookies) { m_allowHTTPCookies = allowHTTPCookies; }
@@ -131,7 +131,7 @@ namespace WebCore {
         KURL m_mainDocumentURL;
         String m_httpMethod;
         HTTPHeaderMap m_httpHeaderFields;
-        FormData m_httpBody;
+        RefPtr<FormData> m_httpBody;
         bool m_allowHTTPCookies;
     };
 

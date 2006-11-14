@@ -124,7 +124,7 @@ public:
 
 private:
     void parseEnctype(const String&);
-    bool formData(FormData&) const;
+    PassRefPtr<FormData> formData() const;
 
     unsigned formElementIndex(HTMLGenericFormElement*);
 

@@ -176,7 +176,7 @@ namespace WebCore {
         void load(const KURL&, const String& referrer, FrameLoadType, const String& target,
             Event*, Element* form, const HashMap<String, String>& formValues);
         void post(const KURL&, const String& referrer, const String& target,
-            const FormData&, const String& contentType,
+            PassRefPtr<FormData>, const String& contentType,
             Event*, Element* form, const HashMap<String, String>& formValues);
 #if PLATFORM(MAC)
         void load(NSURLRequest *);
@@ -343,7 +343,7 @@ namespace WebCore {
         Frame* createFrame(const KURL& URL, const String& name, Element* ownerElement, const String& referrer);
         Frame* loadSubframe(Element* ownerElement, const KURL& URL, const String& name, const String& referrer);
 
-        void submitForm(const char* action, const String& URL, const FormData&, const String& target, const String& contentType, const String& boundary, Event*);
+        void submitForm(const char* action, const String& URL, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
         void submitFormAgain();
         void submitForm(const FrameLoadRequest&, Event*);
 

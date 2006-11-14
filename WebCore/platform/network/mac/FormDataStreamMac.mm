@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-static HashMap<CFReadStreamRef, const FormData*>* streamFormDatas = 0;
+static HashMap<CFReadStreamRef, RefPtr<FormData> >* streamFormDatas = 0;
 
-static HashMap<CFReadStreamRef, const FormData*>* getStreamFormDatas()
+static HashMap<CFReadStreamRef, RefPtr<FormData> >* getStreamFormDatas()
 {
     if (!streamFormDatas)
-        streamFormDatas = new HashMap<CFReadStreamRef, const FormData*>();
+        streamFormDatas = new HashMap<CFReadStreamRef, RefPtr<FormData> >();
     return streamFormDatas;
 }
 
@@ -166,7 +166,7 @@ static void openNextStream(FormStreamFields* form)
 
 static void* formCreate(CFReadStreamRef stream, void* context)
 {
-    const FormData* formData = static_cast<const FormData*>(context);
+    RefPtr<FormData> formData = static_cast<FormData*>(context);
 
     CFSetCallBacks runLoopAndModeCallBacks = { 0, pairRetain, pairRelease, NULL, pairEqual, pairHash };
 
@@ -182,7 +182,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(formData->elements()[size - i - 1]);
 
-    getStreamFormDatas()->set(stream, new FormData(*formData));
+    getStreamFormDatas()->set(stream, formData);
 
     return newInfo;
 }
@@ -191,7 +191,6 @@ static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    delete getStreamFormDatas()->get(stream);
     getStreamFormDatas()->remove(stream);
 
     closeCurrentStream(form);
@@ -305,13 +304,13 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
+void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
 {
-    size_t count = formData.elements().size();
+    size_t count = formData.get()->elements().size();
 
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1) {
-        const FormDataElement& element = formData.elements()[0];
+        const FormDataElement& element = formData.get()->elements()[0];
         if (element.m_type == FormDataElement::data) {
             NSData *data = [[NSData alloc] initWithBytes:element.m_data.data() length:element.m_data.size()];
             [request setHTTPBody:data];
@@ -323,7 +322,7 @@ void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
     long long length = 0;
     for (size_t i = 0; i < count; ++i) {
-        const FormDataElement& element = formData.elements()[i];
+        const FormDataElement& element = formData.get()->elements()[i];
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
@@ -340,15 +339,15 @@ void setHTTPBody(NSMutableURLRequest *request, const FormData& formData)
     // Create and set the stream.
     CFReadStreamRef stream = wkCreateCustomCFReadStream(formCreate, formFinalize,
         formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,
-        const_cast<FormData*>(&formData));
+        formData.get());
     [request setHTTPBodyStream:(NSInputStream *)stream];
     CFRelease(stream);
 }
 
 
-const FormData* httpBodyFromStream(NSInputStream* stream)
+const PassRefPtr<FormData> httpBodyFromStream(NSInputStream* stream)
 {
-    return getStreamFormDatas()->get((CFReadStreamRef)stream);
+    return PassRefPtr<FormData>(getStreamFormDatas()->get((CFReadStreamRef)stream));
 }
 
 }

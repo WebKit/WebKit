@@ -29,12 +29,14 @@
 #ifndef FormDataStreamMac_h_
 #define FormDataStreamMac_h_
 
+#include "FormData.h"
+
 @class NSMutableURLRequest;
 
 namespace WebCore {
     class FormData;
-    void setHTTPBody(NSMutableURLRequest *, const FormData&);
-    const FormData* httpBodyFromStream(NSInputStream* stream);
+    void setHTTPBody(NSMutableURLRequest *, PassRefPtr<FormData>);
+    const PassRefPtr<FormData> httpBodyFromStream(NSInputStream* stream);
 }
 
 #endif // FormDataStreamMac_h_

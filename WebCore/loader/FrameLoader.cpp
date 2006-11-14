@@ -86,13 +86,13 @@ using namespace EventNames;
 struct FormSubmission {
     const char* action;
     String URL;
-    FormData data;
+    RefPtr<FormData> data;
     String target;
     String contentType;
     String boundary;
     RefPtr<Event> event;
 
-    FormSubmission(const char* a, const String& u, const FormData& d, const String& t,
+    FormSubmission(const char* a, const String& u, PassRefPtr<FormData> d, const String& t,
             const String& ct, const String& b, PassRefPtr<Event> e)
         : action(a)
         , URL(u)
@@ -420,9 +420,11 @@ void FrameLoader::submitFormAgain()
             form->contentType, form->boundary, form->event.get());
 }
 
-void FrameLoader::submitForm(const char* action, const String& url, const FormData& formData,
+void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<FormData> formData,
     const String& target, const String& contentType, const String& boundary, Event* event)
 {
+    ASSERT(formData.get());
+    
     KURL u = completeURL(url.isNull() ? "" : url);
     if (!u.isValid())
         return;
@@ -438,7 +440,7 @@ void FrameLoader::submitForm(const char* action, const String& url, const FormDa
     if (m_isRunningScript) {
         if (m_deferredFormSubmission)
             return;
-        m_deferredFormSubmission.set(new FormSubmission(action, url, formData, target,
+        m_deferredFormSubmission.set(new FormSubmission(action, url, formData.get(), target,
             contentType, boundary, event));
         return;
     }
@@ -457,16 +459,16 @@ void FrameLoader::submitForm(const char* action, const String& url, const FormDa
         DeprecatedString encodedBody;
         if (equalIgnoringCase(contentType, "multipart/form-data"))
             // FIXME: is this correct? I suspect not, but what site can we test this on?
-            encodedBody = KURL::encode_string(formData.flattenToString().deprecatedString());
+            encodedBody = KURL::encode_string(formData.get()->flattenToString().deprecatedString());
         else if (equalIgnoringCase(contentType, "text/plain")) {
             // Convention seems to be to decode, and s/&/\n/
-            encodedBody = formData.flattenToString().deprecatedString();
+            encodedBody = formData.get()->flattenToString().deprecatedString();
             encodedBody.replace('&', '\n');
             encodedBody.replace('+', ' ');
             encodedBody = KURL::decode_string(encodedBody); // Decode the rest of it
             encodedBody = KURL::encode_string(encodedBody); // Recode for the URL
         } else
-            encodedBody = KURL::encode_string(formData.flattenToString().deprecatedString());
+            encodedBody = KURL::encode_string(formData.get()->flattenToString().deprecatedString());
 
         DeprecatedString query = u.query();
         if (!query.isEmpty())
@@ -478,9 +480,9 @@ void FrameLoader::submitForm(const char* action, const String& url, const FormDa
 
     if (strcmp(action, "GET") == 0) {
         if (!mailtoForm)
-            u.setQuery(formData.flattenToString().deprecatedString());
+            u.setQuery(formData.get()->flattenToString().deprecatedString());
     } else {
-        frameRequest.resourceRequest().setHTTPBody(formData);
+        frameRequest.resourceRequest().setHTTPBody(formData.get());
         frameRequest.resourceRequest().setHTTPMethod("POST");
 
         // construct some user headers if necessary

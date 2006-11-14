@@ -73,8 +73,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
 
     // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
     [newRequest setHTTPMethod:request.httpMethod()];
-    if (!request.httpBody().isEmpty())
-        setHTTPBody(newRequest, request.httpBody());
+    RefPtr<FormData> formData = request.httpBody();
+    if (formData && !formData->isEmpty())
+        setHTTPBody(newRequest, formData);
 
     wkSupportsMultipartXMixedReplace(newRequest);
 

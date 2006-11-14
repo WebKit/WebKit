@@ -22,6 +22,7 @@
 
 #include "DeprecatedValueList.h"
 #include "PlatformString.h"
+#include "Shared.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,12 +38,12 @@ public:
     String m_filename;
 };
 
-class FormData {
+class FormData : public Shared<FormData> {
 public:
     FormData() { } 
     FormData(const void* data, size_t);
     FormData(const CString&);
-
+    
     void appendData(const void* data, size_t);
     void appendFile(const String& filename);
 

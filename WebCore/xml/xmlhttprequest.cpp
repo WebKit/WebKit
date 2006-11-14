@@ -318,7 +318,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         if (!m_encoding.isValid()) // FIXME: report an error?
             m_encoding = UTF8Encoding();
 
-        request.setHTTPBody(m_encoding.encode(body.characters(), body.length()));
+        request.setHTTPBody(PassRefPtr<FormData>(new FormData(m_encoding.encode(body.characters(), body.length()))));
     }
 
     if (m_requestHeaders.size() > 0)

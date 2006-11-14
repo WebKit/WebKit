@@ -1099,7 +1099,7 @@ void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResp
     sendRemainingDelegateMessages(identifier, response, length, error);
 }
 
-void FrameLoader::post(const KURL& URL, const String& referrer, const String& frameName, const FormData& formData, 
+void FrameLoader::post(const KURL& URL, const String& referrer, const String& frameName, PassRefPtr<FormData> formData, 
     const String& contentType, Event* event, Element* form, const HashMap<String, String>& formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
@@ -1206,8 +1206,9 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     
     [initialRequest setHTTPMethod:request.httpMethod()];
     
-    if (!request.httpBody().isEmpty())        
-        setHTTPBody(initialRequest, request.httpBody());
+    RefPtr<FormData> formData = request.httpBody();
+    if (formData && !formData->isEmpty())        
+        setHTTPBody(initialRequest, formData);
     
     HTTPHeaderMap::const_iterator end = request.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = request.httpHeaderFields().begin(); it != end; ++it)
