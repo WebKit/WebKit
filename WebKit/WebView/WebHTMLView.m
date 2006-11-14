@@ -276,6 +276,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     ASSERT(autoscrollTriggerEvent == nil);
     
     [mouseDownEvent release];
+    [keyDownEvent release];
     [draggingImageURL release];
     [pluginController release];
     [toolTip release];
@@ -3454,13 +3455,16 @@ done:
 
 - (void)keyDown:(NSEvent *)event
 {
+    BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
+
     [self retain];
 
     BOOL callSuper = NO;
 
-    _private->keyDownEvent = event;
+    [_private->keyDownEvent release];
+    _private->keyDownEvent = [event retain];
 
-    if (core([self _frame])->keyEvent(event)) {
+    if (!eventWasSentToWebCore && core([self _frame])->keyEvent(event)) {
         // WebCore processed a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
     } else if (_private->compController && [_private->compController filterKeyDown:event]) {
@@ -3477,15 +3481,15 @@ done:
     else
         [NSCursor setHiddenUntilMouseMoves:YES];
 
-    _private->keyDownEvent = nil;
-    
     [self release];
 }
 
 - (void)keyUp:(NSEvent *)event
 {
+    BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
+
     [self retain];
-    if (!core([self _frame])->keyEvent(event))
+    if (eventWasSentToWebCore || !core([self _frame])->keyEvent(event))
         [super keyUp:event];    
     [self release];
 }
@@ -4031,14 +4035,19 @@ done:
     if ([self _handleStyleKeyEquivalent:event])
         return YES;
     
-    BOOL ret;
+    BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
+    BOOL ret = NO;
+
+    [_private->keyDownEvent release];
+    _private->keyDownEvent = [event retain];
     
     [self retain];
     
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
     // But don't do it if we have already handled the event.
-    if (event != _private->keyDownEvent
+    if (!eventWasSentToWebCore 
+            && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
             && [self _web_firstResponderIsSelfOrDescendantView]
             && core([self _frame])->keyEvent(event))
         ret = YES;

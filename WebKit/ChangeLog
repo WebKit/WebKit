@@ -1,3 +1,27 @@
+2006-11-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=3387
+        Redundant keydown, keypress, keyup events sent for arrow keys
+
+        Added another layer of ugly hacks around AppKit event dispatching.
+
+        1. For arrow keys, keyDown: is invoked after performKeyEquivalent:, so had to store
+        _private->keyDownEvent in both methods, and make it persist after leaving them.
+
+        2. For Esc, AppKit calls performKeyEquivalent: with a fake event of some kind,
+        use [NSApp currentEvent] to check for this to prevent it from being passed to  WebCore.
+
+        Test: manual-tests/arrow-key-events.html
+
+        * WebView/WebHTMLView.m:
+        (-[NSMutableDictionary dealloc]):
+        (-[NSArray keyDown:]):
+        (-[NSArray keyUp:]):
+        (-[NSArray performKeyEquivalent:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2006-11-12  Brady Eidson <beidson@apple.com>
 
         Rubberstamped by Anders
