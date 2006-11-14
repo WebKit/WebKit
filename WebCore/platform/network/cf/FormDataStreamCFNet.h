@@ -30,13 +30,14 @@
 #define FormDataStreamCFNet_h_
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/Forward.h>
 
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
 
 namespace WebCore {
     class FormData;
-    void setHTTPBody(CFMutableURLRequestRef, const FormData&);
-    const FormData* httpBodyFromStream(CFReadStreamRef);
+    void setHTTPBody(CFMutableURLRequestRef, PassRefPtr<FormData>);
+    FormData* httpBodyFromStream(CFReadStreamRef);
 }
 
 #endif FormDataStreamCFNet_h_

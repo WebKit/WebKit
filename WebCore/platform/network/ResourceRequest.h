@@ -114,8 +114,7 @@ namespace WebCore {
         String httpAccept() const { return httpHeaderField("Accept"); }
         void setHTTPAccept(const String& httpUserAgent) { setHTTPHeaderField("Accept", httpUserAgent); }
 
-        const PassRefPtr<FormData> httpBody() const { return m_httpBody; }
-        PassRefPtr<FormData> httpBody() { return m_httpBody; }
+        FormData* httpBody() const { return m_httpBody.get(); }
         void setHTTPBody(PassRefPtr<FormData> httpBody) { m_httpBody = httpBody; } 
         
         bool allowHTTPCookies() const { return m_allowHTTPCookies; }

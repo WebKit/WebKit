@@ -44,12 +44,9 @@
 
 namespace WebCore {
 
-static HashMap<CFReadStreamRef, const FormData*>* streamFormDatas = 0;
-
-static HashMap<CFReadStreamRef, const FormData*>* getStreamFormDatas()
+static HashMap<CFReadStreamRef, RefPtr<FormData> >& getStreamFormDatas()
 {
-    if (!streamFormDatas)
-        streamFormDatas = new HashMap<CFReadStreamRef, const FormData*>();
+    static HashMap<CFReadStreamRef, RefPtr<FormData> > streamFormDatas;
     return streamFormDatas;
 }
 
@@ -169,7 +166,7 @@ static void openNextStream(FormStreamFields* form)
 
 static void* formCreate(CFReadStreamRef stream, void* context)
 {
-    const FormData* formData = static_cast<const FormData*>(context);
+    FormData* formData = static_cast<FormData*>(context);
 
     CFSetCallBacks runLoopAndModeCallBacks = { 0, pairRetain, pairRelease, NULL, pairEqual, pairHash };
 
@@ -185,7 +182,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(formData->elements()[size - i - 1]);
 
-    getStreamFormDatas()->set(stream, new FormData(*formData));
+    getStreamFormDatas().set(stream, adoptRef(formData));
 
     return newInfo;
 }
@@ -194,8 +191,7 @@ static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    delete getStreamFormDatas()->get(stream);
-    getStreamFormDatas()->remove(stream);
+    getStreamFormDatas().remove(stream);
 
     closeCurrentStream(form);
     CFRelease(form->scheduledRunLoopPairs);
@@ -307,16 +303,16 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-void setHTTPBody(CFMutableURLRequestRef request, const FormData& formData)
+void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
 {
-    size_t count = formData.elements().size();
+    size_t count = formData->elements().size();
 
     if (count == 0)
         return;
 
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1) {
-        const FormDataElement& element = formData.elements()[0];
+        const FormDataElement& element = formData->elements()[0];
         if (element.m_type == FormDataElement::data) {
             CFDataRef data = CFDataCreate(0, reinterpret_cast<const UInt8 *>(element.m_data.data()), element.m_data.size());
             CFURLRequestSetHTTPRequestBody(request, data);
@@ -329,7 +325,7 @@ void setHTTPBody(CFMutableURLRequestRef request, const FormData& formData)
     bool haveLength = true;
     long long length = 0;
     for (size_t i = 0; i < count; ++i) {
-        const FormDataElement& element = formData.elements()[i];
+        const FormDataElement& element = formData->elements()[i];
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
@@ -351,15 +347,15 @@ void setHTTPBody(CFMutableURLRequestRef request, const FormData& formData)
     static CFReadStreamCallBacks formDataStreamCallbacks = 
         { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule};
 
-    CFReadStreamRef stream = CFReadStreamCreate(0, &formDataStreamCallbacks, const_cast<FormData*>(&formData));
+    CFReadStreamRef stream = CFReadStreamCreate(0, &formDataStreamCallbacks, formData.releaseRef());
     CFURLRequestSetHTTPRequestBodyStream(request, stream);
     CFRelease(stream);
 }
 
 
-const FormData* httpBodyFromStream(CFReadStreamRef stream)
+FormData* httpBodyFromStream(CFReadStreamRef stream)
 {
-    return getStreamFormDatas()->get(stream);
+    return getStreamFormDatas().get(stream).get();
 }
 
 }

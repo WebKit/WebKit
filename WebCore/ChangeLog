@@ -1,3 +1,23 @@
+2006-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix up usages of FormData within CFNet loader code.
+
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::httpBody):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::getStreamFormDatas): Store RefPtr<FormData>s in the
+        streamFormDatas HashMap.
+        (WebCore::formCreate):
+        (WebCore::formFinalize): Removed delete because the remove() will deref
+        and delete if necessary.
+        (WebCore::setHTTPBody): Changed parameter to PassRefPtr.
+        (WebCore::httpBodyFromStream):
+        * platform/network/cf/FormDataStreamCFNet.h: Fix declarations.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::getResourceRequest):
+
 2006-11-14  Greg Jackson  <gjspanner@gmail.com>
 
         Reviewed by Darin.

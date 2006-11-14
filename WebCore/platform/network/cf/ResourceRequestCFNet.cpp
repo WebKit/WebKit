@@ -59,11 +59,11 @@ namespace WebCore {
        
 
         if (CFDataRef bodyData = CFURLRequestCopyHTTPRequestBody(cfRequest)) {
-            request.setHTTPBody(FormData(CFDataGetBytePtr(bodyData), CFDataGetLength(bodyData)));
+            request.setHTTPBody(new FormData(CFDataGetBytePtr(bodyData), CFDataGetLength(bodyData)));
             CFRelease(bodyData);
         } else if (CFReadStreamRef bodyStream = CFURLRequestCopyHTTPRequestBodyStream(cfRequest)) {
-            if (const FormData* formData = httpBodyFromStream(bodyStream))
-                request.setHTTPBody(*formData);
+            if (FormData* formData = httpBodyFromStream(bodyStream))
+                request.setHTTPBody(formData);
             CFRelease(bodyStream);
         }
         // FIXME: what to do about arbitrary body streams?
