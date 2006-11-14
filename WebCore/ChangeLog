@@ -1,5 +1,26 @@
 2006-11-13  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        <rdar://problem/4828264>
+        In Mail, a crash occurs at WebCore::Selection::toRange() when selecting this web content (http://www.cnet.com/)
+        
+        The start of the selection is in an editable area, and the end is in an 
+        input field inside that editable area.  The code that should pull the end
+        of such a selection outside the input field didn't escape shadow nodes,
+        it would leave a dangling end, causing the crash in toRange.
+        
+        * editing/Selection.cpp:
+        (WebCore::Selection::adjustForEditableContent):  Added an ASSERT and a fixup
+        to prevent crashes like this in future Release builds.
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot): Let this function 
+        escape shadow nodes.  We might eventually push this code down into 
+        next/previous{VisuallyDistinct}Canditate.
+        (WebCore::lastEditablePositionBeforePositionInRoot): Ditto.
+
+2006-11-13  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         * editing/DeleteSelectionCommand.cpp:

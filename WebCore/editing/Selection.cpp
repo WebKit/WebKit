@@ -356,6 +356,10 @@ void Selection::adjustForEditableContent()
         if (startRoot != baseRoot) {
             VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot);
             m_start = first.deepEquivalent();
+            if (m_start.isNull()) {
+                ASSERT_NOT_REACHED();
+                m_start = m_end;
+            }
         }
         // If the end is outside the base's editable root, cap it at the end of that root.
         // If the end is in non-editable content that is inside the base's root, put it
@@ -363,6 +367,10 @@ void Selection::adjustForEditableContent()
         if (endRoot != baseRoot) {
             VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot);
             m_end = last.deepEquivalent();
+            if (m_end.isNull()) {
+                ASSERT_NOT_REACHED();
+                m_end = m_start;
+            }
         }
     // The selection is based in non-editable content.
     } else {

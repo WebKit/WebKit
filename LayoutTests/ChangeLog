@@ -1,5 +1,14 @@
 2006-11-13  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+
+        * editing/selection/drag-select-1-expected.checksum: Added.
+        * editing/selection/drag-select-1-expected.png: Added.
+        * editing/selection/drag-select-1-expected.txt: Added.
+        * editing/selection/drag-select-1.html: Added.
+
+2006-11-13  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Oliver
 
         * editing/pasteboard/paste-unrendered-select-expected.checksum: Added.

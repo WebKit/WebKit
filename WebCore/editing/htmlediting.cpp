@@ -247,10 +247,18 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
 {
     if (comparePositions(position, Position(highestRoot, 0)) == -1)
         return VisiblePosition(Position(highestRoot, 0));
-
+    
     Position p = nextVisuallyDistinctCandidate(position);
-    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
+    Node* root = editableRootForPosition(position);
+    if (p.isNull() && root && root->isShadowNode())
+        p = Position(root->shadowParentNode(), maxDeepOffset(root->shadowParentNode()));
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot)) {
         p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
+        
+        Node* root = editableRootForPosition(position);
+        if (p.isNull() && root && root->isShadowNode())
+            p = Position(root->shadowParentNode(), maxDeepOffset(root->shadowParentNode()));
+    }
 
     return VisiblePosition(p);
 }
@@ -261,8 +269,16 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
         return VisiblePosition(Position(highestRoot, maxDeepOffset(highestRoot)));
     
     Position p = previousVisuallyDistinctCandidate(position);
-    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
+    Node* root = editableRootForPosition(position);
+    if (p.isNull() && root && root->isShadowNode())
+        p = Position(root->shadowParentNode(), 0);
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot)) {
         p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
+        
+        Node* root = editableRootForPosition(position);
+        if (p.isNull() && root && root->isShadowNode())
+            p = Position(root->shadowParentNode(), 0);
+    }
 
     return VisiblePosition(p);
 }
