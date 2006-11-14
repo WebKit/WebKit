@@ -1,3 +1,12 @@
+2006-11-14  Greg Jackson  <gjspanner@gmail.com>
+
+        Reviewed by Darin.
+
+        Preserves any pre-existing value for WEBCORE_NAVIGATOR_PLATFORM
+        rather than overriding it based on platform detection.
+
+        * bindings/js/kjs_navigator.cpp:
+
 2006-11-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

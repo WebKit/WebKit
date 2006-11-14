@@ -31,6 +31,7 @@
 #include "Language.h"
 #include "PlugInInfoStore.h"
 
+#ifndef WEBCORE_NAVIGATOR_PLATFORM
 #if PLATFORM(MAC) && PLATFORM(PPC)
 #define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"
 #elif PLATFORM(MAC) && PLATFORM(X86)
@@ -40,6 +41,7 @@
 #else
 #define WEBCORE_NAVIGATOR_PLATFORM ""
 #endif
+#endif // ifndef WEBCORE_NAVIGATOR_PLATFORM
 
 using namespace WebCore;
 
