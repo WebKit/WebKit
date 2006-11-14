@@ -1,3 +1,15 @@
+2006-11-14  Mitz Pettel  <mitz@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=11575
+        Bug 11575: REGRESSION: WebCore crash in CSSParser/HTMLTokenizer
+
+        * fast/css/css-imports-expected.checksum: Added.
+        * fast/css/css-imports-expected.png: Added.
+        * fast/css/css-imports-expected.txt: Added.
+        * fast/css/css-imports.html: Added.
+        * fast/css/resources/css-imports-2.css: Added.
+        * fast/css/resources/css-imports.css: Added.
+
 2006-11-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

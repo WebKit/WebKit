@@ -1,0 +1,3 @@
+@import "css-imports-2.css";
+@import "data:text/css,div { border-right: solid; }";
+div { border-bottom: solid; }

@@ -1,3 +1,16 @@
+2006-11-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11575
+        Bug 11575: REGRESSION: WebCore crash in CSSParser/HTMLTokenizer
+
+        Test: fast/css/css-imports.html
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        Fix the crash by testing for null pointer.
+
 2006-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Tim H.
