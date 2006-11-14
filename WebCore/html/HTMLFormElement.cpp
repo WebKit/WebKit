@@ -204,7 +204,7 @@ PassRefPtr<FormData> HTMLFormElement::formData() const
             encoding = Latin1Encoding();
     }
 
-    RefPtr<FormData> result = new FormData();
+    RefPtr<FormData> result = new FormData;
     
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElement* current = formElements[i];
@@ -375,11 +375,10 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
     if (!m_post)
         m_multipart = false;
     
-    RefPtr<FormData> postData = formData();
     if (m_post)
-        frame->loader()->submitForm("POST", m_url, postData, m_target, enctype(), boundary(), event);
+        frame->loader()->submitForm("POST", m_url, formData(), m_target, enctype(), boundary(), event);
     else
-        frame->loader()->submitForm("GET", m_url, postData, m_target, String(), String(), event);
+        frame->loader()->submitForm("GET", m_url, formData(), m_target, String(), String(), event);
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);

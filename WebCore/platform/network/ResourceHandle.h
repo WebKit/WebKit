@@ -111,7 +111,7 @@ public:
     const HTTPHeaderMap& requestHeaders() const;
     const KURL& url() const;
     const String& method() const;
-    const PassRefPtr<FormData> postData() const;
+    PassRefPtr<FormData> postData() const;
 
 private:
     bool start(DocLoader*);

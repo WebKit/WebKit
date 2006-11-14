@@ -36,7 +36,7 @@
 namespace WebCore {
     class FormData;
     void setHTTPBody(NSMutableURLRequest *, PassRefPtr<FormData>);
-    const PassRefPtr<FormData> httpBodyFromStream(NSInputStream* stream);
+    FormData* httpBodyFromStream(NSInputStream* stream);
 }
 
 #endif // FormDataStreamMac_h_

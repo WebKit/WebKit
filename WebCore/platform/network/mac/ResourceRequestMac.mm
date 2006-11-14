@@ -52,9 +52,9 @@ namespace WebCore {
             request.setHTTPHeaderField(name, [headers objectForKey:name]);
 
         if (NSData* bodyData = [nsRequest HTTPBody])
-            request.setHTTPBody(PassRefPtr<FormData>(new FormData([bodyData bytes], [bodyData length])));
+            request.setHTTPBody(new FormData([bodyData bytes], [bodyData length]));
         else if (NSInputStream* bodyStream = [nsRequest HTTPBodyStream])
-            if (const PassRefPtr<FormData> formData = httpBodyFromStream(bodyStream))
+            if (FormData* formData = httpBodyFromStream(bodyStream))
                 request.setHTTPBody(formData);
         // FIXME: what to do about arbitrary body streams?
     }

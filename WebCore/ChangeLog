@@ -1,3 +1,29 @@
+2006-11-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Cleanup of my patch last night and merging with aroben-style changes from this morning
+        (More ref-counted FormData stuff)
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::postData):
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::getStreamFormDatas):
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        (WebCore::setHTTPBody):
+        (WebCore::httpBodyFromStream):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::getResourceRequest):
+
 2006-11-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
