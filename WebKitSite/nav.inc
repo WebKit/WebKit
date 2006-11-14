@@ -39,7 +39,7 @@
         <li><a href="/quality/lifecycle.html">Bug Life Cycle</a></li>
 <?php
         if (function_exists("wp_get_archives")) {
-            echo "<li class="subtitle">Archives</li>\n";
+            print "<li class=\"subtitle\">Archives</li>\n";
             wp_get_archives('type=monthly');
         }
 ?>
