@@ -1,3 +1,13 @@
+2006-11-14  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9529
+        Bug 9529: Navigation HTML duplicated on webkit.org web site
+
+        * blog/wp-content/themes/webkit/sidebar.php: Include navigation from nav.inc rather than duplicating it here.
+        * nav.inc: Generate WordPress archive list if included from within WordPress.
+
 2006-11-07  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Dave Hyatt.

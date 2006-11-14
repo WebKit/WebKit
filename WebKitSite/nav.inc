@@ -37,6 +37,12 @@
         <li><a href="/quality/bugpriorities.html">Bug Prioritization</a></li>
         <li><a href="/quality/reduction.html">Test Case Reduction</a></li>
         <li><a href="/quality/lifecycle.html">Bug Life Cycle</a></li>
+<?php
+        if (function_exists("wp_get_archives")) {
+            echo "<li class="subtitle">Archives</li>\n";
+            wp_get_archives('type=monthly');
+        }
+?>
     </ul>
     <div id="notice">
         WebKit is open source software with portions licensed under the
