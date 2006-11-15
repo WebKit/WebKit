@@ -1,3 +1,15 @@
+2006-11-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Use Vector instead of DeprecatedPtrList.
+        
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/BreakBlockquoteCommand.cpp:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintOutline):
+
 2006-11-15  Adam Roben  <aroben@apple.com>
 
         Build fix.

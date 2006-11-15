@@ -372,7 +372,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
 
     // remove current values, if any, of the specified styles from the blocks
     // NOTE: tracks the previous block to avoid repeated processing
-    // Also, gather up all the nodes we want to process in a DeprecatedPtrList before
+    // Also, gather up all the nodes we want to process in a Vector before
     // doing anything. This averts any bugs iterating over these nodes
     // once you start removing and applying style.
     
@@ -384,13 +384,13 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     else
         beyondEnd = end.node()->traverseNextNode();
 
-    DeprecatedPtrList<Node> nodes;
+    Vector<Node*> nodes;
     for (Node *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
         nodes.append(node);
         
     Node *prevBlock = 0;
-    for (DeprecatedPtrListIterator<Node> it(nodes); it.current(); ++it) {
-        Node *block = it.current()->enclosingBlockFlowElement();
+    for (unsigned i = 0; i < nodes.size(); i++) {
+        Node *block = nodes[i]->enclosingBlockFlowElement();
         if (block != prevBlock && block->isHTMLElement()) {
             removeCSSStyle(style, static_cast<HTMLElement *>(block));
             prevBlock = block;
@@ -402,8 +402,8 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     
     // apply specified styles to the block flow elements in the selected range
     prevBlock = 0;
-    for (DeprecatedPtrListIterator<Node> it(nodes); it.current(); ++it) {
-        Node *node = it.current();
+    for (unsigned i = 0; i < nodes.size(); i++) {
+        Node *node = nodes[i];
         if (node->renderer()) {
             Node *block = node->enclosingBlockFlowElement();
             if (block != prevBlock) {

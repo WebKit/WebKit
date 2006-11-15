@@ -26,7 +26,6 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
-#include "DeprecatedPtrList.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "Text.h"
