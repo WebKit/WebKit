@@ -46,6 +46,7 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -864,14 +865,14 @@ void RenderLayer::autoscroll()
         return;
         
     Frame* currentFrame = renderer()->document()->frame();
-    IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->view()->currentMousePosition());
+    IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->eventHandler()->currentMousePosition());
     
-    if (currentFrame->mouseDownMayStartSelect()) {
+    if (currentFrame->eventHandler()->mouseDownMayStartSelect()) {
         HitTestRequest request(true, false, true);
         HitTestResult result(currentPos);
         if (hitTest(request, result)) {
             VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(currentPos));
-            currentFrame->updateSelectionForMouseDragOverPosition(pos);
+            currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
         }
     }
 
@@ -883,7 +884,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     if (!inResizeMode() || !renderer()->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE)
         return;
 
-    if (!m_object->document()->frame()->view()->mousePressed())
+    if (!m_object->document()->frame()->eventHandler()->mousePressed())
         return;
 
     // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
@@ -1156,8 +1157,9 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        m_object->element()->document()->frame()->view()->scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-                                                                        EventTargetNodeCast(m_object->element()), true);
+        m_object->element()->document()->view()->scheduleEvent
+            (new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
+            EventTargetNodeCast(m_object->element()), true);
     }
 }
 

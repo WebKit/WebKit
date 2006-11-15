@@ -27,9 +27,10 @@
 #import "Slider.h"
 
 #import "BlockExceptions.h"
-#import "TextField.h"
+#import "EventHandler.h"
 #import "FrameMac.h"
 #import "KeyboardEvent.h"
+#import "TextField.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
@@ -100,7 +101,7 @@ using namespace WebCore;
 {
     BOOL become = [super becomeFirstResponder];
     if (become && slider && slider->client()) {
-        if (!FrameMac::currentEventIsMouseDownInWidget(slider))
+        if (!EventHandler::currentEventIsMouseDownInWidget(slider))
             slider->client()->scrollToVisible(slider);
         slider->client()->focusIn(slider);
         [FrameMac::bridgeForWidget(slider) formControlIsBecomingFirstResponder:self];
@@ -127,11 +128,10 @@ using namespace WebCore;
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        if (slider) {
-            view = FrameMac::nextKeyViewForWidget(slider, SelectingNext);
-        } else {
+        if (slider)
+            view = EventHandler::nextKeyView(slider, SelectingNext);
+        else
             view = [super nextKeyView];
-        }
     } else { 
         view = [super nextKeyView];
     }
@@ -147,11 +147,10 @@ using namespace WebCore;
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        if (slider) {
-            view = FrameMac::nextKeyViewForWidget(slider, SelectingPrevious);
-        } else {
+        if (slider)
+            view = EventHandler::nextKeyView(slider, SelectingPrevious);
+        else
             view = [super previousKeyView];
-        }
     } else { 
         view = [super previousKeyView];
     }
@@ -163,8 +162,8 @@ using namespace WebCore;
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
     if (slider) {
-        FrameMac* frame = Mac(Frame::frameForWidget(slider));
-        if (!frame->tabsToAllControls(frame->currentKeyboardEvent().get()))
+        Frame* frame = Frame::frameForWidget(slider);
+        if (!frame->eventHandler()->tabsToAllControls(frame->eventHandler()->currentKeyboardEvent().get()))
             return NO;
     }
     return [self window] != nil && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
@@ -226,14 +225,9 @@ void Slider::setFont(const Font& f)
 
 Widget::FocusPolicy Slider::focusPolicy() const
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
-    FrameMac* frame = Mac(Frame::frameForWidget(this));
-    if (!frame || !frame->tabsToAllControls(frame->currentKeyboardEvent().get()))
+    Frame* frame = Frame::frameForWidget(this);
+    if (!frame || !frame->eventHandler()->tabsToAllControls(frame->eventHandler()->currentKeyboardEvent().get()))
         return NoFocus;
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
     return Widget::focusPolicy();
 }
 

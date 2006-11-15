@@ -120,7 +120,6 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 const double caretBlinkFrequency = 0.5;
-const double autoscrollInterval = 0.1;
 
 class UserStyleSheetLoader : public CachedResourceClient {
 public:
@@ -485,7 +484,7 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
     ASSERT(d->m_caretVisible);
     ASSERT(selectionController()->isCaret());
     bool caretPaint = d->m_caretPaint;
-    if (d->m_bMousePressed && caretPaint)
+    if (selectionController()->isCaretBlinkingSuspended() && caretPaint)
         return;
     d->m_caretPaint = !caretPaint;
     selectionController()->invalidateCaretRect();
@@ -572,237 +571,6 @@ void Frame::reparseConfiguration()
         d->m_doc->updateStyleSelector();
 }
 
-bool Frame::shouldDragAutoNode(Node *node, const IntPoint& point) const
-{
-    return false;
-}
-
-void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode)
-{
-    Selection newSelection;
-
-    if (innerNode && innerNode->renderer() && mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        IntPoint vPoint = view()->windowToContents(mouse.pos());
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
-        if (pos.isNotNull()) {
-            newSelection = Selection(pos);
-            newSelection.expandUsingGranularity(WordGranularity);
-        }
-    }
-    
-    if (newSelection.isRange()) {
-        d->m_selectionGranularity = WordGranularity;
-        d->m_beganSelectingText = true;
-    }
-    
-    if (shouldChangeSelection(newSelection))
-        selectionController()->setSelection(newSelection);
-}
-
-void Frame::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)
-{
-    if (event.event().button() == LeftButton) {
-        if (selectionController()->isRange())
-            // A double-click when range is already selected
-            // should not change the selection.  So, do not call
-            // selectClosestWordFromMouseEvent, but do set
-            // m_beganSelectingText to prevent handleMouseReleaseEvent
-            // from setting caret selection.
-            d->m_beganSelectingText = true;
-        else
-            selectClosestWordFromMouseEvent(event.event(), event.targetNode());
-    }
-}
-
-void Frame::handleMousePressEventTripleClick(const MouseEventWithHitTestResults& event)
-{
-    Node *innerNode = event.targetNode();
-    
-    if (event.event().button() == LeftButton && innerNode && innerNode->renderer() &&
-        mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        Selection newSelection;
-        IntPoint vPoint = view()->windowToContents(event.event().pos());
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
-        if (pos.isNotNull()) {
-            newSelection = Selection(pos);
-            newSelection.expandUsingGranularity(ParagraphGranularity);
-        }
-        if (newSelection.isRange()) {
-            d->m_selectionGranularity = ParagraphGranularity;
-            d->m_beganSelectingText = true;
-        }
-        
-        if (shouldChangeSelection(newSelection))
-            selectionController()->setSelection(newSelection);
-    }
-}
-
-void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
-{
-    Node *innerNode = event.targetNode();
-    
-    if (event.event().button() == LeftButton) {
-        if (innerNode && innerNode->renderer() &&
-            mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-            
-            // Extend the selection if the Shift key is down, unless the click is in a link.
-            bool extendSelection = event.event().shiftKey() && !event.isOverLink();
-
-            // Don't restart the selection when the mouse is pressed on an
-            // existing selection so we can allow for text dragging.
-            IntPoint vPoint = view()->windowToContents(event.event().pos());
-            if (!extendSelection && selectionController()->contains(vPoint))
-                return;
-
-            VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(vPoint));
-            if (visiblePos.isNull())
-                visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), DOWNSTREAM);
-            Position pos = visiblePos.deepEquivalent();
-            
-            Selection newSelection = selectionController()->selection();
-            if (extendSelection && newSelection.isCaretOrRange()) {
-                selectionController()->clearModifyBias();
-                
-                // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
-                // was created right-to-left
-                Position start = newSelection.start();
-                Position end = newSelection.end();
-                short before = Range::compareBoundaryPoints(pos.node(), pos.offset(), start.node(), start.offset());
-                if (before <= 0)
-                    newSelection = Selection(pos, end);
-                else
-                    newSelection = Selection(start, pos);
-
-                if (d->m_selectionGranularity != CharacterGranularity)
-                    newSelection.expandUsingGranularity(d->m_selectionGranularity);
-                d->m_beganSelectingText = true;
-            } else {
-                newSelection = Selection(visiblePos);
-                d->m_selectionGranularity = CharacterGranularity;
-            }
-            
-            if (shouldChangeSelection(newSelection))
-                selectionController()->setSelection(newSelection);
-        }
-    }
-}
-
-void Frame::handleMousePressEvent(const MouseEventWithHitTestResults& event)
-{
-    Node *innerNode = event.targetNode();
-
-    d->m_mousePressNode = innerNode;
-    d->m_dragStartPos = event.event().pos();
-
-    if (event.event().button() == LeftButton || event.event().button() == MiddleButton) {
-        d->m_bMousePressed = true;
-        d->m_beganSelectingText = false;
-
-        if (event.event().clickCount() == 2) {
-            handleMousePressEventDoubleClick(event);
-            return;
-        }
-        if (event.event().clickCount() >= 3) {
-            handleMousePressEventTripleClick(event);
-            return;
-        }
-        handleMousePressEventSingleClick(event);
-    }
-    
-   setMouseDownMayStartAutoscroll(mouseDownMayStartSelect() || 
-        (d->m_mousePressNode && d->m_mousePressNode->renderer() && d->m_mousePressNode->renderer()->shouldAutoscroll()));
-}
-
-void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
-{
-    // Mouse not pressed. Do nothing.
-    if (!d->m_bMousePressed)
-        return;
-
-    Node *innerNode = event.targetNode();
-
-    if (event.event().button() != 0 || !innerNode || !innerNode->renderer())
-        return;
-
-    ASSERT(mouseDownMayStartSelect() || mouseDownMayStartAutoscroll());
-
-    setMouseDownMayStartDrag(false);
-    view()->invalidateClick();
-
-     if (mouseDownMayStartAutoscroll()) {            
-        // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
-        // Otherwise, let the bridge handle it so the view can scroll itself.
-        RenderObject* renderer = innerNode->renderer();
-        while (renderer && !renderer->shouldAutoscroll())
-            renderer = renderer->parent();
-        if (renderer)
-            handleAutoscroll(renderer);
-    }
-    
-    if (mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        // handle making selection
-        IntPoint vPoint = view()->windowToContents(event.event().pos());        
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
-
-        updateSelectionForMouseDragOverPosition(pos);
-    }
-
-}
-
-void Frame::updateSelectionForMouseDragOverPosition(const VisiblePosition& pos)
-{
-    // Don't modify the selection if we're not on a node.
-    if (pos.isNull())
-        return;
-
-    // Restart the selection if this is the first mouse move. This work is usually
-    // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
-    Selection newSelection = selectionController()->selection();
-    selectionController()->clearModifyBias();
-    
-    if (!d->m_beganSelectingText) {
-        d->m_beganSelectingText = true;
-        newSelection = Selection(pos);
-    }
-
-    newSelection.setExtent(pos);
-    if (d->m_selectionGranularity != CharacterGranularity)
-        newSelection.expandUsingGranularity(d->m_selectionGranularity);
-
-    if (shouldChangeSelection(newSelection))
-        selectionController()->setSelection(newSelection);
-}
-
-void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
-{
-    stopAutoscrollTimer();
-    
-    // Used to prevent mouseMoveEvent from initiating a drag before
-    // the mouse is pressed again.
-    d->m_bMousePressed = false;
-  
-    // Clear the selection if the mouse didn't move after the last mouse press.
-    // We do this so when clicking on the selection, the selection goes away.
-    // However, if we are editing, place the caret.
-    if (mouseDownMayStartSelect() && !d->m_beganSelectingText
-            && d->m_dragStartPos == event.event().pos()
-            && selectionController()->isRange()) {
-        Selection newSelection;
-        Node *node = event.targetNode();
-        if (node && node->isContentEditable() && node->renderer()) {
-            IntPoint vPoint = view()->windowToContents(event.event().pos());
-            VisiblePosition pos = node->renderer()->positionForPoint(vPoint);
-            newSelection = Selection(pos);
-        }
-        if (shouldChangeSelection(newSelection))
-            selectionController()->setSelection(newSelection);
-    }
-
-    notifyRendererOfSelectionChange(true);
-
-    selectionController()->selectFrameElementInParentIfFullySelected();
-}
-
 bool Frame::shouldChangeSelection(const Selection& newSelection) const
 {
     return shouldChangeSelection(selectionController()->selection(), newSelection, newSelection.affinity(), false);
@@ -858,16 +626,6 @@ void Frame::setTypingStyle(CSSMutableStyleDeclaration *style)
 void Frame::clearTypingStyle()
 {
     d->m_typingStyle = 0;
-}
-
-bool Frame::tabsToLinks(KeyboardEvent*) const
-{
-    return true;
-}
-
-bool Frame::tabsToAllControls(KeyboardEvent*) const
-{
-    return true;
 }
 
 void Frame::copyToPasteboard()
@@ -1138,26 +896,6 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
     deref();
 }
 
-bool Frame::mouseDownMayStartAutoscroll() const
-{
-    return d->m_mouseDownMayStartAutoscroll;
-}
-
-void Frame::setMouseDownMayStartAutoscroll(bool b)
-{
-    d->m_mouseDownMayStartAutoscroll = b;
-}
-
-bool Frame::mouseDownMayStartDrag() const
-{
-    return d->m_mouseDownMayStartDrag;
-}
-
-void Frame::setMouseDownMayStartDrag(bool b)
-{
-    d->m_mouseDownMayStartDrag = b;
-}
-
 void Frame::setSettings(Settings *settings)
 {
     d->m_settings = settings;
@@ -1295,111 +1033,6 @@ void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
     }
 }
 
-// FIXME: should this be here?
-bool Frame::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity)
-{
-    if (!document()) {
-        return false;
-    }
-    
-    Node *node = document()->focusNode();
-    if (node == 0) {
-        node = d->m_mousePressNode.get();
-    }
-    
-    if (node != 0) {
-        RenderObject *r = node->renderer();
-        if (r != 0 && !r->isListBox()) {
-            return r->scroll(direction, granularity);
-        }
-    }
-    
-    return false;
-}
-
-void Frame::handleAutoscroll(RenderObject* renderer)
-{
-    if (d->m_autoscrollTimer.isActive())
-        return;
-    setAutoscrollRenderer(renderer);
-    startAutoscrollTimer();
-}
-
-void Frame::autoscrollTimerFired(Timer<Frame>*)
-{
-    if (!d->m_bMousePressed){
-        stopAutoscrollTimer();
-        return;
-    }
-    if (RenderObject* r = autoscrollRenderer())
-        r->autoscroll();
-}
-
-RenderObject* Frame::autoscrollRenderer() const
-{
-    return d->m_autoscrollRenderer;
-}
-
-void Frame::setAutoscrollRenderer(RenderObject* renderer)
-{
-    d->m_autoscrollRenderer = renderer;
-}
-
-HitTestResult Frame::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
-{
-    HitTestResult result(point);
-    if (!renderer())
-        return result;
-    renderer()->layer()->hitTest(HitTestRequest(true, true), result);
-
-    IntPoint widgetPoint(point);
-    while (true) {
-        Node* n = result.innerNode();
-        if (!n || !n->renderer() || !n->renderer()->isWidget())
-            break;
-        Widget* widget = static_cast<RenderWidget*>(n->renderer())->widget();
-        if (!widget || !widget->isFrameView())
-            break;
-        Frame* frame = static_cast<HTMLFrameElementBase*>(n)->contentFrame();
-        if (!frame || !frame->renderer())
-            break;
-        int absX, absY;
-        n->renderer()->absolutePosition(absX, absY, true);
-        FrameView* view = static_cast<FrameView*>(widget);
-        widgetPoint.move(view->contentsX() - absX, view->contentsY() - absY);
-        HitTestResult widgetHitTestResult(widgetPoint);
-        frame->renderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
-        result = widgetHitTestResult;
-    }
-
-    if (!allowShadowContent) {
-        Node* node = result.innerNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        result.setInnerNode(node);
-        node = result.innerNonSharedNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        result.setInnerNonSharedNode(node); 
-    }
-
-    return result;
-}
-
-
-void Frame::startAutoscrollTimer()
-{
-    d->m_autoscrollTimer.startRepeating(autoscrollInterval);
-}
-
-void Frame::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
-{
-    if (!rendererIsBeingDestroyed && autoscrollRenderer())
-        autoscrollRenderer()->stopAutoscroll();
-    setAutoscrollRenderer(0);
-    d->m_autoscrollTimer.stop();
-}
-
 // FIXME: why is this here instead of on the FrameView?
 void Frame::paint(GraphicsContext* p, const IntRect& rect)
 {
@@ -1458,39 +1091,18 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
 
 #endif
 
-Frame *Frame::frameForWidget(const Widget *widget)
+Frame* Frame::frameForWidget(const Widget* widget)
 {
     ASSERT_ARG(widget, widget);
     
-    Node *node = nodeForWidget(widget);
-    if (node)
-        return frameForNode(node);
+    if (WidgetClient* client = widget->client()) {
+        if (Element* element = client->element(const_cast<Widget*>(widget)))
+            return element->document()->frame();
+    }
     
     // Assume all widgets are either form controls, or FrameViews.
     ASSERT(widget->isFrameView());
     return static_cast<const FrameView*>(widget)->frame();
-}
-
-Frame *Frame::frameForNode(Node *node)
-{
-    ASSERT_ARG(node, node);
-    return node->document()->frame();
-}
-
-Node* Frame::nodeForWidget(const Widget* widget)
-{
-    ASSERT_ARG(widget, widget);
-    WidgetClient* client = widget->client();
-    if (!client)
-        return 0;
-    return client->element(const_cast<Widget*>(widget));
-}
-
-void Frame::clearDocumentFocus(Widget *widget)
-{
-    Node *node = nodeForWidget(widget);
-    ASSERT(node);
-    node->document()->setFocusNode(0);
 }
 
 void Frame::forceLayout()
@@ -1548,24 +1160,6 @@ void Frame::sendScrollEvent()
             return;
         doc->dispatchHTMLEvent(scrollEvent, true, false);
     }
-}
-
-bool Frame::canMouseDownStartSelect(Node* node)
-{
-    if (!node || !node->renderer())
-        return true;
-    
-    // Check to see if -webkit-user-select has been set to none
-    if (!node->renderer()->canSelect())
-        return false;
-    
-    // Some controls and images can't start a select on a mouse down.
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (curr->style()->userSelect() == SELECT_IGNORE)
-            return false;
-    }
-    
-    return true;
 }
 
 void Frame::clearTimers(FrameView *view)
@@ -1838,11 +1432,6 @@ void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
     document()->repaintMarkers(DocumentMarker::TextMatch);
 }
 
-Node *Frame::mousePressNode()
-{
-    return d->m_mousePressNode.get();
-}
-
 FrameTree* Frame::tree() const
 {
     return &d->m_treeNode;
@@ -1859,6 +1448,11 @@ DOMWindow* Frame::domWindow() const
 Page* Frame::page() const
 {
     return d->m_page;
+}
+
+EventHandler* Frame::eventHandler() const
+{
+    return &d->m_eventHandler;
 }
 
 void Frame::pageDestroyed()
@@ -1897,7 +1491,7 @@ bool Frame::prohibitsScrolling() const
     return d->m_prohibitsScrolling;
 }
 
-void Frame::setProhibitsScrolling(const bool prohibit)
+void Frame::setProhibitsScrolling(bool prohibit)
 {
     d->m_prohibitsScrolling = prohibit;
 }
@@ -1912,22 +1506,17 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element*
     , m_bPluginsEnabled(true)
     , m_settings(0)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
-    , m_bMousePressed(false)
-    , m_beganSelectingText(false)
     , m_selectionController(thisFrame)
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
     , m_editor(thisFrame, client)
     , m_command(thisFrame)
+    , m_eventHandler(thisFrame)
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isActive(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame))
     , m_userStyleSheetLoader(0)
-    , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
-    , m_autoscrollRenderer(0)
-    , m_mouseDownMayStartAutoscroll(false)
-    , m_mouseDownMayStartDrag(false)
     , m_paintRestriction(PaintRestrictionNone)
     , m_markedTextUsesUnderlines(false)
     , m_highlightTextMatches(false)

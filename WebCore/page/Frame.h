@@ -61,6 +61,7 @@ class EditCommand;
 class Editor;
 class EditorClient;
 class Element;
+class EventHandler;
 class FloatRect;
 class FrameLoader;
 class FramePrivate;
@@ -118,6 +119,7 @@ public:
     CommandByName* command() const;
     DOMWindow* domWindow() const;
     Editor* editor() const;
+    EventHandler* eventHandler() const;
     FrameLoader* loader() const;
     SelectionController* selectionController() const;
     const Settings* settings() const;
@@ -139,6 +141,8 @@ private:
 // === undecided, may or may not belong here
 
 public:
+    static Frame* frameForWidget(const Widget*);
+
     bool javaScriptEnabled() const;
     bool javaEnabled() const;
     bool pluginsEnabled() const;
@@ -182,18 +186,13 @@ public:
 
     bool isFrameSet() const;
 
-    bool scrollOverflow(ScrollDirection, ScrollGranularity);
-
     void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
-
-    static void clearDocumentFocus(Widget*);
 
     void forceLayout();
     void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
 
     void sendResizeEvent();
     void sendScrollEvent();
-    bool canMouseDownStartSelect(Node*);
 
     void clearTimers();
     static void clearTimers(FrameView*);
@@ -207,6 +206,9 @@ public:
 
     void setNeedsReapplyStyles();
     String documentTypeString() const;
+
+    bool prohibitsScrolling() const;
+    void setProhibitsScrolling(const bool);
 
 protected:
     virtual void cleanupPluginObjects() { }
@@ -284,57 +286,6 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
     virtual void textWillBeDeletedInTextField(Element* input);
     virtual void textDidChangeInTextArea(Element*);
-
-// === to be moved into EventHandler
-
-public:
-    virtual bool shouldDragAutoNode(Node*, const IntPoint&) const; // -webkit-user-drag == auto
-
-    virtual bool lastEventIsMouseUp() const = 0;
-
-    virtual bool tabsToLinks(KeyboardEvent*) const;
-    virtual bool tabsToAllControls(KeyboardEvent*) const;
-    virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
-    virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
-    virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
-
-    void updateSelectionForMouseDragOverPosition(const VisiblePosition&);
-
-    void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
-
-    virtual bool mouseDownMayStartSelect() const { return true; }
-    bool mouseDownMayStartAutoscroll() const;
-    void setMouseDownMayStartAutoscroll(bool b);
-
-    bool mouseDownMayStartDrag() const;
-    void setMouseDownMayStartDrag(bool b);
-
-    static Frame* frameForWidget(const Widget*);
-    static Node* nodeForWidget(const Widget*);
-    static Frame* frameForNode(Node*);
-
-    Node* mousePressNode();
-
-    void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
-    RenderObject* autoscrollRenderer() const;
-
-    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent);
-
-    bool prohibitsScrolling() const;
-    void setProhibitsScrolling(const bool);
-  
-    virtual bool inputManagerHasMarkedText() const { return false; }
-
-private:
-    void handleAutoscroll(RenderObject*);
-    void startAutoscrollTimer();
-    void setAutoscrollRenderer(RenderObject*);
-
-    void autoscrollTimerFired(Timer<Frame>*);
-
-    void handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
-    void handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
-    void handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
 // === to be moved into SelectionController
 

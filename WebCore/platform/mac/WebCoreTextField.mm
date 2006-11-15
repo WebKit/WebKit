@@ -28,6 +28,7 @@
 
 #import "DOMInternal.h"
 #import "Element.h"
+#import "EventHandler.h"
 #import "FrameMac.h"
 #import "HTMLNames.h"
 #import "Settings.h"
@@ -299,7 +300,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
         if (DOMHTMLInputElement* input = inputElement(widget))
             intercepted = [bridge textField:input shouldHandleEvent:event];
         if (!intercepted)
-            intercepted = [bridge _frame]->keyEvent(event);
+            intercepted = [bridge _frame]->eventHandler()->keyEvent(event);
 
         // Always intercept key up events because we don't want them
         // passed along the responder chain. This is arguably a bug in
@@ -405,7 +406,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
         
         hasFocusAndSelectionSet = YES;
 
-        if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
+        if (widget && widget->client() && !EventHandler::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
         if (widget && widget->client()) {
             widget->client()->focusIn(widget);
@@ -548,7 +549,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, SelectingNext);
+    return EventHandler::nextKeyView(widget, SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -558,7 +559,7 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, SelectingPrevious);
+    return EventHandler::nextKeyView(widget, SelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -655,10 +656,9 @@ static DOMHTMLInputElement* inputElement(TextField* widget)
 - (void)_addStringToRecentSearches:(NSString *)string
 {
     ASSERT([[self controlView] isKindOfClass:[WebCoreSearchField class]]);
-    Frame *frame = Frame::frameForWidget([(WebCoreSearchField*)[self controlView] widget]);
+    Frame* frame = Frame::frameForWidget([(WebCoreSearchField*)[self controlView] widget]);
     if (frame && frame->settings()->privateBrowsingEnabled())
         return;
-
     [super _addStringToRecentSearches:string];
 }
 

@@ -54,29 +54,4 @@ void FrameView::updateDashboardRegions()
     }
 }
 
-bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
-{
-    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
-}
-
-bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
-{
-    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
-}
-
-bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
-{
-    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
-}
-
-bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe)
-{
-    return Mac(m_frame.get())->passWheelEventToWidget(subframe->view());
-}
-
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, PlatformScrollbar* scrollbar)
-{
-    return Mac(m_frame.get())->passMouseDownEventToWidget(scrollbar);
-}
- 
 }

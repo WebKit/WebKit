@@ -71,6 +71,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameMac.h>
@@ -79,12 +80,12 @@
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebDataProtocol.h>
+#import <WebCore/WebMimeTypeRegistryBridge.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h> 
-#import <WebCore/WebMimeTypeRegistryBridge.h>
 
 using namespace WebCore;
 
@@ -1197,14 +1198,14 @@ static WebHTMLView *lastHitView = nil;
                          context:[[NSApp currentEvent] context]
                          eventNumber:0 clickCount:0 pressure:0];
         if (FrameMac* lastHitCoreFrame = core([lastHitView _frame]))
-            lastHitCoreFrame->mouseMoved(event);
+            lastHitCoreFrame->eventHandler()->mouseMoved(event);
     }
 
     lastHitView = view;
 
     if (view) {
         if (FrameMac* coreFrame = core([view _frame]))
-            coreFrame->mouseMoved(event);
+            coreFrame->eventHandler()->mouseMoved(event);
 
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
         NSDictionary *element = [view elementAtPoint:point];
@@ -2685,7 +2686,7 @@ static WebHTMLView *lastHitView = nil;
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
     _private->handlingMouseDownEvent = YES;
-    BOOL handledEvent = core([self _frame])->sendContextMenuEvent(event);
+    BOOL handledEvent = core([self _frame])->eventHandler()->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
     if (handledEvent)
         return nil;
@@ -2878,7 +2879,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [self retain];
     FrameMac* frame = core([self _frame]);
-    if (!frame || !frame->wheelEvent(event))
+    if (!frame || !frame->eventHandler()->wheelEvent(event))
         [[self nextResponder] scrollWheel:event];    
     [self release];
 }
@@ -2900,10 +2901,10 @@ static WebHTMLView *lastHitView = nil;
     if (hitHTMLView) {
         bool result = false;
         if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
-            coreFrame->setActivationEventNumber([event eventNumber]);
+            coreFrame->eventHandler()->setActivationEventNumber([event eventNumber]);
             [hitHTMLView _setMouseDownEvent:event];
             if ([hitHTMLView _isSelectionEvent:event])
-                result = coreFrame->eventMayStartDrag(event);
+                result = coreFrame->eventHandler()->eventMayStartDrag(event);
             [hitHTMLView _setMouseDownEvent:nil];
         }
         return result;
@@ -2920,7 +2921,7 @@ static WebHTMLView *lastHitView = nil;
         if ([hitHTMLView _isSelectionEvent:event])
             if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
                 [hitHTMLView _setMouseDownEvent:event];
-                result = coreFrame->eventMayStartDrag(event);
+                result = coreFrame->eventHandler()->eventMayStartDrag(event);
                 [hitHTMLView _setMouseDownEvent:nil];
             }
         return result;
@@ -2953,7 +2954,7 @@ static WebHTMLView *lastHitView = nil;
 
         // Let WebCore get a chance to deal with the event. This will call back to us
         // to start the autoscroll timer if appropriate.
-        core([self _frame])->mouseDown(event);
+        core([self _frame])->eventHandler()->mouseDown(event);
     }
 
 done:
@@ -3006,7 +3007,7 @@ done:
     [self retain];
 
     if (!_private->ignoringMouseDraggedEvents)
-        core([self _frame])->mouseDragged(event);
+        core([self _frame])->eventHandler()->mouseDragged(event);
 
     [self release];
 }
@@ -3089,7 +3090,7 @@ done:
     [self retain];
 
     [self _stopAutoscrollTimer];
-    core([self _frame])->mouseUp(event);
+    core([self _frame])->eventHandler()->mouseUp(event);
     [self _updateMouseoverWithFakeEvent];
 
     [self release];
@@ -3464,7 +3465,7 @@ done:
     [_private->keyDownEvent release];
     _private->keyDownEvent = [event retain];
 
-    if (!eventWasSentToWebCore && core([self _frame])->keyEvent(event)) {
+    if (!eventWasSentToWebCore && core([self _frame])->eventHandler()->keyEvent(event)) {
         // WebCore processed a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
     } else if (_private->compController && [_private->compController filterKeyDown:event]) {
@@ -3489,7 +3490,7 @@ done:
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
 
     [self retain];
-    if (eventWasSentToWebCore || !core([self _frame])->keyEvent(event))
+    if (eventWasSentToWebCore || !core([self _frame])->eventHandler()->keyEvent(event))
         [super keyUp:event];    
     [self release];
 }
@@ -4049,7 +4050,7 @@ done:
     if (!eventWasSentToWebCore 
             && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
             && [self _web_firstResponderIsSelfOrDescendantView]
-            && core([self _frame])->keyEvent(event))
+            && core([self _frame])->eventHandler()->keyEvent(event))
         ret = YES;
     else
         ret = [super performKeyEquivalent:event];
@@ -6109,7 +6110,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 {
     return [[[WebElementDictionary alloc] initWithHitTestResult:
-        core([self _frame])->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
+        core([self _frame])->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
 }
 
 @end

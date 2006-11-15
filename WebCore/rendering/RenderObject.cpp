@@ -35,6 +35,7 @@
 #include "CounterResetNode.h"
 #include "Document.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -2000,16 +2001,16 @@ Node* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& d
     if (!dhtmlOK && !uaOK)
         return 0;
 
-    const RenderObject* curr = this;
-    while (curr) {
+    for (const RenderObject* curr = this; curr; curr = curr->parent()) {
         Node* elt = curr->element();
         if (elt && elt->nodeType() == Node::TEXT_NODE) {
             // Since there's no way for the author to address the -webkit-user-drag style for a text node,
             // we use our own judgement.
-            if (uaOK && view()->frameView()->frame()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
+            if (uaOK && view()->frameView()->frame()->eventHandler()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
                 dhtmlWillDrag = false;
                 return curr->node();
-            } else if (curr->shouldSelect())
+            }
+            if (curr->shouldSelect())
                 // In this case we have a click in the unselected portion of text.  If this text is
                 // selectable, we want to start the selection process instead of looking for a parent
                 // to try to drag.
@@ -2019,14 +2020,13 @@ Node* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& d
             if (dhtmlOK && dragMode == DRAG_ELEMENT) {
                 dhtmlWillDrag = true;
                 return curr->node();
-            } else if (uaOK && dragMode == DRAG_AUTO
-                       && view()->frameView()->frame()->shouldDragAutoNode(curr->node(), IntPoint(x, y)))
-            {
+            }
+            if (uaOK && dragMode == DRAG_AUTO
+                    && view()->frameView()->frame()->eventHandler()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
                 dhtmlWillDrag = false;
                 return curr->node();
             }
         }
-        curr = curr->parent();
     }
     return 0;
 }
@@ -2448,8 +2448,8 @@ bool RenderObject::documentBeingDestroyed() const
 void RenderObject::destroy()
 {
     // If this renderer is being autoscrolled, stop the autoscroll timer
-    if (document() && document()->frame() && document()->frame()->autoscrollRenderer() == this)
-        document()->frame()->stopAutoscrollTimer(true);
+    if (document() && document()->frame() && document()->frame()->eventHandler()->autoscrollRenderer() == this)
+        document()->frame()->eventHandler()->stopAutoscrollTimer(true);
 
     if (m_hasCounterNodeMap) {
         RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();

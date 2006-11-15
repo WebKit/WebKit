@@ -210,7 +210,7 @@ bool HTMLFrameElementBase::isFocusable() const
 void HTMLFrameElementBase::setFocus(bool received)
 {
     HTMLElement::setFocus(received);
-    RenderFrame *renderFrame = static_cast<RenderFrame *>(renderer());
+    RenderFrame* renderFrame = static_cast<RenderFrame*>(renderer());
     if (!renderFrame || !renderFrame->widget())
         return;
     if (received)

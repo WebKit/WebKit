@@ -20,6 +20,7 @@
 #import "config.h"
 #import "PopupMenu.h"
 
+#import "EventHandler.h"
 #import "FontData.h"
 #import "FrameMac.h"
 #import "FrameView.h"
@@ -115,7 +116,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
     RefPtr<FrameMac> frame = Mac(v->frame());
-    NSEvent* event = [frame->currentEvent() retain];
+    NSEvent* event = [frame->eventHandler()->currentNSEvent() retain];
     
     RefPtr<PopupMenu> protector(this);
     
@@ -131,7 +132,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
         // Give the frame a chance to fix up its event state, since the popup eats all the
         // events during tracking.
-        frame->sendFakeEventsAfterWidgetTracking(event);
+        frame->eventHandler()->sendFakeEventsAfterWidgetTracking(event);
     }
 
     [event release];

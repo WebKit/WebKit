@@ -1,3 +1,134 @@
+2006-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - created EventHandler class, moved event handling code from both
+          Frame and FrameView in there
+
+        - added ScrollTypes.h header so you can include the scroller-related
+          enums without all of Scrollbar.h
+
+        * page/EventHandler.cpp: Added.
+        * page/EventHandler.h: Added.
+        * page/mac/EventHandlerMac.mm: Added.
+
+        * platform/ScrollBarMode.h: Removed.
+        * platform/ScrollTypes.h: Added.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::~FrameMac):
+        (WebCore::FrameMac::bridgeForWidget):
+        (WebCore::FrameMac::imageFromRect):
+        * bridge/mac/FrameViewMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge scrollOverflowInDirection:granularity:]):
+        (-[WebCoreFrameBridge nextKeyView]):
+        (-[WebCoreFrameBridge previousKeyView]):
+        (-[WebCoreFrameBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge previousKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreFrameBridge concludeDragForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragSourceMovedTo:]):
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]):
+        * dom/Document.cpp:
+        (WebCore::Document::hoveredNodeDetached):
+        * dom/Element.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::setCaretBlinkingSuspended):
+        (WebCore::SelectionController::isCaretBlinkingSuspended):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setFocus):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::isKeyboardFocusable):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::open):
+
+        * page/Frame.cpp:
+        (WebCore::Frame::caretBlinkTimerFired):
+        (WebCore::Frame::frameForWidget):
+        (WebCore::Frame::eventHandler):
+        (WebCore::Frame::setProhibitsScrolling):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::addRepaintInfo):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scrollPointRecursively):
+        (WebCore::FrameView::setContentsPos):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::scheduleEvent):
+        (WebCore::FrameView::updateOverflowStatus):
+        (WebCore::FrameView::dispatchScheduledEvents):
+        (WebCore::FrameView::windowClipRectForLayer):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+        * page/FrameView.h:
+        * page/PageState.cpp:
+        (WebCore::PageState::PageState):
+        (WebCore::PageState::restore):
+        * page/PageState.h:
+        * platform/ScrollBar.h:
+        * platform/ScrollView.h:
+        * platform/mac/ClipboardMac.mm:
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * platform/mac/SliderMac.mm:
+        (-[WebCoreSlider becomeFirstResponder]):
+        (-[WebCoreSlider nextKeyView]):
+        (-[WebCoreSlider previousKeyView]):
+        (-[WebCoreSlider canBecomeKeyView]):
+        (Slider::focusPolicy):
+        * platform/mac/WebCoreTextField.mm:
+        (-[WebCoreTextFieldController textView:shouldHandleEvent:]):
+        (-[WebCoreTextFieldController setHasFocus:]):
+        (-[WebCoreSearchField nextKeyView]):
+        (-[WebCoreSearchField previousKeyView]):
+        (-[WebCoreSearchFieldCell _addStringToRecentSearches:]):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::clearFocus):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::setResizing):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::autoscroll):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::draggableNode):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::RepaintInfo::RepaintInfo):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::viewCleared):
+
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

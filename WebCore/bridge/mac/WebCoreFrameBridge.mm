@@ -39,6 +39,7 @@
 #import "DocumentFragment.h"
 #import "DocumentType.h"
 #import "EditorClient.h"
+#import "EventHandler.h"
 #import "FloatRect.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
@@ -358,7 +359,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     if (!m_frame)
         return NO;
-    return m_frame->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
+    return m_frame->eventHandler()->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
 }
 
 - (void)clearFrame
@@ -785,7 +786,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyView(doc->focusNode(), SelectingNext);
+    return m_frame->eventHandler()->nextKeyView(doc->focusNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -793,7 +794,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyView(doc->focusNode(), SelectingPrevious);
+    return m_frame->eventHandler()->nextKeyView(doc->focusNode(), SelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebFrameViews
@@ -801,7 +802,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingNext);
+    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebFrameViews
@@ -809,7 +810,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingPrevious);
+    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingPrevious);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
@@ -1334,7 +1335,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
     IntPoint outerPoint(point);
-    Node* node = m_frame->hitTestResultAtPoint(outerPoint, true).innerNode();
+    Node* node = m_frame->eventHandler()->hitTestResultAtPoint(outerPoint, true).innerNode();
     if (!node)
         return VisiblePosition();
     RenderObject* renderer = node->renderer();
@@ -1476,7 +1477,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
             clipboard->setSourceOperation(srcOp);
 
             PlatformMouseEvent event = createMouseEventFromDraggingInfo([self window], info);
-            if (v->updateDragAndDrop(event, clipboard.get())) {
+            if (m_frame->eventHandler()->updateDragAndDrop(event, clipboard.get())) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
@@ -1511,7 +1512,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
             ClipboardAccessPolicy policy = m_frame->loader()->baseURL().isLocalFile() ? ClipboardReadable : ClipboardTypesReadable;
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);            
-            v->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
+            m_frame->eventHandler()->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
         }
     }
@@ -1525,7 +1526,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
             // Sending an event can result in the destruction of the view and part.
             RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], ClipboardReadable);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
-            BOOL result = v->performDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
+            BOOL result = m_frame->eventHandler()->performDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
             return result;
         }
@@ -1539,7 +1540,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         // FIXME: Fake modifier keys here.
         PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
             LeftButton, 0, false, false, false, false);
-        m_frame->dragSourceMovedTo(event);
+        m_frame->eventHandler()->dragSourceMovedTo(event);
     }
 }
 
@@ -1549,7 +1550,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         // FIXME: Fake modifier keys here.
         PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
             LeftButton, 0, false, false, false, false);
-        m_frame->dragSourceEndedAt(event, operation);
+        m_frame->eventHandler()->dragSourceEndedAt(event, operation);
     }
 }
 

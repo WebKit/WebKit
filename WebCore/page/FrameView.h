@@ -129,6 +129,11 @@ public:
 
     void setMediaType(const String&);
 
+    virtual void handleMouseMoveEvent(const PlatformMouseEvent&);
+    virtual void handleMouseReleaseEvent(const PlatformMouseEvent&);
+
+    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
+
 private:
     void init();
 
@@ -144,6 +149,8 @@ private:
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
+    void dispatchScheduledEvents();
+
     unsigned m_refCount;
     IntSize m_size;
     IntSize m_margins;
@@ -152,57 +159,6 @@ private:
 
     friend class Frame;
     friend class FrameMac;
-
-// === to be moved into EventHandler
-
-public:
-    void handleMousePressEvent(const PlatformMouseEvent&);
-    void handleMouseDoubleClickEvent(const PlatformMouseEvent&);
-    virtual void handleMouseMoveEvent(const PlatformMouseEvent&);
-    virtual void handleMouseReleaseEvent(const PlatformMouseEvent&);
-    void handleWheelEvent(PlatformWheelEvent&);
-
-    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame*);
-    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*);
-    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*);
-    bool passWheelEventToSubframe(PlatformWheelEvent&, Frame*);
-    bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*);
-
-    bool mousePressed();
-    void setMousePressed(bool);
-
-    void doAutoScroll();
-
-    bool advanceFocus(KeyboardEvent*);
-
-    bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-    void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-    bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-
-    void scheduleHoverStateUpdate();
-    void hoverTimerFired(Timer<FrameView>*);
-
-    void setResizingFrameSet(HTMLFrameSetElement*);
-
-    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
-
-    IntPoint currentMousePosition() const;
-
-    void setIgnoreWheelEvents(bool);
-
-private:
-    void invalidateClick();
-
-    Node *nodeUnderMouse() const;
-
-    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
-
-    bool dispatchMouseEvent(const AtomicString& eventType, Node* target,
-        bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
-    bool dispatchDragEvent(const AtomicString& eventType, Node* target,
-        const PlatformMouseEvent&, Clipboard*);
-
-    void dispatchScheduledEvents();
 
 };
 

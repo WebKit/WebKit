@@ -59,6 +59,7 @@ class RenderStyle;
 class RenderTable;
 class RenderText;
 class RenderView;
+class Scrollbar;
 
 struct HitTestRequest;
 

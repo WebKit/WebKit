@@ -65,15 +65,16 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/FormState.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
-#import <WebCore/IconDatabase.h>
-#import <WebCore/PageState.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/IconDatabase.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/WebCoreFrameBridge.h>
@@ -1194,7 +1195,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
         IntPoint point(static_cast<const MouseEvent*>(event)->clientX(),
             static_cast<const MouseEvent*>(event)->clientY());
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->hitTestResultAtPoint(point, false)];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
         NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
             element, WebActionElementKey,

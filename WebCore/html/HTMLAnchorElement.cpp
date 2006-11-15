@@ -22,11 +22,13 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
 #include "Document.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -115,7 +117,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!document()->frame())
         return false;
 
-    return document()->frame()->tabsToLinks(event);
+    return document()->frame()->eventHandler()->tabsToLinks(event);
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* evt)

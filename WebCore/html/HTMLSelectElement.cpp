@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -667,7 +668,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             updateListBoxSelection(!multiSelect);
             renderer()->repaint();
         }
-    } else if (evt->type() == mouseupEvent && document()->frame()->autoscrollRenderer() != renderer())
+    } else if (evt->type() == mouseupEvent && document()->frame()->eventHandler()->autoscrollRenderer() != renderer())
         // This makes sure we fire onChange for a single click.  For drag selection, onChange will fire when the autoscroll timer stops.
         listBoxOnChange();
     else if (evt->type() == keypressEvent) {

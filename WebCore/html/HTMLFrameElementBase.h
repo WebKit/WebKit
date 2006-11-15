@@ -27,7 +27,7 @@
 #define HTMLFrameElementBase_h
 
 #include "HTMLElement.h"
-#include "ScrollBarMode.h"
+#include "ScrollTypes.h"
 
 namespace WebCore {
 

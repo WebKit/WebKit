@@ -27,6 +27,7 @@
 #include "PageState.h"
 
 #include "Document.h"
+#include "EventHandler.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -53,7 +54,7 @@ PassRefPtr<PageState> PageState::create(Page* page)
 PageState::PageState(Page* page)
     : m_document(page->mainFrame()->document())
     , m_view(page->mainFrame()->view())
-    , m_mousePressNode(page->mainFrame()->mousePressNode())
+    , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
     , m_URL(page->mainFrame()->loader()->url())
     , m_windowProperties(new SavedProperties)
     , m_locationProperties(new SavedProperties)
@@ -87,7 +88,7 @@ PageState::~PageState()
     clear();
 }
 
-void PageState::restoreJavaScriptState(Page* page)
+void PageState::restore(Page* page)
 {
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
@@ -106,6 +107,8 @@ void PageState::restoreJavaScriptState(Page* page)
     if (m_document && m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
+
+    mainFrame->eventHandler()->setMousePressNode(mousePressNode());
 }
 
 void PageState::clear()

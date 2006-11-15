@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -529,7 +530,7 @@ void EventTargetNode::defaultEventHandler(Event* event)
         KeyboardEvent* keyEvent = static_cast<KeyboardEvent*>(event);
         if (keyEvent->keyIdentifier() == "U+000009") {
             Frame* frame = document()->frame();
-            if (frame && frame->view() && frame->view()->advanceFocus(keyEvent))
+            if (frame && frame->view() && frame->eventHandler()->advanceFocus(keyEvent))
                 event->setDefaultHandled();
         }
     }

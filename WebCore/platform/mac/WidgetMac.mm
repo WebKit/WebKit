@@ -27,6 +27,7 @@
 #import "Widget.h"
 
 #import "Cursor.h"
+#import "Document.h"
 #import "Font.h"
 #import "GraphicsContext.h"
 #import "BlockExceptions.h"
@@ -113,9 +114,8 @@ IntRect Widget::frameGeometry() const
 
 bool Widget::hasFocus() const
 {
-    if (deferFirstResponderChanges && deferredFirstResponder) {
+    if (deferFirstResponderChanges && deferredFirstResponder)
         return this == deferredFirstResponder;
-    }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -123,12 +123,10 @@ bool Widget::hasFocus() const
 
     id firstResponder = [FrameMac::bridgeForWidget(this) firstResponder];
 
-    if (!firstResponder) {
+    if (!firstResponder)
         return false;
-    }
-    if (firstResponder == view) {
+    if (firstResponder == view)
         return true;
-    }
 
     // Some widgets, like text fields, secure text fields, text areas, and selects
     // (when displayed using a list box) may have a descendent widget that is
@@ -181,7 +179,10 @@ void Widget::clearFocus()
     if (!hasFocus())
         return;
     // FIXME: This probably shouldn't be the Widget's responsibility
-    FrameMac::clearDocumentFocus(this);
+    Frame* frame = Frame::frameForWidget(this);
+    if (!frame)
+        return;
+    frame->document()->setFocusNode(0);
 }
 
 Widget::FocusPolicy Widget::focusPolicy() const

@@ -24,6 +24,7 @@
 #include "RenderListBox.h"
 
 #include "Document.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -361,7 +362,7 @@ int RenderListBox::listIndexAtOffset(int offsetX, int offsetY)
 
 void RenderListBox::autoscroll()
 {
-    IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->view()->currentMousePosition());
+    IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->eventHandler()->currentMousePosition());
 
     int rx = 0;
     int ry = 0;

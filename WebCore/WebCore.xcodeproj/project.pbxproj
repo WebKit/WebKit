@@ -1420,7 +1420,6 @@
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
 		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; };
-		9353673F09AED79200D35CD6 /* ScrollBarMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353673E09AED79200D35CD6 /* ScrollBarMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */; };
 		935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */; };
 		9353686B09AF78F600D35CD6 /* TextDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353686A09AF78F600D35CD6 /* TextDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1489,6 +1488,10 @@
 		93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B77B1D0ADDA10700EA4B81 /* UChar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77B1C0ADDA10700EA4B81 /* UChar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
+		93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09A520B064DB3005ABD4D /* EventHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */; };
+		93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A800B064F00005ABD4D /* EventHandler.cpp */; };
+		93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09C850B0657AA005ABD4D /* ScrollTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4301,7 +4304,6 @@
 		9352084409BD43B900F2038D /* Language.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Language.mm; sourceTree = "<group>"; };
 		9352087609BD453400F2038D /* CookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJar.mm; sourceTree = "<group>"; };
 		9352088109BD45E900F2038D /* CookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieJar.h; sourceTree = "<group>"; };
-		9353673E09AED79200D35CD6 /* ScrollBarMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBarMode.h; sourceTree = "<group>"; };
 		9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewMac.mm; sourceTree = "<group>"; };
 		935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextMac.mm; sourceTree = "<group>"; };
 		9353686A09AF78F600D35CD6 /* TextDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDirection.h; sourceTree = "<group>"; };
@@ -4375,6 +4377,10 @@
 		93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderTypes.h; sourceTree = "<group>"; };
 		93B77B1C0ADDA10700EA4B81 /* UChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UChar.h; sourceTree = "<group>"; };
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WidgetClient.h; sourceTree = "<group>"; };
+		93C09A520B064DB3005ABD4D /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
+		93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerMac.mm; sourceTree = "<group>"; };
+		93C09A800B064F00005ABD4D /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
+		93C09C850B0657AA005ABD4D /* ScrollTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollTypes.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
@@ -6482,6 +6488,7 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				93C09A820B064F05005ABD4D /* mac */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
@@ -6489,6 +6496,8 @@
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
+				93C09A520B064DB3005ABD4D /* EventHandler.h */,
+				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
 				658436850AE01B7400E53753 /* FrameLoadRequest.h */,
@@ -7527,6 +7536,14 @@
 				656D371C0ADBA5DE00A4554D /* WebDataProtocol.h */,
 				656D371D0ADBA5DE00A4554D /* WebDataProtocol.mm */,
 				656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		93C09A820B064F05005ABD4D /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -8608,7 +8625,7 @@
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
 				148CF65D0B00561400A997FC /* Screen.h */,
 				BC7B2AF80450824100A8000F /* ScrollBar.h */,
-				9353673E09AED79200D35CD6 /* ScrollBarMode.h */,
+				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
@@ -9496,7 +9513,6 @@
 				651B4D8609AC83370029F1EF /* DeprecatedStringList.h in Headers */,
 				6593923809AE4346002C531F /* KURL.h in Headers */,
 				BC6D6DD309AF906600F59759 /* Font.h in Headers */,
-				9353673F09AED79200D35CD6 /* ScrollBarMode.h in Headers */,
 				9353686B09AF78F600D35CD6 /* TextDirection.h in Headers */,
 				657BD74E09AFDC54005A2056 /* TextCodec.h in Headers */,
 				657BD75009AFDC54005A2056 /* TextEncoding.h in Headers */,
@@ -10539,6 +10555,8 @@
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
 				B27535820B053814002CE64F /* Pen.h in Headers */,
+				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
+				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11803,6 +11821,8 @@
 				B275357F0B053814002CE64F /* Path.cpp in Sources */,
 				B27535810B053814002CE64F /* Pen.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
+				93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */,
+				93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

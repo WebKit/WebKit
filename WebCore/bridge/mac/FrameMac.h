@@ -79,11 +79,6 @@ class ClipboardMac;
 class HTMLTableCellElement;
 class RenderWidget;
 
-enum SelectionDirection {
-    SelectingNext,
-    SelectingPrevious
-};
-
 class FrameMac : public Frame {
     friend class Frame;
 
@@ -128,7 +123,12 @@ public:
     void cleanupPluginObjects();
     bool shouldClose();
 
+    NSImage* selectionImage(bool forceWhiteText = false) const;
+    NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
+
 private:    
+    NSImage* imageFromRect(NSRect) const;
+
     KJS::Bindings::RootObject* _bindingRoot; // The root object used for objects bound outside the context of a plugin.
     Vector<KJS::Bindings::RootObject*> m_rootObjects;
     WebScriptObject* _windowScriptObject;
@@ -202,88 +202,8 @@ public:
 private:
     bool dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPolicy);
 
-    void freeClipboard();
-
     RefPtr<Range> m_markedTextRange;
     
-// === to be moved into EventHandler
-
-public:
-    NSView* nextKeyView(Node* startingPoint, SelectionDirection);
-    NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, SelectionDirection);
-    static NSView* nextKeyViewForWidget(Widget* startingPoint, SelectionDirection);
-
-    PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
-
-    virtual bool tabsToLinks(KeyboardEvent*) const;
-    virtual bool tabsToAllControls(KeyboardEvent*) const;
-    
-    static bool currentEventIsMouseDownInWidget(Widget* candidate);
-
-    NSImage* selectionImage(bool forceWhiteText = false) const;
-    NSImage* snapshotDragImage(Node* node, NSRect* imageRect, NSRect* elementRect) const;
-
-    bool dispatchDragSrcEvent(const AtomicString &eventType, const PlatformMouseEvent&) const;
-
-    void mouseDown(NSEvent*);
-    void mouseDragged(NSEvent*);
-    void mouseUp(NSEvent*);
-    void mouseMoved(NSEvent*);
-    bool keyEvent(NSEvent*);
-    bool wheelEvent(NSEvent*);
-
-    void sendFakeEventsAfterWidgetTracking(NSEvent* initiatingEvent);
-
-    virtual bool lastEventIsMouseUp() const;
-    void setActivationEventNumber(int num) { _activationEventNumber = num; }
-
-    bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
-    bool eventMayStartDrag(NSEvent*) const;
-    void dragSourceMovedTo(const PlatformMouseEvent&);
-    void dragSourceEndedAt(const PlatformMouseEvent&, NSDragOperation);
-
-    bool sendContextMenuEvent(NSEvent*);
-
-    bool passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&);
-    bool passWidgetMouseDownEventToWidget(RenderWidget*);
-    bool passMouseDownEventToWidget(Widget*);
-    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart);
-    bool passWheelEventToWidget(Widget*);
-    
-    WebCoreKeyboardUIMode keyboardUIMode() const;
-
-    virtual bool inputManagerHasMarkedText() const;
-    
-    virtual bool shouldDragAutoNode(Node*, const IntPoint&) const; // -webkit-user-drag == auto
-
-    virtual bool mouseDownMayStartSelect() const { return _mouseDownMayStartSelect; }
-    
-    NSEvent* currentEvent() { return _currentEvent; }
-
-private:
-    virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
-    virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
-    virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
-      
-    NSView* mouseDownViewIfStillGood();
-
-    NSView* nextKeyViewInFrame(Node* startingPoint, SelectionDirection, bool* focusCallResultedInViewBeingCreated = 0);
-    static NSView* documentViewForNode(Node*);
-
-    NSImage* imageFromRect(NSRect) const;
-
-    NSView* _mouseDownView;
-    bool _mouseDownWasInSubframe;
-    bool _sendingEventToSubview;
-    bool _mouseDownMayStartSelect;
-    PlatformMouseEvent m_mouseDown;
-    // in our view's coords
-    IntPoint m_mouseDownPos;
-    float _mouseDownTimestamp;
-    int _activationEventNumber;
-    
-    static NSEvent* _currentEvent;
-
 // === to be moved into the Platform directory
 
 public:

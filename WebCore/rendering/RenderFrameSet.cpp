@@ -27,7 +27,10 @@
 #include "RenderFrameSet.h"
 
 #include "Cursor.h"
+#include "Document.h"
+#include "EventHandler.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameSetElement.h"
@@ -518,7 +521,8 @@ void RenderFrameSet::setResizing(bool e)
     for (RenderObject* p = parent(); p; p = p->parent())
         if (p->isFrameSet())
             static_cast<RenderFrameSet*>(p)->m_clientResizing = m_resizing;
-    view()->frameView()->setResizingFrameSet(e ? element() : 0);
+    if (Frame* frame = document()->frame())
+        frame->eventHandler()->setResizingFrameSet(e ? element() : 0);
 }
 
 bool RenderFrameSet::canResize(int _x, int _y)

@@ -52,7 +52,7 @@ namespace WebCore {
         Node* mousePressNode() { return m_mousePressNode.get(); }
         const KURL& URL() { return m_URL; }
 
-        void restoreJavaScriptState(Page*);
+        void restore(Page*);
 
     private:
         PageState(Page*);

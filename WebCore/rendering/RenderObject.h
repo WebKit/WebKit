@@ -30,7 +30,7 @@
 #include "CachedResourceClient.h"
 #include "DeprecatedValueList.h"
 #include "RenderStyle.h"
-#include "ScrollBar.h"
+#include "ScrollTypes.h"
 #include "VisiblePosition.h"
 #include <algorithm>
 #include <wtf/HashMap.h>
@@ -522,7 +522,7 @@ public:
     // Used to signal a specific subrect within an object that must be repainted after
     // layout is complete.
     struct RepaintInfo {
-        RepaintInfo(RenderObject* object, const IntRect& repaintRect)
+        RepaintInfo(RenderObject* object = 0, const IntRect& repaintRect = IntRect())
             : m_object(object)
             , m_repaintRect(repaintRect)
         {

@@ -1,3 +1,25 @@
+2006-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - update for creation of EventHandler
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[NSArray menuForEvent:]):
+        (-[NSArray scrollWheel:]):
+        (-[NSArray acceptsFirstMouse:]):
+        (-[NSArray shouldDelayWindowOrderingForEvent:]):
+        (-[NSArray mouseDown:]):
+        (-[NSArray mouseDragged:]):
+        (-[NSArray mouseUp:]):
+        (-[NSArray keyDown:]):
+        (-[NSArray keyUp:]):
+        (-[NSArray performKeyEquivalent:]):
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
         Fix build for real this time.

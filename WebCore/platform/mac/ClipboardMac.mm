@@ -27,6 +27,8 @@
 #import "ClipboardMac.h"
 
 #import "CachedImage.h"
+#import "EventHandler.h"
+#import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "Image.h"

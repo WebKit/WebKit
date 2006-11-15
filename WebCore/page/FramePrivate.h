@@ -29,16 +29,13 @@
 
 #include "CommandByName.h"
 #include "Editor.h"
-#include "FormData.h"
+#include "EventHandler.h"
 #include "FrameTree.h"
-#include "KURL.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 
 namespace WebCore {
 
-    class IconLoader;
-    class TextResourceDecoder;
     class UserStyleSheetLoader;
 
     class FramePrivate {
@@ -66,17 +63,14 @@ namespace WebCore {
 
         int m_zoomFactor;
 
-        bool m_bMousePressed;
-        RefPtr<Node> m_mousePressNode; // node under the mouse when the mouse was pressed (set in the mouse handler)
-
         TextGranularity m_selectionGranularity;
-        bool m_beganSelectingText;
 
         SelectionController m_selectionController;
         Selection m_mark;
         Timer<Frame> m_caretBlinkTimer;
         Editor m_editor;
         CommandByName m_command;
+        EventHandler m_eventHandler;
 
         bool m_caretVisible : 1;
         bool m_caretPaint : 1;
@@ -85,17 +79,10 @@ namespace WebCore {
         int m_xPosForVerticalArrowNavigation;
         RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
 
-        IntPoint m_dragStartPos;
-
         Timer<Frame> m_lifeSupportTimer;
 
         FrameLoader* m_loader;
         UserStyleSheetLoader* m_userStyleSheetLoader;
-        
-        Timer<Frame> m_autoscrollTimer;
-        RenderObject* m_autoscrollRenderer;
-        bool m_mouseDownMayStartAutoscroll;
-        bool m_mouseDownMayStartDrag;
         
         RefPtr<Node> m_elementToDraw;
         PaintRestriction m_paintRestriction;

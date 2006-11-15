@@ -40,6 +40,7 @@
 #include "EditorClient.h"
 #include "EntityReference.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -1948,8 +1949,8 @@ void Document::hoveredNodeDetached(Node* node)
     m_hoverNode = node->parent();
     while (m_hoverNode && !m_hoverNode->renderer())
         m_hoverNode = m_hoverNode->parent();
-    if (view())
-        view()->scheduleHoverStateUpdate();
+    if (frame())
+        frame()->eventHandler()->scheduleHoverStateUpdate();
 }
 
 void Document::activeChainNodeDetached(Node* node)

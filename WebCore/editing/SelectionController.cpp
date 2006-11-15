@@ -59,6 +59,7 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
     , m_modifyBiasSet(false)
     , m_frame(frame)
     , m_isDragCaretController(isDragCaretController)
+    , m_isCaretBlinkingSuspended(false)
 {
 }
 

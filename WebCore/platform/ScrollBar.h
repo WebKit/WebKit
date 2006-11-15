@@ -27,6 +27,7 @@
 #define Scrollbar_h
 
 #include "Shared.h"
+#include "ScrollTypes.h"
 
 namespace WebCore {
 
@@ -38,22 +39,6 @@ class PlatformMouseEvent;
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
 #define PAGE_KEEP   40
-
-enum ScrollDirection {
-    ScrollUp,
-    ScrollDown,
-    ScrollLeft,
-    ScrollRight
-};
-
-enum ScrollGranularity {
-    ScrollByLine,
-    ScrollByPage,
-    ScrollByDocument,
-    ScrollByWheel
-};
-
-enum ScrollbarOrientation { HorizontalScrollbar, VerticalScrollbar };
 
 enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar, MiniScrollbar };
 

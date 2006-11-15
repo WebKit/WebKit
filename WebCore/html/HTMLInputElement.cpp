@@ -32,6 +32,7 @@
 #include "DeprecatedSlider.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -1313,7 +1314,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
                 case PASSWORD:
                 case SEARCH:
                 case TEXT:
-                    if (!document()->frame()->inputManagerHasMarkedText())
+                    if (!document()->frame()->eventHandler()->inputManagerHasMarkedText())
                         // Simulate mouse click on the default form button for enter for these types of elements.
                         clickDefaultFormButton = true;
                     break;

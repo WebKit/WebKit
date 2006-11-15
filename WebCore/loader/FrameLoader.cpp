@@ -709,7 +709,6 @@ void FrameLoader::clear(bool clearWindowProperties)
     if (!m_needsClear)
         return;
     m_needsClear = false;
-    m_frame->d->m_mousePressNode = 0;
 
 #if !PLATFORM(MAC)
     // FIXME: Remove this after making other platforms do loading more like Mac.
@@ -725,6 +724,8 @@ void FrameLoader::clear(bool clearWindowProperties)
     if (clearWindowProperties && m_frame->scriptProxy())
         m_frame->scriptProxy()->clear();
 
+    m_frame->selectionController()->clear();
+    m_frame->eventHandler()->clear();
     if (m_frame->view())
         m_frame->view()->clear();
 
@@ -740,8 +741,6 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_scheduledRedirection.clear();
 
     m_receivedData = false;
-
-    m_frame->d->m_bMousePressed = false;
 
     if (!m_encodingWasChosenByUser)
         m_encoding = String();
@@ -1935,12 +1934,11 @@ void FrameLoader::open(PageState& state)
     m_frame->setView(document->view());
     
     m_frame->d->m_doc = document;
-    m_frame->d->m_mousePressNode = state.mousePressNode();
     m_decoder = document->decoder();
 
     updatePolicyBaseURL();
 
-    state.restoreJavaScriptState(m_frame->page());
+    state.restore(m_frame->page());
 
     checkCompleted();
 }
