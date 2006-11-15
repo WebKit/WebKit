@@ -2729,6 +2729,25 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		1C8715220B0BA37B00E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		1C8715230B0BA37B00E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -10576,6 +10595,8 @@
 				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
+				1C8715220B0BA37B00E3CB7B /* PBXBuildRule */,
+				1C8715230B0BA37B00E3CB7B /* PBXBuildRule */,
 			);
 			dependencies = (
 				DD041FF109D9E3250010AF2A /* PBXTargetDependency */,
@@ -10605,6 +10626,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

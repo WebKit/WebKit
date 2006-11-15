@@ -267,6 +267,25 @@
 		E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679509E7CF1200B89D13 /* UnicodeCategory.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		1CFE4BEC0B0BA1EB00CC444D /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		1CFE4BF10B0BA22200CC444D /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		141211350A48796100480255 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1182,6 +1201,8 @@
 				932F5BD20822A1C700736975 /* Frameworks */,
 			);
 			buildRules = (
+				1CFE4BF10B0BA22200CC444D /* PBXBuildRule */,
+				1CFE4BEC0B0BA1EB00CC444D /* PBXBuildRule */,
 			);
 			dependencies = (
 				93396B9D082450C500AB803D /* PBXTargetDependency */,

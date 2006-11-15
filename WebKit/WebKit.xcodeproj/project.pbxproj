@@ -279,6 +279,25 @@
 		EDD6132C0AED9990000B75CA /* WebViewEditingContextMenuOld.nib in Resources */ = {isa = PBXBuildFile; fileRef = EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		1C8715500B0BA41000E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		1C8715510B0BA41000E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
@@ -1209,6 +1228,8 @@
 				939811270824BF01008DF038 /* Frameworks */,
 			);
 			buildRules = (
+				1C8715500B0BA41000E3CB7B /* PBXBuildRule */,
+				1C8715510B0BA41000E3CB7B /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -1224,6 +1245,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1238,6 +1260,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);

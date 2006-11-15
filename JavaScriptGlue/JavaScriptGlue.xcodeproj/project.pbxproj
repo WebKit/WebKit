@@ -43,6 +43,25 @@
 		DD66F3F608F7401B00C75FD7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		1C8715620B0BA46200E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		1C8715630B0BA46200E3CB7B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		1422E8C709DE3EAD00749B87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -234,6 +253,8 @@
 				DD66F3CD08F73ED700C75FD7 /* Frameworks */,
 			);
 			buildRules = (
+				1C8715620B0BA46200E3CB7B /* PBXBuildRule */,
+				1C8715630B0BA46200E3CB7B /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
