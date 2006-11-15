@@ -297,13 +297,18 @@ using namespace HTMLNames;
     return m_renderer->isTextField() || m_renderer->isTextArea();
 }
 
--(BOOL)isPasswordField
+static bool isPasswordFieldElement(Node* node)
 {
-    if (!m_renderer->element() || !m_renderer->element()->hasTagName(inputTag))
+    if (!node || !node->hasTagName(inputTag))
         return false;
     
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
     return input->inputType() == HTMLInputElement::PASSWORD;
+}
+
+-(BOOL)isPasswordField
+{
+    return m_renderer && isPasswordFieldElement(m_renderer->element());
 }
 
 -(BOOL)isAttachment
@@ -897,6 +902,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
 {
     if (visiblePos.isNull())
         return nil;
+    
+    if (isPasswordFieldElement(visiblePos.deepEquivalent().node()))
+        return nil;
         
     return m_renderer->document()->axObjectCache()->textMarkerForVisiblePosition(visiblePos);
 }
@@ -1015,20 +1023,21 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if ([self isTextControl]) {
         RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
         if ([attributeName isEqualToString: NSAccessibilityNumberOfCharactersAttribute])
-            return [NSNumber numberWithUnsignedInt: textControl->text().length()];
+            return [self isPasswordField] ? nil : [NSNumber numberWithUnsignedInt: textControl->text().length()];
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+            if ([self isPasswordField])
+                return nil;
             NSString* text = textControl->text();
             return [text substringWithRange: NSMakeRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart())];
         }
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute])
-            return [NSValue valueWithRange: NSMakeRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart())];
+            return [self isPasswordField] ? nil : [NSValue valueWithRange: NSMakeRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart())];
         // TODO: Get actual visible range. <rdar://problem/4712101>
         if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
-            return [NSValue valueWithRange: NSMakeRange(0, textControl->text().length())];
+            return [self isPasswordField] ? nil : [NSValue valueWithRange: NSMakeRange(0, textControl->text().length())];
         if ([attributeName isEqualToString: NSAccessibilityInsertionPointLineNumberAttribute]) {
-            if (textControl->selectionStart() != textControl->selectionEnd())
+            if ([self isPasswordField] || textControl->selectionStart() != textControl->selectionEnd())
                 return nil;
-            
             NSNumber* index = [NSNumber numberWithInt: textControl->selectionStart()];
             return [self doAXLineForTextMarker: [self textMarkerForIndex: index lastIndexOK: YES]];
         }
@@ -2066,6 +2075,9 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 // specified by the given character range.
 - (id)doAXStringForRange: (NSRange) range
 {
+    if ([self isPasswordField])
+        return nil;
+        
     if (range.length == 0)
         return @"";
         

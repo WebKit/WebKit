@@ -1,3 +1,20 @@
+2006-11-15  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4770453> VO not honoring secure edit fields in web pages
+
+        The remaining problem was the password fields would return their contents
+        even though they did not advertise that they could. Apparently, VoiceOver
+        does not read the ads.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (isPasswordFieldElement):
+        (-[WebCoreAXObject isPasswordField]):
+        (-[WebCoreAXObject textMarkerForVisiblePosition:]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        (-[WebCoreAXObject doAXStringForRange:]):
+
 2006-11-13  Lou Amadio  <lamadio@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak
