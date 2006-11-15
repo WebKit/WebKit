@@ -1,3 +1,13 @@
+2006-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele
+
+        <rdar://problem/4838729> - Replace mistakenly removed SPI
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _handleAutoscrollForMouseDragged:]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-11-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.
