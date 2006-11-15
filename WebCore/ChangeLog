@@ -1,3 +1,9 @@
+2006-11-15  Adam Roben  <aroben@apple.com>
+
+        Build fix.
+
+        * page/EventHandler.h:
+
 2006-11-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

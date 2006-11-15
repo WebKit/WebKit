@@ -115,6 +115,8 @@ public:
     void handleMouseReleaseEvent(const PlatformMouseEvent&);
     void handleWheelEvent(PlatformWheelEvent&);
 
+    bool sendContextMenuEvent(PlatformMouseEvent);
+
 #if PLATFORM(MAC)
 
     NSView *nextKeyView(Node*, SelectionDirection);
@@ -131,7 +133,6 @@ public:
     void mouseMoved(NSEvent*);
     bool keyEvent(NSEvent*);
     bool wheelEvent(NSEvent*);
-    bool sendContextMenuEvent(PlatformMouseEvent);
 
     bool eventMayStartDrag(NSEvent*) const;
 
