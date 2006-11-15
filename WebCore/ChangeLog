@@ -1,3 +1,11 @@
+2006-11-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for <rdar://problem/4780306> REGRESSION: clicking in textarea does not set selection at PunBB.org
+
+        * css/html4.css: Removed "-webkit-user-select: ignore" for labels.
+
 2006-11-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

@@ -277,7 +277,6 @@ form {
 
 label {
     cursor: default;
-    -webkit-user-select: ignore
 }
 
 legend {
