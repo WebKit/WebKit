@@ -496,7 +496,9 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
             const UChar* chars = it.characters();
             int len = it.length();
-            if (len > 1 || !DeprecatedChar(chars[0]).isSpace()) {
+            if (len == 1 && DeprecatedChar(chars[0]).isSpace())
+                it.advance();
+            else {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
                 NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
 

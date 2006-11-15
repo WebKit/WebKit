@@ -1,3 +1,17 @@
+2006-11-15  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4836034> REGRESSION: Hang while spell-checking (advanceToNextMisspelling)
+
+        Test:
+        * manual-tests/keep_spelling_markers.html:
+        Updated to include checking for this bug.
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        it.advance() even when current string is a single space.
+
 2006-11-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by lamadio
