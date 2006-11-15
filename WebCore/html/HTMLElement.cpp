@@ -716,8 +716,8 @@ bool HTMLElement::isRecognizedTagName(const QualifiedName& tagName)
 {
     static HashSet<AtomicStringImpl*> tagList;
     if (tagList.isEmpty()) {
-        for (size_t i = 0; i < g_xhtmlTagsCount; i++)
-            tagList.add(g_xhtmlTags[i]->localName().impl());
+        #define ADD_TAG(name) tagList.add(name##Tag.localName().impl());
+        DOM_HTMLNAMES_FOR_EACH_TAG(ADD_TAG)
     }
     return tagList.contains(tagName.localName().impl());
 }

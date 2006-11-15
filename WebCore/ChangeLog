@@ -1,3 +1,14 @@
+2006-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by lamadio
+
+        Backing out macro expansion
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isRecognizedTagName):
+        * ksvg2/scripts/make_names.pl:
+
 2006-11-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

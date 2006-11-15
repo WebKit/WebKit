@@ -99,9 +99,9 @@ sub readNames
 
 sub printMacros
 {
-    my ($macro, $suffix, @names) = @_;
+    my @names = @_;
     for my $name (@names) {
-        print "    $macro $name","$suffix;\n";
+        print "    macro($name) \\\n";
     }
 }
 
@@ -204,6 +204,17 @@ sub printNamesHeaderFile
     
     print "namespace $cppNamespace { namespace ${namespace}Names {\n\n";
     
+    if (scalar(@tags)) {
+        print"#define DOM_${namespace}NAMES_FOR_EACH_TAG(macro) \\\n";
+        printMacros(@tags);
+        print"// end of macro\n\n";
+    }
+    if (scalar(@attrs)) {
+        print "#define DOM_${namespace}NAMES_FOR_EACH_ATTR(macro) \\\n";
+        printMacros(@attrs);
+        print "// end of macro\n\n";
+    }
+    
     my $lowerNamespace = lc($namespacePrefix);
     print "#ifndef DOM_${namespace}NAMES_HIDE_GLOBALS\n";
     print "// Namespace\n";
@@ -211,16 +222,16 @@ sub printNamesHeaderFile
 
     if (scalar(@tags)) {
         print "// Tags\n";
-        printMacros("extern const WebCore::QualifiedName", "Tag", @tags);
-        print "\nextern const WebCore::QualifiedName* g_${lowerNamespace}Tags[];\n";
-        print "extern const size_t g_${lowerNamespace}TagsCount;\n\n";
+        print "#define DOM_NAMES_DEFINE_TAG_GLOBAL(name) extern const WebCore::QualifiedName name##Tag;\n";
+        print "DOM_${namespace}NAMES_FOR_EACH_TAG(DOM_NAMES_DEFINE_TAG_GLOBAL)\n";
+        print "#undef DOM_NAMES_DEFINE_TAG_GLOBAL\n\n";
     }
     
     if (scalar(@attrs)) {
         print "// Attributes\n";
-        printMacros("extern const WebCore::QualifiedName", "Attr", @attrs);
-        print "\nextern const WebCore::QualifiedName* g_${lowerNamespace}Attr[];\n";
-        print "extern const size_t g_${lowerNamespace}AttrCount;\n\n";
+        print "#define DOM_NAMES_DEFINE_ATTR_GLOBAL(name) extern const WebCore::QualifiedName name##Attr;\n";
+        print "DOM_${namespace}NAMES_FOR_EACH_ATTR(DOM_NAMES_DEFINE_ATTR_GLOBAL)\n";
+        print "#undef DOM_NAMES_DEFINE_ATTR_GLOBAL\n\n";
     }
     print "#endif\n\n";
     print "void init();\n\n";
@@ -247,7 +258,6 @@ print "#else\n";
 print "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
 print "#endif\n\n";
 
-
 print "#include \"${namespace}Names.h\"\n\n";
 print "#include \"StaticConstructors.h\"\n";
 
@@ -259,32 +269,16 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
 ";
 
     if (scalar(@tags)) {
-        print "// Tags\n";
-    for my $name (@tags) {
-        print "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
-    }
-        print "\nconst WebCore::QualifiedName* g_${lowerNamespace}Tags[] = {\n";
-        for my $name (@tags) {
-            print "    &${name}Tag,\n";
-        }
-        print "};\n";
-        print "const size_t g_${lowerNamespace}TagsCount = ", scalar(@tags), ";\n\n";
+        print "#define DEFINE_TAG_GLOBAL(name) DEFINE_GLOBAL(QualifiedName, name##Tag, nullAtom, #name, ${lowerNamespace}NamespaceURI)\n";
+        print "DOM_${namespace}NAMES_FOR_EACH_TAG(DEFINE_TAG_GLOBAL)\n\n";
     }
 
     if (scalar(@attrs)) {
-        print "\n// Attributes\n";
-        for my $name (@attrs) {
-            print "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
-    }
-        print "\nconst WebCore::QualifiedName* g_${lowerNamespace}Attr[] = {\n";
-        for my $name (@attrs) {
-            print "    &${name}Attr,\n";
-        }
-        print "};\n";
-        print "const size_t g_${lowerNamespace}AttrCount = ", scalar(@attrs), ";\n\n";
+        print "#define DEFINE_ATTR_GLOBAL(name) DEFINE_GLOBAL(QualifiedName, name##Attr, nullAtom, #name, nullAtom)\n";
+        print "DOM_${namespace}NAMES_FOR_EACH_ATTR(DEFINE_ATTR_GLOBAL)\n\n";
     }
 
-print "\nvoid init()
+print "void init()
 {
     static bool initialized = false;
     if (initialized)
@@ -331,11 +325,8 @@ sub printDefinitions
     my $shortUpperType = uc($shortType);
     
     print "    // " . ucfirst($type) . "\n";
-
-    for my $name (@$namesRef) {
-        print "    const char *$name","${shortCamelType}String = \"$name\";\n";
-    }
-        
+    print "    #define DEFINE_${shortUpperType}_STRING(name) const char *name##${shortCamelType}String = #name;\n";
+    print "    DOM_${namespace}NAMES_FOR_EACH_${shortUpperType}(DEFINE_${shortUpperType}_STRING)\n\n";
     for my $name (@$namesRef) {
         if ($name =~ /_/) {
             my $realName = $name;
@@ -343,12 +334,8 @@ sub printDefinitions
             print "    ${name}${shortCamelType}String = \"$realName\";\n";
         }
     }
-    print "\n";
-
-    for my $name (@$namesRef) {
-        print "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
-    }
-
+    print "\n    #define INITIALIZE_${shortUpperType}_GLOBAL(name) new ((void*)&name##${shortCamelType}) QualifiedName(nullAtom, name##${shortCamelType}String, $namespaceURI);\n";
+    print "    DOM_${namespace}NAMES_FOR_EACH_${shortUpperType}(INITIALIZE_${shortUpperType}_GLOBAL)\n\n";
 }
 
 my $savedSTDOUT;
