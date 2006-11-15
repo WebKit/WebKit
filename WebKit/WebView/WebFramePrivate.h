@@ -54,4 +54,5 @@ typedef enum {
 - (BOOL)_isFrameSet;
 - (BOOL)_firstLayoutDone;
 - (WebFrameLoadType)_loadType;
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 @end

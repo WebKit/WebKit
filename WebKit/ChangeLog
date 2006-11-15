@@ -1,5 +1,16 @@
 2006-11-15  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sarge
+
+        SPI addition
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+
+2006-11-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adele
 
         <rdar://problem/4838729> - Replace mistakenly removed SPI

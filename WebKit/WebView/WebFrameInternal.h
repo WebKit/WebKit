@@ -174,7 +174,6 @@ WebView *getWebView(WebFrame *webFrame);
 - (void)_detachScriptDebugger;
 
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
 - (void)_setProvisionalItem:(WebHistoryItem *)item;
 - (void)_setPreviousItem:(WebHistoryItem *)item;
