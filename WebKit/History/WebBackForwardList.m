@@ -28,6 +28,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
+#import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"

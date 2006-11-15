@@ -41,6 +41,7 @@
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
+#import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebIconDatabase.h"
 #import "WebIconDatabasePrivate.h"

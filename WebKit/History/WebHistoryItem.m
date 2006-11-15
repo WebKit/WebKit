@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 
 #import "WebFrameBridge.h"
@@ -118,6 +119,8 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
+    NSLog(@"%@ - %@", URLString, title);
+    
     self = [super init];
     _private = [[WebHistoryItemPrivate alloc] init];
     _private->lastVisitedTimeInterval = time;
@@ -272,7 +275,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 @interface WebWindowWatcher : NSObject
 @end
 
-@implementation WebHistoryItem (WebPrivate)
+@implementation WebHistoryItem (WebInternal)
 
 - (void)_retainIconInDatabase:(BOOL)retain
 {
@@ -291,11 +294,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     return [[[self alloc] initWithURL:URL title:nil] autorelease];
 }
 
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title
-{
-    return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
-}
-
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
     self = [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
@@ -304,16 +302,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
         _private->parent = [parent copy];
     }
     return self;
-}
-
-- (NSURL *)URL
-{
-    return _private->URLString ? [NSURL _web_URLWithDataAsString:_private->URLString] : nil;
-}
-
-- (NSString *)target
-{
-    return _private->target;
 }
 
 - (NSString *)parent
@@ -379,31 +367,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSString *copy = [parent copy];
     [_private->parent release];
     _private->parent = copy;
-}
-
-- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
-{
-    if (_private->lastVisitedTimeInterval != time) {
-        _private->lastVisitedTimeInterval = time;
-        [_private->lastVisitedDate release];
-        _private->lastVisitedDate = nil;
-        _private->visitCount++;
-    }
-}
-
-// FIXME:  Remove this accessor and related ivar.
-- (NSCalendarDate *)_lastVisitedDate
-{
-    if (!_private->lastVisitedDate){
-        _private->lastVisitedDate = [[NSCalendarDate alloc]
-                    initWithTimeIntervalSinceReferenceDate:_private->lastVisitedTimeInterval];
-    }
-    return _private->lastVisitedDate;
-}
-
-- (int)visitCount
-{
-    return _private->visitCount;
 }
 
 - (void)setVisitCount:(int)count
@@ -475,15 +438,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     }
 }
 
-- (WebHistoryItem *)targetItem
-{
-    if (_private->isTargetItem || !_private->subItems) {
-        return self;
-    } else {
-        return [self _recurseToFindTargetItem];
-    }
-}
-
 - (void)_setFormInfoFromRequest:(NSURLRequest *)request
 {
     NSData *newData = nil;
@@ -524,23 +478,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     return _private->formReferrer;
 }
 
-- (NSString *)RSSFeedReferrer
-{
-    return _private->RSSFeedReferrer;
-}
-
-- (void)setRSSFeedReferrer:(NSString *)referrer
-{
-    NSString *copy = [referrer copy];
-    [_private->RSSFeedReferrer release];
-    _private->RSSFeedReferrer = copy;
-}
-
-- (NSArray *)children
-{
-    return _private->subItems;
-}
-
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem
 {
     ASSERT_ARG(otherItem, otherItem);
@@ -569,39 +506,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
         }
     }
     return nil;
-}
-
-- (NSDictionary *)dictionaryRepresentation
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
-
-    if (_private->URLString) {
-        [dict setObject:_private->URLString forKey:@""];
-    }
-    if (_private->title) {
-        [dict setObject:_private->title forKey:WebTitleKey];
-    }
-    if (_private->displayTitle) {
-        [dict setObject:_private->displayTitle forKey:WebDisplayTitleKey];
-    }
-    if (_private->lastVisitedTimeInterval != 0.0) {
-        // store as a string to maintain backward compatibility (see 3245793)
-        [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->lastVisitedTimeInterval]
-                 forKey:WebLastVisitedTimeIntervalKey];
-    }
-    if (_private->visitCount) {
-        [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:WebVisitCountKey];
-    }
-    if (_private->subItems != nil) {
-        NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_private->subItems count]];
-        int i;
-        for (i = [_private->subItems count]; i >= 0; i--) {
-            [childDicts addObject: [[_private->subItems objectAtIndex:i] dictionaryRepresentation]];
-        }
-        [dict setObject: childDicts forKey:WebChildrenKey];
-    }
-
-    return dict;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
@@ -642,11 +546,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     }
 
     return self;
-}
-
-- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
-{
-    _private->alwaysAttemptToUsePageCache = flag;
 }
 
 - (BOOL)alwaysAttemptToUsePageCache
@@ -720,14 +619,6 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     }
 }
 
-+ (void)_releaseAllPendingPageCaches
-{
-    LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
-    [WebHistoryItem _invalidateReleaseTimer];
-    [self _closeObjectsInPendingPageCaches];
-    [_pendingPageCacheToRelease removeAllObjects];
-}
-
 + (void)_releasePageCache: (NSTimer *)timer
 {
     float userDelta;
@@ -764,6 +655,83 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     return _private->pageCache;
 }
 
+@end
+
+@implementation WebHistoryItem (WebPrivate)
+
+- (id)initWithURL:(NSURL *)URL title:(NSString *)title
+{
+    return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
+}
+
+- (int)visitCount
+{
+    return _private->visitCount;
+}
+
+- (NSString *)RSSFeedReferrer
+{
+    return _private->RSSFeedReferrer;
+}
+
+- (void)setRSSFeedReferrer:(NSString *)referrer
+{
+    NSString *copy = [referrer copy];
+    [_private->RSSFeedReferrer release];
+    _private->RSSFeedReferrer = copy;
+}
+
+- (NSArray *)children
+{
+    return _private->subItems;
+}
+
+- (NSDictionary *)dictionaryRepresentation
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
+
+    if (_private->URLString) {
+        [dict setObject:_private->URLString forKey:@""];
+    }
+    if (_private->title) {
+        [dict setObject:_private->title forKey:WebTitleKey];
+    }
+    if (_private->displayTitle) {
+        [dict setObject:_private->displayTitle forKey:WebDisplayTitleKey];
+    }
+    if (_private->lastVisitedTimeInterval != 0.0) {
+        // store as a string to maintain backward compatibility (see 3245793)
+        [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->lastVisitedTimeInterval]
+                 forKey:WebLastVisitedTimeIntervalKey];
+    }
+    if (_private->visitCount) {
+        [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:WebVisitCountKey];
+    }
+    if (_private->subItems != nil) {
+        NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_private->subItems count]];
+        int i;
+        for (i = [_private->subItems count]; i >= 0; i--) {
+            [childDicts addObject: [[_private->subItems objectAtIndex:i] dictionaryRepresentation]];
+        }
+        [dict setObject: childDicts forKey:WebChildrenKey];
+    }
+
+    return dict;
+}
+
+- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
+{
+    _private->alwaysAttemptToUsePageCache = flag;
+}
+
++ (void)_releaseAllPendingPageCaches
+{
+    LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
+    [WebHistoryItem _invalidateReleaseTimer];
+    [self _closeObjectsInPendingPageCaches];
+    [_pendingPageCacheToRelease removeAllObjects];
+}
+
 - (id)_transientPropertyForKey:(NSString *)key
 {
     if (!_private->transientProperties)
@@ -782,8 +750,48 @@ static NSTimer *_pageCacheReleaseTimer = nil;
         [_private->transientProperties removeObjectForKey:key];
 }
 
+- (NSURL *)URL
+{
+    return _private->URLString ? [NSURL _web_URLWithDataAsString:_private->URLString] : nil;
+}
+
+- (NSString *)target
+{
+    return _private->target;
+}
+
+- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
+{
+    if (_private->lastVisitedTimeInterval != time) {
+        _private->lastVisitedTimeInterval = time;
+        [_private->lastVisitedDate release];
+        _private->lastVisitedDate = nil;
+        _private->visitCount++;
+    }
+}
+
+// FIXME:  Remove this accessor and related ivar.
+- (NSCalendarDate *)_lastVisitedDate
+{
+    if (!_private->lastVisitedDate){
+        _private->lastVisitedDate = [[NSCalendarDate alloc]
+                    initWithTimeIntervalSinceReferenceDate:_private->lastVisitedTimeInterval];
+    }
+    return _private->lastVisitedDate;
+}
+
+- (WebHistoryItem *)targetItem
+{
+    if (_private->isTargetItem || !_private->subItems) {
+        return self;
+    } else {
+        return [self _recurseToFindTargetItem];
+    }
+}
+
 @end
 
+// FIXME: This is a bizarre policy - we flush the pagecaches ANY time ANY window is closed?  
 @implementation WebWindowWatcher
 -(void)windowWillClose:(NSNotification *)notification
 {

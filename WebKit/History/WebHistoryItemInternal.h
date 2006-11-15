@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,32 +31,56 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItem.h>
 
-@interface WebHistoryItem (WebPrivate)
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title;
+@interface WebHistoryItem (WebInternal)
+- (void)_retainIconInDatabase:(BOOL)retain;
+- (BOOL)hasPageCache;
+- (void)setHasPageCache:(BOOL)f;
+- (NSMutableDictionary *)pageCache;
 
-- (NSURL *)URL;
-- (int)visitCount;
++ (WebHistoryItem *)entryWithURL:(NSURL *)URL;
 
-// Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
-// The properties will not be persisted; when the history item is removed, the properties will be lost.
-- (id)_transientPropertyForKey:(NSString *)key;
-- (void)_setTransientProperty:(id)property forKey:(NSString *)key;
-- (NSString *)RSSFeedReferrer;
-- (void)setAlwaysAttemptToUsePageCache:(BOOL)flag;
-+ (void)_releaseAllPendingPageCaches;
-- (void)setRSSFeedReferrer:(NSString *)referrer;
-- (NSCalendarDate *)_lastVisitedDate;
+- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title;
 
-// This should not be called directly for WebHistoryItems that are already included
-// in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
-- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
-- (NSDictionary *)dictionaryRepresentation;
-- (WebHistoryItem *)targetItem;
-- (NSString *)target;
-- (NSArray *)children;
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
+
+- (NSString *)parent;
+
+
+- (NSPoint)scrollPoint;
+- (NSArray *)documentState;
+- (BOOL)isTargetItem;
+- (NSData *)formData;
+- (NSString *)formContentType;
+- (NSString *)formReferrer;
+- (id)viewState;
+
+- (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
+
+- (void)setURL:(NSURL *)URL;
+- (void)setURLString:(NSString *)string;
+- (void)setOriginalURLString:(NSString *)URL;
+- (void)setTarget:(NSString *)target;
+- (void)setParent:(NSString *)parent;
+- (void)setTitle:(NSString *)title;
+- (void)setScrollPoint:(NSPoint)p;
+- (void)setDocumentState:(NSArray *)state;
+- (void)setIsTargetItem:(BOOL)flag;
+- (void)_setFormInfoFromRequest:(NSURLRequest *)request;
+- (void)setVisitCount:(int)count;
+- (void)setViewState:(id)statePList;
+
+
+- (void)addChildItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)childItemWithName:(NSString *)name;
+
+- (BOOL)alwaysAttemptToUsePageCache;
+
 
 @end
 
-
-
+@interface WebBackForwardList (WebPrivate)
+- (void)_close;
+- (BOOL)_usesPageCache;
+- (void)_clearPageCache;
+@end
 

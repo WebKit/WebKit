@@ -45,6 +45,7 @@
 #import "WebFrameViewInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItem.h"
+#import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitStatisticsPrivate.h"

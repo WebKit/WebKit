@@ -30,6 +30,7 @@
 #import "WebHistoryPrivate.h"
 
 #import "WebHistoryItem.h"
+#import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
 #import "WebNSCalendarDateExtras.h"
