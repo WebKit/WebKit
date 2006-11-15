@@ -1,5 +1,16 @@
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Fix build for real this time.
+        
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditCommand initWithEditCommand:WebCore::]):
+        (-[WebEditCommand dealloc]):
+        (-[WebEditCommand finalize]):
+        (+[WebEditCommand commandWithEditCommand:]):
+        (-[WebEditCommand command]):
+
+2006-11-14  Anders Carlsson  <acarlsson@apple.com>
+
         Try fixing the build.
         
         * WebCoreSupport/WebEditorClient.mm:

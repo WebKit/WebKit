@@ -41,6 +41,50 @@
 
 using namespace WebCore;
 
+@interface WebEditCommand : NSObject
+{
+    EditCommand *m_command;   
+}
+
++ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command;
+- (EditCommand *)command;
+
+@end
+
+@implementation WebEditCommand
+
+- (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
+{
+    ASSERT(command);
+    [super init];
+    m_command = command.releaseRef();
+    return self;
+}
+
+- (void)dealloc
+{
+    m_command->deref();
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    m_command->deref();
+    [super finalize];
+}
+
++ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command
+{
+    return [[[WebEditCommand alloc] initWithEditCommand:command] autorelease];
+}
+
+- (EditCommand *)command;
+{
+    return m_command;
+}
+
+@end
+
 @interface WebEditorUndoTarget : NSObject
 {
 }
@@ -167,50 +211,6 @@ void WebEditorClient::didEndEditing()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[m_webFrame webView]];
 }
-
-@interface WebEditCommand : NSObject
-{
-    EditCommand *m_command;   
-}
-
-+ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command;
-- (EditCommand *)command;
-
-@end
-
-@implementation WebEditCommand
-
-- (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
-{
-    ASSERT(command);
-    [super init];
-    m_command = command.releaseRef();
-    return self;
-}
-
-- (void)dealloc
-{
-    m_command->deref();
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    m_command->deref();
-    [super finalize];
-}
-
-+ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command
-{
-    return [[[WebEditCommand alloc] initWithEditCommand:command] autorelease];
-}
-
-- (EditCommand *)command;
-{
-    return m_command;
-}
-
-@end
 
 static NSString* undoNameForEditAction(EditAction editAction)
 {
