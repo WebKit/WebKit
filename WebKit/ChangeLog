@@ -1,5 +1,13 @@
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Try fixing the build.
+        
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditorUndoTarget undoEditing:]):
+        (-[WebEditorUndoTarget redoEditing:]):
+
+2006-11-14  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Move undo/redo handling into WebEditorClient.

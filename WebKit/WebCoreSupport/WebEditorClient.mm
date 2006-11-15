@@ -41,6 +41,31 @@
 
 using namespace WebCore;
 
+@interface WebEditorUndoTarget : NSObject
+{
+}
+
+- (void)undoEditing:(id)arg;
+- (void)redoEditing:(id)arg;
+
+@end
+
+@implementation WebEditorUndoTarget
+
+- (void)undoEditing:(id)arg
+{
+    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
+    [arg command]->unapply();
+}
+
+- (void)redoEditing:(id)arg
+{
+    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
+    [arg command]->reapply();
+}
+
+@end
+
 PassRefPtr<WebEditorClient> WebEditorClient::create()
 {
     return new WebEditorClient;
@@ -183,31 +208,6 @@ void WebEditorClient::didEndEditing()
 - (EditCommand *)command;
 {
     return m_command;
-}
-
-@end
-
-@interface WebEditorUndoTarget : NSObject
-{
-}
-
-- (void)undoEditing:(id)arg;
-- (void)redoEditing:(id)arg;
-
-@end
-
-@implementation WebEditorUndoTarget
-
-- (void)undoEditing:(id)arg
-{
-    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
-    [arg command]->unapply();
-}
-
-- (void)redoEditing:(id)arg
-{
-    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
-    [arg command]->reapply();
 }
 
 @end
