@@ -240,7 +240,7 @@ sub ScanDirectory
 
         # Recurisvely enter directory
         if (-d "$thisDir/$name") {
-            $object->ScanDirectory($interface, "$thisDir/$name", $useDirectory, $reportAllFiles);
+            $object->ScanDirectory($interface, "$directory/$name", $useDirectory, $reportAllFiles);
             next;
         }
 

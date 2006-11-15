@@ -1,3 +1,11 @@
+2006-11-14  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Oliver.
+
+        Build fix
+
+        * bindings/scripts/CodeGenerator.pm:
+
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
         Turns out I wasn't forcing DWARF on the world at all, 
