@@ -1,3 +1,13 @@
+2006-11-13  Lou Amadio  <lamadio@apple.com>
+
+        Reviewed by Darin Adler, Maciej Stachowiak
+
+        Cleanup: Expanded macros in generated files
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isRecognizedTagName):
+        * ksvg2/scripts/make_names.pl:
+
 2006-11-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
