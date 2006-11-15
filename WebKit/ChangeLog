@@ -1,3 +1,26 @@
+2006-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4766635> Safari should never follow links in editable areas (add a WebKitEditableLinkNeverLive option)
+
+        Adds an Open Link, Open Link in New Window and Copy Link to the editing context menu.
+        Adds a new WebKitEditableLinkNeverLive preference value that maps to WebCore's EditableLinkNeverLive.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultUIDelegate requestWithURL:includingReferrerFromFrame:]):
+        (-[WebDefaultUIDelegate openNewWindowWithURL:element:]):
+        (-[WebDefaultUIDelegate openLink:]):
+        * English.lproj/Localizable.strings:
+        * WebKit.exp:
+        * WebView/WebPreferences.m:
+        (-[WebPreferences editableLinkBehavior]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebUIDelegatePrivate.h:
+
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
         Turns out I wasn't forcing DWARF on the world at all, 

@@ -676,6 +676,7 @@ NS_ENDHANDLER
     WebKitEditableLinkBehavior value = [self _integerValueForKey:WebKitEditableLinkBehaviorPreferenceKey];
     if (value != WebKitEditableLinkDefaultBehavior &&
         value != WebKitEditableLinkAlwaysLive &&
+        value != WebKitEditableLinkNeverLive &&
         value != WebKitEditableLinkOnlyLiveWithShiftKey &&
         value != WebKitEditableLinkLiveWhenNotFocused) {
         // ensure that a valid result is returned

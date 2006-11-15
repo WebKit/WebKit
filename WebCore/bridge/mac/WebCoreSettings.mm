@@ -338,6 +338,7 @@ using namespace WebCore;
     Settings::EditableLinkBehavior b = (Settings::EditableLinkBehavior)behavior;
     if (b != Settings::EditableLinkDefaultBehavior &&
         b != Settings::EditableLinkAlwaysLive &&
+        b != Settings::EditableLinkNeverLive &&
         b != Settings::EditableLinkOnlyLiveWithShiftKey &&
         b != Settings::EditableLinkLiveWhenNotFocused) {
         settings->setEditableLinkBehavior(Settings::EditableLinkDefaultBehavior);

@@ -557,7 +557,11 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
                     case Settings::EditableLinkAlwaysLive:
                         editableLinkEnabled = true;
                         break;
-                    
+
+                    case Settings::EditableLinkNeverLive:
+                        editableLinkEnabled = false;
+                        break;
+
                     case Settings::EditableLinkLiveWhenNotFocused:
                         editableLinkEnabled = nodeIsNotBeingEdited(node, frame) || event.event().shiftKey();
                         break;

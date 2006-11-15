@@ -28,6 +28,11 @@
 
 #import <WebKit/WebUIDelegate.h>
 
+// FIXME: This should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
+enum { 
+    WebMenuItemTagOpenLink = 1000
+};
+
 @interface NSObject (WebUIDelegatePrivate)
 
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message;

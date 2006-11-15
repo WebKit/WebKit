@@ -77,6 +77,10 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     SEL action = NULL;
     
     switch(tag) {
+        case WebMenuItemTagOpenLink:
+            title = UI_STRING("Open Link", "Open Link context menu item");
+            action = @selector(openLink:);
+            break;
         case WebMenuItemTagOpenLinkInNewWindow:
             title = UI_STRING("Open Link in New Window", "Open in New Window context menu item");
             action = @selector(openLinkInNewWindow:);
@@ -206,7 +210,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         }
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard target:self representedObject:element]];
     }
-    
+
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
     
@@ -293,6 +297,8 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
 
+    NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
+    
     if ([[element objectForKey:WebElementIsSelectedKey] boolValue] && !inPasswordField) {
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
@@ -305,7 +311,17 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
-    
+
+    if (linkURL) {
+        if([WebView _canHandleRequest:[NSURLRequest requestWithURL:linkURL]]) {
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLink target:self representedObject:element]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow target:self representedObject:element]];
+        }
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard target:self representedObject:element]];
+        // FIXME: we should add "Edit Link..." here like NSTextView has in it's context menu
+        [menuItems addObject:[NSMenuItem separatorItem]];
+    }
+
     // Load our NSTextView-like context menu nib.
     if (defaultMenu == nil) {
         static NSNib *textViewMenuNib = nil;
@@ -369,17 +385,20 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     }
 }
 
-- (void)openNewWindowWithURL:(NSURL *)URL element:(NSDictionary *)element
+- (NSURLRequest *)requestWithURL:(NSURL *)URL includingReferrerFromFrame:(WebFrame *)webFrame
 {
-    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebView *webView = [webFrame webView];
-    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = core(webFrame)->loader()->outgoingReferrer();
     if (referrer)
         [request _web_setHTTPReferrer:referrer];
-    
-    [webView _openNewWindowWithRequest:request];
+    return request;
+}
+
+- (void)openNewWindowWithURL:(NSURL *)URL element:(NSDictionary *)element
+{
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    WebView *webView = [webFrame webView];
+    [webView _openNewWindowWithRequest:[self requestWithURL:URL includingReferrerFromFrame:webFrame]];
 }
 
 - (void)downloadURL:(NSURL *)URL element:(NSDictionary *)element
@@ -387,6 +406,18 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebView *webView = [webFrame webView];
     [webView _downloadURL:URL];
+}
+
+- (void)openLink:(id)sender
+{
+    NSDictionary *element = [sender representedObject];
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    WebFrame *targetFrame = [element objectForKey:WebElementLinkTargetFrameKey];
+    NSURL *url = [element objectForKey:WebElementLinkURLKey];
+    if (targetFrame)
+        [targetFrame loadRequest:[self requestWithURL:url includingReferrerFromFrame:webFrame]];
+    else
+        [self openNewWindowWithURL:url element:element];
 }
 
 - (void)openLinkInNewWindow:(id)sender

@@ -1,3 +1,22 @@
+2006-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4766635> Safari should never follow links in editable areas (add a WebKitEditableLinkNeverLive option)
+
+        Adds an EditableLinkNeverLive setting that will make links in editable areas always dead.
+
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setEditableLinkBehavior:]):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::setActive):
+        (WebCore::HTMLAnchorElement::isLiveLink):
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * page/Settings.h:
+        (WebCore::Settings::):
+
 2006-11-14  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Oliver.
