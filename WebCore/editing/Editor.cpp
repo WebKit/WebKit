@@ -726,6 +726,18 @@ static bool execToggleItalic(Frame* frame)
     return true;
 }
 
+static bool execRedo(Frame* frame)
+{
+    frame->editor()->client()->redo();
+    return true;
+}
+
+static bool execUndo(Frame* frame)
+{
+    frame->editor()->client()->undo();
+    return true;
+}
+
 // Enabled functions
 
 static bool enabled(Frame*)
@@ -756,6 +768,16 @@ static bool hasRangeSelection(Frame* frame)
 static bool hasRichlyEditableSelection(Frame* frame)
 {
     return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentRichlyEditable();
+}
+
+static bool canRedo(Frame* frame)
+{
+    return frame->editor()->client()->canRedo();
+}
+
+static bool canUndo(Frame* frame)
+{
+    return frame->editor()->client()->canUndo();
 }
 
 struct Command {
@@ -813,9 +835,11 @@ static CommandMap* createCommandMap()
         { "MoveWordRight", { hasEditableSelection, execMoveWordRight } },
         { "MoveWordRightAndModifySelection", { hasEditableSelection, execMoveWordRightAndModifySelection } },
         { "Paste", { canPaste, execPaste } },
+        { "Redo", { canRedo, execRedo } },
         { "SelectAll", { enabled, execSelectAll } },
         { "ToggleBold", { hasRichlyEditableSelection, execToggleBold } },
-        { "ToggleItalic", { hasRichlyEditableSelection, execToggleItalic } }
+        { "ToggleItalic", { hasRichlyEditableSelection, execToggleItalic } },
+        { "Undo", { canUndo, execUndo } }
     };
     
     CommandMap* commandMap = new CommandMap;
