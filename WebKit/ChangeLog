@@ -1,3 +1,15 @@
+2006-11-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        isTargetItem is used by DRT, so make it private instead of internal.
+        
+        * History/WebHistoryItem.m:
+        (-[WebHistoryItem isTargetItem]):
+        * History/WebHistoryItemInternal.h:
+        * History/WebHistoryItemPrivate.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2006-11-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

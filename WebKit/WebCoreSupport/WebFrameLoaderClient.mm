@@ -49,6 +49,7 @@
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLView.h"
 #import "WebHistoryItemInternal.h"
+#import "WebHistoryItemPrivate.h"
 #import "WebHistoryPrivate.h"
 #import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"

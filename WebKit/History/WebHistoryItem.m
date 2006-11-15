@@ -119,8 +119,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    NSLog(@"%@ - %@", URLString, title);
-    
     self = [super init];
     _private = [[WebHistoryItemPrivate alloc] init];
     _private->lastVisitedTimeInterval = time;
@@ -406,11 +404,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 - (id)viewState
 {
     return _private->viewState;
-}
-
-- (BOOL)isTargetItem
-{
-    return _private->isTargetItem;
 }
 
 - (void)setIsTargetItem:(BOOL)flag
@@ -787,6 +780,11 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     } else {
         return [self _recurseToFindTargetItem];
     }
+}
+
+- (BOOL)isTargetItem
+{
+    return _private->isTargetItem;
 }
 
 @end
