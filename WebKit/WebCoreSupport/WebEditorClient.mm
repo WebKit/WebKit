@@ -162,6 +162,16 @@ int WebEditorClient::spellCheckerDocumentTag()
     return [[m_webFrame webView] spellCheckerDocumentTag];
 }
 
+bool WebEditorClient::selectWordBeforeMenuEvent()
+{
+    return [[m_webFrame webView] _selectWordBeforeMenuEvent];
+}
+
+bool WebEditorClient::isEditable()
+{
+    return [[m_webFrame webView] isEditable];
+}
+
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]

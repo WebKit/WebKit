@@ -131,7 +131,7 @@ public:
     void mouseMoved(NSEvent*);
     bool keyEvent(NSEvent*);
     bool wheelEvent(NSEvent*);
-    bool sendContextMenuEvent(NSEvent*);
+    bool sendContextMenuEvent(PlatformMouseEvent);
 
     bool eventMayStartDrag(NSEvent*) const;
 

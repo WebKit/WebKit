@@ -979,43 +979,6 @@ bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
     return [Mac(m_frame)->bridge() mayStartDragAtEventLocation:m_frame->view()->contentsToWindow(point)];
 }
 
-bool EventHandler::sendContextMenuEvent(NSEvent *event)
-{
-    Document* doc = m_frame->document();
-    FrameView* v = m_frame->view();
-    if (!doc || !v)
-        return false;
-
-    bool swallowEvent;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
-    
-    PlatformMouseEvent mouseEvent(event);
-
-    IntPoint viewportPos = v->windowToContents(mouseEvent.pos());
-    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, viewportPos, mouseEvent);
-
-    swallowEvent = dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, mouseEvent, true);
-    if (!swallowEvent && !m_frame->selectionController()->contains(viewportPos) &&
-            ([Mac(m_frame)->bridge() selectWordBeforeMenuEvent] || [Mac(m_frame)->bridge() isEditable]
-                || (mev.targetNode() && mev.targetNode()->isContentEditable()))) {
-        m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
-        selectClosestWordFromMouseEvent(mouseEvent, mev.targetNode());
-    }
-
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
-
-    return swallowEvent;
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return false;
-}
-
 WebCoreKeyboardUIMode EventHandler::keyboardUIMode() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

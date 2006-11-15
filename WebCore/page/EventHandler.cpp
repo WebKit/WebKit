@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "Cursor.h"
 #include "Document.h"
+#include "Editor.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -1063,6 +1064,28 @@ void EventHandler::handleWheelEvent(PlatformWheelEvent& e)
             }
         }
     }
+}
+
+bool EventHandler::sendContextMenuEvent(PlatformMouseEvent event)
+{
+    Document* doc = m_frame->document();
+    FrameView* v = m_frame->view();
+    if (!doc || !v)
+        return false;
+    
+    bool swallowEvent;
+    IntPoint viewportPos = v->windowToContents(event.pos());
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, viewportPos, event);
+    
+    swallowEvent = dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, event, true);
+    if (!swallowEvent && !m_frame->selectionController()->contains(viewportPos) &&
+            (m_frame->editor()->selectWordBeforeMenuEvent() || m_frame->editor()->clientIsEditable()
+            || (mev.targetNode() && mev.targetNode()->isContentEditable()))) {
+        m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
+        selectClosestWordFromMouseEvent(event, mev.targetNode());
+    }
+    
+    return swallowEvent;
 }
 
 void EventHandler::scheduleHoverStateUpdate()

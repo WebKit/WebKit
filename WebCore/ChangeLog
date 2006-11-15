@@ -1,3 +1,23 @@
+2006-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Move things off the bridge, and move sendContextMenuEvent() from 
+        EventHandlerMac to EventHandler.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/EditorClient.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectWordBeforeMenuEvent):
+        (WebCore::Editor::clientIsEditable):
+        * editing/Editor.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+
 2006-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Harrison.

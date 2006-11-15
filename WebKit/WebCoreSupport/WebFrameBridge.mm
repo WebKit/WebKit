@@ -844,11 +844,6 @@ static BOOL loggedObjectCacheSize = NO;
     return [docView _mayStartDragAtEventLocation:location];
 }
 
-- (BOOL)selectWordBeforeMenuEvent
-{
-    return [[self webView] _selectWordBeforeMenuEvent];
-}
-
 - (int)historyLength
 {
     return [[[self webView] backForwardList] backListCount] + 1;

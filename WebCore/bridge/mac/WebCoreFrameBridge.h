@@ -357,8 +357,6 @@ typedef enum {
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData;
 - (BOOL)mayStartDragAtEventLocation:(NSPoint)location;
 
-- (BOOL)selectWordBeforeMenuEvent;
-
 - (int)historyLength;
 - (void)goBackOrForward:(int)distance;
 - (BOOL)canGoBackOrForward:(int)distance;
