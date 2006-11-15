@@ -1,3 +1,16 @@
+2006-11-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4806874>
+        Missing background image after paste
+        
+        * editing/markup.cpp:
+        (WebCore::createMarkup): If the body is fully selected, add a 
+        div with its CSS properties to the markup.  Migrated a use of 
+        enclosingBlockFlowElement to enclosingBlock to fix an infinite 
+        loop when pasting <div><input></div>.
+
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

@@ -16,15 +16,15 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > P > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > P > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > SPAN > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of P > SPAN > P > DIV > DIV > BODY > HTML > #document to 0 of P > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > SPAN > P > DIV > DIV > BODY > HTML > #document to 0 of P > SPAN > P > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > P > SPAN > P > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > SPAN > P > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > P > DIV > SPAN > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document to 3 of #text > P > DIV > SPAN > P > DIV > SPAN > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -37,33 +37,27 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (14,14) size 756x112
             RenderBlock (anonymous) at (0,0) size 756x0
               RenderInline {SPAN} at (0,0) size 0x0
-            RenderBlock (anonymous) at (0,0) size 756x28
-              RenderBlock {P} at (0,0) size 756x28
-                RenderText {#text} at (0,0) size 32x28
-                  text run at (0,0) width 32: "foo"
-            RenderBlock (anonymous) at (0,28) size 756x0
-              RenderInline {SPAN} at (0,0) size 0x0
-              RenderInline {SPAN} at (0,0) size 0x0
-            RenderBlock (anonymous) at (0,28) size 756x84
-              RenderBlock {P} at (0,0) size 756x28
-                RenderText {#text} at (0,0) size 31x28
-                  text run at (0,0) width 31: "bar"
-              RenderBlock {P} at (0,28) size 756x56
-                RenderBlock (anonymous) at (0,0) size 756x0
-                  RenderInline {SPAN} at (0,0) size 0x0
-                RenderBlock (anonymous) at (0,0) size 756x28
-                  RenderBlock {P} at (0,0) size 756x28
-                    RenderText {#text} at (0,0) size 32x28
-                      text run at (0,0) width 32: "foo"
-                RenderBlock (anonymous) at (0,28) size 756x0
-                  RenderInline {SPAN} at (0,0) size 0x0
-                  RenderInline {SPAN} at (0,0) size 0x0
-                RenderBlock (anonymous) at (0,28) size 756x28
-                  RenderBlock {P} at (0,0) size 756x28
-                    RenderText {#text} at (0,0) size 31x28
-                      text run at (0,0) width 31: "bar"
-                RenderBlock (anonymous) at (0,56) size 756x0
-                  RenderInline {SPAN} at (0,0) size 0x0
+            RenderBlock (anonymous) at (0,0) size 756x112
+              RenderBlock {DIV} at (0,0) size 756x112
+                RenderBlock {P} at (0,0) size 756x28
+                  RenderText {#text} at (0,0) size 32x28
+                    text run at (0,0) width 32: "foo"
+                RenderBlock {P} at (0,28) size 756x28
+                  RenderText {#text} at (0,0) size 31x28
+                    text run at (0,0) width 31: "bar"
+                RenderBlock {P} at (0,56) size 756x56
+                  RenderBlock (anonymous) at (0,0) size 756x0
+                    RenderInline {SPAN} at (0,0) size 0x0
+                  RenderBlock (anonymous) at (0,0) size 756x56
+                    RenderBlock {DIV} at (0,0) size 756x56
+                      RenderBlock {P} at (0,0) size 756x28
+                        RenderText {#text} at (0,0) size 32x28
+                          text run at (0,0) width 32: "foo"
+                      RenderBlock {P} at (0,28) size 756x28
+                        RenderText {#text} at (0,0) size 31x28
+                          text run at (0,0) width 31: "bar"
+                  RenderBlock (anonymous) at (0,56) size 756x0
+                    RenderInline {SPAN} at (0,0) size 0x0
             RenderBlock (anonymous) at (0,112) size 756x0
               RenderInline {SPAN} at (0,0) size 0x0
-caret: position 3 of child 0 {#text} of child 0 {P} of child 1 {SPAN} of child 1 {P} of child 1 {SPAN} of child 0 {P} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {P} of child 0 {DIV} of child 0 {SPAN} of child 2 {P} of child 0 {DIV} of child 0 {SPAN} of child 0 {P} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

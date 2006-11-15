@@ -27,6 +27,7 @@
 #include "markup.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
@@ -43,6 +44,7 @@
 #include "Logging.h"
 #include "ProcessingInstruction.h"
 #include "Range.h"
+#include "Selection.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include "TextIterator.h"
@@ -325,8 +327,16 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     doc->updateLayoutIgnorePendingStylesheets();
 
     Node *commonAncestorBlock = 0;
-    if (commonAncestor)
-        commonAncestorBlock = commonAncestor->enclosingBlockFlowElement();
+    if (commonAncestor) {
+        commonAncestorBlock = enclosingBlock(commonAncestor);
+        if (commonAncestorBlock->hasTagName(tbodyTag)) {
+            Node* table = commonAncestorBlock->parentNode();
+            while (table && !table->hasTagName(tableTag))
+                table = table->parentNode();
+            if (table)
+                commonAncestorBlock = table;
+        }
+    }
     if (!commonAncestorBlock)
         return "";
 
@@ -468,6 +478,33 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                 markups.append(endMarkup(ancestor));
             }
         }
+    }
+    
+    // FIXME: Do this for all fully selected blocks, not just a body.
+    Node* root = range->startPosition().node();
+    while (root && !root->hasTagName(bodyTag))
+        root = root->parentNode();
+    if (root && *Selection::selectionFromContentsOfNode(root).toRange() == *range) {
+        CSSMutableStyleDeclaration* inlineStyleDecl = static_cast<HTMLElement*>(root)->inlineStyleDecl();
+        RefPtr<CSSMutableStyleDeclaration> style = inlineStyleDecl ? inlineStyleDecl->copy() : new CSSMutableStyleDeclaration();
+        RefPtr<CSSRuleList> matchedRules = root->document()->styleSelector()->styleRulesForElement(static_cast<Element*>(root), true);
+        if (matchedRules) {
+            for (unsigned i = 0; i < matchedRules->length(); i++) {
+                if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
+                    RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
+                    style->merge(s.get(), true);
+                }
+            }
+        }
+        defaultStyle->diff(style.get());
+        
+        // Bring the background attribute over, but not as an attribute because a background attribute on a div
+        // appears to have no effect.
+        if (!style->getPropertyCSSValue(CSS_PROP_BACKGROUND_IMAGE) && static_cast<Element*>(root)->hasAttribute(backgroundAttr))
+            style->setProperty(CSS_PROP_BACKGROUND_IMAGE, "url('" + static_cast<Element*>(root)->getAttribute(backgroundAttr) + "')");
+        
+        markups.prepend("<div style='" + style->cssText().deprecatedString() + "'>");
+        markups.append("</div>");
     }
     
     // add in the "default style" for this markup

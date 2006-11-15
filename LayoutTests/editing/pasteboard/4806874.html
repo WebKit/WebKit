@@ -1,0 +1,12 @@
+<p>This tests for an infinite loop on Paste.  You should see 'Hello: ' and then an input field.</p>
+<div id="div" contenteditable="true">Hello: </div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "word");
+
+document.execCommand("InsertHTML", false, "<div><input type='text'></div>");
+</script>
