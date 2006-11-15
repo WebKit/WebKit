@@ -169,9 +169,6 @@ public:
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const Selection&);
 
-    virtual bool canRedo() const;
-    virtual bool canUndo() const;
-
     bool canDHTMLCut();
     bool canDHTMLCopy();
     bool canDHTMLPaste();
@@ -179,11 +176,6 @@ public:
     bool tryDHTMLCopy();
     bool tryDHTMLPaste();
     
-    virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
-    virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
-    virtual void clearUndoRedoOperations();
-    virtual void issueUndoCommand();
-    virtual void issueRedoCommand();
     virtual void issueCutCommand();
     virtual void issueCopyCommand();
     virtual void issuePasteCommand();
@@ -212,9 +204,6 @@ private:
 
     void freeClipboard();
 
-    void registerCommandForUndoOrRedo(PassRefPtr<EditCommand>, bool isRedo);
-
-    bool _haveUndoRedoOperations;
     RefPtr<Range> m_markedTextRange;
     
 // === to be moved into EventHandler

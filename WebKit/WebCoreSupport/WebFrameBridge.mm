@@ -1142,50 +1142,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
 
-- (NSString *)undoNameForEditAction:(EditAction)editAction
-{
-    switch (editAction) {
-        case EditActionUnspecified: return nil;
-        case EditActionSetColor: return UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
-        case EditActionSetBackgroundColor: return UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
-        case EditActionTurnOffKerning: return UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
-        case EditActionTightenKerning: return UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
-        case EditActionLoosenKerning: return UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
-        case EditActionUseStandardKerning: return UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
-        case EditActionTurnOffLigatures: return UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
-        case EditActionUseStandardLigatures: return UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
-        case EditActionUseAllLigatures: return UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
-        case EditActionRaiseBaseline: return UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
-        case EditActionLowerBaseline: return UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
-        case EditActionSetTraditionalCharacterShape: return UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
-        case EditActionSetFont: return UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
-        case EditActionChangeAttributes: return UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
-        case EditActionAlignLeft: return UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
-        case EditActionAlignRight: return UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
-        case EditActionCenter: return UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
-        case EditActionJustify: return UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
-        case EditActionSetWritingDirection: return UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
-        case EditActionSubscript: return UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
-        case EditActionSuperscript: return UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
-        case EditActionUnderline: return UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
-        case EditActionOutline: return UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
-        case EditActionUnscript: return UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
-        case EditActionDrag: return UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
-        case EditActionCut: return UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
-        case EditActionPaste: return UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
-        case EditActionPasteFont: return UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
-        case EditActionPasteRuler: return UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
-        case EditActionTyping: return UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
-        case EditActionCreateLink: return UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
-        case EditActionUnlink: return UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
-        case EditActionInsertList: return UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
-        case EditActionFormatBlock: return UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
-        case EditActionIndent: return UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
-        case EditActionOutdent: return UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
-    }
-    return nil;
-}
-
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
 {
     return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];

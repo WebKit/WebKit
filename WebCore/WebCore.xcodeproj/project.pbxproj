@@ -1346,7 +1346,7 @@
 		93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D92099E64910056E581 /* DeleteSelectionCommand.h */; };
 		93309DE2099E64920056E581 /* EditAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D93099E64910056E581 /* EditAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE3099E64920056E581 /* EditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D94099E64910056E581 /* EditCommand.cpp */; };
-		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; };
+		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE5099E64920056E581 /* HTMLInterchange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D96099E64910056E581 /* HTMLInterchange.cpp */; };
 		93309DE6099E64920056E581 /* HTMLInterchange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D97099E64910056E581 /* HTMLInterchange.h */; };
 		93309DE7099E64920056E581 /* htmlediting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D98099E64910056E581 /* htmlediting.cpp */; };
@@ -1431,7 +1431,7 @@
 		935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */; };
-		935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */; };
+		935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */; };
 		935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */; };
 		935C477309AC4D7700A6AAB4 /* WheelEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */; };
@@ -1559,7 +1559,6 @@
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* AtomicStringList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199D508245E59001E9ABC /* WebCoreEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */; };
 		93F199DE08245E59001E9ABC /* Position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* Position.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199E008245E59001E9ABC /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* Slider.h */; };
 		93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */; };
@@ -1598,7 +1597,6 @@
 		93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* BlockExceptions.mm */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */; };
-		93F19AF708245E59001E9ABC /* WebCoreEditCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = BEF7EEA105FF8F0D009717EE /* WebCoreEditCommand.mm */; };
 		93F19AF808245E59001E9ABC /* Position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* Position.cpp */; };
 		93F19AFA08245E59001E9ABC /* SliderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* SliderMac.mm */; };
 		93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */; };
@@ -5690,8 +5688,6 @@
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardAccess.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreEditCommand.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BEF7EEA105FF8F0D009717EE /* WebCoreEditCommand.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreEditCommand.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -6537,8 +6533,6 @@
 				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
 				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
 				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
-				BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */,
-				BEF7EEA105FF8F0D009717EE /* WebCoreEditCommand.mm */,
 				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
 				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
@@ -9180,7 +9174,6 @@
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
 				93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */,
-				93F199D508245E59001E9ABC /* WebCoreEditCommand.h in Headers */,
 				93F199DE08245E59001E9ABC /* Position.h in Headers */,
 				93F199E008245E59001E9ABC /* Slider.h in Headers */,
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
@@ -10731,7 +10724,6 @@
 				93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */,
-				93F19AF708245E59001E9ABC /* WebCoreEditCommand.mm in Sources */,
 				93F19AF808245E59001E9ABC /* Position.cpp in Sources */,
 				93F19AFA08245E59001E9ABC /* SliderMac.mm in Sources */,
 				93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */,

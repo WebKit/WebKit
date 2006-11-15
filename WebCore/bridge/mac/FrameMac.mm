@@ -78,7 +78,6 @@
 #import "SystemTime.h"
 #import "TextIterator.h"
 #import "TextResourceDecoder.h"
-#import "WebCoreEditCommand.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
@@ -2112,61 +2111,6 @@ void FrameMac::cleanupPluginObjects()
     }
 }
 
-void FrameMac::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)
-{
-    ASSERT(cmd);
-    EditAction editAction = cmd->editingAction();
-    NSUndoManager* undoManager = [_bridge undoManager];
-    WebCoreEditCommand* command = [WebCoreEditCommand commandWithEditCommand:cmd];
-    NSString* actionName = [_bridge undoNameForEditAction:editAction];
-    [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
-    if (actionName)
-        [undoManager setActionName:actionName];
-    _haveUndoRedoOperations = YES;
-}
-
-void FrameMac::registerCommandForUndo(PassRefPtr<EditCommand> cmd)
-{
-    registerCommandForUndoOrRedo(cmd, false);
-}
-
-void FrameMac::registerCommandForRedo(PassRefPtr<EditCommand> cmd)
-{
-    registerCommandForUndoOrRedo(cmd, true);
-}
-
-void FrameMac::clearUndoRedoOperations()
-{
-    if (_haveUndoRedoOperations) {
-        // workaround for <rdar://problem/4645507> NSUndoManager dies
-        // with uncaught exception when undo items cleared while
-        // groups are open
-        NSUndoManager *undoManager = [_bridge undoManager];
-        int groupingLevel = [undoManager groupingLevel];
-        for (int i = 0; i < groupingLevel; ++i)
-            [undoManager endUndoGrouping];
-        
-        [undoManager removeAllActionsWithTarget:_bridge];
-
-        for (int i = 0; i < groupingLevel; ++i)
-            [undoManager beginUndoGrouping];
-
-        _haveUndoRedoOperations = NO;
-    }
-}
-
-void FrameMac::issueUndoCommand()
-{
-    if (canUndo())
-        [[_bridge undoManager] undo];
-}
-
-void FrameMac::issueRedoCommand()
-{
-    if (canRedo())
-        [[_bridge undoManager] redo];
-}
-
 void FrameMac::issueCutCommand()
 {
     [_bridge issueCutCommand];
@@ -2190,16 +2134,6 @@ void FrameMac::issuePasteAndMatchStyleCommand()
 void FrameMac::issueTransposeCommand()
 {
     [_bridge issueTransposeCommand];
-}
-
-bool FrameMac::canUndo() const
-{
-    return [[Mac(this)->_bridge undoManager] canUndo];
-}
-
-bool FrameMac::canRedo() const
-{
-    return [[Mac(this)->_bridge undoManager] canRedo];
 }
 
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)

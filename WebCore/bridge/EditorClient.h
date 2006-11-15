@@ -26,13 +26,15 @@
 #ifndef Editor_Client_h
 #define Editor_Client_h
 
+#include <wtf/Forward.h>
 #include "AbstractShared.h"
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
-class Range;
+class EditCommand;
 class HTMLElement;
+class Range;
 
 class EditorClient : public AbstractShared {
 public:
@@ -58,6 +60,16 @@ public:
 //  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
 //  virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;
 //  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView = 0;
+    
+    virtual void registerCommandForUndo(PassRefPtr<EditCommand>) = 0;
+    virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
+    virtual void clearUndoRedoOperations() = 0;
+
+    virtual bool canUndo() const = 0;
+    virtual bool canRedo() const = 0;
+    
+    virtual void undo() = 0;
+    virtual void redo() = 0;
 };
 
 }

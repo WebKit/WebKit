@@ -73,7 +73,6 @@
 #import "TextEncoding.h"
 #import "TextIterator.h"
 #import "TypingCommand.h"
-#import "WebCoreEditCommand.h"
 #import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
@@ -958,18 +957,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (m_frame && m_frame->view())
         m_frame->view()->setTransparent(!drawsBackground);
-}
-
-- (void)undoEditing:(id)arg
-{
-    ASSERT([arg isKindOfClass:[WebCoreEditCommand class]]);
-    [arg command]->unapply();
-}
-
-- (void)redoEditing:(id)arg
-{
-    ASSERT([arg isKindOfClass:[WebCoreEditCommand class]]);
-    [arg command]->reapply();
 }
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity

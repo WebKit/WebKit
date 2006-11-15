@@ -1,3 +1,32 @@
+2006-11-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Let the editor client handle undo/redo.
+        
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/EditorClient.h:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::canUndo):
+        (WebCore::FrameMac::canRedo):
+        * bridge/mac/WebCoreEditCommand.h: Removed.
+        * bridge/mac/WebCoreEditCommand.mm: Removed.
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        * editing/JSEditor.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeURL):
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::updateFromElement):
+
 2006-11-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Brady

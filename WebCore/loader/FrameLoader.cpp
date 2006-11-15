@@ -37,6 +37,7 @@
 #include "DocumentLoader.h"
 #include "EditCommand.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -570,7 +571,7 @@ bool FrameLoader::closeURL()
 {
     saveDocumentState();
     stopLoading(true);
-    m_frame->clearUndoRedoOperations();
+    m_frame->editor()->client()->clearUndoRedoOperations();
     return true;
 }
 

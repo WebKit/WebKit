@@ -27,14 +27,17 @@
  */
 
 #import <WebCore/EditorClient.h>
+#import <WebCore/RetainPtr.h>
 #import <WebCore/Shared.h>
 #import <wtf/Forward.h>
 
+@class WebEditorUndoTarget;
 @class WebFrame;
 
 class WebEditorClient : public WebCore::EditorClient, public WebCore::Shared<WebEditorClient> {
 public:
     static PassRefPtr<WebEditorClient> create();
+    ~WebEditorClient();
     
     virtual void ref();
     virtual void deref();
@@ -58,8 +61,21 @@ public:
 
     void respondToChangedContents();
 
+    virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
+    virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
+    virtual void clearUndoRedoOperations();
+    
+    virtual bool canUndo() const;
+    virtual bool canRedo() const;
+    
+    virtual void undo();
+    virtual void redo();
 private:
+    void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();
     
     WebFrame *m_webFrame;
+    WebCore::RetainPtr<WebEditorUndoTarget> m_undoTarget;
+    
+    bool m_haveUndoRedoOperations;
 };

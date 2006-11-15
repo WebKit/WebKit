@@ -228,9 +228,6 @@ typedef enum {
 
 - (id)accessibilityTree;
 
-- (void)undoEditing:(id)arg;
-- (void)redoEditing:(id)arg;
-
 - (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
 - (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration verticalDistance:(float)distance;
@@ -384,8 +381,6 @@ typedef enum {
 // Deprecated, use getAppletInView: instead.
 - (jobject)pollForAppletInView:(NSView *)view;
 
-- (NSUndoManager *)undoManager;
-- (NSString *)undoNameForEditAction:(WebCore::EditAction)editAction;
 - (void)issueCutCommand;
 - (void)issueCopyCommand;
 - (void)issuePasteCommand;

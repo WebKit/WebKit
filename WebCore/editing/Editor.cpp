@@ -405,7 +405,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
         // Only register a new undo command if the command passed in is
         // different from the last command
         m_lastEditCommand = cmd;
-        m_frame->registerCommandForUndo(m_lastEditCommand);
+        m_client->registerCommandForUndo(m_lastEditCommand);
     }
     respondToChangedContents(newSelection);    
 }
@@ -419,7 +419,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
-    m_frame->registerCommandForRedo(cmd);
+    m_client->registerCommandForRedo(cmd);
     respondToChangedContents(newSelection);    
 }
 
@@ -432,7 +432,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
-    m_frame->registerCommandForUndo(cmd);
+    m_client->registerCommandForUndo(cmd);
     respondToChangedContents(newSelection);    
 }
 

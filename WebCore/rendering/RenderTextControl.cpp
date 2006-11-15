@@ -22,6 +22,8 @@
 #include "RenderTextControl.h"
 
 #include "Document.h"
+#include "Editor.h"
+#include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -161,7 +163,7 @@ void RenderTextControl::updateFromElement()
             if (value.endsWith("\n") || value.endsWith("\r"))
                 m_div->appendChild(new HTMLBRElement(document()), ec);
             if (document()->frame())
-                document()->frame()->clearUndoRedoOperations();
+                document()->frame()->editor()->client()->clearUndoRedoOperations();
             setEdited(false);
         }
         element->setValueMatchesRenderer();

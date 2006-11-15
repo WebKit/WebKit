@@ -1,3 +1,32 @@
+2006-11-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Move undo/redo handling into WebEditorClient.
+        
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::~WebEditorClient):
+        (-[WebEditCommand initWithEditCommand:WebCore::]):
+        (-[WebEditCommand dealloc]):
+        (-[WebEditCommand finalize]):
+        (+[WebEditCommand commandWithEditCommand:]):
+        (-[WebEditCommand command]):
+        (-[WebEditorUndoTarget undoEditing:]):
+        (-[WebEditorUndoTarget redoEditing:]):
+        (undoNameForEditAction):
+        (WebEditorClient::registerCommandForUndoOrRedo):
+        (WebEditorClient::registerCommandForUndo):
+        (WebEditorClient::registerCommandForRedo):
+        (WebEditorClient::clearUndoRedoOperations):
+        (WebEditorClient::canUndo):
+        (WebEditorClient::canRedo):
+        (WebEditorClient::undo):
+        (WebEditorClient::redo):
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Tim H.

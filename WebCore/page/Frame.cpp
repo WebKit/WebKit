@@ -895,17 +895,6 @@ void Frame::transpose()
     issueTransposeCommand();
 }
 
-void Frame::redo()
-{
-    issueRedoCommand();
-}
-
-void Frame::undo()
-{
-    issueUndoCommand();
-}
-
-
 void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction editingAction)
 {
     if (!style || style->length() == 0) {

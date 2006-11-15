@@ -32,9 +32,12 @@
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
+#import "WebLocalizableStrings.h"
 #import "WebViewInternal.h"
 #import "WebEditingDelegatePrivate.h"
 #import <wtf/PassRefPtr.h>
+#import <WebCore/EditAction.h>
+#import <WebCore/EditCommand.h>
 
 using namespace WebCore;
 
@@ -44,7 +47,13 @@ PassRefPtr<WebEditorClient> WebEditorClient::create()
 }
 
 WebEditorClient::WebEditorClient()
-    : m_webFrame(nil) 
+    : m_webFrame(nil)
+    , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
+    , m_haveUndoRedoOperations(false)
+{
+}
+
+WebEditorClient::~WebEditorClient()
 {
 }
 
@@ -132,6 +141,184 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::didEndEditing()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[m_webFrame webView]];
+}
+
+@interface WebEditCommand : NSObject
+{
+    EditCommand *m_command;   
+}
+
++ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command;
+- (EditCommand *)command;
+
+@end
+
+@implementation WebEditCommand
+
+- (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
+{
+    ASSERT(command);
+    [super init];
+    m_command = command.releaseRef();
+    return self;
+}
+
+- (void)dealloc
+{
+    m_command->deref();
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    m_command->deref();
+    [super finalize];
+}
+
++ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command
+{
+    return [[[WebEditCommand alloc] initWithEditCommand:command] autorelease];
+}
+
+- (EditCommand *)command;
+{
+    return m_command;
+}
+
+@end
+
+@interface WebEditorUndoTarget : NSObject
+{
+}
+
+- (void)undoEditing:(id)arg;
+- (void)redoEditing:(id)arg;
+
+@end
+
+@implementation WebEditorUndoTarget
+
+- (void)undoEditing:(id)arg
+{
+    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
+    [arg command]->unapply();
+}
+
+- (void)redoEditing:(id)arg
+{
+    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
+    [arg command]->reapply();
+}
+
+@end
+
+static NSString* undoNameForEditAction(EditAction editAction)
+{
+    switch (editAction) {
+        case EditActionUnspecified: return nil;
+        case EditActionSetColor: return UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
+        case EditActionSetBackgroundColor: return UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
+        case EditActionTurnOffKerning: return UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
+        case EditActionTightenKerning: return UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
+        case EditActionLoosenKerning: return UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
+        case EditActionUseStandardKerning: return UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
+        case EditActionTurnOffLigatures: return UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
+        case EditActionUseStandardLigatures: return UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
+        case EditActionUseAllLigatures: return UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
+        case EditActionRaiseBaseline: return UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
+        case EditActionLowerBaseline: return UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
+        case EditActionSetTraditionalCharacterShape: return UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
+        case EditActionSetFont: return UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
+        case EditActionChangeAttributes: return UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
+        case EditActionAlignLeft: return UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
+        case EditActionAlignRight: return UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
+        case EditActionCenter: return UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
+        case EditActionJustify: return UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
+        case EditActionSetWritingDirection: return UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
+        case EditActionSubscript: return UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
+        case EditActionSuperscript: return UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
+        case EditActionUnderline: return UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
+        case EditActionOutline: return UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
+        case EditActionUnscript: return UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
+        case EditActionDrag: return UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
+        case EditActionCut: return UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
+        case EditActionPaste: return UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
+        case EditActionPasteFont: return UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
+        case EditActionPasteRuler: return UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
+        case EditActionTyping: return UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
+        case EditActionCreateLink: return UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
+        case EditActionUnlink: return UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
+        case EditActionInsertList: return UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
+        case EditActionFormatBlock: return UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
+        case EditActionIndent: return UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
+        case EditActionOutdent: return UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
+    }
+    return nil;
+}
+
+void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)
+{
+    ASSERT(cmd);
+    
+    NSUndoManager *undoManager = [[m_webFrame webView] undoManager];
+    NSString *actionName = undoNameForEditAction(cmd->editingAction());
+    WebEditCommand *command = [WebEditCommand commandWithEditCommand:cmd];
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
+    if (actionName)
+        [undoManager setActionName:actionName];
+    m_haveUndoRedoOperations = YES;
+}
+
+void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> cmd)
+{
+    registerCommandForUndoOrRedo(cmd, false);
+}
+
+void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand> cmd)
+{
+    registerCommandForUndoOrRedo(cmd, true);
+}
+
+void WebEditorClient::clearUndoRedoOperations()
+{
+    if (m_haveUndoRedoOperations) {
+        // workaround for <rdar://problem/4645507> NSUndoManager dies
+        // with uncaught exception when undo items cleared while
+        // groups are open
+        NSUndoManager *undoManager = [[m_webFrame webView] undoManager];
+        int groupingLevel = [undoManager groupingLevel];
+        for (int i = 0; i < groupingLevel; ++i)
+            [undoManager endUndoGrouping];
+        
+        [undoManager removeAllActionsWithTarget:m_undoTarget.get()];
+        
+        for (int i = 0; i < groupingLevel; ++i)
+            [undoManager beginUndoGrouping];
+        
+        m_haveUndoRedoOperations = NO;
+    }    
+}
+
+bool WebEditorClient::canUndo() const
+{
+    return [[[m_webFrame webView] undoManager] canUndo];
+}
+
+bool WebEditorClient::canRedo() const
+{
+    return [[[m_webFrame webView] undoManager] canRedo];
+}
+
+void WebEditorClient::undo()
+{
+    if (canUndo())
+        [[[m_webFrame webView] undoManager] undo];
+}
+
+void WebEditorClient::redo()
+{
+    if (canRedo())
+        [[[m_webFrame webView] undoManager] redo];    
 }
 
 /*
