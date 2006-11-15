@@ -1,5 +1,12 @@
 2006-11-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Turns out I wasn't forcing DWARF on the world at all, 
+        it's now the default!
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2006-11-14  Anders Carlsson  <acarlsson@apple.com>
+
         I must stop trying to force DWARF on the world.
 
         * WebKit.xcodeproj/project.pbxproj:
