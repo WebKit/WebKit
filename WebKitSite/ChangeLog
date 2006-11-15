@@ -1,3 +1,18 @@
+2006-11-14  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Moved the web developer page to the wiki, adding link to the Drosera page.
+
+        * .htaccess: Add permanent redirect to the new page on the wiki.
+        * contact.html: Trac numbers are no longer one off.
+        * nav.inc:
+        * webdevelopers/index.html: Removed.
+        * webdevelopers/webkit_version.html: Removed.
+        * webdevelopers/webkit_version.js: Removed.
+        * webdevelopers/webkit_version_xl.html: Removed.
+        * webdevelopers/webkit_version_xl.js: Removed.
+
 2006-11-14  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Tim Hatcher.

@@ -3,6 +3,7 @@
         <li><a href="/">Home</a></li>
         <li><a href="/blog/">Surfin&#8217; Safari Blog</a></li>
         <li><a href="/contact.html">Keeping in Touch</a></li>
+        <li><a href="http://trac.webkit.org/projects/webkit">Trac</a></li>
 
         <li class="subtitle">Working with the Code</li>
 
@@ -16,13 +17,10 @@
 
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
+        <li><a href="http://trac.webkit.org/projects/webkit/wiki/Drosera">Drosera</a></li>
+        <li><a href="http://trac.webkit.org/projects/webkit/wiki/WebDevelopers">Web developer resources</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
-        <li><a href="http://trac.webkit.org/projects/webkit">Trac</a></li>
-        
-        <li class="subtitle">Web Developers</li>
-
-        <li><a href="/webdevelopers/">Detecting WebKit</a></li>
-        
+                
         <li class="subtitle">Testing</li>
 
         <li><a href="/quality/testing.html">Regression Testing</a></li>

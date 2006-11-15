@@ -1,1 +1,2 @@
 AddType application/x-httpd-php html
+Redirect 301 /webdevelopers http://trac.webkit.org/projects/webkit/wiki/WebDevelopers
