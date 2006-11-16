@@ -1,4 +1,14 @@
-2006-11-15  Timothy Hatcher  <timothy@apple.com>
+2006-11-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin and Tim.
+
+        <rdar://problem/4799949> REGRESSION: Crash in FrameMac::eventMayStartDrag() by clicking on a page
+        
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventMayStartDrag):
+        Add nil check of hitTest's result.innerNode().
+
+2006-11-16  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
 

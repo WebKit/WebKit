@@ -524,7 +524,7 @@ bool EventHandler::eventMayStartDrag(NSEvent *event) const
     HitTestResult result(mouseDownPos);
     m_frame->renderer()->layer()->hitTest(request, result);
     bool srcIsDHTML;
-    return result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
+    return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
 }
 
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
