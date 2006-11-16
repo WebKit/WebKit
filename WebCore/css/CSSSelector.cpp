@@ -95,6 +95,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
     static AtomicString selection("selection");
+    static AtomicString sliderThumb("-webkit-slider-thumb");
     static AtomicString target("target");
     static AtomicString visited("visited");
     bool element = false;       // pseudo-element
@@ -160,6 +161,9 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoRoot;
     else if (value == selection) {
         _pseudoType = PseudoSelection;
+        element = true;
+    } else if (value == sliderThumb) {
+        _pseudoType = PseudoSliderThumb;
         element = true;
     } else if (value == target)
         _pseudoType = PseudoTarget;

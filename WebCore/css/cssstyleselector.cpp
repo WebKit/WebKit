@@ -1640,7 +1640,9 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
             case CSSSelector::PseudoFileUploadButton:
                 dynamicPseudo = RenderStyle::FILE_UPLOAD_BUTTON;
                 return true;
-                
+            case CSSSelector::PseudoSliderThumb:
+                dynamicPseudo = RenderStyle::SLIDER_THUMB;
+                return true;                
             case CSSSelector::PseudoNotParsed:
                 assert(false);
                 break;

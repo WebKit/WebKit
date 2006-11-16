@@ -25,13 +25,17 @@
 #import "cssstyleselector.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
+#import "Element.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "Image.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "RenderSlider.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
+
+#import <Cocoa/Cocoa.h>
 
 // The methods in this file are specific to the Mac OS X platform.
 
@@ -61,6 +65,10 @@ RenderThemeMac::RenderThemeMac()
     : checkbox(nil)
     , radio(nil)
     , button(nil)
+    , sliderThumbHorizontalCell(nil)
+    , sliderThumbVerticalCell(nil)
+    , sliderHorizontalCellIsPressed(false)
+    , sliderVerticalCellIsPressed(false)    
     , resizeCornerImage(0)
 {
 }
@@ -714,6 +722,16 @@ static void MainGradientInterpolate( void *info, const CGFloat *inData, CGFloat 
         outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
 }
 
+static void TrackGradientInterpolate( void *info, const CGFloat *inData, CGFloat *outData )
+{
+    static float dark[4] = { 0, 0, 0, 0.678 };
+    static float light[4] = { 0, 0, 0, 0.13 };
+    float a = inData[0];
+    int i = 0;
+    for( i = 0; i < 4; i++ )
+        outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
+}
+
 void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     CGContextRef context = paintInfo.context->platformContext();
@@ -907,6 +925,122 @@ int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
     if (fontSize >= 11)
         return 5;
     return 0;
+}
+
+const int trackWidth = 5;
+const int trackRadius = 2;
+
+bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    IntRect bounds = r;
+    
+    if (o->style()->appearance() ==  SliderHorizontalAppearance) {
+        bounds.setHeight(trackWidth);
+        bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
+    } else if (o->style()->appearance() == SliderVerticalAppearance) {
+        bounds.setWidth(trackWidth);
+        bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
+    }
+    
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    CGContextRef context = paintInfo.context->platformContext();
+    CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();    
+
+    paintInfo.context->save();
+    CGContextClipToRect(context, bounds);
+    
+    struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
+    CGFunctionRef mainFunction = CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks);
+    CGShadingRef mainShading;
+    if (o->style()->appearance() == SliderVerticalAppearance) {
+        mainShading = CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.bottom()), 
+                                                    CGPointMake(bounds.right(), bounds.bottom()), mainFunction, false, false);
+    } else {
+        mainShading = CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), 
+                                                    CGPointMake(bounds.x(), bounds.bottom()), mainFunction, false, false);
+    }
+    
+    IntSize radius(trackRadius, trackRadius);
+    paintInfo.context->addRoundedRectClip(bounds, 
+        radius, radius,
+        radius, radius);
+    CGContextDrawShading(context, mainShading);  
+    paintInfo.context->restore();     
+
+    return false;
+}
+
+const float verticalSliderHeightPadding = 0.1;
+
+bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{   
+    NSSliderCell* sliderThumbCell;
+    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+        sliderThumbCell = sliderThumbVerticalCell;
+    else
+        sliderThumbCell = sliderThumbHorizontalCell;
+   
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    if (!sliderThumbCell) {
+        sliderThumbCell = HardRetainWithNSRelease([[NSSliderCell alloc] init]);
+        [sliderThumbCell setTitle:nil];
+        [sliderThumbCell setSliderType:NSLinearSlider];
+        if (o->style()->appearance() == SliderThumbVerticalAppearance)
+            sliderVerticalCellIsPressed = false;
+        else
+            sliderHorizontalCellIsPressed = false;        
+    }
+    [sliderThumbCell setControlSize:NSSmallControlSize];
+
+    // Update the various states we respond to.
+    updateEnabledState(sliderThumbCell, o->parent());
+    updateFocusedState(sliderThumbCell, o->parent());
+    
+    // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
+    bool oldPressed;
+    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+        oldPressed = sliderVerticalCellIsPressed;
+    else
+        oldPressed = sliderHorizontalCellIsPressed;
+    
+    bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
+    
+    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+        sliderVerticalCellIsPressed = pressed;
+    else
+        sliderHorizontalCellIsPressed = pressed; 
+    
+    if (pressed != oldPressed) { 
+        if (pressed)
+            [sliderThumbCell startTrackingAt:NSPoint() inView:nil];
+        else
+            [sliderThumbCell stopTracking:NSPoint() at:NSPoint() inView:nil mouseIsUp:YES];
+    }
+    
+    FloatRect bounds = r;
+    // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
+    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+        bounds.setHeight(bounds.height() + verticalSliderHeightPadding);
+
+    [sliderThumbCell drawWithFrame:NSRect(bounds) inView:o->view()->frameView()->getDocumentView()];
+    [sliderThumbCell setControlView:nil];
+
+    return false;
+}
+
+void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element* e) const
+{
+}
+
+const int sliderThumbWidth = 15;
+const int sliderThumbHeight = 15;
+
+void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element* e) const
+{
+    style->setWidth(Length(sliderThumbWidth, Fixed));
+    style->setHeight(Length(sliderThumbHeight, Fixed));
 }
 
 }

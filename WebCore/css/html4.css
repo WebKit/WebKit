@@ -378,6 +378,19 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     box-sizing: border-box
 }
 
+input[type="range"] {
+    -webkit-appearance: slider-horizontal;
+    padding: initial;
+    border: initial;
+    -webkit-user-select: ignore;
+    margin: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: sliderthumb-horizontal;
+    -webkit-user-select: ignore
+}
+
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]::-webkit-file-upload-button:disabled, button:disabled, select:disabled, optgroup:disabled, option:disabled {
     color: GrayText
 }

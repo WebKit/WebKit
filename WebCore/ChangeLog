@@ -1,3 +1,83 @@
+2006-11-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        New implementation of slider control.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed DeprecatedSlider and Slider classes, added RenderSlider class.
+        * rendering/DeprecatedSlider.cpp: Removed.
+        * rendering/DeprecatedSlider.h: Removed.
+        * platform/Slider.h: Removed.
+        * platform/mac/SliderMac.mm: Removed.
+        * platform/win/TemporaryLinkStubs.cpp:
+
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Added PseudoElement for thumb, PseudoSliderThumb.
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType): Added code for "-webkit-slider-thumb".
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::checkOneSelector): 
+        * rendering/RenderStyle.cpp:
+        (WebCore::):
+        (WebCore::pseudoBit):
+        * rendering/RenderStyle.h: (WebCore::RenderStyle::):
+
+        * css/html4.css: Added style for input[type="range"] and input[type="range"]::-webkit-slider-thumb
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createRenderer): Create RenderSlider for input type="range" elements.
+        (WebCore::HTMLInputElement::defaultEventHandler): Allow the renderer to forward events, and set thumb position when click occurs on the track.
+
+        * page/EventHandler.cpp:  Added concept of a node that will capture all mouse events.  This will be used by the slider thumb, so it can
+          continue to capture mouse move events during the drag, even though those events aren't directly over the slider.
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::setCapturingMouseEventsNode):
+        (WebCore::EventHandler::dispatchMouseEvent): If the capturingMouseEventsNode is set, then dispatch all mouse events to that node.
+        * page/EventHandler.h:
+
+        * rendering/RenderSlider.cpp: Added.
+        (WebCore::HTMLSliderThumbElement::isShadowNode):
+        (WebCore::HTMLSliderThumbElement::shadowParentNode):
+        (WebCore::HTMLSliderThumbElement::inDragMode): Keeps track of whether or not the thumb is in drag mode.
+        (WebCore::HTMLSliderThumbElement::HTMLSliderThumbElement):
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler): Handles positioning of slider thumb during drag.
+        (WebCore::RenderSlider::RenderSlider):
+        (WebCore::RenderSlider::~RenderSlider):
+        (WebCore::RenderSlider::baselinePosition):
+        (WebCore::RenderSlider::calcMinMaxWidth):
+        (WebCore::RenderSlider::setStyle):
+        (WebCore::RenderSlider::createThumbStyle):
+        (WebCore::RenderSlider::layout): Positions the thumb to be centered on the track.
+        (WebCore::RenderSlider::updateFromElement):
+        (WebCore::RenderSlider::mouseEventIsInThumb):
+        (WebCore::RenderSlider::setValueForPosition):
+        (WebCore::RenderSlider::setPositionFromValue):
+        (WebCore::RenderSlider::positionForOffset):
+        (WebCore::RenderSlider::valueChanged):
+        (WebCore::RenderSlider::currentPosition):
+        (WebCore::RenderSlider::setCurrentPosition):
+        (WebCore::RenderSlider::trackSize):
+        (WebCore::RenderSlider::forwardEvent):
+        (WebCore::RenderSlider::inDragMode):
+        * rendering/RenderSlider.h: Added.
+        (WebCore::RenderSlider::renderName):
+
+         * rendering/RenderTheme.cpp: Added drawing code for slider track and thumb.
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::adjustSliderTrackStyle):
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintSliderTrack):
+        (WebCore::RenderTheme::paintSliderThumb):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::TrackGradientInterpolate):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+
 2006-11-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

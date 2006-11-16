@@ -72,6 +72,12 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustMenuListStyle(selector, style, e);
         case MenulistButtonAppearance:
             return adjustMenuListButtonStyle(selector, style, e);
+        case SliderHorizontalAppearance:
+        case SliderVerticalAppearance:
+            return adjustSliderTrackStyle(selector, style, e);
+        case SliderThumbHorizontalAppearance:
+        case SliderThumbVerticalAppearance:
+            return adjustSliderThumbStyle(selector, style, e);
         default:
             break;
     }
@@ -102,6 +108,12 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintButton(o, paintInfo, r);
         case MenulistAppearance:
             return paintMenuList(o, paintInfo, r);
+        case SliderHorizontalAppearance:
+        case SliderVerticalAppearance:
+            return paintSliderTrack(o, paintInfo, r);
+        case SliderThumbHorizontalAppearance:
+        case SliderThumbVerticalAppearance:
+            return paintSliderThumb(o, paintInfo, r);
         case MenulistButtonAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
@@ -134,6 +146,10 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case SquareButtonAppearance:
         case ButtonAppearance:
         case MenulistAppearance:
+        case SliderHorizontalAppearance:
+        case SliderVerticalAppearance:
+        case SliderThumbHorizontalAppearance:
+        case SliderThumbVerticalAppearance:
         default:
             break;
     }
@@ -159,6 +175,10 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         case SquareButtonAppearance:
         case ButtonAppearance:
         case MenulistAppearance:
+        case SliderHorizontalAppearance:
+        case SliderVerticalAppearance:
+        case SliderThumbHorizontalAppearance:
+        case SliderThumbVerticalAppearance:
         default:
             break;
     }
@@ -380,6 +400,14 @@ void RenderTheme::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* s
 }
 
 void RenderTheme::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+}
+
+void RenderTheme::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+}
+
+void RenderTheme::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
 }
 

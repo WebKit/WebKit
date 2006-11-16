@@ -29,7 +29,6 @@
 
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
-#include "DeprecatedSlider.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -49,6 +48,7 @@
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
+#include "RenderSlider.h"
 #include "SelectionController.h"
 #include <unicode/ubrk.h>
 
@@ -843,7 +843,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case SEARCH:
             return new (arena) RenderLineEdit(this);
         case RANGE:
-            return new (arena) DeprecatedSlider(this);
+            return new (arena) RenderSlider(this);
         case ISINDEX:
         case PASSWORD:
         case TEXT:
@@ -1394,7 +1394,19 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
     
     if (isNonWidgetTextField() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())
         static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
-    
+
+    if (inputType() == RANGE && renderer()) {
+        RenderSlider* slider = static_cast<RenderSlider*>(renderer());
+        if (evt->isMouseEvent() && evt->type() == mousedownEvent) {
+            MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
+            if (!slider->mouseEventIsInThumb(mEvt)) {
+                slider->setValueForPosition(slider->positionForOffset(IntPoint(mEvt->offsetX(), mEvt->offsetY())));
+            }
+        }
+        if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())
+            slider->forwardEvent(evt);
+    }
+            
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
 

@@ -1566,7 +1566,6 @@
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* AtomicStringList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199DE08245E59001E9ABC /* Position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* Position.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199E008245E59001E9ABC /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* Slider.h */; };
 		93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */; };
 		93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* ClipboardMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
@@ -1604,7 +1603,6 @@
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */; };
 		93F19AF808245E59001E9ABC /* Position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* Position.cpp */; };
-		93F19AFA08245E59001E9ABC /* SliderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* SliderMac.mm */; };
 		93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */; };
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
@@ -2260,6 +2258,8 @@
 		AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
+		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
+		AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = AB247A6B0AFD6383003FA5FD /* RenderSlider.h */; };
 		AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AB4261D70A2F6C9700BDD17D /* missingImage.tiff */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; };
@@ -2593,8 +2593,6 @@
 		BC6DB3690A1A7CB700E5CD14 /* GlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */; };
 		BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */; };
-		BC92F1DD0A40AEA300AC0746 /* DeprecatedSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */; };
-		BC92F1DE0A40AEA300AC0746 /* DeprecatedSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */; };
 		BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16B8B0979B01400467741 /* DeprecatedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* DeprecatedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5140,6 +5138,8 @@
 		AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTextFieldInnerElement.h; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
+		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
+		AB247A6B0AFD6383003FA5FD /* RenderSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSlider.h; sourceTree = "<group>"; };
 		AB4261D70A2F6C9700BDD17D /* missingImage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = missingImage.tiff; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControl.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextControl.h; sourceTree = "<group>"; };
@@ -5599,10 +5599,6 @@
 		BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMapMac.cpp; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC86FB8D061F5C23006BB822 /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Slider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC86FB8E061F5C23006BB822 /* SliderMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SliderMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedSlider.cpp; sourceTree = "<group>"; };
-		BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedSlider.h; sourceTree = "<group>"; };
 		BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageAnimationObserver.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		BCB16B880979B01400467741 /* DeprecatedArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedArray.h; sourceTree = "<group>"; };
@@ -6482,7 +6478,6 @@
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
-				BC86FB8E061F5C23006BB822 /* SliderMac.mm */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
 				93B0FD880A759BED0080AD44 /* StringImplMac.mm */,
@@ -8659,7 +8654,6 @@
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
-				BC86FB8D061F5C23006BB822 /* Slider.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				9352071709BD3BA500F2038D /* StaticConstructors.h */,
@@ -8877,6 +8871,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
+				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
@@ -8889,8 +8885,6 @@
 				9392F1490AD1861300691BD4 /* CounterResetNode.cpp */,
 				9392F1450AD1860C00691BD4 /* CounterResetNode.h */,
 				BCEA4817097D93020094C9E4 /* DataRef.h */,
-				BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */,
-				BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
@@ -9220,7 +9214,6 @@
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
 				93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */,
 				93F199DE08245E59001E9ABC /* Position.h in Headers */,
-				93F199E008245E59001E9ABC /* Slider.h in Headers */,
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
@@ -9829,7 +9822,6 @@
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,
 				1AC694C80A3B1676003F5049 /* PluginDocument.h in Headers */,
 				51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */,
-				BC92F1DE0A40AEA300AC0746 /* DeprecatedSlider.h in Headers */,
 				D05CED2A0A40BB2C00C5AF38 /* FormatBlockCommand.h in Headers */,
 				85031B3D0A44EFC700F992E0 /* BeforeUnloadEvent.h in Headers */,
 				85031B3E0A44EFC700F992E0 /* Clipboard.h in Headers */,
@@ -10562,6 +10554,7 @@
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				14D823520AF92A790004F057 /* Chrome.h in Headers */,
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
+				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
 				65DADA000AFD86BF00CE53ED /* FormDataStreamMac.h in Headers */,
 				65DADA180AFD878000CE53ED /* FormData.h in Headers */,
 				651888890AFF3BF700164720 /* ResourceError.h in Headers */,
@@ -10773,7 +10766,6 @@
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */,
 				93F19AF808245E59001E9ABC /* Position.cpp in Sources */,
-				93F19AFA08245E59001E9ABC /* SliderMac.mm in Sources */,
 				93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
 				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
@@ -11338,7 +11330,6 @@
 				1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */,
 				51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */,
 				51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */,
-				BC92F1DD0A40AEA300AC0746 /* DeprecatedSlider.cpp in Sources */,
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,
 				85031B3C0A44EFC700F992E0 /* BeforeUnloadEvent.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
@@ -11812,6 +11803,7 @@
 				B2A015B90AF6CD53006BCE0E /* SVGResourceMasker.cpp in Sources */,
 				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
 				14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */,
+				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
 				1402692D0AFE72D8005919E2 /* ScreenMac.mm in Sources */,
 				65DAD9FC0AFD86B400CE53ED /* FormData.cpp in Sources */,
