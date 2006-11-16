@@ -1,3 +1,33 @@
+2006-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4832894> Crash deleting an element inside a list while deletion rectangle is visible (compareBoundaryPoints)
+
+        * Disable and hide the deletion UI for each editing command. This prevents editing commands from being affected
+          by the deletion UI elements we insert. The deletion UI is then shown after the editing commands are completely done.
+
+        * Multiple calls to DeleteButtonController's disable() needed to be paired with the same number of enable() calls before
+          the deletion UI is enabled again. This allows for nested editing commands to be called without thrashing the deletion UI.
+
+        * Make sure the the renderers are currently reflecting the latest style changes, so call updateLayoutIgnorePendingStylesheets().
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::DeleteButtonController):
+        (WebCore::isDeletableElement):
+        (WebCore::DeleteButtonController::respondToChangedSelection): check the enabled state
+        (WebCore::DeleteButtonController::respondToChangedContents): check the enabled state
+        (WebCore::DeleteButtonController::show): call isDeletableElement() to make sure the element is allowed
+        (WebCore::DeleteButtonController::deleteTarget): check the enabled state
+        * editing/DeleteButtonController.h:
+        (WebCore::DeleteButtonController::disable):
+        (WebCore::DeleteButtonController::enable):
+        (WebCore::DeleteButtonController::enabled):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): hide and disable the deletion UI, then show at the end
+        (WebCore::EditCommand::unapply): ditto
+        (WebCore::EditCommand::reapply): ditto
+
 2006-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

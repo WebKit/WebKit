@@ -57,12 +57,13 @@ DeleteButtonController::DeleteButtonController(Frame* frame)
     : m_frame(frame)
     , m_wasStaticPositioned(false)
     , m_wasAutoZIndex(false)
+    , m_disableStack(0)
 {
 }
 
 static bool isDeletableElement(Node* node)
 {
-    if (!node || !node->isHTMLElement() || !node->isContentEditable())
+    if (!node || !node->isHTMLElement() || !node->inDocument() || !node->isContentEditable())
         return false;
 
     const int minimumWidth = 25;
@@ -124,6 +125,9 @@ static HTMLElement* enclosingDeletableElement(const Selection& selection)
 
 void DeleteButtonController::respondToChangedSelection(const Selection& oldSelection)
 {
+    if (!enabled())
+        return;
+
     HTMLElement* oldElement = enclosingDeletableElement(oldSelection);
     HTMLElement* newElement = enclosingDeletableElement(m_frame->selectionController()->selection());
     if (oldElement == newElement)
@@ -138,43 +142,49 @@ void DeleteButtonController::respondToChangedSelection(const Selection& oldSelec
 
 void DeleteButtonController::respondToChangedContents()
 {
+    if (!enabled())
+        return;
+
     updateOutlineStyle();
 }
 
 void DeleteButtonController::updateOutlineStyle()
 {
-    if (!m_element || !m_element->renderer() || !m_outlineElement)
+    if (!m_target || !m_target->renderer() || !m_outlineElement)
         return;
 
     CSSMutableStyleDeclaration* style = m_outlineElement->getInlineStyleDecl();
-    style->setProperty(CSS_PROP_WIDTH, String::number(m_element->renderer()->overflowWidth()) + "px");
-    style->setProperty(CSS_PROP_HEIGHT, String::number(m_element->renderer()->overflowHeight()) + "px");
+    style->setProperty(CSS_PROP_WIDTH, String::number(m_target->renderer()->overflowWidth()) + "px");
+    style->setProperty(CSS_PROP_HEIGHT, String::number(m_target->renderer()->overflowHeight()) + "px");
 }
 
 void DeleteButtonController::show(HTMLElement* element)
 {
     hide();
 
-    if (!element->renderer() || !element->renderer()->isRenderBlock())
+    if (!enabled() || !element || !element->inDocument() || !isDeletableElement(element))
         return;
 
     if (!m_frame->editor()->shouldShowDeleteInterface(static_cast<HTMLElement*>(element)))
         return;
 
-    m_element = element;
+    // we rely on the renderer having current information, so we should update the layout if needed
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    m_containerElement = new HTMLDivElement(m_element->document());
+    m_target = element;
+
+    m_containerElement = new HTMLDivElement(m_target->document());
     m_containerElement->setId(containerElementIdentifier);
 
     CSSMutableStyleDeclaration* style = m_containerElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-    style->setProperty(CSS_PROP_TOP, String::number(-m_element->renderer()->borderTop()) + "px");
-    style->setProperty(CSS_PROP_LEFT, String::number(-m_element->renderer()->borderLeft()) + "px");
+    style->setProperty(CSS_PROP_TOP, String::number(-m_target->renderer()->borderTop()) + "px");
+    style->setProperty(CSS_PROP_LEFT, String::number(-m_target->renderer()->borderLeft()) + "px");
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
 
-    m_outlineElement = new HTMLDivElement(m_element->document());
+    m_outlineElement = new HTMLDivElement(m_target->document());
     m_outlineElement->setId(outlineElementIdentifier);
 
     const int borderWidth = 4;
@@ -202,7 +212,7 @@ void DeleteButtonController::show(HTMLElement* element)
         return;
     }
 
-    m_buttonElement = new DeleteButton(m_element->document());
+    m_buttonElement = new DeleteButton(m_target->document());
     m_buttonElement->setId(buttonElementIdentifier);
 
     const int buttonWidth = 30;
@@ -228,24 +238,24 @@ void DeleteButtonController::show(HTMLElement* element)
         return;
     }
 
-    m_element->appendChild(m_containerElement.get(), ec);
+    m_target->appendChild(m_containerElement.get(), ec);
     ASSERT(ec == 0);
     if (ec) {
         hide();
         return;
     }
 
-    if (m_element->renderer()->style()->position() == StaticPosition) {
-        m_element->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_RELATIVE);
+    if (m_target->renderer()->style()->position() == StaticPosition) {
+        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_RELATIVE);
         m_wasStaticPositioned = true;
     }
 
-    if (m_element->renderer()->style()->hasAutoZIndex()) {
-        m_element->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, "0");
+    if (m_target->renderer()->style()->hasAutoZIndex()) {
+        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, "0");
         m_wasAutoZIndex = true;
     }
 
-    m_element->renderer()->repaint(true);
+    m_target->renderer()->repaint(true);
 }
 
 void DeleteButtonController::hide()
@@ -254,26 +264,42 @@ void DeleteButtonController::hide()
     if (m_containerElement)
         m_containerElement->parentNode()->removeChild(m_containerElement.get(), ec);
 
-    if (m_element && m_wasStaticPositioned)
-        m_element->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_STATIC);
+    if (m_target && m_wasStaticPositioned)
+        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_STATIC);
 
-    if (m_element && m_wasAutoZIndex)
-        m_element->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, CSS_VAL_AUTO);
+    if (m_target && m_wasAutoZIndex)
+        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, CSS_VAL_AUTO);
 
     m_wasStaticPositioned = false;
     m_wasAutoZIndex = false;
-    m_element = 0;
+    m_target = 0;
     m_outlineElement = 0;
     m_buttonElement = 0;
     m_containerElement = 0;
 }
 
+void DeleteButtonController::enable()
+{
+    ASSERT(m_disableStack > 0);
+    if (m_disableStack > 0)
+        m_disableStack--;
+    if (enabled())
+        show(enclosingDeletableElement(m_frame->selectionController()->selection()));
+}
+
+void DeleteButtonController::disable()
+{
+    if (enabled())
+        hide();
+    m_disableStack++;
+}
+
 void DeleteButtonController::deleteTarget()
 {
-    if (!m_element)
+    if (!enabled() || !m_target)
         return;
 
-    RefPtr<Node> element = m_element;
+    RefPtr<Node> element = m_target;
     hide();
 
     RefPtr<RemoveNodeCommand> command = new RemoveNodeCommand(element.get());

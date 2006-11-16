@@ -29,6 +29,7 @@
 #include "CompositeEditCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "DeleteButtonController.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
@@ -84,7 +85,11 @@ void EditCommand::apply()
         }
     }
 
+    frame->editor()->deleteButtonController()->disable();
+
     doApply();
+
+    frame->editor()->deleteButtonController()->enable();
 
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -107,7 +112,11 @@ void EditCommand::unapply()
  
     Frame* frame = m_document->frame();
     
+    frame->editor()->deleteButtonController()->disable();
+
     doUnapply();
+
+    frame->editor()->deleteButtonController()->enable();
 
     if (!m_parent) {
         updateLayout();
@@ -122,7 +131,11 @@ void EditCommand::reapply()
  
     Frame* frame = m_document->frame();
     
+    frame->editor()->deleteButtonController()->disable();
+
     doReapply();
+
+    frame->editor()->deleteButtonController()->enable();
 
     if (!m_parent) {
         updateLayout();

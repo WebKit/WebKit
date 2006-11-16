@@ -44,7 +44,7 @@ public:
     static const char* const buttonElementIdentifier;
     static const char* const outlineElementIdentifier;
 
-    HTMLElement* target() const { return m_element.get(); };
+    HTMLElement* target() const { return m_target.get(); };
 
     void respondToChangedSelection(const Selection& oldSelection);
     void respondToChangedContents();
@@ -52,18 +52,23 @@ public:
     void show(HTMLElement*);
     void hide();
 
+    bool enabled() { ASSERT(m_disableStack && !m_target); return m_disableStack == 0; }
+    void enable();
+    void disable();
+
     void deleteTarget();
 
 private:
     void updateOutlineStyle();
 
     Frame* m_frame;
-    RefPtr<HTMLElement> m_element;
+    RefPtr<HTMLElement> m_target;
     RefPtr<HTMLElement> m_containerElement;
     RefPtr<HTMLElement> m_outlineElement;
     RefPtr<DeleteButton> m_buttonElement;
     bool m_wasStaticPositioned;
     bool m_wasAutoZIndex;
+    unsigned m_disableStack;
 };
 
 } // namespace WebCore
