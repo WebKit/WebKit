@@ -1,3 +1,15 @@
+2006-11-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add null checks on the node filter, they can be null if no filter was passed to the respective
+        create functions.
+        
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::mark):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::mark):
+
 2006-11-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.

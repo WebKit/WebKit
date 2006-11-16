@@ -26,7 +26,8 @@ namespace WebCore {
     
 void JSTreeWalker::mark()
 {
-    m_impl->filter()->mark();
+    if (NodeFilter* filter = m_impl->filter())
+        filter->mark();
     
     DOMObject::mark();
 }
