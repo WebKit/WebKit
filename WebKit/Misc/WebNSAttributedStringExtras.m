@@ -157,7 +157,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
     NSMutableAttributedString *result;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!range->boundaryPointsValid())
+    if (!range || !range->boundaryPointsValid())
         return nil;
     
     Node* firstNode = range->startNode();

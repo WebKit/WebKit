@@ -1,3 +1,15 @@
+2006-11-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/4841123>
+        REGRESSION: Crash in WebCore::Range::boundaryPointsValid when replying to a mail Message
+        
+        * Misc/WebNSAttributedStringExtras.m:
+        (+[NSAttributedString _web_attributedStringFromRange:]):
+        If the range passed in is null, return null. When this function was in the bridge, it would never get called
+        with a null range when nothing was selected. Instead, the range would just have invalid boundary points.
+
 2006-11-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.
