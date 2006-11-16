@@ -1,3 +1,15 @@
+2006-11-16  Rob Buis  <buis@kde.org>
+
+        Reviewed by hyatt.
+
+        Removal of unused m_styleElement.
+
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::dump):
+        * dom/Node.h:
+        (WebCore::Node::isLink): should be styleElement, a bug?
+
 2006-11-15  Adam Roben  <aroben@apple.com>
 
         Build fix.
