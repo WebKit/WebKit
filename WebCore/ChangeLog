@@ -1,3 +1,11 @@
+2006-11-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        Add null-checks for the frame, it might not exist for all documents.
+        
 2006-11-16  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed and landed by ap.
