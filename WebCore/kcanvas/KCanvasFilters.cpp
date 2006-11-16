@@ -85,7 +85,7 @@ TextStream& KCanvasFilter::externalRepresentation(TextStream& ts) const
         ts << " [bounding box mode=" << filterBoundingBoxMode() << "]";
     if (effectBoundingBoxMode()) // default is false
         ts << " [effect bounding box mode=" << effectBoundingBoxMode() << "]";
-    if (m_effects.count() > 0)
+    if (m_effects.size() > 0)
         ts << " [effects=" << m_effects << "]";
     return ts;
 }

@@ -363,12 +363,12 @@ void HTMLCollection::updateNameCache() const
     info->hasNameCache = true;
 }
 
-DeprecatedValueList< RefPtr<Node> > HTMLCollection::namedItems(const AtomicString &name) const
+void HTMLCollection::namedItems(const AtomicString &name, Vector<RefPtr<Node> >& result) const
 {
-    DeprecatedValueList< RefPtr<Node> > result;
-
+    ASSERT(result.isEmpty());
+    
     if (name.isEmpty())
-        return result;
+        return;
 
     resetCollectionInfo();
     updateNameCache();
@@ -377,12 +377,10 @@ DeprecatedValueList< RefPtr<Node> > HTMLCollection::namedItems(const AtomicStrin
     Vector<Node*>* nameResults = info->nameCache.get(name.impl());
     
     for (unsigned i = 0; idResults && i < idResults->size(); ++i)
-        result.append(RefPtr<Node>(idResults->at(i)));
+        result.append(idResults->at(i));
 
     for (unsigned i = 0; nameResults && i < nameResults->size(); ++i)
-        result.append(RefPtr<Node>(nameResults->at(i)));
-
-    return result;
+        result.append(nameResults->at(i));
 }
 
 

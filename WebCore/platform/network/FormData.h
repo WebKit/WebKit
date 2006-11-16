@@ -20,7 +20,6 @@
 #ifndef FormData_h
 #define FormData_h
 
-#include "DeprecatedValueList.h"
 #include "PlatformString.h"
 #include "Shared.h"
 #include <wtf/Vector.h>

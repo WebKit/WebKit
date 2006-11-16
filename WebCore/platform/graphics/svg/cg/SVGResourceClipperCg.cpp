@@ -41,18 +41,18 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
 {
     KRenderingDeviceContext* context = renderingDevice()->currentContext();
     CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();
-    if (m_clipData.count() < 1)
+    if (m_clipData.clipData().size() < 1)
         return;
 
     bool heterogenousClipRules = false;
-    WindRule clipRule = m_clipData[0].windRule;
+    WindRule clipRule = m_clipData.clipData()[0].windRule;
 
     context->clearPath();
 
     CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), CGRect(boundingBox));
 
-    for (unsigned x = 0; x < m_clipData.count(); x++) {
-        ClipData data = m_clipData[x];
+    for (unsigned x = 0; x < m_clipData.clipData().size(); x++) {
+        ClipData data = m_clipData.clipData()[x];
         if (data.windRule != clipRule)
             heterogenousClipRules = true;
         
@@ -67,7 +67,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
             CGContextAddPath(cgContext, clipPath);
     }
 
-    if (m_clipData.count()) {
+    if (m_clipData.clipData().size()) {
         // FIXME!
         // We don't currently allow for heterogenous clip rules.
         // we would have to detect such, draw to a mask, and then clip

@@ -1106,7 +1106,7 @@ const ClassInfo DOMNamedNodesCollection::info = { "Collection", 0, 0, 0 };
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState* exec, const DeprecatedValueList< RefPtr<Node> >& nodes )
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
   : m_nodes(nodes)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
@@ -1115,7 +1115,7 @@ DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState* exec, const Deprecat
 JSValue* DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
-  return jsNumber(thisObj->m_nodes.count());
+  return jsNumber(thisObj->m_nodes.size());
 }
 
 JSValue* DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1134,7 +1134,7 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState* exec, const Identifi
   // array index ?
   bool ok;
   unsigned idx = propertyName.toUInt32(&ok);
-  if (ok && idx < m_nodes.count()) {
+  if (ok && idx < m_nodes.size()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
   }
@@ -1143,10 +1143,8 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState* exec, const Identifi
   // document.formName.name result by id as well as be index.
 
   AtomicString atomicPropertyName = propertyName;
-  DeprecatedValueListConstIterator< RefPtr<Node> > end = m_nodes.end();
-  int i = 0;
-  for (DeprecatedValueListConstIterator< RefPtr<Node> > it = m_nodes.begin(); it != end; ++it, ++i) {
-    Node* node = (*it).get();
+  for (unsigned i = 0; i < m_nodes.size(); i++) {
+    Node* node = m_nodes[i].get();
     if (node->hasAttributes() && node->attributes()->id() == atomicPropertyName) {
       slot.setCustomIndex(this, i, indexGetter);
       return true;

@@ -39,20 +39,24 @@ namespace WebCore {
         bool bboxUnits : 1;
     };
 
-    // FIXME: Step away from DeprecatedValueList
-    class ClipDataList : public DeprecatedValueList<ClipData> {
+    class ClipDataList { 
     public:
-        inline void addPath(const Path& pathData, WindRule windRule, bool bboxUnits)
+        void addPath(const Path& pathData, WindRule windRule, bool bboxUnits)
         {
             ClipData clipData;
-
+            
             clipData.path = pathData;
             clipData.windRule = windRule;
             clipData.bboxUnits = bboxUnits;
-        
-            append(clipData);
+            
+            m_clipData.append(clipData);
         }
-    };
+        
+        void clear() { m_clipData.clear(); }
+        const Vector<ClipData>& clipData() const { return m_clipData; }
+    private:
+        Vector<ClipData> m_clipData;
+    };  
 
     class SVGResourceClipper : public SVGResource {
     public:

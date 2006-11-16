@@ -200,12 +200,12 @@ JSValue *JSHTMLDocument::namedItemGetter(ExecState* exec, JSObject* originalObje
   HTMLDocument &doc = *static_cast<HTMLDocument*>(thisObj->impl());
 
   String name = propertyName;
-  RefPtr<WebCore::HTMLCollection> collection = doc.documentNamedItems(name);
+  RefPtr<HTMLCollection> collection = doc.documentNamedItems(name);
 
   if (collection->length() == 1) {
-    WebCore::Node* node = collection->firstItem();
+    Node* node = collection->firstItem();
     Frame *frame;
-    if (node->hasTagName(iframeTag) && (frame = static_cast<WebCore::HTMLIFrameElement*>(node)->contentFrame()))
+    if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
       return Window::retrieve(frame);
     return toJS(exec, node);
   }
@@ -433,7 +433,7 @@ const ClassInfo JSHTMLElement::tr_info = { "HTMLTableRowElement", &JSHTMLElement
 
 const ClassInfo* JSHTMLElement::classInfo() const
 {
-    static HashMap<WebCore::AtomicStringImpl*, const ClassInfo*> classInfoMap;
+    static HashMap<AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
         classInfoMap.set(captionTag.localName().impl(), &caption_info);
         classInfoMap.set(colTag.localName().impl(), &col_info);
@@ -477,7 +477,7 @@ const JSHTMLElement::Accessors JSHTMLElement::marquee_accessors = { &JSHTMLEleme
 
 const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 {
-    static HashMap<WebCore::AtomicStringImpl*, const Accessors*> accessorMap;
+    static HashMap<AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
         accessorMap.add(captionTag.localName().impl(), &caption_accessors);
         accessorMap.add(colTag.localName().impl(), &col_accessors);
@@ -1653,12 +1653,14 @@ JSValue *JSHTMLCollection::callAsFunction(ExecState* exec, JSObject* , const Lis
 
 JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &propertyName) const
 {
-    DeprecatedValueList< RefPtr<WebCore::Node> > namedItems = m_impl->namedItems(propertyName);
+    Vector<RefPtr<Node> > namedItems;
+    
+    m_impl->namedItems(propertyName, namedItems);
 
     if (namedItems.isEmpty())
         return jsUndefined();
 
-    if (namedItems.count() == 1)
+    if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
     return new DOMNamedNodesCollection(exec, namedItems);

@@ -1,3 +1,47 @@
+2006-11-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Use Vector instead of DeprecatedValueList in a few places.
+        
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::namedItemGetter):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::JSHTMLCollection::getNamedItems):
+        * bindings/objc/DOM.mm:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::dashboardRegionsDictionary):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::diff):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItems):
+        * html/HTMLCollection.h:
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::KCanvasFilter::externalRepresentation):
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCanvasFEColorMatrix::values):
+        (WebCore::KCanvasFEColorMatrix::setValues):
+        (WebCore::KCanvasFEConvolveMatrix::kernel):
+        (WebCore::KCanvasFEConvolveMatrix::setKernel):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::getCIFilterStack):
+        (WebCore::KCanvasFEColorMatrixQuartz::getCIFilter):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * platform/graphics/svg/SVGResourceClipper.h:
+        * platform/graphics/svg/cg/SVGResourceClipperCg.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/network/FormData.h:
+        * rendering/RenderPath.h:
+        * rendering/SVGRenderTreeAsText.h:
+        (WebCore::operator<<):
+
 2006-11-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim.
@@ -671,7 +715,7 @@
         (WebCore::HTMLElement::isRecognizedTagName):
         * ksvg2/scripts/make_names.pl:
 
-2006-11-15  Anders Carlsson  <acarlsson@apple.com>
+2006-11-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
 

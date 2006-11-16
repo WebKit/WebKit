@@ -177,13 +177,10 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
 {
     NSMutableArray *filterEffects = [NSMutableArray array];
 
-    DeprecatedValueListIterator<KCanvasFilterEffect*> it = m_effects.begin();
-    DeprecatedValueListIterator<KCanvasFilterEffect*> end = m_effects.end();
-
     setImageForName(inputImage, "SourceGraphic"); // input
 
-    for (;it != end; it++) {
-        CIFilter *filter = (*it)->getCIFilter(this);
+    for (unsigned i = 0; i < m_effects.size(); i++) {
+        CIFilter *filter = m_effects[i]->getCIFilter(this);
         if (filter)
             [filterEffects addObject:filter];
     }
@@ -315,9 +312,9 @@ CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) c
 #define deg2rad(d) ((d * (2.0 * M_PI))/360.0)
 
 #define CMValuesCheck(expected, type) \
-    if (values().count() != expected) { \
-        NSLog(@"Error, incorrect number of values in ColorMatrix for type \"%s\", expected: %i actual: %i, ignoring filter.  Values:", type, expected, values().count()); \
-        for (unsigned x=0; x < values().count(); x++) fprintf(stderr, " %f", values()[x]); \
+    if (values().size() != expected) { \
+        NSLog(@"Error, incorrect number of values in ColorMatrix for type \"%s\", expected: %i actual: %i, ignoring filter.  Values:", type, expected, values().size()); \
+        for (unsigned x=0; x < values().size(); x++) fprintf(stderr, " %f", values()[x]); \
         fprintf(stderr, "\n"); \
         return nil; \
     }
@@ -332,7 +329,7 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz* quartzFil
         CMValuesCheck(20, "matrix");
         filter = [CIFilter filterWithName:@"CIColorMatrix"];
         [filter setDefaults];
-        DeprecatedValueList<float> v = values();
+        const Vector<float>& v = values();
         [filter setValue:[CIVector vectorWithX:v[0] Y:v[1] Z:v[2] W:v[3]] forKey:@"inputRVector"];
         [filter setValue:[CIVector vectorWithX:v[5] Y:v[6] Z:v[7] W:v[8]] forKey:@"inputGVector"];
         [filter setValue:[CIVector vectorWithX:v[10] Y:v[11] Z:v[12] W:v[13]] forKey:@"inputBVector"];

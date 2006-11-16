@@ -1456,7 +1456,7 @@ NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
     const Vector<DashboardRegionValue>& regions = doc->dashboardRegions();
     size_t n = regions.size();
 
-    // Convert the DeprecatedValueList<DashboardRegionValue> into a NSDictionary of WebDashboardRegions
+    // Convert the Vector<DashboardRegionValue> into a NSDictionary of WebDashboardRegions
     NSMutableDictionary *webRegions = [NSMutableDictionary dictionaryWithCapacity:n];
     for (size_t i = 0; i < n; i++) {
         const DashboardRegionValue& region = regions[i];

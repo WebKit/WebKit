@@ -130,7 +130,7 @@ public:
 
 protected:
     FloatRect m_filterRect;
-    DeprecatedValueList<KCanvasFilterEffect* > m_effects;
+    Vector<KCanvasFilterEffect*> m_effects;
     bool m_filterBBoxMode;
     bool m_effectBBoxMode;
 };
@@ -203,14 +203,14 @@ public:
     KCColorMatrixType type() const { return m_type; }
     void setType(KCColorMatrixType type) { m_type = type; }
 
-    DeprecatedValueList<float> values() const { return m_values; }
-    void setValues(const DeprecatedValueList<float> &values) { m_values = values; };
+    const Vector<float>& values() const { return m_values; }
+    void setValues(const Vector<float>& values) { m_values = values; };
 
     TextStream& externalRepresentation(TextStream&) const;
 
 private:
     KCColorMatrixType m_type;
-    DeprecatedValueList<float> m_values;
+    Vector<float> m_values;
 };
 
 typedef enum {
@@ -309,8 +309,8 @@ public:
     FloatSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(FloatSize kernelSize) { m_kernelSize = kernelSize; }
     
-    DeprecatedValueList<float> kernel() const { return m_kernelMatrix; }
-    void setKernel(DeprecatedValueList<float> kernel) { m_kernelMatrix = kernel; }
+    const Vector<float>& kernel() const { return m_kernelMatrix; }
+    void setKernel(const Vector<float>& kernel) { m_kernelMatrix = kernel; }
     
     float divisor() const { return m_divisor; }
     void setDivisor(float divisor) { m_divisor = divisor; }
@@ -334,7 +334,7 @@ public:
 
 private:
     FloatSize m_kernelSize;
-    DeprecatedValueList<float> m_kernelMatrix; // maybe should be a real matrix?
+    Vector<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
     FloatSize m_targetOffset;

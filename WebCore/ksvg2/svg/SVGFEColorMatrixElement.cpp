@@ -78,7 +78,7 @@ KCanvasFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
         
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
-    DeprecatedValueList<float> _values;
+    Vector<float> _values;
     SVGNumberList* numbers = values();
 
     ExceptionCode ec = 0;

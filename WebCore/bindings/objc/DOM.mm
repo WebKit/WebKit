@@ -34,7 +34,6 @@
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DeprecatedValueList.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"

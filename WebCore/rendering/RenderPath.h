@@ -27,7 +27,6 @@
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
-#include "DeprecatedValueList.h"
 #include "FloatRect.h"
 
 #include "RenderObject.h"
