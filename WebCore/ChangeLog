@@ -1,3 +1,12 @@
+2006-11-16  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4796730> table deletion elements are serialized out if they are visible when innerHTML or a Web Archive is made
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): disable the delete button so it's elements are not serialized into the markup
+
 2006-11-16  George Staikos  <staikos@kde.org>
 
         Rubberstamped by Maciej.

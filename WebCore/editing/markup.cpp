@@ -33,10 +33,13 @@
 #include "CSSStyleRule.h"
 #include "cssstyleselector.h"
 #include "Comment.h"
+#include "DeleteButtonController.h"
 #include "DeprecatedStringList.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "Editor.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
@@ -324,6 +327,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     ASSERT(ec == 0);
 
     Document *doc = commonAncestor->document();
+    // disable the delete button so it's elements are not serialized into the markup
+    doc->frame()->editor()->deleteButtonController()->disable();
     doc->updateLayoutIgnorePendingStylesheets();
 
     Node *commonAncestorBlock = 0;
@@ -337,8 +342,11 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                 commonAncestorBlock = table;
         }
     }
-    if (!commonAncestorBlock)
+
+    if (!commonAncestorBlock) {
+        doc->frame()->editor()->deleteButtonController()->enable();
         return "";
+    }
 
     DeprecatedStringList markups;
     Node *pastEnd = range->pastEndNode();
@@ -354,9 +362,11 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
     if (annotate && needInterchangeNewlineAfter(visibleStart)) {
-        if (visibleStart == visibleEnd.previous())
+        if (visibleStart == visibleEnd.previous()) {
+            doc->frame()->editor()->deleteButtonController()->enable();
             return interchangeNewlineString;
-            
+        }
+
         markups.append(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().node();
     }
@@ -513,6 +523,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     markups.prepend(openTag);
     markups.append("</span>");
 
+    doc->frame()->editor()->deleteButtonController()->enable();
     return markups.join("");
 }
 
@@ -535,8 +546,12 @@ DeprecatedString createMarkup(const Node* node, EChildrenOnly includeChildren,
     Vector<Node*>* nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
+    // disable the delete button so it's elements are not serialized into the markup
+    node->document()->frame()->editor()->deleteButtonController()->disable();
     node->document()->updateLayoutIgnorePendingStylesheets();
-    return markup(const_cast<Node*>(node), includeChildren, false, nodes);
+    DeprecatedString result(markup(const_cast<Node*>(node), includeChildren, false, nodes));
+    node->document()->frame()->editor()->deleteButtonController()->enable();
+    return result;
 }
 
 static void fillContainerFromString(ContainerNode* paragraph, const DeprecatedString& string)
