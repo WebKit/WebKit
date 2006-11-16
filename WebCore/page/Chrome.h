@@ -27,6 +27,7 @@
 namespace WebCore {
 
     class ChromeClient;
+    class ContextMenu;
     class FloatRect;
     class Page;
     struct FrameLoadRequest;
@@ -68,6 +69,8 @@ namespace WebCore {
         bool menubarVisible() const;
         
         void setResizable(bool) const;
+
+        void addCustomContextMenuItems(ContextMenu*) const;
 
     private:
         Page* m_page;

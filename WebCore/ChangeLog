@@ -1,3 +1,28 @@
+2006-11-15  Beth Dakin  <bdakin@apple.com>
+        &   Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adam and Beth.
+
+        Initial cut at pushing Context Menus into WebCore. Nobody actually 
+        calls this code just yet.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::addCustomContextMenuItems): Use the chrome to 
+        call into addContextMenuItems on the UIDelegate.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ContextMenu.cpp: Added.
+        (WebCore::addDefaultItems):
+        (WebCore::ContextMenu::populate):
+        * platform/ContextMenu.h: Added.
+        (WebCore::):
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::hitTestResult):
+        (WebCore::ContextMenu::platformMenuDescription):
+
 2006-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

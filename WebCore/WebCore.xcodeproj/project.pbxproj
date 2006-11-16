@@ -1463,6 +1463,9 @@
 		93AE23210AAB521B00CD8A35 /* TextEncodingRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */; };
 		93B0FD8A0A759BED0080AD44 /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B0FD880A759BED0080AD44 /* StringImplMac.mm */; };
 		93B0FD8B0A759BED0080AD44 /* StringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B0FD890A759BED0080AD44 /* StringMac.mm */; };
+		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */; };
+		93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */; };
 		93B70D5D09EB0C7C009D8468 /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */; };
 		93B70D5E09EB0C7C009D8468 /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */; };
 		93B70D6109EB0C7C009D8468 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */; };
@@ -4371,6 +4374,9 @@
 		93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
 		93B0FD880A759BED0080AD44 /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
 		93B0FD890A759BED0080AD44 /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringMac.mm; sourceTree = "<group>"; };
+		93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenu.h; sourceTree = "<group>"; };
+		93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenu.cpp; sourceTree = "<group>"; };
+		93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMac.mm; sourceTree = "<group>"; };
 		93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
 		93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessor.cpp; sourceTree = "<group>"; };
@@ -6444,6 +6450,7 @@
 				9305001F0AF025D300FFF491 /* ClipboardAccessPolicy.h */,
 				2D90660B0665D937006B6F1A /* ClipboardMac.h */,
 				2D90660C0665D937006B6F1A /* ClipboardMac.mm */,
+				93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */,
 				9352087609BD453400F2038D /* CookieJar.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
 				651B4D8E09AC859F0029F1EF /* DeprecatedStringListMac.mm */,
@@ -8590,6 +8597,8 @@
 				65F5382009B2B55700F3DC4A /* character-sets.txt */,
 				9326DC0A09DAD5BE00AFC847 /* CharsetData.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
+				93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */,
+				93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				1A98955A0AA78149005EF5EF /* CString.cpp */,
 				1A98955B0AA78149005EF5EF /* CString.h */,
@@ -10576,6 +10585,7 @@
 				B27535820B053814002CE64F /* Pen.h in Headers */,
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
+				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10626,8 +10636,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11845,6 +11853,8 @@
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */,
 				93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */,
+				93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */,
+				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
