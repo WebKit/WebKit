@@ -1,3 +1,19 @@
+2006-11-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+
+        Allow <embed> and <object> tags to include non-plugin
+        content when plugins are disabled
+
+        Fixes <rdar://problems/4839488>
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+
 2006-11-15  Adele Peterson  <adele@apple.com>
 
         Build fix.  Another type problem that I don't see locally.

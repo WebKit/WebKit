@@ -133,7 +133,7 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
 bool HTMLEmbedElement::rendererIsNeeded(RenderStyle *style)
 {
     Frame *frame = document()->frame();
-    if (!frame || !frame->pluginsEnabled())
+    if (!frame)
         return false;
 
     Node *p = parentNode();

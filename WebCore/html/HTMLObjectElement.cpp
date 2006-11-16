@@ -184,9 +184,8 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
     if (m_useFallbackContent || isImageType())
         return HTMLPlugInElement::rendererIsNeeded(style);
 
-    // FIXME: This check is WRONG.  We should check the content before disabling, or do so at a later stage.
     Frame* frame = document()->frame();
-    if (!frame || !frame->pluginsEnabled())
+    if (!frame)
         return false;
     
     return true;

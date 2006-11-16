@@ -1281,8 +1281,13 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
         completedURL = completeURL(url);
 
     bool useFallback;
-    if (shouldUsePlugin(renderer->element(), completedURL, mimeType, renderer->hasFallbackContent(), useFallback))
+    if (shouldUsePlugin(renderer->element(), completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
+        
+        if (!m_frame->pluginsEnabled())
+            return false;
+        
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
+    }
 
     ASSERT(renderer->node()->hasTagName(objectTag) || renderer->node()->hasTagName(embedTag));
     AtomicString uniqueFrameName = m_frame->tree()->uniqueChildName(frameName);
