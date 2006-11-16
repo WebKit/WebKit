@@ -1,3 +1,13 @@
+2006-11-16  George Staikos  <staikos@kde.org>
+
+        Rubberstamped by Maciej.
+
+        Making the code valgrind clean.
+
+        * rendering/RenderTableCell.cpp: initialize variable m_widthChanged
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h: remove unused variable nWrap
+
 2006-11-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin and Tim.

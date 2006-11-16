@@ -50,6 +50,7 @@ RenderTableCell::RenderTableCell(Node* _node)
   _topExtra = 0;
   _bottomExtra = 0;
   m_percentageHeight = 0;
+  m_widthChanged = false;
 }
 
 void RenderTableCell::destroy()
