@@ -1,5 +1,19 @@
 2006-11-15  Adam Roben  <aroben@apple.com>
 
+        Build fix.
+
+        Rename the items in the ContextMenuAction enum so that they don't
+        conflict with WebKit names.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        * platform/ContextMenu.h:
+        (WebCore::):
+        (WebCore::ContextMenuItem::ContextMenuItem):
+
+2006-11-15  Adam Roben  <aroben@apple.com>
+
         Reviewed by Anders.
 
         Change m_contextMenu to an OwnPtr.

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-#define MENU_ACTION_ITEM(action, title) static ContextMenuItem action##Item(ActionType, WebMenuItemTag##action, String(title))
+#define MENU_ACTION_ITEM(action, title) static ContextMenuItem action##Item(ActionType, ContextMenuItemTag##action, String(title))
 
 void ContextMenu::populate()
 {
@@ -66,7 +66,7 @@ void ContextMenu::populate()
     MENU_ACTION_ITEM(LookUpInDictionary, "Look Up in Dictionary");
     // FIXME: Add PDF action items
 
-    ContextMenuItem SeparatorItem(SeparatorType, WebMenuItemTagNoAction, String());
+    ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
     HitTestResult result = hitTestResult();
 
     if (!result.isContentEditable()) {

@@ -43,39 +43,39 @@ namespace WebCore {
 
 // This enum needs to be in sync with WebMenuItemTag, which is defined in WebUIDelegate.h
 enum ContextMenuAction {
-    WebMenuItemTagNoAction=0, // This item is not actually in WebUIDelegate.h
-    WebMenuItemTagOpenLinkInNewWindow=1,
-    WebMenuItemTagDownloadLinkToDisk,
-    WebMenuItemTagCopyLinkToClipboard,
-    WebMenuItemTagOpenImageInNewWindow,
-    WebMenuItemTagDownloadImageToDisk,
-    WebMenuItemTagCopyImageToClipboard,
-    WebMenuItemTagOpenFrameInNewWindow,
-    WebMenuItemTagCopy,
-    WebMenuItemTagGoBack,
-    WebMenuItemTagGoForward,
-    WebMenuItemTagStop,
-    WebMenuItemTagReload,
-    WebMenuItemTagCut,
-    WebMenuItemTagPaste,
-    WebMenuItemTagSpellingGuess,
-    WebMenuItemTagNoGuessesFound,
-    WebMenuItemTagIgnoreSpelling,
-    WebMenuItemTagLearnSpelling,
-    WebMenuItemTagOther,
-    WebMenuItemTagSearchInSpotlight,
-    WebMenuItemTagSearchWeb,
-    WebMenuItemTagLookUpInDictionary,
-    WebMenuItemTagOpenWithDefaultApplication,
-    WebMenuItemPDFActualSize,
-    WebMenuItemPDFZoomIn,
-    WebMenuItemPDFZoomOut,
-    WebMenuItemPDFAutoSize,
-    WebMenuItemPDFSinglePage,
-    WebMenuItemPDFFacingPages,
-    WebMenuItemPDFContinuous,
-    WebMenuItemPDFNextPage,
-    WebMenuItemPDFPreviousPage,
+    ContextMenuItemTagNoAction=0, // This item is not actually in WebUIDelegate.h
+    ContextMenuItemTagOpenLinkInNewWindow=1,
+    ContextMenuItemTagDownloadLinkToDisk,
+    ContextMenuItemTagCopyLinkToClipboard,
+    ContextMenuItemTagOpenImageInNewWindow,
+    ContextMenuItemTagDownloadImageToDisk,
+    ContextMenuItemTagCopyImageToClipboard,
+    ContextMenuItemTagOpenFrameInNewWindow,
+    ContextMenuItemTagCopy,
+    ContextMenuItemTagGoBack,
+    ContextMenuItemTagGoForward,
+    ContextMenuItemTagStop,
+    ContextMenuItemTagReload,
+    ContextMenuItemTagCut,
+    ContextMenuItemTagPaste,
+    ContextMenuItemTagSpellingGuess,
+    ContextMenuItemTagNoGuessesFound,
+    ContextMenuItemTagIgnoreSpelling,
+    ContextMenuItemTagLearnSpelling,
+    ContextMenuItemTagOther,
+    ContextMenuItemTagSearchInSpotlight,
+    ContextMenuItemTagSearchWeb,
+    ContextMenuItemTagLookUpInDictionary,
+    ContextMenuItemTagOpenWithDefaultApplication,
+    ContextMenuItemPDFActualSize,
+    ContextMenuItemPDFZoomIn,
+    ContextMenuItemPDFZoomOut,
+    ContextMenuItemPDFAutoSize,
+    ContextMenuItemPDFSinglePage,
+    ContextMenuItemPDFFacingPages,
+    ContextMenuItemPDFContinuous,
+    ContextMenuItemPDFNextPage,
+    ContextMenuItemPDFPreviousPage,
 };
 
 enum ContextMenuItemType {
@@ -87,7 +87,7 @@ enum ContextMenuItemType {
 struct ContextMenuItem {
     ContextMenuItem()
         : type(SeparatorType)
-        , action(WebMenuItemTagNoAction)
+        , action(ContextMenuItemTagNoAction)
         , title(String())
     {
     }
