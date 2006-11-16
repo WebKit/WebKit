@@ -28,6 +28,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #include "ContextMenu.h"
@@ -53,7 +54,7 @@ namespace WebCore {
         Page* m_page;
         RefPtr<ContextMenuClient> m_client;
 
-        std::auto_ptr<ContextMenu> m_contextMenu;
+        OwnPtr<ContextMenu> m_contextMenu;
     };
 
 }

@@ -65,7 +65,7 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     if (!result.innerNonSharedNode())
         return;
 
-    m_contextMenu = new ContextMenu(result);
+    m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();
     m_client->addCustomContextMenuItems(m_contextMenu.get());
     m_contextMenu->show();

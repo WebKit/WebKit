@@ -2,6 +2,17 @@
 
         Reviewed by Anders.
 
+        Change m_contextMenu to an OwnPtr.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * page/ContextMenuController.h:
+
+2006-11-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
         Add new ContextMenuController and ContextMenuClient classes, and move
         context menu responsibilities from Chrome and ChromeClient to them.
 
