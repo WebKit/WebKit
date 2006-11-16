@@ -1,5 +1,11 @@
 2006-11-15  Adele Peterson  <adele@apple.com>
 
+        Build fix.  Another type problem that I don't see locally.
+
+        * rendering/RenderSlider.cpp: (WebCore::RenderSlider::setPositionFromValue):
+
+2006-11-15  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam.
 
         Adding MathExtras header.

@@ -300,7 +300,7 @@ double RenderSlider::setPositionFromValue(bool inLayout)
     if (style()->appearance() == SliderVerticalAppearance)
         factor = 1.0 - factor;
 
-    setCurrentPosition(factor * trackSize());
+    setCurrentPosition((int)(factor * trackSize()));
     
     if (val != oldVal)
         static_cast<HTMLInputElement*>(node())->setValueFromRenderer(String::number(val));
