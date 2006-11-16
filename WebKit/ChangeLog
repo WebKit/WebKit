@@ -1,5 +1,17 @@
 2006-11-15  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Maciej
+
+        Quick change of files to ObjC++ for BF cache re-write
+
+        * History/WebBackForwardList.m: Removed.
+        * History/WebBackForwardList.mm: Added.
+        * History/WebHistoryItem.m: Removed.
+        * History/WebHistoryItem.mm: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2006-11-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sarge
 
         SPI addition
