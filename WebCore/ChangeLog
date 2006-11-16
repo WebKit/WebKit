@@ -1,3 +1,14 @@
+2006-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4836897> Deletion rectangle disappears when multiple list items are selected
+
+        Consider the container of the selection range for deletion before asking enclosingNodeOfType().
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+
 2006-11-16  Rob Buis  <buis@kde.org>
 
         Reviewed by hyatt.

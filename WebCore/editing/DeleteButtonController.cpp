@@ -115,6 +115,12 @@ static HTMLElement* enclosingDeletableElement(const Selection& selection)
     if (!container->isContentEditable())
         return 0;
 
+    // enclosingNodeOfType only looks at ancestor nodes, we also consider the container for deletion
+    if (isDeletableElement(container)) {
+        ASSERT(container->isHTMLElement());
+        return static_cast<HTMLElement*>(container);
+    }
+
     Node* element = enclosingNodeOfType(container, &isDeletableElement);
     if (!element)
         return 0;
