@@ -1,3 +1,11 @@
+2006-11-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Adding MathExtras header.
+
+        * rendering/RenderSlider.cpp:
+
 2006-11-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Harrison.

@@ -31,6 +31,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
+#include <wtf/MathExtras.h>
 
 using std::min;
 
