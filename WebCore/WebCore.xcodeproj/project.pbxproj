@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */; };
+		065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */; };
 		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; };
 		0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */; };
 		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; };
@@ -2915,6 +2918,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuClient.h; sourceTree = "<group>"; };
+		065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuController.cpp; sourceTree = "<group>"; };
+		065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuController.h; sourceTree = "<group>"; };
 		0668E1890ADD9624004128E0 /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
 		0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
 		066C772A0AB603B700238CC4 /* FileChooser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileChooser.h; sourceTree = "<group>"; };
@@ -6513,6 +6519,9 @@
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
+				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
+				065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */,
+				065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
@@ -8348,9 +8357,11 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				B27535290B053814002CE64F /* cg */,
+				B27535490B053814002CE64F /* mac */,
+				B2A015960AF6CD53006BCE0E /* svg */,
 				B27535270B053814002CE64F /* AffineTransform.cpp */,
 				B27535280B053814002CE64F /* AffineTransform.h */,
-				B27535290B053814002CE64F /* cg */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
@@ -8359,6 +8370,10 @@
 				B275353D0B053814002CE64F /* FloatRect.h */,
 				B275353E0B053814002CE64F /* FloatSize.cpp */,
 				B275353F0B053814002CE64F /* FloatSize.h */,
+				B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */,
+				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
+				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
+				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
 				B27535400B053814002CE64F /* Icon.h */,
 				B27535410B053814002CE64F /* Image.cpp */,
 				B27535420B053814002CE64F /* Image.h */,
@@ -8368,16 +8383,10 @@
 				B27535460B053814002CE64F /* IntRect.h */,
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
-				B27535490B053814002CE64F /* mac */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				B27535540B053814002CE64F /* Pen.cpp */,
 				B27535550B053814002CE64F /* Pen.h */,
-				B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */,
-				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
-				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
-				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
-				B2A015960AF6CD53006BCE0E /* svg */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -10579,6 +10588,8 @@
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
+				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
+				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11850,6 +11861,7 @@
 				93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */,
 				93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
+				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

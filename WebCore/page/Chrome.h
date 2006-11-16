@@ -70,8 +70,6 @@ namespace WebCore {
         
         void setResizable(bool) const;
 
-        void addCustomContextMenuItems(ContextMenu*) const;
-
     private:
         Page* m_page;
         RefPtr<ChromeClient> m_client;

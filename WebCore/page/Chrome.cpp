@@ -170,10 +170,5 @@ void Chrome::setResizable(bool b) const
     m_client->setResizable(b);
 }
 
-void Chrome::addCustomContextMenuItems(ContextMenu* defaultMenu) const
-{
-    m_client->addCustomContextMenuItems(defaultMenu);
-}
-
 } // namespace WebCore
 

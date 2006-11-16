@@ -1,3 +1,24 @@
+2006-11-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        Added new WebContextMenuClient class to act as WebCore's ChromeClient,
+        and moved context menu-related code there from WebChromeClient.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebContextMenuClient.h: Added.
+        (WebContextMenuClient::webView):
+        * WebCoreSupport/WebContextMenuClient.mm: Added.
+        (WebContextMenuClient::create):
+        (WebContextMenuClient::WebContextMenuClient):
+        (WebContextMenuClient::ref):
+        (WebContextMenuClient::deref):
+        (WebContextMenuClient::addCustomContextMenuItems):
+        * WebKit.xcodeproj/project.pbxproj: Added new files.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2006-11-15  Beth Dakin  <bdakin@apple.com>
         &   Adam Roben  <aroben@apple.com>
 

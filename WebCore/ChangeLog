@@ -1,3 +1,39 @@
+2006-11-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        Add new ContextMenuController and ContextMenuClient classes, and move
+        context menu responsibilities from Chrome and ChromeClient to them.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project, and
+        alphabetize some others.
+        * page/Chrome.cpp: Remove context menu-related code.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h:
+        * page/ContextMenuClient.h: Added.
+        * page/ContextMenuController.cpp: Added.
+        (WebCore::ContextMenuController::ContextMenuController):
+        (WebCore::ContextMenuController::~ContextMenuController):
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        (WebCore::ContextMenuController::contextMenuActionSelected):
+        * page/ContextMenuController.h: Added.
+        (WebCore::ContextMenuController::client):
+        * page/Page.cpp: Every Page now has a ContextMenuController.
+        (WebCore::Page::Page):
+        * page/Page.h: Made m_dragCaretController and m_chrome objects instead
+        of pointers to objects.
+        (WebCore::Page::contextMenuController):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Removed the call to Chrome to ask the
+        delegate to add its menu items, and moved the code from the static
+        addDefaultItems function into this method.
+        * platform/ContextMenu.h:
+        (WebCore::ContextMenu::show): Added an empty method body since this
+        method is now called from ContextMenuController (although no one calls
+        into ContextMenuController yet, so it's OK for this to be empty).
+        (WebCore::ContextMenu::hide): Ditto.
+
 2006-11-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -26,54 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/ChromeClient.h>
+#import <WebCore/ContextMenuClient.h>
 #import <WebCore/Shared.h>
 #import <wtf/Forward.h>
 
 @class WebView;
 
-class WebChromeClient : public WebCore::ChromeClient, public WebCore::Shared<WebChromeClient> {
+class WebContextMenuClient : public WebCore::ContextMenuClient, public WebCore::Shared<WebContextMenuClient> {
 public:
-    static PassRefPtr<WebChromeClient> create(WebView *webView);
+    static PassRefPtr<WebContextMenuClient> create(WebView *webView);
     
     virtual void ref();
     virtual void deref();
+    
+    virtual void addCustomContextMenuItems(WebCore::ContextMenu* menu);
 
     WebView *webView() { return m_webView; }
-    
-    virtual void setWindowRect(const WebCore::FloatRect&);
-    virtual WebCore::FloatRect windowRect();
-
-    virtual WebCore::FloatRect pageRect();
-
-    virtual float scaleFactor();
-
-    virtual void focus();
-    virtual void unfocus();
-
-    virtual WebCore::Page* createWindow(const WebCore::FrameLoadRequest&);
-    virtual WebCore::Page* createModalDialog(const WebCore::FrameLoadRequest&);
-    virtual void show();
-
-    virtual bool canRunModal();
-    virtual void runModal();
-
-    virtual void setToolbarsVisible(bool);
-    virtual bool toolbarsVisible();
-    
-    virtual void setStatusbarVisible(bool);
-    virtual bool statusbarVisible();
-    
-    virtual void setScrollbarsVisible(bool);
-    virtual bool scrollbarsVisible();
-    
-    virtual void setMenubarVisible(bool);
-    virtual bool menubarVisible();
-    
-    virtual void setResizable(bool);
-    
+        
 private:
-    WebChromeClient(WebView *webView);
+    WebContextMenuClient(WebView *webView);
     
     WebView *m_webView;
 };

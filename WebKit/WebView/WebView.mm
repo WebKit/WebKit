@@ -33,6 +33,7 @@
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebChromeClient.h"
+#import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDashboardRegion.h"
 #import "WebDataSourceInternal.h"
@@ -1808,7 +1809,7 @@ NSMutableDictionary *countInvocations;
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
-    _private->page = new Page(WebChromeClient::create(self));
+    _private->page = new Page(WebChromeClient::create(self), WebContextMenuClient::create(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName view:frameView webView:self] release];
 
     [self _addToAllWebViewsSet];

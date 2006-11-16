@@ -29,14 +29,12 @@
 #import "WebChromeClient.h"
 
 #import "WebDefaultUIDelegate.h"
-#import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebUIDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
-#import <WebCore/ContextMenu.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/ResourceRequestMac.h>
@@ -202,15 +200,5 @@ bool WebChromeClient::menubarVisible()
 void WebChromeClient::setResizable(bool b)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView setResizable:b];
-}
-
-void WebChromeClient::addCustomContextMenuItems(ContextMenu* menu)
-{
-    id delegate = [m_webView UIDelegate];
-    if ([delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
-        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:menu->hitTestResult()] autorelease];
-        NSArray *newMenu = [delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:menu->platformMenuDescription()];
-        menu->setPlatformMenuDescription(newMenu);
-    }
 }
 

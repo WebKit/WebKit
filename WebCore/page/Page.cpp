@@ -21,12 +21,11 @@
 #include "config.h"
 #include "Page.h"
 
-#include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContextMenuClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "SelectionController.h"
 #include "StringHash.h"
 #include "Widget.h"
 #include <kjs/collector.h>
@@ -40,9 +39,10 @@ namespace WebCore {
 static HashSet<Page*>* allPages;
 static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 
-Page::Page(PassRefPtr<ChromeClient> chromeClient)
-    : m_dragCaretController(new SelectionController(0, true))
-    , m_chrome(new Chrome(this, chromeClient))
+Page::Page(PassRefPtr<ChromeClient> chromeClient, PassRefPtr<ContextMenuClient> contextMenuClient)
+    : m_dragCaretController(0, true)
+    , m_chrome(this, chromeClient)
+    , m_contextMenuController(this, contextMenuClient)
     , m_frameCount(0)
     , m_defersLoading(false)
 {
@@ -72,9 +72,6 @@ Page::~Page()
         Collector::collect();
 #endif
     }
-    
-    delete m_dragCaretController;
-    delete m_chrome;
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)

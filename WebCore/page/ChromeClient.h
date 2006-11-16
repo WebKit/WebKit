@@ -25,7 +25,6 @@
 
 namespace WebCore {
 
-    class ContextMenu;
     class FloatRect;
     class Page;
 
@@ -63,8 +62,6 @@ namespace WebCore {
         virtual bool menubarVisible() = 0;
 
         virtual void setResizable(bool) = 0;
-
-        virtual void addCustomContextMenuItems(ContextMenu*) = 0;
 };
 
 }

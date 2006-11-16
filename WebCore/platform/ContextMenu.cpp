@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include "Chrome.h"
+#include "ContextMenuController.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 
 #define MENU_ACTION_ITEM(action, title) static ContextMenuItem action##Item(ActionType, WebMenuItemTag##action, String(title))
 
-static void addDefaultItems(ContextMenu* menu)
+void ContextMenu::populate()
 {
     MENU_ACTION_ITEM(OpenLinkInNewWindow, "Open Link in New Window");
     MENU_ACTION_ITEM(DownloadLinkToDisk, "Download Linked File");
@@ -67,54 +67,54 @@ static void addDefaultItems(ContextMenu* menu)
     // FIXME: Add PDF action items
 
     ContextMenuItem SeparatorItem(SeparatorType, WebMenuItemTagNoAction, String());
-    HitTestResult result = menu->hitTestResult();
+    HitTestResult result = hitTestResult();
 
     if (!result.isContentEditable()) {
         KURL linkURL = result.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (true) { // FIXME: if FrameLoaderClient can handle the request
-                menu->appendItem(OpenLinkInNewWindowItem);
-                menu->appendItem(DownloadLinkToDiskItem);
+                appendItem(OpenLinkInNewWindowItem);
+                appendItem(DownloadLinkToDiskItem);
             }
-            menu->appendItem(CopyLinkToClipboardItem);
+            appendItem(CopyLinkToClipboardItem);
         }
 
         KURL imageURL = result.absoluteImageURL();
         if (!imageURL.isEmpty()) {
             if (!linkURL.isEmpty())
-                menu->appendItem(SeparatorItem);
+                appendItem(SeparatorItem);
 
-            menu->appendItem(OpenImageInNewWindowItem);
-            menu->appendItem(DownloadImageToDiskItem);
+            appendItem(OpenImageInNewWindowItem);
+            appendItem(DownloadImageToDiskItem);
             if (imageURL.isLocalFile())
-                menu->appendItem(CopyImageToClipboardItem);
+                appendItem(CopyImageToClipboardItem);
         }
 
         if (imageURL.isEmpty() && linkURL.isEmpty()) {
             if (result.isSelected()) {
     #if PLATFORM(MAC)
-                menu->appendItem(SearchInSpotlightItem);
+                appendItem(SearchInSpotlightItem);
     #endif
-                menu->appendItem(SearchWebItem);
-                menu->appendItem(SeparatorItem);
-                menu->appendItem(LookUpInDictionaryItem);
-                menu->appendItem(SeparatorItem);
-                menu->appendItem(CopyItem);
+                appendItem(SearchWebItem);
+                appendItem(SeparatorItem);
+                appendItem(LookUpInDictionaryItem);
+                appendItem(SeparatorItem);
+                appendItem(CopyItem);
             } else {
                 FrameLoader* loader = result.innerNonSharedNode()->document()->frame()->loader();
                 if (loader->canGoBackOrForward(-1))
-                    menu->appendItem(GoBackItem);
+                    appendItem(GoBackItem);
 
                 if (loader->canGoBackOrForward(1))
-                    menu->appendItem(GoForwardItem);
+                    appendItem(GoForwardItem);
                 
                 if (loader->isLoading())
-                    menu->appendItem(StopItem);
+                    appendItem(StopItem);
                 else
-                    menu->appendItem(ReloadItem);
+                    appendItem(ReloadItem);
 
                 if (result.innerNonSharedNode()->document()->frame() != result.innerNonSharedNode()->document()->frame()->page()->mainFrame())
-                    menu->appendItem(OpenFrameInNewWindowItem);
+                    appendItem(OpenFrameInNewWindowItem);
             }
         }
     } else { // Make an editing context menu
@@ -124,40 +124,32 @@ static void addDefaultItems(ContextMenu* menu)
         // Add spelling-related context menu items.
         if (true) { // FIXME: Should be (selectionController->isSelectionMisspelled() && !inPasswordField)
             // FIXME: Add spelling guesses here
-            menu->appendItem(NoGuessesFoundItem);
+            appendItem(NoGuessesFoundItem);
 
-            menu->appendItem(SeparatorItem);
-            menu->appendItem(IgnoreSpellingItem);
-            menu->appendItem(LearnSpellingItem);
-            menu->appendItem(SeparatorItem);
+            appendItem(SeparatorItem);
+            appendItem(IgnoreSpellingItem);
+            appendItem(LearnSpellingItem);
+            appendItem(SeparatorItem);
         }
 
         if (result.isSelected() && !inPasswordField) {
     #if PLATFORM(MAC)
-            menu->appendItem(SearchInSpotlightItem);
+            appendItem(SearchInSpotlightItem);
     #endif
-            menu->appendItem(SearchWebItem);
-            menu->appendItem(SeparatorItem);
+            appendItem(SearchWebItem);
+            appendItem(SeparatorItem);
      
-            menu->appendItem(LookUpInDictionaryItem);
-            menu->appendItem(SeparatorItem);
+            appendItem(LookUpInDictionaryItem);
+            appendItem(SeparatorItem);
         }
         
-        menu->appendItem(CutItem);
-        menu->appendItem(CopyItem);
-        menu->appendItem(PasteItem);
-        menu->appendItem(SeparatorItem);
+        appendItem(CutItem);
+        appendItem(CopyItem);
+        appendItem(PasteItem);
+        appendItem(SeparatorItem);
 
         // FIXME: Add "Spelling [and Grammar, on Leopard]", "Font", "Speech", "Writing Direction" submenus here.
     }
-}
-
-void ContextMenu::populate()
-{
-    addDefaultItems(this);
-    if (Frame* frame = m_hitTestResult.innerNonSharedNode()->document()->frame())
-        if (Page* page = frame->page())
-            page->chrome()->addCustomContextMenuItems(this);
 }
 
 }

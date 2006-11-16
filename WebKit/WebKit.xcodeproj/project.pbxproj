@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */; };
+		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
 		1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0706620A431E01001078F6 /* WebScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -299,6 +301,8 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebContextMenuClient.h; sourceTree = "<group>"; };
+		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
 		1C0706620A431E01001078F6 /* WebScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugServer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -958,6 +962,8 @@
 			children = (
 				14D8252D0AF955090004F057 /* WebChromeClient.h */,
 				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
+				065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */,
+				065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */,
 				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
 				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
@@ -1209,6 +1215,7 @@
 				14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */,
 				9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */,
 				51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */,
+				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1434,6 +1441,7 @@
 				1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */,
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
+				065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
