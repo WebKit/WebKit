@@ -27,6 +27,7 @@
 #define EditCommand_h
 
 #include "EditAction.h"
+#include "Element.h"
 #include "Selection.h"
 
 namespace WebCore {

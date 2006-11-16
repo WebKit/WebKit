@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
+ *
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,58 +22,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Screen.h"
+#ifndef ContextMenuClientWin_H
+#define ContextMenuClientWin_H
 
-#include "IntRect.h"
-#include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "Page.h"
-#include <windows.h>
+#include "ContextMenuClient.h"
 
 namespace WebCore {
 
-FloatRect scaleScreenRectToPageCoordinates(const FloatRect& rect, const Page*)
-{
-    return rect;
+class ContextMenuClientWin : public ContextMenuClient, public Shared<ContextMenuClientWin> {
+public:
+    virtual ~ContextMenuClientWin() { }
+
+    virtual void ref() { Shared<ContextMenuClientWin>::ref(); }
+    virtual void deref() { Shared<ContextMenuClientWin>::deref(); }
+
+    virtual void addCustomContextMenuItems(ContextMenu*);
+};
+
 }
 
-FloatRect scalePageRectToScreenCoordinates(const FloatRect& rect, const Page*)
-{
-    return rect;
-}
-
-static MONITORINFOEX monitorInfo(Widget* widget)
-{
-    HMONITOR monitor = MonitorFromWindow(widget->containingWindow(), MONITOR_DEFAULTTOPRIMARY);
-    MONITORINFOEX info;
-    info.cbSize = sizeof(MONITORINFOEX);
-    GetMonitorInfo(monitor, &info);
-    return info;
-}
-
-FloatRect screenRect(Widget* widget)
-{
-    return monitorInfo(widget).rcMonitor;
-}
-
-FloatRect screenAvailableRect(Widget* widget)
-{
-    // FIXME: I have no idea if this is correct
-    return monitorInfo(widget).rcWork;
-}
-
-int screenDepth(Widget*)
-{
-    DEVMODE deviceInfo;
-    deviceInfo.dmSize = sizeof(DEVMODE);
-    deviceInfo.dmDriverExtra = 0;
-    EnumDisplaySettings(0, ENUM_CURRENT_SETTINGS, &deviceInfo);
-    return deviceInfo.dmBitsPerPel;
-}
-
-} // namespace WebCore
+#endif // ContextMenuClientWin_H

@@ -33,13 +33,14 @@
 #include "WebBackForwardList.h"
 
 #pragma warning( push, 0 )
-#include "ResourceHandleClient.h"
-#include "FrameWin.h"
 #include "Document.h"
+#include "EventHandler.h"
 #include "FrameView.h"
+#include "FrameWin.h"
 #include "IntRect.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "ResourceHandleClient.h"
 #include "SelectionController.h"
 #include "TypingCommand.h"
 #pragma warning(pop)
@@ -99,25 +100,25 @@ WebView* WebView::createInstance()
 void WebView::mouseMoved(UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
-    m_mainFrame->impl()->view()->handleMouseMoveEvent(mouseEvent);
+    m_mainFrame->impl()->eventHandler()->handleMouseMoveEvent(mouseEvent);
 }
 
 void WebView::mouseDown(UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
-    m_mainFrame->impl()->view()->handleMousePressEvent(mouseEvent);
+    m_mainFrame->impl()->eventHandler()->handleMousePressEvent(mouseEvent);
 }
 
 void WebView::mouseUp(UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
-    m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
+    m_mainFrame->impl()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
 }
 
 void WebView::mouseDoubleClick(UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
-    m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
+    m_mainFrame->impl()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
 }
 
 bool WebView::keyPress(WPARAM wParam, LPARAM lParam)

@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef FormState_h
+#define FormState_h
+
 #include "Shared.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
@@ -52,3 +55,5 @@ namespace WebCore {
     };
 
 }
+
+#endif // FormState_h

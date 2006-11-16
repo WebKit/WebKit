@@ -36,6 +36,7 @@
 #if USE(WININET)
 #include <winsock2.h>
 #include <windows.h>
+#include "Timer.h"
 #endif
 
 #if USE(CURL)

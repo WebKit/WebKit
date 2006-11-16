@@ -1,3 +1,27 @@
+2006-11-16  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed and landed by ap.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11509:
+        Windows build bustage.
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+        (WebFrame::loadHTMLString):
+        (WebFrame::stopLoading):
+        (WebFrame::reload):
+        (WebFrame::loadDataSource):
+        (WebFrame::didReceiveData):
+        (WebFrame::receivedResponse):
+        (WebFrame::receivedAllData):
+        * COM/WebFrame.h:
+        * COM/WebView.cpp:
+        (WebView::mouseMoved):
+        (WebView::mouseDown):
+        (WebView::mouseUp):
+        (WebView::mouseDoubleClick):
+        * WebKit.vcproj/WebKit.vcproj:
+
 2006-11-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim.

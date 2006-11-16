@@ -76,7 +76,6 @@ static void initialiseSupportedImageMIMETypes()
 #else
     //assume that all implementations at least support
     supportedImageMIMETypes->add("image/jpeg");
-    supportedImageMIMETypes->add("image/jpeg");
     supportedImageMIMETypes->add("image/png");
     supportedImageMIMETypes->add("image/gif");
     supportedImageMIMETypes->add("image/bmp");

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * All rights reserved.
  *
@@ -33,12 +32,43 @@
 
 namespace WebCore {
 
-class ChromeClientWin : public ChromeClient {
+class ChromeClientWin : public ChromeClient, public Shared<ChromeClientWin> {
 public:
     virtual ~ChromeClientWin() { }
-        
+
+    virtual void ref() { Shared<ChromeClientWin>::ref(); }
+    virtual void deref() { Shared<ChromeClientWin>::deref(); }
+
+    virtual void setWindowRect(const FloatRect&);
+    virtual FloatRect windowRect();
+
+    virtual FloatRect pageRect();
+
+    virtual float scaleFactor();
+
+    virtual void focus();
+    virtual void unfocus();
+
+    virtual Page* createWindow(const FrameLoadRequest&);
+    virtual Page* createModalDialog(const FrameLoadRequest&);
+    virtual void show();
+
     virtual bool canRunModal();
     virtual void runModal();
+
+    virtual void setToolbarsVisible(bool);
+    virtual bool toolbarsVisible();
+
+    virtual void setStatusbarVisible(bool);
+    virtual bool statusbarVisible();
+
+    virtual void setScrollbarsVisible(bool);
+    virtual bool scrollbarsVisible();
+
+    virtual void setMenubarVisible(bool);
+    virtual bool menubarVisible();
+
+    virtual void setResizable(bool);
 };
 
 }

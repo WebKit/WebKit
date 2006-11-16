@@ -99,8 +99,7 @@ void Widget::setFocus()
 
 void Widget::clearFocus()
 {
-    FrameWin::clearDocumentFocus(this);
-    SetFocus(0);
+    SetFocus(NULL);
 }
 
 const Font& Widget::font() const

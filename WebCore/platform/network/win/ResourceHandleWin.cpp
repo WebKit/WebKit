@@ -32,7 +32,9 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "Page.h"
+#include "ResourceError.h"
 #include "Timer.h"
 #include <windows.h>
 #include <wininet.h>
@@ -172,7 +174,7 @@ void ResourceHandle::onHandleCreated(LPARAM lParam)
         headers += d->m_postReferrer;
         headers += "\n";
         const CString& headersLatin1 = headers.latin1();
-        String formData = postData().flattenToString();
+        String formData = postData()->flattenToString();
         INTERNET_BUFFERSA buffers;
         memset(&buffers, 0, sizeof(buffers));
         buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
@@ -196,8 +198,9 @@ void ResourceHandle::onRequestRedirected(LPARAM lParam)
     if (d->status != 0)
         return;
 
-    KURL url(String((StringImpl*) lParam).deprecatedString());
-    client()->receivedRedirect(this, url);
+    ResourceRequest request((StringImpl*) lParam);
+    ResourceResponse redirectResponse;
+    client()->willSendRequest(this, request, redirectResponse);
 }
 
 void ResourceHandle::onRequestComplete(LPARAM lParam)
@@ -342,7 +345,7 @@ bool ResourceHandle::start(DocLoader* docLoader)
     } else {
         static HINTERNET internetHandle = 0;
         if (!internetHandle) {
-            String userAgentStr = docLoader->frame()->userAgent() + String("", 1);
+            String userAgentStr = docLoader->frame()->loader()->userAgent() + String("", 1);
             LPCWSTR userAgent = reinterpret_cast<const WCHAR*>(userAgentStr.characters());
             // leak the Internet for now
             internetHandle = InternetOpen(userAgent, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_ASYNC);
@@ -365,13 +368,13 @@ bool ResourceHandle::start(DocLoader* docLoader)
         // For form posting, we can't use InternetOpenURL.  We have to use
         // InternetConnect followed by HttpSendRequest.
         HINTERNET urlHandle;
-        String referrer = docLoader->frame()->referrer();
+        String referrer = docLoader->frame()->loader()->referrer();
         if (method() == "POST") {
             d->m_postReferrer = referrer;
             DeprecatedString host = url().host();
             host += "\0";
             urlHandle = InternetConnectA(internetHandle, host.ascii(),
-                                         d->URL.port(),
+                                         url().port(),
                                          NULL, // no username
                                          NULL, // no password
                                          INTERNET_SERVICE_HTTP,
@@ -447,7 +450,8 @@ void ResourceHandle::cancel()
 
     if (!d->m_resourceHandle)
         // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.
-        setError(1);
+        // FIXME: need real cancel error
+        client()->didFailWithError(this, ResourceError());
 }
 
 void ResourceHandle::setHasReceivedResponse(bool b)

@@ -29,8 +29,11 @@
 
 #include "TextResourceDecoder.h"
 #include "Document.h"
+#include "EditorClient.h"
+#include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "FramePrivate.h"
+#include "FrameView.h"
 #include "Settings.h"
 #include "PlatformKeyboardEvent.h"
 #include "Plugin.h"
@@ -59,32 +62,7 @@ FrameWin::FrameWin(Page* page, Element* ownerElement,  PassRefPtr<EditorClient> 
 FrameWin::~FrameWin()
 {
     setView(0);
-    clearRecordedFormValues();    
-}
-
-void FrameWin::urlSelected(const FrameLoadRequest& request, Event* /*triggeringEvent*/)
-{
-    if (m_client)
-        m_client->openURL(request.resourceRequest().url().url(), request.lockHistory());
-}
-
-void FrameWin::submitForm(const FrameLoadRequest& request, Event*)
-{
-    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    const ResourceRequest& resourceRequest = request.resourceRequest();
-    if (d->m_submittedFormURL == resourceRequest.url())
-        return;
-    d->m_submittedFormURL = resourceRequest.url();
-
-    if (m_client)
-        m_client->submitForm(resourceRequest.httpMethod(), resourceRequest.url(), &resourceRequest.httpBody());
-
-    clearRecordedFormValues();
-}
-
-String FrameWin::userAgent() const
-{
-    return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
+    loader()->clearRecordedFormValues();    
 }
 
 void FrameWin::runJavaScriptAlert(String const& message)
@@ -125,29 +103,13 @@ bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
     }
     
     if (!keyEvent.isKeyUp())
-        prepareForUserAction();
+        loader()->resetMultipleFormSubmissionProtection();
 
     result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
 
     // FIXME: FrameMac has a keyDown/keyPress hack here which we are not copying.
 
     return result;
-}
-
-void FrameWin::setTitle(const String &title)
-{
-    String text = title;
-    text.replace('\\', backslashAsCurrencySymbol());
-
-    m_client->setTitle(text);
-}
-
-void FrameWin::setStatusBarText(const String& status)
-{
-    String text = status;
-    text.replace('\\', backslashAsCurrencySymbol());
-
-    m_client->setStatusText(text);
 }
 
 void FrameWin::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& features, Frame*& newFrame)

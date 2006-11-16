@@ -40,6 +40,7 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "Image.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"

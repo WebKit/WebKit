@@ -1,3 +1,301 @@
+2006-11-16  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed and landed by ap.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11509:
+        Windows build bustage.
+
+        Also reorganizes WebCore.vcproj to add files whose absence wasn't
+        causing compile errors, but which should have been there, and to
+        make the include directory ordering (and contents) sane.
+        Also reorganizes TemporaryLinkStubs.cpp to put headers and
+        function groups in alphabetical order, and ensure that all functions
+        in the file call notImplemented().
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ChromeClientWin.h:
+        (WebCore::ChromeClientWin::ref):
+        (WebCore::ChromeClientWin::deref):
+        * bridge/win/ContextMenuClientWin.h: Added.
+        (WebCore::ContextMenuClientWin::~ContextMenuClientWin):
+        (WebCore::ContextMenuClientWin::ref):
+        (WebCore::ContextMenuClientWin::deref):
+        * bridge/win/EditorClientWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::~FrameWin):
+        (WebCore::FrameWin::keyPress):
+        * bridge/win/FrameWin.h:
+        * bridge/win/PageWin.cpp: Removed.
+        * editing/EditCommand.h:
+        * loader/FormState.h:
+        * loader/FrameLoader.h:
+        * page/EventHandler.cpp:
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedImageMIMETypes):
+        * platform/graphics/win/ImageWin.cpp:
+        * platform/network/ResourceError.cpp:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onHandleCreated):
+        (WebCore::ResourceHandle::onRequestRedirected):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        * platform/win/ScreenWin.cpp:
+        (WebCore::monitorInfo):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenDepth):
+        * platform/win/SoundWin.cpp: Added.
+        (WebCore::systemBeep):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::CacheObjectExpiresTime):
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::CheckIfReloading):
+        (WebCore::defaultLanguage):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::findNextSentenceFromIndex):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findSentenceBoundary):
+        (WebCore::findWordBoundary):
+        (WebCore::focusRingColor):
+        (WebCore::historyContains):
+        (WebCore::inputElementAltText):
+        (WebCore::IsResponseURLEqualToURL):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::refreshPlugins):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::ResponseIsMultipart):
+        (WebCore::ResponseMIMEType):
+        (WebCore::ResponseURL):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::setFocusRingColorChangeFunction):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::CachedResource::setPlatformResponse):
+        (WebCore::CachedResource::setAllData):
+        (WebCore::ChromeClientWin::setWindowRect):
+        (WebCore::ChromeClientWin::windowRect):
+        (WebCore::ChromeClientWin::pageRect):
+        (WebCore::ChromeClientWin::scaleFactor):
+        (WebCore::ChromeClientWin::focus):
+        (WebCore::ChromeClientWin::unfocus):
+        (WebCore::ChromeClientWin::createWindow):
+        (WebCore::ChromeClientWin::createModalDialog):
+        (WebCore::ChromeClientWin::show):
+        (WebCore::ChromeClientWin::canRunModal):
+        (WebCore::ChromeClientWin::runModal):
+        (WebCore::ChromeClientWin::setToolbarsVisible):
+        (WebCore::ChromeClientWin::toolbarsVisible):
+        (WebCore::ChromeClientWin::setStatusbarVisible):
+        (WebCore::ChromeClientWin::statusbarVisible):
+        (WebCore::ChromeClientWin::setScrollbarsVisible):
+        (WebCore::ChromeClientWin::scrollbarsVisible):
+        (WebCore::ChromeClientWin::setMenubarVisible):
+        (WebCore::ChromeClientWin::menubarVisible):
+        (WebCore::ChromeClientWin::setResizable):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenuClientWin::addCustomContextMenuItems):
+        (WebCore::DocumentLoader::setFrame):
+        (WebCore::DocumentLoader::frameLoader):
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::isStopping):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::setLoading):
+        (WebCore::DocumentLoader::updateLoading):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::stopRecordingResponses):
+        (WebCore::EditorClientWin::shouldDeleteRange):
+        (WebCore::EditorClientWin::shouldShowDeleteInterface):
+        (WebCore::EditorClientWin::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientWin::isGrammarCheckingEnabled):
+        (WebCore::EditorClientWin::spellCheckerDocumentTag):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleMouseUp):
+        (WebCore::EventHandler::lastEventIsMouseUp):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToSubframe):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        (WebCore::EventHandler::shouldDragAutoNode):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::tabsToLinks):
+        (WebCore::Frame::setNeedsReapplyStyles):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::overrideMediaType):
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        (WebCore::FrameLoader::redirectDataToPlugin):
+        (WebCore::FrameLoader::getHistoryLength):
+        (WebCore::FrameLoader::setTitle):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::saveDocumentState):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::goBackOrForward):
+        (WebCore::FrameLoader::historyURL):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::partClearedInBegin):
+        (WebCore::FrameLoader::originalRequestURL):
+        (WebCore::FrameLoader::canGoBackOrForward):
+        (WebCore::FrameLoader::objectContentType):
+        (WebCore::FrameLoader::createPlugin):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameView::updateBorder):
+        (WebCore::FrameWin::bindingRootObject):
+        (WebCore::FrameWin::canPaste):
+        (WebCore::FrameWin::issuePasteAndMatchStyleCommand):
+        (WebCore::FrameWin::markedTextRange):
+        (WebCore::FrameWin::passSubframeEventToSubframe):
+        (WebCore::FrameWin::lastEventIsMouseUp):
+        (WebCore::FrameWin::addMessageToConsole):
+        (WebCore::FrameWin::shouldChangeSelection):
+        (WebCore::FrameWin::respondToChangedSelection):
+        (WebCore::FrameWin::clearUndoRedoOperations):
+        (WebCore::FrameWin::markMisspellingsInAdjacentWords):
+        (WebCore::FrameWin::respondToChangedContents):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineWidth):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        (WebCore::Icon::paint):
+        (WebCore::IconDatabase::isIconExpiredForIconURL):
+        (WebCore::IconDatabase::hasEntryForIconURL):
+        (WebCore::IconDatabase::sharedIconDatabase):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::getHBITMAP):
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::contains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::operator=):
+        (WebCore::Path::clear):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::transform):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::~PlatformScrollbar):
+        (WebCore::PlatformScrollbar::width):
+        (WebCore::PlatformScrollbar::height):
+        (WebCore::PlatformScrollbar::setEnabled):
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::updateThumbPosition):
+        (WebCore::PlatformScrollbar::updateThumbProportion):
+        (WebCore::PlatformScrollbar::setRect):
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PlugInInfoStore::pluginCount):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        (WebCore::PolicyCheck::PolicyCheck):
+        (WebCore::PolicyCheck::clear):
+        (WebCore::PolicyCheck::clearRequest):
+        (WebCore::PolicyCheck::call):
+        (WebCore::RenderThemeWin::systemFont):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::adjustMenuListStyle):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::scrollPointRecursively):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::themeChanged):
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::windowResizerRect):
+        (WebCore::ScrollView::resizerOverlapsContent):
+        (WebCore::TextField::selectAll):
+        (WebCore::TextField::addSearchResult):
+        (WebCore::TextField::selectionStart):
+        (WebCore::TextField::hasSelectedText):
+        (WebCore::TextField::selectedText):
+        (WebCore::TextField::setAutoSaveName):
+        (WebCore::TextField::checksDescendantsForFocus):
+        (WebCore::TextField::setSelection):
+        (WebCore::TextField::setMaxResults):
+        (WebCore::TextField::edited):
+        (WebCore::TextField::focusPolicy):
+        (WebCore::TextField::TextField):
+        (WebCore::TextField::~TextField):
+        (WebCore::TextField::setFont):
+        (WebCore::TextField::setAlignment):
+        (WebCore::TextField::setWritingDirection):
+        (WebCore::TextField::maxLength):
+        (WebCore::TextField::setMaxLength):
+        (WebCore::TextField::text):
+        (WebCore::TextField::setText):
+        (WebCore::TextField::cursorPosition):
+        (WebCore::TextField::setCursorPosition):
+        (WebCore::TextField::setEdited):
+        (WebCore::TextField::setReadOnly):
+        (WebCore::TextField::setPlaceholderString):
+        (WebCore::TextField::setColors):
+        (WebCore::TextField::sizeForCharacterWidth):
+        (WebCore::TextField::baselinePosition):
+        (WebCore::TextField::setLiveSearch):
+        (WebCore::Widget::enableFlushDrawing):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::focusPolicy):
+        (WebCore::Widget::disableFlushDrawing):
+        (WebCore::Widget::removeFromParent):
+        (WebCore::Widget::lockDrawingFocus):
+        (WebCore::Widget::unlockDrawingFocus):
+        (WebCore::Widget::capturingMouse):
+        (WebCore::Widget::setCapturingMouse):
+        (WebCore::Widget::capturingTarget):
+        (WebCore::Widget::capturingChild):
+        (WebCore::Widget::setCapturingChild):
+        (WebCore::Widget::convertChildToSelf):
+        (WebCore::Widget::convertSelfToChild):
+        (WebCore::Widget::setParent):
+        (WebCore::Widget::parent):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::clearFocus):
+
 2006-11-16  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * All rights reserved.
  *

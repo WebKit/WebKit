@@ -59,10 +59,4 @@ Image* Image::loadPlatformResource(const char *name)
     return img;
 }
 
-bool Image::supportsType(const String& type)
-{
-    // FIXME: Implement.
-    return false;
-}
-
 }
