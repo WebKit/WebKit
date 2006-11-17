@@ -81,7 +81,7 @@ public:
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String &url, const String& charset, const String &sheet);
     bool isLoading() const;
-    void sheetLoaded();
+    virtual bool sheetLoaded();
 
     bool isAlternate() const { return m_disabledState == 0 && m_alternate; }
     bool isDisabled() const { return m_disabledState == 2; }

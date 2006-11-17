@@ -1,3 +1,25 @@
+2006-11-16  Rob Buis  <buis@kde.org>
+
+        Reviewed and landed by Brady
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11590 -
+        REGRESSION (r17726-r17742): Wikipedia page intermittently loads but doesn't render
+        Fix the regression by setting m_loadCompleted correctly.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * dom/Node.h:
+        (WebCore::Node::sheetLoaded):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        * dom/ProcessingInstruction.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::sheetLoaded):
+        * html/HTMLLinkElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::sheetLoaded):
+        * html/HTMLStyleElement.h:
+
 2006-11-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Beth.

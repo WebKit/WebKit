@@ -202,7 +202,7 @@ public:
     virtual void aboutToUnload() { }
 
     // For <link> and <style> elements.
-    virtual void sheetLoaded() { }
+    virtual bool sheetLoaded() { return true; }
 
     bool hasID() const { return m_hasId; }
     bool hasClass() const { return m_hasClass; }

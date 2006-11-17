@@ -170,9 +170,7 @@ void CSSStyleSheet::checkLoaded()
         return;
     if (parent())
         parent()->checkLoaded();
-    if (m_parentNode)
-        m_parentNode->sheetLoaded();
-    m_loadCompleted = true;
+    m_loadCompleted = m_parentNode ? m_parentNode->sheetLoaded() : true;
 }
 
 DocLoader *CSSStyleSheet::docLoader()

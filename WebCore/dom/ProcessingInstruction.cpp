@@ -189,10 +189,13 @@ bool ProcessingInstruction::isLoading() const
     return m_sheet->isLoading();
 }
 
-void ProcessingInstruction::sheetLoaded()
+bool ProcessingInstruction::sheetLoaded()
 {
-    if (!isLoading())
+    if (!isLoading()) {
         document()->stylesheetLoaded();
+    return true;
+    }
+    return false;
 }
 
 void ProcessingInstruction::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)

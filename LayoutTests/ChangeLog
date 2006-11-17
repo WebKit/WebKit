@@ -1,3 +1,16 @@
+2006-11-16  Rob Buis  <buis@kde.org>
+
+        Reviewed and landed by Brady
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11590
+        Bug 11590: REGRESSION (r17726-r17742): Wikipedia page intermittently loads but doesn't render
+
+        * fast/css/import-rule-regression-11590-expected.txt: Added.
+        * fast/css/import-rule-regression-11590.html: Added.
+        * fast/css/resources/imports.css: Added.
+        * fast/css/resources/style.css: Added.
+
 2006-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

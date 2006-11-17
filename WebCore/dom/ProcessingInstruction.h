@@ -62,7 +62,7 @@ public:
 #endif
     void setCSSStyleSheet(CSSStyleSheet*);
     bool isLoading() const;
-    void sheetLoaded();
+    virtual bool sheetLoaded();
     virtual String toString() const;
 
 #ifdef XSLT_SUPPORT
