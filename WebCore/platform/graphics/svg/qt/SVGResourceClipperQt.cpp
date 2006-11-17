@@ -34,7 +34,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
 {
     KRenderingDeviceContext* context = renderingDevice()->currentContext();
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
-    if (m_clipData.count() < 1)
+    if (m_clipData.clipData().size() < 1)
         return;
 
     context->clearPath();
@@ -42,10 +42,11 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
     QPainterPath newPath;
 
     bool heterogenousClipRules = false;
-    WindRule clipRule = m_clipData[0].windRule;
+    WindRule clipRule = m_clipData.clipData()[0].windRule;
 
-    for (unsigned int x = 0; x < m_clipData.count(); x++) {
-        ClipData clipData = m_clipData[x];
+    unsigned int clipDataCount = m_clipData.clipData().size();
+    for (unsigned int x = 0; x < clipDataCount; x++) {
+        ClipData clipData = m_clipData.clipData()[x];
         if (clipData.windRule != clipRule)
             heterogenousClipRules = true;
 
@@ -99,7 +100,7 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
         }
     }
 
-    if (m_clipData.count()) {
+    if (m_clipData.clipData().size()) {
         // FIXME!
         // We don't currently allow for heterogenous clip rules.
         // we would have to detect such, draw to a mask, and then clip

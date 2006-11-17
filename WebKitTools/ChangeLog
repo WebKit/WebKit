@@ -1,3 +1,13 @@
+2006-11-17  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Mitz. Landed by Niko.
+
+        Fixing compilation.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree): Adding
+        ContextMenuClient to the constructor
+
 2006-11-12  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  *
  * All rights reserved.
  *
@@ -31,6 +32,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "ChromeClientQt.h"
+#include "ContextMenuClientQt.h"
 #include "KURL.h"
 
 #include <QDebug>
@@ -104,7 +106,7 @@ void WebKitPart::initView(QWidget* parentWidget, GUIProfile prof)
     m_client = new WebKitPartClient(this);
  
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt());
+    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt());
     Frame* frame = new FrameQt(page, 0, m_client);
 
     m_frame = frame;

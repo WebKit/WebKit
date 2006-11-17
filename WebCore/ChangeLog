@@ -1,3 +1,62 @@
+2006-11-17  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Mitz. Landed by Niko.
+
+        Making platform Qt/KDE compile and work after
+        the latest api changes. Reported as
+        http://bugs.webkit.org/show_bug.cgi?id=11617
+
+        * CMakeLists.txt:
+        * page/qt/EventHandlerQt.cpp: Added.
+        (WebCore::isKeyboardOptionTab):
+        (WebCore::EventHandler::tabsToLinks):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::freeClipboard):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::lastEventIsMouseUp):
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::shouldDragAutoNode):
+        (WebCore::EventHandler::dispatchDragSrcEvent):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/ContextMenu.h:
+        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/qt/ContextMenuClientQt.cpp: Added.
+        (WebCore::ContextMenuClientQt::addCustomContextMenuItems):
+        (WebCore::ContextMenuClientQt::ref):
+        (WebCore::ContextMenuClientQt::deref):
+        * platform/qt/ContextMenuClientQt.h: Added.
+        * platform/qt/ContextMenuQt.cpp: Added.
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::setPlatformMenuDescription):
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::selectWordBeforeMenuEvent):
+        (WebCore::EditorClientQt::isEditable):
+        (WebCore::EditorClientQt::registerCommandForUndo):
+        (WebCore::EditorClientQt::registerCommandForRedo):
+        (WebCore::EditorClientQt::clearUndoRedoOperations):
+        (WebCore::EditorClientQt::canUndo):
+        (WebCore::EditorClientQt::canRedo):
+        (WebCore::EditorClientQt::undo):
+        (WebCore::EditorClientQt::redo):
+        * platform/qt/EditorClientQt.h:
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::mousePressEvent):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (FrameView::updateBorder):
+
 2006-11-17  David Harrison  <harrison@apple.com>
 
         Reviewed by Adele.

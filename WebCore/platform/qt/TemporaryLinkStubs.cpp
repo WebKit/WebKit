@@ -40,7 +40,6 @@
 #include "Widget.h"
 #include "GraphicsContext.h"
 #include "TextField.h"
-#include "Slider.h"
 #include "Cursor.h"
 #include "loader.h"
 #include "FrameView.h"
@@ -64,7 +63,8 @@
 
 using namespace WebCore;
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
+           __FILE__, __LINE__, __FUNCTION__); } while(0)
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { notImplemented(); return FloatRect(); }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
@@ -108,16 +108,6 @@ IntSize TextField::sizeForCharacterWidth(int) const { notImplemented(); return I
 int TextField::baselinePosition(int) const { notImplemented(); return 0; }
 void TextField::setLiveSearch(bool) { notImplemented(); }
 
-Slider::Slider() { notImplemented(); }
-IntSize Slider::sizeHint() const { notImplemented(); return IntSize(); }
-Slider::~Slider() { notImplemented(); }
-void Slider::setValue(double) { notImplemented(); }
-void Slider::setMaxValue(double) { notImplemented(); }
-void Slider::setMinValue(double) { notImplemented(); }
-void Slider::setFont(WebCore::Font const&) { notImplemented(); }
-double Slider::value() const { notImplemented(); return 0; }
-Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
-
 Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { notImplemented(); }
 void Scrollbar::setSteps(int, int) { notImplemented(); }
 bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
@@ -160,11 +150,6 @@ FloatRect WebCore::screenAvailableRect(Widget*)
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }
-bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
-bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
-bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
-bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, PlatformScrollbar*) { return false; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 

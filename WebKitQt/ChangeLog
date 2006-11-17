@@ -1,3 +1,14 @@
+2006-11-17  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Mitz. Landed by Niko.
+
+        Adjusting to the new api.
+
+        * QtLauncher/main.cpp:
+        (main):
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::initView):
+
 2006-11-10  Zack Rusin  <zack@kde.org>
 
         Reviewed and landed by Anders.

@@ -33,6 +33,8 @@
 #include "EditorClient.h"
 #include "Shared.h"
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class EditorClientQt : public EditorClient, public Shared<EditorClientQt> {
@@ -56,6 +58,15 @@ public:
     virtual void respondToChangedContents();
     virtual void didEndEditing();
 
+    virtual bool selectWordBeforeMenuEvent();
+    virtual bool isEditable();
+    virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
+    virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
+    virtual void clearUndoRedoOperations();
+    virtual bool canUndo() const;
+    virtual bool canRedo() const;
+    virtual void undo();
+    virtual void redo();
 };
 
 }

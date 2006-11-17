@@ -31,6 +31,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
    ${CMAKE_CURRENT_SOURCE_DIR}/loader/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/page
+   ${CMAKE_CURRENT_SOURCE_DIR}/page/qt
    ${CMAKE_CURRENT_BINARY_DIR}/platform
    ${CMAKE_CURRENT_SOURCE_DIR}/platform 
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics
@@ -969,18 +970,23 @@ set(WebCore_SRCS
     loader/qt/ResourceLoaderQt.cpp
 
     page/Chrome.cpp
+    page/ContextMenuController.cpp
     page/DOMWindow.cpp
+    page/EventHandler.cpp   
     page/Frame.cpp
     page/FrameTree.cpp
     page/FrameView.cpp
     page/MouseEventWithHitTestResults.cpp
     page/Page.cpp
-    page/PageState.cpp    
+    page/PageState.cpp
+
+	page/qt/EventHandlerQt.cpp   
 
     platform/Arena.cpp
     platform/ArrayImpl.cpp
     platform/AtomicString.cpp
     platform/CString.cpp
+    platform/ContextMenu.cpp
     platform/DeprecatedCString.cpp
     platform/DeprecatedPtrListImpl.cpp
     platform/DeprecatedString.cpp
@@ -1108,10 +1114,11 @@ set(WebCore_SRCS
     platform/network/qt/ResourceHandleQt.cpp
     
     platform/qt/ChromeClientQt.cpp
+    platform/qt/ContextMenuClientQt.cpp
+    platform/qt/ContextMenuQt.cpp
     platform/qt/CookieJarQt.cpp
     platform/qt/CursorQt.cpp
     platform/qt/EditorClientQt.cpp
-#   platform/qt/FileButtonQt.cpp
     platform/qt/FileChooserQt.cpp
     platform/qt/FontCacheQt.cpp
     platform/qt/FontDataQt.cpp
@@ -1167,7 +1174,6 @@ set(WebCore_SRCS
     rendering/break_lines.cpp
     rendering/CounterNode.cpp
     rendering/CounterResetNode.cpp
-    rendering/DeprecatedSlider.cpp
     rendering/EllipsisBox.cpp
     rendering/FixedTableLayout.cpp
     rendering/HitTestResult.cpp
@@ -1205,6 +1211,7 @@ set(WebCore_SRCS
     rendering/RenderPart.cpp
     rendering/RenderPartObject.cpp
     rendering/RenderReplaced.cpp
+    rendering/RenderSlider.cpp
     rendering/RenderStyle.cpp
     rendering/RenderTableCell.cpp
     rendering/RenderTableCol.cpp

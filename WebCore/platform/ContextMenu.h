@@ -37,6 +37,8 @@ class NSMutableArray;
 #endif
 #elif PLATFORM(WIN)
 typedef struct HMENU__* HMENU;
+#elif PLATFORM(QT)
+class QMenu;
 #endif
 
 namespace WebCore {
@@ -111,6 +113,8 @@ struct ContextMenuItem {
 typedef NSMutableArray* PlatformMenuDescription;
 #elif PLATFORM(WIN)
 typedef HMENU PlatformMenuDescription;
+#elif PLATFORM(QT)
+typedef QMenu* PlatformMenuDescription;
 #endif
 
 class ContextMenu : Noncopyable

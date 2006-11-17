@@ -34,6 +34,7 @@
 #include "ScrollViewCanvasQt.h"
 #include "ScrollViewCanvasQt.moc"
 
+#include "EventHandler.h"
 #include "FrameQt.h"
 #include "FrameView.h"
 #include "TypingCommand.h"
@@ -90,10 +91,10 @@ void ScrollViewCanvasQt::mouseMoveEvent(QMouseEvent* ev)
 void ScrollViewCanvasQt::mousePressEvent(QMouseEvent* ev)
 {
     FrameView* fv = static_cast<FrameView*>(m_frameView);
-    if (!fv || !fv->frame())
+    if (!fv || !fv->frame() || !fv->frame()->eventHandler())
         return;
 
-    fv->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    fv->frame()->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
 void ScrollViewCanvasQt::mouseReleaseEvent(QMouseEvent* ev)
