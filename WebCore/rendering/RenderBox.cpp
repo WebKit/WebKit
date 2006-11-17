@@ -954,17 +954,19 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& r, bool f)
     }
 }
 
-void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
+void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
 {
     int newX = m_x;
     int newY = m_y;
-    if (oldX != newX || oldY != newY) {
+    int newWidth = m_width;
+    int newHeight = m_height;
+    if (rect.x() != newX || rect.y() != newY) {
         // The child moved.  Invalidate the object's old and new positions.  We have to do this
         // since the object may not have gotten a layout.
-        m_x = oldX; m_y = oldY;
+        m_x = rect.x(); m_y = rect.y(); m_width = rect.width(); m_height = rect.height();
         repaint();
         repaintOverhangingFloats(true);
-        m_x = newX; m_y = newY;
+        m_x = newX; m_y = newY; m_width = newWidth; m_height = newHeight;
         repaint();
         repaintOverhangingFloats(true);
     }

@@ -105,7 +105,7 @@ public:
     virtual IntRect getAbsoluteRepaintRect();
     virtual void computeAbsoluteRepaintRect(IntRect& r, bool f=false);
 
-    virtual void repaintDuringLayoutIfMoved(int oldX, int oldY);
+    virtual void repaintDuringLayoutIfMoved(const IntRect& rect);
     
     virtual int containingBlockWidth() const;
 

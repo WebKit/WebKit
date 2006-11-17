@@ -544,8 +544,7 @@ int RenderTableSection::layoutRows(int toAdd)
                     cell->repaint();
             }
             
-            int oldCellX = cell->xPos();
-            int oldCellY = cell->yPos() - cell->borderTopExtra();
+            IntRect oldCellRect(cell->xPos(), cell->yPos() - cell->borderTopExtra() , cell->width(), cell->height());
         
             if (style()->direction() == RTL) {
                 cell->setPos(
@@ -560,7 +559,7 @@ int RenderTableSection::layoutRows(int toAdd)
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
             // repaint ourselves (and the cell) anyway.
             if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                cell->repaintDuringLayoutIfMoved(oldCellX, oldCellY);
+                cell->repaintDuringLayoutIfMoved(oldCellRect);
         }
     }
 

@@ -1,3 +1,32 @@
+2006-11-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Beth.
+
+        <rdar://problem/4056100> REGRESSION (Tiger): Deleting top part of reply email leaves fails to clear text at end of message
+
+        The problem was triggered by the fact that the parent div was changing both
+        in position and in height. The renderer normally bifurcates its logic for
+        x-position changes vs height changes.
+
+        Call repaintDuringLayoutIfMoved() with old rect (incl. width and height) instead of just the old position.
+
+        Test added:
+        * manual-tests/delete-into-nested-block.html
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::positionNewFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::placeChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintDuringLayoutIfMoved):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2006-11-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
