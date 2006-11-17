@@ -1,3 +1,19 @@
+2006-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4843131> text entry is slow inside element that has the deletion rectangle around it
+
+        Only disable/enable the delete button inside applyCommand() to prevent slowing down typing.
+        This reintroduces <rdar://problem/4796657> table deletion outline does not always follow the table size as editing occurs inside
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+        (WebCore::applyCommand):
+        * editing/EditCommand.h:
+
 2006-11-17  Zack Rusin  <zack@kde.org>
 
         Reviewed by Mitz. Landed by Niko.
