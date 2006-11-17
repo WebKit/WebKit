@@ -120,7 +120,7 @@ bool ProcessingInstruction::checkStyleSheet()
         String type;
         if (i != attrs.end())
             type = i->second;
-        
+
         bool isCSS = type.isEmpty() || type == "text/css";
 #if XSLT_SUPPORT
         m_isXSL = (type == "text/xml" || type == "text/xsl" || type == "application/xml" ||
@@ -142,7 +142,7 @@ bool ProcessingInstruction::checkStyleSheet()
                 if (m_isXSL) {
                     m_sheet = new XSLStyleSheet(this, m_localHref, true);
                     m_loading = false;
-                }                    
+                }
                 return !m_isXSL;
 #endif
             }
@@ -167,13 +167,12 @@ bool ProcessingInstruction::checkStyleSheet()
                         m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href), charset);
                     }
                     if (m_cachedSheet)
-                        m_cachedSheet->ref( this );
+                        m_cachedSheet->ref(this);
 #if XSLT_SUPPORT
                     return !m_isXSL;
 #endif
                 }
             }
-
         }
     }
     
@@ -193,20 +192,22 @@ bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
         document()->stylesheetLoaded();
-    return true;
+        return true;
     }
     return false;
 }
 
-void ProcessingInstruction::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
+void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& charset, const String& sheet)
 {
+#if XSLT_SUPPORT
     ASSERT(!m_isXSL);
+#endif
     m_sheet = new CSSStyleSheet(this, url, charset);
     parseStyleSheet(sheet);
 }
 
 #if XSLT_SUPPORT
-void ProcessingInstruction::setXSLStyleSheet(const String &url, const String &sheet)
+void ProcessingInstruction::setXSLStyleSheet(const String& url, const String& sheet)
 {
     ASSERT(m_isXSL);
     m_sheet = new XSLStyleSheet(this, url);
@@ -214,7 +215,7 @@ void ProcessingInstruction::setXSLStyleSheet(const String &url, const String &sh
 }
 #endif
 
-void ProcessingInstruction::parseStyleSheet(const String &sheet)
+void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
     m_sheet->parseString(sheet);
     if (m_cachedSheet)

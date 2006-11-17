@@ -1,3 +1,19 @@
+2006-11-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11635
+        Bug 11635: Fix potential issue with non-xslt build
+
+        Fix the issue and do style guideline corrections.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        (WebCore::ProcessingInstruction::setXSLStyleSheet):
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+
 2006-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Harrison.
