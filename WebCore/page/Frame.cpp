@@ -1006,16 +1006,14 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
     }
 
     Position start = selectionController()->start();
-    Position end = selectionController()->end();
 
     ASSERT(start.node());
     if (start.node() && start.node()->renderer()) {
-        RenderLayer *layer = start.node()->renderer()->enclosingLayer();
-        if (layer) {
-            ASSERT(!end.node() || !end.node()->renderer() 
-                   || (end.node()->renderer()->enclosingLayer() == layer));
+        // FIXME: This code only handles scrolling the startContainer's layer, but
+        // the selection rect could intersect more than just that. 
+        // See <rdar://problem/4799899>.
+        if (RenderLayer *layer = start.node()->renderer()->enclosingLayer())
             layer->scrollRectToVisible(rect, alignment, alignment);
-        }
     }
 }
 
