@@ -1030,17 +1030,15 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
-void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element* e) const
-{
-}
-
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
 
-void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 {
-    style->setWidth(Length(sliderThumbWidth, Fixed));
-    style->setHeight(Length(sliderThumbHeight, Fixed));
+    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
+        o->style()->setWidth(Length(sliderThumbWidth, Fixed));
+        o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+    }
 }
 
 }

@@ -411,4 +411,8 @@ void RenderTheme::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle
 {
 }
 
+void RenderTheme::adjustSliderThumbSize(RenderObject*) const
+{
+}
+
 }

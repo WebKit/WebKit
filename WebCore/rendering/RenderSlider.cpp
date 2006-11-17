@@ -31,6 +31,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
+#include "RenderTheme.h"
 #include <wtf/MathExtras.h>
 
 using std::min;
@@ -160,13 +161,9 @@ void RenderSlider::setStyle(RenderStyle* newStyle)
     RenderBlock::setStyle(newStyle);
     
     RenderStyle* thumbStyle = createThumbStyle(newStyle);
+
     if (m_thumb)
         m_thumb->renderer()->setStyle(thumbStyle);
-        
-    if (newStyle->appearance() == SliderVerticalAppearance)
-        thumbStyle->setAppearance(SliderThumbVerticalAppearance);
-     else
-        thumbStyle->setAppearance(SliderThumbHorizontalAppearance);
         
     setReplaced(isInline());
 }
@@ -183,6 +180,11 @@ RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle)
     style->setDisplay(BLOCK);
     style->setPosition(RelativePosition);
 
+    if (parentStyle->appearance() == SliderVerticalAppearance)
+       style->setAppearance(SliderThumbVerticalAppearance);
+    else if (parentStyle->appearance() == SliderHorizontalAppearance)
+       style->setAppearance(SliderThumbHorizontalAppearance);
+
     return style;
 }
 
@@ -191,6 +193,7 @@ void RenderSlider::layout()
     bool relayoutChildren = false;
     
     if (m_thumb && m_thumb->renderer()) {
+            
         int oldWidth = m_width;
         calcWidth();
         int oldHeight = m_height;
@@ -199,11 +202,15 @@ void RenderSlider::layout()
         if (oldWidth != m_width || oldHeight != m_height)
             relayoutChildren = true;  
 
+        // Allow the theme to set the size of the thumb
+        if (m_thumb->renderer()->style()->hasAppearance())
+            theme()->adjustSliderThumbSize(m_thumb->renderer());
+
         if (style()->appearance() == SliderVerticalAppearance)
             m_thumb->renderer()->style()->setLeft(Length(m_width / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
         else
             m_thumb->renderer()->style()->setTop(Length(m_height / 2 - m_thumb->renderer()->style()->height().value() / 2, Fixed));
-        
+
         if (relayoutChildren)
             setPositionFromValue(true);
     }

@@ -1,3 +1,18 @@
+2006-11-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Slider cleanup.  Let the theme set the size of the slider thumb.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setStyle): Moving the thumb's appearance adjustment to createThumbStyle.
+        (WebCore::RenderSlider::createThumbStyle):
+        (WebCore::RenderSlider::layout): Let the theme set the size of the thumb.
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::adjustSliderThumbSize):  Added.
+        * rendering/RenderTheme.h: ditto.
+        * rendering/RenderThemeMac.h: ditto.
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::adjustSliderThumbSize): ditto.
+
 2006-11-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -60,6 +60,8 @@ public:
     virtual void systemFont(int propId, FontDescription&) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;
+    
+    virtual void adjustSliderThumbSize(RenderObject*) const;
 
 protected:
     // Methods for each appearance value.
@@ -85,12 +87,9 @@ protected:
     virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     
-    virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-
-    virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    
+
 private:
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
