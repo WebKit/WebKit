@@ -1,3 +1,30 @@
+2006-11-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        More conversions from DeprecatedValueList to Vector and HashSet.
+        
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::~CSSValueList):
+        (WebCore::CSSValueList::append):
+        (WebCore::CSSValueList::cssText):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::length):
+        (WebCore::CSSValueList::item):
+        * dom/Document.cpp:
+        (WebCore::Document::attachNodeIterator):
+        (WebCore::Document::notifyBeforeNodeRemoval):
+        * dom/Document.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::notifyClientsToRepaint):
+        * platform/graphics/svg/SVGResource.cpp:
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::addClient):
+        * platform/graphics/svg/SVGResource.h:
+        * rendering/RenderBlock.h:
+
 === Safari-521.31 ===
 
 2006-11-17  Timothy Hatcher  <timothy@apple.com>

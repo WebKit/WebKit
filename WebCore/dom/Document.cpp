@@ -2166,7 +2166,7 @@ Node* Document::getCSSTarget() const
 
 void Document::attachNodeIterator(NodeIterator *ni)
 {
-    m_nodeIterators.append(ni);
+    m_nodeIterators.add(ni);
 }
 
 void Document::detachNodeIterator(NodeIterator *ni)
@@ -2180,9 +2180,10 @@ void Document::notifyBeforeNodeRemoval(Node *n)
         f->selectionController()->nodeWillBeRemoved(n);
         f->dragCaretController()->nodeWillBeRemoved(n);
     }
-    DeprecatedPtrListIterator<NodeIterator> it(m_nodeIterators);
-    for (; it.current(); ++it)
-        it.current()->notifyBeforeNodeRemoval(n);
+
+    HashSet<NodeIterator*>::const_iterator end = m_nodeIterators.end();
+    for (HashSet<NodeIterator*>::const_iterator it = m_nodeIterators.begin(); it != end; ++it)
+        (*it)->notifyBeforeNodeRemoval(n);
 }
 
 DOMWindow* Document::defaultView() const

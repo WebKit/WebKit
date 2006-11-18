@@ -28,8 +28,6 @@ namespace WebCore {
 
 CSSValueList::~CSSValueList()
 {
-    for (CSSValue *val = m_values.first(); val; val = m_values.next())
-        val->deref();
 }
 
 unsigned short CSSValueList::cssValueType() const
@@ -39,17 +37,18 @@ unsigned short CSSValueList::cssValueType() const
 
 void CSSValueList::append(PassRefPtr<CSSValue> val)
 {
-    m_values.append(val.releaseRef());
+    m_values.append(val);
 }
 
 String CSSValueList::cssText() const
 {
     String result = "";
 
-    for (DeprecatedPtrListIterator<CSSValue> iterator(m_values); iterator.current(); ++iterator) {
+    unsigned size = m_values.size();
+    for (unsigned i = 0; i < size; i++) {
         if (!result.isEmpty())
             result += ", ";
-        result += iterator.current()->cssText();
+        result += m_values[i]->cssText();
     }
     
     return result;

@@ -30,7 +30,6 @@
 
 #include "Shared.h"
 #include "PlatformString.h"
-#include "DeprecatedValueList.h"
 
 namespace WebCore {
 
@@ -40,7 +39,7 @@ namespace WebCore {
     class AtomicString;
     class KRenderingPaintServer;
 
-    typedef DeprecatedValueList<const RenderPath*> RenderPathList;
+    typedef Vector<const RenderPath*> RenderPathList;
 
     enum SVGResourceType {
         // Painting mode

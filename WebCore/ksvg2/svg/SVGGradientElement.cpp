@@ -94,8 +94,9 @@ void SVGGradientElement::notifyAttributeChange() const
     m_resource->invalidate();  // should this be added to build gradient?
     
     const RenderPathList &clients = m_resource->clients();
-    for (RenderPathList::ConstIterator it = clients.begin(); it != clients.end(); ++it) {
-        const RenderPath* current = (*it);
+    unsigned size = clients.size();
+    for (unsigned i = 0 ; i < size; i++) {
+        const RenderPath* current = clients[i];
         SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
         if (styled)
             styled->setChanged(true);

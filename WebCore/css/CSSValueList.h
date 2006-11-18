@@ -24,8 +24,8 @@
 #define CSSValueList_H
 
 #include "CSSValue.h"
-#include "DeprecatedPtrList.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -34,8 +34,8 @@ class CSSValueList : public CSSValue
 public:
     virtual ~CSSValueList();
 
-    unsigned length() const { return m_values.count(); }
-    CSSValue* item (unsigned index) { return m_values.at(index); }
+    unsigned length() const { return m_values.size(); }
+    CSSValue* item (unsigned index) { return m_values[index].get(); }
 
     virtual bool isValueList() { return true; }
 
@@ -45,7 +45,7 @@ public:
     virtual String cssText() const;
 
 protected:
-    DeprecatedPtrList<CSSValue> m_values;
+    Vector<RefPtr<CSSValue> > m_values;
 };
 
 } // namespace

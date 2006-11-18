@@ -45,17 +45,19 @@ SVGResource::~SVGResource()
 
 void SVGResource::invalidate()
 {
-    RenderPathList::ConstIterator it = m_clients.begin();
-    RenderPathList::ConstIterator end = m_clients.end();
-
-    for(; it != end; ++it)
-        const_cast<RenderPath*>(*it)->repaint();
+    unsigned size = m_clients.size();
+    for (unsigned i = 0; i < size; i++)
+        const_cast<RenderPath*>(m_clients[i])->repaint();
 }
 
 void SVGResource::addClient(const RenderPath* item)
 {
-    if(m_clients.find(item) != m_clients.end())
-        return;
+    unsigned size = m_clients.size();
+
+    for (unsigned i = 0; i < size; i++) {
+        if (m_clients[i] == item)
+            return;
+    }
 
     m_clients.append(item);
 }

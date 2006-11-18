@@ -256,11 +256,9 @@ void SVGPatternElement::notifyClientsToRepaint() const
 {
     const RenderPathList& clients = m_paintServer->clients();
 
-    RenderPathList::ConstIterator it = clients.begin();
-    RenderPathList::ConstIterator end = clients.end();
-
-    for (; it != end; ++it) {
-        const RenderPath* current = (*it);
+    unsigned size = clients.size();
+    for (unsigned i = 0 ; i < size; i++) {
+        const RenderPath* current = clients[i];
 
         SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
         if (styled) {
