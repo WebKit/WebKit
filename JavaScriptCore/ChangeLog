@@ -1,3 +1,13 @@
+2006-11-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Make sure that we always use std::min and std::max instead of macros.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * kjs/config.h:
+        * wtf/Vector.h:
+
 === Safari-521.31 ===
 
 2006-11-12  Geoffrey Garen  <ggaren@apple.com>

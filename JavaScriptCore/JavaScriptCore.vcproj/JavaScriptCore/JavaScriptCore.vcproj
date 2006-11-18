@@ -541,6 +541,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtf\Forward.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\GetPtr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtf\HashCountedSet.h"
 				>
 			</File>
@@ -569,7 +577,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtf\ListRefPtr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtf\MathExtras.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\Noncopyable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\OwnArrayPtr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\OwnPtr.h"
 				>
 			</File>
 			<File
@@ -586,6 +610,30 @@
 			</File>
 			<File
 				RelativePath="..\..\wtf\StringExtras.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\TCPageMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\TCSpinLock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\TCSystemAlloc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\UnusedParam.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\Vector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\VectorTraits.h"
 				>
 			</File>
 		</Filter>

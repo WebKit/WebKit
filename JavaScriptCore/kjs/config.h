@@ -14,6 +14,11 @@
 
 #elif PLATFORM(WIN_OS)
 
+// If we don't define these, they get defined in windef.h. 
+// We want to use std::min and std::max
+#define max max
+#define min min
+
 #define HAVE_FLOAT_H 1
 #define HAVE_FUNC__FINITE 1
 #define HAVE_SYS_TIMEB_H 1
