@@ -1,3 +1,17 @@
+2006-11-18  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11321
+        Element with :target pseudo-class still matched after fragment identifier change
+
+        Make sure the page does a style recalculation and possible rendering
+        when navigating back from a page with an anchor to a page without
+        an anchor.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+
 2006-11-18  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Sam Weinig.

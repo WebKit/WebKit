@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<style type="text/css">
+div:target {
+    background-color: #66CCFF;
+}
+</style>
+<script>
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    window.location.hash ='#target-01';
+    document.body.offsetTop;
+    window.history.back();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="test()">
+
+<div id="target-01">
+  <p>I should be highlighted first because of the anchor, and de-highlighted when there is no fragment.</p>
+</div>
+
+</body></html>

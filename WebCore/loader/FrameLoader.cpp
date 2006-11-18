@@ -994,7 +994,11 @@ void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 void FrameLoader::gotoAnchor()
 {
     // If our URL has no ref, then we have no place we need to jump to.
-    if (!m_URL.hasRef())
+    // OTOH if css target was set previously, we want to set it to 0, recalc
+    // and possibly repaint because :target pseudo class may have been
+    // set(See bug 11321)
+    if (!m_URL.hasRef() &&
+        !(m_frame->document() && m_frame->document()->getCSSTarget()))
         return;
 
     DeprecatedString ref = m_URL.encodedHtmlRef();
