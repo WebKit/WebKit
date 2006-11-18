@@ -110,8 +110,6 @@ void EditCommand::unapply()
     
     doUnapply();
 
-    frame->editor()->deleteButtonController()->enable();
-
     if (!m_parent) {
         updateLayout();
         frame->editor()->unappliedEditing(this);
