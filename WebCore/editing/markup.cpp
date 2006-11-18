@@ -118,6 +118,34 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
     return plainText(&r);
 }
 
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element, bool authorOnly = true)
+{
+    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration();
+    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element, authorOnly);
+    if (matchedRules) {
+        for (unsigned i = 0; i < matchedRules->length(); i++) {
+            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
+                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
+                style->merge(s.get(), true);
+            }
+        }
+    }
+    
+    return style.release();
+}
+
+static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style, Node* node)
+{
+    Node* blockquote = nearestMailBlockquote(node);
+    if (!blockquote || !blockquote->parentNode())
+        return;
+            
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(blockquote->parentNode(), 0).computedStyle()->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = Position(blockquote, 0).computedStyle()->copyInheritableProperties();
+    parentStyle->diff(blockquoteStyle.get());
+    blockquoteStyle->diff(style);
+}
+
 static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclaration *defaultStyle)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
@@ -140,6 +168,11 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                 if (element) {
                     RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(element, 0).computedStyle();
                     RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
+                    // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
+                    // us differentiate those styles from ones that the user has applied.  This helps us
+                    // get the color of content pasted into blockquotes right.
+                    removeEnclosingMailBlockquoteStyle(style.get(), const_cast<Node*>(node));
+                    
                     defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         // FIXME: Handle case where style->cssText() has illegal characters in it, like "
@@ -170,18 +203,16 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             const Element* el = static_cast<const Element*>(node);
             markup += el->nodeNamePreservingCase().deprecatedString();
             String additionalStyle;
-            if (defaultStyle && el->isHTMLElement()) {
+            if (defaultStyle && el->isHTMLElement() && !isMailBlockquote(node)) {
                 RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element*>(el), 0).computedStyle();
                 RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
-                RefPtr<CSSRuleList> matchedRules = node->document()->styleSelector()->styleRulesForElement(const_cast<Element*>(el), true);
-                if (matchedRules) {
-                    for (unsigned i = 0; i < matchedRules->length(); i++) {
-                        if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                            RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
-                            style->merge(s.get(), true);
-                        }
-                    }
-                }
+                style->merge(styleFromMatchedRulesForElement(const_cast<Element*>(el)).get());
+                
+                // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
+                // us differentiate those styles from ones that the user has applied.  This helps us
+                // get the color of content pasted into blockquotes right.
+                removeEnclosingMailBlockquoteStyle(style.get(), const_cast<Node*>(node));
+                
                 defaultStyle->diff(style.get());
                 if (style->length() > 0) {
                     CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement*>(el)->inlineStyleDecl();
@@ -497,15 +528,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     if (root && *Selection::selectionFromContentsOfNode(root).toRange() == *range) {
         CSSMutableStyleDeclaration* inlineStyleDecl = static_cast<HTMLElement*>(root)->inlineStyleDecl();
         RefPtr<CSSMutableStyleDeclaration> style = inlineStyleDecl ? inlineStyleDecl->copy() : new CSSMutableStyleDeclaration();
-        RefPtr<CSSRuleList> matchedRules = root->document()->styleSelector()->styleRulesForElement(static_cast<Element*>(root), true);
-        if (matchedRules) {
-            for (unsigned i = 0; i < matchedRules->length(); i++) {
-                if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                    RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
-                    style->merge(s.get(), true);
-                }
-            }
-        }
+        style->merge(styleFromMatchedRulesForElement(static_cast<Element*>(root)).get());
+        
         defaultStyle->diff(style.get());
         
         // Bring the background attribute over, but not as an attribute because a background attribute on a div

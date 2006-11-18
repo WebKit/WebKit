@@ -1,0 +1,19 @@
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin: 0px;
+    padding: 0 0 0 20px;
+}
+</style>
+
+<p>This tests pasting a blockquote at the start of a paragraph.</p>
+<div id="div" contenteditable="true">&nbsp;This should not be blockquoted.</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+
+sel.setPosition(div, 0);
+document.execCommand("InsertHTML", false, "<blockquote type='cite'>This should not be blockquoted.</blockquote>");
+</script>

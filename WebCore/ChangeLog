@@ -1,3 +1,39 @@
+2006-11-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4237467> REGRESSION: Pasting word from quoted text quotes the destination
+        <rdar://problem/4017358> quoted text is wrong color, when pasted as quotation
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isMailPasteAsQuotationNode): Added.  Checks for the node
+        that Mail wraps around an incoming fragment when it wants it to be pasted
+        with quoting (no merging should be done).
+        (WebCore::ReplaceSelectionCommand::removeNodePreservingChildren): Added
+        this virtual method in order to adjust the nodes that ReplaceSelectionCommand
+        tracks.
+        (WebCore::ReplaceSelectionCommand::shouldMerge): Don't merge from content
+        inside a Mail Paste as Quotation node.  Allow merging from Mail blockquotes.
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles): When pasting into
+        a Mail blockquote, we ignore the parts of the source document's default style
+        that are overriden by styles from the Mail blockquote.  This is necessary in order
+        for text that's black (because black is the source document's default font color) 
+        to appear blue/green/whatever when it's pasted into a Mail blockquote.
+        (WebCore::ReplaceSelectionCommand::handlePasteAsQuotationNode): Turn an inserted
+        Mail Paste as Quotation node into a normal Mail blockquote.  This will prevent
+        a copied blockquote that was inserted into the document using Paste as Quotation
+        from triggering Paste as Quotation behavior when it's pasted.
+        (WebCore::ReplaceSelectionCommand::doApply): Call the new/altered methods.
+        * editing/ReplaceSelectionCommand.h:
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesForElement): Put this code into a subroutine.
+        (WebCore::removeEnclosingMailBlockquoteStyle): Added.
+        (WebCore::startMarkup): When wrapping text nodes in style spans, leave out
+        styles that Mail blockquotes contribute, so that Mail blockquote styles can
+        be differentiated from styles that the user has applied.  When creating markup
+        for elements, do the same thing.
+        (WebCore::createMarkup): Call the new subroutine.
+
 2006-11-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

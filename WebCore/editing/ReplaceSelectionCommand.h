@@ -89,7 +89,11 @@ private:
     bool shouldMergeEnd(bool);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
     
-    void removeRedundantStyles();
+    void removeRedundantStyles(Node*);
+    
+    void handlePasteAsQuotationNode();
+    
+    virtual void removeNodePreservingChildren(Node*);
 
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastNodeInserted;

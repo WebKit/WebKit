@@ -1,3 +1,30 @@
+2006-11-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4237467> REGRESSION: Pasting word from quoted text quotes the destination
+        <rdar://problem/4017358> quoted text is wrong color, when pasted as quotation
+
+        Fixed:
+        * editing/pasteboard/merge-end-blockquote-expected.checksum:
+        * editing/pasteboard/merge-end-blockquote-expected.png:
+        * editing/pasteboard/merge-end-blockquote-expected.txt:
+        * editing/pasteboard/merge-end-blockquote.html:
+        
+        Added:
+        * editing/pasteboard/paste-blockquote-1-expected.checksum: Added.
+        * editing/pasteboard/paste-blockquote-1-expected.png: Added.
+        * editing/pasteboard/paste-blockquote-1-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-1.html: Added.
+        * editing/pasteboard/paste-blockquote-2-expected.checksum: Added.
+        * editing/pasteboard/paste-blockquote-2-expected.png: Added.
+        * editing/pasteboard/paste-blockquote-2-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-2.html: Added.
+        * editing/pasteboard/paste-blockquote-3-expected.checksum: Added.
+        * editing/pasteboard/paste-blockquote-3-expected.png: Added.
+        * editing/pasteboard/paste-blockquote-3-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-3.html: Added.
+
 2006-11-16  Rob Buis  <buis@kde.org>
 
         Reviewed and landed by Brady
