@@ -1,3 +1,11 @@
+2006-11-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        Gender-neutrality fix.
+
+        * coding/contributing.html:
+
 2006-11-14  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Tim Hatcher.
