@@ -25,7 +25,9 @@
 #include "config.h"
 #include "ContainerNode.h"
 
+#include "DeleteButtonController.h"
 #include "Document.h"
+#include "Editor.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameView.h"
@@ -652,9 +654,14 @@ void ContainerNode::removedFromTree(bool deep)
 
 void ContainerNode::cloneChildNodes(Node *clone)
 {
+    // disable the delete button so it's elements are not serialized into the markup
+    if (document()->frame())
+        document()->frame()->editor()->deleteButtonController()->disable();
     ExceptionCode ec = 0;
     for (Node* n = firstChild(); n && !ec; n = n->nextSibling())
         clone->appendChild(n->cloneNode(true), ec);
+    if (document()->frame())
+        document()->frame()->editor()->deleteButtonController()->enable();
 }
 
 bool ContainerNode::getUpperLeftCorner(int &xPos, int &yPos) const

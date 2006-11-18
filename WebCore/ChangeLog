@@ -1,3 +1,16 @@
+2006-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4796730> table deletion elements are serialized out if they are visible when innerHTML or a Web Archive is made
+
+        Disable the delete button controller when cloning nodes, Mail does this before saving a draft.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromNodes):
+
 2006-11-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
