@@ -1,3 +1,125 @@
+2006-11-18  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11634:
+        Fix segfault on startup for Windows build.  Also fix segfault when
+        typing in a URL.
+        Clean up some of the style of the patch that landed in r17816.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ChromeClientWin.h:
+        (WebCore::ChromeClientWin::~ChromeClientWin):
+        (WebCore::ChromeClientWin::ref):
+        (WebCore::ChromeClientWin::deref):
+        * bridge/win/ContextMenuClientWin.h:
+        (WebCore::ContextMenuClientWin::~ContextMenuClientWin):
+        (WebCore::ContextMenuClientWin::ref):
+        (WebCore::ContextMenuClientWin::deref):
+        * bridge/win/EditorClientWin.h:
+        (WebCore::EditorClientWin::~EditorClientWin):
+        (WebCore::EditorClientWin::ref):
+        (WebCore::EditorClientWin::deref):
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * bridge/win/FrameWin.h:
+        (WebCore::Win):
+        * loader/win/FrameLoaderClientWin.h: Added.
+        (WebCore::FrameLoaderClientWin::~FrameLoaderClientWin):
+        (WebCore::FrameLoaderClientWin::ref):
+        (WebCore::FrameLoaderClientWin::deref):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ChromeClientWin::createWindow):
+        (WebCore::ChromeClientWin::createModalDialog):
+        (WebCore::EditorClientWin::selectWordBeforeMenuEvent):
+        (WebCore::EditorClientWin::isEditable):
+        (WebCore::EditorClientWin::shouldBeginEditing):
+        (WebCore::EditorClientWin::shouldEndEditing):
+        (WebCore::EditorClientWin::shouldApplyStyle):
+        (WebCore::EditorClientWin::didBeginEditing):
+        (WebCore::EditorClientWin::respondToChangedContents):
+        (WebCore::EditorClientWin::didEndEditing):
+        (WebCore::EditorClientWin::registerCommandForUndo):
+        (WebCore::EditorClientWin::registerCommandForRedo):
+        (WebCore::EditorClientWin::clearUndoRedoOperations):
+        (WebCore::EditorClientWin::canUndo):
+        (WebCore::EditorClientWin::canRedo):
+        (WebCore::EditorClientWin::undo):
+        (WebCore::EditorClientWin::redo):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoader::createPlugin):
+        (WebCore::FrameLoaderClientWin::hasWebView):
+        (WebCore::FrameLoaderClientWin::hasFrameView):
+        (WebCore::FrameLoaderClientWin::hasBackForwardList):
+        (WebCore::FrameLoaderClientWin::resetBackForwardList):
+        (WebCore::FrameLoaderClientWin::provisionalItemIsTarget):
+        (WebCore::FrameLoaderClientWin::loadProvisionalItemFromPageCache):
+        (WebCore::FrameLoaderClientWin::invalidateCurrentItemPageCache):
+        (WebCore::FrameLoaderClientWin::privateBrowsingEnabled):
+        (WebCore::FrameLoaderClientWin::makeDocumentView):
+        (WebCore::FrameLoaderClientWin::makeRepresentation):
+        (WebCore::FrameLoaderClientWin::forceLayout):
+        (WebCore::FrameLoaderClientWin::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientWin::updateHistoryForCommit):
+        (WebCore::FrameLoaderClientWin::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoaderClientWin::updateHistoryForReload):
+        (WebCore::FrameLoaderClientWin::updateHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientWin::updateHistoryForInternalLoad):
+        (WebCore::FrameLoaderClientWin::updateHistoryAfterClientRedirect):
+        (WebCore::FrameLoaderClientWin::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientWin::tokenForLoadErrorReset):
+        (WebCore::FrameLoaderClientWin::resetAfterLoadError):
+        (WebCore::FrameLoaderClientWin::doNotResetAfterLoadError):
+        (WebCore::FrameLoaderClientWin::willCloseDocument):
+        (WebCore::FrameLoaderClientWin::detachedFromParent1):
+        (WebCore::FrameLoaderClientWin::detachedFromParent2):
+        (WebCore::FrameLoaderClientWin::detachedFromParent3):
+        (WebCore::FrameLoaderClientWin::detachedFromParent4):
+        (WebCore::FrameLoaderClientWin::loadedFromPageCache):
+        (WebCore::FrameLoaderClientWin::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientWin::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientWin::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientWin::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientWin::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientWin::dispatchWillClose):
+        (WebCore::FrameLoaderClientWin::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientWin::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWin::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientWin::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWin::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientWin::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientWin::dispatchShow):
+        (WebCore::FrameLoaderClientWin::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientWin::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientWin::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientWin::clearLoadingFromPageCache):
+        (WebCore::FrameLoaderClientWin::isLoadingFromPageCache):
+        (WebCore::FrameLoaderClientWin::revertToProvisionalState):
+        (WebCore::FrameLoaderClientWin::clearUnarchivingState):
+        (WebCore::FrameLoaderClientWin::progressStarted):
+        (WebCore::FrameLoaderClientWin::progressCompleted):
+        (WebCore::FrameLoaderClientWin::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientWin::willChangeTitle):
+        (WebCore::FrameLoaderClientWin::didChangeTitle):
+        (WebCore::FrameLoaderClientWin::finishedLoading):
+        (WebCore::FrameLoaderClientWin::finalSetupForReplace):
+        (WebCore::FrameLoaderClientWin::setDefersLoading):
+        (WebCore::FrameLoaderClientWin::isArchiveLoadPending):
+        (WebCore::FrameLoaderClientWin::cancelPendingArchiveLoad):
+        (WebCore::FrameLoaderClientWin::clearArchivedResources):
+        (WebCore::FrameLoaderClientWin::canShowMIMEType):
+        (WebCore::FrameLoaderClientWin::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientWin::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientWin::frameLoadCompleted):
+        (WebCore::FrameLoaderClientWin::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoaderClientWin::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientWin::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoaderClientWin::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoaderClientWin::didFinishLoad):
+        (WebCore::FrameLoaderClientWin::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientWin::setTitle):
+        (WebCore::FrameLoaderClientWin::userAgent):
+
 2006-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Rob (yay!).

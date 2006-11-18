@@ -32,44 +32,44 @@
 
 namespace WebCore {
 
-class ChromeClientWin : public ChromeClient, public Shared<ChromeClientWin> {
-public:
-    virtual ~ChromeClientWin() { }
+    class ChromeClientWin : public ChromeClient, public Shared<ChromeClientWin> {
+    public:
+        virtual ~ChromeClientWin() { }
 
-    virtual void ref() { Shared<ChromeClientWin>::ref(); }
-    virtual void deref() { Shared<ChromeClientWin>::deref(); }
+        virtual void ref() { Shared<ChromeClientWin>::ref(); }
+        virtual void deref() { Shared<ChromeClientWin>::deref(); }
 
-    virtual void setWindowRect(const FloatRect&);
-    virtual FloatRect windowRect();
+        virtual void setWindowRect(const FloatRect&);
+        virtual FloatRect windowRect();
 
-    virtual FloatRect pageRect();
+        virtual FloatRect pageRect();
 
-    virtual float scaleFactor();
+        virtual float scaleFactor();
 
-    virtual void focus();
-    virtual void unfocus();
+        virtual void focus();
+        virtual void unfocus();
 
-    virtual Page* createWindow(const FrameLoadRequest&);
-    virtual Page* createModalDialog(const FrameLoadRequest&);
-    virtual void show();
+        virtual Page* createWindow(const FrameLoadRequest&);
+        virtual Page* createModalDialog(const FrameLoadRequest&);
+        virtual void show();
 
-    virtual bool canRunModal();
-    virtual void runModal();
+        virtual bool canRunModal();
+        virtual void runModal();
 
-    virtual void setToolbarsVisible(bool);
-    virtual bool toolbarsVisible();
+        virtual void setToolbarsVisible(bool);
+        virtual bool toolbarsVisible();
 
-    virtual void setStatusbarVisible(bool);
-    virtual bool statusbarVisible();
+        virtual void setStatusbarVisible(bool);
+        virtual bool statusbarVisible();
 
-    virtual void setScrollbarsVisible(bool);
-    virtual bool scrollbarsVisible();
+        virtual void setScrollbarsVisible(bool);
+        virtual bool scrollbarsVisible();
 
-    virtual void setMenubarVisible(bool);
-    virtual bool menubarVisible();
+        virtual void setMenubarVisible(bool);
+        virtual bool menubarVisible();
 
-    virtual void setResizable(bool);
-};
+        virtual void setResizable(bool);
+    };
 
 }
 

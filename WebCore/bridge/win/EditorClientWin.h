@@ -32,17 +32,41 @@
 
 namespace WebCore {
 
-class EditorClientWin : public EditorClient {
-public:
-    virtual ~EditorClientWin() { }
+    class EditorClientWin : public EditorClient, public Shared<EditorClientWin> {
+    public:
+        virtual ~EditorClientWin() { }
 
-    virtual bool shouldDeleteRange(Range*);
-    virtual bool shouldShowDeleteInterface(HTMLElement*);
+        virtual void ref() { Shared<EditorClientWin>::ref(); }
+        virtual void deref() { Shared<EditorClientWin>::deref(); }
 
-    virtual bool isContinuousSpellCheckingEnabled();
-    virtual bool isGrammarCheckingEnabled();
-    virtual int spellCheckerDocumentTag();
-};
+        virtual bool shouldDeleteRange(Range*);
+        virtual bool shouldShowDeleteInterface(HTMLElement*);
+
+        virtual bool isContinuousSpellCheckingEnabled();
+        virtual bool isGrammarCheckingEnabled();
+        virtual int spellCheckerDocumentTag();
+
+        virtual bool selectWordBeforeMenuEvent();
+        virtual bool isEditable();
+
+        virtual bool shouldBeginEditing(Range*);
+        virtual bool shouldEndEditing(Range*);
+        virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
+
+        virtual void didBeginEditing();
+        virtual void respondToChangedContents();
+        virtual void didEndEditing();
+
+        virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
+        virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
+        virtual void clearUndoRedoOperations();
+
+        virtual bool canUndo() const;
+        virtual bool canRedo() const;
+
+        virtual void undo();
+        virtual void redo();
+    };
 
 }
 

@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "EditorClient.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClientWin.h"
 #include "FrameLoadRequest.h"
 #include "FramePrivate.h"
 #include "FrameView.h"
@@ -57,6 +58,9 @@ FrameWin::FrameWin(Page* page, Element* ownerElement,  PassRefPtr<EditorClient> 
     settings->setStdFontName("Times New Roman");
     settings->setIsJavaScriptEnabled(true);
     setSettings(settings);
+
+    // FIXME: rework once FrameLoaderClientWin is even close to working
+    loader()->setClient(new FrameLoaderClientWin());
 }
 
 FrameWin::~FrameWin()

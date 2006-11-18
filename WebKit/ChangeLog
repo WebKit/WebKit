@@ -1,3 +1,14 @@
+2006-11-18  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11634:
+        Fix segfault on startup for Windows build.  Also fix segfault when
+        typing in a URL.
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+
 === Safari-521.31 ===
 
 2006-11-17  Timothy Hatcher  <timothy@apple.com>

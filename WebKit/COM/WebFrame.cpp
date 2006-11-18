@@ -28,29 +28,29 @@
 #include "WebKitDLL.h"
 
 #include "IWebURLResponse.h"
-#include "WebMutableURLRequest.h"
-#include "WebFrame.h"
-#include "WebView.h"
 #include "WebDataSource.h"
+#include "WebFrame.h"
 #include "WebHistoryItem.h"
+#include "WebMutableURLRequest.h"
+#include "WebView.h"
 
 #pragma warning( push, 0 )
 #include "Cache.h"
+#include "cairo.h"
+#include "cairo-win32.h"
 #include "ChromeClientWin.h"
 #include "ContextMenuClientWin.h"
 #include "Document.h"
+#include "EditorClientWin.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "FrameWin.h"
 #include "GraphicsContext.h"
 #include "Page.h"
 #include "RenderFrame.h"
-#include "cairo.h"
-#include "cairo-win32.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleWin.h"
 #include "ResourceRequest.h"
-#include "EditorClient.h"
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -140,7 +140,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
         return hr;
 
     Page* page = new Page(new ChromeClientWin(), new ContextMenuClientWin());
-    Frame* frame = new FrameWin(page, 0, 0, this);
+    Frame* frame = new FrameWin(page, 0, new EditorClientWin(), this);
 
     // FIXME: This is one-time initialization, but it gets the value of the setting from the
     // current WebView. That's a mismatch and not good!
