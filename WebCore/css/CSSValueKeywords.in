@@ -269,6 +269,10 @@ move
 vertical-text
 cell
 context-menu
+alias
+progress
+no-drop
+not-allowed
 e-resize
 ne-resize
 nw-resize

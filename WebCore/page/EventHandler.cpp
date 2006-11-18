@@ -633,6 +633,14 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             return cellCursor();
         case CURSOR_CONTEXT_MENU:
             return contextMenuCursor();
+        case CURSOR_PROGRESS:
+            return progressCursor();
+        case CURSOR_NO_DROP:
+            return noDropCursor();
+        case CURSOR_ALIAS:
+            return aliasCursor();
+        case CURSOR_NOT_ALLOWED:
+            return noDropCursor();
         case CURSOR_DEFAULT:
             return pointerCursor();
     }

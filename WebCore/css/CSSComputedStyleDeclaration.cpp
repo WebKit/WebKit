@@ -639,6 +639,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case CURSOR_CONTEXT_MENU:
                 value = new CSSPrimitiveValue(CSS_VAL_CONTEXT_MENU);
                 break;
+            case CURSOR_ALIAS:
+                value = new CSSPrimitiveValue(CSS_VAL_ALIAS);
+                break;
+            case CURSOR_PROGRESS:
+                value = new CSSPrimitiveValue(CSS_VAL_PROGRESS);
+                break;
+            case CURSOR_NO_DROP:
+                value = new CSSPrimitiveValue(CSS_VAL_NO_DROP);
+                break;
+            case CURSOR_NOT_ALLOWED:
+                value = new CSSPrimitiveValue(CSS_VAL_NOT_ALLOWED);
+                break;
             case CURSOR_E_RESIZE:
                 value = new CSSPrimitiveValue(CSS_VAL_E_RESIZE);
                 break;

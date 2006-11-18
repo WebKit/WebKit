@@ -104,10 +104,12 @@ namespace WebCore {
     const Cursor& northWestSouthEastResizeCursor();
     const Cursor& columnResizeCursor();
     const Cursor& rowResizeCursor();
-
     const Cursor& verticalTextCursor();
     const Cursor& cellCursor();
     const Cursor& contextMenuCursor();
+    const Cursor& noDropCursor();
+    const Cursor& progressCursor();
+    const Cursor& aliasCursor();
 
 } // namespace WebCore
 

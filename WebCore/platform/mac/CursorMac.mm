@@ -117,7 +117,6 @@ const Cursor& crossCursor()
 
 const Cursor& handCursor()
 {
-    // FIXME: Use [NSCursor pointingHandCursor]?
     static Cursor c = leakNamedCursor("linkCursor", 6, 1);
     return c;
 }
@@ -143,6 +142,24 @@ const Cursor& cellCursor()
 const Cursor& contextMenuCursor()
 {
     static Cursor c = leakNamedCursor("contextMenuCursor", 1, 1);
+    return c;
+}
+
+const Cursor& aliasCursor()
+{
+    static Cursor c = leakNamedCursor("aliasCursor", 11, 3);
+    return c;
+}
+
+const Cursor& progressCursor()
+{
+    static Cursor c = leakNamedCursor("progressCursor", 1, 1);
+    return c;
+}
+
+const Cursor& noDropCursor()
+{
+    static Cursor c = leakNamedCursor("noDropCursor", 1, 1);
     return c;
 }
 

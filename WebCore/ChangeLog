@@ -1,3 +1,29 @@
+2006-11-17  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11638
+        [CSS 2.1+3] add support for alias, progress, no-drop and not-allowed cursor styles
+
+        * Resources/aliasCursor.png: Added.
+        * Resources/noDropCursor.png: Added.
+        * Resources/progressCursor.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * manual-tests/cursor.html:
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::handCursor):
+        (WebCore::aliasCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+
 2006-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
