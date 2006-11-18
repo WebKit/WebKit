@@ -1,3 +1,14 @@
+2006-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4841044> Temporarily default Mail.app editable link clicking behavior, until they do it themselves
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+        (-[WebView setPreferences:]):
+
 2006-11-16  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed and landed by ap.

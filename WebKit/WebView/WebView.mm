@@ -1666,7 +1666,7 @@ NSMutableDictionary *countInvocations;
 
 @implementation WebView
 
-#if REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
+#ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
 // this prevents open source users from crashing when using the Show DOM Tree menu item in Safari
 // FIXME: remove this when it is no longer needed to prevent Safari from crashing
 +(void)initialize
@@ -1692,6 +1692,18 @@ NSMutableDictionary *countInvocations;
     if (domTree)
         [debugMenu removeItem:domTree];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidAddItemNotification object:[NSApp mainMenu]];
+}
+#endif
+
+#ifdef DISABLE_EDITABLE_LINKS_IN_MAIL
++(void)initialize
+{
+    static BOOL tooLate = NO;
+    if (!tooLate) {
+        if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"] && [[WebPreferences standardPreferences] editableLinkBehavior] == WebKitEditableLinkDefaultBehavior)
+            [[WebPreferences standardPreferences] setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
+        tooLate = YES;
+    }
 }
 #endif
 
@@ -2017,6 +2029,10 @@ NS_ENDHANDLER
 - (void)setPreferences:(WebPreferences *)prefs
 {
     if (_private->preferences != prefs) {
+#ifdef DISABLE_EDITABLE_LINKS_IN_MAIL
+        if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"] && [prefs editableLinkBehavior] == WebKitEditableLinkDefaultBehavior)
+            [prefs setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
+#endif
         [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
         [WebPreferences _removeReferenceForIdentifier:[_private->preferences identifier]];
         [_private->preferences release];
