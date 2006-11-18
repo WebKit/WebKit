@@ -30,6 +30,8 @@
 #include "ResourceResponse.h"
 #include <CFNetwork/CFURLResponsePriv.h>
 
+using std::min;
+
 // We would like a better value for a maximum time_t,
 // but there is no way to do that in C with any certainty.
 // INT_MAX should work well enough for our purposes.
@@ -48,10 +50,10 @@ namespace WebCore {
        response = ResourceResponse(CFURLResponseGetURL(cfResponse), CFURLResponseGetMIMEType(cfResponse), CFURLResponseGetExpectedContentLength(cfResponse), CFURLResponseGetTextEncodingName(cfResponse), /* suggestedFilename */ "");
 
        CFAbsoluteTime expiration = CFURLResponseGetExpirationTime(cfResponse);
-       response.setExpirationDate(expiration + kCFAbsoluteTimeIntervalSince1970 > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration);
+       response.setExpirationDate(min((time_t)(expiration + kCFAbsoluteTimeIntervalSince1970), MAX_TIME_T));
 
        CFAbsoluteTime lastModified = CFURLResponseGetLastModifiedDate(cfResponse);
-       response.setLastModifiedDate(expiration + kCFAbsoluteTimeIntervalSince1970 > MAX_TIME_T ? MAX_TIME_T : (time_t)lastModified);
+       response.setLastModifiedDate(min((time_t)(lastModified + kCFAbsoluteTimeIntervalSince1970), MAX_TIME_T));
 
        CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(cfResponse);
        if (httpResponse) {

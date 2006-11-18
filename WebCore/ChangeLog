@@ -1,3 +1,15 @@
+2006-11-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam.
+
+        Properly adjust CFAbsoluteTime to time_t to fix date calculations.
+        
+        Compare lastModified w/ MAX_TIME_T when setting last modified date
+        instead of comparing expiration against MAX_TIME_T.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::getResourceResponse): Add kCFAbsoluteTimeIntervalSince1970 in assignment
+
 2006-11-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
