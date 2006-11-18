@@ -205,12 +205,13 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState* exec, JSObject* th
                 async = args[2]->toBoolean(exec);
 
             String user;
-            if (args.size() >= 4)
+            String password;
+            if (args.size() >= 4 && !args[3]->isUndefined()) {
                 user = args[3]->toString(exec);
 
-            String password;
-            if (args.size() >= 5)
-                password = args[4]->toString(exec);
+                if (args.size() >= 5 && !args[4]->isUndefined())
+                    password = args[4]->toString(exec);
+            }
 
             request->m_impl->open(method, url, async, user, password, ec);
             setDOMException(exec, ec);
