@@ -1,3 +1,15 @@
+2006-11-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11626
+          Automate test for rdar://problem/4056100
+
+        * fast/repaint/delete-into-nested-block-expected.checksum: Added.
+        * fast/repaint/delete-into-nested-block-expected.png: Added.
+        * fast/repaint/delete-into-nested-block-expected.txt: Added.
+        * fast/repaint/delete-into-nested-block.html: Added.
+
 2006-11-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
