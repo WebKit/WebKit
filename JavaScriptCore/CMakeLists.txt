@@ -10,6 +10,7 @@ check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
 check_library_exists(pthread pthread_getattr_np "" HAVE_PTHREAD_GETATTR_NP)
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/pcre
     ${CMAKE_CURRENT_SOURCE_DIR}/bindings
     ${CMAKE_CURRENT_SOURCE_DIR}/bindings/c
@@ -55,12 +56,21 @@ add_custom_command(
 
 ########### next target ###############
 
-kde4_add_library(wtf-unity SHARED
-    wtf/TCSystemAlloc.cpp
-    wtf/Assertions.cpp
-    wtf/HashTable.cpp
-    wtf/FastMalloc.cpp
-)
+IF (WEBKIT_USE_KDE_SUPPORT)
+    kde4_add_library(wtf-unity SHARED
+        wtf/TCSystemAlloc.cpp
+        wtf/Assertions.cpp
+        wtf/HashTable.cpp
+        wtf/FastMalloc.cpp
+    )
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+    add_library(wtf-unity SHARED
+        wtf/TCSystemAlloc.cpp
+        wtf/Assertions.cpp
+        wtf/HashTable.cpp
+        wtf/FastMalloc.cpp
+    )
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 set(kjs-unity_LIB_SRCS
     ${kjs-unity_LIB_SRCS}
@@ -118,23 +128,29 @@ set(kjs-unity_LIB_SRCS
     kjs/ExecState.cpp
 )
 
-kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
 
 IF (WEBKIT_USE_KDE_SUPPORT)
 if(UNIX)
+   kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
    target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS} m )
 else(UNIX)
    target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS})
 endif(UNIX)
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+   add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
 ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 target_link_libraries(kjs-unity wtf-unity)
 set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 
-install (TARGETS wtf-unity DESTINATION ${LIB_INSTALL_DIR})
-install (TARGETS kjs-unity DESTINATION ${LIB_INSTALL_DIR})
+IF (WEBKIT_USE_KDE_SUPPORT)
+    install (TARGETS wtf-unity DESTINATION ${LIB_INSTALL_DIR})
+    install (TARGETS kjs-unity DESTINATION ${LIB_INSTALL_DIR})
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 # testkjs
-set(testkjs_SRCS kjs/testkjs.cpp)
-kde4_add_executable(testkjs RUN_UNINSTALLED ${testkjs_SRCS})
-target_link_libraries(testkjs ${KDE4_KDECORE_LIBS} kjs-unity pcre-unity icuuc)
+IF (WEBKIT_USE_KDE_SUPPORT)
+    set(testkjs_SRCS kjs/testkjs.cpp)
+    kde4_add_executable(testkjs RUN_UNINSTALLED ${testkjs_SRCS})
+    target_link_libraries(testkjs ${KDE4_KDECORE_LIBS} kjs-unity pcre-unity icuuc)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)

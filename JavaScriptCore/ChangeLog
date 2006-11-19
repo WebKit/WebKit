@@ -1,3 +1,13 @@
+2006-11-19  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11649
+        Fix CMake Qt-only build without KDE CMake files
+
+        * CMakeLists.txt:
+        * pcre/CMakeLists.txt:
+
 2006-11-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

@@ -33,6 +33,12 @@
 
 #include "ResourceHandle.h"
 
+// forward declarations for Qt-only build
+namespace KIO {
+class Job;
+}
+class KJob;
+
 namespace WebCore {
 
 class FrameQtClient;

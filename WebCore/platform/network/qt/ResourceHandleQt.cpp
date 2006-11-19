@@ -27,7 +27,11 @@
 
 #include "config.h"
 
+#if PLATFORM(KDE)
 #include <kio/job.h>
+#endif
+
+#include <QRegExp>
 
 #include "FrameQt.h"
 #include "DocLoader.h"

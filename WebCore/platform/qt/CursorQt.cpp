@@ -241,6 +241,21 @@ const Cursor& contextMenuCursor()
     return Cursors::self()->PointerCursor;
 }
 
+const Cursor& noDropCursor()
+{
+    return Cursors::self()->PointerCursor;
+}
+
+const Cursor& progressCursor()
+{
+    return Cursors::self()->PointerCursor;
+}
+
+const Cursor& aliasCursor()
+{
+    return Cursors::self()->PointerCursor;
+}
+
 }
 
 // vim: ts=4 sw=4 et

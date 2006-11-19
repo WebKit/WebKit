@@ -1,7 +1,11 @@
 
 project( pcre-unity )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../wtf )
+include_directories( 
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_SOURCE_DIR}/../wtf
+    )
 #compile dftables.c -> dftables
 #run dftables to generate chartables.c
 
@@ -36,6 +40,10 @@ set(pcre-unity_LIB_SRCS
    pcre_fullinfo.c
    )
 
-kde4_add_library(pcre-unity STATIC ${pcre-unity_LIB_SRCS})
+IF (WEBKIT_USE_KDE_SUPPORT)
+    kde4_add_library(pcre-unity STATIC ${pcre-unity_LIB_SRCS})
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+    add_library(pcre-unity STATIC ${pcre-unity_LIB_SRCS})
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 

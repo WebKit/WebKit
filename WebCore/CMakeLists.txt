@@ -1,7 +1,9 @@
 
 project( WebCore )
 
-include (CheckCXXCompilerFlag)
+IF (WEBKIT_USE_KDE_SUPPORT)
+    include (CheckCXXCompilerFlag)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 include_directories(
    BEFORE ${CMAKE_CURRENT_BINARY_DIR}
@@ -51,20 +53,28 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/rendering
    ${CMAKE_CURRENT_BINARY_DIR}/xml
    ${CMAKE_CURRENT_SOURCE_DIR}/xml
+   ${LIBXML2_INCLUDE_DIR}
+   ${QT_INCLUDES}
 )
 
-include_directories( ${LIBXML2_INCLUDE_DIR} ${QT_INCLUDES} )
-
 add_definitions( -DQT3_SUPPORT -Wno-undef -Wno-unused-parameter )
-check_cxx_compiler_flag( -Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS )
+IF (WEBKIT_USE_KDE_SUPPORT)
+    check_cxx_compiler_flag( -Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS )
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 IF ( __KDE_HAVE_WVARIADIC_MACROS )
   add_definitions( -Wno-variadic-macros )
 ENDIF (__KDE_HAVE_WVARIADIC_MACROS)
 
-kde4_automoc( WebCore platform/network/qt/ResourceHandleManager.cpp )
-kde4_automoc( WebCore platform/qt/ScrollViewCanvasQt.cpp )
-kde4_automoc( WebCore platform/qt/SharedTimerQt.cpp )
+IF (WEBKIT_USE_KDE_SUPPORT)
+    kde4_automoc( WebCore platform/network/qt/ResourceHandleManager.cpp )
+    kde4_automoc( WebCore platform/qt/ScrollViewCanvasQt.cpp )
+    kde4_automoc( WebCore platform/qt/SharedTimerQt.cpp )
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+    qt4_automoc( WebCore platform/network/qt/ResourceHandleManager.cpp )
+    qt4_automoc( WebCore platform/qt/ScrollViewCanvasQt.cpp )
+    qt4_automoc( WebCore platform/qt/SharedTimerQt.cpp )
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 SET (FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
 
@@ -1069,6 +1079,7 @@ set(WebCore_SRCS
     platform/graphics/svg/qt/SVGResourceClipperQt.cpp
     platform/graphics/svg/qt/SVGResourceImageQt.cpp
     platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
+    platform/graphics/svg/qt/SVGResourceFilterQt.cpp
 
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/gif/GIFImageDecoder.cpp
@@ -1256,7 +1267,11 @@ set(WebCore_SRCS
     ${WebCore-unity-IDLGeneratedSources}
 )
 
-kde4_add_library( WebCore-unity SHARED  ${WebCore_SRCS} )
+IF (WEBKIT_USE_KDE_SUPPORT)
+    kde4_add_library( WebCore-unity SHARED  ${WebCore_SRCS} )
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+    add_library( WebCore-unity SHARED  ${WebCore_SRCS} )
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 IF (WEBKIT_USE_KDE_SUPPORT)
 target_link_libraries(WebCore-unity
@@ -1291,4 +1306,6 @@ target_link_libraries(WebCore-unity
 )
 ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
-install( TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR} )
+IF (WEBKIT_USE_KDE_SUPPORT)
+    install( TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR} )
+ENDIF (WEBKIT_USE_KDE_SUPPORT)

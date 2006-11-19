@@ -39,9 +39,30 @@ IF (WEBKIT_USE_XBL_SUPPORT)
 ENDIF (WEBKIT_USE_XBL_SUPPORT)
 
 # search packages used by KDE
-find_package (KDE4 REQUIRED)
-include (KDE4Defaults)
-include (MacroLibrary)
+IF (WEBKIT_USE_KDE_SUPPORT)
+    find_package (KDE4 REQUIRED)
+    include (KDE4Defaults)
+    include (MacroLibrary)
+
+    # use the KDE modules for finding these
+    find_package (LibXml2 REQUIRED)
+    find_package (LibXslt REQUIRED)
+
+ELSE (WEBKIT_USE_KDE_SUPPORT)
+    INCLUDE(UsePkgConfig)
+
+    PKGCONFIG(libxml-2.0 _LibXml2IncDir _LibXml2LinkDir _LibXml2LinkFlags _LibXml2CFlags)
+    SET(LIBXML2_LIBRARIES ${_LibXml2LinkFlags})
+    # I'd like to use the output of --cflags directly but cmake craps out on it ;(
+    SET(LIBXML2_INCLUDE_DIR ${_LibXml2IncDir}/libxml2)
+
+    PKGCONFIG(libxslt _LibXslt2IncDir _LibXslt2LinkDir _LibXslt2LinkFlags _LibXslt2CFlags)
+    SET(LIBXSLT_LIBRARIES ${_LibXslt2LinkFlags})
+    SET(LIBXSLT_INCLUDE_DIR ${_LibXslt2IncDir})
+
+    include(CheckLibraryExists)
+    include(FindQt4)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 # Special option for BuildBot, to disable output colorization (must be done after KDE4Defaults is loaded)
 OPTION (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT "Do not colorize compilation output." OFF)
@@ -50,8 +71,6 @@ IF (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT)
     set(CMAKE_COLOR_MAKEFILE OFF)
 ENDIF (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT)
 
-find_package (LibXml2 REQUIRED)
-find_package (LibXslt REQUIRED)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 
@@ -82,7 +101,9 @@ add_definitions (-DUSE_SYSTEM_MALLOC=1)
 
 add_subdirectory (JavaScriptCore)
 add_subdirectory (WebCore)
-add_subdirectory (WebKitTools/DumpRenderTree/DumpRenderTree.qtproj)
+IF (WEBKIT_USE_KDE_SUPPORT)
+    add_subdirectory (WebKitTools/DumpRenderTree/DumpRenderTree.qtproj)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 add_subdirectory (WebKitQt/QtLauncher)
 

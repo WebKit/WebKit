@@ -1,3 +1,31 @@
+2006-11-19  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11649
+        Fix CMake files for Qt-only build without KDE cmake files.
+        Fix Qt/KDE build for the SVG support.
+        Fix Qt-only build in the resource handler.
+
+        * CMakeLists.txt:
+        * platform/graphics/svg/qt/SVGResourceFilterQt.cpp: Added.
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::~SVGResourceFilter):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * platform/network/qt/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::cancel):
+        (WebCore::ResourceHandleManager::slotData):
+        (WebCore::ResourceHandleManager::slotMimetype):
+        (WebCore::ResourceHandleManager::slotResult):
+        (WebCore::ResourceHandleManager::deliverJobData):
+        * platform/network/qt/ResourceHandleManager.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::noDropCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+
 2006-11-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
