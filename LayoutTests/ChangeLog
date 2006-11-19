@@ -1,3 +1,11 @@
+2006-11-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Removed parts of an incorrectly committed test, to be re-added later.
+
+        * dom/xhtml/level3/core/documentgetxmlencoding03-expected.png: Removed.
+        * dom/xhtml/level3/core/documentgetxmlencoding03-expected.checksum: Removed.
+        * dom/xhtml/level3/core/documentgetxmlencoding03.xhtml: Removed.
+
 2006-11-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
