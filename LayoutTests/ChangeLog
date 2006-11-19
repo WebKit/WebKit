@@ -1,3 +1,13 @@
+2006-11-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add tests for crash when garbage collecting node iterators and tree walkers
+        without a node filter.
+        
+        * fast/dom/node-filter-gc-expected.txt: Added.
+        * fast/dom/node-filter-gc.html: Added.
+
 2006-11-18  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
