@@ -25,7 +25,7 @@
 #define KSVG_SVGFilterElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
+#include "SVGResourceFilter.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
@@ -66,7 +66,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResX, filterResX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResY, filterResY)
 
-        RefPtr<KCanvasFilter> m_filter;
+        RefPtr<SVGResourceFilter> m_filter;
     };
 
 } // namespace WebCore

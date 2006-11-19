@@ -1,3 +1,454 @@
+2006-11-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11596
+
+        Split up KCanvasFilters & KCanvasFilterQuartz into several
+        new classes (SVGFEBlend, SVGFEComposite...) and move them
+        into platform/graphics/svg. This is still a temporary location,
+        as discussed with Darin; the whole platform/graphics/svg directory
+        will probably be moved into ksvg2/ in near future.
+
+        This finally removes the duplicated enumerations in the svg filter
+        classes and within kcanvas. ksvg2/ and platform/graphics/svg share
+        their enums now. As KCanvasFilters is gone now, The kcanvas/ subdirectory
+        is empty.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * kcanvas/KCanvasFilters.cpp: Removed.
+        * kcanvas/KCanvasFilters.h: Removed.
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        (WebCore::KRenderingDeviceQt::createFilterEffect):
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm: Removed.
+        * kcanvas/device/quartz/KCanvasItemQuartz.cpp:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.cpp:
+        (WebCore::KRenderingDeviceQuartz::createResource):
+        (WebCore::KRenderingDeviceQuartz::createFilterEffect):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKIdentityTransferFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKIdentityTransferFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKPointLightFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKPointLightFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKPointLightFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.m: Removed.
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.cikernel: Removed.
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.h: Removed.
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.m: Removed.
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::transferFunction):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        (WebCore::SVGFEDiffuseLightingElement::updateLights):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::stringToChannel):
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * ksvg2/svg/SVGFEDistantLightElement.h:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::filterEffect):
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEMergeElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * ksvg2/svg/SVGFEPointLightElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        (WebCore::SVGFESpecularLightingElement::updateLights):
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * ksvg2/svg/SVGFESpotLightElement.h:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETileElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        (WebCore::):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * platform/graphics/FloatPoint3D.cpp: Added.
+        (WebCore::FloatPoint3D::FloatPoint3D):
+        (WebCore::FloatPoint3D::x):
+        (WebCore::FloatPoint3D::setX):
+        (WebCore::FloatPoint3D::y):
+        (WebCore::FloatPoint3D::setY):
+        (WebCore::FloatPoint3D::z):
+        (WebCore::FloatPoint3D::setZ):
+        (WebCore::FloatPoint3D::normalize):
+        * platform/graphics/FloatPoint3D.h: Added.
+        * platform/graphics/svg/SVGResourceFilter.cpp: Added.
+        (WebCore::SVGResourceFilter::clearEffects):
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        (WebCore::SVGResourceFilter::filterBBoxForItemBBox):
+        (WebCore::SVGResourceFilter::externalRepresentation):
+        (WebCore::getFilterById):
+        * platform/graphics/svg/SVGResourceFilter.h: Added.
+        (WebCore::SVGResourceFilter::isFilter):
+        (WebCore::SVGResourceFilter::filterBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setFilterBoundingBoxMode):
+        (WebCore::SVGResourceFilter::effectBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setEffectBoundingBoxMode):
+        (WebCore::SVGResourceFilter::filterRect):
+        (WebCore::SVGResourceFilter::setFilterRect):
+        * platform/graphics/svg/SVGResourceImage.h:
+        * platform/graphics/svg/SVGResourceListener.h:
+        (SVGResourceListener::SVGResourceListener):
+        (SVGResourceListener::~SVGResourceListener):
+        * platform/graphics/svg/cg/SVGResourceClipperCg.cpp:
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm: Added.
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::~SVGResourceFilter):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        (WebCore::SVGResourceFilter::getCIFilterStack):
+        (WebCore::SVGResourceFilter::imageForName):
+        (WebCore::SVGResourceFilter::setImageForName):
+        (WebCore::SVGResourceFilter::setOutputImage):
+        (WebCore::alphaImageForImage):
+        (WebCore::SVGResourceFilter::inputImage):
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.h: Removed.
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        * platform/graphics/svg/filters/SVGDistantLightSource.h: Added.
+        (WebCore::SVGDistantLightSource::SVGDistantLightSource):
+        (WebCore::SVGDistantLightSource::azimuth):
+        (WebCore::SVGDistantLightSource::elevation):
+        * platform/graphics/svg/filters/SVGFEBlend.cpp: Added.
+        (WebCore::SVGFEBlend::in2):
+        (WebCore::SVGFEBlend::setIn2):
+        (WebCore::SVGFEBlend::blendMode):
+        (WebCore::SVGFEBlend::setBlendMode):
+        (WebCore::operator<<):
+        (WebCore::SVGFEBlend::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEBlend.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEColorMatrix.cpp: Added.
+        (WebCore::SVGFEColorMatrix::type):
+        (WebCore::SVGFEColorMatrix::setType):
+        (WebCore::SVGFEColorMatrix::values):
+        (WebCore::SVGFEColorMatrix::setValues):
+        (WebCore::operator<<):
+        (WebCore::SVGFEColorMatrix::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEColorMatrix.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.cpp: Added.
+        (WebCore::SVGFEComponentTransfer::redFunction):
+        (WebCore::SVGFEComponentTransfer::setRedFunction):
+        (WebCore::SVGFEComponentTransfer::greenFunction):
+        (WebCore::SVGFEComponentTransfer::setGreenFunction):
+        (WebCore::SVGFEComponentTransfer::blueFunction):
+        (WebCore::SVGFEComponentTransfer::setBlueFunction):
+        (WebCore::SVGFEComponentTransfer::alphaFunction):
+        (WebCore::SVGFEComponentTransfer::setAlphaFunction):
+        (WebCore::operator<<):
+        (WebCore::SVGFEComponentTransfer::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.h: Added.
+        (WebCore::):
+        (WebCore::SVGComponentTransferFunction::SVGComponentTransferFunction):
+        * platform/graphics/svg/filters/SVGFEComposite.cpp: Added.
+        (WebCore::SVGFEComposite::in2):
+        (WebCore::SVGFEComposite::setIn2):
+        (WebCore::SVGFEComposite::operation):
+        (WebCore::SVGFEComposite::setOperation):
+        (WebCore::SVGFEComposite::k1):
+        (WebCore::SVGFEComposite::setK1):
+        (WebCore::SVGFEComposite::k2):
+        (WebCore::SVGFEComposite::setK2):
+        (WebCore::SVGFEComposite::k3):
+        (WebCore::SVGFEComposite::setK3):
+        (WebCore::SVGFEComposite::k4):
+        (WebCore::SVGFEComposite::setK4):
+        (WebCore::SVGFEComposite::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEComposite.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp: Added.
+        (WebCore::SVGFEConvolveMatrix::kernelSize):
+        (WebCore::SVGFEConvolveMatrix::setKernelSize):
+        (WebCore::SVGFEConvolveMatrix::kernel):
+        (WebCore::SVGFEConvolveMatrix::setKernel):
+        (WebCore::SVGFEConvolveMatrix::divisor):
+        (WebCore::SVGFEConvolveMatrix::setDivisor):
+        (WebCore::SVGFEConvolveMatrix::bias):
+        (WebCore::SVGFEConvolveMatrix::setBias):
+        (WebCore::SVGFEConvolveMatrix::targetOffset):
+        (WebCore::SVGFEConvolveMatrix::setTargetOffset):
+        (WebCore::SVGFEConvolveMatrix::edgeMode):
+        (WebCore::SVGFEConvolveMatrix::setEdgeMode):
+        (WebCore::SVGFEConvolveMatrix::kernelUnitLength):
+        (WebCore::SVGFEConvolveMatrix::setKernelUnitLength):
+        (WebCore::SVGFEConvolveMatrix::preserveAlpha):
+        (WebCore::SVGFEConvolveMatrix::setPreserveAlpha):
+        (WebCore::operator<<):
+        (WebCore::SVGFEConvolveMatrix::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp: Added.
+        (WebCore::SVGFEDiffuseLighting::SVGFEDiffuseLighting):
+        (WebCore::SVGFEDiffuseLighting::~SVGFEDiffuseLighting):
+        (WebCore::SVGFEDiffuseLighting::lightingColor):
+        (WebCore::SVGFEDiffuseLighting::setLightingColor):
+        (WebCore::SVGFEDiffuseLighting::surfaceScale):
+        (WebCore::SVGFEDiffuseLighting::setSurfaceScale):
+        (WebCore::SVGFEDiffuseLighting::diffuseConstant):
+        (WebCore::SVGFEDiffuseLighting::setDiffuseConstant):
+        (WebCore::SVGFEDiffuseLighting::kernelUnitLengthX):
+        (WebCore::SVGFEDiffuseLighting::setKernelUnitLengthX):
+        (WebCore::SVGFEDiffuseLighting::kernelUnitLengthY):
+        (WebCore::SVGFEDiffuseLighting::setKernelUnitLengthY):
+        (WebCore::SVGFEDiffuseLighting::lightSource):
+        (WebCore::SVGFEDiffuseLighting::setLightSource):
+        (WebCore::SVGFEDiffuseLighting::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.h: Added.
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.cpp: Added.
+        (WebCore::SVGFEDisplacementMap::SVGFEDisplacementMap):
+        (WebCore::SVGFEDisplacementMap::in2):
+        (WebCore::SVGFEDisplacementMap::setIn2):
+        (WebCore::SVGFEDisplacementMap::xChannelSelector):
+        (WebCore::SVGFEDisplacementMap::setXChannelSelector):
+        (WebCore::SVGFEDisplacementMap::yChannelSelector):
+        (WebCore::SVGFEDisplacementMap::setYChannelSelector):
+        (WebCore::SVGFEDisplacementMap::scale):
+        (WebCore::SVGFEDisplacementMap::setScale):
+        (WebCore::operator<<):
+        (WebCore::SVGFEDisplacementMap::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEFlood.cpp: Added.
+        (WebCore::SVGFEFlood::floodColor):
+        (WebCore::SVGFEFlood::setFloodColor):
+        (WebCore::SVGFEFlood::floodOpacity):
+        (WebCore::SVGFEFlood::setFloodOpacity):
+        (WebCore::SVGFEFlood::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEFlood.h: Added.
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.cpp: Added.
+        (WebCore::SVGFEGaussianBlur::stdDeviationX):
+        (WebCore::SVGFEGaussianBlur::setStdDeviationX):
+        (WebCore::SVGFEGaussianBlur::stdDeviationY):
+        (WebCore::SVGFEGaussianBlur::setStdDeviationY):
+        (WebCore::SVGFEGaussianBlur::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.h: Added.
+        * platform/graphics/svg/filters/SVGFEImage.cpp: Added.
+        (WebCore::SVGFEImage::SVGFEImage):
+        (WebCore::SVGFEImage::~SVGFEImage):
+        (WebCore::SVGFEImage::cachedImage):
+        (WebCore::SVGFEImage::setCachedImage):
+        (WebCore::SVGFEImage::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEImage.h: Added.
+        * platform/graphics/svg/filters/SVGFEMerge.cpp: Added.
+        (WebCore::SVGFEMerge::mergeInputs):
+        (WebCore::SVGFEMerge::setMergeInputs):
+        (WebCore::SVGFEMerge::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEMerge.h: Added.
+        * platform/graphics/svg/filters/SVGFEMorphology.cpp: Added.
+        (WebCore::SVGFEMorphology::morphologyOperator):
+        (WebCore::SVGFEMorphology::setMorphologyOperator):
+        (WebCore::SVGFEMorphology::radiusX):
+        (WebCore::SVGFEMorphology::setRadiusX):
+        (WebCore::SVGFEMorphology::radiusY):
+        (WebCore::SVGFEMorphology::setRadiusY):
+        (WebCore::operator<<):
+        (WebCore::SVGFEMorphology::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEMorphology.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFEOffset.cpp: Added.
+        (WebCore::SVGFEOffset::dx):
+        (WebCore::SVGFEOffset::setDx):
+        (WebCore::SVGFEOffset::dy):
+        (WebCore::SVGFEOffset::setDy):
+        (WebCore::SVGFEOffset::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFEOffset.h: Added.
+        * platform/graphics/svg/filters/SVGFESpecularLighting.cpp: Added.
+        (WebCore::SVGFESpecularLighting::SVGFESpecularLighting):
+        (WebCore::SVGFESpecularLighting::~SVGFESpecularLighting):
+        (WebCore::SVGFESpecularLighting::lightingColor):
+        (WebCore::SVGFESpecularLighting::setLightingColor):
+        (WebCore::SVGFESpecularLighting::surfaceScale):
+        (WebCore::SVGFESpecularLighting::setSurfaceScale):
+        (WebCore::SVGFESpecularLighting::specularConstant):
+        (WebCore::SVGFESpecularLighting::setSpecularConstant):
+        (WebCore::SVGFESpecularLighting::specularExponent):
+        (WebCore::SVGFESpecularLighting::setSpecularExponent):
+        (WebCore::SVGFESpecularLighting::kernelUnitLengthX):
+        (WebCore::SVGFESpecularLighting::setKernelUnitLengthX):
+        (WebCore::SVGFESpecularLighting::kernelUnitLengthY):
+        (WebCore::SVGFESpecularLighting::setKernelUnitLengthY):
+        (WebCore::SVGFESpecularLighting::lightSource):
+        (WebCore::SVGFESpecularLighting::setLightSource):
+        (WebCore::SVGFESpecularLighting::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFESpecularLighting.h: Added.
+        * platform/graphics/svg/filters/SVGFETile.h: Added.
+        * platform/graphics/svg/filters/SVGFETurbulence.cpp: Added.
+        (WebCore::SVGFETurbulence::type):
+        (WebCore::SVGFETurbulence::setType):
+        (WebCore::SVGFETurbulence::baseFrequencyY):
+        (WebCore::SVGFETurbulence::setBaseFrequencyY):
+        (WebCore::SVGFETurbulence::baseFrequencyX):
+        (WebCore::SVGFETurbulence::setBaseFrequencyX):
+        (WebCore::SVGFETurbulence::seed):
+        (WebCore::SVGFETurbulence::setSeed):
+        (WebCore::SVGFETurbulence::numOctaves):
+        (WebCore::SVGFETurbulence::setNumOctaves):
+        (WebCore::SVGFETurbulence::stitchTiles):
+        (WebCore::SVGFETurbulence::setStitchTiles):
+        (WebCore::operator<<):
+        (WebCore::SVGFETurbulence::externalRepresentation):
+        * platform/graphics/svg/filters/SVGFETurbulence.h: Added.
+        (WebCore::):
+        * platform/graphics/svg/filters/SVGFilterEffect.cpp: Added.
+        (WebCore::SVGFilterEffect::subRegion):
+        (WebCore::SVGFilterEffect::setSubRegion):
+        (WebCore::SVGFilterEffect::in):
+        (WebCore::SVGFilterEffect::setIn):
+        (WebCore::SVGFilterEffect::result):
+        (WebCore::SVGFilterEffect::setResult):
+        (WebCore::SVGFilterEffect::externalRepresentation):
+        (WebCore::operator<<):
+        * platform/graphics/svg/filters/SVGFilterEffect.h: Added.
+        (WebCore::):
+        (WebCore::SVGFilterEffect::SVGFilterEffect):
+        (WebCore::SVGFilterEffect::~SVGFilterEffect):
+        (WebCore::SVGFilterEffect::effectType):
+        * platform/graphics/svg/filters/SVGLightSource.cpp: Added.
+        (WebCore::operator<<):
+        (WebCore::SVGPointLightSource::externalRepresentation):
+        (WebCore::SVGSpotLightSource::externalRepresentation):
+        (WebCore::SVGDistantLightSource::externalRepresentation):
+        * platform/graphics/svg/filters/SVGLightSource.h: Added.
+        (WebCore::):
+        (WebCore::SVGLightSource::SVGLightSource):
+        (WebCore::SVGLightSource::~SVGLightSource):
+        (WebCore::SVGLightSource::type):
+        * platform/graphics/svg/filters/SVGPointLightSource.h: Added.
+        (WebCore::SVGPointLightSource::SVGPointLightSource):
+        (WebCore::SVGPointLightSource::position):
+        * platform/graphics/svg/filters/SVGSpotLightSource.h: Added.
+        (WebCore::SVGSpotLightSource::SVGSpotLightSource):
+        (WebCore::SVGSpotLightSource::position):
+        (WebCore::SVGSpotLightSource::direction):
+        (WebCore::SVGSpotLightSource::specularExponent):
+        (WebCore::SVGSpotLightSource::limitingConeAngle):
+        * platform/graphics/svg/filters/cg/SVGFEBlendCg.mm: Added.
+        (WebCore::SVGFEBlend::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm: Added.
+        (WebCore::SVGFEColorMatrix::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEComponentTransferCg.mm: Added.
+        (WebCore::genImageFromTable):
+        (WebCore::setParametersForComponentFunc):
+        (WebCore::filterForComponentFunc):
+        (WebCore::getFilterForFunc):
+        (WebCore::SVGFEComponentTransfer::getFunctionFilter):
+        (WebCore::SVGFEComponentTransfer::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFECompositeCg.mm: Added.
+        (WebCore::SVGFEComposite::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDiffuseLightingCg.mm: Added.
+        (WebCore::SVGFEDiffuseLighting::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDisplacementMapCg.mm: Added.
+        (WebCore::SVGFEDisplacementMap::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEFloodCg.mm: Added.
+        (WebCore::SVGFEFlood::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEGaussianBlurCg.mm: Added.
+        (WebCore::SVGFEGaussianBlur::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h: Added.
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.mm: Added.
+        (WebCore::getVectorForChannel):
+        (WebCore::ciColor):
+        (WebCore::getPointLightVectors):
+        (WebCore::getLightVectors):
+        (WebCore::getNormalMap):
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm: Added.
+        (WebCore::SVGFEImage::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEMergeCg.mm: Added.
+        (WebCore::SVGFEMerge::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEOffsetCg.mm: Added.
+        (WebCore::SVGFEOffset::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFESpecularLightingCg.mm: Added.
+        (WebCore::SVGFESpecularLighting::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFETileCg.mm: Added.
+        (WebCore::SVGFETile::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFilterEffectCg.mm: Added.
+        (WebCore::SVGFilterEffect::getCIFilter):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::getAbsoluteRepaintRect):
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::getAbsoluteRepaintRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+
 2006-11-18  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

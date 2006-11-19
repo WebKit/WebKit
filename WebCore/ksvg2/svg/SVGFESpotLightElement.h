@@ -30,7 +30,7 @@ namespace WebCore
     public:
         SVGFESpotLightElement(const QualifiedName&, Document*);
         virtual ~SVGFESpotLightElement();
-        virtual KCLightSource *lightSource() const;
+        virtual SVGLightSource *lightSource() const;
     };
 
 } // namespace WebCore

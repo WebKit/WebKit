@@ -24,7 +24,7 @@
 #define KSVG_SVGFECompositeElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
+#include "SVGFEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
@@ -33,16 +33,6 @@ namespace WebCore
     class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        enum SVGCompositeOperators {
-            SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0,
-            SVG_FECOMPOSITE_OPERATOR_OVER       = 1,
-            SVG_FECOMPOSITE_OPERATOR_IN         = 2,
-            SVG_FECOMPOSITE_OPERATOR_OUT        = 3,
-            SVG_FECOMPOSITE_OPERATOR_ATOP       = 4,
-            SVG_FECOMPOSITE_OPERATOR_XOR        = 5,
-            SVG_FECOMPOSITE_OPERATOR_ARITHMETIC = 6
-        };
-
         SVGFECompositeElement(const QualifiedName&, Document*);
         virtual ~SVGFECompositeElement();
 
@@ -50,7 +40,7 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual KCanvasFEComposite* filterEffect() const;
+        virtual SVGFEComposite* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -63,7 +53,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K2, k2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K3, k3)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K4, k4)
-        mutable KCanvasFEComposite* m_filterEffect;
+        mutable SVGFEComposite* m_filterEffect;
     };
 
 } // namespace WebCore

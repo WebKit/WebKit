@@ -178,7 +178,7 @@ PassRefPtr<KRenderingPaintServer> KRenderingDeviceQt::createPaintServer(const KC
     }
 }
 
-KCanvasFilterEffect* KRenderingDeviceQt::createFilterEffect(const KCFilterEffectType& type) const
+SVGFilterEffect* KRenderingDeviceQt::createFilterEffect(const SVGFilterEffectType& type) const
 {
     qDebug("KRenderingDeviceQt::createFilterEffect() TODO!");
     return 0;

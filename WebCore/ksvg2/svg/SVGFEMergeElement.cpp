@@ -41,10 +41,10 @@ SVGFEMergeElement::~SVGFEMergeElement()
     delete m_filterEffect;
 }
 
-KCanvasFEMerge* SVGFEMergeElement::filterEffect() const
+SVGFEMerge* SVGFEMergeElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEMerge*>(renderingDevice()->createFilterEffect(FE_MERGE));
+        m_filterEffect = static_cast<SVGFEMerge*>(renderingDevice()->createFilterEffect(FE_MERGE));
     if (!m_filterEffect)
         return 0;
     setStandardAttributes(m_filterEffect);

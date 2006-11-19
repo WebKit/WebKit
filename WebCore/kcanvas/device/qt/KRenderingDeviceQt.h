@@ -79,7 +79,7 @@ public:
     // Resource creation
     virtual PassRefPtr<SVGResource> createResource(const SVGResourceType&) const;
     virtual PassRefPtr<KRenderingPaintServer> createPaintServer(const KCPaintServerType&) const;
-    virtual KCanvasFilterEffect* createFilterEffect(const KCFilterEffectType&) const;
+    virtual SVGFilterEffect* createFilterEffect(const SVGFilterEffectType&) const;
 };
 
 }

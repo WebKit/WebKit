@@ -69,10 +69,10 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
+SVGFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEColorMatrix*>(renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+        m_filterEffect = static_cast<SVGFEColorMatrix*>(renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
     if (!m_filterEffect)
         return 0;
         
@@ -86,7 +86,7 @@ KCanvasFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
     for (unsigned int i = 0;i < nr;i++)
         _values.append(numbers->getItem(i, ec));
     m_filterEffect->setValues(_values);
-    m_filterEffect->setType((KCColorMatrixType)(type() - 1));
+    m_filterEffect->setType((SVGColorMatrixType) type());
     
     return m_filterEffect;
 }

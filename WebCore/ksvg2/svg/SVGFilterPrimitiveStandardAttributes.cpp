@@ -25,6 +25,7 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include "SVGFilterElement.h"
+#include "SVGFilterEffect.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
@@ -71,7 +72,7 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute*
         return SVGStyledElement::parseMappedAttribute(attr);
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEffect* filterEffect) const
+void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGFilterEffect* filterEffect) const
 {
     ASSERT(filterEffect);
     if (!filterEffect)

@@ -27,7 +27,6 @@
 #include "SVGFETileElement.h"
 
 #include "Attr.h"
-#include "KCanvasFilters.h"
 #include "KRenderingDevice.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
@@ -56,10 +55,10 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFETile *SVGFETileElement::filterEffect() const
+SVGFETile *SVGFETileElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
+        m_filterEffect = static_cast<SVGFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());

@@ -27,7 +27,7 @@
 
 #include "Attr.h"
 #include "KRenderingDevice.h"
-#include "KCanvasFilters.h"
+#include "SVGResourceFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
@@ -113,7 +113,7 @@ SVGResource* SVGFilterElement::canvasResource()
         return 0;
 
     if (!m_filter)
-        m_filter = WTF::static_pointer_cast<KCanvasFilter>(renderingDevice()->createResource(RS_FILTER));
+        m_filter = WTF::static_pointer_cast<SVGResourceFilter>(renderingDevice()->createResource(RS_FILTER));
 
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);

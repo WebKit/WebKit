@@ -21,31 +21,23 @@
 #define KSVG_SVGFEDisplacementMapElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
+#include "SVGFEDisplacementMap.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
     
     class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
     public:
-        enum SVGChannelSelectors {
-            SVG_CHANNEL_UNKNOWN = 0,
-            SVG_CHANNEL_R       = 1,
-            SVG_CHANNEL_G       = 2,
-            SVG_CHANNEL_B       = 3,
-            SVG_CHANNEL_A       = 4
-        };
-
         SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
         virtual ~SVGFEDisplacementMapElement();
         
         // 'SVGFEDisplacementMapElement' functions
-        static KCChannelSelectorType stringToChannel(const String&);
+        static SVGChannelSelectorType stringToChannel(const String&);
         
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute*);
         
-        virtual KCanvasFEDisplacementMap* filterEffect() const;
+        virtual SVGFEDisplacementMap* filterEffect() const;
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -56,7 +48,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, XChannelSelector, xChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, YChannelSelector, yChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, double, double, Scale, scale)
-        mutable KCanvasFEDisplacementMap* m_filterEffect;
+        mutable SVGFEDisplacementMap* m_filterEffect;
     };
 
 } // namespace WebCore

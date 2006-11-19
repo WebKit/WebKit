@@ -24,8 +24,8 @@
 #define KSVG_SVGComponentTransferFunctionElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
 #include "SVGElement.h"
+#include "SVGFEComponentTransfer.h"
 
 namespace WebCore
 {
@@ -34,15 +34,6 @@ namespace WebCore
     class SVGComponentTransferFunctionElement : public SVGElement
     {
     public:
-        enum SVGComponentTransferType {
-            SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0,
-            SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY = 1,
-            SVG_FECOMPONENTTRANSFER_TYPE_TABLE    = 2,
-            SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE = 3,
-            SVG_FECOMPONENTTRANSFER_TYPE_LINEAR   = 4,
-            SVG_FECOMPONENTTRANSFER_TYPE_GAMMA    = 5
-        };
-
         SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
         virtual ~SVGComponentTransferFunctionElement();
 
@@ -50,7 +41,7 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute* attr);
         
-        KCComponentTransferFunction transferFunction() const;
+        SVGComponentTransferFunction transferFunction() const;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)

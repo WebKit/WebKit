@@ -88,13 +88,13 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEComposite *SVGFECompositeElement::filterEffect() const
+SVGFEComposite *SVGFECompositeElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEComposite *>(renderingDevice()->createFilterEffect(FE_COMPOSITE));
+        m_filterEffect = static_cast<SVGFEComposite *>(renderingDevice()->createFilterEffect(FE_COMPOSITE));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setOperation((KCCompositeOperationType)(_operator() - 1));
+    m_filterEffect->setOperation((SVGCompositeOperationType) _operator());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
     setStandardAttributes(m_filterEffect);

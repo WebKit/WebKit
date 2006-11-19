@@ -67,13 +67,13 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEBlend* SVGFEBlendElement::filterEffect() const
+SVGFEBlend* SVGFEBlendElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEBlend*>(renderingDevice()->createFilterEffect(FE_BLEND));
+        m_filterEffect = static_cast<SVGFEBlend*>(renderingDevice()->createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setBlendMode((KCBlendModeType)(mode()-1));
+    m_filterEffect->setBlendMode((SVGBlendModeType) mode());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
     setStandardAttributes(m_filterEffect);

@@ -31,7 +31,6 @@
 #include <wtf/Assertions.h>
 
 #include <ApplicationServices/ApplicationServices.h>
-#include "KCanvasFilterQuartz.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDeviceQuartz.h"
 #include "QuartzSupport.h"

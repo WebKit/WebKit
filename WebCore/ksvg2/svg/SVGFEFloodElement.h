@@ -25,7 +25,7 @@
 #ifdef SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "KCanvasFilters.h"
+#include "SVGFEFlood.h"
 
 namespace WebCore
 {
@@ -40,14 +40,14 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
-        virtual KCanvasFEFlood *filterEffect() const;
+        virtual SVGFEFlood *filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEFloodElement, String, String, In1, in1)
-        mutable KCanvasFEFlood *m_filterEffect;
+        mutable SVGFEFlood *m_filterEffect;
     };
 
 } // namespace WebCore

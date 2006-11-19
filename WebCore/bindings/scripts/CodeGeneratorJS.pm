@@ -199,6 +199,19 @@ sub AddClassForwardIfNeeded
     push(@headerContent, "class $implClassName;\n\n") unless $codeGenerator->IsSVGAnimatedType($implClassName);
 }
 
+sub HashValueForClassAndName
+{
+    my $class = shift;
+    my $name = shift;
+
+    # SVG Filter enums live in WebCore namespace (platform/graphics/)
+    if ($class =~ /^SVGFE*/ or $class =~ /^SVGComponentTransferFunctionElement$/) {
+        return "WebCore::$name";
+    }
+
+    return "${class}::$name";
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -527,7 +540,7 @@ sub GenerateImplementation
             my $name = $constant->name;
             push(@hashKeys, $name);
 
-            my $value = "${implClassName}::$name";
+            my $value = HashValueForClassAndName($implClassName, $name);
             push(@hashValues, $value);
 
             my $special = "DontDelete|ReadOnly";
@@ -560,7 +573,7 @@ sub GenerateImplementation
         my $name = $constant->name;
         push(@hashKeys, $name);
 
-        my $value = "${implClassName}::$name";
+        my $value = HashValueForClassAndName($implClassName, $name);
         push(@hashValues, $value);
 
         my $special = "DontDelete|ReadOnly";

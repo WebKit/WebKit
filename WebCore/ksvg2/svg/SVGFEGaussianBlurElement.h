@@ -24,7 +24,7 @@
 #define KSVG_SVGFEGaussianBlurElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
+#include "SVGFEGaussianBlur.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
@@ -42,7 +42,7 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual KCanvasFEGaussianBlur* filterEffect() const;
+        virtual SVGFEGaussianBlur* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -51,7 +51,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationY, stdDeviationY)
-        mutable KCanvasFEGaussianBlur* m_filterEffect;
+        mutable SVGFEGaussianBlur* m_filterEffect;
     };
 
 } // namespace WebCore

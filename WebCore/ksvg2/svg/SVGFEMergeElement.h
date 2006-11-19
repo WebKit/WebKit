@@ -24,7 +24,7 @@
 #define KSVG_SVGFEMergeElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasFilters.h"
+#include "SVGFEMerge.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore
@@ -35,13 +35,13 @@ namespace WebCore
         SVGFEMergeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeElement();
 
-        virtual KCanvasFEMerge* filterEffect() const;
+        virtual SVGFEMerge* filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable KCanvasFEMerge* m_filterEffect;
+        mutable SVGFEMerge* m_filterEffect;
     };
 
 } // namespace WebCore

@@ -20,20 +20,22 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasResourceListener_H
-#define KCanvasResourceListener_H
+#ifndef SVGResourceListener_H
+#define SVGResourceListener_H
+
 #ifdef SVG_SUPPORT
 
-class KCanvasResourceListener
+class SVGResourceListener
 {
 public:
-    KCanvasResourceListener() { }
-    virtual ~KCanvasResourceListener() { }
+    SVGResourceListener() { }
+    virtual ~SVGResourceListener() { }
 
     virtual void resourceNotification() const = 0;
 };
 
 #endif // SVG_SUPPORT
+
 #endif
 
 // vim:ts=4:noet

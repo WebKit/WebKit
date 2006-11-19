@@ -1624,28 +1624,8 @@
 		A70023FD0B02BEAB00170215 /* MimeTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */; };
 		A70023FE0B02BEAB00170215 /* MimeTypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70024000B02BECC00170215 /* MimeTypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */; };
-		A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */; };
-		A7638A8C09958EA50007E14F /* WKDisplacementMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */; };
-		A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */; };
 		A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */; };
 		A7638A980995965D0007E14F /* SVGFEDisplacementMapElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */; };
-		A7B97B770979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */; };
-		A7B97B780979C3A1000E8EB1 /* WKComponentMergeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */; };
-		A7B97B790979C3A1000E8EB1 /* WKComponentMergeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */; };
-		A7B97B7A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */; };
-		A7B97B7B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */; };
-		A7B97B7C0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */; };
-		A7B97B7D0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */; };
-		A7B97B7E0979C3A1000E8EB1 /* WKGammaTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */; };
-		A7B97B7F0979C3A1000E8EB1 /* WKGammaTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */; };
-		A7B97B800979C3A1000E8EB1 /* WKIdentityTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */; };
-		A7B97B810979C3A1000E8EB1 /* WKIdentityTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */; };
-		A7B97B820979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */; };
-		A7B97B830979C3A1000E8EB1 /* WKLinearTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */; };
-		A7B97B840979C3A1000E8EB1 /* WKLinearTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */; };
-		A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */; };
-		A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */; };
-		A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */; };
 		A7D23C540B03E41300582A4F /* WebMimeTypeRegistryBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D23C550B03E41300582A4F /* WebMimeTypeRegistryBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -1783,7 +1763,6 @@
 		A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A833C80A0A2CF25600D57664 /* XMLNames.cpp */; };
 		A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A833C80B0A2CF25600D57664 /* XMLNames.h */; };
 		A833C8520A2CF52800D57664 /* SVGElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E609D1508D000E61D7 /* SVGElementFactory.cpp */; };
-		A8415FA20AC10C5D00F7D0DF /* KCanvasFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8415F990AC10C5D00F7D0DF /* KCanvasFilters.cpp */; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
 		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
@@ -1859,29 +1838,6 @@
 		A88AD3900952486D001DD196 /* KRenderingPaintServerPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB61089701F700BA5114 /* KRenderingPaintServerPattern.h */; };
 		A88AD3910952486D001DD196 /* KRenderingPaintServerSolid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB62089701F700BA5114 /* KRenderingPaintServerSolid.cpp */; };
 		A88AD3920952486D001DD196 /* KRenderingPaintServerSolid.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB63089701F700BA5114 /* KRenderingPaintServerSolid.h */; };
-		A88AD3950952486D001DD196 /* WKArithmeticFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */; };
-		A88AD3960952486D001DD196 /* WKArithmeticFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */; };
-		A88AD3970952486D001DD196 /* WKArithmeticFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */; };
-		A88AD3980952486D001DD196 /* WKDiffuseLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */; };
-		A88AD3990952486D001DD196 /* WKDiffuseLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */; };
-		A88AD39A0952486D001DD196 /* WKDiffuseLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */; };
-		A88AD39B0952486D001DD196 /* WKDistantLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */; };
-		A88AD39C0952486D001DD196 /* WKDistantLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */; };
-		A88AD39D0952486D001DD196 /* WKDistantLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */; };
-		A88AD39E0952486D001DD196 /* WKNormalMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */; };
-		A88AD39F0952486D001DD196 /* WKNormalMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */; };
-		A88AD3A00952486D001DD196 /* WKNormalMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */; };
-		A88AD3A10952486D001DD196 /* WKPointLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */; };
-		A88AD3A20952486D001DD196 /* WKPointLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */; };
-		A88AD3A30952486D001DD196 /* WKPointLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */; };
-		A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */; };
-		A88AD3A50952486D001DD196 /* WKSpecularLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */; };
-		A88AD3A60952486D001DD196 /* WKSpecularLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */; };
-		A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */; };
-		A88AD3A80952486D001DD196 /* WKSpotLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */; };
-		A88AD3A90952486D001DD196 /* WKSpotLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */; };
-		A88AD3AA0952486D001DD196 /* KCanvasFilterQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */; };
-		A88AD3AB0952486D001DD196 /* KCanvasFilterQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */; };
 		A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */; };
 		A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */; };
 		A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */; };
@@ -1890,7 +1846,6 @@
 		A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.cpp */; };
 		A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
 		A88AD3B60952486E001DD196 /* QuartzSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */; };
-		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
 		A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */; };
 		A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F700089701F100BA5114 /* SVGRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */; };
@@ -2345,6 +2300,107 @@
 		B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */; };
 		B2CB41930AB75904004D9C45 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB414C0AB75904004D9C45 /* SVGRenderingIntent.h */; };
 		B2CB41A60AB75904004D9C45 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB415F0AB75904004D9C45 /* SVGUnitTypes.h */; };
+		B2E27BD50B0F2A9500F17C7B /* SVGResourceFilterCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BD30B0F2A9500F17C7B /* SVGResourceFilterCg.mm */; };
+		B2E27BDA0B0F2AC800F17C7B /* SVGResourceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BD70B0F2AC800F17C7B /* SVGResourceFilter.cpp */; };
+		B2E27BDB0B0F2AC800F17C7B /* SVGResourceFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BD80B0F2AC800F17C7B /* SVGResourceFilter.h */; };
+		B2E27BDC0B0F2AC800F17C7B /* SVGResourceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BD90B0F2AC800F17C7B /* SVGResourceListener.h */; };
+		B2E27C3E0B0F2AE600F17C7B /* SVGFEBlendCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BDF0B0F2AE600F17C7B /* SVGFEBlendCg.mm */; };
+		B2E27C3F0B0F2AE600F17C7B /* SVGFEColorMatrixCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE00B0F2AE600F17C7B /* SVGFEColorMatrixCg.mm */; };
+		B2E27C400B0F2AE600F17C7B /* SVGFEComponentTransferCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE10B0F2AE600F17C7B /* SVGFEComponentTransferCg.mm */; };
+		B2E27C410B0F2AE600F17C7B /* SVGFECompositeCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE20B0F2AE600F17C7B /* SVGFECompositeCg.mm */; };
+		B2E27C420B0F2AE600F17C7B /* SVGFEDiffuseLightingCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE30B0F2AE600F17C7B /* SVGFEDiffuseLightingCg.mm */; };
+		B2E27C430B0F2AE600F17C7B /* SVGFEDisplacementMapCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE40B0F2AE600F17C7B /* SVGFEDisplacementMapCg.mm */; };
+		B2E27C440B0F2AE600F17C7B /* SVGFEFloodCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE50B0F2AE600F17C7B /* SVGFEFloodCg.mm */; };
+		B2E27C450B0F2AE600F17C7B /* SVGFEGaussianBlurCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE60B0F2AE600F17C7B /* SVGFEGaussianBlurCg.mm */; };
+		B2E27C460B0F2AE600F17C7B /* SVGFEHelpersCg.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BE70B0F2AE600F17C7B /* SVGFEHelpersCg.h */; };
+		B2E27C470B0F2AE600F17C7B /* SVGFEHelpersCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE80B0F2AE600F17C7B /* SVGFEHelpersCg.mm */; };
+		B2E27C480B0F2AE600F17C7B /* SVGFEImageCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BE90B0F2AE600F17C7B /* SVGFEImageCg.mm */; };
+		B2E27C490B0F2AE600F17C7B /* SVGFEMergeCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BEA0B0F2AE600F17C7B /* SVGFEMergeCg.mm */; };
+		B2E27C4A0B0F2AE600F17C7B /* SVGFEOffsetCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BEB0B0F2AE600F17C7B /* SVGFEOffsetCg.mm */; };
+		B2E27C4B0B0F2AE600F17C7B /* SVGFESpecularLightingCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BEC0B0F2AE600F17C7B /* SVGFESpecularLightingCg.mm */; };
+		B2E27C4C0B0F2AE600F17C7B /* SVGFETileCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BED0B0F2AE600F17C7B /* SVGFETileCg.mm */; };
+		B2E27C4D0B0F2AE600F17C7B /* SVGFilterEffectCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BEE0B0F2AE600F17C7B /* SVGFilterEffectCg.mm */; };
+		B2E27C4E0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BEF0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel */; };
+		B2E27C4F0B0F2AE600F17C7B /* WKArithmeticFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BF00B0F2AE600F17C7B /* WKArithmeticFilter.h */; };
+		B2E27C500B0F2AE600F17C7B /* WKArithmeticFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BF10B0F2AE600F17C7B /* WKArithmeticFilter.m */; };
+		B2E27C510B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BF20B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel */; };
+		B2E27C520B0F2AE600F17C7B /* WKComponentMergeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BF30B0F2AE600F17C7B /* WKComponentMergeFilter.h */; };
+		B2E27C530B0F2AE600F17C7B /* WKComponentMergeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BF40B0F2AE600F17C7B /* WKComponentMergeFilter.m */; };
+		B2E27C540B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BF50B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel */; };
+		B2E27C550B0F2AE600F17C7B /* WKDiffuseLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BF60B0F2AE600F17C7B /* WKDiffuseLightingFilter.h */; };
+		B2E27C560B0F2AE600F17C7B /* WKDiffuseLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BF70B0F2AE600F17C7B /* WKDiffuseLightingFilter.m */; };
+		B2E27C570B0F2AE600F17C7B /* WKDiscreteTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BF80B0F2AE600F17C7B /* WKDiscreteTransferFilter.cikernel */; };
+		B2E27C580B0F2AE600F17C7B /* WKDiscreteTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BF90B0F2AE600F17C7B /* WKDiscreteTransferFilter.h */; };
+		B2E27C590B0F2AE600F17C7B /* WKDiscreteTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BFA0B0F2AE600F17C7B /* WKDiscreteTransferFilter.m */; };
+		B2E27C5A0B0F2AE600F17C7B /* WKDisplacementMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BFB0B0F2AE600F17C7B /* WKDisplacementMapFilter.cikernel */; };
+		B2E27C5B0B0F2AE600F17C7B /* WKDisplacementMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BFC0B0F2AE600F17C7B /* WKDisplacementMapFilter.h */; };
+		B2E27C5C0B0F2AE600F17C7B /* WKDisplacementMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27BFD0B0F2AE600F17C7B /* WKDisplacementMapFilter.m */; };
+		B2E27C5D0B0F2AE600F17C7B /* WKDistantLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27BFE0B0F2AE600F17C7B /* WKDistantLightFilter.cikernel */; };
+		B2E27C5E0B0F2AE600F17C7B /* WKDistantLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27BFF0B0F2AE600F17C7B /* WKDistantLightFilter.h */; };
+		B2E27C5F0B0F2AE600F17C7B /* WKDistantLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C000B0F2AE600F17C7B /* WKDistantLightFilter.m */; };
+		B2E27C600B0F2AE600F17C7B /* WKGammaTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C010B0F2AE600F17C7B /* WKGammaTransferFilter.cikernel */; };
+		B2E27C610B0F2AE600F17C7B /* WKGammaTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C020B0F2AE600F17C7B /* WKGammaTransferFilter.h */; };
+		B2E27C620B0F2AE600F17C7B /* WKGammaTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C030B0F2AE600F17C7B /* WKGammaTransferFilter.m */; };
+		B2E27C630B0F2AE600F17C7B /* WKIdentityTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C040B0F2AE600F17C7B /* WKIdentityTransferFilter.h */; };
+		B2E27C640B0F2AE600F17C7B /* WKIdentityTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C050B0F2AE600F17C7B /* WKIdentityTransferFilter.m */; };
+		B2E27C650B0F2AE600F17C7B /* WKLinearTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C060B0F2AE600F17C7B /* WKLinearTransferFilter.cikernel */; };
+		B2E27C660B0F2AE600F17C7B /* WKLinearTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C070B0F2AE600F17C7B /* WKLinearTransferFilter.h */; };
+		B2E27C670B0F2AE600F17C7B /* WKLinearTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C080B0F2AE600F17C7B /* WKLinearTransferFilter.m */; };
+		B2E27C680B0F2AE600F17C7B /* WKNormalMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C090B0F2AE600F17C7B /* WKNormalMapFilter.cikernel */; };
+		B2E27C690B0F2AE600F17C7B /* WKNormalMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C0A0B0F2AE600F17C7B /* WKNormalMapFilter.h */; };
+		B2E27C6A0B0F2AE600F17C7B /* WKNormalMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C0B0B0F2AE600F17C7B /* WKNormalMapFilter.m */; };
+		B2E27C6B0B0F2AE600F17C7B /* WKPointLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C0C0B0F2AE600F17C7B /* WKPointLightFilter.cikernel */; };
+		B2E27C6C0B0F2AE600F17C7B /* WKPointLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C0D0B0F2AE600F17C7B /* WKPointLightFilter.h */; };
+		B2E27C6D0B0F2AE600F17C7B /* WKPointLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C0E0B0F2AE600F17C7B /* WKPointLightFilter.m */; };
+		B2E27C6E0B0F2AE600F17C7B /* WKSpecularLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C0F0B0F2AE600F17C7B /* WKSpecularLightingFilter.cikernel */; };
+		B2E27C6F0B0F2AE600F17C7B /* WKSpecularLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C100B0F2AE600F17C7B /* WKSpecularLightingFilter.h */; };
+		B2E27C700B0F2AE600F17C7B /* WKSpecularLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C110B0F2AE600F17C7B /* WKSpecularLightingFilter.m */; };
+		B2E27C710B0F2AE600F17C7B /* WKSpotLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C120B0F2AE600F17C7B /* WKSpotLightFilter.cikernel */; };
+		B2E27C720B0F2AE600F17C7B /* WKSpotLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C130B0F2AE600F17C7B /* WKSpotLightFilter.h */; };
+		B2E27C730B0F2AE600F17C7B /* WKSpotLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C140B0F2AE600F17C7B /* WKSpotLightFilter.m */; };
+		B2E27C740B0F2AE600F17C7B /* WKTableTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B2E27C150B0F2AE600F17C7B /* WKTableTransferFilter.cikernel */; };
+		B2E27C750B0F2AE600F17C7B /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C160B0F2AE600F17C7B /* WKTableTransferFilter.h */; };
+		B2E27C760B0F2AE600F17C7B /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C170B0F2AE600F17C7B /* WKTableTransferFilter.m */; };
+		B2E27C770B0F2AE600F17C7B /* SVGDistantLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C180B0F2AE600F17C7B /* SVGDistantLightSource.h */; };
+		B2E27C780B0F2AE600F17C7B /* SVGFEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C190B0F2AE600F17C7B /* SVGFEBlend.cpp */; };
+		B2E27C790B0F2AE600F17C7B /* SVGFEBlend.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C1A0B0F2AE600F17C7B /* SVGFEBlend.h */; };
+		B2E27C7A0B0F2AE600F17C7B /* SVGFEColorMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C1B0B0F2AE600F17C7B /* SVGFEColorMatrix.cpp */; };
+		B2E27C7B0B0F2AE600F17C7B /* SVGFEColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C1C0B0F2AE600F17C7B /* SVGFEColorMatrix.h */; };
+		B2E27C7C0B0F2AE600F17C7B /* SVGFEComponentTransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C1D0B0F2AE600F17C7B /* SVGFEComponentTransfer.cpp */; };
+		B2E27C7D0B0F2AE600F17C7B /* SVGFEComponentTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C1E0B0F2AE600F17C7B /* SVGFEComponentTransfer.h */; };
+		B2E27C7E0B0F2AE600F17C7B /* SVGFEComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C1F0B0F2AE600F17C7B /* SVGFEComposite.cpp */; };
+		B2E27C7F0B0F2AE600F17C7B /* SVGFEComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C200B0F2AE600F17C7B /* SVGFEComposite.h */; };
+		B2E27C800B0F2AE600F17C7B /* SVGFEConvolveMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C210B0F2AE600F17C7B /* SVGFEConvolveMatrix.cpp */; };
+		B2E27C810B0F2AE600F17C7B /* SVGFEConvolveMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C220B0F2AE600F17C7B /* SVGFEConvolveMatrix.h */; };
+		B2E27C820B0F2AE600F17C7B /* SVGFEDiffuseLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C230B0F2AE600F17C7B /* SVGFEDiffuseLighting.cpp */; };
+		B2E27C830B0F2AE600F17C7B /* SVGFEDiffuseLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C240B0F2AE600F17C7B /* SVGFEDiffuseLighting.h */; };
+		B2E27C840B0F2AE600F17C7B /* SVGFEDisplacementMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C250B0F2AE600F17C7B /* SVGFEDisplacementMap.cpp */; };
+		B2E27C850B0F2AE600F17C7B /* SVGFEDisplacementMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C260B0F2AE600F17C7B /* SVGFEDisplacementMap.h */; };
+		B2E27C860B0F2AE600F17C7B /* SVGFEFlood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C270B0F2AE600F17C7B /* SVGFEFlood.cpp */; };
+		B2E27C870B0F2AE600F17C7B /* SVGFEFlood.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C280B0F2AE600F17C7B /* SVGFEFlood.h */; };
+		B2E27C880B0F2AE600F17C7B /* SVGFEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C290B0F2AE600F17C7B /* SVGFEGaussianBlur.cpp */; };
+		B2E27C890B0F2AE600F17C7B /* SVGFEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C2A0B0F2AE600F17C7B /* SVGFEGaussianBlur.h */; };
+		B2E27C8A0B0F2AE600F17C7B /* SVGFEImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C2B0B0F2AE600F17C7B /* SVGFEImage.cpp */; };
+		B2E27C8B0B0F2AE600F17C7B /* SVGFEImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C2C0B0F2AE600F17C7B /* SVGFEImage.h */; };
+		B2E27C8C0B0F2AE600F17C7B /* SVGFEMerge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C2D0B0F2AE600F17C7B /* SVGFEMerge.cpp */; };
+		B2E27C8D0B0F2AE600F17C7B /* SVGFEMerge.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C2E0B0F2AE600F17C7B /* SVGFEMerge.h */; };
+		B2E27C8E0B0F2AE600F17C7B /* SVGFEMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C2F0B0F2AE600F17C7B /* SVGFEMorphology.cpp */; };
+		B2E27C8F0B0F2AE600F17C7B /* SVGFEMorphology.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C300B0F2AE600F17C7B /* SVGFEMorphology.h */; };
+		B2E27C900B0F2AE600F17C7B /* SVGFEOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C310B0F2AE600F17C7B /* SVGFEOffset.cpp */; };
+		B2E27C910B0F2AE600F17C7B /* SVGFEOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C320B0F2AE600F17C7B /* SVGFEOffset.h */; };
+		B2E27C920B0F2AE600F17C7B /* SVGFESpecularLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C330B0F2AE600F17C7B /* SVGFESpecularLighting.cpp */; };
+		B2E27C930B0F2AE600F17C7B /* SVGFESpecularLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C340B0F2AE600F17C7B /* SVGFESpecularLighting.h */; };
+		B2E27C940B0F2AE600F17C7B /* SVGFETile.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C350B0F2AE600F17C7B /* SVGFETile.h */; };
+		B2E27C950B0F2AE600F17C7B /* SVGFETurbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C360B0F2AE600F17C7B /* SVGFETurbulence.cpp */; };
+		B2E27C960B0F2AE600F17C7B /* SVGFETurbulence.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C370B0F2AE600F17C7B /* SVGFETurbulence.h */; };
+		B2E27C970B0F2AE600F17C7B /* SVGFilterEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C380B0F2AE600F17C7B /* SVGFilterEffect.cpp */; };
+		B2E27C980B0F2AE600F17C7B /* SVGFilterEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C390B0F2AE600F17C7B /* SVGFilterEffect.h */; };
+		B2E27C990B0F2AE600F17C7B /* SVGLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C3A0B0F2AE600F17C7B /* SVGLightSource.cpp */; };
+		B2E27C9A0B0F2AE600F17C7B /* SVGLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C3B0B0F2AE600F17C7B /* SVGLightSource.h */; };
+		B2E27C9B0B0F2AE600F17C7B /* SVGPointLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C3C0B0F2AE600F17C7B /* SVGPointLightSource.h */; };
+		B2E27C9C0B0F2AE600F17C7B /* SVGSpotLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C3D0B0F2AE600F17C7B /* SVGSpotLightSource.h */; };
+		B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */; };
+		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; };
 		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
 		B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */; };
 		B2FA3D360AB75A6F000E5AC4 /* JSSVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */; };
@@ -4477,28 +4533,8 @@
 		A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MimeTypeRegistry.cpp; sourceTree = "<group>"; };
 		A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MimeTypeRegistry.h; sourceTree = "<group>"; };
 		A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypeRegistryMac.mm; sourceTree = "<group>"; };
-		A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDisplacementMapFilter.h; sourceTree = "<group>"; };
-		A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDisplacementMapFilter.m; sourceTree = "<group>"; };
-		A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
 		A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMapElement.h; sourceTree = "<group>"; };
 		A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMapElement.cpp; sourceTree = "<group>"; };
-		A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKComponentMergeFilter.cikernel; sourceTree = "<group>"; };
-		A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKComponentMergeFilter.h; sourceTree = "<group>"; };
-		A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKComponentMergeFilter.m; sourceTree = "<group>"; };
-		A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDiscreteTransferFilter.cikernel; sourceTree = "<group>"; };
-		A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDiscreteTransferFilter.h; sourceTree = "<group>"; };
-		A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDiscreteTransferFilter.m; sourceTree = "<group>"; };
-		A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKGammaTransferFilter.cikernel; sourceTree = "<group>"; };
-		A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKGammaTransferFilter.h; sourceTree = "<group>"; };
-		A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKGammaTransferFilter.m; sourceTree = "<group>"; };
-		A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKIdentityTransferFilter.h; sourceTree = "<group>"; };
-		A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKIdentityTransferFilter.m; sourceTree = "<group>"; };
-		A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKLinearTransferFilter.cikernel; sourceTree = "<group>"; };
-		A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKLinearTransferFilter.h; sourceTree = "<group>"; };
-		A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKLinearTransferFilter.m; sourceTree = "<group>"; };
-		A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKTableTransferFilter.cikernel; sourceTree = "<group>"; };
-		A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
-		A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
 		A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMimeTypeRegistryBridge.h; sourceTree = "<group>"; };
 		A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMimeTypeRegistryBridge.mm; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
@@ -4660,7 +4696,6 @@
 		A833C7F60A2CF1D800D57664 /* xmlattrs.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = xmlattrs.in; sourceTree = "<group>"; };
 		A833C80A0A2CF25600D57664 /* XMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNames.cpp; sourceTree = "<group>"; };
 		A833C80B0A2CF25600D57664 /* XMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLNames.h; sourceTree = "<group>"; };
-		A8415F990AC10C5D00F7D0DF /* KCanvasFilters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasFilters.cpp; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
 		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
@@ -4953,8 +4988,6 @@
 		A8C0FB61089701F700BA5114 /* KRenderingPaintServerPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerPattern.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB62089701F700BA5114 /* KRenderingPaintServerSolid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerSolid.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB63089701F700BA5114 /* KRenderingPaintServerSolid.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerSolid.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilterQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasFilterQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasItemQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDeviceQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDeviceQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4963,28 +4996,6 @@
 		A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB76089701F800BA5114 /* QuartzSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QuartzSupport.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuartzSupport.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilters.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKArithmeticFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKArithmeticFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKArithmeticFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKDiffuseLightingFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKDiffuseLightingFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKDiffuseLightingFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKDistantLightFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKDistantLightFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKDistantLightFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKNormalMapFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKNormalMapFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKNormalMapFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKPointLightFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKPointLightFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKPointLightFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKSpecularLightingFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKSpecularLightingFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKSpecularLightingFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKSpotLightFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKSpotLightFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKSpotLightFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295C093BB7B2000B9CAC /* SVGFELightElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGFELightElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295D093BB7B2000B9CAC /* SVGFELightElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFELightElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDistantLightElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5314,6 +5325,107 @@
 		B2CB41620AB75904004D9C45 /* SVGUseElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGUseElement.idl; sourceTree = "<group>"; };
 		B2CB41630AB75904004D9C45 /* SVGViewElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGViewElement.idl; sourceTree = "<group>"; };
 		B2CB41640AB75904004D9C45 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; };
+		B2E27BD30B0F2A9500F17C7B /* SVGResourceFilterCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterCg.mm; sourceTree = "<group>"; };
+		B2E27BD70B0F2AC800F17C7B /* SVGResourceFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceFilter.cpp; sourceTree = "<group>"; };
+		B2E27BD80B0F2AC800F17C7B /* SVGResourceFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceFilter.h; sourceTree = "<group>"; };
+		B2E27BD90B0F2AC800F17C7B /* SVGResourceListener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceListener.h; sourceTree = "<group>"; };
+		B2E27BDF0B0F2AE600F17C7B /* SVGFEBlendCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEBlendCg.mm; sourceTree = "<group>"; };
+		B2E27BE00B0F2AE600F17C7B /* SVGFEColorMatrixCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEColorMatrixCg.mm; sourceTree = "<group>"; };
+		B2E27BE10B0F2AE600F17C7B /* SVGFEComponentTransferCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEComponentTransferCg.mm; sourceTree = "<group>"; };
+		B2E27BE20B0F2AE600F17C7B /* SVGFECompositeCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFECompositeCg.mm; sourceTree = "<group>"; };
+		B2E27BE30B0F2AE600F17C7B /* SVGFEDiffuseLightingCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEDiffuseLightingCg.mm; sourceTree = "<group>"; };
+		B2E27BE40B0F2AE600F17C7B /* SVGFEDisplacementMapCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEDisplacementMapCg.mm; sourceTree = "<group>"; };
+		B2E27BE50B0F2AE600F17C7B /* SVGFEFloodCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEFloodCg.mm; sourceTree = "<group>"; };
+		B2E27BE60B0F2AE600F17C7B /* SVGFEGaussianBlurCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEGaussianBlurCg.mm; sourceTree = "<group>"; };
+		B2E27BE70B0F2AE600F17C7B /* SVGFEHelpersCg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEHelpersCg.h; sourceTree = "<group>"; };
+		B2E27BE80B0F2AE600F17C7B /* SVGFEHelpersCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEHelpersCg.mm; sourceTree = "<group>"; };
+		B2E27BE90B0F2AE600F17C7B /* SVGFEImageCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEImageCg.mm; sourceTree = "<group>"; };
+		B2E27BEA0B0F2AE600F17C7B /* SVGFEMergeCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEMergeCg.mm; sourceTree = "<group>"; };
+		B2E27BEB0B0F2AE600F17C7B /* SVGFEOffsetCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEOffsetCg.mm; sourceTree = "<group>"; };
+		B2E27BEC0B0F2AE600F17C7B /* SVGFESpecularLightingCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFESpecularLightingCg.mm; sourceTree = "<group>"; };
+		B2E27BED0B0F2AE600F17C7B /* SVGFETileCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFETileCg.mm; sourceTree = "<group>"; };
+		B2E27BEE0B0F2AE600F17C7B /* SVGFilterEffectCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFilterEffectCg.mm; sourceTree = "<group>"; };
+		B2E27BEF0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKArithmeticFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BF00B0F2AE600F17C7B /* WKArithmeticFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKArithmeticFilter.h; sourceTree = "<group>"; };
+		B2E27BF10B0F2AE600F17C7B /* WKArithmeticFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKArithmeticFilter.m; sourceTree = "<group>"; };
+		B2E27BF20B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKComponentMergeFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BF30B0F2AE600F17C7B /* WKComponentMergeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKComponentMergeFilter.h; sourceTree = "<group>"; };
+		B2E27BF40B0F2AE600F17C7B /* WKComponentMergeFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKComponentMergeFilter.m; sourceTree = "<group>"; };
+		B2E27BF50B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDiffuseLightingFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BF60B0F2AE600F17C7B /* WKDiffuseLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDiffuseLightingFilter.h; sourceTree = "<group>"; };
+		B2E27BF70B0F2AE600F17C7B /* WKDiffuseLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDiffuseLightingFilter.m; sourceTree = "<group>"; };
+		B2E27BF80B0F2AE600F17C7B /* WKDiscreteTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDiscreteTransferFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BF90B0F2AE600F17C7B /* WKDiscreteTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDiscreteTransferFilter.h; sourceTree = "<group>"; };
+		B2E27BFA0B0F2AE600F17C7B /* WKDiscreteTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDiscreteTransferFilter.m; sourceTree = "<group>"; };
+		B2E27BFB0B0F2AE600F17C7B /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BFC0B0F2AE600F17C7B /* WKDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDisplacementMapFilter.h; sourceTree = "<group>"; };
+		B2E27BFD0B0F2AE600F17C7B /* WKDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDisplacementMapFilter.m; sourceTree = "<group>"; };
+		B2E27BFE0B0F2AE600F17C7B /* WKDistantLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDistantLightFilter.cikernel; sourceTree = "<group>"; };
+		B2E27BFF0B0F2AE600F17C7B /* WKDistantLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDistantLightFilter.h; sourceTree = "<group>"; };
+		B2E27C000B0F2AE600F17C7B /* WKDistantLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDistantLightFilter.m; sourceTree = "<group>"; };
+		B2E27C010B0F2AE600F17C7B /* WKGammaTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKGammaTransferFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C020B0F2AE600F17C7B /* WKGammaTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKGammaTransferFilter.h; sourceTree = "<group>"; };
+		B2E27C030B0F2AE600F17C7B /* WKGammaTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKGammaTransferFilter.m; sourceTree = "<group>"; };
+		B2E27C040B0F2AE600F17C7B /* WKIdentityTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKIdentityTransferFilter.h; sourceTree = "<group>"; };
+		B2E27C050B0F2AE600F17C7B /* WKIdentityTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKIdentityTransferFilter.m; sourceTree = "<group>"; };
+		B2E27C060B0F2AE600F17C7B /* WKLinearTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKLinearTransferFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C070B0F2AE600F17C7B /* WKLinearTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKLinearTransferFilter.h; sourceTree = "<group>"; };
+		B2E27C080B0F2AE600F17C7B /* WKLinearTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKLinearTransferFilter.m; sourceTree = "<group>"; };
+		B2E27C090B0F2AE600F17C7B /* WKNormalMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKNormalMapFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C0A0B0F2AE600F17C7B /* WKNormalMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKNormalMapFilter.h; sourceTree = "<group>"; };
+		B2E27C0B0B0F2AE600F17C7B /* WKNormalMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKNormalMapFilter.m; sourceTree = "<group>"; };
+		B2E27C0C0B0F2AE600F17C7B /* WKPointLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKPointLightFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C0D0B0F2AE600F17C7B /* WKPointLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKPointLightFilter.h; sourceTree = "<group>"; };
+		B2E27C0E0B0F2AE600F17C7B /* WKPointLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKPointLightFilter.m; sourceTree = "<group>"; };
+		B2E27C0F0B0F2AE600F17C7B /* WKSpecularLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKSpecularLightingFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C100B0F2AE600F17C7B /* WKSpecularLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKSpecularLightingFilter.h; sourceTree = "<group>"; };
+		B2E27C110B0F2AE600F17C7B /* WKSpecularLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKSpecularLightingFilter.m; sourceTree = "<group>"; };
+		B2E27C120B0F2AE600F17C7B /* WKSpotLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKSpotLightFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C130B0F2AE600F17C7B /* WKSpotLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKSpotLightFilter.h; sourceTree = "<group>"; };
+		B2E27C140B0F2AE600F17C7B /* WKSpotLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKSpotLightFilter.m; sourceTree = "<group>"; };
+		B2E27C150B0F2AE600F17C7B /* WKTableTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKTableTransferFilter.cikernel; sourceTree = "<group>"; };
+		B2E27C160B0F2AE600F17C7B /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
+		B2E27C170B0F2AE600F17C7B /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
+		B2E27C180B0F2AE600F17C7B /* SVGDistantLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGDistantLightSource.h; sourceTree = "<group>"; };
+		B2E27C190B0F2AE600F17C7B /* SVGFEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEBlend.cpp; sourceTree = "<group>"; };
+		B2E27C1A0B0F2AE600F17C7B /* SVGFEBlend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEBlend.h; sourceTree = "<group>"; };
+		B2E27C1B0B0F2AE600F17C7B /* SVGFEColorMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEColorMatrix.cpp; sourceTree = "<group>"; };
+		B2E27C1C0B0F2AE600F17C7B /* SVGFEColorMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEColorMatrix.h; sourceTree = "<group>"; };
+		B2E27C1D0B0F2AE600F17C7B /* SVGFEComponentTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEComponentTransfer.cpp; sourceTree = "<group>"; };
+		B2E27C1E0B0F2AE600F17C7B /* SVGFEComponentTransfer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEComponentTransfer.h; sourceTree = "<group>"; };
+		B2E27C1F0B0F2AE600F17C7B /* SVGFEComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEComposite.cpp; sourceTree = "<group>"; };
+		B2E27C200B0F2AE600F17C7B /* SVGFEComposite.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEComposite.h; sourceTree = "<group>"; };
+		B2E27C210B0F2AE600F17C7B /* SVGFEConvolveMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrix.cpp; sourceTree = "<group>"; };
+		B2E27C220B0F2AE600F17C7B /* SVGFEConvolveMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrix.h; sourceTree = "<group>"; };
+		B2E27C230B0F2AE600F17C7B /* SVGFEDiffuseLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDiffuseLighting.cpp; sourceTree = "<group>"; };
+		B2E27C240B0F2AE600F17C7B /* SVGFEDiffuseLighting.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEDiffuseLighting.h; sourceTree = "<group>"; };
+		B2E27C250B0F2AE600F17C7B /* SVGFEDisplacementMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMap.cpp; sourceTree = "<group>"; };
+		B2E27C260B0F2AE600F17C7B /* SVGFEDisplacementMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMap.h; sourceTree = "<group>"; };
+		B2E27C270B0F2AE600F17C7B /* SVGFEFlood.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEFlood.cpp; sourceTree = "<group>"; };
+		B2E27C280B0F2AE600F17C7B /* SVGFEFlood.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEFlood.h; sourceTree = "<group>"; };
+		B2E27C290B0F2AE600F17C7B /* SVGFEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEGaussianBlur.cpp; sourceTree = "<group>"; };
+		B2E27C2A0B0F2AE600F17C7B /* SVGFEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEGaussianBlur.h; sourceTree = "<group>"; };
+		B2E27C2B0B0F2AE600F17C7B /* SVGFEImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEImage.cpp; sourceTree = "<group>"; };
+		B2E27C2C0B0F2AE600F17C7B /* SVGFEImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEImage.h; sourceTree = "<group>"; };
+		B2E27C2D0B0F2AE600F17C7B /* SVGFEMerge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMerge.cpp; sourceTree = "<group>"; };
+		B2E27C2E0B0F2AE600F17C7B /* SVGFEMerge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEMerge.h; sourceTree = "<group>"; };
+		B2E27C2F0B0F2AE600F17C7B /* SVGFEMorphology.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMorphology.cpp; sourceTree = "<group>"; };
+		B2E27C300B0F2AE600F17C7B /* SVGFEMorphology.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEMorphology.h; sourceTree = "<group>"; };
+		B2E27C310B0F2AE600F17C7B /* SVGFEOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEOffset.cpp; sourceTree = "<group>"; };
+		B2E27C320B0F2AE600F17C7B /* SVGFEOffset.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEOffset.h; sourceTree = "<group>"; };
+		B2E27C330B0F2AE600F17C7B /* SVGFESpecularLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFESpecularLighting.cpp; sourceTree = "<group>"; };
+		B2E27C340B0F2AE600F17C7B /* SVGFESpecularLighting.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFESpecularLighting.h; sourceTree = "<group>"; };
+		B2E27C350B0F2AE600F17C7B /* SVGFETile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFETile.h; sourceTree = "<group>"; };
+		B2E27C360B0F2AE600F17C7B /* SVGFETurbulence.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETurbulence.cpp; sourceTree = "<group>"; };
+		B2E27C370B0F2AE600F17C7B /* SVGFETurbulence.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFETurbulence.h; sourceTree = "<group>"; };
+		B2E27C380B0F2AE600F17C7B /* SVGFilterEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilterEffect.cpp; sourceTree = "<group>"; };
+		B2E27C390B0F2AE600F17C7B /* SVGFilterEffect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFilterEffect.h; sourceTree = "<group>"; };
+		B2E27C3A0B0F2AE600F17C7B /* SVGLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLightSource.cpp; sourceTree = "<group>"; };
+		B2E27C3B0B0F2AE600F17C7B /* SVGLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLightSource.h; sourceTree = "<group>"; };
+		B2E27C3C0B0F2AE600F17C7B /* SVGPointLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPointLightSource.h; sourceTree = "<group>"; };
+		B2E27C3D0B0F2AE600F17C7B /* SVGSpotLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGSpotLightSource.h; sourceTree = "<group>"; };
+		B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint3D.cpp; sourceTree = "<group>"; };
+		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
 		B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedAngle.idl; sourceTree = "<group>"; };
 		B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedBoolean.idl; sourceTree = "<group>"; };
 		B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedEnumeration.idl; sourceTree = "<group>"; };
@@ -8237,8 +8349,6 @@
 			isa = PBXGroup;
 			children = (
 				A8C0FB53089701F700BA5114 /* device */,
-				A8415F990AC10C5D00F7D0DF /* KCanvasFilters.cpp */,
-				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
 			);
 			path = kcanvas;
 			sourceTree = "<group>";
@@ -8263,9 +8373,6 @@
 		A8C0FB68089701F800BA5114 /* quartz */ = {
 			isa = PBXGroup;
 			children = (
-				A8C3291F093BB732000B9CAC /* filters */,
-				A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */,
-				A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */,
 				A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */,
 				A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */,
 				A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */,
@@ -8276,54 +8383,6 @@
 				A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */,
 			);
 			path = quartz;
-			sourceTree = "<group>";
-		};
-		A8C3291F093BB732000B9CAC /* filters */ = {
-			isa = PBXGroup;
-			children = (
-				A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */,
-				A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */,
-				A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */,
-				A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */,
-				A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */,
-				A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */,
-				A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */,
-				A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */,
-				A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */,
-				A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */,
-				A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */,
-				A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */,
-				A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */,
-				A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */,
-				A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */,
-				A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */,
-				A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */,
-				A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */,
-				A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */,
-				A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */,
-				A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */,
-				A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */,
-				A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */,
-				A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */,
-				A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */,
-				A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */,
-				A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */,
-				A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */,
-				A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */,
-				A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */,
-				A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */,
-				A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */,
-				A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */,
-				A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */,
-				A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */,
-				A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */,
-				A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */,
-				A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */,
-				A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */,
-				A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */,
-				A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */,
-			);
-			path = filters;
 			sourceTree = "<group>";
 		};
 		B27535290B053814002CE64F /* cg */ = {
@@ -8375,6 +8434,8 @@
 				B27535390B053814002CE64F /* Color.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
 				B275353B0B053814002CE64F /* FloatPoint.h */,
+				B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */,
+				B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */,
 				B275353C0B053814002CE64F /* FloatRect.cpp */,
 				B275353D0B053814002CE64F /* FloatRect.h */,
 				B275353E0B053814002CE64F /* FloatSize.cpp */,
@@ -8403,12 +8464,16 @@
 		B2A015960AF6CD53006BCE0E /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				B2E27BDD0B0F2AE500F17C7B /* filters */,
 				B2A015970AF6CD53006BCE0E /* cg */,
 				B2A0159F0AF6CD53006BCE0E /* SVGResource.cpp */,
 				B2A015A00AF6CD53006BCE0E /* SVGResource.h */,
 				B2A015A10AF6CD53006BCE0E /* SVGResourceClipper.cpp */,
 				B2A015A20AF6CD53006BCE0E /* SVGResourceClipper.h */,
+				B2E27BD70B0F2AC800F17C7B /* SVGResourceFilter.cpp */,
+				B2E27BD80B0F2AC800F17C7B /* SVGResourceFilter.h */,
 				B2A015A30AF6CD53006BCE0E /* SVGResourceImage.h */,
+				B2E27BD90B0F2AC800F17C7B /* SVGResourceListener.h */,
 				B2A015A40AF6CD53006BCE0E /* SVGResourceMarker.cpp */,
 				B2A015A50AF6CD53006BCE0E /* SVGResourceMarker.h */,
 				B2A015A60AF6CD53006BCE0E /* SVGResourceMasker.cpp */,
@@ -8420,9 +8485,120 @@
 		B2A015970AF6CD53006BCE0E /* cg */ = {
 			isa = PBXGroup;
 			children = (
+				B2E27BD30B0F2A9500F17C7B /* SVGResourceFilterCg.mm */,
 				B2A015980AF6CD53006BCE0E /* SVGResourceClipperCg.cpp */,
 				B2A015990AF6CD53006BCE0E /* SVGResourceImageCg.cpp */,
 				B2A0159A0AF6CD53006BCE0E /* SVGResourceMaskerCg.mm */,
+			);
+			path = cg;
+			sourceTree = "<group>";
+		};
+		B2E27BDD0B0F2AE500F17C7B /* filters */ = {
+			isa = PBXGroup;
+			children = (
+				B2E27BDE0B0F2AE500F17C7B /* cg */,
+				B2E27C180B0F2AE600F17C7B /* SVGDistantLightSource.h */,
+				B2E27C190B0F2AE600F17C7B /* SVGFEBlend.cpp */,
+				B2E27C1A0B0F2AE600F17C7B /* SVGFEBlend.h */,
+				B2E27C1B0B0F2AE600F17C7B /* SVGFEColorMatrix.cpp */,
+				B2E27C1C0B0F2AE600F17C7B /* SVGFEColorMatrix.h */,
+				B2E27C1D0B0F2AE600F17C7B /* SVGFEComponentTransfer.cpp */,
+				B2E27C1E0B0F2AE600F17C7B /* SVGFEComponentTransfer.h */,
+				B2E27C1F0B0F2AE600F17C7B /* SVGFEComposite.cpp */,
+				B2E27C200B0F2AE600F17C7B /* SVGFEComposite.h */,
+				B2E27C210B0F2AE600F17C7B /* SVGFEConvolveMatrix.cpp */,
+				B2E27C220B0F2AE600F17C7B /* SVGFEConvolveMatrix.h */,
+				B2E27C230B0F2AE600F17C7B /* SVGFEDiffuseLighting.cpp */,
+				B2E27C240B0F2AE600F17C7B /* SVGFEDiffuseLighting.h */,
+				B2E27C250B0F2AE600F17C7B /* SVGFEDisplacementMap.cpp */,
+				B2E27C260B0F2AE600F17C7B /* SVGFEDisplacementMap.h */,
+				B2E27C270B0F2AE600F17C7B /* SVGFEFlood.cpp */,
+				B2E27C280B0F2AE600F17C7B /* SVGFEFlood.h */,
+				B2E27C290B0F2AE600F17C7B /* SVGFEGaussianBlur.cpp */,
+				B2E27C2A0B0F2AE600F17C7B /* SVGFEGaussianBlur.h */,
+				B2E27C2B0B0F2AE600F17C7B /* SVGFEImage.cpp */,
+				B2E27C2C0B0F2AE600F17C7B /* SVGFEImage.h */,
+				B2E27C2D0B0F2AE600F17C7B /* SVGFEMerge.cpp */,
+				B2E27C2E0B0F2AE600F17C7B /* SVGFEMerge.h */,
+				B2E27C2F0B0F2AE600F17C7B /* SVGFEMorphology.cpp */,
+				B2E27C300B0F2AE600F17C7B /* SVGFEMorphology.h */,
+				B2E27C310B0F2AE600F17C7B /* SVGFEOffset.cpp */,
+				B2E27C320B0F2AE600F17C7B /* SVGFEOffset.h */,
+				B2E27C330B0F2AE600F17C7B /* SVGFESpecularLighting.cpp */,
+				B2E27C340B0F2AE600F17C7B /* SVGFESpecularLighting.h */,
+				B2E27C350B0F2AE600F17C7B /* SVGFETile.h */,
+				B2E27C360B0F2AE600F17C7B /* SVGFETurbulence.cpp */,
+				B2E27C370B0F2AE600F17C7B /* SVGFETurbulence.h */,
+				B2E27C380B0F2AE600F17C7B /* SVGFilterEffect.cpp */,
+				B2E27C390B0F2AE600F17C7B /* SVGFilterEffect.h */,
+				B2E27C3A0B0F2AE600F17C7B /* SVGLightSource.cpp */,
+				B2E27C3B0B0F2AE600F17C7B /* SVGLightSource.h */,
+				B2E27C3C0B0F2AE600F17C7B /* SVGPointLightSource.h */,
+				B2E27C3D0B0F2AE600F17C7B /* SVGSpotLightSource.h */,
+			);
+			path = filters;
+			sourceTree = "<group>";
+		};
+		B2E27BDE0B0F2AE500F17C7B /* cg */ = {
+			isa = PBXGroup;
+			children = (
+				B2E27BDF0B0F2AE600F17C7B /* SVGFEBlendCg.mm */,
+				B2E27BE00B0F2AE600F17C7B /* SVGFEColorMatrixCg.mm */,
+				B2E27BE10B0F2AE600F17C7B /* SVGFEComponentTransferCg.mm */,
+				B2E27BE20B0F2AE600F17C7B /* SVGFECompositeCg.mm */,
+				B2E27BE30B0F2AE600F17C7B /* SVGFEDiffuseLightingCg.mm */,
+				B2E27BE40B0F2AE600F17C7B /* SVGFEDisplacementMapCg.mm */,
+				B2E27BE50B0F2AE600F17C7B /* SVGFEFloodCg.mm */,
+				B2E27BE60B0F2AE600F17C7B /* SVGFEGaussianBlurCg.mm */,
+				B2E27BE70B0F2AE600F17C7B /* SVGFEHelpersCg.h */,
+				B2E27BE80B0F2AE600F17C7B /* SVGFEHelpersCg.mm */,
+				B2E27BE90B0F2AE600F17C7B /* SVGFEImageCg.mm */,
+				B2E27BEA0B0F2AE600F17C7B /* SVGFEMergeCg.mm */,
+				B2E27BEB0B0F2AE600F17C7B /* SVGFEOffsetCg.mm */,
+				B2E27BEC0B0F2AE600F17C7B /* SVGFESpecularLightingCg.mm */,
+				B2E27BED0B0F2AE600F17C7B /* SVGFETileCg.mm */,
+				B2E27BEE0B0F2AE600F17C7B /* SVGFilterEffectCg.mm */,
+				B2E27BEF0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel */,
+				B2E27BF00B0F2AE600F17C7B /* WKArithmeticFilter.h */,
+				B2E27BF10B0F2AE600F17C7B /* WKArithmeticFilter.m */,
+				B2E27BF20B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel */,
+				B2E27BF30B0F2AE600F17C7B /* WKComponentMergeFilter.h */,
+				B2E27BF40B0F2AE600F17C7B /* WKComponentMergeFilter.m */,
+				B2E27BF50B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel */,
+				B2E27BF60B0F2AE600F17C7B /* WKDiffuseLightingFilter.h */,
+				B2E27BF70B0F2AE600F17C7B /* WKDiffuseLightingFilter.m */,
+				B2E27BF80B0F2AE600F17C7B /* WKDiscreteTransferFilter.cikernel */,
+				B2E27BF90B0F2AE600F17C7B /* WKDiscreteTransferFilter.h */,
+				B2E27BFA0B0F2AE600F17C7B /* WKDiscreteTransferFilter.m */,
+				B2E27BFB0B0F2AE600F17C7B /* WKDisplacementMapFilter.cikernel */,
+				B2E27BFC0B0F2AE600F17C7B /* WKDisplacementMapFilter.h */,
+				B2E27BFD0B0F2AE600F17C7B /* WKDisplacementMapFilter.m */,
+				B2E27BFE0B0F2AE600F17C7B /* WKDistantLightFilter.cikernel */,
+				B2E27BFF0B0F2AE600F17C7B /* WKDistantLightFilter.h */,
+				B2E27C000B0F2AE600F17C7B /* WKDistantLightFilter.m */,
+				B2E27C010B0F2AE600F17C7B /* WKGammaTransferFilter.cikernel */,
+				B2E27C020B0F2AE600F17C7B /* WKGammaTransferFilter.h */,
+				B2E27C030B0F2AE600F17C7B /* WKGammaTransferFilter.m */,
+				B2E27C040B0F2AE600F17C7B /* WKIdentityTransferFilter.h */,
+				B2E27C050B0F2AE600F17C7B /* WKIdentityTransferFilter.m */,
+				B2E27C060B0F2AE600F17C7B /* WKLinearTransferFilter.cikernel */,
+				B2E27C070B0F2AE600F17C7B /* WKLinearTransferFilter.h */,
+				B2E27C080B0F2AE600F17C7B /* WKLinearTransferFilter.m */,
+				B2E27C090B0F2AE600F17C7B /* WKNormalMapFilter.cikernel */,
+				B2E27C0A0B0F2AE600F17C7B /* WKNormalMapFilter.h */,
+				B2E27C0B0B0F2AE600F17C7B /* WKNormalMapFilter.m */,
+				B2E27C0C0B0F2AE600F17C7B /* WKPointLightFilter.cikernel */,
+				B2E27C0D0B0F2AE600F17C7B /* WKPointLightFilter.h */,
+				B2E27C0E0B0F2AE600F17C7B /* WKPointLightFilter.m */,
+				B2E27C0F0B0F2AE600F17C7B /* WKSpecularLightingFilter.cikernel */,
+				B2E27C100B0F2AE600F17C7B /* WKSpecularLightingFilter.h */,
+				B2E27C110B0F2AE600F17C7B /* WKSpecularLightingFilter.m */,
+				B2E27C120B0F2AE600F17C7B /* WKSpotLightFilter.cikernel */,
+				B2E27C130B0F2AE600F17C7B /* WKSpotLightFilter.h */,
+				B2E27C140B0F2AE600F17C7B /* WKSpotLightFilter.m */,
+				B2E27C150B0F2AE600F17C7B /* WKTableTransferFilter.cikernel */,
+				B2E27C160B0F2AE600F17C7B /* WKTableTransferFilter.h */,
+				B2E27C170B0F2AE600F17C7B /* WKTableTransferFilter.m */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -9248,18 +9424,9 @@
 				A88AD38C0952486D001DD196 /* KRenderingPaintServerGradient.h in Headers */,
 				A88AD3900952486D001DD196 /* KRenderingPaintServerPattern.h in Headers */,
 				A88AD3920952486D001DD196 /* KRenderingPaintServerSolid.h in Headers */,
-				A88AD3960952486D001DD196 /* WKArithmeticFilter.h in Headers */,
-				A88AD3990952486D001DD196 /* WKDiffuseLightingFilter.h in Headers */,
-				A88AD39C0952486D001DD196 /* WKDistantLightFilter.h in Headers */,
-				A88AD39F0952486D001DD196 /* WKNormalMapFilter.h in Headers */,
-				A88AD3A20952486D001DD196 /* WKPointLightFilter.h in Headers */,
-				A88AD3A50952486D001DD196 /* WKSpecularLightingFilter.h in Headers */,
-				A88AD3A80952486D001DD196 /* WKSpotLightFilter.h in Headers */,
-				A88AD3AA0952486D001DD196 /* KCanvasFilterQuartz.h in Headers */,
 				A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */,
 				A88AD3B30952486E001DD196 /* KRenderingPaintServerQuartz.h in Headers */,
 				A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */,
-				A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */,
 				A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */,
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,
 				A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */,
@@ -9389,12 +9556,6 @@
 				A81369E2097374F600D74463 /* HTMLLabelElement.h in Headers */,
 				A81369E4097374F600D74463 /* HTMLKeygenElement.h in Headers */,
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
-				A7B97B780979C3A1000E8EB1 /* WKComponentMergeFilter.h in Headers */,
-				A7B97B7B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h in Headers */,
-				A7B97B7E0979C3A1000E8EB1 /* WKGammaTransferFilter.h in Headers */,
-				A7B97B800979C3A1000E8EB1 /* WKIdentityTransferFilter.h in Headers */,
-				A7B97B830979C3A1000E8EB1 /* WKLinearTransferFilter.h in Headers */,
-				A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				65BF02300974816300C43196 /* FramePrivate.h in Headers */,
 				65BF02440974819000C43196 /* FrameMac.h in Headers */,
@@ -9490,7 +9651,6 @@
 				93CD4FE40995F9EA007ECC97 /* StringImpl.h in Headers */,
 				93CD4FEC0995FD2A007ECC97 /* PlatformString.h in Headers */,
 				6582A14009999CD600BEEB6D /* DeprecatedString.h in Headers */,
-				A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */,
 				A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
@@ -10599,6 +10759,45 @@
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
 				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
+				B2E27BDB0B0F2AC800F17C7B /* SVGResourceFilter.h in Headers */,
+				B2E27BDC0B0F2AC800F17C7B /* SVGResourceListener.h in Headers */,
+				B2E27C460B0F2AE600F17C7B /* SVGFEHelpersCg.h in Headers */,
+				B2E27C4F0B0F2AE600F17C7B /* WKArithmeticFilter.h in Headers */,
+				B2E27C520B0F2AE600F17C7B /* WKComponentMergeFilter.h in Headers */,
+				B2E27C550B0F2AE600F17C7B /* WKDiffuseLightingFilter.h in Headers */,
+				B2E27C580B0F2AE600F17C7B /* WKDiscreteTransferFilter.h in Headers */,
+				B2E27C5B0B0F2AE600F17C7B /* WKDisplacementMapFilter.h in Headers */,
+				B2E27C5E0B0F2AE600F17C7B /* WKDistantLightFilter.h in Headers */,
+				B2E27C610B0F2AE600F17C7B /* WKGammaTransferFilter.h in Headers */,
+				B2E27C630B0F2AE600F17C7B /* WKIdentityTransferFilter.h in Headers */,
+				B2E27C660B0F2AE600F17C7B /* WKLinearTransferFilter.h in Headers */,
+				B2E27C690B0F2AE600F17C7B /* WKNormalMapFilter.h in Headers */,
+				B2E27C6C0B0F2AE600F17C7B /* WKPointLightFilter.h in Headers */,
+				B2E27C6F0B0F2AE600F17C7B /* WKSpecularLightingFilter.h in Headers */,
+				B2E27C720B0F2AE600F17C7B /* WKSpotLightFilter.h in Headers */,
+				B2E27C750B0F2AE600F17C7B /* WKTableTransferFilter.h in Headers */,
+				B2E27C770B0F2AE600F17C7B /* SVGDistantLightSource.h in Headers */,
+				B2E27C790B0F2AE600F17C7B /* SVGFEBlend.h in Headers */,
+				B2E27C7B0B0F2AE600F17C7B /* SVGFEColorMatrix.h in Headers */,
+				B2E27C7D0B0F2AE600F17C7B /* SVGFEComponentTransfer.h in Headers */,
+				B2E27C7F0B0F2AE600F17C7B /* SVGFEComposite.h in Headers */,
+				B2E27C810B0F2AE600F17C7B /* SVGFEConvolveMatrix.h in Headers */,
+				B2E27C830B0F2AE600F17C7B /* SVGFEDiffuseLighting.h in Headers */,
+				B2E27C850B0F2AE600F17C7B /* SVGFEDisplacementMap.h in Headers */,
+				B2E27C870B0F2AE600F17C7B /* SVGFEFlood.h in Headers */,
+				B2E27C890B0F2AE600F17C7B /* SVGFEGaussianBlur.h in Headers */,
+				B2E27C8B0B0F2AE600F17C7B /* SVGFEImage.h in Headers */,
+				B2E27C8D0B0F2AE600F17C7B /* SVGFEMerge.h in Headers */,
+				B2E27C8F0B0F2AE600F17C7B /* SVGFEMorphology.h in Headers */,
+				B2E27C910B0F2AE600F17C7B /* SVGFEOffset.h in Headers */,
+				B2E27C930B0F2AE600F17C7B /* SVGFESpecularLighting.h in Headers */,
+				B2E27C940B0F2AE600F17C7B /* SVGFETile.h in Headers */,
+				B2E27C960B0F2AE600F17C7B /* SVGFETurbulence.h in Headers */,
+				B2E27C980B0F2AE600F17C7B /* SVGFilterEffect.h in Headers */,
+				B2E27C9A0B0F2AE600F17C7B /* SVGLightSource.h in Headers */,
+				B2E27C9B0B0F2AE600F17C7B /* SVGPointLightSource.h in Headers */,
+				B2E27C9C0B0F2AE600F17C7B /* SVGSpotLightSource.h in Headers */,
+				B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10662,19 +10861,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */,
-				A88AD3950952486D001DD196 /* WKArithmeticFilter.cikernel in Resources */,
-				A88AD3980952486D001DD196 /* WKDiffuseLightingFilter.cikernel in Resources */,
-				A88AD39B0952486D001DD196 /* WKDistantLightFilter.cikernel in Resources */,
-				A88AD39E0952486D001DD196 /* WKNormalMapFilter.cikernel in Resources */,
-				A88AD3A10952486D001DD196 /* WKPointLightFilter.cikernel in Resources */,
-				A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */,
-				A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */,
-				A7B97B770979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel in Resources */,
-				A7B97B7A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel in Resources */,
-				A7B97B7D0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel in Resources */,
-				A7B97B820979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel in Resources */,
-				A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */,
-				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
 				1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */,
@@ -10701,6 +10887,19 @@
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */,
 				46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */,
+				B2E27C4E0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel in Resources */,
+				B2E27C510B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel in Resources */,
+				B2E27C540B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel in Resources */,
+				B2E27C570B0F2AE600F17C7B /* WKDiscreteTransferFilter.cikernel in Resources */,
+				B2E27C5A0B0F2AE600F17C7B /* WKDisplacementMapFilter.cikernel in Resources */,
+				B2E27C5D0B0F2AE600F17C7B /* WKDistantLightFilter.cikernel in Resources */,
+				B2E27C600B0F2AE600F17C7B /* WKGammaTransferFilter.cikernel in Resources */,
+				B2E27C650B0F2AE600F17C7B /* WKLinearTransferFilter.cikernel in Resources */,
+				B2E27C680B0F2AE600F17C7B /* WKNormalMapFilter.cikernel in Resources */,
+				B2E27C6B0B0F2AE600F17C7B /* WKPointLightFilter.cikernel in Resources */,
+				B2E27C6E0B0F2AE600F17C7B /* WKSpecularLightingFilter.cikernel in Resources */,
+				B2E27C710B0F2AE600F17C7B /* WKSpotLightFilter.cikernel in Resources */,
+				B2E27C740B0F2AE600F17C7B /* WKTableTransferFilter.cikernel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10803,14 +11002,6 @@
 				A88AD38B0952486D001DD196 /* KRenderingPaintServerGradient.cpp in Sources */,
 				A88AD38F0952486D001DD196 /* KRenderingPaintServerPattern.cpp in Sources */,
 				A88AD3910952486D001DD196 /* KRenderingPaintServerSolid.cpp in Sources */,
-				A88AD3970952486D001DD196 /* WKArithmeticFilter.m in Sources */,
-				A88AD39A0952486D001DD196 /* WKDiffuseLightingFilter.m in Sources */,
-				A88AD39D0952486D001DD196 /* WKDistantLightFilter.m in Sources */,
-				A88AD3A00952486D001DD196 /* WKNormalMapFilter.m in Sources */,
-				A88AD3A30952486D001DD196 /* WKPointLightFilter.m in Sources */,
-				A88AD3A60952486D001DD196 /* WKSpecularLightingFilter.m in Sources */,
-				A88AD3A90952486D001DD196 /* WKSpotLightFilter.m in Sources */,
-				A88AD3AB0952486D001DD196 /* KCanvasFilterQuartz.mm in Sources */,
 				A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */,
 				A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */,
 				A88AD3B20952486E001DD196 /* KRenderingPaintServerGradientQuartz.cpp in Sources */,
@@ -10941,12 +11132,6 @@
 				A81369E3097374F600D74463 /* HTMLLabelElement.cpp in Sources */,
 				A81369E5097374F600D74463 /* HTMLKeygenElement.cpp in Sources */,
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
-				A7B97B790979C3A1000E8EB1 /* WKComponentMergeFilter.m in Sources */,
-				A7B97B7C0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m in Sources */,
-				A7B97B7F0979C3A1000E8EB1 /* WKGammaTransferFilter.m in Sources */,
-				A7B97B810979C3A1000E8EB1 /* WKIdentityTransferFilter.m in Sources */,
-				A7B97B840979C3A1000E8EB1 /* WKLinearTransferFilter.m in Sources */,
-				A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				65BF02450974819000C43196 /* FrameMac.mm in Sources */,
 				FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */,
@@ -11030,7 +11215,6 @@
 				6582A13F09999CD600BEEB6D /* DeprecatedString.cpp in Sources */,
 				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,
 				6582A17809999EA000BEEB6D /* DeprecatedStringMac.mm in Sources */,
-				A7638A8C09958EA50007E14F /* WKDisplacementMapFilter.m in Sources */,
 				A7638A980995965D0007E14F /* SVGFEDisplacementMapElement.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				93309DD8099E64920056E581 /* ApplyStyleCommand.cpp in Sources */,
@@ -11639,7 +11823,6 @@
 				853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */,
 				85BCBC140ABBA87D00381160 /* DOMHTMLDocument.mm in Sources */,
 				AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */,
-				A8415FA20AC10C5D00F7D0DF /* KCanvasFilters.cpp in Sources */,
 				8541636A0AC7180B0001E01B /* DOMSVGTransformList.mm in Sources */,
 				8541636C0AC7180B0001E01B /* DOMSVGTransform.mm in Sources */,
 				8541636E0AC7180B0001E01B /* DOMSVGPathSegList.mm in Sources */,
@@ -11871,6 +12054,55 @@
 				93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
+				B2E27BD50B0F2A9500F17C7B /* SVGResourceFilterCg.mm in Sources */,
+				B2E27BDA0B0F2AC800F17C7B /* SVGResourceFilter.cpp in Sources */,
+				B2E27C3E0B0F2AE600F17C7B /* SVGFEBlendCg.mm in Sources */,
+				B2E27C3F0B0F2AE600F17C7B /* SVGFEColorMatrixCg.mm in Sources */,
+				B2E27C400B0F2AE600F17C7B /* SVGFEComponentTransferCg.mm in Sources */,
+				B2E27C410B0F2AE600F17C7B /* SVGFECompositeCg.mm in Sources */,
+				B2E27C420B0F2AE600F17C7B /* SVGFEDiffuseLightingCg.mm in Sources */,
+				B2E27C430B0F2AE600F17C7B /* SVGFEDisplacementMapCg.mm in Sources */,
+				B2E27C440B0F2AE600F17C7B /* SVGFEFloodCg.mm in Sources */,
+				B2E27C450B0F2AE600F17C7B /* SVGFEGaussianBlurCg.mm in Sources */,
+				B2E27C470B0F2AE600F17C7B /* SVGFEHelpersCg.mm in Sources */,
+				B2E27C480B0F2AE600F17C7B /* SVGFEImageCg.mm in Sources */,
+				B2E27C490B0F2AE600F17C7B /* SVGFEMergeCg.mm in Sources */,
+				B2E27C4A0B0F2AE600F17C7B /* SVGFEOffsetCg.mm in Sources */,
+				B2E27C4B0B0F2AE600F17C7B /* SVGFESpecularLightingCg.mm in Sources */,
+				B2E27C4C0B0F2AE600F17C7B /* SVGFETileCg.mm in Sources */,
+				B2E27C4D0B0F2AE600F17C7B /* SVGFilterEffectCg.mm in Sources */,
+				B2E27C500B0F2AE600F17C7B /* WKArithmeticFilter.m in Sources */,
+				B2E27C530B0F2AE600F17C7B /* WKComponentMergeFilter.m in Sources */,
+				B2E27C560B0F2AE600F17C7B /* WKDiffuseLightingFilter.m in Sources */,
+				B2E27C590B0F2AE600F17C7B /* WKDiscreteTransferFilter.m in Sources */,
+				B2E27C5C0B0F2AE600F17C7B /* WKDisplacementMapFilter.m in Sources */,
+				B2E27C5F0B0F2AE600F17C7B /* WKDistantLightFilter.m in Sources */,
+				B2E27C620B0F2AE600F17C7B /* WKGammaTransferFilter.m in Sources */,
+				B2E27C640B0F2AE600F17C7B /* WKIdentityTransferFilter.m in Sources */,
+				B2E27C670B0F2AE600F17C7B /* WKLinearTransferFilter.m in Sources */,
+				B2E27C6A0B0F2AE600F17C7B /* WKNormalMapFilter.m in Sources */,
+				B2E27C6D0B0F2AE600F17C7B /* WKPointLightFilter.m in Sources */,
+				B2E27C700B0F2AE600F17C7B /* WKSpecularLightingFilter.m in Sources */,
+				B2E27C730B0F2AE600F17C7B /* WKSpotLightFilter.m in Sources */,
+				B2E27C760B0F2AE600F17C7B /* WKTableTransferFilter.m in Sources */,
+				B2E27C780B0F2AE600F17C7B /* SVGFEBlend.cpp in Sources */,
+				B2E27C7A0B0F2AE600F17C7B /* SVGFEColorMatrix.cpp in Sources */,
+				B2E27C7C0B0F2AE600F17C7B /* SVGFEComponentTransfer.cpp in Sources */,
+				B2E27C7E0B0F2AE600F17C7B /* SVGFEComposite.cpp in Sources */,
+				B2E27C800B0F2AE600F17C7B /* SVGFEConvolveMatrix.cpp in Sources */,
+				B2E27C820B0F2AE600F17C7B /* SVGFEDiffuseLighting.cpp in Sources */,
+				B2E27C840B0F2AE600F17C7B /* SVGFEDisplacementMap.cpp in Sources */,
+				B2E27C860B0F2AE600F17C7B /* SVGFEFlood.cpp in Sources */,
+				B2E27C880B0F2AE600F17C7B /* SVGFEGaussianBlur.cpp in Sources */,
+				B2E27C8A0B0F2AE600F17C7B /* SVGFEImage.cpp in Sources */,
+				B2E27C8C0B0F2AE600F17C7B /* SVGFEMerge.cpp in Sources */,
+				B2E27C8E0B0F2AE600F17C7B /* SVGFEMorphology.cpp in Sources */,
+				B2E27C900B0F2AE600F17C7B /* SVGFEOffset.cpp in Sources */,
+				B2E27C920B0F2AE600F17C7B /* SVGFESpecularLighting.cpp in Sources */,
+				B2E27C950B0F2AE600F17C7B /* SVGFETurbulence.cpp in Sources */,
+				B2E27C970B0F2AE600F17C7B /* SVGFilterEffect.cpp in Sources */,
+				B2E27C990B0F2AE600F17C7B /* SVGLightSource.cpp in Sources */,
+				B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

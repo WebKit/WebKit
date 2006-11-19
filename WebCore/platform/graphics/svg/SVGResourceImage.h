@@ -46,7 +46,7 @@ namespace WebCore {
         SVGResourceImage();
 
 #if PLATFORM(CG)
-    virtual ~SVGResourceImage();
+        virtual ~SVGResourceImage();
 #endif
 
         // To be implemented by the specific rendering devices 

@@ -27,6 +27,7 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
+#import "SVGResourceFilter.h"
 #import "SVGResourceMasker.h"
 #import "SVGResourceImage.h"
 #import "SVGRenderStyle.h"
@@ -35,7 +36,8 @@
 #import "QuartzSupport.h"
 
 #import <QuartzCore/CoreImage.h>
-
+#import <QuartzCore/CIFilter.h>
+#
 namespace WebCore {
 
 static CIImage* applyLuminanceToAlphaFilter(CIImage* inputImage)

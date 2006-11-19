@@ -80,10 +80,10 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFESpecularLighting* SVGFESpecularLightingElement::filterEffect() const
+SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<KCanvasFESpecularLighting*>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
+        m_filterEffect = static_cast<SVGFESpecularLighting*>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()));
@@ -101,7 +101,7 @@ void SVGFESpecularLightingElement::updateLights() const
     if (!m_filterEffect)
         return;
 
-    KCLightSource* light = 0;    
+    SVGLightSource* light = 0;    
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feDistantLightTag)||n->hasTagName(SVGNames::fePointLightTag)||n->hasTagName(SVGNames::feSpotLightTag)) {
             SVGFELightElement* lightNode = static_cast<SVGFELightElement*>(n); 

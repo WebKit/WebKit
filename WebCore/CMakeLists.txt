@@ -37,6 +37,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/qt
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/svg
+   ${CMAKE_CURRENT_SOURCE_DIR}/platform/graphics/svg/filters
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/gif
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/jpeg
@@ -533,9 +534,8 @@ set (SVG_SOURCES
     kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp
     kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp
     kcanvas/device/qt/KRenderingPaintServerQt.cpp
-kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp
-kcanvas/device/qt/RenderPathQt.cpp
-kcanvas/KCanvasFilters.cpp
+    kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp
+    kcanvas/device/qt/RenderPathQt.cpp
 
     ksvg2/css/SVGCSSParser.cpp
     ksvg2/css/SVGCSSStyleSelector.cpp
@@ -1019,6 +1019,7 @@ set(WebCore_SRCS
 
     platform/graphics/AffineTransform.cpp
     platform/graphics/Color.cpp
+    platform/graphics/FloatPoint3D.cpp
     platform/graphics/FloatPoint.cpp
     platform/graphics/FloatRect.cpp
     platform/graphics/FloatSize.cpp
@@ -1043,8 +1044,27 @@ set(WebCore_SRCS
 
     platform/graphics/svg/SVGResource.cpp
     platform/graphics/svg/SVGResourceClipper.cpp
+    platform/graphics/svg/SVGResourceFilter.cpp
     platform/graphics/svg/SVGResourceMarker.cpp
     platform/graphics/svg/SVGResourceMasker.cpp
+
+    platform/graphics/svg/filters/SVGFEBlend.cpp
+    platform/graphics/svg/filters/SVGFEColorMatrix.cpp
+    platform/graphics/svg/filters/SVGFEComponentTransfer.cpp
+    platform/graphics/svg/filters/SVGFEComposite.cpp
+    platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp
+    platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp
+    platform/graphics/svg/filters/SVGFEDisplacementMap.cpp
+    platform/graphics/svg/filters/SVGFEFlood.cpp
+    platform/graphics/svg/filters/SVGFEGaussianBlur.cpp
+    platform/graphics/svg/filters/SVGFEImage.cpp
+    platform/graphics/svg/filters/SVGFEMerge.cpp
+    platform/graphics/svg/filters/SVGFEMorphology.cpp
+    platform/graphics/svg/filters/SVGFEOffset.cpp
+    platform/graphics/svg/filters/SVGFESpecularLighting.cpp
+    platform/graphics/svg/filters/SVGFETurbulence.cpp
+    platform/graphics/svg/filters/SVGFilterEffect.cpp
+    platform/graphics/svg/filters/SVGLightSource.cpp
 
     platform/graphics/svg/qt/SVGResourceClipperQt.cpp
     platform/graphics/svg/qt/SVGResourceImageQt.cpp

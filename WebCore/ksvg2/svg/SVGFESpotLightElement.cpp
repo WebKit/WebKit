@@ -20,7 +20,7 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGFESpotLightElement.h"
-
+#include "SVGSpotLightSource.h"
 
 namespace WebCore {
 
@@ -33,15 +33,15 @@ SVGFESpotLightElement::~SVGFESpotLightElement()
 {
 }
 
-KCLightSource *SVGFESpotLightElement::lightSource() const
+SVGLightSource *SVGFESpotLightElement::lightSource() const
 {
-    KCanvasPoint3F pos(x(), y(), z());
+    FloatPoint3D pos(x(), y(), z());
     //convert lookAt to a direction
-    KCanvasPoint3F direction(pointsAtX() - pos.x(), 
+    FloatPoint3D direction(pointsAtX() - pos.x(), 
                              pointsAtY() - pos.y(), 
                              pointsAtZ() - pos.z());
     direction.normalize();
-    return new KCSpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
+    return new SVGSpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
 }
 
 }

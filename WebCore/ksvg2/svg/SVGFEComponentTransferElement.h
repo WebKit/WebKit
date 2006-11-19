@@ -25,7 +25,7 @@
 #ifdef SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "KCanvasFilters.h"
+#include "SVGFEComponentTransfer.h"
 
 namespace WebCore
 {
@@ -40,14 +40,14 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
-        virtual KCanvasFEComponentTransfer *filterEffect() const;
+        virtual SVGFEComponentTransfer *filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEComponentTransferElement, String, String, In1, in1)
-        mutable KCanvasFEComponentTransfer *m_filterEffect;
+        mutable SVGFEComponentTransfer *m_filterEffect;
     };
 
 } // namespace WebCore

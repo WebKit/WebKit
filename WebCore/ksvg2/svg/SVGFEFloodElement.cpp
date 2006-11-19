@@ -29,7 +29,6 @@
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "KCanvasFilters.h"
 #include "KRenderingDevice.h"
 
 namespace WebCore {
@@ -56,10 +55,10 @@ void SVGFEFloodElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEFlood *SVGFEFloodElement::filterEffect() const
+SVGFEFlood *SVGFEFloodElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
+        m_filterEffect = static_cast<SVGFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());

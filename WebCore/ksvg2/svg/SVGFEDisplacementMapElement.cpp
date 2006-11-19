@@ -47,18 +47,18 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enu
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr.localName(), m_yChannelSelector)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, double, Number, number, Scale, scale, SVGNames::scaleAttr.localName(), m_scale)
 
-KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
+SVGChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {
     if (key == "R")
-        return CS_RED;
+        return SVG_CHANNEL_R;
     else if (key == "G")
-        return CS_GREEN;
+        return SVG_CHANNEL_G;
     else if (key == "B")
-        return CS_BLUE;
+        return SVG_CHANNEL_B;
     else if (key == "A")
-        return CS_ALPHA;
-    //error
-    return (KCChannelSelectorType)-1;
+        return SVG_CHANNEL_A;
+
+    return SVG_CHANNEL_UNKNOWN;
 }
 
 void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
@@ -78,14 +78,14 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
+SVGFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEDisplacementMap *>(renderingDevice()->createFilterEffect(FE_DISPLACEMENT_MAP));
+        m_filterEffect = static_cast<SVGFEDisplacementMap *>(renderingDevice()->createFilterEffect(FE_DISPLACEMENT_MAP));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelector()));
-    m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelector()));
+    m_filterEffect->setXChannelSelector((SVGChannelSelectorType)(xChannelSelector()));
+    m_filterEffect->setYChannelSelector((SVGChannelSelectorType)(yChannelSelector()));
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
     m_filterEffect->setScale(scale());

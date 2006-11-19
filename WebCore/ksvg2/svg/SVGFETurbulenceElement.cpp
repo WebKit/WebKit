@@ -80,14 +80,14 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-KCanvasFETurbulence* SVGFETurbulenceElement::filterEffect() const
+SVGFETurbulence* SVGFETurbulenceElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETurbulence*>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<SVGFETurbulence*>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     
-    m_filterEffect->setType((KCTurbulanceType)(type() - 1));
+    m_filterEffect->setType((SVGTurbulanceType) type());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setBaseFrequencyX(baseFrequencyX());
     m_filterEffect->setBaseFrequencyY(baseFrequencyY());
