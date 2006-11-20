@@ -1,3 +1,28 @@
+2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11633
+        Implement XMLDocument properties xmlEncoding, xmlVersion, xmlStandalone
+
+        * dom/xhtml/level3/core/documentgetxmlencoding01-expected.txt:
+        * dom/xhtml/level3/core/documentgetxmlencoding03-expected.txt
+        * dom/xhtml/level3/core/documentgetxmlstandalone04-expected.txt:
+        * dom/xhtml/level3/core/documentgetxmlversion01-expected.txt:
+        * dom/xhtml/level3/core/documentgetxmlversion02-expected.txt:
+        * dom/xhtml/level3/core/documentgetxmlversion03-expected.txt:
+        These now pass.
+
+        * dom/xhtml/level3/core/documentgetxmlencoding03.xhtml: Re-added a correct test.
+
+        * fast/dom/Window/window-properties-expected.txt: Added these new properties.
+
+        * http/tests/xmlhttprequest/xml-encoding-expected.txt: Added.
+        * http/tests/xmlhttprequest/xml-encoding.html: Added.
+        * http/tests/xmlhttprequest/resources/xml-encoding.xml: Added.
+        * http/tests/xmlhttprequest/resources/post-echo-as-utf-8.cgi: Added.
+        Test how xmlEncoding interacts with XMLHttpRequest.
+
 2006-11-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Removed parts of an incorrectly committed test, to be re-added later.

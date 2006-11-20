@@ -2,6 +2,7 @@
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+# Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
 #
 # This library is free software; you can redistribute it and/or
@@ -150,6 +151,16 @@ sub new
 sub finish
 {
     my $object = shift;
+}
+
+# Uppercase the first letter, while respecting WebKit style guidelines. 
+# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
+sub WK_ucfirst
+{
+    my $param = shift;
+    my $ret = ucfirst($param);
+    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
+    return $ret;
 }
 
 sub ReadPublicInterfaces
@@ -672,7 +683,7 @@ sub GenerateHeader
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
-                    my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
+                    my $setter = "- (void)set" . WK_ucfirst($attributeName) . ":(" . $attributeType . ")new" . WK_ucfirst($attributeName) . ";\n";
                     push(@headerAttributes, $setter) if $public;
                     push(@privateHeaderAttributes, $setter) unless $public;
                 }
@@ -998,9 +1009,9 @@ sub GenerateImplementation
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
 
-                $attributeName = "set" . ucfirst($attributeName);
-                my $setterName = "set" . ucfirst($attributeInterfaceName);
-                my $argName = "new" . ucfirst($attributeInterfaceName);
+                $attributeName = "set" . WK_ucfirst($attributeName);
+                my $setterName = "set" . WK_ucfirst($attributeInterfaceName);
+                my $argName = "new" . WK_ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
 
                 if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
@@ -1052,7 +1063,7 @@ sub GenerateImplementation
                 my $paramType = GetObjCType($param->type);
 
                 # make a new parameter name if the original conflicts with a property name
-                $paramName = "in" . ucfirst($paramName) if $attributeNames{$paramName};
+                $paramName = "in" . WK_ucfirst($paramName) if $attributeNames{$paramName};
 
                 AddIncludesForType($param->type);
 

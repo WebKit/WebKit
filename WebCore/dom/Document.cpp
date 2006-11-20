@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -219,11 +220,13 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     , m_title("")
     , m_titleSetExplicitly(false)
     , m_imageLoadEventTimer(this, &Document::imageLoadEventTimerFired)
-#ifdef XBL_SUPPORT
-    , m_bindingManager(new XBLBindingManager(this))
-#endif
 #ifdef XSLT_SUPPORT
     , m_transformSource(0)
+#endif
+    , m_xmlVersion("1.0")
+    , m_xmlStandalone(false)
+#ifdef XBL_SUPPORT
+    , m_bindingManager(new XBLBindingManager(this))
 #endif
     , m_savedRenderer(0)
     , m_passwordFields(0)
@@ -674,6 +677,27 @@ void Document::setCharset(const String& charset)
     if (!decoder())
         return;
     decoder()->setEncoding(charset, TextResourceDecoder::UserChosenEncoding);
+}
+
+void Document::setXMLVersion(const String& version, ExceptionCode& ec)
+{
+    // FIXME: also raise NOT_SUPPORTED_ERR if the version is set to a value that is not supported by this Document.
+    if (!implementation()->hasFeature("XML", String())) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+   
+    m_xmlVersion = version;
+}
+
+void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
+{
+    if (!implementation()->hasFeature("XML", String())) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    m_xmlStandalone = standalone;
 }
 
 Element* Document::elementFromPoint(int x, int y) const

@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -178,6 +179,14 @@ public:
     String characterSet() const { return inputEncoding(); }
 
     void setCharset(const String&);
+
+    String xmlEncoding() const { return m_xmlEncoding; }
+    String xmlVersion() const { return m_xmlVersion; }
+    bool xmlStandalone() const { return m_xmlStandalone; }
+
+    void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLTokenizer
+    void setXMLVersion(const String&, ExceptionCode&);
+    void setXMLStandalone(bool, ExceptionCode&);
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
     
@@ -714,6 +723,10 @@ protected:
     HashSet<Node*> m_disconnectedNodesWithEventListeners;
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
+
+    String m_xmlEncoding;
+    String m_xmlVersion;
+    bool m_xmlStandalone;
 
 public:
     bool inPageCache();

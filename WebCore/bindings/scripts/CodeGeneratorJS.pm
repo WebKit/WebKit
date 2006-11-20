@@ -4,6 +4,7 @@
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+# Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
 #
 # This file is part of the KDE project
@@ -83,6 +84,16 @@ sub finish
 sub leftShift($$) {
     my ($value, $distance) = @_;
     return (($value << $distance) & 0xFFFFFFFF);
+}
+
+# Uppercase the first letter, while respecting WebKit style guidelines. 
+# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
+sub WK_ucfirst
+{
+    my $param = shift;
+    my $ret = ucfirst($param);
+    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
+    return $ret;
 }
 
 # Params: 'domClass' struct
@@ -334,7 +345,7 @@ sub GenerateHeader
 
             my $value = $attribute->signature->type =~ /Constructor$/
                       ? $attribute->signature->name . "ConstructorAttrNum"
-                      : ucfirst($attribute->signature->name) . "AttrNum";
+                      : WK_ucfirst($attribute->signature->name) . "AttrNum";
             $value .= ", " if (($i < $numAttributes - 1));
             $value .= ", " if (($i eq $numAttributes - 1) and ($numFunctions ne 0));
             push(@headerContent, $value);
@@ -353,7 +364,7 @@ sub GenerateHeader
 
             $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"};
 
-            my $value = ucfirst($function->signature->name) . "FuncNum";
+            my $value = WK_ucfirst($function->signature->name) . "FuncNum";
             $value .= ", " if ($i < $numFunctions - 1);
             push(@headerContent, $value);
         }
@@ -368,7 +379,7 @@ sub GenerateHeader
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
                 push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                    push(@headerContent, "    void set" . WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
                 }
             }
         }
@@ -507,7 +518,7 @@ sub GenerateImplementation
 
             my $value = $className . "::" . ($attribute->signature->type =~ /Constructor$/
                                        ? $attribute->signature->name . "ConstructorAttrNum"
-                                       : ucfirst($attribute->signature->name) . "AttrNum");
+                                       : WK_ucfirst($attribute->signature->name) . "AttrNum");
             push(@hashValues, $value);
 
             my $special = "DontDelete";
@@ -587,7 +598,7 @@ sub GenerateImplementation
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
-        my $value = $className . "::" . ucfirst($name) . "FuncNum";
+        my $value = $className . "::" . WK_ucfirst($name) . "FuncNum";
         push(@hashValues, $value);
 
         my $special = "DontDelete|Function";
@@ -746,7 +757,7 @@ sub GenerateImplementation
             my $name = $attribute->signature->name;
 
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
+                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
                 push(@implContent, "        return $name(exec);\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
@@ -755,10 +766,10 @@ sub GenerateImplementation
                 push(@implContent, "    case " . $name . "ConstructorAttrNum:\n");
                 push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
             } elsif (!@{$attribute->getterExceptions}) {
-                push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
+                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
                 push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp->$name()") . ";\n");
             } else {
-                push(@implContent, "    case " . ucfirst($name) . "AttrNum: {\n");
+                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
                 push(@implContent, "        ExceptionCode ec = 0;\n");
                 push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "imp->$name(ec)") . ";\n");
                 push(@implContent, "        setDOMException(exec, ec);\n");
@@ -795,8 +806,8 @@ sub GenerateImplementation
                     my $name = $attribute->signature->name;
 
                     if ($attribute->signature->extendedAttributes->{"Custom"}) {
-                        push(@implContent, "    case " . ucfirst($name) . "AttrNum: {\n");
-                        push(@implContent, "        set" . ucfirst($name) . "(exec, value);\n");
+                        push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
+                        push(@implContent, "        set" . WK_ucfirst($name) . "(exec, value);\n");
                     } elsif ($attribute->signature->type =~ /Constructor$/) {
                         my $constructorType = $attribute->signature->type;
                         $constructorType =~ s/Constructor$//;
@@ -809,9 +820,9 @@ sub GenerateImplementation
                         push(@implContent, "        if (isSafeScript(exec))\n");
                         push(@implContent, "            JSObject::put(exec, \"$name\", value);\n");
                     } else {
-                        push(@implContent, "    case " . ucfirst($name) ."AttrNum: {\n");
+                        push(@implContent, "    case " . WK_ucfirst($name) ."AttrNum: {\n");
                         push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-                        push(@implContent, "        imp->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
+                        push(@implContent, "        imp->set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
                         push(@implContent, ", ec") if @{$attribute->setterExceptions};
                         push(@implContent, ");\n");
                         push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -846,7 +857,7 @@ sub GenerateImplementation
 
         push(@implContent, "    switch (id) {\n");
         foreach my $function (@{$dataNode->functions}) {
-            push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . "FuncNum: {\n");
+            push(@implContent, "    case ${className}::" . WK_ucfirst($function->signature->name) . "FuncNum: {\n");
 
             if ($function->signature->extendedAttributes->{"Custom"}) {
                 push(@implContent, "        return static_cast<${className}*>(thisObj)->" . $function->signature->name . "(exec, args);\n    }\n");

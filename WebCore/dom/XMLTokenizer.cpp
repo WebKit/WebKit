@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
  * Copyright (C) 2005, 2006 Apple Computer, Inc.
- * Copyright (C) 2006 Alexey Proskuryakov
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -75,14 +75,14 @@ class PendingCallbacks;
 
 class XMLTokenizer : public Tokenizer, public CachedResourceClient {
 public:
-    XMLTokenizer(Document *, FrameView * = 0);
-    XMLTokenizer(DocumentFragment *, Element *);
+    XMLTokenizer(Document*, FrameView* = 0);
+    XMLTokenizer(DocumentFragment*, Element*);
     ~XMLTokenizer();
 
     enum ErrorType { warning, nonFatal, fatal };
 
     // from Tokenizer
-    virtual bool write(const SegmentedString &str, bool);
+    virtual bool write(const SegmentedString& str, bool);
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
@@ -96,17 +96,18 @@ public:
     bool isXHTMLDocument() const { return m_isXHTMLDocument; }
 
     // from CachedResourceClient
-    virtual void notifyFinished(CachedResource *finishedObj);
+    virtual void notifyFinished(CachedResource* finishedObj);
 
     // callbacks from parser SAX
-    void error(ErrorType, const char *message, va_list args);
-    void startElementNs(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes);
+    void error(ErrorType, const char* message, va_list args);
+    void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
     void endElementNs();
-    void characters(const xmlChar *s, int len);
-    void processingInstruction(const xmlChar *target, const xmlChar *data);
-    void cdataBlock(const xmlChar *s, int len);
-    void comment(const xmlChar *s);
-    void internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID);
+    void characters(const xmlChar* s, int len);
+    void processingInstruction(const xmlChar* target, const xmlChar* data);
+    void cdataBlock(const xmlChar* s, int len);
+    void comment(const xmlChar* s);
+    void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
+    void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
 
     void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
     
@@ -122,13 +123,13 @@ private:
     bool enterText();
     void exitText();
 
-    Document *m_doc;
-    FrameView *m_view;
+    Document* m_doc;
+    FrameView* m_view;
     
     String m_originalSourceForTransform;
 
     xmlParserCtxtPtr m_context;
-    Node *m_currentNode;
+    Node* m_currentNode;
     bool m_currentNodeIsReferenced;
 
     bool m_sawError;
@@ -145,7 +146,7 @@ private:
     int m_lastErrorColumn;
     String m_errorMessages;
 
-    CachedScript *m_pendingScript;
+    CachedScript* m_pendingScript;
     RefPtr<Element> m_scriptElement;
     int m_scriptStartLine;
     
@@ -164,7 +165,7 @@ public:
         m_callbacks.setAutoDelete(true);
     }
     
-    void appendStartElementNSCallback(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **attributes)
+    void appendStartElementNSCallback(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** attributes)
     {
         PendingStartElementNSCallback* callback = new PendingStartElementNSCallback;
         
@@ -172,12 +173,12 @@ public:
         callback->xmlPrefix = xmlStrdup(xmlPrefix);
         callback->xmlURI = xmlStrdup(xmlURI);
         callback->nb_namespaces = nb_namespaces;
-        callback->namespaces = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof (xmlChar*) * nb_namespaces * 2));
+        callback->namespaces = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_namespaces * 2));
         for (int i = 0; i < nb_namespaces * 2 ; i++)
             callback->namespaces[i] = xmlStrdup(namespaces[i]);
         callback->nb_attributes = nb_attributes;
         callback->nb_defaulted = nb_defaulted;
-        callback->attributes =  reinterpret_cast<xmlChar**>(xmlMalloc(sizeof (xmlChar*) * nb_attributes * 5));
+        callback->attributes =  reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_attributes * 5));
         for (int i = 0; i < nb_attributes; i++) {
             // Each attribute has 5 elements in the array:
             // name, prefix, uri, value and an end pointer.
@@ -201,7 +202,7 @@ public:
         m_callbacks.append(callback);
     }
     
-    void appendCharactersCallback(const xmlChar *s, int len)
+    void appendCharactersCallback(const xmlChar* s, int len)
     {
         PendingCharactersCallback* callback = new PendingCharactersCallback;
         
@@ -211,7 +212,7 @@ public:
         m_callbacks.append(callback);        
     }
     
-    void appendProcessingInstructionCallback(const xmlChar *target, const xmlChar *data)
+    void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
     {
         PendingProcessingInstructionCallback* callback = new PendingProcessingInstructionCallback;
         
@@ -221,7 +222,7 @@ public:
         m_callbacks.append(callback);
     }
     
-    void appendCDATABlockCallback(const xmlChar *s, int len)
+    void appendCDATABlockCallback(const xmlChar* s, int len)
     {
         PendingCDATABlockCallback* callback = new PendingCDATABlockCallback;
         
@@ -231,7 +232,7 @@ public:
         m_callbacks.append(callback);        
     }
 
-    void appendCommentCallback(const xmlChar *s)
+    void appendCommentCallback(const xmlChar* s)
     {
         PendingCommentCallback* callback = new PendingCommentCallback;
         
@@ -240,7 +241,7 @@ public:
         m_callbacks.append(callback);        
     }
 
-    void appendInternalSubsetCallback(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+    void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
     {
         PendingInternalSubsetCallback* callback = new PendingInternalSubsetCallback;
         
@@ -265,7 +266,7 @@ public:
 
     void callAndRemoveFirstCallback(XMLTokenizer* tokenizer)
     {
-        PendingCallback *cb = m_callbacks.getFirst();
+        PendingCallback* cb = m_callbacks.getFirst();
             
         cb->call(tokenizer);
         m_callbacks.removeFirst();
@@ -426,13 +427,13 @@ static int matchFunc(const char* uri)
     return 1; // Match everything.
 }
 
-static DocLoader *globalDocLoader = 0;
+static DocLoader* globalDocLoader = 0;
 
 class OffsetBuffer {
 public:
     OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
     
-    int readOutBytes(char *outputBuffer, unsigned askedToRead) {
+    int readOutBytes(char* outputBuffer, unsigned askedToRead) {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
         unsigned lenToCopy = min(askedToRead, bytesLeft);
         if (lenToCopy) {
@@ -473,7 +474,7 @@ static int readFunc(void* context, char* buffer, int len)
     if (context == &globalDescriptor)
         return 0;
         
-    OffsetBuffer *data = static_cast<OffsetBuffer *>(context);
+    OffsetBuffer* data = static_cast<OffsetBuffer*>(context);
     return data->readOutBytes(buffer, len);
 }
 
@@ -483,10 +484,10 @@ static int writeFunc(void* context, const char* buffer, int len)
     return 0;
 }
 
-static int closeFunc(void * context)
+static int closeFunc(void* context)
 {
     if (context != &globalDescriptor) {
-        OffsetBuffer *data = static_cast<OffsetBuffer *>(context);
+        OffsetBuffer* data = static_cast<OffsetBuffer*>(context);
         delete data;
     }
     return 0;
@@ -497,7 +498,7 @@ static void errorFunc(void*, const char*, ...)
     // FIXME: It would be nice to display error messages somewhere.
 }
 
-void setLoaderForLibXMLCallbacks(DocLoader *docLoader)
+void setLoaderForLibXMLCallbacks(DocLoader* docLoader)
 {
     globalDocLoader = docLoader;
 }
@@ -523,7 +524,7 @@ static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* user
 
 // --------------------------------
 
-XMLTokenizer::XMLTokenizer(Document *_doc, FrameView *_view)
+XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
     : m_doc(_doc)
     , m_view(_view)
     , m_context(0)
@@ -546,7 +547,7 @@ XMLTokenizer::XMLTokenizer(Document *_doc, FrameView *_view)
 {
 }
 
-XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
+XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     : m_doc(fragment->document())
     , m_view(0)
     , m_context(0)
@@ -577,19 +578,19 @@ XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
     while (parentElement) {
         elemStack.append(parentElement);
         
-        Node *n = parentElement->parentNode();
+        Node* n = parentElement->parentNode();
         if (!n || !n->isElementNode())
             break;
-        parentElement = static_cast<Element *>(n);
+        parentElement = static_cast<Element*>(n);
     }
     
     if (elemStack.isEmpty())
         return;
     
-    for (Element *element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
-        if (NamedAttrMap *attrs = element->attributes()) {
+    for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
+        if (NamedAttrMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
-                Attribute *attr = attrs->attributeItem(i);
+                Attribute* attr = attrs->attributeItem(i);
                 if (attr->localName() == "xmlns")
                     m_defaultNamespaceURI = attr->value();
                 else if (attr->prefix() == "xmlns")
@@ -666,14 +667,14 @@ inline String toString(const xmlChar* str)
 }
 
 struct _xmlSAX2Namespace {
-    const xmlChar *prefix;
-    const xmlChar *uri;
+    const xmlChar* prefix;
+    const xmlChar* uri;
 };
 typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 
-static inline void handleElementNamespaces(Element *newElement, const xmlChar **libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
+static inline void handleElementNamespaces(Element* newElement, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
 {
-    xmlSAX2Namespace *namespaces = reinterpret_cast<xmlSAX2Namespace *>(libxmlNamespaces);
+    xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for(int i = 0; i < nb_namespaces; i++) {
         String namespaceQName = "xmlns";
         String namespaceURI = toString(namespaces[i].uri);
@@ -686,17 +687,17 @@ static inline void handleElementNamespaces(Element *newElement, const xmlChar **
 }
 
 struct _xmlSAX2Attributes {
-    const xmlChar *localname;
-    const xmlChar *prefix;
-    const xmlChar *uri;
-    const xmlChar *value;
-    const xmlChar *end;
+    const xmlChar* localname;
+    const xmlChar* prefix;
+    const xmlChar* uri;
+    const xmlChar* value;
+    const xmlChar* end;
 };
 typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 
-static inline void handleElementAttributes(Element *newElement, const xmlChar **libxmlAttributes, int nb_attributes, ExceptionCode& ec)
+static inline void handleElementAttributes(Element* newElement, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
 {
-    xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
+    xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for(int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
@@ -711,7 +712,7 @@ static inline void handleElementAttributes(Element *newElement, const xmlChar **
     }
 }
 
-void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **libxmlNamespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
+void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** libxmlNamespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
 {
     if (m_parserStopped)
         return;
@@ -768,7 +769,7 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     }
 
     if (newElement->hasTagName(scriptTag))
-        static_cast<HTMLScriptElement *>(newElement.get())->setCreatedByParser(true);
+        static_cast<HTMLScriptElement*>(newElement.get())->setCreatedByParser(true);
     
     if (newElement->hasTagName(HTMLNames::scriptTag)
 #ifdef SVG_SUPPORT
@@ -799,7 +800,7 @@ void XMLTokenizer::endElementNs()
     
     exitText();
 
-    Node *n = m_currentNode;
+    Node* n = m_currentNode;
     while (n->implicitNode())
         n = n->parentNode();
     RefPtr<Node> parent = n->parentNode();
@@ -842,7 +843,7 @@ void XMLTokenizer::endElementNs()
 
         } else {
             String scriptCode = "";
-            for (Node *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
+            for (Node* child = scriptElement->firstChild(); child; child = child->nextSibling()) {
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
@@ -855,7 +856,7 @@ void XMLTokenizer::endElementNs()
     setCurrentNode(parent.get());
 }
 
-void XMLTokenizer::characters(const xmlChar *s, int len)
+void XMLTokenizer::characters(const xmlChar* s, int len)
 {
     if (m_parserStopped)
         return;
@@ -921,7 +922,7 @@ void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, in
         stopParsing();    
 }
 
-void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
+void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
 {
     if (m_parserStopped)
         return;
@@ -930,7 +931,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
     char m[1024];
     vsnprintf(m, sizeof(m) - 1, message, args);
 #else
-    char *m;
+    char* m;
     vasprintf(&m, message, args);
 #endif
     
@@ -944,7 +945,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
 #endif
 }
 
-void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *data)
+void XMLTokenizer::processingInstruction(const xmlChar* target, const xmlChar* data)
 {
     if (m_parserStopped)
         return;
@@ -982,7 +983,7 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     }
 }
 
-void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
+void XMLTokenizer::cdataBlock(const xmlChar* s, int len)
 {
     if (m_parserStopped)
         return;
@@ -1001,7 +1002,7 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
         newNode->attach();
 }
 
-void XMLTokenizer::comment(const xmlChar *s)
+void XMLTokenizer::comment(const xmlChar* s)
 {
     if (m_parserStopped)
         return;
@@ -1019,7 +1020,18 @@ void XMLTokenizer::comment(const xmlChar *s)
         newNode->attach();
 }
 
-void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+void XMLTokenizer::startDocument(const xmlChar* version, const xmlChar* encoding, int standalone)
+{
+    ExceptionCode ec = 0;
+    
+    if (version)
+        m_doc->setXMLVersion(toString(version), ec);
+    m_doc->setXMLStandalone(standalone == 1, ec); // possible values are 0, 1, and -1
+    if (encoding)
+        m_doc->setXMLEncoding(toString(encoding));
+}
+
+void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
 {
     if (m_parserStopped)
         return;
@@ -1029,27 +1041,27 @@ void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID
         return;
     }
     
-    Document *doc = m_doc;
+    Document* doc = m_doc;
     if (!doc)
         return;
 
     doc->setDocType(new DocumentType(doc, toString(name), toString(externalID), toString(systemID)));
 }
 
-inline XMLTokenizer *getTokenizer(void *closure)
+inline XMLTokenizer* getTokenizer(void* closure)
 {
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
-    return static_cast<XMLTokenizer *>(ctxt->_private);
+    return static_cast<XMLTokenizer*>(ctxt->_private);
 }
 
 // This is a hack around http://bugzilla.gnome.org/show_bug.cgi?id=159219
 // Otherwise libxml seems to call all the SAX callbacks twice for any replaced entity.
-static inline bool hackAroundLibXMLEntityBug(void *closure)
+static inline bool hackAroundLibXMLEntityBug(void* closure)
 {
     return static_cast<xmlParserCtxtPtr>(closure)->node;
 }
 
-static void startElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
+static void startElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix, const xmlChar* uri, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1057,7 +1069,7 @@ static void startElementNsHandler(void *closure, const xmlChar *localname, const
     getTokenizer(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
 }
 
-static void endElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri)
+static void endElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix, const xmlChar* uri)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1065,7 +1077,7 @@ static void endElementNsHandler(void *closure, const xmlChar *localname, const x
     getTokenizer(closure)->endElementNs();
 }
 
-static void charactersHandler(void *closure, const xmlChar *s, int len)
+static void charactersHandler(void* closure, const xmlChar* s, int len)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1073,7 +1085,7 @@ static void charactersHandler(void *closure, const xmlChar *s, int len)
     getTokenizer(closure)->characters(s, len);
 }
 
-static void processingInstructionHandler(void *closure, const xmlChar *target, const xmlChar *data)
+static void processingInstructionHandler(void* closure, const xmlChar* target, const xmlChar* data)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1081,7 +1093,7 @@ static void processingInstructionHandler(void *closure, const xmlChar *target, c
     getTokenizer(closure)->processingInstruction(target, data);
 }
 
-static void cdataBlockHandler(void *closure, const xmlChar *s, int len)
+static void cdataBlockHandler(void* closure, const xmlChar* s, int len)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1089,7 +1101,7 @@ static void cdataBlockHandler(void *closure, const xmlChar *s, int len)
     getTokenizer(closure)->cdataBlock(s, len);
 }
 
-static void commentHandler(void *closure, const xmlChar *comment)
+static void commentHandler(void* closure, const xmlChar* comment)
 {
     if (hackAroundLibXMLEntityBug(closure))
         return;
@@ -1097,7 +1109,7 @@ static void commentHandler(void *closure, const xmlChar *comment)
     getTokenizer(closure)->comment(comment);
 }
 
-static void warningHandler(void *closure, const char *message, ...)
+static void warningHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -1105,7 +1117,7 @@ static void warningHandler(void *closure, const char *message, ...)
     va_end(args);
 }
 
-static void fatalErrorHandler(void *closure, const char *message, ...)
+static void fatalErrorHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -1113,7 +1125,7 @@ static void fatalErrorHandler(void *closure, const char *message, ...)
     va_end(args);
 }
 
-static void normalErrorHandler(void *closure, const char *message, ...)
+static void normalErrorHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -1146,7 +1158,7 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
     return &sharedXHTMLEntity;
 }
 
-static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
+static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
 {
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
     xmlEntityPtr ent = xmlGetPredefinedEntity(name);
@@ -1160,13 +1172,20 @@ static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
     return ent;
 }
 
-static void internalSubsetHandler(void *closure, const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+static void startDocumentHandler(void* closure)
+{
+    xmlParserCtxt* ctxt = static_cast<xmlParserCtxt*>(closure);
+    getTokenizer(closure)->startDocument(ctxt->version, ctxt->encoding, ctxt->standalone);
+    xmlSAX2StartDocument(closure);
+}
+
+static void internalSubsetHandler(void* closure, const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
 {
     getTokenizer(closure)->internalSubset(name, externalID, systemID);
     xmlSAX2InternalSubset(closure, name, externalID, systemID);
 }
 
-static void externalSubsetHandler(void *closure, const xmlChar *name, const xmlChar *externalId, const xmlChar *systemId)
+static void externalSubsetHandler(void* closure, const xmlChar* name, const xmlChar* externalId, const xmlChar* systemId)
 {
     String extId = toString(externalId);
     if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
@@ -1180,7 +1199,7 @@ static void externalSubsetHandler(void *closure, const xmlChar *name, const xmlC
         getTokenizer(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 
-static void ignorableWhitespaceHandler(void *ctx, const xmlChar *ch, int len)
+static void ignorableWhitespaceHandler(void* ctx, const xmlChar* ch, int len)
 {
     // nothing to do, but we need this to work around a crasher
     // http://bugzilla.gnome.org/show_bug.cgi?id=172255
@@ -1201,7 +1220,7 @@ void XMLTokenizer::initializeParserContext()
     sax.startElementNs = startElementNsHandler;
     sax.endElementNs = endElementNsHandler;
     sax.getEntity = getEntityHandler;
-    sax.startDocument = xmlSAX2StartDocument;
+    sax.startDocument = startDocumentHandler;
     sax.internalSubset = internalSubsetHandler;
     sax.externalSubset = externalSubsetHandler;
     sax.ignorableWhitespace = ignorableWhitespaceHandler;
@@ -1287,7 +1306,7 @@ void XMLTokenizer::insertErrorMessageBlock()
 
     // Create elements for display
     ExceptionCode ec = 0;
-    Document *doc = m_doc;
+    Document* doc = m_doc;
     Node* documentElement = doc->documentElement();
     if (!documentElement) {
         RefPtr<Node> rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", ec);
@@ -1323,7 +1342,7 @@ void XMLTokenizer::insertErrorMessageBlock()
     doc->updateRendering();
 }
 
-void XMLTokenizer::notifyFinished(CachedResource *finishedObj)
+void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
 {
     ASSERT(m_pendingScript == finishedObj);
     ASSERT(m_pendingScript->accessCount() > 0);
@@ -1356,7 +1375,7 @@ bool XMLTokenizer::isWaitingForScripts() const
 }
 
 #ifdef XSLT_SUPPORT
-void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const DeprecatedString &url)
+void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const DeprecatedString& url)
 {
     if (source.isEmpty())
         return 0;
@@ -1386,7 +1405,7 @@ void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const Depre
 }
 #endif
 
-Tokenizer *newXMLTokenizer(Document *d, FrameView *v)
+Tokenizer* newXMLTokenizer(Document* d, FrameView* v)
 {
     return new XMLTokenizer(d, v);
 }
@@ -1441,45 +1460,45 @@ void XMLTokenizer::resumeParsing()
         end();
 }
 
-static void balancedStartElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
+static void balancedStartElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix, const xmlChar* uri, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
 {
-   static_cast<XMLTokenizer *>(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
+   static_cast<XMLTokenizer*>(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
 }
 
-static void balancedEndElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri)
+static void balancedEndElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix, const xmlChar* uri)
 {
-    static_cast<XMLTokenizer *>(closure)->endElementNs();
+    static_cast<XMLTokenizer*>(closure)->endElementNs();
 }
 
-static void balancedCharactersHandler(void *closure, const xmlChar *s, int len)
+static void balancedCharactersHandler(void* closure, const xmlChar* s, int len)
 {
-    static_cast<XMLTokenizer *>(closure)->characters(s, len);
+    static_cast<XMLTokenizer*>(closure)->characters(s, len);
 }
 
-static void balancedProcessingInstructionHandler(void *closure, const xmlChar *target, const xmlChar *data)
+static void balancedProcessingInstructionHandler(void* closure, const xmlChar* target, const xmlChar* data)
 {
-    static_cast<XMLTokenizer *>(closure)->processingInstruction(target, data);
+    static_cast<XMLTokenizer*>(closure)->processingInstruction(target, data);
 }
 
-static void balancedCdataBlockHandler(void *closure, const xmlChar *s, int len)
+static void balancedCdataBlockHandler(void* closure, const xmlChar* s, int len)
 {
-    static_cast<XMLTokenizer *>(closure)->cdataBlock(s, len);
+    static_cast<XMLTokenizer*>(closure)->cdataBlock(s, len);
 }
 
-static void balancedCommentHandler(void *closure, const xmlChar *comment)
+static void balancedCommentHandler(void* closure, const xmlChar* comment)
 {
-    static_cast<XMLTokenizer *>(closure)->comment(comment);
+    static_cast<XMLTokenizer*>(closure)->comment(comment);
 }
 
-static void balancedWarningHandler(void *closure, const char *message, ...)
+static void balancedWarningHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
-    static_cast<XMLTokenizer *>(closure)->error(XMLTokenizer::warning, message, args);
+    static_cast<XMLTokenizer*>(closure)->error(XMLTokenizer::warning, message, args);
     va_end(args);
 }
 
-bool parseXMLDocumentFragment(const String &string, DocumentFragment *fragment, Element *parent)
+bool parseXMLDocumentFragment(const String& string, DocumentFragment* fragment, Element* parent)
 {
     XMLTokenizer tokenizer(fragment, parent);
     
@@ -1508,17 +1527,17 @@ struct AttributeParseState {
 };
 
 
-static void attributesStartElementNsHandler(void *closure, const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
+static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
 {
-    if (strcmp(reinterpret_cast<const char *>(xmlLocalName), "attrs") != 0)
+    if (strcmp(reinterpret_cast<const char*>(xmlLocalName), "attrs") != 0)
         return;
     
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
-    AttributeParseState *state = static_cast<AttributeParseState *>(ctxt->_private);
+    AttributeParseState* state = static_cast<AttributeParseState*>(ctxt->_private);
     
     state->gotAttributes = true;
     
-    xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
+    xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for(int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);

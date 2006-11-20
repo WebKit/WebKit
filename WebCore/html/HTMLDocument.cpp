@@ -78,6 +78,7 @@ using namespace HTMLNames;
 HTMLDocument::HTMLDocument(DOMImplementation *_implementation, FrameView *v)
   : Document(_implementation, v)
 {
+    m_xmlVersion = String();
     bodyElement = 0;
     htmlElement = 0;
 }

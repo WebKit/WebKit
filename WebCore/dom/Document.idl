@@ -63,6 +63,12 @@ module core {
 
         readonly attribute [ConvertNullStringTo=Null] DOMString inputEncoding;
 
+        readonly attribute [ConvertNullStringTo=Null] DOMString xmlEncoding;
+                 attribute [ConvertNullStringTo=Null] DOMString xmlVersion
+                    setter raises (DOMException);
+                 attribute boolean xmlStandalone
+                    setter raises (DOMException);
+
         Node               adoptNode(in Node source)
             raises (DOMException);
 
