@@ -1,3 +1,19 @@
+2006-11-20  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11647
+        Fix Win32 build
+
+        * config.h: add #define NOMINMAX for windows build
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/win/TemporaryLinkStubs.cpp: add definitions for 
+        new cursors.
+        (WebCore::aliasCursor):
+        (WebCore::noDropCursor):
+        (WebCore::progressCursor):
+
 2006-11-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

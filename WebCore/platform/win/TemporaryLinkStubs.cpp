@@ -101,9 +101,12 @@ Color focusRingColor() { notImplemented(); return 0xFF0000FF; }
 bool historyContains(DeprecatedString const&) { notImplemented(); return false; }
 String inputElementAltText() { notImplemented(); return DeprecatedString(); }
 bool IsResponseURLEqualToURL(PlatformResponse , const String&) { notImplemented(); return false; }
+const Cursor& aliasCursor() { notImplemented(); return localCursor; }
 const Cursor& cellCursor() { notImplemented(); return localCursor; }
 const Cursor& contextMenuCursor() { notImplemented(); return localCursor; }
 const Cursor& moveCursor() { notImplemented(); return localCursor; }
+const Cursor& noDropCursor() { notImplemented(); return localCursor; }
+const Cursor& progressCursor() { notImplemented(); return localCursor; }
 const Cursor& verticalTextCursor() { notImplemented(); return localCursor; }
 void refreshPlugins(bool) { notImplemented(); }
 String resetButtonDefaultLabel() { notImplemented(); return "Reset"; }

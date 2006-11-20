@@ -1,3 +1,15 @@
+2006-11-20  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11647
+        Fix Win32 build
+
+        * kjs/config.h: define NOMINMAX instead of min/max
+        as themselves.
+        * wtf/Vector.h: put back hack to ensure that min/max
+        are not defined as macros.
+
 2006-11-19  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

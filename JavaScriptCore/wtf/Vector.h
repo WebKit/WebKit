@@ -30,6 +30,16 @@
 #include <stdlib.h>
 #include <utility>
 
+// FIXME: For unknown reasons defining NOMINMAX is not preventing the
+// min and max macros from being defined on Win32.
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
 namespace WTF {
 
     using std::min;
