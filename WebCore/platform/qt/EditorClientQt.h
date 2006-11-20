@@ -51,6 +51,7 @@ public:
 
     virtual bool shouldBeginEditing(WebCore::Range*);
     virtual bool shouldEndEditing(WebCore::Range*);
+    virtual bool shouldInsertText(String, Range*, EditorInsertAction);
     virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*,
                                   WebCore::Range*);
     

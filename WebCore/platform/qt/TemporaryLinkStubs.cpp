@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include "Node.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "Font.h"
 #include "IntPoint.h"
 #include "Widget.h"
@@ -150,6 +151,8 @@ FloatRect WebCore::screenAvailableRect(Widget*)
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }
+
+void FrameLoader::reload() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 

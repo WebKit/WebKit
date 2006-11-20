@@ -72,6 +72,8 @@ public:
 
     virtual String mimeTypeForFileName(const String&) const;
 
+    virtual void ignoreSpelling();
+    virtual void learnSpelling();
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const Selection&);
 

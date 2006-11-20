@@ -1,3 +1,32 @@
+2006-11-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fix Qt/Linux build.
+
+        * platform/qt/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::ref):
+        (WebCore::ContextMenuClientQt::deref):
+        (WebCore::ContextMenuClientQt::copyLinkToClipboard):
+        (WebCore::ContextMenuClientQt::downloadURL):
+        (WebCore::ContextMenuClientQt::copyImageToClipboard):
+        (WebCore::ContextMenuClientQt::lookUpInDictionary):
+        * platform/qt/ContextMenuClientQt.h:
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::show):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldInsertText):
+        * platform/qt/EditorClientQt.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::ignoreSpelling):
+        (WebCore::FrameQt::learnSpelling):
+        * platform/qt/FrameQt.h:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (FrameLoader::reload):
+
 2006-11-20  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

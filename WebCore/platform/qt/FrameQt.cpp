@@ -205,6 +205,16 @@ String FrameQt::mimeTypeForFileName(const String&) const
     return String();
 }
 
+void FrameQt::ignoreSpelling()
+{
+    notImplemented();
+}
+
+void FrameQt::learnSpelling()
+{
+    notImplemented();
+}
+
 void FrameQt::markMisspellingsInAdjacentWords(const VisiblePosition&)
 {
     notImplemented();
