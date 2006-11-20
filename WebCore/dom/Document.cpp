@@ -260,6 +260,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     m_bParsing = false;
     m_docChanged = false;
     m_tokenizer = 0;
+    m_wellFormed = false;
 
     pMode = Strict;
     hMode = XHtml;
@@ -1230,6 +1231,8 @@ void Document::implicitClose()
         return;
 
     m_processingLoadEvent = true;
+
+    m_wellFormed = m_tokenizer && m_tokenizer->wellFormed();
 
     // We have to clear the tokenizer, in case someone document.write()s from the
     // onLoad event handler, as in Radar 3206524.

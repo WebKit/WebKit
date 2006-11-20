@@ -160,6 +160,9 @@ Document* XMLHttpRequest::getResponseXML() const
             m_responseXML->write(m_responseText);
             m_responseXML->finishParsing();
             m_responseXML->close();
+            
+            if (!m_responseXML->wellFormed())
+                m_responseXML = 0;
         }
         m_createdDocument = true;
     }

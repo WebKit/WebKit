@@ -9,6 +9,6 @@ after send(): Loaded
   Status: 200
   StatusText: "OK"
   ResponseText: ""
-  ResponseXML: [object Document]
-  ResponseXML serialized: "<html><body><parsererror style="white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"><h3>This page contains the following errors:</h3><div style="font-family:monospace;font-size:12px">error on line 1 at column 1: Extra content at the end of the document </div><h3>Below is a rendering of the page up to the first error.</h3></parsererror></body></html>"
+  ResponseXML: null
+  ResponseXML serialized: n/a
 

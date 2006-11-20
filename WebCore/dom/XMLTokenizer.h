@@ -63,6 +63,8 @@ public:
     bool inViewSourceMode() const { return m_inViewSourceMode; }
     void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
 
+    virtual bool wellFormed() const { return true; }
+
 protected:
     // The tokenizer has buffers, so parsing may continue even after
     // it stops receiving data. We use m_parserStopped to stop the tokenizer

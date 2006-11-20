@@ -1,5 +1,16 @@
 2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10736
+        XMLHttpRequest.responseXML should be null on error
+
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
+        Updated the results for the new behavior.
+
+2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         http://bugs.webkit.org/show_bug.cgi?id=11633

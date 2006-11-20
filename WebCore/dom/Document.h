@@ -325,6 +325,8 @@ public:
     void finishParsing();
     void clear();
 
+    bool wellFormed() const { return m_wellFormed; }
+
     DeprecatedString URL() const { return m_url.isEmpty() ? "about:blank" : m_url; }
     void setURL(const DeprecatedString& url);
 
@@ -612,6 +614,7 @@ protected:
 
     DocLoader* m_docLoader;
     Tokenizer* m_tokenizer;
+    bool m_wellFormed;
     DeprecatedString m_url;
     DeprecatedString m_baseURL;
     String m_baseTarget;

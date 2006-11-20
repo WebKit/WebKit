@@ -110,7 +110,9 @@ public:
     void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
 
     void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
-    
+
+    virtual bool wellFormed() const { return !m_sawError; }
+
 private:
     void initializeParserContext();
     void setCurrentNode(Node*);

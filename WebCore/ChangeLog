@@ -1,5 +1,26 @@
 2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10736
+        XMLHttpRequest.responseXML should be null on error
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::wellFormed):
+        * dom/XMLTokenizer.h:
+        (WebCore::Tokenizer::wellFormed):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::implicitClose):
+        * dom/Document.h:
+        (WebCore::Document::wellFormed):
+        Tell whether XMLTokenizer saw an error. Always true (success) for HTML.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Set the document to null if it's not well-formed.
+
+2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         http://bugs.webkit.org/show_bug.cgi?id=11633
