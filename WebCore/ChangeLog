@@ -1,3 +1,25 @@
+2006-11-20  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11656
+        Fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ContextMenuClientWin.h:
+        * bridge/win/EditorClientWin.h:
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ContextMenu::show):
+        (WebCore::ContextMenuClientWin::copyLinkToClipboard):
+        (WebCore::ContextMenuClientWin::downloadURL):
+        (WebCore::ContextMenuClientWin::copyImageToClipboard):
+        (WebCore::ContextMenuClientWin::lookUpInDictionary):
+        (WebCore::EditorClientWin::shouldInsertText):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameWin::ignoreSpelling):
+        (WebCore::FrameWin::learnSpelling):
+
 2006-11-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

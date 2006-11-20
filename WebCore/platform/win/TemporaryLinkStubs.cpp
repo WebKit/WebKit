@@ -147,8 +147,13 @@ bool ChromeClientWin::menubarVisible() { notImplemented(); return false; }
 void ChromeClientWin::setResizable(bool) { notImplemented(); }
 
 void ContextMenu::appendItem(ContextMenuItem item) { notImplemented(); }
+void ContextMenu::show() { notImplemented(); }
 
 void ContextMenuClientWin::addCustomContextMenuItems(ContextMenu*) { notImplemented(); }
+void ContextMenuClientWin::copyLinkToClipboard(HitTestResult) { notImplemented(); }
+void ContextMenuClientWin::downloadURL(KURL) { notImplemented(); }
+void ContextMenuClientWin::copyImageToClipboard(HitTestResult) { notImplemented(); }
+void ContextMenuClientWin::lookUpInDictionary(Frame*) { notImplemented(); }
 
 void DocumentLoader::setFrame(Frame*) { notImplemented(); }
 FrameLoader* DocumentLoader::frameLoader() const { notImplemented(); return m_frame->loader(); }
@@ -170,6 +175,7 @@ bool EditorClientWin::selectWordBeforeMenuEvent() { notImplemented(); return fal
 bool EditorClientWin::isEditable() { notImplemented(); return false; }
 bool EditorClientWin::shouldBeginEditing(Range*) { notImplemented(); return false; }
 bool EditorClientWin::shouldEndEditing(Range*) { notImplemented(); return false; }
+bool EditorClientWin::shouldInsertText(String, Range*, EditorInsertAction) { notImplemented(); return false; }
 bool EditorClientWin::shouldApplyStyle(CSSStyleDeclaration*, Range*) { notImplemented(); return false; }
 void EditorClientWin::didBeginEditing() { notImplemented(); }
 void EditorClientWin::respondToChangedContents() { notImplemented(); }
@@ -227,6 +233,7 @@ ObjectContentType FrameLoader::objectContentType(const KURL&, const String&) { n
 Widget* FrameLoader::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { notImplemented(); return 0; }
 void FrameLoader::detachFromParent() { notImplemented(); }
 void FrameLoader::checkLoadCompleteForThisFrame() { notImplemented(); }
+void FrameLoader::reload() { notImplemented(); }
 
 bool FrameLoaderClientWin::hasWebView() const { notImplemented(); return false; }
 bool FrameLoaderClientWin::hasFrameView() const { notImplemented(); return false; }
@@ -343,6 +350,8 @@ void FrameWin::respondToChangedSelection(const Selection&, bool) { notImplemente
 void FrameWin::clearUndoRedoOperations(void) { notImplemented(); }
 void FrameWin::markMisspellingsInAdjacentWords(VisiblePosition const&) { notImplemented(); }
 void FrameWin::respondToChangedContents(const Selection&) { notImplemented(); }
+void FrameWin::ignoreSpelling() { notImplemented(); }
+void FrameWin::learnSpelling() { notImplemented(); }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }

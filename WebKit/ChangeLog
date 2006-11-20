@@ -1,3 +1,13 @@
+2006-11-20  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11656
+        Fix Windows build
+
+        * WebKit.vcproj/WebKit.vcproj: don't include directories that no
+        longer exist.
+
 2006-11-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

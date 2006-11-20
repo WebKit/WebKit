@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContextMenuClientWin_H
-#define ContextMenuClientWin_H
+#ifndef ContextMenuClientWin_h
+#define ContextMenuClientWin_h
 
 #include "ContextMenuClient.h"
 
@@ -40,8 +40,13 @@ namespace WebCore {
         virtual void deref() { Shared<ContextMenuClientWin>::deref(); }
 
         virtual void addCustomContextMenuItems(ContextMenu*);
+
+        virtual void copyLinkToClipboard(HitTestResult);
+        virtual void downloadURL(KURL);
+        virtual void copyImageToClipboard(HitTestResult);
+        virtual void lookUpInDictionary(Frame*);
     };
 
-}
+} // namespace WebCore
 
-#endif // ContextMenuClientWin_H
+#endif // ContextMenuClientWin_h

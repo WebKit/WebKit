@@ -959,6 +959,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\ChromeClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\ContextMenuClient.h"
 				>
 			</File>
@@ -968,10 +972,6 @@
 			</File>
 			<File
 				RelativePath="..\..\page\ContextMenuController.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\page\ChromeClient.h"
 				>
 			</File>
 			<File
@@ -4340,6 +4340,10 @@
 			</File>
 			<File
 				RelativePath="..\..\editing\Editor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\EditorInsertAction.h"
 				>
 			</File>
 			<File
