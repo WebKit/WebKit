@@ -1,3 +1,14 @@
+2006-11-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Use CString instead of DeprecatedCString.
+        
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString):
+        (WebCore::fixLineBreaks):
+        (WebCore::FormDataList::appendFile):
+
 2006-11-20  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Alexey.
