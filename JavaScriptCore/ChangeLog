@@ -1,3 +1,39 @@
+2006-11-20  W. Andy Carrel  <wac@google.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11501
+        REGRESSION: \u no longer escapes metacharacters in RegExps
+        http://bugs.webkit.org/show_bug.cgi?id=11502
+        Serializing RegExps doesn't preserve Unicode escapes
+
+        * kjs/lexer.cpp:
+        (Lexer::Lexer):
+        (Lexer::setCode):
+        (Lexer::shift):
+        (Lexer::scanRegExp):
+        Push \u parsing back down into the RegExp object rather than in the
+        parser. This backs out r17354 in favor of a new fix that better 
+        matches the behavior of other browsers.
+
+        * kjs/lexer.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        (KJS::sanitizePattern):
+        (KJS::isHexDigit):
+        (KJS::convertHex):
+        (KJS::convertUnicode):
+        * kjs/regexp.h:
+        Translate \u escaped unicode characters for the benefit of pcre.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::append):
+        Fix failure to increment length on the first UChar appended to a 
+        UString that was copy-on-write.
+
+        * tests/mozilla/ecma_2/RegExp/properties-001.js:
+        Adjust tests back to the uniform standards.
+
 2006-11-20  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

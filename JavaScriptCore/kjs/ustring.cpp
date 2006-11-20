@@ -749,7 +749,7 @@ UString &UString::append(unsigned short c)
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), length * sizeof(UChar));
     d[length] = c;
-    m_rep = Rep::create(d, length);
+    m_rep = Rep::create(d, length + 1);
     m_rep->capacity = newCapacity;
   }
 

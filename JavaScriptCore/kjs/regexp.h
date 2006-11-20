@@ -61,6 +61,13 @@ namespace KJS {
 
     RegExp(const RegExp &);
     RegExp &operator=(const RegExp &);
+
+    static UString sanitizePattern(const UString&);
+
+    static bool isHexDigit(UChar);
+    static unsigned char convertHex(int);
+    static unsigned char convertHex(int, int);
+    static UChar convertUnicode(UChar, UChar, UChar, UChar);
   };
 
 } // namespace

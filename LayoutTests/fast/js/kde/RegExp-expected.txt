@@ -88,7 +88,7 @@ PASS reg.x = 1; reg.x is 1
 PASS var r2 = reg; r2.x = 2; reg.x is 2
 PASS str.match(re).toString() is 'Chapter 3.4.5.1,Chapter 3.4.5.1,.1'
 PASS str.match(/d/gi).toString() is 'D,d'
-FAIL /\u0061/.source should be \u0061 (of type string). Was a (of type string).
+PASS /\u0061/.source is '\\u0061'
 PASS 'abc'.match(/\u0062/).toString() is 'b'
 FAIL Object.prototype.toString.apply(RegExp.prototype) should be [object RegExp] (of type string). Was [object RegExpPrototype] (of type string).
 PASS typeof RegExp.prototype.toString() is 'string'

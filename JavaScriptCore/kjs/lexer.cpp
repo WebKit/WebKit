@@ -61,7 +61,7 @@ Lexer::Lexer()
 #ifndef KJS_PURE_ECMA
     bol(true),
 #endif
-    current(0), next1(0), next2(0), next3(0), next4(0),
+    current(0), next1(0), next2(0), next3(0),
     strings(0), numStrings(0), stringsCapacity(0),
     identifiers(0), numIdentifiers(0), identifiersCapacity(0)
 {
@@ -119,7 +119,6 @@ void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const KJS:
   next1 = (length > 1) ? code[1].uc : -1;
   next2 = (length > 2) ? code[2].uc : -1;
   next3 = (length > 3) ? code[3].uc : -1;
-  next4 = (length > 4) ? code[4].uc : -1;
 }
 
 void Lexer::shift(unsigned int p)
@@ -131,8 +130,7 @@ void Lexer::shift(unsigned int p)
     current = next1;
     next1 = next2;
     next2 = next3;
-    next3 = next4;
-    next4 = (pos + 4 < length) ? code[pos+4].uc : -1;
+    next3 = (pos + 3 < length) ? code[pos + 3].uc : -1;
   }
 }
 
@@ -836,29 +834,14 @@ bool Lexer::scanRegExp()
       return false;
     else if (current != '/' || lastWasEscape == true || inBrackets == true)
     {
-        if (lastWasEscape) {
-          // deal with unicode escapes in inline regexps
-          if (current == 'u') {
-            if (isHexDigit(next1) && isHexDigit(next2) && 
-                isHexDigit(next3) && isHexDigit(next4)) {
-              record16(convertUnicode(next1, next2, next3, next4));
-              shift(5);
-              lastWasEscape = false;
-              continue;
-            } else 
-              // this wasn't unicode after all
-              record16('\\');
-          }
-        } else {
-          // keep track of '[' and ']'
+        // keep track of '[' and ']'
+        if (!lastWasEscape) {
           if ( current == '[' && !inBrackets )
             inBrackets = true;
           if ( current == ']' && inBrackets )
             inBrackets = false;
         }
-        // don't want to capture the '\' for unicode escapes
-        if (current != '\\' || next1 != 'u')
-          record16(current);
+        record16(current);
         lastWasEscape =
             !lastWasEscape && (current == '\\');
     }

@@ -22,7 +22,7 @@
     AddRegExpCases( /[a-zA-Z0-9]*/gm, "[a-zA-Z0-9]*", true, false, true, 0 );
     AddRegExpCases( /x|y|z/gim, "x|y|z", true, true, true, 0 );
 
-    AddRegExpCases( /\u0051/im, "\u0051", false, true, true, 0 );
+    AddRegExpCases( /\u0051/im, "\\u0051", false, true, true, 0 );
     AddRegExpCases( /\x45/gm, "\\x45", true, false, true, 0 );
     AddRegExpCases( /\097/gi, "\\097", true, true, false, 0 );
 

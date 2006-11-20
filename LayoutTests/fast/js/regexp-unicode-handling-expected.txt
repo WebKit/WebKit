@@ -10,39 +10,39 @@ PASS inlineRe.source is evalFromInlineRe.source
 PASS inlineRe.source is evalInlineRe.source
 PASS inlineRe.source is newFromEvalInlineRe.source
 PASS inlineRe.source is evalFromEvalInlineRe.source
-FAIL inlineRe.source should be .m\u2820p (of type string). Was .m⠠p (of type string).
-FAIL inlineRe.source should be .m\u2820p (of type string). Was .m⠠p (of type string).
+PASS inlineRe.source is explicitRe.source
+PASS inlineRe.source is newFromExplicitRe.source
 PASS inlineRe.source is evalFromExplicitRe.source
 PASS inlineRe.toString() is newFromInlineRe.toString()
 PASS inlineRe.toString() is evalFromInlineRe.toString()
 PASS inlineRe.toString() is evalInlineRe.toString()
 PASS inlineRe.toString() is newFromEvalInlineRe.toString()
 PASS inlineRe.toString() is evalFromEvalInlineRe.toString()
-FAIL inlineRe.toString() should be /.m\u2820p/ (of type string). Was /.m⠠p/ (of type string).
-FAIL inlineRe.toString() should be /.m\u2820p/ (of type string). Was /.m⠠p/ (of type string).
+PASS inlineRe.toString() is explicitRe.toString()
+PASS inlineRe.toString() is newFromExplicitRe.toString()
 PASS inlineRe.toString() is evalFromExplicitRe.toString()
 PASS inlineRe.exec(sample)[0] is 'bm⠠p'
 PASS evalInlineRe.exec(sample)[0] is 'bm⠠p'
-FAIL explicitRe.exec(sample)[0] should be bm⠠p. Threw exception TypeError: Null value
+PASS explicitRe.exec(sample)[0] is 'bm⠠p'
 PASS binlineRe.source is bnewFromInlineRe.source
 PASS binlineRe.source is bevalFromInlineRe.source
 PASS binlineRe.source is bevalInlineRe.source
 PASS binlineRe.source is bnewFromEvalInlineRe.source
 PASS binlineRe.source is bevalFromEvalInlineRe.source
-FAIL binlineRe.source should be .m\u007cp (of type string). Was .m|p (of type string).
-FAIL binlineRe.source should be .m\u007cp (of type string). Was .m|p (of type string).
+PASS binlineRe.source is bexplicitRe.source
+PASS binlineRe.source is bnewFromExplicitRe.source
 PASS binlineRe.source is bevalFromExplicitRe.source
 PASS binlineRe.toString() is bnewFromInlineRe.toString()
 PASS binlineRe.toString() is bevalFromInlineRe.toString()
 PASS binlineRe.toString() is bevalInlineRe.toString()
 PASS binlineRe.toString() is bnewFromEvalInlineRe.toString()
 PASS binlineRe.toString() is bevalFromEvalInlineRe.toString()
-FAIL binlineRe.toString() should be /.m\u007cp/ (of type string). Was /.m|p/ (of type string).
-FAIL binlineRe.toString() should be /.m\u007cp/ (of type string). Was /.m|p/ (of type string).
+PASS binlineRe.toString() is bexplicitRe.toString()
+PASS binlineRe.toString() is bnewFromExplicitRe.toString()
 PASS binlineRe.toString() is bevalFromExplicitRe.toString()
-FAIL binlineRe.exec(bsample)[0] should be bm|p (of type string). Was am (of type string).
-FAIL bevalInlineRe.exec(bsample)[0] should be bm|p (of type string). Was am (of type string).
-FAIL bexplicitRe.exec(bsample)[0] should be bm|p. Threw exception TypeError: Null value
+PASS binlineRe.exec(bsample)[0] is 'bm|p'
+PASS bevalInlineRe.exec(bsample)[0] is 'bm|p'
+PASS bexplicitRe.exec(bsample)[0] is 'bm|p'
 PASS successfullyParsed is true
 
 TEST COMPLETE

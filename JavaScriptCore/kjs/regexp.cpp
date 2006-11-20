@@ -44,12 +44,20 @@ RegExp::RegExp(const UString &p, int flags)
 
   const char *errorMessage;
   int errorOffset;
-  UString nullTerminated(p);
-  char null(0);
-  nullTerminated.append(null);
-  _regex = pcre_compile(reinterpret_cast<const uint16_t *>(nullTerminated.data()), options, &errorMessage, &errorOffset, NULL);
-  if (!_regex)
-    return;
+  
+  UString pattern(p);
+  
+  pattern.append('\0');
+  _regex = pcre_compile(reinterpret_cast<const uint16_t*>(pattern.data()),
+                        options, &errorMessage, &errorOffset, NULL);
+  if (!_regex) {
+    // Try again, this time handle any \u we might find.
+    UString uPattern = sanitizePattern(pattern);
+    _regex = pcre_compile(reinterpret_cast<const uint16_t*>(uPattern.data()),
+                          options, &errorMessage, &errorOffset, NULL);
+    if (!_regex) 
+      return;
+  }
 
 #ifdef PCRE_INFO_CAPTURECOUNT
   // Get number of subpatterns that will be returned.
@@ -171,6 +179,80 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   return s.substr((*ovector)[0], (*ovector)[1] - (*ovector)[0]);
 
 #endif
+}
+
+UString RegExp::sanitizePattern(const UString& p)
+{
+  UString newPattern;
+  
+  int startPos = 0;
+  int pos = p.find("\\u", 0) + 2; // Skip the \u
+  
+  while (pos != 1) { // p.find failing is -1 + 2 = 1 
+    if (pos + 3 < p.size()) {
+      if (isHexDigit(p[pos]) && isHexDigit(p[pos + 1]) &&
+          isHexDigit(p[pos + 2]) && isHexDigit(p[pos + 3])) {
+        newPattern.append(p.substr(startPos, pos - startPos - 2));
+        UChar escapedUnicode(convertUnicode(p[pos], p[pos + 1], 
+                                            p[pos + 2], p[pos + 3]));
+        // \u encoded characters should be treated as if they were escaped,
+        // so add an escape for certain characters that need it.
+        switch (escapedUnicode.unicode()) {
+          case '|':
+          case '+':
+          case '*':
+          case '(':
+          case ')':
+          case '[':
+          case ']':
+          case '{':
+          case '}':
+          case '?':
+          case '\\':
+            newPattern.append('\\');
+        }
+        newPattern.append(escapedUnicode);
+
+        startPos = pos + 4;
+      }
+    }
+    pos = p.find("\\u", pos) + 2;
+  }
+  newPattern.append(p.substr(startPos, p.size() - startPos));
+
+  return newPattern;
+}
+
+bool RegExp::isHexDigit(UChar uc)
+{
+  int c = uc.unicode();
+  return (c >= '0' && c <= '9' ||
+          c >= 'a' && c <= 'f' ||
+          c >= 'A' && c <= 'F');
+}
+
+unsigned char RegExp::convertHex(int c)
+{
+  if (c >= '0' && c <= '9')
+    return static_cast<unsigned char>(c - '0');
+  if (c >= 'a' && c <= 'f')
+    return static_cast<unsigned char>(c - 'a' + 10);
+  return static_cast<unsigned char>(c - 'A' + 10);
+}
+
+unsigned char RegExp::convertHex(int c1, int c2)
+{
+  return ((convertHex(c1) << 4) + convertHex(c2));
+}
+
+UChar RegExp::convertUnicode(UChar uc1, UChar uc2, UChar uc3, UChar uc4)
+{
+  int c1 = uc1.unicode();
+  int c2 = uc2.unicode();
+  int c3 = uc3.unicode();
+  int c4 = uc4.unicode();
+  return UChar((convertHex(c1) << 4) + convertHex(c2),
+               (convertHex(c3) << 4) + convertHex(c4));
 }
 
 } // namespace KJS
