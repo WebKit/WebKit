@@ -28,14 +28,27 @@
 
 #include "ContextMenu.h"
 #include "ContextMenuClient.h"
+#include "Document.h"
+#include "DocumentFragment.h"
+#include "DocumentLoader.h"
+#include "Editor.h"
+#include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoadRequest.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "KURL.h"
 #include "MouseEvent.h"
 #include "Node.h"
+#include "Page.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
+#include "ReplaceSelectionCommand.h"
+#include "ResourceRequest.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -71,9 +84,136 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     m_contextMenu->show();
 }
 
-void ContextMenuController::contextMenuActionSelected(ContextMenuAction action)
+static String makeGoogleSearchURL(String searchString)
 {
-    // FIXME: Implement this
+    searchString.stripWhiteSpace();
+    DeprecatedString encoded = KURL::encode_string(searchString.deprecatedString());
+    encoded.replace(DeprecatedString("%20"), DeprecatedString("+"));
+    
+    String url("http://www.google.com/search?client=safari&q=");
+    url.append(String(encoded));
+    url.append("&ie=UTF-8&oe=UTF-8");
+    return url;
+}
+
+void ContextMenuController::contextMenuActionSelected(ContextMenuAction action, String title)
+{
+    Frame* frame = m_contextMenu->hitTestResult().innerNonSharedNode()->document()->frame();
+    if (!frame)
+        return;
+    ASSERT(m_page == frame->page());
+    
+    switch (action) {
+        case ContextMenuItemTagOpenLinkInNewWindow: {
+            ResourceRequest request = ResourceRequest(m_contextMenu->hitTestResult().absoluteLinkURL());
+            String referrer = frame->loader()->referrer();
+            m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+            break;
+        }
+        case ContextMenuItemTagDownloadLinkToDisk:
+            // FIXME: Some day we should be able to do this from within WebCore.
+            m_client->downloadURL(m_contextMenu->hitTestResult().absoluteLinkURL());
+            break;
+        case ContextMenuItemTagCopyLinkToClipboard:
+            // FIXME: The Pasteboard class is not written yet. This is what we should be able to do some day:
+            // generalPasteboard()->copy(m_contextMenu->hitTestResult().absoluteLinkURL(), 
+            //      m_contextMenu->hitTestResult.textContent());
+            // For now, call into the client. This is temporary!
+            m_client->copyLinkToClipboard(m_contextMenu->hitTestResult());
+            break;
+        case ContextMenuItemTagOpenImageInNewWindow: {
+            ResourceRequest request = ResourceRequest(m_contextMenu->hitTestResult().absoluteImageURL());
+            String referrer = frame->loader()->referrer();
+            m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+            break;
+        }
+        case ContextMenuItemTagDownloadImageToDisk:
+            // FIXME: Some day we should be able to do this from within WebCore.
+            m_client->downloadURL(m_contextMenu->hitTestResult().absoluteImageURL());
+            break;
+        case ContextMenuItemTagCopyImageToClipboard:
+            // FIXME: The Pasteboard class is not written yet
+            // For now, call into the client. This is temporary!
+            m_client->copyImageToClipboard(m_contextMenu->hitTestResult());
+            break;
+        case ContextMenuItemTagOpenFrameInNewWindow: {
+            // FIXME: The DocumentLoader is all-Mac right now
+#if PLATFORM(MAC)
+            KURL unreachableURL = frame->loader()->documentLoader()->unreachableURL();
+            if (frame && unreachableURL.isEmpty())
+                unreachableURL = frame->loader()->documentLoader()->URL();
+            ResourceRequest request = ResourceRequest(unreachableURL);
+            String referrer = frame->loader()->referrer();
+            if (m_page)
+                m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+#endif
+            break;
+        }
+        case ContextMenuItemTagCopy:
+            frame->editor()->copy();
+            break;
+        case ContextMenuItemTagGoBack:
+            frame->loader()->goBackOrForward(-1);
+            break;
+        case ContextMenuItemTagGoForward:
+            frame->loader()->goBackOrForward(1);
+            break;
+        case ContextMenuItemTagStop:
+            frame->loader()->stop();
+            break;
+        case ContextMenuItemTagReload:
+            frame->loader()->reload();
+            break;
+        case ContextMenuItemTagCut:
+            frame->editor()->cut();
+            break;
+        case ContextMenuItemTagPaste:
+            frame->editor()->paste();
+            break;
+        case ContextMenuItemTagSpellingGuess:
+            ASSERT(frame->selectedText().length() != 0);
+            if (frame->editor()->shouldInsertText(title, frame->selectionController()->toRange().get(), EditorInsertActionPasted)) {
+                Document* document = frame->document();
+                applyCommand(new ReplaceSelectionCommand(document, createFragmentFromMarkup(document, title, ""),
+                    true, false, true));
+                frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+            }
+            break;
+        case ContextMenuItemTagIgnoreSpelling:
+            frame->ignoreSpelling();
+            break;
+        case ContextMenuItemTagLearnSpelling:
+            frame->learnSpelling();
+            break;
+        case ContextMenuItemTagSearchInSpotlight:
+#if PLATFORM(MAC)
+            m_client->searchWithSpotlight();
+#endif
+            break;
+        case ContextMenuItemTagSearchWeb: {
+            String url = makeGoogleSearchURL(frame->selectedText());
+            ResourceRequest request = ResourceRequest(url);
+            frame->loader()->urlSelected(FrameLoadRequest(request), new Event());
+            break;
+        }
+        case ContextMenuItemTagLookUpInDictionary:
+            // FIXME: Some day we may be able to do this from within WebCore.
+            m_client->lookUpInDictionary(frame);
+            break;
+        // PDF actions. Let's take care of this later. 
+        case ContextMenuItemTagOpenWithDefaultApplication:
+        case ContextMenuItemPDFActualSize:
+        case ContextMenuItemPDFZoomIn:
+        case ContextMenuItemPDFZoomOut:
+        case ContextMenuItemPDFAutoSize:
+        case ContextMenuItemPDFSinglePage:
+        case ContextMenuItemPDFFacingPages:
+        case ContextMenuItemPDFContinuous:
+        case ContextMenuItemPDFNextPage:
+        case ContextMenuItemPDFPreviousPage:
+        default:
+            break;
+    }
 }
 
 } // namespace WebCore

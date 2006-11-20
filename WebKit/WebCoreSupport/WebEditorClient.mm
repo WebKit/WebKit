@@ -41,6 +41,19 @@
 
 using namespace WebCore;
 
+EditorInsertAction core(WebViewInsertAction);
+WebViewInsertAction kit(EditorInsertAction);
+
+EditorInsertAction core(WebViewInsertAction kitAction)
+{
+    return static_cast<EditorInsertAction>(kitAction);
+}
+
+WebViewInsertAction kit(EditorInsertAction coreAction)
+{
+    return static_cast<WebViewInsertAction>(coreAction);
+}
+
 @interface WebEditCommand : NSObject
 {
     EditCommand *m_command;   
@@ -202,6 +215,12 @@ bool WebEditorClient::shouldEndEditing(Range* range)
 {
     return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
                              shouldEndEditingInDOMRange:kit(range)];
+}
+
+bool WebEditorClient::shouldInsertText(String text, Range* range, EditorInsertAction action)
+{
+    WebView* webView = [m_webFrame webView];
+    return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
 void WebEditorClient::didBeginEditing()

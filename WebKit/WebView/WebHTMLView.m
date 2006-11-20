@@ -1760,40 +1760,6 @@ static WebHTMLView *lastHitView = nil;
     [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
 }
 
-- (void)_lookUpInDictionaryFromMenu:(id)sender
-{
-    // This should only be called when there's a selection, but play it safe.
-    if (![self _hasSelection])
-        return;
-    
-    // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
-    static bool lookedForFunction = false;
-    typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
-    static ServiceWindowShowFunction dictionaryServiceWindowShow;
-    if (!lookedForFunction) {
-        const struct mach_header *frameworkImageHeader = 0;
-        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
-            _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
-        lookedForFunction = true;
-    }
-    if (!dictionaryServiceWindowShow) {
-        LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
-        return;
-    }
-
-    // FIXME: must check for right-to-left here
-    NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
-
-    NSAttributedString *attrString = [self selectedAttributedString];
-    // FIXME: the dictionary API expects the rect for the first line of selection. Passing
-    // the rect for the entire selection, as we do here, positions the pop-up window near
-    // the bottom of the selection rather than at the selected word.
-    NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
-    rect.origin = [[self window] convertBaseToScreen:rect.origin];
-    NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
-    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
-}
-
 - (BOOL)_transparentBackground
 {
     return _private->transparentBackground;
@@ -5261,6 +5227,40 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 }
 
 #endif /* !BUILDING_ON_TIGER */
+
+- (void)_lookUpInDictionaryFromMenu:(id)sender
+{
+    // This should only be called when there's a selection, but play it safe.
+    if (![self _hasSelection])
+        return;
+    
+    // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
+    static bool lookedForFunction = false;
+    typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
+    static ServiceWindowShowFunction dictionaryServiceWindowShow;
+    if (!lookedForFunction) {
+        const struct mach_header *frameworkImageHeader = 0;
+        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
+            _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
+        lookedForFunction = true;
+    }
+    if (!dictionaryServiceWindowShow) {
+        LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
+        return;
+    }
+
+    // FIXME: must check for right-to-left here
+    NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
+
+    NSAttributedString *attrString = [self selectedAttributedString];
+    // FIXME: the dictionary API expects the rect for the first line of selection. Passing
+    // the rect for the entire selection, as we do here, positions the pop-up window near
+    // the bottom of the selection rather than at the selected word.
+    NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
+    rect.origin = [[self window] convertBaseToScreen:rect.origin];
+    NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
+    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+}
 
 @end
 

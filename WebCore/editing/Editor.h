@@ -26,6 +26,7 @@
 #ifndef Editor_h
 #define Editor_h
 
+#include "EditorInsertAction.h"
 #include "Frame.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -70,6 +71,7 @@ public:
     void indent();
     void outdent();
 
+    bool shouldInsertText(String, Range*, EditorInsertAction) const;
     bool shouldShowDeleteInterface(HTMLElement*) const;
     bool shouldDeleteRange(Range*) const;
 

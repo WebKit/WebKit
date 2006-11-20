@@ -1,3 +1,32 @@
+2006-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit side of new context menu actions.
+
+        * WebCoreSupport/WebContextMenuClient.h: These are for the 
+        currently-WebKit-dependent menu actions.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::copyLinkToClipboard):
+        (WebContextMenuClient::downloadURL):
+        (WebContextMenuClient::copyImageToClipboard):
+        (WebContextMenuClient::searchWithSpotlight):
+        (WebContextMenuClient::lookUpInDictionary):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (core): These are to convert between WebViewInsertAction and 
+        EditorInsertAction.
+        (kit):
+        (WebEditorClient::shouldInsertText): Added implementation for 
+        shouldInsertText.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]): Moved 
+        _lookUpInDictionary to be within the implementation of WebHTMLView 
+        internal.
+        * WebView/WebHTMLViewInternal.h: Add _lookUpInDictionaryFromMenu
+        * WebView/WebViewInternal.h: Add _searchWithSpotlightFromMenu
+
 2006-11-18  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Sam Weinig.

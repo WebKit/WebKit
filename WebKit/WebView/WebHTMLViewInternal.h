@@ -114,6 +114,7 @@
 - (void)cut:(id)sender;
 - (void)paste:(id)sender;
 - (void)pasteAsPlainText:(id)sender;
+- (void)_lookUpInDictionaryFromMenu:(id)sender;
 #if !BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;

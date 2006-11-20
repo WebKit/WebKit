@@ -1,3 +1,46 @@
+2006-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Implementation of actions for the new context menus.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/EditorClient.h: Declaration of shouldInsertText.
+        * bridge/mac/FrameMac.h: Two new spelling functions.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::ignoreSpelling):
+        (WebCore::FrameMac::learnSpelling):
+        * editing/Editor.cpp:
+        (WebCore::Editor::shouldInsertText): Call into the client.
+        * editing/Editor.h:
+        * editing/EditorInsertAction.h: Added.
+        (WebCore::): The WebCore equivalent of WebViewInsertAction. This is 
+        defined in its own header so that we can use it from Editor.h and 
+        EditorClient.h without having one of the above include the other.
+        * page/ContextMenuClient.h: A few currently WebKit-implemented 
+        function needed for menu actions.
+        * page/ContextMenuController.cpp:
+        (WebCore::makeGoogleSearchURL):
+        (WebCore::ContextMenuController::contextMenuActionSelected): The 
+        actions!
+        * page/ContextMenuController.h:
+        * page/Frame.h: New pure-virtual spelling functions.
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::controller): Get the controller from the 
+        menu.
+        * platform/ContextMenu.h:
+        * platform/mac/ContextMenuMac.mm:
+        (-[MenuTarget 
+        forwardContextMenuAction:initWithContextMenuController:WebCore::]): 
+        Use the controller instead of the menu
+        (-[MenuTarget WebCore::]):
+        (-[MenuTarget setMenuController:WebCore::]):
+        (-[MenuTarget forwardContextMenuAction:]):
+        (getNSMenuItem):
+        (ContextMenu::show):
+        (ContextMenu::hide):
+
 2006-11-19  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

@@ -25,39 +25,43 @@
 
 #include "config.h"
 #include "ContextMenu.h"
+
+#include "ContextMenuController.h"
  
 @interface MenuTarget : NSObject {
-    WebCore::ContextMenu* _menu;
+    WebCore::ContextMenuController* _menuController;
 }
-- (WebCore::ContextMenu*)menu;
-- (void)setMenu:(WebCore::ContextMenu*)menu;
+- (WebCore::ContextMenuController*)menuController;
+- (void)setMenuController:(WebCore::ContextMenuController*)menuController;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
 @implementation MenuTarget
 
-- (id)initWithContextMenu:(WebCore::ContextMenu*)menu
+- (id)initWithContextMenuController:(WebCore::ContextMenuController*)menuController
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _menu = menu;
+    _menuController = menuController;
     return self;
 }
 
-- (WebCore::ContextMenu*)menu
+- (WebCore::ContextMenuController*)menuController
 {
-    return _menu;
+    return _menuController;
 }
 
-- (void)setMenu:(WebCore::ContextMenu*)menu
+- (void)setMenuController:(WebCore::ContextMenuController*)menuController
 {
-    _menu = menu;
+    _menuController = menuController;
 }
 
 - (void)forwardContextMenuAction:(id)sender
 {
+    WebCore::ContextMenuAction action = static_cast<WebCore::ContextMenuAction>([sender tag]);
+    _menuController->contextMenuActionSelected(action, [sender title]);
 }
 
 @end
@@ -71,10 +75,11 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, ContextMenuItem item)
     if (!menu->platformMenuDescription())
         menu->setPlatformMenuDescription([[[NSMutableArray alloc] init] autorelease]);
     
+    ContextMenuController* currentController = menu->controller();
     if (!target)
-        target = [[MenuTarget alloc] initWithContextMenu:menu];
-    else if (menu != [target menu])
-        [target setMenu:menu];
+        target = [[MenuTarget alloc] initWithContextMenuController:currentController];
+    else if (currentController != [target menuController])
+        [target setMenuController:currentController];
     
     NSMenuItem* menuItem = [[[NSMenuItem alloc] init] autorelease];
     [menuItem setTag: item.action];
@@ -105,4 +110,12 @@ void ContextMenu::insertItem(unsigned position, ContextMenuItem item)
 void ContextMenu::setPlatformMenuDescription(NSMutableArray* menu)
 {
     m_menu = menu;
+}
+
+void ContextMenu::show()
+{
+}
+
+void ContextMenu::hide()
+{
 }

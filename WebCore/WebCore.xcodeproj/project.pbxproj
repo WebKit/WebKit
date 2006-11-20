@@ -1621,6 +1621,7 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
+		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70023FD0B02BEAB00170215 /* MimeTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */; };
 		A70023FE0B02BEAB00170215 /* MimeTypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70024000B02BECC00170215 /* MimeTypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */; };
@@ -4530,6 +4531,7 @@
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
 		93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLStructure.pm; path = scripts/IDLStructure.pm; sourceTree = "<group>"; };
+		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
 		A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MimeTypeRegistry.cpp; sourceTree = "<group>"; };
 		A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MimeTypeRegistry.h; sourceTree = "<group>"; };
 		A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypeRegistryMac.mm; sourceTree = "<group>"; };
@@ -7596,6 +7598,7 @@
 				93309D95099E64910056E581 /* EditCommand.h */,
 				4B3043CA0AE0373B00A82647 /* Editor.cpp */,
 				4B3043CB0AE0373B00A82647 /* Editor.h */,
+				93FDAFC90B11307400E2746F /* EditorInsertAction.h */,
 				93309D98099E64910056E581 /* htmlediting.cpp */,
 				93309D99099E64910056E581 /* htmlediting.h */,
 				93309D96099E64910056E581 /* HTMLInterchange.cpp */,
@@ -10798,6 +10801,7 @@
 				B2E27C9B0B0F2AE600F17C7B /* SVGPointLightSource.h in Headers */,
 				B2E27C9C0B0F2AE600F17C7B /* SVGSpotLightSource.h in Headers */,
 				B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */,
+				93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

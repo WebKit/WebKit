@@ -105,6 +105,10 @@
 @end
 #endif
 
+@interface NSSpellChecker (CurrentlyPrivateForTextView)
+- (void)learnWord:(NSString *)word;
+@end
+
 using namespace std;
 using namespace KJS::Bindings;
 
@@ -1145,6 +1149,21 @@ void FrameMac::issuePasteAndMatchStyleCommand()
 void FrameMac::issueTransposeCommand()
 {
     [_bridge issueTransposeCommand];
+}
+
+void FrameMac::ignoreSpelling()
+{
+    String text = selectedText();
+    ASSERT(text.length() != 0);
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:text 
+        inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag()];
+}
+
+void FrameMac::learnSpelling()
+{
+    String text = selectedText();
+    ASSERT(text.length() != 0);
+    [[NSSpellChecker sharedSpellChecker] learnWord:text];
 }
 
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)

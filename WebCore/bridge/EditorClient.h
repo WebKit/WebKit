@@ -29,11 +29,14 @@
 #include <wtf/Forward.h>
 #include "AbstractShared.h"
 
+#include "EditorInsertAction.h"
+
 namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
 class HTMLElement;
+class String;
 class Range;
 
 class EditorClient : public AbstractShared {
@@ -51,7 +54,7 @@ public:
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;
 //  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) = 0;
-//  virtual bool shouldInsertText(NSString*, Range *replacingRange, WebViewInsertAction) = 0;
+    virtual bool shouldInsertText(String, Range*, EditorInsertAction) = 0;
 //  virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, NSSelectionAffinity, bool stillSelecting) = 0;
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
 //  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;

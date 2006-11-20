@@ -188,6 +188,11 @@ void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
 {
 }
 
+bool Editor::shouldInsertText(String text, Range* range, EditorInsertAction action) const
+{
+    return m_client->shouldInsertText(text, range, action);
+}
+
 bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 {
     return m_client->shouldShowDeleteInterface(element);

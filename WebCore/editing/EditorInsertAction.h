@@ -22,31 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
-#ifndef ContextMenuClient_h
-#define ContextMenuClient_h
-
-#include "AbstractShared.h"
+ 
+#ifndef EditorInsertAction_h
+#define EditorInsertAction_h
 
 namespace WebCore {
-    class ContextMenu;
-    class Frame;
-    class HitTestResult;
-    class KURL;
 
-    class ContextMenuClient : public AbstractShared {
-    public:
-        virtual void addCustomContextMenuItems(ContextMenu*) = 0;
+// This must be kept in sync with WebViewInsertAction defined in WebEditingDelegate.h
+enum EditorInsertAction {
+    EditorInsertActionTyped,
+    EditorInsertActionPasted,
+    EditorInsertActionDropped,
+};
 
-        virtual void copyLinkToClipboard(HitTestResult) = 0;
-        virtual void downloadURL(KURL url) = 0;
-        virtual void copyImageToClipboard(HitTestResult) = 0;
-        virtual void lookUpInDictionary(Frame*) = 0;
-
-#if PLATFORM(MAC)
-        virtual void searchWithSpotlight() = 0;
-#endif
-    };
-}
+} // namespace
 
 #endif

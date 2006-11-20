@@ -30,9 +30,15 @@
 
 #import "WebElementDictionary.h"
 #import "WebFrame.h"
+#import "WebFrameInternal.h"
+#import "WebHTMLView.h"
+#import "WebHTMLViewInternal.h"
+#import "WebNSPasteboardExtras.h"
 #import "WebUIDelegate.h"
 #import "WebView.h"
+#import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
+#import <WebCore/KURL.h>
 
 using namespace WebCore;
 
@@ -64,4 +70,40 @@ void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
         NSArray *newMenu = [delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:menu->platformMenuDescription()];
         menu->setPlatformMenuDescription(newMenu);
     }
+}
+
+void WebContextMenuClient::copyLinkToClipboard(HitTestResult hitTestResult)
+{
+    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSPasteboard _web_writableTypesForURL];
+    [m_webView _writeLinkElement:element withPasteboardTypes:types toPasteboard:pasteboard];
+}
+
+void WebContextMenuClient::downloadURL(KURL url)
+{
+    [m_webView _downloadURL:url.getNSURL()];
+}
+
+void WebContextMenuClient::copyImageToClipboard(HitTestResult hitTestResult)
+{
+    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:(hitTestResult.innerNonSharedNode() != 0)];
+    [[[element objectForKey:WebElementFrameKey] webView] _writeImageForElement:element 
+                                                           withPasteboardTypes:types 
+                                                                  toPasteboard:pasteboard];
+}
+
+void WebContextMenuClient::searchWithSpotlight()
+{
+    [m_webView _searchWithSpotlightFromMenu:nil];
+}
+
+void WebContextMenuClient::lookUpInDictionary(Frame* frame)
+{
+    WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    if(![htmlView isKindOfClass:[WebHTMLView class]])
+        return;
+    [htmlView _lookUpInDictionaryFromMenu:nil];
 }
