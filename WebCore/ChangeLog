@@ -2,6 +2,24 @@
 
         Reviewed by Maciej.
 
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::findXMLEncoding):
+        Use CString instead of DeprecatedCString.
+        
+        * platform/CString.cpp:
+        (WebCore::CString::find):
+        * platform/CString.h:
+        (WebCore::CString::data):
+        Add find method, make data method inline.
+        
+        * platform/TextStream.cpp:
+        * platform/TextStream.h:
+        Remove DeprecatedCString functions.
+
+2006-11-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
         Use CString instead of DeprecatedCString.
         
         * html/FormDataList.cpp:

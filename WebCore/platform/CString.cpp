@@ -55,11 +55,6 @@ void CString::init(const char* str, unsigned length)
     m_buffer->data()[length] = '\0';
 }
 
-const char* CString::data() const
-{
-    return m_buffer ? m_buffer->data() : 0;
-}
-
 char* CString::mutableData()
 {
     copyBufferIfNeeded();
@@ -97,6 +92,38 @@ void CString::copyBufferIfNeeded()
     RefPtr<CStringBuffer> m_temp = m_buffer;
     m_buffer = new CStringBuffer(len);
     memcpy(m_buffer->data(), m_temp->data(), len);
+}
+
+int CString::find(const char* substring, int index) const
+{
+    const char* str = data();
+ 
+    if(str && str[0] && substring && index >=0) { // don't search empty strings
+        // advance until we get to index
+        int pos = 0;
+        while(pos < index)
+            if(str[pos++] == 0)
+                return -1;                  // index is beyond end of str
+        
+        // now search from index onward
+        while(str[index] != 0) {
+            char a, b;
+            
+            // compare until we reach the end or a mismatch
+            pos = 0;
+
+            while((a = substring[pos]) && (b = str[index]) && a == b)
+                pos++, index++;
+            
+            // reached the end of our compare string without a mismatch?
+            if(substring[pos] == 0)
+                return index - pos;
+            
+            index ++;
+        }
+    }
+    
+    return -1;
 }
 
 }
