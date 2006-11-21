@@ -1,3 +1,22 @@
+2006-11-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - a couple changes to reduce the chance of false positives on the leakbot
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree): Move the main function into a separate function so we can run
+        a final garbage collect afterward without any stray values on the stack. Replaced
+        the old way of closing down a WebView (setting the delegates to nil) with the new
+        way (calling the close method), which does a more complete job of shutting
+        everything down without waiting for the WebView object to be deallocated.
+        (main): Put auto-release pool here and added an explicit call to garbage collect.
+        With a separate function, we greatly reduce the chance that a stray address on the
+        stack will keep an object alive.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Let Xcode do its thing,
+        because I don't have what it takes to fight the power.
+
 2006-11-17  Zack Rusin  <zack@kde.org>
 
         Reviewed by Mitz. Landed by Niko.

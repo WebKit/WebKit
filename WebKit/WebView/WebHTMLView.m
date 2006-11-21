@@ -289,6 +289,29 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     [super dealloc];
 }
 
+- (void)clear
+{
+    [mouseDownEvent release];
+    [keyDownEvent release];
+    [draggingImageURL release];
+    [pluginController release];
+    [toolTip release];
+    [compController release];
+    [firstResponderTextViewAtMouseDownTime release];
+    [dataSource release];
+    [highlighters release];
+
+    mouseDownEvent = nil;
+    keyDownEvent = nil;
+    draggingImageURL = nil;
+    pluginController = nil;
+    toolTip = nil;
+    compController = nil;
+    firstResponderTextViewAtMouseDownTime = nil;
+    dataSource = nil;
+    highlighters = nil;
+}
+
 @end
 
 @implementation WebHTMLView (WebHTMLViewFileInternal)
@@ -1929,8 +1952,10 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
+    [_private->pluginController setDataSource:nil];
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
     [self removeAllToolTips];
+    [_private clear];
     _private->closed = YES;
 }
 

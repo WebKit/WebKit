@@ -224,10 +224,8 @@ static void makeLargeMallocFailSilently(void)
     zone->realloc = checkedRealloc;
 }
 
-int main(int argc, const char *argv[])
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
+void dumpRenderTree(int argc, const char *argv[])
+{    
     [NSApplication sharedApplication];
 
     class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
@@ -371,9 +369,7 @@ int main(int argc, const char *argv[])
     
     [workQueue release];
 
-    [webView setFrameLoadDelegate:nil];
-    [webView setEditingDelegate:nil];
-    [webView setUIDelegate:nil];
+    [webView close];
     frame = nil;
 
     // Work around problem where registering drag types leaves an outstanding
@@ -396,9 +392,14 @@ int main(int argc, const char *argv[])
     
     if (dumpPixels)
         restoreColorSpace(0);
-    
-    [pool release];
+}
 
+int main(int argc, const char *argv[])
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    dumpRenderTree(argc, argv);
+    [WebCoreStatistics garbageCollectJavaScriptObjects];
+    [pool release];
     return 0;
 }
 

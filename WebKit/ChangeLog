@@ -1,3 +1,25 @@
+2006-11-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - make the close method do a more-complete job to prevent world leaks seen when
+          running some of the layout tests
+
+        * WebView/WebHTMLViewInternal.h: Added declaration of -[WebHTMLViewPrivate clear].
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLViewPrivate clear]): Added method to drop references to other objects.
+        We want to do this at "close" time, rather than waiting for deallocation time.
+        This is especially important for the data source, which indirectly keeps a number of
+        objects alive.
+        (-[WebHTMLView close]): Added an explicit call to clear out the data source on the
+        plug-in controller. Without this, we'd see the plug-in controller making calls to
+        a deallocated data source during the layout tests. Added a call to the new clear method
+        on the private object so that we release the objects at close time instead of waiting
+        for deallocation time.
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode have its way with the project file,
+        because I can't fight the power.
+
 2006-11-20  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Alexey.

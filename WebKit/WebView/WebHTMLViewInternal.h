@@ -93,6 +93,7 @@
     
     WebDataSource *dataSource;
 }
+- (void)clear;
 @end
 
 @interface WebHTMLView (WebInternal)
