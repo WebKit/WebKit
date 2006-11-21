@@ -26,78 +26,52 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
-
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "SVGPaintServer.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
+SVGPaintServer::SVGPaintServer()
+    : m_activeClient(0)
+    , m_paintingText(false)
 {
 }
 
-SVGResource::~SVGResource()
+SVGPaintServer::~SVGPaintServer()
 {
 }
 
-void SVGResource::invalidate()
+const RenderPath* SVGPaintServer::activeClient() const
 {
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
+    return m_activeClient;
 }
 
-void SVGResource::addClient(const RenderPath* item)
+void SVGPaintServer::setActiveClient(const RenderPath* client)
 {
-    unsigned size = m_clients.size();
-
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
-
-    m_clients.append(item);
+    m_activeClient = client;
 }
 
-const RenderPathList& SVGResource::clients() const
+bool SVGPaintServer::isPaintingText() const
 {
-    return m_clients;
+    return m_paintingText;
 }
 
-String SVGResource::idInRegistry() const
+void SVGPaintServer::setPaintingText(bool paintingText)
 {
-    return m_registryId;
+    m_paintingText = paintingText;
 }
 
-void SVGResource::setIdInRegistry(const String& id)
+TextStream& operator<<(TextStream& ts, const SVGPaintServer& paintServer)
 {
-    m_registryId = id;
+    return paintServer.externalRepresentation(ts);
 }
 
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
+SVGPaintServer* getPaintServerById(Document* document, const AtomicString& id)
 {
-    return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
+    SVGResource* resource = getResourceById(document, id);
+    if (resource && resource->isPaintServer())
+        return static_cast<SVGPaintServer*>(resource);
 
     return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
 }
 
 } // namespace WebCore

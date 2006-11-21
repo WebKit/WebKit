@@ -28,7 +28,7 @@
 #include "GraphicsContext.h"
 #include "SVGResourceImage.h"
 #include "KRenderingDevice.h"
-#include "KRenderingPaintServerPattern.h"
+#include "SVGPaintServerPattern.h"
 #include "RenderSVGContainer.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
@@ -137,12 +137,12 @@ void SVGPatternElement::resourceNotification() const
 void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix)
 {
     DeprecatedString ref = href().deprecatedString();
-    RefPtr<KRenderingPaintServer> refServer = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> refServer = getPaintServerById(document(), ref.mid(1));
 
     if (!refServer || refServer->type() != PS_PATTERN)
         return;
     
-    RefPtr<KRenderingPaintServerPattern> refPattern = WTF::static_pointer_cast<KRenderingPaintServerPattern>(refServer);
+    RefPtr<SVGPaintServerPattern> refPattern = WTF::static_pointer_cast<SVGPaintServerPattern>(refServer);
     
     if (!hasAttribute(SVGNames::patternUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternUnitsAttr);
@@ -326,7 +326,7 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
 SVGResource* SVGPatternElement::canvasResource()
 {
     if (!m_paintServer) {
-        m_paintServer = WTF::static_pointer_cast<KRenderingPaintServerPattern>(renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN)));
+        m_paintServer = WTF::static_pointer_cast<SVGPaintServerPattern>(renderingDevice()->createPaintServer(SVGPaintServerType(PS_PATTERN)));
         m_paintServer->setListener(const_cast<SVGPatternElement*>(this));
     }
     return m_paintServer.get();

@@ -26,78 +26,46 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
-
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "SVGPaintServerLinearGradient.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
+SVGPaintServerLinearGradient::SVGPaintServerLinearGradient()
 {
 }
 
-SVGResource::~SVGResource()
+SVGPaintServerLinearGradient::~SVGPaintServerLinearGradient()
 {
 }
 
-void SVGResource::invalidate()
+FloatPoint SVGPaintServerLinearGradient::gradientStart() const
 {
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
+    return m_start;
 }
 
-void SVGResource::addClient(const RenderPath* item)
+void SVGPaintServerLinearGradient::setGradientStart(const FloatPoint& start)
 {
-    unsigned size = m_clients.size();
-
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
-
-    m_clients.append(item);
+    m_start = start;
 }
 
-const RenderPathList& SVGResource::clients() const
+FloatPoint SVGPaintServerLinearGradient::gradientEnd() const
 {
-    return m_clients;
+    return m_end;
 }
 
-String SVGResource::idInRegistry() const
+void SVGPaintServerLinearGradient::setGradientEnd(const FloatPoint& end)
 {
-    return m_registryId;
+    m_end = end;
 }
 
-void SVGResource::setIdInRegistry(const String& id)
+TextStream& SVGPaintServerLinearGradient::externalRepresentation(TextStream& ts) const
 {
-    m_registryId = id;
-}
-
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
-{
+    ts << "[type=LINEAR-GRADIENT] ";
+    SVGPaintServerGradient::externalRepresentation(ts);
+    ts  << " [start=" << gradientStart() << "]"
+        << " [end=" << gradientEnd() << "]";
     return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
 }
 
 } // namespace WebCore

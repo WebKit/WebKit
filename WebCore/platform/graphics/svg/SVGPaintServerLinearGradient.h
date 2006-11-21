@@ -23,83 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef SVGPaintServerLinearGradient_H
+#define SVGPaintServerLinearGradient_H
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
 
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "FloatPoint.h"
+#include "SVGPaintServerGradient.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
-{
-}
+    class SVGPaintServerLinearGradient : public SVGPaintServerGradient {
+    public:
+        SVGPaintServerLinearGradient();
+        virtual ~SVGPaintServerLinearGradient();
 
-SVGResource::~SVGResource()
-{
-}
+        virtual SVGPaintServerType type() const { return PS_LINEAR_GRADIENT; }
 
-void SVGResource::invalidate()
-{
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
-}
+        FloatPoint gradientStart() const;
+        void setGradientStart(const FloatPoint&);
 
-void SVGResource::addClient(const RenderPath* item)
-{
-    unsigned size = m_clients.size();
+        FloatPoint gradientEnd() const;
+        void setGradientEnd(const FloatPoint&);
 
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-    m_clients.append(item);
-}
+#if PLATFORM(QT)
+        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+#endif
 
-const RenderPathList& SVGResource::clients() const
-{
-    return m_clients;
-}
-
-String SVGResource::idInRegistry() const
-{
-    return m_registryId;
-}
-
-void SVGResource::setIdInRegistry(const String& id)
-{
-    m_registryId = id;
-}
-
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
-{
-    return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
-}
+    private:
+        FloatPoint m_start;
+        FloatPoint m_end;
+    };
 
 } // namespace WebCore
 
 #endif
+
+#endif // SVGPaintServerLinearGradient_H

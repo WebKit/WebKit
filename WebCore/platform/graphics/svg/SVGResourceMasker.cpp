@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "SVGResourceMasker.h"
 
 #ifdef SVG_SUPPORT
+#include "SVGResourceMasker.h"
 
 #include "TextStream.h"
 #include "SVGResourceImage.h"

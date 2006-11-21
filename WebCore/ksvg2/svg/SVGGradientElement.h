@@ -24,7 +24,7 @@
 #define KSVG_SVGGradientElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KRenderingPaintServerGradient.h"
+#include "SVGPaintServerGradient.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
@@ -57,8 +57,8 @@ namespace WebCore {
         virtual void resourceNotification() const;
 
     protected:
-        virtual void buildGradient(PassRefPtr<KRenderingPaintServerGradient>) const = 0;
-        virtual KCPaintServerType gradientType() const = 0;
+        virtual void buildGradient(PassRefPtr<SVGPaintServerGradient>) const = 0;
+        virtual SVGPaintServerType gradientType() const = 0;
         void rebuildStops() const;
 
     protected:
@@ -69,7 +69,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
 
-        mutable RefPtr<KRenderingPaintServerGradient> m_resource;
+        mutable RefPtr<SVGPaintServerGradient> m_resource;
     };
 
 } // namespace WebCore

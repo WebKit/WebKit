@@ -25,7 +25,6 @@
 #include "Attr.h"
 
 #include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
 
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"

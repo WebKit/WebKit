@@ -25,7 +25,6 @@
 #include "SVGFEGaussianBlurElement.h"
 
 #include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 

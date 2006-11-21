@@ -106,7 +106,7 @@ void SVGGradientElement::notifyAttributeChange() const
 SVGResource* SVGGradientElement::canvasResource()
 {
     if (!m_resource) {
-        m_resource = WTF::static_pointer_cast<KRenderingPaintServerGradient>(renderingDevice()->createPaintServer(gradientType()));
+        m_resource = WTF::static_pointer_cast<SVGPaintServerGradient>(renderingDevice()->createPaintServer(gradientType()));
         m_resource->setListener(this);
         buildGradient(m_resource);
     }
@@ -116,13 +116,13 @@ SVGResource* SVGGradientElement::canvasResource()
 void SVGGradientElement::resourceNotification() const
 {
     // We're referenced by a "client", build the gradient now...
-    buildGradient(static_cast<KRenderingPaintServerGradient*>(const_cast<SVGGradientElement*>(this)->canvasResource()));
+    buildGradient(static_cast<SVGPaintServerGradient*>(const_cast<SVGGradientElement*>(this)->canvasResource()));
 }
 
 void SVGGradientElement::rebuildStops() const
 {
     if (m_resource && !ownerDocument()->parsing()) {
-        Vector<KCGradientStop> stops;
+        Vector<SVGGradientStop> stops;
          // FIXME: Manual style resolution is a hack
         RenderStyle* gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
         for (Node* n = firstChild(); n; n = n->nextSibling()) {

@@ -41,14 +41,14 @@ typedef Vector<float> KCDashArray;
 #endif
 
     class CSSValue;
-    class KRenderingPaintServer;
+    class SVGPaintServer;
     class RenderStyle;
     class RenderObject;
 
     class KSVGPainterFactory {
     public:
-        static KRenderingPaintServer* strokePaintServer(const RenderStyle*, const RenderObject*);
-        static KRenderingPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
+        static SVGPaintServer* strokePaintServer(const RenderStyle*, const RenderObject*);
+        static SVGPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
 
         // Helpers
         static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);

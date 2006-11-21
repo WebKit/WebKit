@@ -535,16 +535,7 @@ set (SVG_SOURCES
     bindings/js/JSSVGRect.cpp
 
     kcanvas/device/KRenderingDevice.cpp
-    kcanvas/device/KRenderingPaintServerGradient.cpp
-    kcanvas/device/KRenderingPaintServerPattern.cpp
-    kcanvas/device/KRenderingPaintServerSolid.cpp
-#   kcanvas/device/qt/KCanvasFilterQt.cpp
-#   kcanvas/device/qt/KCanvasImageItemQt.cpp
     kcanvas/device/qt/KRenderingDeviceQt.cpp
-    kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp
-    kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp
-    kcanvas/device/qt/KRenderingPaintServerQt.cpp
-    kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp
     kcanvas/device/qt/RenderPathQt.cpp
 
     ksvg2/css/SVGCSSParser.cpp
@@ -990,7 +981,7 @@ set(WebCore_SRCS
     page/Page.cpp
     page/PageState.cpp
 
-	page/qt/EventHandlerQt.cpp   
+    page/qt/EventHandlerQt.cpp   
 
     platform/Arena.cpp
     platform/ArrayImpl.cpp
@@ -1052,6 +1043,12 @@ set(WebCore_SRCS
     platform/graphics/qt/IntSizeQt.cpp
     platform/graphics/qt/PathQt.cpp
 
+    platform/graphics/svg/SVGPaintServer.cpp
+    platform/graphics/svg/SVGPaintServerGradient.cpp
+    platform/graphics/svg/SVGPaintServerLinearGradient.cpp
+    platform/graphics/svg/SVGPaintServerPattern.cpp
+    platform/graphics/svg/SVGPaintServerRadialGradient.cpp
+    platform/graphics/svg/SVGPaintServerSolid.cpp
     platform/graphics/svg/SVGResource.cpp
     platform/graphics/svg/SVGResourceClipper.cpp
     platform/graphics/svg/SVGResourceFilter.cpp
@@ -1076,6 +1073,12 @@ set(WebCore_SRCS
     platform/graphics/svg/filters/SVGFilterEffect.cpp
     platform/graphics/svg/filters/SVGLightSource.cpp
 
+    platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp
+    platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp
+    platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp
+    platform/graphics/svg/qt/SVGPaintServerQt.cpp
+    platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp
+    platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp
     platform/graphics/svg/qt/SVGResourceClipperQt.cpp
     platform/graphics/svg/qt/SVGResourceImageQt.cpp
     platform/graphics/svg/qt/SVGResourceMaskerQt.cpp

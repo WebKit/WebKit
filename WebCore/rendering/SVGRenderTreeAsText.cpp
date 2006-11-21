@@ -35,9 +35,9 @@
 #include "RenderTreeAsText.h"
 #include "RenderSVGContainer.h"
 #include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
-#include "KRenderingPaintServerPattern.h"
-#include "KRenderingPaintServerSolid.h"
+#include "SVGPaintServerGradient.h"
+#include "SVGPaintServerPattern.h"
+#include "SVGPaintServerSolid.h"
 #include "KCanvasRenderingStyle.h"
 #include "SVGStyledElement.h"
 #include <math.h>
@@ -228,7 +228,7 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
         const RenderPath& path = static_cast<const RenderPath&>(object);
-        KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
+        SVGPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
         if (strokePaintServer) {
             TextStreamSeparator s(" ");
             ts << " [stroke={";
@@ -259,7 +259,7 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
                 ts << s << "[dash array=" << dashArray << "]";        
             ts << "}]";
         }
-        KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
+        SVGPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
         if (fillPaintServer) {
             TextStreamSeparator s(" ");
             ts << " [fill={";
@@ -368,7 +368,7 @@ void writeRenderResources(TextStream& ts, Node *parent)
         
         DeprecatedString elementId = svgElement->getAttribute(HTMLNames::idAttr).deprecatedString();
         if (resource->isPaintServer()) {
-            RefPtr<KRenderingPaintServer> paintServer = WTF::static_pointer_cast<KRenderingPaintServer>(resource);
+            RefPtr<SVGPaintServer> paintServer = WTF::static_pointer_cast<SVGPaintServer>(resource);
             ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *paintServer << "}" << endl;
         } else
             ts << "KCanvasResource {id=\"" << elementId << "\" " << *resource << "}" << endl;

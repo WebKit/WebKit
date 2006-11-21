@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "SVGResourceClipper.h"
 
 #ifdef SVG_SUPPORT
+#include "SVGResourceClipper.h"
 
 #include "SVGRenderTreeAsText.h"
 #include "TextStream.h"

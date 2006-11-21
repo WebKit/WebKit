@@ -37,7 +37,6 @@ namespace WebCore {
     class RenderPath;
     class TextStream;
     class AtomicString;
-    class KRenderingPaintServer;
 
     typedef Vector<const RenderPath*> RenderPathList;
 
@@ -95,7 +94,6 @@ namespace WebCore {
     };
 
     SVGResource* getResourceById(Document*, const AtomicString&);
-    KRenderingPaintServer* getPaintServerById(Document*, const AtomicString&);
 
     TextStream& operator<<(TextStream&, const SVGResource&);
 

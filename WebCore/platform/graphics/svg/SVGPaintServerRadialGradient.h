@@ -23,83 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef SVGPaintServerRadialGradient_H
+#define SVGPaintServerRadialGradient_H
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
 
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "FloatPoint.h"
+#include "SVGPaintServerGradient.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
-{
-}
+    class SVGPaintServerRadialGradient : public SVGPaintServerGradient {
+    public:
+        SVGPaintServerRadialGradient();
+        virtual ~SVGPaintServerRadialGradient();
 
-SVGResource::~SVGResource()
-{
-}
+        virtual SVGPaintServerType type() const { return PS_RADIAL_GRADIENT; }
 
-void SVGResource::invalidate()
-{
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
-}
+        FloatPoint gradientCenter() const;
+        void setGradientCenter(const FloatPoint&);
 
-void SVGResource::addClient(const RenderPath* item)
-{
-    unsigned size = m_clients.size();
+        FloatPoint gradientFocal() const;
+        void setGradientFocal(const FloatPoint&);
 
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
+        float gradientRadius() const;
+        void setGradientRadius(float);
 
-    m_clients.append(item);
-}
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-const RenderPathList& SVGResource::clients() const
-{
-    return m_clients;
-}
+#if PLATFORM(QT)
+        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+#endif
 
-String SVGResource::idInRegistry() const
-{
-    return m_registryId;
-}
-
-void SVGResource::setIdInRegistry(const String& id)
-{
-    m_registryId = id;
-}
-
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
-{
-    return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
-}
+    private:
+        float m_radius;
+        FloatPoint m_center;
+        FloatPoint m_focal;
+    };
 
 } // namespace WebCore
 
 #endif
+
+#endif // SVGPaintServerRadialGradient_H

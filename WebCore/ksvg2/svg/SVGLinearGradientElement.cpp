@@ -25,7 +25,7 @@
 #include "SVGLinearGradientElement.h"
 
 #include "KRenderingDevice.h"
-#include "KRenderingPaintServerGradient.h"
+#include "SVGPaintServerLinearGradient.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
@@ -71,7 +71,7 @@ void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
-void SVGLinearGradientElement::buildGradient(PassRefPtr<KRenderingPaintServerGradient> _grad) const
+void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> _grad) const
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
@@ -85,23 +85,23 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<KRenderingPaintServerGra
     float _x1 = x1()->value(), _y1 = y1()->value();
     float _x2 = x2()->value(), _y2 = y2()->value();
 
-    RefPtr<KRenderingPaintServerLinearGradient> grad = WTF::static_pointer_cast<KRenderingPaintServerLinearGradient>(_grad);
+    RefPtr<SVGPaintServerLinearGradient> grad = WTF::static_pointer_cast<SVGPaintServerLinearGradient>(_grad);
     AffineTransform mat;
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = href().deprecatedString();
-    RefPtr<KRenderingPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
     
     if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
         bool isLinear = pserver->type() == PS_LINEAR_GRADIENT;
-        KRenderingPaintServerGradient* gradient = static_cast<KRenderingPaintServerGradient*>(pserver.get());
+        SVGPaintServerGradient* gradient = static_cast<SVGPaintServerGradient*>(pserver.get());
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
             
         if (isLinear) {
-            KRenderingPaintServerLinearGradient* linear = static_cast<KRenderingPaintServerLinearGradient*>(pserver.get());
+            SVGPaintServerLinearGradient* linear = static_cast<SVGPaintServerLinearGradient*>(pserver.get());
             if (!hasAttribute(SVGNames::x1Attr))
                 _x1 = linear->gradientStart().x();
             else if (bbox)

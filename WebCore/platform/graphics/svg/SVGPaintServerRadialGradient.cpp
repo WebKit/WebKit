@@ -26,78 +26,59 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
-
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "SVGPaintServerRadialGradient.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
+SVGPaintServerRadialGradient::SVGPaintServerRadialGradient()
+    : m_radius(0.0)
 {
 }
 
-SVGResource::~SVGResource()
+SVGPaintServerRadialGradient::~SVGPaintServerRadialGradient()
 {
 }
 
-void SVGResource::invalidate()
+
+FloatPoint SVGPaintServerRadialGradient::gradientCenter() const
 {
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
+    return m_center;
 }
 
-void SVGResource::addClient(const RenderPath* item)
+void SVGPaintServerRadialGradient::setGradientCenter(const FloatPoint& center)
 {
-    unsigned size = m_clients.size();
-
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
-
-    m_clients.append(item);
+    m_center = center;
 }
 
-const RenderPathList& SVGResource::clients() const
+FloatPoint SVGPaintServerRadialGradient::gradientFocal() const
 {
-    return m_clients;
+    return m_focal;
 }
 
-String SVGResource::idInRegistry() const
+void SVGPaintServerRadialGradient::setGradientFocal(const FloatPoint& focal)
 {
-    return m_registryId;
+    m_focal = focal;
 }
 
-void SVGResource::setIdInRegistry(const String& id)
+float SVGPaintServerRadialGradient::gradientRadius() const
 {
-    m_registryId = id;
+    return m_radius;
 }
 
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
+void SVGPaintServerRadialGradient::setGradientRadius(float radius)
 {
+    m_radius = radius;
+}
+
+TextStream& SVGPaintServerRadialGradient::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=RADIAL-GRADIENT] ";
+    SVGPaintServerGradient::externalRepresentation(ts);
+    ts << " [center=" << gradientCenter() << "]"
+        << " [focal=" << gradientFocal() << "]"
+        << " [radius=" << gradientRadius() << "]";
     return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
 }
 
 } // namespace WebCore

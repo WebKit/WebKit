@@ -23,83 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef SVGPaintServerSolid_H
+#define SVGPaintServerSolid_H
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
 
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "Color.h"
+#include "SVGPaintServer.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
-{
-}
+    class SVGPaintServerSolid : public SVGPaintServer {
+    public:
+        SVGPaintServerSolid();
+        virtual ~SVGPaintServerSolid();
 
-SVGResource::~SVGResource()
-{
-}
+        virtual SVGPaintServerType type() const { return PS_SOLID; }
 
-void SVGResource::invalidate()
-{
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
-}
+        Color color() const;
+        void setColor(const Color&);
 
-void SVGResource::addClient(const RenderPath* item)
-{
-    unsigned size = m_clients.size();
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
+#if PLATFORM(MAC) || PLATFORM(QT)
+        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+#endif
 
-    m_clients.append(item);
-}
-
-const RenderPathList& SVGResource::clients() const
-{
-    return m_clients;
-}
-
-String SVGResource::idInRegistry() const
-{
-    return m_registryId;
-}
-
-void SVGResource::setIdInRegistry(const String& id)
-{
-    m_registryId = id;
-}
-
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
-{
-    return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
-}
+    private:
+        Color m_color;
+    };
 
 } // namespace WebCore
 
 #endif
+
+#endif // SVGPaintServerSolid_H

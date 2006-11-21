@@ -26,7 +26,7 @@
 #ifdef SVG_SUPPORT
 
 #include "SVGFilterEffect.h"
-#include "KRenderingPaintServer.h"
+#include "SVGPaintServer.h"
 
 namespace WebCore {
 
@@ -73,7 +73,7 @@ public:
     // Creation tools
     virtual PassRefPtr<SVGResource> createResource(const SVGResourceType&) const = 0;
     virtual SVGFilterEffect* createFilterEffect(const SVGFilterEffectType&) const = 0;
-    virtual PassRefPtr<KRenderingPaintServer> createPaintServer(const KCPaintServerType&) const = 0;
+    virtual PassRefPtr<SVGPaintServer> createPaintServer(const SVGPaintServerType&) const = 0;
 
 private:
     Vector<KRenderingDeviceContext*> m_contextStack;

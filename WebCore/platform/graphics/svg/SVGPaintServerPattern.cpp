@@ -26,78 +26,81 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#include "SVGResource.h"
-
-#include "RenderPath.h"
-#include "SVGElement.h"
-#include "SVGStyledElement.h"
+#include "SVGPaintServerPattern.h"
+#include "SVGRenderTreeAsText.h"
+#include "SVGResourceImage.h"
 
 namespace WebCore {
 
-SVGResource::SVGResource()
+SVGPaintServerPattern::SVGPaintServerPattern()
+    : m_boundingBoxMode(true)
+    , m_listener(0)
 {
 }
 
-SVGResource::~SVGResource()
+SVGPaintServerPattern::~SVGPaintServerPattern()
 {
 }
 
-void SVGResource::invalidate()
+FloatRect SVGPaintServerPattern::bbox() const
 {
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
+    return m_bbox;
 }
 
-void SVGResource::addClient(const RenderPath* item)
+void SVGPaintServerPattern::setBbox(const FloatRect& rect)
 {
-    unsigned size = m_clients.size();
-
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
-
-    m_clients.append(item);
+    m_bbox = rect;
 }
 
-const RenderPathList& SVGResource::clients() const
+bool SVGPaintServerPattern::boundingBoxMode() const
 {
-    return m_clients;
+    return m_boundingBoxMode;
 }
 
-String SVGResource::idInRegistry() const
+void SVGPaintServerPattern::setBoundingBoxMode(bool mode)
 {
-    return m_registryId;
+    m_boundingBoxMode = mode;
 }
 
-void SVGResource::setIdInRegistry(const String& id)
+SVGResourceImage* SVGPaintServerPattern::tile() const
 {
-    m_registryId = id;
+    return m_tile.get();
 }
 
-TextStream& SVGResource::externalRepresentation(TextStream& ts) const
+void SVGPaintServerPattern::setTile(const PassRefPtr<SVGResourceImage>& tile)
 {
+    m_tile = tile;
+}
+
+AffineTransform SVGPaintServerPattern::patternTransform() const
+{
+    return m_patternTransform;
+}
+
+void SVGPaintServerPattern::setPatternTransform(const AffineTransform& transform)
+{
+    m_patternTransform = transform;
+}
+
+SVGResourceListener* SVGPaintServerPattern::listener() const
+{
+    return m_listener;
+}
+
+void SVGPaintServerPattern::setListener(SVGResourceListener* listener)
+{
+    m_listener = listener;
+}
+
+TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=PATTERN]"
+        << " [bbox=" << bbox() << "]";
+    if (!boundingBoxMode())
+        ts << " [bounding box mode=" << boundingBoxMode() << "]";
+    if (!patternTransform().isIdentity())
+        ts << " [pattern transform=" << patternTransform() << "]";
     return ts;
-}
-
-SVGResource* getResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
-
-    if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
-
-    return 0;
-}
-
-TextStream& operator<<(TextStream& ts, const SVGResource& r)
-{
-    return r.externalRepresentation(ts);
 }
 
 } // namespace WebCore

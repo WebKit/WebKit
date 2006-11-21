@@ -24,7 +24,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGRadialGradientElement.h"
 
-#include "KRenderingPaintServerGradient.h"
+#include "SVGPaintServerRadialGradient.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
@@ -77,7 +77,7 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
-void SVGRadialGradientElement::buildGradient(PassRefPtr<KRenderingPaintServerGradient> _grad) const
+void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> _grad) const
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
@@ -94,23 +94,23 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<KRenderingPaintServerGra
     float _fx = fxSet ? fx()->value() : _cx;
     float _fy = fySet ? fy()->value() : _cy;
 
-    RefPtr<KRenderingPaintServerRadialGradient> grad = WTF::static_pointer_cast<KRenderingPaintServerRadialGradient>(_grad);
+    RefPtr<SVGPaintServerRadialGradient> grad = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(_grad);
     AffineTransform mat;
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = href().deprecatedString();
-    RefPtr<KRenderingPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
 
     if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
         bool isRadial = pserver->type() == PS_RADIAL_GRADIENT;
-        RefPtr<KRenderingPaintServerGradient> gradient = WTF::static_pointer_cast<KRenderingPaintServerGradient>(pserver);
+        RefPtr<SVGPaintServerGradient> gradient = WTF::static_pointer_cast<SVGPaintServerGradient>(pserver);
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
 
         if (isRadial) {
-            RefPtr<KRenderingPaintServerRadialGradient> radial = WTF::static_pointer_cast<KRenderingPaintServerRadialGradient>(pserver);
+            RefPtr<SVGPaintServerRadialGradient> radial = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(pserver);
             if (!hasAttribute(SVGNames::cxAttr))
                 _cx = radial->gradientCenter().x();
             else if (bbox)

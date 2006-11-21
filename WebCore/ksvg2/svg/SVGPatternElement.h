@@ -24,7 +24,7 @@
 #define KSVG_SVGPatternElementImpl_H
 #ifdef SVG_SUPPORT
 
-#include "KRenderingPaintServerPattern.h"
+#include "SVGPaintServerPattern.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -84,7 +84,7 @@ namespace WebCore
 
         mutable RefPtr<SVGResourceImage> m_tile;
         mutable bool m_ignoreAttributeChanges;
-        mutable RefPtr<KRenderingPaintServerPattern> m_paintServer;
+        mutable RefPtr<SVGPaintServerPattern> m_paintServer;
         
         virtual const SVGElement* contextElement() const { return this; }
 

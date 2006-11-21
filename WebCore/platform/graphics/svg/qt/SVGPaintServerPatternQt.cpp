@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
 
     This file is part of the KDE project
 
@@ -14,62 +13,30 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Library General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; see the file COPYING.LIB. If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
+    You should have received a copy of the GNU Library General Public License
+    aint with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
 */
 
 #include "config.h"
 
-#include <qrect.h>
-#include <qimage.h>
-
-#include <math.h>
-#include <QPointF>
-#include <QPainterPath>
-
-#include "RenderPath.h"
-#include "RenderStyle.h"
-#include "KRenderingDeviceQt.h"
-#include "KCanvasRenderingStyle.h"
-#include "KRenderingPaintServerPatternQt.h"
-#include "SVGResourceImage.h"
+#ifdef SVG_SUPPORT
+#include "SVGPaintServerPattern.h"
 
 namespace WebCore {
 
-// KRenderingPaintServerPatternQt
-KRenderingPaintServerPatternQt::KRenderingPaintServerPatternQt()
-    : KRenderingPaintServerPattern()
-    , KRenderingPaintServerQt()
+bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
 {
-}
+    // FIXME: Reactivate old pattern code
 
-KRenderingPaintServerPatternQt::~KRenderingPaintServerPatternQt()
-{
-}
-
-void KRenderingPaintServerPatternQt::renderPath(KRenderingDeviceContext* context, const RenderPath* path, KCPaintTargetType type) const
-{
-    RenderStyle* renderStyle = path->style();
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
-
-    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
-        qtContext->fillPath();
-
-    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
-        qtContext->strokePath();
-}
-
-bool KRenderingPaintServerPatternQt::setup(KRenderingDeviceContext* context, const RenderObject* object, KCPaintTargetType type) const
-{
 /*
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
     Q_ASSERT(qtContext != 0);
 
     QPainterPath* _path = static_cast<QPainterPath*>(qtContext->path());
     Q_ASSERT(_path != 0);
- 
+
     if (listener()) {
         listener()->resourceNotification();
     }
@@ -109,20 +76,8 @@ bool KRenderingPaintServerPatternQt::setup(KRenderingDeviceContext* context, con
     return true;
 }
 
-void KRenderingPaintServerPatternQt::teardown(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const
-{
-}
+} // namespace WebCore
 
-void KRenderingPaintServerPatternQt::draw(KRenderingDeviceContext* context, const RenderPath* path, KCPaintTargetType type) const
-{
-    if (!setup(context, path, type))
-        return;
-
-    renderPath(context, path, type);
-    teardown(context, path, type);
-}
-
-}
+#endif
 
 // vim:ts=4:noet
-

@@ -102,7 +102,7 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
         c->beginTransparencyLayer(opacity);
     }
     
-    KRenderingPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(object->style(), object);
+    SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(object->style(), object);
     if (fillPaintServer) {
         fillPaintServer->setPaintingText(true);
         if (fillPaintServer->setup(context, object, APPLY_TO_FILL)) {
@@ -111,7 +111,7 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
         }
         fillPaintServer->setPaintingText(false);
     }
-    KRenderingPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(object->style(), object);
+    SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(object->style(), object);
     if (strokePaintServer) {
         strokePaintServer->setPaintingText(true);
         if (strokePaintServer->setup(context, object, APPLY_TO_STROKE)) {

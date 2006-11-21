@@ -203,13 +203,13 @@ void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     context->clearPath();
     
-    KRenderingPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
+    SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         context->addPath(path());
         fillPaintServer->setActiveClient(this);
         fillPaintServer->draw(context, this, APPLY_TO_FILL);
     }
-    KRenderingPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
+    SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         context->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);

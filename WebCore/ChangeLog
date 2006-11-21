@@ -1,3 +1,195 @@
+2006-11-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11658
+
+        Move KRenderingPaintServer* classes to the location
+        of all other resources (platform/graphics/svg).
+
+        Soon the whole platform/graphics/svg stuff will bemoved
+        into ksvg2/ itself, as discussed with Darin.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServer.h: Removed.
+        * kcanvas/device/KRenderingPaintServerGradient.cpp: Removed.
+        * kcanvas/device/KRenderingPaintServerGradient.h: Removed.
+        * kcanvas/device/KRenderingPaintServerPattern.cpp: Removed.
+        * kcanvas/device/KRenderingPaintServerPattern.h: Removed.
+        * kcanvas/device/KRenderingPaintServerSolid.cpp: Removed.
+        * kcanvas/device/KRenderingPaintServerSolid.h: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.h: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.h: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerQt.h: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp: Removed.
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.h: Removed.
+        * kcanvas/device/quartz/KCanvasItemQuartz.h: Removed.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.cpp:
+        (WebCore::KRenderingDeviceQuartz::createPaintServer):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.cpp: Removed.
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.cpp: Removed.
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h: Removed.
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::sharedSolidPaintServer):
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::canvasResource):
+        (WebCore::SVGGradientElement::resourceNotification):
+        (WebCore::SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        (WebCore::SVGLinearGradientElement::gradientType):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::canvasResource):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        (WebCore::SVGRadialGradientElement::gradientType):
+        * platform/graphics/svg/SVGPaintServer.cpp: Added.
+        (WebCore::SVGPaintServer::SVGPaintServer):
+        (WebCore::SVGPaintServer::~SVGPaintServer):
+        (WebCore::SVGPaintServer::activeClient):
+        (WebCore::SVGPaintServer::setActiveClient):
+        (WebCore::SVGPaintServer::isPaintingText):
+        (WebCore::SVGPaintServer::setPaintingText):
+        (WebCore::operator<<):
+        (WebCore::getPaintServerById):
+        * platform/graphics/svg/SVGPaintServer.h: Added.
+        (WebCore::):
+        (WebCore::SVGPaintServer::isPaintServer):
+        * platform/graphics/svg/SVGPaintServerGradient.cpp: Added.
+        (WebCore::compareStopOffset):
+        (WebCore::operator<<):
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::~SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::gradientStops):
+        (WebCore::SVGPaintServerGradient::setGradientStops):
+        (WebCore::SVGPaintServerGradient::spreadMethod):
+        (WebCore::SVGPaintServerGradient::setGradientSpreadMethod):
+        (WebCore::SVGPaintServerGradient::boundingBoxMode):
+        (WebCore::SVGPaintServerGradient::setBoundingBoxMode):
+        (WebCore::SVGPaintServerGradient::gradientTransform):
+        (WebCore::SVGPaintServerGradient::setGradientTransform):
+        (WebCore::SVGPaintServerGradient::listener):
+        (WebCore::SVGPaintServerGradient::setListener):
+        (WebCore::SVGPaintServerGradient::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerGradient.h: Added.
+        (WebCore::):
+        (WebCore::SVGPaintServerGradient::):
+        (WebCore::makeGradientStop):
+        * platform/graphics/svg/SVGPaintServerLinearGradient.cpp: Added.
+        (WebCore::SVGPaintServerLinearGradient::SVGPaintServerLinearGradient):
+        (WebCore::SVGPaintServerLinearGradient::~SVGPaintServerLinearGradient):
+        (WebCore::SVGPaintServerLinearGradient::gradientStart):
+        (WebCore::SVGPaintServerLinearGradient::setGradientStart):
+        (WebCore::SVGPaintServerLinearGradient::gradientEnd):
+        (WebCore::SVGPaintServerLinearGradient::setGradientEnd):
+        (WebCore::SVGPaintServerLinearGradient::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h: Added.
+        (WebCore::SVGPaintServerLinearGradient::type):
+        * platform/graphics/svg/SVGPaintServerPattern.cpp: Added.
+        (WebCore::SVGPaintServerPattern::SVGPaintServerPattern):
+        (WebCore::SVGPaintServerPattern::~SVGPaintServerPattern):
+        (WebCore::SVGPaintServerPattern::bbox):
+        (WebCore::SVGPaintServerPattern::setBbox):
+        (WebCore::SVGPaintServerPattern::boundingBoxMode):
+        (WebCore::SVGPaintServerPattern::setBoundingBoxMode):
+        (WebCore::SVGPaintServerPattern::tile):
+        (WebCore::SVGPaintServerPattern::setTile):
+        (WebCore::SVGPaintServerPattern::patternTransform):
+        (WebCore::SVGPaintServerPattern::setPatternTransform):
+        (WebCore::SVGPaintServerPattern::listener):
+        (WebCore::SVGPaintServerPattern::setListener):
+        (WebCore::SVGPaintServerPattern::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerPattern.h: Added.
+        (WebCore::SVGPaintServerPattern::type):
+        * platform/graphics/svg/SVGPaintServerRadialGradient.cpp: Added.
+        (WebCore::SVGPaintServerRadialGradient::SVGPaintServerRadialGradient):
+        (WebCore::SVGPaintServerRadialGradient::~SVGPaintServerRadialGradient):
+        (WebCore::SVGPaintServerRadialGradient::gradientCenter):
+        (WebCore::SVGPaintServerRadialGradient::setGradientCenter):
+        (WebCore::SVGPaintServerRadialGradient::gradientFocal):
+        (WebCore::SVGPaintServerRadialGradient::setGradientFocal):
+        (WebCore::SVGPaintServerRadialGradient::gradientRadius):
+        (WebCore::SVGPaintServerRadialGradient::setGradientRadius):
+        (WebCore::SVGPaintServerRadialGradient::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h: Added.
+        (WebCore::SVGPaintServerRadialGradient::type):
+        * platform/graphics/svg/SVGPaintServerSolid.cpp: Added.
+        (WebCore::SVGPaintServerSolid::SVGPaintServerSolid):
+        (WebCore::SVGPaintServerSolid::~SVGPaintServerSolid):
+        (WebCore::SVGPaintServerSolid::color):
+        (WebCore::SVGPaintServerSolid::setColor):
+        (WebCore::SVGPaintServerSolid::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerSolid.h: Added.
+        (WebCore::SVGPaintServerSolid::type):
+        * platform/graphics/svg/SVGResource.cpp:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceClipper.cpp:
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        * platform/graphics/svg/cg/SVGPaintServerCg.cpp: Added.
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        (WebCore::SVGPaintServer::strokePath):
+        (WebCore::SVGPaintServer::clipToStrokePath):
+        (WebCore::SVGPaintServer::fillPath):
+        (WebCore::SVGPaintServer::clipToFillPath):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp: Added.
+        (WebCore::cgGradientCallback):
+        (WebCore::CGShadingRefForLinearGradient):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::SVGPaintServerGradient::invalidateCaches):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientCache):
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::setup):
+        (WebCore::SVGPaintServerGradient::invalidate):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp: Added.
+        (WebCore::patternCallback):
+        (WebCore::SVGPaintServerPattern::setup):
+        (WebCore::SVGPaintServerPattern::teardown):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp: Added.
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp: Added.
+        (WebCore::SVGPaintServerGradient::fillColorArray):
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp: Added.
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp: Added.
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp: Added.
+        (WebCore::SVGPaintServer::setPenProperties):
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp: Added.
+        (WebCore::setup):
+        * platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp: Added.
+        (WebCore::SVGPaintServerSolid::setup):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::writeRenderResources):
+
 2006-11-21  Alex Taylor  <darwin@techvisual.co.nz>
 
         Reviewed by Mitz.

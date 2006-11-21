@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "SVGResourceMarker.h"
 
 #ifdef SVG_SUPPORT
+#include "SVGResourceMarker.h"
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"

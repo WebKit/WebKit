@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
 
     This file is part of the KDE project
 
@@ -20,35 +19,32 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KRenderingPaintServerSolid_H
-#define KRenderingPaintServerSolid_H
-#ifdef SVG_SUPPORT
+#include "config.h"
 
-#include "Color.h"
-#include "KRenderingPaintServer.h"
+#ifdef SVG_SUPPORT
+#include "SVGPaintServerGradient.h"
+
+#include <QColor>
+#include <QGradient>
 
 namespace WebCore {
 
-class KRenderingPaintServerSolid : public KRenderingPaintServer
+// Helper function used by linear & radial gradient
+void SVGPaintServerGradient::fillColorArray(QGradient& gradient, const Vector<SVGGradientStop>& stops, float opacity) const
 {
-public:
-    KRenderingPaintServerSolid();
-    virtual ~KRenderingPaintServerSolid();
+    for (unsigned i = 0; i < stops.size(); ++i) {
+        float offset = stops[i].first;
+        Color color = stops[i].second;
 
-    virtual KCPaintServerType type() const;
+        QColor c(color.red(), color.green(), color.blue());
+        c.setAlpha(int(color.alpha() * opacity));
 
-    // 'Solid' interface
-    Color color() const;
-    void setColor(const Color&);
-
-    TextStream& externalRepresentation(TextStream&) const;
-private:
-    Color m_color;
-};
-
+        gradient.setColorAt(offset, c);
+    }
 }
 
-#endif // SVG_SUPPORT
+} // namespace WebCore
+
 #endif
 
 // vim:ts=4:noet
