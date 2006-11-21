@@ -115,7 +115,6 @@ public:
 
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
-protected:
     // Methods for state querying
     bool isChecked(const RenderObject*) const;
     bool isIndeterminate(const RenderObject*) const;
@@ -125,6 +124,7 @@ protected:
     bool isHovered(const RenderObject*) const;
     bool isReadOnlyControl(const RenderObject*) const;
 
+protected:
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }

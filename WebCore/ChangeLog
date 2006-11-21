@@ -1,3 +1,17 @@
+2006-11-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11519
+        REGRESSION: Disabled file upload control doesn't have disabled appearance, failing fast/forms/file-input-disabled.html
+
+        Transport disabled state from DOM element to the shadow
+        DOM/render object.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        * rendering/RenderTheme.h:
+
 2006-11-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

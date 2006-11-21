@@ -116,6 +116,7 @@ void RenderFileUploadControl::updateFromElement()
         
         addChild(m_button->renderer());
     }
+    m_button->setDisabled(!theme()->isEnabled(this));
 }
 
 int RenderFileUploadControl::maxFilenameWidth()
