@@ -511,7 +511,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                 if (*end == '\0')
                     break;
                 DeprecatedCString str(ptr, end - ptr);
-                int len;
+                int len = 0;
                 int pos = findXMLEncoding(str, len);
                 if (pos != -1)
                     setEncoding(TextEncoding(str.mid(pos, len)), EncodingFromXMLHeader);
