@@ -1,3 +1,15 @@
+2006-11-21  Alex Taylor  <darwin@techvisual.co.nz>
+
+        Reviewed by Mitz.
+
+        Pixel tests for border radius rendering bug
+        - http://bugs.webkit.org/show_bug.cgi?id=11587
+
+        * fast/borders/borderRadiusArcs01-expected.checksum: Added.
+        * fast/borders/borderRadiusArcs01-expected.png: Added.
+        * fast/borders/borderRadiusArcs01-expected.txt: Added.
+        * fast/borders/borderRadiusArcs01.html: Added.
+
 2006-11-20  W. Andy Carrel  <wac@google.com>
 
         Reviewed by Maciej.

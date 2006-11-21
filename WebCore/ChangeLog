@@ -1,3 +1,15 @@
+2006-11-21  Alex Taylor  <darwin@techvisual.co.nz>
+
+        Reviewed by Mitz.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11587
+
+        Adds calculations for bottom right radius's position
+        which was being drawn incorrectly.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorder):
+
 2006-11-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
