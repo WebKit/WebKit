@@ -24,11 +24,6 @@ frameworks are open source, we would like to move as much of this code as possib
 Objective-C to make the code more portable.  Ultimately we would like WebKit to be nothing more than the embedding APIs for a given platform and infrastructure/glue 
 code that is needed to tie into a specific platform.  All of the remaining logic should move to WebCore.
 
-<dt>Implement form controls using WebKit</dt>
-<dd>Currently there is a dependency on all of the various Qt interfaces for form controls like checkboxes, buttons and text fields.  We would like to re-implement
-these controls using WebKit itself.  This will eliminate many Qt classes from the platform layer (KWQ) and make the porting job easier when moving to other platforms.
-See the <a href="../forms/index.html">forms project page</a> for more details.
-
 <dt>Implement missing components</dt>
 <dd>Not all platforms have code for handling cookies, authentication, SSL, caching, network loading, or image decoding.  We would be interested in implementations
 of these capabilities that could optionally be used on platforms that do not have this support.  On platforms that do, the implementation of the cross-platform

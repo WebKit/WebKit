@@ -1,6 +1,6 @@
 <?php
-	$title = "WebKit Bug Life Cycle";
-	include("../header.inc");
+    $title = "WebKit Bug Life Cycle";
+    include("../header.inc");
 ?>
 <h2>WebKit Bug Life Cycle</h2>
 
@@ -57,7 +57,7 @@ the requested reviewer's email address in the <tt>Requestee</tt> field. Otherwis
 this point; it isn't changed to <tt>FIXED</tt> until a fix has been checked into the source tree.</p>
 
 <p>When the review flag's state is changed, or when a comment is made in the Edit form for an attachment, email is automatically sent to
-the <a href="http://www.opendarwin.org/mailman/listinfo/webkit-reviews">webkit-reviews</a> mailing list. The reviewers all subscribe to
+the <a href="http://lists.webkit.org/mailman/listinfo/webkit-reviews">webkit-reviews</a> mailing list. The reviewers all subscribe to
 this list, and anyone else is free to do so as well.</p>
 
 <p>If the submitter of a patch changes their mind about wanting a review, they should clear the <tt>review</tt> flag by choosing the
@@ -85,7 +85,7 @@ submitter should also clear the <tt>review</tt> flag. This would happen automati
 should change the state of the bug to <tt>FIXED</tt>; generally the assignee is left unchanged at this point.</p>
 
 <p>All of the
-people with commit privileges should be subscribed to the <a href="http://www.opendarwin.org/mailman/listinfo/webkit-reviews">webkit-reviews</a>
+people with commit privileges should be subscribed to the <a href="http://lists.webkit.org/mailman/listinfo/webkit-reviews">webkit-reviews</a>
 mailing list, and so they will receive email when a patch is approved and thus ready to be committed. If an approved patch has not been committed for what seems to be an inordinately
 long time, the patch submitter could send email requesting status to this mailing list. As a last resort, the patch submitter could contact the
 reviewer directly. Due to everyone's busy schedules, some delays in getting patches reviewed, and then in getting them committed, are inevitable.</p>
@@ -113,5 +113,5 @@ change the resolution to <tt>REOPENED</tt> and assign it to the person who submi
 the resolution is changed to <tt>CLOSED</tt>.
 
 <?php
-	include("../footer.inc");
+    include("../footer.inc");
 ?>

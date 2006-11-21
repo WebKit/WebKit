@@ -7,10 +7,7 @@
 <h3>Overview</h3>
 <p>Welcome to the project page for the HTML form controls.  Form controls are the various widgets that can be used in an HTML form and that can 
 participate in form submission.  The code in the engine that talks to the controls is in the <tt>WebCore</tt> framework.  The DOM elements are
-under the <tt>khtml/html</tt> directory, and the rendering objects are under the <tt>khtml/rendering</tt> directory.  At the moment the controls are
-all grouped together into single files, and one change we plan to make is to split these out into one class per file in order to make it easier to
-locate each control's implementation.
-</p>
+under the <tt>html</tt> directory, and the rendering objects are under the <tt>rendering</tt> directory.</p>
 
 <h3>Get Involved!</h3>
 
@@ -22,16 +19,8 @@ View bugs in the HTML Forms component in Bugzilla.
 </p>
 
 <dl>
-<dt>Use WebKit to implement the controls</dt>
-<dd>
-<p>The HTML form controls are currently implemented without using the WebKit engine.  Right now WebKit talks to Qt interfaces that represent the controls.
-On OS X our implementation of these Qt interfaces uses App Kit.  The major architectural change that we are planning for form controls in the coming year
-is to re-implement the form controls using the WebKit engine itself to render.  This will allow us to support more CSS properties for form controls, make
-our code more portable to other platforms, and - most importantly - will improve our performance significantly on pages with a large number of controls.
-
-<p>For input fields and text areas, we plan to use <a href="../editing/index.html">HTML editing</a> to implement these controls, and for the other controls custom
-renderers will be made.  A new theme abstraction will be used to encapsulate the rendering of a native look on the platform with <tt>NSCells</tt> being used to
-determine the correct appearance of controls like checkboxes and buttons on OS X.</p>
+<dt>Stabilize the new form controls</dt>
+<dd>Form controls have recently switched from using standard AppKit controls to being rendered within the engine itself.  This allows us to support more CSS properties for controls, and makes our code more portable to other platforms.  Because this is such a major architectural change, we ask that you scrutinize the new controls closely and <a href="http://webkit.org/quality/reporting.html">report any bugs</a>.
 
 <dt>Implement Web Forms</dt>
 <dd>The <a href="http://whatwg.org">WhatWG</a> has outlined extensions to existing HTML forms.  We are interested in supporting these extensions (along with Opera

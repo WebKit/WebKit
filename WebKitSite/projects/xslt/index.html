@@ -29,24 +29,13 @@ View bugs in the XSLT component in Bugzilla.</a>
 </p>
 
 <p>Below is a sampling of interesting open issues with WebKit's XSLT support.  If you wish to sign up for any of these tasks, send mail
-to <a href="mailto:webkit-dev@opendarwin.org">webkit-dev@opendarwin.org</a> or comment in the appropriate bug.</p>
+to <a href="http://lists.webkit.org/mailman/listinfo/webkit-dev">webkit-dev@lists.webkit.org</a> or comment in the appropriate bug.</p>
 
 <dl>
 <dt><a href="http://bugs.webkit.org/show_bug.cgi?id=3273">XSL transformations block the user interface</a>
 <dd>The XSLTProcessor that performs the transformation using libxslt does so on the UI thread.  Therefore a transformation that takes a long time
 to complete will block the UI of a WebKit application.  The code should be restructured so that both synchronous and asynchronous transformations are
 allowed, since until JavaScript can be suspended/resumed a synchronous transformation mode must be possible in order for a JS API for XSL transformations to work.
-
-<dt><a href="http://bugs.webkit.org/show_bug.cgi?id=3274">The document() function is not supported</a></dt>
-<dd>The <tt>document()</tt> capability of XSLT is not supported.  XSLT's loader API (the one used to load stylesheets) 
-needs to be used in order to synchronously load and hand back an XML document.  This code could be 
-similar to (or possibly reuse) the sync code for XMLHttpRequests.
-
-<dt><a href="http://bugs.webkit.org/show_bug.cgi?id=3275">Implement Mozilla's XSLTProcessor JS object</a></dt>
-<dd>Right now the only way XSLT can be used in WebKit is through the use of client-side processing instructions in the source XML.  Mozilla offers a programmatic
-API for performing transformations from JS through an <tt>XSLTProcessor</tt> object.  The following <a href="http://www.mozilla.org/projects/xslt/js-interface.html">document</a> 
-on the Mozilla Web site describes this JS API.  We would like to match this API exactly.
-
 </dl>
 
 <?php

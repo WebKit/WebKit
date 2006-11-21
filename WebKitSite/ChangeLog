@@ -1,3 +1,23 @@
+2006-11-21  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11652
+        Bug 11652: Mailing list address and URL are incorrect
+
+        This also removes a lot of bit rot from the KWQ-era.
+
+        * coding/contributing.html:
+        * contact.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/portability/index.html:
+        * projects/xslt/index.html:
+        * quality/lifecycle.html:
+        * quality/testwriting.html:
+
 2006-11-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
