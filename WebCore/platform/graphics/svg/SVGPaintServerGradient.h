@@ -32,7 +32,7 @@
 #include "Color.h"
 #include "SVGPaintServer.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
 #include "SVGResourceImage.h"
 #endif
 
@@ -76,7 +76,7 @@ namespace WebCore {
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
         virtual void teardown(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
         virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, SVGPaintTargetType) const;
 
@@ -102,7 +102,7 @@ namespace WebCore {
         AffineTransform m_gradientTransform;
         SVGResourceListener* m_listener;
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
     public:
         typedef struct {
             CGFloat colorArray[4];

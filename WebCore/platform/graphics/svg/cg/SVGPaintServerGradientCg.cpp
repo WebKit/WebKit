@@ -158,10 +158,10 @@ void SVGPaintServerGradient::updateQuartzGradientCache(const SVGPaintServerGradi
     if (m_shadingCache)
         CGShadingRelease(m_shadingCache);
 
-    if (type() == PS_RADIAL_GRADIENT) {
+    if (type() == RadialGradientPaintServer) {
         const SVGPaintServerRadialGradient* radial = static_cast<const SVGPaintServerRadialGradient*>(server);
         m_shadingCache = CGShadingRefForRadialGradient(radial);
-    } else if (type() == PS_LINEAR_GRADIENT) {
+    } else if (type() == LinearGradientPaintServer) {
         const SVGPaintServerLinearGradient* linear = static_cast<const SVGPaintServerLinearGradient*>(server);
         m_shadingCache = CGShadingRefForLinearGradient(linear);
     }
@@ -175,14 +175,14 @@ void SVGPaintServerGradient::teardown(KRenderingDeviceContext* context, const Re
     RenderStyle* style = object->style();
     ASSERT(contextRef != NULL);
 
-    if ((type & APPLY_TO_FILL) && style->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         // workaround for filling the entire screen with the shading in the case that no text was intersected with the clip
         if (!isPaintingText() || (object->width() > 0 && object->height() > 0))
             CGContextDrawShading(contextRef, shading);
         CGContextRestoreGState(contextRef);
     }
 
-    if ((type & APPLY_TO_STROKE) && style->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         if (isPaintingText()) {
             int width  = 2048;
             int height = 2048; // FIXME??? SEE ABOVE
@@ -215,9 +215,9 @@ void SVGPaintServerGradient::renderPath(KRenderingDeviceContext* context, const 
     CGRect objectBBox;
     if (boundingBoxMode())
         objectBBox = CGContextGetPathBoundingBox(contextRef);
-    if ((type & APPLY_TO_FILL) && style->svgStyle()->hasFill())
+    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
         clipToFillPath(contextRef, path);
-    if ((type & APPLY_TO_STROKE) && style->svgStyle()->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke())
         clipToStrokePath(contextRef, path);
     // make the gradient fit in the bbox if necessary.
     if (boundingBoxMode()) { // no support for bounding boxes around text yet!
@@ -251,13 +251,13 @@ bool SVGPaintServerGradient::setup(KRenderingDeviceContext* context, const Rende
     CGContextSaveGState(contextRef);
     CGContextSetAlpha(contextRef, style->opacity());
 
-    if ((type & APPLY_TO_FILL) && style->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         CGContextSaveGState(contextRef);
         if (isPaintingText())
             CGContextSetTextDrawingMode(contextRef, kCGTextClip);
     }
 
-    if ((type & APPLY_TO_STROKE) && style->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         CGContextSaveGState(contextRef);
         applyStrokeStyleToContext(contextRef, style, object); // FIXME: this seems like the wrong place for this.
         if (isPaintingText()) {

@@ -1,3 +1,61 @@
+2006-11-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Mitz.
+
+        General SVG cleanup. Change some enums to match the style guidelines, use PLATFORM(CG) instead of PLATFORM(MAC).
+        Remove config.h inluce from AffineTransform.h
+        
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.cpp:
+        (WebCore::KRenderingDeviceQuartz::createPaintServer):
+        (WebCore::KRenderingDeviceQuartz::createResource):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::sharedSolidPaintServer):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        (WebCore::SVGLinearGradientElement::gradientType):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::canvasResource):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        (WebCore::SVGRadialGradientElement::gradientType):
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/svg/SVGPaintServer.h:
+        (WebCore::):
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::~SVGPaintServerGradient):
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        (WebCore::SVGPaintServerLinearGradient::type):
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        (WebCore::SVGPaintServerPattern::type):
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        (WebCore::SVGPaintServerRadialGradient::type):
+        * platform/graphics/svg/SVGPaintServerSolid.h:
+        (WebCore::SVGPaintServerSolid::type):
+        * platform/graphics/svg/SVGResource.h:
+        (WebCore::):
+        * platform/graphics/svg/cg/SVGPaintServerCg.cpp:
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientCache):
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+
 2006-11-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

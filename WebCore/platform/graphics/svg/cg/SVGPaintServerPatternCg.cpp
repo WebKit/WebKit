@@ -80,7 +80,7 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
 
     m_patternSpace = CGColorSpaceCreatePattern(NULL);
 
-    if ((type & APPLY_TO_FILL) && style->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         CGContextSetFillColorSpace(contextRef, m_patternSpace);
         CGContextSetFillPattern(contextRef, m_pattern, &alpha);
         if (isPaintingText()) {
@@ -89,7 +89,7 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
         }
     }
 
-    if ((type & APPLY_TO_STROKE) && style->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         CGContextSetStrokeColorSpace(contextRef, m_patternSpace);
         CGContextSetStrokePattern(contextRef, m_pattern, &alpha);
         applyStrokeStyleToContext(contextRef, style, object);

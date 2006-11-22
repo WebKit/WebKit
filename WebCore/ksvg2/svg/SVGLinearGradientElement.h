@@ -40,7 +40,7 @@ namespace WebCore
 
     protected:
         virtual void buildGradient(PassRefPtr<SVGPaintServerGradient>) const;
-        virtual SVGPaintServerType gradientType() const { return PS_LINEAR_GRADIENT; }
+        virtual SVGPaintServerType gradientType() const { return LinearGradientPaintServer; }
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

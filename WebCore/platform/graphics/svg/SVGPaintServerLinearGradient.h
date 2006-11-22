@@ -38,7 +38,7 @@ namespace WebCore {
         SVGPaintServerLinearGradient();
         virtual ~SVGPaintServerLinearGradient();
 
-        virtual SVGPaintServerType type() const { return PS_LINEAR_GRADIENT; }
+        virtual SVGPaintServerType type() const { return LinearGradientPaintServer; }
 
         FloatPoint gradientStart() const;
         void setGradientStart(const FloatPoint&);

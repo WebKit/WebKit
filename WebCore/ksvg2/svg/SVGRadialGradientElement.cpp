@@ -102,8 +102,8 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     DeprecatedString ref = href().deprecatedString();
     RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
 
-    if (pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT)) {
-        bool isRadial = pserver->type() == PS_RADIAL_GRADIENT;
+    if (pserver && (pserver->type() == RadialGradientPaintServer || pserver->type() == LinearGradientPaintServer)) {
+        bool isRadial = pserver->type() == RadialGradientPaintServer;
         RefPtr<SVGPaintServerGradient> gradient = WTF::static_pointer_cast<SVGPaintServerGradient>(pserver);
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))

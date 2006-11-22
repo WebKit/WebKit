@@ -41,7 +41,7 @@ namespace WebCore {
         SVGPaintServerPattern();
         virtual ~SVGPaintServerPattern();
 
-        virtual SVGPaintServerType type() const { return PS_PATTERN; }
+        virtual SVGPaintServerType type() const { return PatternPaintServer; }
 
         // Pattern bounding box
         void setBbox(const FloatRect&);
@@ -63,7 +63,7 @@ namespace WebCore {
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
         virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
         virtual void teardown(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const; 
 #endif
@@ -79,7 +79,7 @@ namespace WebCore {
         bool m_boundingBoxMode;
         SVGResourceListener* m_listener;
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
         mutable CGColorSpaceRef m_patternSpace;
         mutable CGPatternRef m_pattern;
 #endif                

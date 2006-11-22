@@ -30,7 +30,7 @@
 
 #include "SVGResource.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -42,16 +42,16 @@ namespace WebCore {
     
     enum SVGPaintServerType {
         // Painting mode
-        PS_SOLID = 0,
-        PS_PATTERN = 1,
-        PS_LINEAR_GRADIENT = 2,
-        PS_RADIAL_GRADIENT = 3
+        SolidPaintServer = 0,
+        PatternPaintServer = 1,
+        LinearGradientPaintServer = 2,
+        RadialGradientPaintServer = 3
     };
 
     enum SVGPaintTargetType {
         // Target mode
-        APPLY_TO_FILL = 1,
-        APPLY_TO_STROKE = 2
+        ApplyToFillTargetType = 1,
+        ApplyToStrokeTargetType = 2
     };
 
     class RenderObject;
@@ -83,7 +83,7 @@ namespace WebCore {
         virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const = 0;
 
     protected:
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
         void strokePath(CGContextRef, const RenderPath*) const;
         void clipToStrokePath(CGContextRef, const RenderPath*) const;
         void fillPath(CGContextRef, const RenderPath*) const;

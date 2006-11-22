@@ -207,13 +207,13 @@ void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (fillPaintServer) {
         context->addPath(path());
         fillPaintServer->setActiveClient(this);
-        fillPaintServer->draw(context, this, APPLY_TO_FILL);
+        fillPaintServer->draw(context, this, ApplyToFillTargetType);
     }
     SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         context->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
-        strokePaintServer->draw(context, this, APPLY_TO_STROKE);
+        strokePaintServer->draw(context, this, ApplyToStrokeTargetType);
     }
 
     drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, path());

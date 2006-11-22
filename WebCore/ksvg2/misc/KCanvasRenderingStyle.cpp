@@ -44,7 +44,7 @@ static SVGPaintServerSolid* sharedSolidPaintServer()
 {
     static SVGPaintServerSolid* _sharedSolidPaintServer = 0;
     if (!_sharedSolidPaintServer)
-        _sharedSolidPaintServer = static_cast<SVGPaintServerSolid*>(renderingDevice()->createPaintServer(PS_SOLID).releaseRef());
+        _sharedSolidPaintServer = static_cast<SVGPaintServerSolid*>(renderingDevice()->createPaintServer(SolidPaintServer).releaseRef());
     return _sharedSolidPaintServer;
 }
 

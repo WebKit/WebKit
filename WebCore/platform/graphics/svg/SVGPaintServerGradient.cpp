@@ -68,7 +68,7 @@ SVGPaintServerGradient::SVGPaintServerGradient()
     , m_boundingBoxMode(true)
     , m_listener(0)
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
     , m_stopsCache(0)
     , m_stopsCount(0)
     , m_shadingCache(0)
@@ -78,7 +78,7 @@ SVGPaintServerGradient::SVGPaintServerGradient()
 
 SVGPaintServerGradient::~SVGPaintServerGradient()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
     delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
 #endif

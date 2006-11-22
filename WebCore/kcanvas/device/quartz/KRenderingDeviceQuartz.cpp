@@ -155,16 +155,16 @@ PassRefPtr<SVGPaintServer> KRenderingDeviceQuartz::createPaintServer(const SVGPa
 {
     SVGPaintServer* newServer = NULL;
     switch(type) {
-    case PS_SOLID:
+    case SolidPaintServer:
         newServer = new SVGPaintServerSolid();
         break;
-    case PS_PATTERN:
+    case PatternPaintServer:
         newServer = new SVGPaintServerPattern();
         break;
-    case PS_LINEAR_GRADIENT:
+    case LinearGradientPaintServer:
         newServer = new SVGPaintServerLinearGradient();
         break;
-    case PS_RADIAL_GRADIENT:
+    case RadialGradientPaintServer:
         newServer = new SVGPaintServerRadialGradient();
         break;
     }
@@ -174,15 +174,15 @@ PassRefPtr<SVGPaintServer> KRenderingDeviceQuartz::createPaintServer(const SVGPa
 PassRefPtr<SVGResource> KRenderingDeviceQuartz::createResource(const SVGResourceType& type) const
 {
     switch (type) {
-    case RS_CLIPPER:
+    case ClipperResourceType:
         return new SVGResourceClipper();
-    case RS_MARKER:
+    case MarkerResourceType:
         return new SVGResourceMarker();
-    case RS_IMAGE:
+    case ImageResourceType:
         return new SVGResourceImage();
-    case RS_FILTER:
+    case FilterResourceType:
         return new SVGResourceFilter();
-    case RS_MASKER:
+    case MaskerResourceType:
         return new SVGResourceMasker();
     }
     LOG_ERROR("Failed to create resource of type: %i", type);

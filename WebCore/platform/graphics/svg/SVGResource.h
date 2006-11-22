@@ -42,11 +42,11 @@ namespace WebCore {
 
     enum SVGResourceType {
         // Painting mode
-        RS_CLIPPER = 0,
-        RS_MARKER = 1,
-        RS_IMAGE = 2,
-        RS_FILTER = 3,
-        RS_MASKER = 4
+        ClipperResourceType = 0,
+        MarkerResourceType = 1,
+        ImageResourceType = 2,
+        FilterResourceType = 3,
+        MaskerResourceType = 4
     };
 
     // The SVGResource file represent various graphics resources:

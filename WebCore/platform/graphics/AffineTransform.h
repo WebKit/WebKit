@@ -26,8 +26,6 @@
 #ifndef AffineTransform_h
 #define AffineTransform_h
 
-#include "config.h"
-
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(QT)

@@ -50,10 +50,10 @@ void SVGPaintServer::renderPath(KRenderingDeviceContext* context, const RenderPa
     KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(context);
     CGContextRef contextRef = quartzContext->cgContext();
 
-    if ((type & APPLY_TO_FILL) && style->svgStyle()->hasFill())
+    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
         fillPath(contextRef, path);
 
-    if ((type & APPLY_TO_STROKE) && style->svgStyle()->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke())
         strokePath(contextRef, path);
 }
 
