@@ -81,7 +81,7 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
     if (requiresFill && !KSVGPainterFactory::fillPaintServer(style(), this))
         return false;
 
-    return path().contains(mapAbsolutePointToLocal(point), style()->svgStyle()->fillRule());
+    return path().contains(point, style()->svgStyle()->fillRule());
 }
 
 FloatRect RenderPath::relativeBBox(bool includeStroke) const
@@ -294,7 +294,7 @@ bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
     
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        FloatPoint hitPoint(_x,_y);
+        FloatPoint hitPoint = mapAbsolutePointToLocal(FloatPoint(_x, _y));
         if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
             setInnerNode(result);

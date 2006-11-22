@@ -1,3 +1,16 @@
+2006-11-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11661
+        SVG: stroke not sensitive to mouse events (hit testing fails)
+
+        Use mapAbsolutePointToLocal when hit-testing strokes.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::nodeAtPoint):
+
 2006-11-21  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Mitz.
