@@ -57,22 +57,12 @@ SVGMatrix *SVGStyledTransformableElement::localMatrix() const
 
 SVGMatrix *SVGStyledTransformableElement::getCTM() const
 {
-    SVGMatrix *ctm = SVGLocatable::getCTM(this);
-
-    if(m_localMatrix)
-        ctm->multiply(m_localMatrix.get());
-
-    return ctm;
+    return SVGTransformable::getCTM(this);
 }
 
 SVGMatrix *SVGStyledTransformableElement::getScreenCTM() const
 {
-    SVGMatrix *ctm = SVGLocatable::getScreenCTM(this);
-
-    if(m_localMatrix)
-        ctm->multiply(m_localMatrix.get());
-
-    return ctm;
+    return SVGTransformable::getScreenCTM(this);
 }
 
 void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList *localTransforms)

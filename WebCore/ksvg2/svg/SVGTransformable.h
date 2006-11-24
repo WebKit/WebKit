@@ -39,10 +39,12 @@ namespace WebCore {
 
         // 'SVGTransformable' functions
         virtual SVGMatrix* localMatrix() const = 0;
-        
+
         virtual void updateLocalTransform(SVGTransformList*) = 0;
-        
+
         static void parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
+        SVGMatrix* getCTM(const SVGElement*) const;
+        SVGMatrix* getScreenCTM(const SVGElement*) const;
     };
 
 } // namespace WebCore

@@ -1,3 +1,24 @@
+2006-11-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11666
+        .getScreenCTM() returns wrong values
+
+        Take into account the local transform matrix too and
+        so fix getScreenCTM/getCTM for <text>.
+
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (SVGStyledTransformableElement::getCTM):
+        (SVGStyledTransformableElement::getScreenCTM):
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getScreenCTM):
+        (WebCore::SVGTextElement::getCTM):
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::getCTM):
+        (WebCore::SVGTransformable::getScreenCTM):
+        * ksvg2/svg/SVGTransformable.h:
+
 2006-11-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

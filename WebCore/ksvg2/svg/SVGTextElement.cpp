@@ -104,12 +104,12 @@ FloatRect SVGTextElement::getBBox() const
 
 SVGMatrix* SVGTextElement::getScreenCTM() const
 {
-    return SVGLocatable::getScreenCTM(this);
+    return SVGTransformable::getScreenCTM(this);
 }
 
 SVGMatrix* SVGTextElement::getCTM() const
 {
-    return SVGLocatable::getScreenCTM(this);
+    return SVGTransformable::getCTM(this);
 }
 
 RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* style)

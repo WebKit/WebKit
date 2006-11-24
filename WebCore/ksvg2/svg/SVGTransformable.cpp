@@ -41,6 +41,20 @@ SVGTransformable::~SVGTransformable()
 {
 }
 
+SVGMatrix* SVGTransformable::getCTM(const SVGElement* element) const
+{
+    SVGMatrix* ctm = SVGLocatable::getCTM(element);
+    ctm->multiply(localMatrix());
+    return ctm;
+}
+
+SVGMatrix* SVGTransformable::getScreenCTM(const SVGElement* element) const
+{
+    SVGMatrix* ctm = SVGLocatable::getScreenCTM(element);
+    ctm->multiply(localMatrix());
+    return ctm;
+}
+
 void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
     // Split string for handling 1 transform statement at a time
