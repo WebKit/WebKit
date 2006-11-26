@@ -29,9 +29,10 @@
 #include "SVGResourceClipper.h"
 #include "SVGResourceMarker.h"
 #include "KRenderingDeviceQt.h"
-#include "KRenderingPaintServerSolidQt.h"
-#include "KRenderingPaintServerGradientQt.h"
-#include "KRenderingPaintServerPatternQt.h"
+#include "SVGPaintServerSolid.h"
+#include "SVGPaintServerLinearGradient.h"
+#include "SVGPaintServerRadialGradient.h"
+#include "SVGPaintServerPattern.h"
 
 namespace WebCore {
 
@@ -146,33 +147,33 @@ PassRefPtr<SVGResource> KRenderingDeviceQt::createResource(const SVGResourceType
 {
     switch (type)
     {
-        case RS_CLIPPER:
+        case ClipperResourceType:
             return new SVGResourceClipper();
-        case RS_MARKER:
+        case MarkerResourceType:
             return new SVGResourceMarker(); // Use default implementation...
-        case RS_IMAGE:
+        case ImageResourceType:
             // return new SVGResourceImageQt();
-        case RS_FILTER:
+        case FilterResourceType:
             // return new KCanvasFilterQt();
-        case RS_MASKER:
+        case MaskerResourceType:
             // return new KCanvasMaskerQt();
         default:
             return 0;
     }
 }
 
-PassRefPtr<KRenderingPaintServer> KRenderingDeviceQt::createPaintServer(const KCPaintServerType& type) const
+PassRefPtr<SVGPaintServer> KRenderingDeviceQt::createPaintServer(const SVGPaintServerType& type) const
 {
     switch (type)
     {
-        case PS_SOLID:
-            return new KRenderingPaintServerSolidQt();
-        case PS_PATTERN:
-            return new KRenderingPaintServerPatternQt();
-        case PS_LINEAR_GRADIENT:
-            return new KRenderingPaintServerLinearGradientQt();
-        case PS_RADIAL_GRADIENT:
-            return new KRenderingPaintServerRadialGradientQt();
+        case SolidPaintServer:
+            return new SVGPaintServerSolid();
+        case PatternPaintServer:
+            return new SVGPaintServerPattern();
+        case LinearGradientPaintServer:
+            return new SVGPaintServerLinearGradient();
+        case RadialGradientPaintServer:
+            return new SVGPaintServerRadialGradient();
         default:
             return 0;
     }

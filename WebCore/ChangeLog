@@ -1,3 +1,23 @@
+2006-11-26  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11693
+        Fix the Qt build, adapt to various enum/class renamings.
+
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        (WebCore::KRenderingDeviceQt::createResource):
+        (WebCore::KRenderingDeviceQt::createPaintServer):
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::setup):
+        * platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
 2006-11-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

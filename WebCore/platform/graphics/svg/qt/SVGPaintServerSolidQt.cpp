@@ -38,7 +38,7 @@ bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderOb
 
     QColor c = color();
 
-    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
         c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
 
         QBrush brush(c);
@@ -48,7 +48,7 @@ bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderOb
         /* if(isPaintingText()) ... */
     }
 
-    if((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
         c.setAlphaF(renderStyle->svgStyle()->strokeOpacity());
 
         QPen pen(c);

@@ -70,7 +70,7 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
 
     // TODO: Gradient transform + opacity fixes!
 
-    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
         fillColorArray(gradient, gradientStops(), opacity);
 
         QBrush brush(gradient);
@@ -79,7 +79,7 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
         qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
     }
 
-    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
         fillColorArray(gradient, gradientStops(), opacity);
 
         QPen pen;
