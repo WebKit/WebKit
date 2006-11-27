@@ -1,3 +1,16 @@
+2006-11-27  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam and Anders.
+
+        Testcase for:
+        Targeted frame submission.
+
+        * fast/forms/resources/success.html: Added.
+        * fast/forms/targeted-frame-submission-expected.checksum: Added.
+        * fast/forms/targeted-frame-submission-expected.png: Added.
+        * fast/forms/targeted-frame-submission-expected.txt: Added.
+        * fast/forms/targeted-frame-submission.html: Added.
+
 2006-11-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
