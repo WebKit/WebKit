@@ -1,3 +1,12 @@
+2006-11-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Moved unused Private SPI to Internal and pruned other unused code
+
+        * Misc/WebIconDatabase.m:
+        * Misc/WebIconDatabasePrivate.h:
+
 2006-11-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

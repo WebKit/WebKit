@@ -46,23 +46,5 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 */
 - (void)removeAllIcons;
 
-/*!
-   @method isIconExpiredForIconURL:
-   @discussion Returns whether or not the icon at the specified URL is expired in the DB
-*/
-- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL;
-
 @end
 
-@interface WebIconDatabase (WebPrivate)
-
-// None of these are used in WebKit outside WebIconDatabase.m, so if we can verify that
-// they are not used outside WebKit, then we can just remove these declarations and
-// make them "file internal".
-
-- (BOOL)_isEnabled;
-- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
-- (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
-- (void)_sendNotificationForURL:(NSString *)URL;
-
-@end

@@ -59,6 +59,10 @@ NSSize WebIconLargeSize = {128, 128};
 #define UniqueFilePathSize (34)
 
 @interface WebIconDatabase (WebInternal)
+- (BOOL)_isEnabled;
+- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
+- (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
+- (void)_sendNotificationForURL:(NSString *)URL;
 - (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
 - (void)_resetCachedWebPreferences:(NSNotification *)notification;
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
@@ -217,35 +221,13 @@ NSSize WebIconLargeSize = {128, 128};
                                                       userInfo:nil];
 }
 
-- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL
-{
-    return IconDatabase::sharedIconDatabase()->isIconExpiredForIconURL(iconURL);
-}
-
 @end
 
-@implementation WebIconDatabase (WebPrivate)
+@implementation WebIconDatabase (WebInternal)
 
 - (BOOL)_isEnabled
 {
     return IconDatabase::sharedIconDatabase()->enabled();
-}
-
-- (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
-{
-    ASSERT(data);
-    ASSERT(iconURL);
-    ASSERT([self _isEnabled]);   
-
-    IconDatabase::sharedIconDatabase()->setIconDataForIconURL([data bytes], [data length], iconURL);
-}
-
-- (void)_setHaveNoIconForIconURL:(NSString *)iconURL
-{
-    ASSERT(iconURL);
-    ASSERT([self _isEnabled]);
-
-    IconDatabase::sharedIconDatabase()->setHaveNoIconForIconURL(iconURL);
 }
 
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL
@@ -279,10 +261,6 @@ NSSize WebIconLargeSize = {128, 128};
                                                         object:self
                                                       userInfo:userInfo];
 }
-
-@end
-
-@implementation WebIconDatabase (WebInternal)
 
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
