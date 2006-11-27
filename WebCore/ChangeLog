@@ -1,3 +1,14 @@
+2006-11-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=8062
+          Caret color in new text field should take background color and foreground color into consideration
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::paintCaret):
+          Use the foreground color of the rootEditableElement to determine the caret color.  This will work well for text controls in web pages (since the root is always the actual form control)
+          as well as in editable WebViews, like in Mail, which will just pick up the color from the body element.
+
 2006-11-26  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Maciej.

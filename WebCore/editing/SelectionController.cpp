@@ -866,8 +866,14 @@ void SelectionController::paintCaret(GraphicsContext *p, const IntRect &rect)
         layout();
         
     IntRect caret = intersection(caretRect(), rect);
-    if (!caret.isEmpty())
-        p->fillRect(caret, Color::black);
+    if (!caret.isEmpty()) {
+        Color caretColor = Color::black;
+        Element* element = rootEditableElement();
+        if (element && element->renderer())
+            caretColor = element->renderer()->style()->color();
+
+        p->fillRect(caret, caretColor);
+    }
 }
 
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const
