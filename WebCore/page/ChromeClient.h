@@ -27,7 +27,8 @@ namespace WebCore {
 
     class FloatRect;
     class Page;
-
+    class String;
+    
     struct FrameLoadRequest;
     
     class ChromeClient : public AbstractShared {
@@ -62,6 +63,8 @@ namespace WebCore {
         virtual bool menubarVisible() = 0;
 
         virtual void setResizable(bool) = 0;
+        
+        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID) = 0;
 };
 
 }

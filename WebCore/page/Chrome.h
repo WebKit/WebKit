@@ -30,6 +30,7 @@ namespace WebCore {
     class ContextMenu;
     class FloatRect;
     class Page;
+    class String;
     struct FrameLoadRequest;
     
     class Chrome {
@@ -70,6 +71,8 @@ namespace WebCore {
         
         void setResizable(bool) const;
 
+        void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
+        
     private:
         Page* m_page;
         RefPtr<ChromeClient> m_client;

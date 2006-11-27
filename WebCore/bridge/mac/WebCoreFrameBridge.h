@@ -320,7 +320,6 @@ typedef enum {
 - (BOOL)shouldInterruptJavaScript;
 - (BOOL)canRunBeforeUnloadConfirmPanel;
 - (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message;
-- (void)addMessageToConsole:(NSDictionary *)message;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;

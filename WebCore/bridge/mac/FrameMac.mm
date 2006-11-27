@@ -730,16 +730,6 @@ bool FrameMac::shouldInterruptJavaScript()
     return false;
 }
 
-void FrameMac::addMessageToConsole(const String &message, unsigned lineNumber, const String &sourceURL)
-{
-    NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-        (NSString *)message, @"message",
-        [NSNumber numberWithInt: lineNumber], @"lineNumber",
-        (NSString *)sourceURL, @"sourceURL",
-        NULL];
-    [_bridge addMessageToConsole:dictionary];
-}
-
 // Returns whether caller should continue with "the default processing", which is the same as 
 // the event handler NOT setting the return value to false
 bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy)

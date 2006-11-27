@@ -72,6 +72,8 @@ public:
     
     virtual void setResizable(bool);
     
+    virtual void addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceID);
+
 private:
     WebChromeClient(WebView *webView);
     

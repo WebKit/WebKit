@@ -220,8 +220,6 @@ private:
 // === to be moved into Chrome
 
 public:
-    virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID) = 0;
-
     virtual void runJavaScriptAlert(const String& message) = 0;
     virtual bool runJavaScriptConfirm(const String& message) = 0;
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;  

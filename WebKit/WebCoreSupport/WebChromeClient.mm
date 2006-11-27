@@ -33,10 +33,12 @@
 #import "WebFrameView.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequestMac.h>
 #import <WebCore/Screen.h>
 #import <wtf/PassRefPtr.h>
@@ -201,4 +203,19 @@ void WebChromeClient::setResizable(bool b)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView setResizable:b];
 }
+
+void WebChromeClient::addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceURL)
+{
+    id wd = [m_webView UIDelegate];
+    if ([wd respondsToSelector:@selector(webView:addMessageToConsole:)]) {
+        NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+            (NSString *)message, @"message",
+            [NSNumber numberWithInt: lineNumber], @"lineNumber",
+            (NSString *)sourceURL, @"sourceURL",
+            NULL];
+        
+        [wd webView:m_webView addMessageToConsole:dictionary];
+    }    
+}
+
 

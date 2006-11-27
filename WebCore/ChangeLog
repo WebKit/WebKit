@@ -1,3 +1,25 @@
+2006-11-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move addMessageToConsole to Chrome.
+        
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        (KJS::ScheduledAction::execute):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::addMessageToConsole):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.h:
+
 2006-11-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

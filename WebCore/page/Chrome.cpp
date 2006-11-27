@@ -170,5 +170,10 @@ void Chrome::setResizable(bool b) const
     m_client->setResizable(b);
 }
 
+void Chrome::addMessageToConsole(const String &message, unsigned lineNumber, const String &sourceURL)
+{
+    m_client->addMessageToConsole(message, lineNumber, sourceURL);
+}
+
 } // namespace WebCore
 

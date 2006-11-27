@@ -1,3 +1,14 @@
+2006-11-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move addMessageToConsole to Chrome.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::addMessageToConsole):
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2006-11-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

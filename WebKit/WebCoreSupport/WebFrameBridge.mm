@@ -368,14 +368,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return *result != nil;
 }
 
-- (void)addMessageToConsole:(NSDictionary *)message
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    if ([wd respondsToSelector:@selector(webView:addMessageToConsole:)])
-        [wd webView:wv addMessageToConsole:message];
-}
-
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebCoreOpenPanelResultListener>)resultListener
 {
     WebView *wv = [self webView];
