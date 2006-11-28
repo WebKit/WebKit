@@ -309,6 +309,10 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
     }
     cachedStylesheet->clearDocuments();
     
+    xmlChar* origMethod = sheet->method;
+    if (!origMethod && mimeType == "text/html")
+        sheet->method = (xmlChar*)"html";
+
     bool success = false;
     bool shouldFreeSourceDoc = false;
     if (xmlDocPtr sourceDoc = xmlDocPtrFromNode(sourceNode, shouldFreeSourceDoc)) {
@@ -340,6 +344,7 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
         xmlFreeDoc(resultDoc);
     }
     
+    sheet->method = origMethod;
     setXSLTLoadCallBack(0, 0, 0);
     xsltFreeStylesheet(sheet);
 
@@ -356,11 +361,16 @@ RefPtr<Document> XSLTProcessor::transformToDocument(Node *sourceNode)
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, sourceNode);
 }
 
-RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node *sourceNode, Document *outputDoc)
+RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
 {
     DeprecatedString resultMIMEType;
     DeprecatedString resultString;
     DeprecatedString resultEncoding;
+
+    // If the output document is HTML, default to HTML method.
+    if (outputDoc->isHTMLDocument())
+        resultMIMEType = "text/html";
+    
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return 0;
     return createFragmentFromSource(resultString, resultMIMEType, sourceNode, outputDoc);

@@ -1,3 +1,18 @@
+2006-11-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11694
+        XSLT output method does not default to HTML when the target document is HTML
+
+        Test: fast/xsl/default-html.html
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToString): Make mimeType an input/output parameter, 
+        serving as a hint when the stylesheet doesn't specify the output method.
+        (WebCore::XSLTProcessor::transformToFragment): Set mimeType to text/html if the target
+        document is HTML.
+
 2006-11-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
