@@ -1,3 +1,10 @@
+2006-11-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Try fixing the build.
+        
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::IntRect):
+
 2006-11-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
