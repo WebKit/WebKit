@@ -45,6 +45,8 @@
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
 		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
 		650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 650F74E309E488F70020118A /* WebUnarchivingState.m */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
@@ -387,6 +389,8 @@
 		51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C6906C0347500A9B09E /* WebPDFRepresentation.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPDFRepresentation.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
+		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
+		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
 		650F74E209E488F70020118A /* WebUnarchivingState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebUnarchivingState.h; sourceTree = "<group>"; };
 		650F74E309E488F70020118A /* WebUnarchivingState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebUnarchivingState.m; sourceTree = "<group>"; };
 		65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDictionaryExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -559,7 +563,7 @@
 		F5F717230288493C018635CA /* npapi.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = npapi.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7174C02885C5B018635CA /* WebViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7174D02885C5B018635CA /* WebViewFactory.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebViewFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = WebKit.exp; sourceTree = SOURCE_ROOT; };
+		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = WebKit.exp; sourceTree = "<group>"; };
 		F5F81C3902B67C26018635CA /* WebRenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebRenderNode.h; path = ../WebView/WebRenderNode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F81C3A02B67C26018635CA /* WebRenderNode.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; name = WebRenderNode.m; path = ../WebView/WebRenderNode.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -614,6 +618,7 @@
 			isa = PBXGroup;
 			children = (
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
+				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F52CA6C002DF9D78018635CA /* Download */,
@@ -659,7 +664,6 @@
 				932399D7034CF7F6008635CE /* StringsNotToBeLocalized.txt */,
 				F5883BDE025E5C6A01000102 /* nullplugin.tiff */,
 				F5B67130023EDF8901C1A525 /* url_icon.tiff */,
-				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
 				9345D4E70365C58D008635CE /* WebJavaScriptTextInputPanel.nib */,
 				8476113206EF82DB00AB2914 /* WebViewEditingContextMenu.nib */,
 				EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */,
@@ -690,6 +694,8 @@
 		254DC334016E1D3F0ECA149E /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				5241ADF30B1BC48A004012BD /* WebCache.h */,
+				5241ADF40B1BC48A004012BD /* WebCache.mm */,
 				6578F5DE045F817400000128 /* WebDownload.h */,
 				6578F5DF045F817400000128 /* WebDownload.m */,
 				ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */,
@@ -1216,6 +1222,7 @@
 				9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */,
 				51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */,
 				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,
+				5241ADF50B1BC48A004012BD /* WebCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1265,7 +1272,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1443,6 +1449,7 @@
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
 				065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */,
+				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

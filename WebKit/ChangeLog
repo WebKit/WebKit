@@ -1,3 +1,19 @@
+2006-11-27  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam.
+
+        Part of the change to move WebCoreCache into WebKit:
+        Added WebCache which handles emptying and enable/disabling the cache.
+        emptyCache and setCacheDisabled have been removed from WebCoreStatistics.
+
+        * Misc/WebCache.h: Added.
+        * Misc/WebCache.mm: Added.
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.m:
+        (+[WebCoreStatistics statistics]):
+        * WebKit.exp:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-11-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

@@ -28,9 +28,9 @@
 
 #import "WebCoreStatistics.h"
 
-#import <WebCore/WebCoreCache.h>
 #import <WebCore/WebCoreJavaScript.h>
 
+#import "WebCache.h"
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 
@@ -38,17 +38,7 @@
 
 + (NSArray *)statistics
 {
-    return [WebCoreCache statistics];
-}
-
-+ (void)emptyCache
-{
-    [WebCoreCache empty];
-}
-
-+ (void)setCacheDisabled:(BOOL)disabled
-{
-    [WebCoreCache setDisabled:disabled];
+    return [WebCache statistics];
 }
 
 + (size_t)javaScriptObjectsCount

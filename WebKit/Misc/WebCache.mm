@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "WebCoreCache.h"
+#import "WebCache.h"
 
-#include "Cache.h"
+#import <WebCore/Cache.h>
 
-@implementation WebCoreCache
+@implementation WebCache
 
 + (NSArray *)statistics
 {
