@@ -28,6 +28,7 @@
 
 #include <wtf/HashSet.h>
 #include "AtomicString.h"
+#include "ClipboardAccessPolicy.h"
 #include "Node.h"
 #include "Shared.h"
 
@@ -62,6 +63,8 @@ namespace WebCore {
         virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
         virtual Node* dragImageElement() = 0;
         virtual void setDragImageElement(Node*, const IntPoint&) = 0;
+
+        virtual void setAccessPolicy(ClipboardAccessPolicy) = 0;
     };
 
 } // namespace WebCore

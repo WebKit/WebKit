@@ -43,6 +43,7 @@ public:
     virtual bool isContinuousSpellCheckingEnabled();
     virtual int spellCheckerDocumentTag();
 
+    virtual bool smartInsertDeleteEnabled();
     virtual bool selectWordBeforeMenuEvent();
     virtual bool isEditable();
 
@@ -51,6 +52,7 @@ public:
 
     virtual bool shouldBeginEditing(WebCore::Range*);
     virtual bool shouldEndEditing(WebCore::Range*);
+    virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
     virtual bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
 
     virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
@@ -58,6 +60,9 @@ public:
     virtual void didBeginEditing();
     virtual void didEndEditing();
 
+    virtual NSData* dataForArchivedSelectionInFrame();
+    virtual NSString* _web_userVisibleString(NSURL*);
+    
     virtual void respondToChangedContents();
 
     virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);

@@ -26,6 +26,8 @@
 #ifndef Editor_h
 #define Editor_h
 
+#include "ClipboardAccessPolicy.h"
+#include "EditorClient.h"
 #include "EditorInsertAction.h"
 #include "Frame.h"
 #include <wtf/Forward.h>
@@ -34,16 +36,14 @@
 
 namespace WebCore {
 
+class Clipboard;
 class DeleteButtonController;
-class Editor;
-class EditorClient;
+class DocumentFragment;
 class Frame;
 class HTMLElement;
+class Pasteboard;
 class Range;
 class Selection;
-
-// make platform-specific and implement - this is temporary placeholder
-typedef int Pasteboard;
 
 class Editor {
 public:
@@ -57,6 +57,13 @@ public:
     
     bool canEdit() const;
     bool canEditRichly() const;
+
+    bool canDHTMLCut();
+    bool canDHTMLCopy();
+    bool canDHTMLPaste();
+    bool tryDHTMLCopy();
+    bool tryDHTMLCut();
+    bool tryDHTMLPaste();
 
     bool canCut() const;
     bool canCopy() const;
@@ -88,6 +95,7 @@ public:
     void setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand);
 
     void deleteSelectionWithSmartDelete(bool smartDelete);
+    bool dispatchCPPEvent(const AtomicString &, ClipboardAccessPolicy);
     
     Node* removedAnchor() const { return m_removedAnchor.get(); }
     void setRemovedAnchor(PassRefPtr<Node> n) { m_removedAnchor = n; }
@@ -102,7 +110,7 @@ public:
     void reappliedEditing(PassRefPtr<EditCommand>);
     
     bool selectionStartHasStyle(CSSStyleDeclaration*) const;
-    
+
     bool selectWordBeforeMenuEvent() const;
     bool clientIsEditable() const;
     
@@ -115,14 +123,17 @@ private:
 
     bool canDeleteRange(Range*) const;
     bool canSmartCopyOrDelete();
-    Range* selectedRange();
-    bool tryDHTMLCopy();
-    bool tryDHTMLCut();
-    bool tryDHTMLPaste();
+    bool canSmartReplaceWithPasteboard(Pasteboard* pasteboard);
+    PassRefPtr<Clipboard> newGeneralClipboard(ClipboardAccessPolicy policy);
+    PassRefPtr<Range> selectedRange();
     void deleteSelection();
-    void pasteAsPlainTextWithPasteboard(Pasteboard);
-    void pasteWithPasteboard(Pasteboard, bool allowPlainText);
-    void writeSelectionToPasteboard(Pasteboard);
+    void pasteAsPlainTextWithPasteboard(Pasteboard*);
+    Vector<String> pasteboardTypesForSelection();
+    void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
+    void replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle);
+    void replaceSelectionWithText(String text, bool selectReplacement, bool smartReplace);
+    bool shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction);
+    void writeSelectionToPasteboard(Pasteboard*);
 };
 
 } // namespace WebCore

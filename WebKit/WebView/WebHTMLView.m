@@ -1648,38 +1648,6 @@ static WebHTMLView *lastHitView = nil;
     [self mouseDragged:fakeEvent];
 }
 
-- (BOOL)_canCopy
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return false;
-    return coreFrame->editor()->canCopy();
-}
-
-- (BOOL)_canCut
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return false;
-    return coreFrame->editor()->canCut();
-}
-
-- (BOOL)_canDelete
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return false;
-    return coreFrame->editor()->canDelete();
-}
-
-- (BOOL)_canPaste
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return false;
-    return coreFrame->editor()->canPaste();
-}
-
 - (BOOL)_canEdit
 {
     Frame* coreFrame = core([self _frame]);
@@ -2274,13 +2242,13 @@ static WebHTMLView *lastHitView = nil;
         return [[self _webView] isEditable] && [self _canEditRichly];
     
     if (action == @selector(copy:))
-        return (frame && frame->canDHTMLCopy()) || [self _canCopy];
+        return (frame && frame->editor()->canDHTMLCopy()) || frame->editor()->canCopy();
     
     if (action == @selector(cut:))
-        return (frame && frame->canDHTMLCut()) || [self _canCut];
+        return (frame && frame->editor()->canDHTMLCut()) || frame->editor()->canCut();
     
     if (action == @selector(delete:))
-        return [self _canDelete];
+        return (frame && frame->editor()->canDelete());
     
     if (action == @selector(_ignoreSpellingFromMenu:)
             || action == @selector(_learnSpellingFromMenu:)
@@ -2288,11 +2256,11 @@ static WebHTMLView *lastHitView = nil;
         return [self _hasSelection];
     
     if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
-        return (frame && frame->canDHTMLPaste()) || [self _canPaste];
+        return (frame && frame->editor()->canDHTMLPaste()) || frame->editor()->canPaste();
     
     if (action == @selector(pasteAsRichText:))
-        return frame && (frame->canDHTMLPaste()
-            || ([self _canPaste] && frame->selectionController()->isContentRichlyEditable()));
+        return frame && (frame->editor()->canDHTMLPaste()
+            || (frame->editor()->canPaste() && frame->selectionController()->isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
         // FIXME: Not yet implemented.
@@ -3840,11 +3808,18 @@ done:
 
 - (void)delete:(id)sender
 {
-    if (![self _canDelete]) {
+#if USING_WEBCORE_DELETE
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->performDelete();
+#else
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame->editor()->canDelete()) {
         NSBeep();
         return;
     }
     [self _deleteSelection];
+#endif
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -5172,22 +5147,33 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)copy:(id)sender
 {
-    FrameMac* frame = [[self _bridge] _frame];
-    if (frame && frame->tryDHTMLCopy())
+#if USING_WEBCORE_COPY
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->copy();
+#else
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame && coreFrame->editor()->tryDHTMLCopy())
         return; // DHTML did the whole operation
-    if (![self _canCopy]) {
+    if (!coreFrame->editor()->canCopy()) {
         NSBeep();
         return;
     }
     [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+#endif
 }
 
 - (void)cut:(id)sender
 {
+#if USING_WEBCORE_CUT
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->cut();
+#else
     FrameMac* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->tryDHTMLCut())
+    if (coreFrame && coreFrame->editor()->tryDHTMLCut())
         return; // DHTML did the whole operation
-    if (![self _canCut]) {
+    if (!coreFrame->editor()->canCut()) {
         NSBeep();
         return;
     }
@@ -5196,20 +5182,27 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
         if (coreFrame)
             coreFrame->editor()->deleteSelectionWithSmartDelete([self _canSmartCopyOrDelete]);
-   }
+    }
+#endif
 }
 
 - (void)paste:(id)sender
 {
+#if USING_WEBCORE_PASTE
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->paste();
+#else
     FrameMac* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->tryDHTMLPaste())
+    if (coreFrame && coreFrame->editor()->tryDHTMLPaste())
         return; // DHTML did the whole operation
-    if (![self _canPaste])
+    if (!coreFrame->editor()->canPaste())
         return;
     if (coreFrame && coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
+#endif
 }
 
 - (void)pasteAsPlainText:(id)sender

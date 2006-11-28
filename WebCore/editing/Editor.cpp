@@ -26,11 +26,14 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "ApplyStyleCommand.h"
 #include "AXObjectCache.h"
+#include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CharacterData.h"
+#include "Clipboard.h"
+#include "ClipboardEvent.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -45,6 +48,7 @@
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "Range.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
@@ -57,12 +61,7 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-
-// implement as platform-specific
-static Pasteboard generalPasteboard()
-{
-    return 0;
-}
+using namespace EventNames;
 
 EditorClient* Editor::client() const
 {
@@ -81,6 +80,26 @@ bool Editor::canEditRichly() const
 {
     SelectionController* selectionController = m_frame->selectionController();
     return canEdit() && selectionController->isContentRichlyEditable();
+}
+
+// WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items.  They
+// also send onbeforecopy, apparently for symmetry, but it doesn't affect the menu items.
+// We need to use onbeforecopy as a real menu enabler because we allow elements that are not
+// normally selectable to implement copy/paste (like divs, or a document body).
+
+bool Editor::canDHTMLCut()
+{
+    return canCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
+}
+
+bool Editor::canDHTMLCopy()
+{
+    return canCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
+}
+
+bool Editor::canDHTMLPaste()
+{
+    return !dispatchCPPEvent(beforepasteEvent, ClipboardNumb);
 }
 
 bool Editor::canCut() const
@@ -129,11 +148,14 @@ bool Editor::canDeleteRange(Range* range) const
 
 bool Editor::canSmartCopyOrDelete()
 {
+    if (client())
+        return client()->smartInsertDeleteEnabled() && m_frame->selectionGranularity() == WordGranularity;
     return false;
 }
 
 void Editor::deleteSelection()
 {
+    ASSERT_WITH_MESSAGE(0, "Not Implemented");
 }
 
 void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
@@ -144,17 +166,58 @@ void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
     applyCommand(new DeleteSelectionCommand(m_frame->document(), smartDelete));
 }
 
-void Editor::pasteAsPlainTextWithPasteboard(Pasteboard pasteboard)
+void Editor::pasteAsPlainTextWithPasteboard(Pasteboard* pasteboard)
 {
+    String text = pasteboard->plainText(m_frame);
+    if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
+        replaceSelectionWithText(text, false, canSmartReplaceWithPasteboard(pasteboard));
 }
 
-void Editor::pasteWithPasteboard(Pasteboard pasteboard, bool allowPlainText)
+void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
+    bool chosePlainText;
+    RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, selectedRange(), allowPlainText, chosePlainText);
+    if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
+        replaceSelectionWithFragment(fragment, false, canSmartReplaceWithPasteboard(pasteboard), chosePlainText);
 }
 
-Range* Editor::selectedRange()
+bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
 {
-    return 0;
+    if (client())
+        return client()->smartInsertDeleteEnabled() && pasteboard->canSmartReplace();
+    return false;
+}
+
+bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction)
+{
+    Node *child = fragment->firstChild();
+    if (client()) {
+        if (fragment->lastChild() == child && child->isCharacterDataNode())
+            return client()->shouldInsertText(((CharacterData *)child)->data(), replacingDOMRange.get(), givenAction);
+        return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
+    }
+    return false;
+}
+
+void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle)
+{
+    if (m_frame->selectionController()->isNone() || !fragment)
+        return;
+    
+    applyCommand(new ReplaceSelectionCommand(m_frame->document(), fragment, selectReplacement, smartReplace, matchStyle));
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+}
+
+void Editor::replaceSelectionWithText(String text, bool selectReplacement, bool smartReplace)
+{
+    replaceSelectionWithFragment(createFragmentFromText(selectedRange().get(), text), selectReplacement, smartReplace, true); 
+}
+
+PassRefPtr<Range> Editor::selectedRange()
+{
+    if (!m_frame)
+        return 0;
+    return m_frame->selectionController()->toRange();
 }
 
 bool Editor::shouldDeleteRange(Range* range) const
@@ -169,28 +232,40 @@ bool Editor::shouldDeleteRange(Range* range) const
     if (client())
         return client()->shouldDeleteRange(range);
     return false;
- }
+}
 
 bool Editor::tryDHTMLCopy()
 {
-    bool handled = false;
-    return handled;
+    if (!canCopy())
+        return false;
+
+    // Must be done before oncopy adds types and data to the pboard,
+    // also done for security, as it erases data from the last copy/paste.
+    Pasteboard::generalPasteboard()->clearTypes();
+
+    return !dispatchCPPEvent(copyEvent, ClipboardWritable);
 }
 
 bool Editor::tryDHTMLCut()
 {
-    bool handled = false;
-    return handled;
+    if (!canCopy())
+        return false;
+
+    // Must be done before oncut adds types and data to the pboard,
+    // also done for security, as it erases data from the last copy/paste.
+    Pasteboard::generalPasteboard()->clearTypes();
+
+    return !dispatchCPPEvent(cutEvent, ClipboardWritable);
 }
 
 bool Editor::tryDHTMLPaste()
 {
-    bool handled = false;
-    return handled;
+    return !dispatchCPPEvent(pasteEvent, ClipboardReadable);
 }
 
-void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
+void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
 {
+    pasteboard->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
 }
 
 bool Editor::shouldInsertText(String text, Range* range, EditorInsertAction action) const
@@ -287,6 +362,31 @@ void Editor::removeFormattingAndStyle()
 void Editor::setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand) 
 {
     m_lastEditCommand = lastEditCommand;
+}
+
+// Returns whether caller should continue with "the default processing", which is the same as 
+// the event handler NOT setting the return value to false
+bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy)
+{
+    Node* target = m_frame->selectionController()->start().element();
+    if (!target && m_frame->document())
+        target = m_frame->document()->body();
+    if (!target)
+        return true;
+    if (target->isShadowNode())
+        target = target->shadowParentNode();
+    
+    RefPtr<Clipboard> clipboard = newGeneralClipboard(policy);
+
+    ExceptionCode ec = 0;
+    RefPtr<Event> evt = new ClipboardEvent(eventType, true, true, clipboard.get());
+    EventTargetNodeCast(target)->dispatchEvent(evt, ec, true);
+    bool noDefaultProcessing = evt->defaultPrevented();
+
+    // invalidate clipboard here for security
+    clipboard->setAccessPolicy(ClipboardNumb);
+    
+    return !noDefaultProcessing;
 }
 
 void Editor::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
@@ -926,8 +1026,8 @@ void Editor::cut()
         return;
     }
     
-    if (shouldDeleteRange(selectedRange())) {
-        writeSelectionToPasteboard(generalPasteboard());
+    if (shouldDeleteRange(selectedRange().get())) {
+        Pasteboard::generalPasteboard()->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
     }
 }
@@ -940,7 +1040,7 @@ void Editor::copy()
         systemBeep();
         return;
     }
-    writeSelectionToPasteboard(generalPasteboard());
+    Pasteboard::generalPasteboard()->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
 }
 
 void Editor::paste()
@@ -949,10 +1049,10 @@ void Editor::paste()
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
-    if (canEditRichly())
-        pasteWithPasteboard(generalPasteboard(), true);
+    if (canEditRichly()) // or should we call m_frame->selectionController()->isContentRichlyEditable()
+        pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
-        pasteAsPlainTextWithPasteboard(generalPasteboard());
+        pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
 }
 
 void Editor::performDelete()

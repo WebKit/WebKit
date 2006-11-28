@@ -1,3 +1,80 @@
+2006-11-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Justin and Adam.
+
+        All layout tests pass as they do without this patch
+
+        * WebCore.exp:
+        Exposed functions in Editor and removed functions in FrameMac due to changes in WebHTMLView.m
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Added Pasteboard.h, PasteboardMac.mm, WebNSAttributedStringExtras.h&mm, EditorMac.mm
+
+        * bridge/EditorClient.h:
+        Added smartInsertDeleteEnabled and shouldInsertNode and some mac-specific functions
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        Removed dispatchCPPEvent and [can|try]DHTML[cut|copy|paste] since the Editor's are called now
+
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::isCharacterDataNode):
+        * dom/Node.h:
+        (WebCore::Node::isCharacterDataNode):
+        Added a type-identifying function to Node and the proper subclass
+
+        * dom/Clipboard.h:
+        Exposed setAccessPolicy as public
+        
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+        Implemented the following
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canDHTMLPaste):
+        (WebCore::Editor::canSmartCopyOrDelete):
+        (WebCore::Editor::deleteSelection):
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::canSmartReplaceWithPasteboard):
+        (WebCore::Editor::shouldInsertFragment):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::replaceSelectionWithText):
+        (WebCore::Editor::selectedRange):
+        (WebCore::Editor::shouldDeleteRange):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::tryDHTMLPaste):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::paste):
+                
+        * platform/mac/ClipboardAccessPolicy.h: Removed.
+        Not removed, but moved to dom/ClipboardAccessPolicy.h
+        
+        * platform/mac/EditorMac.mm: Added.
+        (WebCore::Editor::newGeneralClipboard):
+
+        * platform/Pasteboard.h: Added.
+        * platform/mac/PasteboardMac.mm: Added.
+        The pasteboard class follows a singleton pattern
+        (Pasteboard::generalPasteboard):
+        (Pasteboard::~Pasteboard):
+        (Pasteboard::Pasteboard):
+        (Pasteboard::clearTypes):
+        (Pasteboard::writeSelection):
+        (Pasteboard::selectionPasteboardTypes):
+        (Pasteboard::canSmartReplace):
+        (Pasteboard::plainText):
+        (Pasteboard::documentFragment):
+        
+        * platform/mac/WebNSAttributedStringExtras.h: Added.
+        * platform/mac/WebNSAttributedStringExtras.mm: Added.
+        Added select portions of this file from WebKit because the pasteboard needed the following function:
+        (-[NSAttributedString _web_attributedStringByStrippingAttachmentCharacters]):
+
 2006-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

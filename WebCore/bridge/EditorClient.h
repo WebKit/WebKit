@@ -28,14 +28,20 @@
 
 #include "EditorInsertAction.h"
 #include <wtf/Forward.h>
+#if PLATFORM(MAC)
+class NSData;
+class NSString;
+class NSURL;
+#endif
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
 class HTMLElement;
-class String;
+class Node;
 class Range;
+class String;
 
 class EditorClient {
 public:
@@ -44,7 +50,7 @@ public:
     
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
-    
+    virtual bool smartInsertDeleteEnabled() = 0;    
     virtual bool isContinuousSpellCheckingEnabled() = 0;
     virtual bool isGrammarCheckingEnabled() = 0;
     virtual int spellCheckerDocumentTag() = 0;
@@ -54,6 +60,7 @@ public:
 
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;
+    virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) = 0;
 //  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) = 0;
     virtual bool shouldInsertText(String, Range*, EditorInsertAction) = 0;
 //  virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, NSSelectionAffinity, bool stillSelecting) = 0;
@@ -77,6 +84,12 @@ public:
     
     virtual void undo() = 0;
     virtual void redo() = 0;
+
+#if PLATFORM(MAC)
+    virtual NSData* dataForArchivedSelectionInFrame() = 0; 
+    virtual NSString* _web_userVisibleString(NSURL*) = 0;
+#endif
+
 };
 
 }

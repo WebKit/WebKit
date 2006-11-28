@@ -1,3 +1,33 @@
+2006-11-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Justin and Adam.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        added the following        
+        (WebEditorClient::smartInsertDeleteEnabled):
+        (WebEditorClient::dataForArchivedSelectionInFrame):
+        (WebEditorClient::_web_userVisibleString):
+        (WebEditorClient::shouldInsertNode):
+        
+        * WebKitPrefix.h:
+        Added flags to control whether WebCore cut/copy/paste is enabled.
+        Turned on Cut and Copy, left Paste and Delete off
+        
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebHTMLView.m:
+        removed _can[Cut|Copy|Paste|Delete]
+        (-[NSArray validateUserInterfaceItem:]):
+        call the editor for canDHTML[C|C|P|D] and _can[C|C|P|D] instead 
+        (-[NSArray delete:]):
+        added code to call the editor's delete instead (not turned on)
+        (-[WebHTMLView copy:]):
+        added code to call the editor's copy (turned on)
+        (-[WebHTMLView cut:]):
+        added code to call the editor's cut (turned on)
+        (-[WebHTMLView paste:]):
+        added code to call the editor's paste (not turned on)
+
 2006-11-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam.

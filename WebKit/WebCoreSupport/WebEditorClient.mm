@@ -28,6 +28,7 @@
 
 #import "WebEditorClient.h"
 
+#import "WebDataSourceInternal.h"
 #import "WebDocument.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
@@ -35,6 +36,10 @@
 #import "WebLocalizableStrings.h"
 #import "WebViewInternal.h"
 #import "WebEditingDelegatePrivate.h"
+#import "WebArchive.h"
+#import "WebArchiver.h"
+#import "WebNSURLExtras.h"
+#import <WebCore/PlatformString.h>
 #import <wtf/PassRefPtr.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
@@ -176,6 +181,11 @@ bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
         shouldShowDeleteInterfaceForElement:kit(element)];
 }
 
+bool WebEditorClient::smartInsertDeleteEnabled()
+{
+    return [m_webView smartInsertDeleteEnabled];
+}
+
 bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
@@ -218,6 +228,22 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::didEndEditing()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
+}
+
+NSData* WebEditorClient::dataForArchivedSelectionInFrame()
+{
+    WebArchive *archive = [WebArchiver archiveSelectionInFrame:[m_webView selectedFrame]];
+    return [archive data];
+}
+
+NSString* WebEditorClient::_web_userVisibleString(NSURL *URL)
+{
+    return [URL _web_userVisibleString];
+}
+
+bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, EditorInsertAction givenAction)
+{ 
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
 }
 
 static NSString* undoNameForEditAction(EditAction editAction)
@@ -330,8 +356,6 @@ void WebEditorClient::redo()
 }
 
 /*
-bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, WebViewInsertAction givenAction) { return false; }
-bool WebEditorClient::shouldInsertText(NSString *text, Range *replacingRange, WebViewInsertActiongivenAction) { return false; }
 bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) { return false; }
 bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle) { return false; }
 bool WebEditorClient::doCommandBySelector(SEL selector) { return false; }

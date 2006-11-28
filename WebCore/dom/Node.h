@@ -138,6 +138,7 @@ public:
     virtual bool isAttributeNode() const { return false; }
     virtual bool isTextNode() const { return false; }
     virtual bool isCommentNode() const { return false; }
+    virtual bool isCharacterDataNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
     virtual bool isEventTargetNode() const { return false; }
     virtual bool isShadowNode() const { return false; }

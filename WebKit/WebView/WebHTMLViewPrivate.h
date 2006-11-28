@@ -82,10 +82,6 @@
 - (void)_startAutoscrollTimer:(NSEvent *)event;
 - (void)_stopAutoscrollTimer;
 
-- (BOOL)_canCopy;
-- (BOOL)_canCut;
-- (BOOL)_canDelete;
-- (BOOL)_canPaste;
 - (BOOL)_canEdit;
 - (BOOL)_canEditRichly;
 - (BOOL)_canAlterCurrentSelection;
