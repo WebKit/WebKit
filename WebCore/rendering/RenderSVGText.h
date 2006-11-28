@@ -24,14 +24,14 @@
 #define RenderSVGText_H
 #ifdef SVG_SUPPORT
 
-#include "RenderBlock.h"
+#include "RenderSVGBlock.h"
 #include "AffineTransform.h"
 
 namespace WebCore {
 
 class SVGTextElement;
 
-class RenderSVGText : public RenderBlock {
+class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement* node);
 

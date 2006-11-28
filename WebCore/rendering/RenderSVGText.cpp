@@ -37,7 +37,7 @@
 namespace WebCore {
 
 RenderSVGText::RenderSVGText(SVGTextElement* node) 
-    : RenderBlock(node)
+    : RenderSVGBlock(node)
 {
 }
 

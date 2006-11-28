@@ -1,3 +1,25 @@
+2006-11-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fixes a crash in SVG caused by an attempt to 
+        perform css overflow clipping by preventing
+        the css overflow clip from being set in SVG.
+        
+        <rdar:/problems/4839568>
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::RenderForeignObject):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderSVGBlock.cpp: Added.
+        (WebCore::RenderSVGBlock::RenderSVGBlock):
+        (WebCore::RenderSVGBlock::setStyle):
+        * rendering/RenderSVGBlock.h: Added.
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText):
+        * rendering/RenderSVGText.h:
+
 2006-11-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

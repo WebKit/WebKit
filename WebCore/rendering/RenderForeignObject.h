@@ -25,13 +25,13 @@
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
-#include "RenderBlock.h"
+#include "RenderSVGBlock.h"
 
 namespace WebCore {
 
 class SVGForeignObjectElement;
 
-class RenderForeignObject : public RenderBlock {
+class RenderForeignObject : public RenderSVGBlock {
 public:
     RenderForeignObject(SVGForeignObjectElement*);
 
