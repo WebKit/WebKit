@@ -40,7 +40,7 @@ namespace WebCore {
 
     class FramePrivate {
     public:
-        FramePrivate(Page*, Frame* parent, Frame* thisFrame, Element* ownerElement, PassRefPtr<EditorClient>);
+        FramePrivate(Page*, Frame* parent, Frame* thisFrame, Element* ownerElement);
         ~FramePrivate();
 
         Page* m_page;

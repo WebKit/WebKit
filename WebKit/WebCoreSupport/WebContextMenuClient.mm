@@ -42,24 +42,14 @@
 
 using namespace WebCore;
 
-PassRefPtr<WebContextMenuClient> WebContextMenuClient::create(WebView *webView)
-{
-    return new WebContextMenuClient(webView);
-}
-
 WebContextMenuClient::WebContextMenuClient(WebView *webView) 
     : m_webView(webView)
 {
 }
 
-void WebContextMenuClient::ref() 
+void WebContextMenuClient::contextMenuDestroyed()
 {
-    Shared<WebContextMenuClient>::ref();
-}
-
-void WebContextMenuClient::deref()
-{
-    Shared<WebContextMenuClient>::deref();
+    delete this;
 }
 
 void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)

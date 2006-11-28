@@ -28,7 +28,6 @@
 
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/RetainPtr.h>
-#import <WebCore/Shared.h>
 #import <WebCore/Timer.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -46,20 +45,16 @@ namespace WebCore {
 
 typedef HashMap<RefPtr<WebCore::ResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::Shared<WebFrameLoaderClient> {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    static PassRefPtr<WebFrameLoaderClient> create(WebFrame*);
-
-    virtual void ref();
-    virtual void deref();
+    WebFrameLoaderClient(WebFrame*);
 
     WebFrame* webFrame() const { return m_webFrame.get(); }
 
+    virtual void frameLoaderDestroyed();
     void receivedPolicyDecison(WebCore::PolicyAction);
 
 private:
-    WebFrameLoaderClient(WebFrame*);
-
     virtual bool hasWebView() const; // mainly for assertions
     virtual bool hasFrameView() const; // ditto
 

@@ -42,18 +42,17 @@ namespace WebCore {
     class ContextMenuController : Noncopyable
     {
     public:
-        ContextMenuController(Page*, PassRefPtr<ContextMenuClient>);
+        ContextMenuController(Page*, ContextMenuClient*);
         ~ContextMenuController();
 
-        ContextMenuClient* client() { return m_client.get(); }
+        ContextMenuClient* client() { return m_client; }
 
         void handleContextMenuEvent(Event*);
         void contextMenuActionSelected(ContextMenuAction, String);
 
     private:
         Page* m_page;
-        RefPtr<ContextMenuClient> m_client;
-
+        ContextMenuClient* m_client;
         OwnPtr<ContextMenu> m_contextMenu;
     };
 

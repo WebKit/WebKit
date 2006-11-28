@@ -36,6 +36,7 @@ namespace WebCore {
 
     class ChromeClient;
     class ContextMenuClient;
+    class EditorClient;
     class Frame;
     class FrameNamespace;
     class FloatRect;
@@ -44,8 +45,10 @@ namespace WebCore {
 
     class Page : Noncopyable {
     public:
-        Page(PassRefPtr<ChromeClient>, PassRefPtr<ContextMenuClient>);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*);
         ~Page();
+        
+        EditorClient* editorClient() const { return m_editorClient; }
 
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
@@ -81,6 +84,7 @@ namespace WebCore {
         Chrome m_chrome;
         ContextMenuController m_contextMenuController;
 
+        EditorClient* m_editorClient;
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
         String m_groupName;

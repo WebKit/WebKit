@@ -59,7 +59,6 @@ class DOMWindow;
 class Document;
 class EditCommand;
 class Editor;
-class EditorClient;
 class Element;
 class EventHandler;
 class FloatRect;
@@ -103,7 +102,7 @@ struct MarkedTextUnderline {
 
 class Frame : public Shared<Frame> {
 public:
-    Frame(Page*, Element*, PassRefPtr<EditorClient>);
+    Frame(Page*, Element*);
     virtual void setView(FrameView*);
     virtual ~Frame();
 

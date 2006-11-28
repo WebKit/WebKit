@@ -836,7 +836,7 @@ WebView *getWebView(WebFrame *webFrame)
 
     ++WebFrameCount;
 
-    [self _frameLoader]->setClient(WebFrameLoaderClient::create(self));
+    [self _frameLoader]->setClient(new WebFrameLoaderClient(self));
 
     return self;
 }

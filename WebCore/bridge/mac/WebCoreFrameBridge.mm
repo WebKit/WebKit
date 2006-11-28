@@ -252,7 +252,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge([document _document]->frame());
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page withEditorClient:(WebCoreEditorClient *)client
+- (id)initMainFrameWithPage:(WebCore::Page*)page
 {
     if (!initializedKJS) {
         mainThread = pthread_self();
@@ -264,7 +264,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
 
-    m_frame = new FrameMac(page, 0, client);
+    m_frame = new FrameMac(page, 0);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -278,12 +278,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return self;
 }
 
-- (id)initSubframeWithOwnerElement:(Element *)ownerElement withEditorClient:(WebCoreEditorClient *)client
+- (id)initSubframeWithOwnerElement:(Element *)ownerElement
 {
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement, client);
+    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 

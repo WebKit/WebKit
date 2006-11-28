@@ -127,8 +127,8 @@ typedef enum {
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page withEditorClient:(WebCoreEditorClient *)client;
-- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement withEditorClient:(WebCoreEditorClient *)client;
+- (id)initMainFrameWithPage:(WebCore::Page*)page;
+- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement;
 
 - (void)close;
 

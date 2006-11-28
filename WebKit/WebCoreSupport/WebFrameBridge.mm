@@ -34,7 +34,6 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebEditingDelegate.h"
-#import "WebEditorClient.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -132,25 +131,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView
 {
-    RefPtr<WebEditorClient> editorClient = WebEditorClient::create();
-    self = [super initMainFrameWithPage:page withEditorClient:editorClient.get()];
+    self = [super initMainFrameWithPage:page];
     [self finishInitializingWithFrameName:name view:view];
-    
-    // FIXME: Need to clear the WebFrame pointer in WebEditorClient when the WebView is deallocated.
-    editorClient->setWebFrame([view webFrame]);
-
     return self;
 }
 
 - (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    RefPtr<WebEditorClient> editorClient = WebEditorClient::create();
-    self = [super initSubframeWithOwnerElement:ownerElement withEditorClient:editorClient.get()];
+    self = [super initSubframeWithOwnerElement:ownerElement];
     [self finishInitializingWithFrameName:name view:view];
-
-    // FIXME: Need to clear the WebFrame pointer in WebEditorClient when the WebView is deallocated.
-    editorClient->setWebFrame([view webFrame]);
-
     return self;
 }
 

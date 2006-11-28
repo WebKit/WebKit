@@ -106,11 +106,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
 }
 
-PassRefPtr<WebFrameLoaderClient> WebFrameLoaderClient::create(WebFrame* webFrame)
-{
-    return new WebFrameLoaderClient(webFrame);
-}
-
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
     , m_policyFunction(0)
@@ -118,14 +113,9 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
-void WebFrameLoaderClient::ref()
+void WebFrameLoaderClient::frameLoaderDestroyed()
 {
-    Shared<WebFrameLoaderClient>::ref();
-}
-
-void WebFrameLoaderClient::deref()
-{
-    Shared<WebFrameLoaderClient>::deref();
+    delete this;
 }
 
 bool WebFrameLoaderClient::hasWebView() const

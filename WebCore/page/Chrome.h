@@ -35,9 +35,10 @@ namespace WebCore {
     
     class Chrome {
     public:
-        Chrome(Page*, PassRefPtr<ChromeClient>);
+        Chrome(Page*, ChromeClient*);
+        ~Chrome();
 
-        ChromeClient* client() { return m_client.get(); }
+        ChromeClient* client() { return m_client; }
 
         void setWindowRect(const FloatRect&) const;
         FloatRect windowRect() const;
@@ -75,7 +76,7 @@ namespace WebCore {
         
     private:
         Page* m_page;
-        RefPtr<ChromeClient> m_client;
+        ChromeClient* m_client;
     };
 }
 

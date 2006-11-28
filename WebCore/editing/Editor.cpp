@@ -44,6 +44,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
+#include "Page.h"
 #include "Range.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
@@ -65,7 +66,9 @@ static Pasteboard generalPasteboard()
 
 EditorClient* Editor::client() const
 {
-    return m_client.get();
+    if (Page* page = m_frame->page())
+        return page->editorClient();
+    return 0;
 }
 
 bool Editor::canEdit() const
@@ -163,7 +166,9 @@ bool Editor::shouldDeleteRange(Range* range) const
     if (!canDeleteRange(range))
         return false;
 
-    return m_client->shouldDeleteRange(range);
+    if (client())
+        return client()->shouldDeleteRange(range);
+    return false;
  }
 
 bool Editor::tryDHTMLCopy()
@@ -190,12 +195,16 @@ void Editor::writeSelectionToPasteboard(Pasteboard pasteboard)
 
 bool Editor::shouldInsertText(String text, Range* range, EditorInsertAction action) const
 {
-    return m_client->shouldInsertText(text, range, action);
+    if (client())
+        return client()->shouldInsertText(text, range, action);
+    return false;
 }
 
 bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 {
-    return m_client->shouldShowDeleteInterface(element);
+    if (client())
+        return client()->shouldShowDeleteInterface(element);
+    return false;
 }
 
 void Editor::respondToChangedSelection(const Selection& oldSelection)
@@ -211,7 +220,8 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
             m_frame->renderer()->document()->axObjectCache()->postNotification(node->renderer(), "AXValueChanged");
     }
     
-    m_client->respondToChangedContents();  
+    if (client())
+        client()->respondToChangedContents();  
     m_deleteButtonController->respondToChangedContents();
 }
 
@@ -315,7 +325,7 @@ void Editor::applyStyleToSelection(CSSStyleDeclaration* style, EditAction editin
     if (!style || style->length() == 0 || !canEditRichly())
         return;
 
-    if (m_client->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
+    if (client() && client()->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
         applyStyle(style, editingAction);
 }
 
@@ -324,18 +334,22 @@ void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditActi
     if (!style || style->length() == 0 || !canEditRichly())
         return;
     
-    if (m_client->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
+    if (client() && client()->shouldApplyStyle(style, m_frame->selectionController()->toRange().get()))
         applyParagraphStyle(style, editingAction);
 }
 
 bool Editor::selectWordBeforeMenuEvent() const
 {
-    return m_client->selectWordBeforeMenuEvent();
+    if (client())
+        return client()->selectWordBeforeMenuEvent();
+    return false;
 }
 
 bool Editor::clientIsEditable() const
 {
-    return m_client->isEditable();
+    if (client())
+        return client()->isEditable();
+    return false;
 }
 
 bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
@@ -420,7 +434,8 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
         // Only register a new undo command if the command passed in is
         // different from the last command
         m_lastEditCommand = cmd;
-        m_client->registerCommandForUndo(m_lastEditCommand);
+        if (client())
+            client()->registerCommandForUndo(m_lastEditCommand);
     }
     respondToChangedContents(newSelection);    
 }
@@ -434,7 +449,8 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
-    m_client->registerCommandForRedo(cmd);
+    if (client())
+        client()->registerCommandForRedo(cmd);
     respondToChangedContents(newSelection);    
 }
 
@@ -447,7 +463,8 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
-    m_client->registerCommandForUndo(cmd);
+    if (client())
+        client()->registerCommandForUndo(cmd);
     respondToChangedContents(newSelection);    
 }
 
@@ -871,9 +888,8 @@ static CommandMap* createCommandMap()
 //
 // =============================================================================
 
-Editor::Editor(Frame* frame, PassRefPtr<EditorClient> client)
+Editor::Editor(Frame* frame)
     : m_frame(frame)
-    , m_client(client)
     , m_deleteButtonController(new DeleteButtonController(frame))
 { 
 }

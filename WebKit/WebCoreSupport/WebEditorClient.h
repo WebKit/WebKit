@@ -28,42 +28,37 @@
 
 #import <WebCore/EditorClient.h>
 #import <WebCore/RetainPtr.h>
-#import <WebCore/Shared.h>
 #import <wtf/Forward.h>
 
+@class WebView;
 @class WebEditorUndoTarget;
-@class WebFrame;
 
-class WebEditorClient : public WebCore::EditorClient, public WebCore::Shared<WebEditorClient> {
+class WebEditorClient : public WebCore::EditorClient {
 public:
-    static PassRefPtr<WebEditorClient> create();
-    ~WebEditorClient();
+    WebEditorClient(WebView *);
     
-    virtual void ref();
-    virtual void deref();
+    virtual void pageDestroyed();
 
-    void setWebFrame(WebFrame *webFrame);
-    
-    bool isGrammarCheckingEnabled();
-    bool isContinuousSpellCheckingEnabled();
-    int spellCheckerDocumentTag();
+    virtual bool isGrammarCheckingEnabled();
+    virtual bool isContinuousSpellCheckingEnabled();
+    virtual int spellCheckerDocumentTag();
 
-    bool selectWordBeforeMenuEvent();
-    bool isEditable();
+    virtual bool selectWordBeforeMenuEvent();
+    virtual bool isEditable();
 
-    bool shouldDeleteRange(WebCore::Range*);    
-    bool shouldShowDeleteInterface(WebCore::HTMLElement*);
+    virtual bool shouldDeleteRange(WebCore::Range*);    
+    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
 
-    bool shouldBeginEditing(WebCore::Range*);
-    bool shouldEndEditing(WebCore::Range*);
-    bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
+    virtual bool shouldBeginEditing(WebCore::Range*);
+    virtual bool shouldEndEditing(WebCore::Range*);
+    virtual bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
 
-    bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
+    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
 
-    void didBeginEditing();
-    void didEndEditing();
+    virtual void didBeginEditing();
+    virtual void didEndEditing();
 
-    void respondToChangedContents();
+    virtual void respondToChangedContents();
 
     virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
@@ -78,7 +73,7 @@ private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();
     
-    WebFrame *m_webFrame;
+    WebView *m_webView;
     WebCore::RetainPtr<WebEditorUndoTarget> m_undoTarget;
     
     bool m_haveUndoRedoOperations;

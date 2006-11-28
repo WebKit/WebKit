@@ -123,42 +123,21 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 @end
 
-PassRefPtr<WebEditorClient> WebEditorClient::create()
+void WebEditorClient::pageDestroyed()
 {
-    return new WebEditorClient;
+    delete this;
 }
 
-WebEditorClient::WebEditorClient()
-    : m_webFrame(nil)
+WebEditorClient::WebEditorClient(WebView *webView)
+    : m_webView(webView)
     , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
     , m_haveUndoRedoOperations(false)
 {
 }
 
-WebEditorClient::~WebEditorClient()
-{
-}
-
-void WebEditorClient::ref()
-{
-    Shared<WebEditorClient>::ref();
-}
-
-void WebEditorClient::deref()
-{
-    Shared<WebEditorClient>::deref();
-}
-
-void WebEditorClient::setWebFrame(WebFrame *webFrame)
-{
-    ASSERT(!m_webFrame); // Should only be called during initialization
-    ASSERT(webFrame);
-    m_webFrame = webFrame;
-}
-
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
 {
-    return [[m_webFrame webView] isContinuousSpellCheckingEnabled];
+    return [m_webView isContinuousSpellCheckingEnabled];
 }
 
 bool WebEditorClient::isGrammarCheckingEnabled()
@@ -166,46 +145,46 @@ bool WebEditorClient::isGrammarCheckingEnabled()
 #ifdef BUILDING_ON_TIGER
     return false;
 #else
-    return [[m_webFrame webView] isGrammarCheckingEnabled];
+    return [m_webView isGrammarCheckingEnabled];
 #endif
 }
 
 int WebEditorClient::spellCheckerDocumentTag()
 {
-    return [[m_webFrame webView] spellCheckerDocumentTag];
+    return [m_webView spellCheckerDocumentTag];
 }
 
 bool WebEditorClient::selectWordBeforeMenuEvent()
 {
-    return [[m_webFrame webView] _selectWordBeforeMenuEvent];
+    return [m_webView _selectWordBeforeMenuEvent];
 }
 
 bool WebEditorClient::isEditable()
 {
-    return [[m_webFrame webView] isEditable];
+    return [m_webView isEditable];
 }
 
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
-    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldDeleteDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
 {
-    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldShowDeleteInterfaceForElement:kit(element)];
 }
 
 bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 {
-    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldBeginEditing(Range* range)
 {
-    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldBeginEditingInDOMRange:kit(range)];
 
     return false;
@@ -213,32 +192,32 @@ bool WebEditorClient::shouldBeginEditing(Range* range)
 
 bool WebEditorClient::shouldEndEditing(Range* range)
 {
-    return [[[m_webFrame webView] _editingDelegateForwarder] webView:[m_webFrame webView]
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
                              shouldEndEditingInDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldInsertText(String text, Range* range, EditorInsertAction action)
 {
-    WebView* webView = [m_webFrame webView];
+    WebView* webView = m_webView;
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
 void WebEditorClient::didBeginEditing()
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:[m_webFrame webView]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
 }
 
 void WebEditorClient::respondToChangedContents()
 {
-    NSView <WebDocumentView> *view = [[m_webFrame frameView] documentView];
+    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)view _updateFontPanel];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[m_webFrame webView]];    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
 }
 
 void WebEditorClient::didEndEditing()
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[m_webFrame webView]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
 }
 
 static NSString* undoNameForEditAction(EditAction editAction)
@@ -289,7 +268,7 @@ void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, 
 {
     ASSERT(cmd);
     
-    NSUndoManager *undoManager = [[m_webFrame webView] undoManager];
+    NSUndoManager *undoManager = [m_webView undoManager];
     NSString *actionName = undoNameForEditAction(cmd->editingAction());
     WebEditCommand *command = [WebEditCommand commandWithEditCommand:cmd];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
@@ -314,7 +293,7 @@ void WebEditorClient::clearUndoRedoOperations()
         // workaround for <rdar://problem/4645507> NSUndoManager dies
         // with uncaught exception when undo items cleared while
         // groups are open
-        NSUndoManager *undoManager = [[m_webFrame webView] undoManager];
+        NSUndoManager *undoManager = [m_webView undoManager];
         int groupingLevel = [undoManager groupingLevel];
         for (int i = 0; i < groupingLevel; ++i)
             [undoManager endUndoGrouping];
@@ -330,24 +309,24 @@ void WebEditorClient::clearUndoRedoOperations()
 
 bool WebEditorClient::canUndo() const
 {
-    return [[[m_webFrame webView] undoManager] canUndo];
+    return [[m_webView undoManager] canUndo];
 }
 
 bool WebEditorClient::canRedo() const
 {
-    return [[[m_webFrame webView] undoManager] canRedo];
+    return [[m_webView undoManager] canRedo];
 }
 
 void WebEditorClient::undo()
 {
     if (canUndo())
-        [[[m_webFrame webView] undoManager] undo];
+        [[m_webView undoManager] undo];
 }
 
 void WebEditorClient::redo()
 {
     if (canRedo())
-        [[[m_webFrame webView] undoManager] redo];    
+        [[m_webView undoManager] redo];    
 }
 
 /*

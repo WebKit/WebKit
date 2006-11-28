@@ -61,7 +61,6 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
-		14F861890B0651D300CE995A /* AbstractShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F861880B0651D300CE995A /* AbstractShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FD6DFD0AE5EA1B00AD67AD /* WindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
@@ -3035,7 +3034,6 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
-		14F861880B0651D300CE995A /* AbstractShared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AbstractShared.h; sourceTree = "<group>"; };
 		14FD6DFC0AE5EA1B00AD67AD /* WindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WindowFeatures.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
@@ -8794,7 +8792,6 @@
 				6582A14809999D6C00BEEB6D /* mac */,
 				656B84D70AEA1CE900A095B4 /* network */,
 				65F5382109B2B55700F3DC4A /* make-charset-table.pl */,
-				14F861880B0651D300CE995A /* AbstractShared.h */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				BCB16B890979B01400467741 /* ArrayImpl.cpp */,
@@ -10752,7 +10749,6 @@
 				65DADA180AFD878000CE53ED /* FormData.h in Headers */,
 				651888890AFF3BF700164720 /* ResourceError.h in Headers */,
 				148CF65E0B00561400A997FC /* Screen.h in Headers */,
-				14F861890B0651D300CE995A /* AbstractShared.h in Headers */,
 				B27535570B053814002CE64F /* AffineTransform.h in Headers */,
 				B275355D0B053814002CE64F /* GraphicsContextPlatformPrivate.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,

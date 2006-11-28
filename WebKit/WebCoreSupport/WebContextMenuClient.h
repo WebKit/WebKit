@@ -32,12 +32,11 @@
 
 @class WebView;
 
-class WebContextMenuClient : public WebCore::ContextMenuClient, public WebCore::Shared<WebContextMenuClient> {
+class WebContextMenuClient : public WebCore::ContextMenuClient {
 public:
-    static PassRefPtr<WebContextMenuClient> create(WebView *webView);
+    WebContextMenuClient(WebView *webView);
     
-    virtual void ref();
-    virtual void deref();
+    virtual void contextMenuDestroyed();
     
     virtual void addCustomContextMenuItems(WebCore::ContextMenu* menu);
     
@@ -50,7 +49,5 @@ public:
     WebView *webView() { return m_webView; }
         
 private:
-    WebContextMenuClient(WebView *webView);
-    
     WebView *m_webView;
 };

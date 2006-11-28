@@ -26,16 +26,17 @@
 #ifndef ContextMenuClient_h
 #define ContextMenuClient_h
 
-#include "AbstractShared.h"
-
 namespace WebCore {
     class ContextMenu;
     class Frame;
     class HitTestResult;
     class KURL;
 
-    class ContextMenuClient : public AbstractShared {
+    class ContextMenuClient {
     public:
+        virtual ~ContextMenuClient() {  }
+        virtual void contextMenuDestroyed() = 0;
+        
         virtual void addCustomContextMenuItems(ContextMenu*) = 0;
 
         virtual void copyLinkToClipboard(HitTestResult) = 0;

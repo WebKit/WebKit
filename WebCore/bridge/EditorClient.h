@@ -26,10 +26,8 @@
 #ifndef Editor_Client_h
 #define Editor_Client_h
 
-#include <wtf/Forward.h>
-#include "AbstractShared.h"
-
 #include "EditorInsertAction.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -39,8 +37,11 @@ class HTMLElement;
 class String;
 class Range;
 
-class EditorClient : public AbstractShared {
+class EditorClient {
 public:
+    virtual ~EditorClient() {  }
+    virtual void pageDestroyed() = 0;
+    
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
     

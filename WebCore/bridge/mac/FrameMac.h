@@ -76,6 +76,7 @@ typedef int NSWritingDirection;
 namespace WebCore {
 
 class ClipboardMac;
+class EditorClient;
 class HTMLTableCellElement;
 class RenderWidget;
 
@@ -83,7 +84,7 @@ class FrameMac : public Frame {
     friend class Frame;
 
 public:
-    FrameMac(Page*, Element*, PassRefPtr<EditorClient>);
+    FrameMac(Page*, Element*);
     ~FrameMac();
 
     void setBridge(WebCoreFrameBridge*);

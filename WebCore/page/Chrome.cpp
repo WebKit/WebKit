@@ -31,11 +31,16 @@
 
 namespace WebCore {
 
-Chrome::Chrome(Page* page, PassRefPtr<ChromeClient> client)
+Chrome::Chrome(Page* page, ChromeClient* client)
     : m_page(page)
     , m_client(client)
 {
     ASSERT(m_client);
+}
+
+Chrome::~Chrome()
+{
+    m_client->chromeDestroyed();
 }
 
 void Chrome::setWindowRect(const FloatRect& rect) const

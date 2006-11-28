@@ -28,7 +28,6 @@
 #ifndef FrameLoaderClient_h
 #define FrameLoaderClient_h
 
-#include "AbstractShared.h"
 #include "FrameLoaderTypes.h"
 #include <wtf/Forward.h>
 
@@ -58,8 +57,11 @@ namespace WebCore {
 
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 
-    class FrameLoaderClient : public AbstractShared {
+    class FrameLoaderClient {
     public:
+        virtual ~FrameLoaderClient() {  }
+        virtual void frameLoaderDestroyed() = 0;
+        
         virtual bool hasWebView() const = 0; // mainly for assertions
         virtual bool hasFrameView() const = 0; // ditto
 

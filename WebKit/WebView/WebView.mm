@@ -49,6 +49,7 @@
 #import "WebDownloadInternal.h"
 #import "WebDynamicScrollBarsView.h"
 #import "WebEditingDelegate.h"
+#import "WebEditorClient.h"
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
@@ -1821,7 +1822,7 @@ NSMutableDictionary *countInvocations;
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
-    _private->page = new Page(WebChromeClient::create(self), WebContextMenuClient::create(self));
+    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName view:frameView webView:self] release];
 
     [self _addToAllWebViewsSet];
