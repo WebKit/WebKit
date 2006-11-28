@@ -1,3 +1,13 @@
+2006-11-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Add an explicit IntRect constructor that takes a FloatRect.
+        
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::IntRect):
+        * platform/graphics/IntRect.h:
+
 2006-11-27  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam.
