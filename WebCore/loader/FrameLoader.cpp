@@ -310,6 +310,11 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
     return frame;
 }
 
+bool FrameLoader::canHandleRequest(const ResourceRequest& request)
+{
+    return m_client->canHandleRequest(request);
+}
+
 void FrameLoader::changeLocation(const String& URL, const String& referrer, bool lockHistory, bool userGesture)
 {
     if (URL.find("javascript:", 0, false) == 0) {

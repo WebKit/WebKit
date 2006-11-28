@@ -1,3 +1,33 @@
+2006-11-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Getting rid of some of the critical FIXMEs in ContextMenu.cpp.
+
+        * bridge/mac/FrameMac.h: Two new spell checker functions from 
+        WebKit. (We will be able to delete the WebKit versions once we 
+        switch over to WebCore context menus.)
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::isSelectionMisspelled):
+        (WebCore::core): Convert from NSArray of Strings to a Vector of 
+        Strings.
+        (WebCore::FrameMac::guessesForMisspelledSelection):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canHandleRequest):
+        * loader/FrameLoader.h: Make canHandleRequest available through the 
+        FrameLoader.
+        * loader/FrameLoaderClient.h: canHandleRequest takes a 
+        ResourceRequest instead of an NSURLRequest.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::continueAfterNavigationPolicy): Same
+        * page/Frame.h: New spell checker functions moved to Frame. These 
+        should be moved some place better some day, but FrameMac currently 
+        seems to be the place to be for spell checker stuff.
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Use new FrameLoader and spell 
+        checking functionality to get rid of two if (true) statements. Also 
+        add spelling guesses to the editing context menus.
+
 2006-11-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.

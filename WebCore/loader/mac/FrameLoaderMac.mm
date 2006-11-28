@@ -55,6 +55,8 @@
 #import "Page.h"
 #import "PageState.h"
 #import "Plugin.h"
+#import "ResourceRequest.h"
+#import "ResourceRequestMac.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
@@ -802,12 +804,15 @@ void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
             m_client->startDownload(check.request());
             check.clearRequest();
             break;
-        case PolicyUse:
-            if (!m_client->canHandleRequest(check.request())) {
+        case PolicyUse: {
+            ResourceRequest request;
+            getResourceRequest(request, check.request());
+            if (!m_client->canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_client->cannotShowURLError(check.request()));
                 check.clearRequest();
             }
             break;
+        }
     }
 
     check.call();

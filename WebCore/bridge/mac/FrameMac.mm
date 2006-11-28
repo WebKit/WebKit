@@ -1156,6 +1156,41 @@ void FrameMac::learnSpelling()
     [[NSSpellChecker sharedSpellChecker] learnWord:text];
 }
 
+bool FrameMac::isSelectionMisspelled()
+{
+    String selectedString = selectedText();
+    unsigned length = selectedString.length();
+    if (length == 0)
+        return false;
+    NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:selectedString
+                                                                    startingAt:0
+                                                                      language:nil
+                                                                          wrap:NO 
+                                                        inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() 
+                                                                     wordCount:NULL];
+    return range.length == length;
+}
+
+static Vector<String> core(NSArray* stringsArray)
+{
+    Vector<String> stringsVector = Vector<String>();
+    unsigned count = [stringsArray count];
+    if (count > 0) {
+        NSEnumerator* enumerator = [stringsArray objectEnumerator];
+        NSString* string;
+        while ((string = [enumerator nextObject]) != nil)
+            stringsVector.append(string);
+    }
+    return stringsVector;
+}
+
+Vector<String> FrameMac::guessesForMisspelledSelection()
+{
+    String selectedString = selectedText();
+    ASSERT(selectedString.length() != 0);
+    return core([[NSSpellChecker sharedSpellChecker] guessesForWord:selectedString]);
+}
+
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
     if (!editor()->client()->isContinuousSpellCheckingEnabled())

@@ -1743,18 +1743,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_isSelectionMisspelled
 {
-    NSString *selectedString = [self selectedString];
-    unsigned length = [selectedString length];
-    if (length == 0) {
-        return NO;
-    }
-    NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:selectedString
-                                                                    startingAt:0
-                                                                      language:nil
-                                                                          wrap:NO
-                                                        inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]
-                                                                     wordCount:NULL];
-    return range.length == length;
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->isSelectionMisspelled();
+    return NO;
 }
 
 - (NSArray *)_guessesForMisspelledSelection

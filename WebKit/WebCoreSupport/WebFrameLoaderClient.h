@@ -41,6 +41,7 @@
 namespace WebCore {
     class String;
     class ResourceLoader;
+    class ResourceRequest;
 }
 
 typedef HashMap<RefPtr<WebCore::ResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
@@ -186,7 +187,7 @@ private:
     virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
     virtual void clearArchivedResources();
 
-    virtual bool canHandleRequest(NSURLRequest *) const;
+    virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
     virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
     virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
     virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String& URLScheme) const;

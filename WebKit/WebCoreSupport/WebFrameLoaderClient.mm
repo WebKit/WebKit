@@ -78,6 +78,7 @@
 #import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceLoader.h>
+#import <WebCore/ResourceRequestMac.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCorePageState.h>
 #import <WebCore/WebDataProtocol.h>
@@ -901,9 +902,9 @@ void WebFrameLoaderClient::clearArchivedResources()
     m_archivedResourcesDeliveryTimer.stop();
 }
 
-bool WebFrameLoaderClient::canHandleRequest(NSURLRequest *request) const
+bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) const
 {
-    return [WebView _canHandleRequest:request];
+    return [WebView _canHandleRequest:nsURLRequest(request)];
 }
 
 bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const

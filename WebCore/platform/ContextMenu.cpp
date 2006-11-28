@@ -33,6 +33,7 @@
 #include "KURL.h"
 #include "Node.h"
 #include "Page.h"
+#include "ResourceRequest.h"
 #include "SelectionController.h"
 
 namespace WebCore {
@@ -77,11 +78,19 @@ void ContextMenu::populate()
 
     ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
     HitTestResult result = hitTestResult();
+    
+    Node* node = m_hitTestResult.innerNonSharedNode();
+    if (!node)
+        return;
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return;
 
     if (!result.isContentEditable()) {
+        FrameLoader* loader = frame->loader();
         KURL linkURL = result.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
-            if (true) { // FIXME: if FrameLoaderClient can handle the request
+            if (loader->canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkInNewWindowItem);
                 appendItem(DownloadLinkToDiskItem);
             }
@@ -110,7 +119,6 @@ void ContextMenu::populate()
                 appendItem(SeparatorItem);
                 appendItem(CopyItem);
             } else {
-                FrameLoader* loader = result.innerNonSharedNode()->document()->frame()->loader();
                 if (loader->canGoBackOrForward(-1))
                     appendItem(GoBackItem);
 
@@ -122,18 +130,27 @@ void ContextMenu::populate()
                 else
                     appendItem(ReloadItem);
 
-                if (result.innerNonSharedNode()->document()->frame() != result.innerNonSharedNode()->document()->frame()->page()->mainFrame())
+                if (frame->page() && frame != frame->page()->mainFrame())
                     appendItem(OpenFrameInNewWindowItem);
             }
         }
     } else { // Make an editing context menu
-        SelectionController* selectionController = result.innerNonSharedNode()->document()->frame()->selectionController();
+        SelectionController* selectionController = frame->selectionController();
         bool inPasswordField = selectionController->isInPasswordField();
 
         // Add spelling-related context menu items.
-        if (true) { // FIXME: Should be (selectionController->isSelectionMisspelled() && !inPasswordField)
-            // FIXME: Add spelling guesses here
-            appendItem(NoGuessesFoundItem);
+        if (frame->isSelectionMisspelled() && !inPasswordField) {
+            Vector<String> guesses = frame->guessesForMisspelledSelection();
+            unsigned size = guesses.size();
+            if (size == 0)
+                appendItem(NoGuessesFoundItem);
+            else {
+                for (unsigned i = 0; i < size; i++) {
+                    String guess = guesses[i];
+                    if (!guess.isNull())
+                        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSpellingGuess, guess));
+                }
+            }                
 
             appendItem(SeparatorItem);
             appendItem(IgnoreSpellingItem);

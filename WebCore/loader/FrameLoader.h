@@ -193,6 +193,8 @@ namespace WebCore {
         Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
 
         void loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r);
+        
+        bool canHandleRequest(const ResourceRequest&);
 
         // Also not cool.
         void stopLoadingPlugIns();
