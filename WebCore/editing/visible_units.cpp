@@ -399,9 +399,9 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         // This containing editable block does not have a previous line.
         // Need to move back to previous containing editable block in this root editable
         // block and find the last root line box in that block.
-        Node *startBlock = node->enclosingBlockFlowElement();
+        Node* startBlock = enclosingBlock(node);
         Node *n = node->previousEditable();
-        while (n && startBlock == n->enclosingBlockFlowElement())
+        while (n && startBlock == enclosingBlock(n))
             n = n->previousEditable();
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)
@@ -468,9 +468,9 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // This containing editable block does not have a next line.
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
-        Node *startBlock = node->enclosingBlockFlowElement();
+        Node* startBlock = enclosingBlock(node);
         Node *n = node->nextEditable(p.offset());
-        while (n && startBlock == n->enclosingBlockFlowElement())
+        while (n && startBlock == enclosingBlock(n))
             n = n->nextEditable();
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)

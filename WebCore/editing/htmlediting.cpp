@@ -51,25 +51,11 @@ bool isAtomicNode(const Node *node)
     return node && (!node->hasChildNodes() || editingIgnoresContent(node));
 }
 
-// FIXME: This function needs a comment.
-bool editingIgnoresContent(const Node *node)
+// Returns true for nodes that either have no content, or have content that is ignored (skipped 
+// over) while editing.  There are no VisiblePositions inside these nodes.
+bool editingIgnoresContent(const Node* node)
 {
-    if (!node || !node->isHTMLElement())
-        return false;
-    
-    // There doesn't seem to be a way to find out if a a node is a pop up box by looking at its renderer.
-    if (node->hasTagName(selectTag))
-        return true;
-    
-    if (node->renderer())
-        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isHR() || node->renderer()->isTextArea() || node->renderer()->isTextField();
-
-    return node->hasTagName(appletTag) ||
-           node->hasTagName(embedTag) ||
-           node->hasTagName(iframeTag) ||
-           node->hasTagName(imgTag) ||
-           node->hasTagName(hrTag) ||
-           static_cast<const HTMLElement *>(node)->isGenericFormElement();
+    return !canHaveChildrenForEditing(node) && !node->isTextNode();
 }
 
 // Some nodes, like brs, will technically accept children, but we don't want that to happen while editing. 
@@ -83,6 +69,10 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->hasTagName(textareaTag) &&
            !node->hasTagName(objectTag) &&
            !node->hasTagName(iframeTag) &&
+           !node->hasTagName(buttonTag) &&
+           !node->hasTagName(embedTag) &&
+           !node->hasTagName(appletTag) &&
+           !node->hasTagName(selectTag) &&
            !node->isTextNode();
 }
 

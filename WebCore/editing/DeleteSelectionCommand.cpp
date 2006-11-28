@@ -80,7 +80,7 @@ void DeleteSelectionCommand::initializeStartEnd()
     Position start = m_selectionToDelete.start();
     Position end = m_selectionToDelete.end();
  
-    // For HR's, we'll get a position at (HR,1) when hitting delete from the beginning of the previous line, or (HR,0) when forward deleting,
+    // For HRs, we'll get a position at (HR,1) when hitting delete from the beginning of the previous line, or (HR,0) when forward deleting,
     // but in these cases, we want to delete it, so manually expand the selection
     if (start.node()->hasTagName(hrTag))
         start = Position(start.node(), 0);

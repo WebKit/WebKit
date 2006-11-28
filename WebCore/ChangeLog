@@ -1,3 +1,29 @@
+2006-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4397952>
+        Cannot select buttons at the end of a document, preventing copy/paste
+        
+        There were no VisiblePositions before/after buttons because editingIgnoresContent
+        returned false for buttons. 
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Fixed a comment.
+        (WebCore::Position::downstream): Ditto.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent): It's unnecessary to prefer renderer 
+        checks over tag name checks because it seems that a node of a tag name 
+        that we do not ignore content for can't have a renderer of a type that we do.
+        (WebCore::canHaveChildrenForEditing): Added selects, buttons, applets, and embeds.
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition): Migrate to enclosingBlock.  Fixes a bug where the
+        caret would get stuck moving up/down a line from a caret just before an 
+        input element.
+        (WebCore::nextLinePosition): Ditto.
+
 2006-11-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam.

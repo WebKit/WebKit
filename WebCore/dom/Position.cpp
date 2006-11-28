@@ -316,9 +316,7 @@ Position Position::upstream() const
         if (currentNode == enclosingBlock(currentNode) && currentOffset == 0)
             return lastVisible;
             
-        // return position after replaced or BR elements
-        // NOTE: caretMaxOffset() can be less than childNodeCount()!!
-        // e.g. SELECT and APPLET nodes
+        // Return position after brs, tables, and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
             int maxOffset = maxDeepOffset(currentNode);
             if (currentOffset >= maxOffset)
@@ -395,7 +393,7 @@ Position Position::downstream() const
         if (isStreamer(currentPos))
             lastVisible = currentPos;
 
-        // return position before replaced or BR elements
+        // Return position before brs, tables, and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
             if (currentOffset <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());

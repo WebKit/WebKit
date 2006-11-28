@@ -1,3 +1,15 @@
+2006-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4397952>
+        Cannot select buttons at the end of a document, preventing copy/paste
+
+        * editing/selection/4397952-expected.checksum: Added.
+        * editing/selection/4397952-expected.png: Added.
+        * editing/selection/4397952-expected.txt: Added.
+        * editing/selection/4397952.html: Added.
+
 2006-11-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.
