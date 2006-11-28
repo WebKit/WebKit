@@ -1,5 +1,15 @@
 2006-11-27  Kevin McCullough  <KMcCullough@apple.com>
 
+        Reviewed by Adam.
+
+        * fast/forms/resources/success.html: Removed.
+        * fast/forms/targeted-frame-submission-expected.checksum:
+        * fast/forms/targeted-frame-submission-expected.png:
+        * fast/forms/targeted-frame-submission-expected.txt:
+        * fast/forms/targeted-frame-submission.html:
+
+2006-11-27  Kevin McCullough  <KMcCullough@apple.com>
+
         Reviewed by Adam and Anders.
 
         Testcase for:
