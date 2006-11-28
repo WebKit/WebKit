@@ -88,18 +88,20 @@ void PDFDocumentImage::setCurrentPage(int page)
 
     m_currentPage = page;
 
+    CGPDFPageRef cgPage = CGPDFDocumentGetPage(m_document, page + 1);
+
     // get media box (guaranteed)
-    m_mediaBox = CGPDFDocumentGetMediaBox(m_document, page + 1);
+    m_mediaBox = CGPDFPageGetBoxRect(cgPage, kCGPDFMediaBox);
 
     // get crop box (not always there). if not, use media box
-    CGRect r = CGPDFDocumentGetCropBox(m_document, page + 1);
+    CGRect r = CGPDFPageGetBoxRect(cgPage, kCGPDFCropBox);
     if (!CGRectIsEmpty(r))
         m_cropBox = r;
     else
         m_cropBox = m_mediaBox;
 
     // get page rotation angle
-    m_rotation = CGPDFDocumentGetRotationAngle(m_document, page + 1) * M_PI / 180.0; // to radians
+    m_rotation = CGPDFPageGetRotationAngle(cgPage) * M_PI / 180.0; // to radians
 }
 
 int PDFDocumentImage::pageCount() const
