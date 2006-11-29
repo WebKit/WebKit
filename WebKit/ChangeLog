@@ -1,3 +1,23 @@
+2006-11-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoffff.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11691 REGRESSION 
+        (r17399, r17511): WebElementDictionary no longer returns nil 
+        NSStrings
+
+        String's NSString* operator converts null Strings to empty 
+        NSStrings for compatibility with AppKit. We need to work around 
+        that here.
+
+        * Misc/WebElementDictionary.m:
+        (NSStringOrNil):
+        (-[WebElementDictionary _altDisplayString]):
+        (-[WebElementDictionary _spellingToolTip]):
+        (-[WebElementDictionary _title]):
+        (-[WebElementDictionary _titleDisplayString]):
+        (-[WebElementDictionary _textContent]):
+
 2006-11-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

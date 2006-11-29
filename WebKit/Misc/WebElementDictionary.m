@@ -162,14 +162,23 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     return [[[self _domNode] ownerDocument] webFrame];
 }
 
+// String's NSString* operator converts null Strings to empty NSStrings for compatibility
+// with AppKit. We need to work around that here.
+static NSString* NSStringOrNil(String coreString)
+{
+    if (coreString.isNull())
+        return nil;
+    return coreString;
+}
+
 - (NSString *)_altDisplayString
 {
-    return _result->altDisplayString();
+    return NSStringOrNil(_result->altDisplayString());
 }
 
 - (NSString *)_spellingToolTip
 {
-    return _result->spellingToolTip();
+    return NSStringOrNil(_result->spellingToolTip());
 }
 
 - (NSImage *)_image
@@ -197,7 +206,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (NSString *)_title
 {
-    return _result->title();
+    return NSStringOrNil(_result->title());
 }
 
 - (NSURL *)_absoluteLinkURL
@@ -212,12 +221,12 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (NSString *)_titleDisplayString
 {
-    return _result->titleDisplayString();
+    return NSStringOrNil(_result->titleDisplayString());
 }
 
 - (NSString *)_textContent
 {
-    return _result->textContent();
+    return NSStringOrNil(_result->textContent());
 }
 
 - (NSNumber *)_isLiveLink
