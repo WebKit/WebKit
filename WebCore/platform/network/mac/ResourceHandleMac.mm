@@ -32,7 +32,6 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "ResourceError.h"
-#import "ResourceRequestMac.h"
 #import "ResourceResponse.h"
 #import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
@@ -104,12 +103,11 @@ NSURLRequest *ResourceHandle::willSendRequest(NSURLRequest *nsRequest, NSURLResp
 {
     ASSERT(nsRequest);
     if (ResourceHandleClient* c = client()) {
-        ResourceRequest request;
-        getResourceRequest(request, nsRequest);
+        ResourceRequest request(nsRequest);
         ResourceResponse redirectResponse;
         getResourceResponse(redirectResponse, nsRedirectResponse);
         c->willSendRequest(this, request, redirectResponse);
-        return nsURLRequest(request);
+        return request.nsURLRequest();
     }
 
     return nsRequest;

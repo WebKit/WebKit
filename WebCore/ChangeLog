@@ -1,3 +1,49 @@
+2006-11-28  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Have ResourceRequest hold on to the platform object so we don't
+        have to convert back and forth when nothing in the object changes.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::pageRect):
+        * platform/network/ResourceRequest.cpp: Added.
+        (WebCore::ResourceRequest::isEmpty):
+        (WebCore::ResourceRequest::url):
+        (WebCore::ResourceRequest::setURL):
+        (WebCore::ResourceRequest::cachePolicy):
+        (WebCore::ResourceRequest::setCachePolicy):
+        (WebCore::ResourceRequest::timeoutInterval):
+        (WebCore::ResourceRequest::setTimeoutInterval):
+        (WebCore::ResourceRequest::mainDocumentURL):
+        (WebCore::ResourceRequest::setMainDocumentURL):
+        (WebCore::ResourceRequest::httpMethod):
+        (WebCore::ResourceRequest::setHTTPMethod):
+        (WebCore::ResourceRequest::httpHeaderFields):
+        (WebCore::ResourceRequest::httpHeaderField):
+        (WebCore::ResourceRequest::setHTTPHeaderField):
+        (WebCore::ResourceRequest::httpBody):
+        (WebCore::ResourceRequest::setHTTPBody):
+        (WebCore::ResourceRequest::allowHTTPCookies):
+        (WebCore::ResourceRequest::setAllowHTTPCookies):
+        (WebCore::ResourceRequest::updatePlatformRequest):
+        (WebCore::ResourceRequest::updateResourceRequest):
+        (WebCore::ResourceRequest::addHTTPHeaderField):
+        (WebCore::ResourceRequest::addHTTPHeaderFields):
+        * platform/network/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceRequestMac.h: Removed.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::nsURLRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2006-11-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

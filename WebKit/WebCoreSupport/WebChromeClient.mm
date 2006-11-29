@@ -95,7 +95,7 @@ Page* WebChromeClient::createWindow(const FrameLoadRequest& request)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())
-        URLRequest = nsURLRequest(request.resourceRequest());
+        URLRequest = request.resourceRequest().nsURLRequest();
 
     WebView *newWebView;
     id delegate = [m_webView UIDelegate];
@@ -111,7 +111,7 @@ Page* WebChromeClient::createModalDialog(const FrameLoadRequest& request)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())
-        URLRequest = nsURLRequest(request.resourceRequest());
+        URLRequest = request.resourceRequest().nsURLRequest();
 
     WebView *newWebView = nil;
     id delegate = [m_webView UIDelegate];

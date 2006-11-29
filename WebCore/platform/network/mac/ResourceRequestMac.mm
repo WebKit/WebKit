@@ -33,52 +33,58 @@
 #import <Foundation/Foundation.h>
 
 namespace WebCore {
+
+NSURLRequest* ResourceRequest::nsURLRequest() const
+{ 
+    updatePlatformRequest();
     
-    void getResourceRequest(ResourceRequest& request, NSURLRequest* nsRequest)
-    {
-        request = ResourceRequest([nsRequest URL]);
+    return [[m_nsRequest.get() retain] autorelease]; 
+}
 
-        request.setCachePolicy((ResourceRequestCachePolicy)[nsRequest cachePolicy]);
-        request.setTimeoutInterval([nsRequest timeoutInterval]);
-        request.setMainDocumentURL(KURL([nsRequest mainDocumentURL]));
-        if (NSString* method = [nsRequest HTTPMethod])
-            request.setHTTPMethod(method);
-        request.setAllowHTTPCookies([nsRequest HTTPShouldHandleCookies]);
+void ResourceRequest::doUpdateResourceRequest()
+{
+    m_url = [m_nsRequest.get() URL];
+    m_cachePolicy = (ResourceRequestCachePolicy)[m_nsRequest.get() cachePolicy];
+    m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
+    m_mainDocumentURL = [m_nsRequest.get() mainDocumentURL];
+    
+    if (NSString* method = [m_nsRequest.get() HTTPMethod])
+        m_httpMethod = method;
+    m_allowHTTPCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
+    
+    NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
+    NSEnumerator *e = [headers keyEnumerator];
+    NSString *name;
+    while ((name = [e nextObject]))
+        m_httpHeaderFields.set(name, [headers objectForKey:name]);
+    
+    if (NSData* bodyData = [m_nsRequest.get() HTTPBody])
+        m_httpBody = new FormData([bodyData bytes], [bodyData length]);
+    else if (NSInputStream* bodyStream = [m_nsRequest.get() HTTPBodyStream])
+        if (FormData* formData = httpBodyFromStream(bodyStream))
+            m_httpBody = formData;    
+}
 
-        NSDictionary *headers = [nsRequest allHTTPHeaderFields];
-        NSEnumerator *e = [headers keyEnumerator];
-        NSString *name;
-        while ((name = [e nextObject]))
-            request.setHTTPHeaderField(name, [headers objectForKey:name]);
-
-        if (NSData* bodyData = [nsRequest HTTPBody])
-            request.setHTTPBody(new FormData([bodyData bytes], [bodyData length]));
-        else if (NSInputStream* bodyStream = [nsRequest HTTPBodyStream])
-            if (FormData* formData = httpBodyFromStream(bodyStream))
-                request.setHTTPBody(formData);
-        // FIXME: what to do about arbitrary body streams?
-    }
-
-    NSURLRequest* nsURLRequest(const ResourceRequest& request)
-    {
-        NSMutableURLRequest* nsRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];
-
-        [nsRequest setCachePolicy:(NSURLRequestCachePolicy)request.cachePolicy()];
-        [nsRequest setTimeoutInterval:request.timeoutInterval()];
-        [nsRequest setMainDocumentURL:request.mainDocumentURL().getNSURL()];
-        if (!request.httpMethod().isEmpty())
-            [nsRequest setHTTPMethod:request.httpMethod()];
-        [nsRequest setHTTPShouldHandleCookies:request.allowHTTPCookies()];
-
-        HTTPHeaderMap::const_iterator end = request.httpHeaderFields().end();
-        for (HTTPHeaderMap::const_iterator it = request.httpHeaderFields().begin(); it != end; ++it)
-            [nsRequest setValue:it->second forHTTPHeaderField:it->first];
-
-        RefPtr<FormData> formData = request.httpBody();
-        if (formData && !formData->isEmpty())
-            setHTTPBody(nsRequest, formData);
-
-        return [nsRequest autorelease];
-    }
+void ResourceRequest::doUpdatePlatformRequest()
+{
+    NSMutableURLRequest* nsRequest = [[NSMutableURLRequest alloc] initWithURL:url().getNSURL()];
+    
+    [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
+    [nsRequest setTimeoutInterval:timeoutInterval()];
+    [nsRequest setMainDocumentURL:mainDocumentURL().getNSURL()];
+    if (!httpMethod().isEmpty())
+        [nsRequest setHTTPMethod:httpMethod()];
+    [nsRequest setHTTPShouldHandleCookies:allowHTTPCookies()];
+    
+    HTTPHeaderMap::const_iterator end = httpHeaderFields().end();
+    for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
+        [nsRequest setValue:it->second forHTTPHeaderField:it->first];
+    
+    RefPtr<FormData> formData = httpBody();
+    if (formData && !formData->isEmpty())
+        WebCore::setHTTPBody(nsRequest, formData);
+    
+    m_nsRequest = nsRequest;
+}
 
 }

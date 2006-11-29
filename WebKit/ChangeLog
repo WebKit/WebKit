@@ -1,3 +1,15 @@
+2006-11-28  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Update for changes to ResourceRequest.
+        
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        (WebChromeClient::createModalDialog):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canHandleRequest):
+
 2006-11-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

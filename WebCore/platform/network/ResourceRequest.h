@@ -32,6 +32,21 @@
 #include "KURL.h"
 #include "HTTPHeaderMap.h"
 
+#if PLATFORM(MAC)
+
+#include "RetainPtr.h"
+
+#ifdef __OBJC__
+@class NSURLRequest;
+#else
+class NSURLRequest;
+#endif
+
+#elif USE(CFNETWORK)
+#include "RetainPtr.h"
+typedef const struct _CFURLRequest* CFURLRequestRef;
+#endif
+
 namespace WebCore {
 
     enum ResourceRequestCachePolicy {
@@ -43,12 +58,15 @@ namespace WebCore {
 
     struct ResourceRequest {
 
+        
         ResourceRequest(const String& url) 
             : m_url(url.deprecatedString())
             , m_cachePolicy(UseProtocolCachePolicy)
             , m_timeoutInterval(defaultTimeoutInterval)
             , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
+            , m_resourceRequestUpdated(true)
+            , m_platformRequestUpdated(false)
         {
         }
 
@@ -58,6 +76,8 @@ namespace WebCore {
             , m_timeoutInterval(defaultTimeoutInterval)
             , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
+            , m_resourceRequestUpdated(true)
+            , m_platformRequestUpdated(false)
         {
         }
 
@@ -67,6 +87,8 @@ namespace WebCore {
             , m_timeoutInterval(defaultTimeoutInterval)
             , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
+            , m_resourceRequestUpdated(true)
+            , m_platformRequestUpdated(false)
         {
             setHTTPReferrer(referrer);
         }
@@ -76,29 +98,31 @@ namespace WebCore {
             , m_timeoutInterval(defaultTimeoutInterval)
             , m_httpMethod("GET")
             , m_allowHTTPCookies(true)
+            , m_resourceRequestUpdated(true)
+            , m_platformRequestUpdated(false)
         {
         }
 
-        bool isEmpty() const { return m_url.isEmpty(); }
+        bool isEmpty() const;
 
-        const KURL& url() const { return m_url; }
-        void setURL(const KURL& url) { m_url = url; }
+        const KURL& url() const;
+        void setURL(const KURL& url);
 
-        const ResourceRequestCachePolicy cachePolicy() const { return m_cachePolicy; }
-        void setCachePolicy(ResourceRequestCachePolicy cachePolicy) { m_cachePolicy = cachePolicy; }
+        const ResourceRequestCachePolicy cachePolicy() const;
+        void setCachePolicy(ResourceRequestCachePolicy cachePolicy);
         
-        double timeoutInterval() const { return m_timeoutInterval; }
-        void setTimeoutInterval(double timeoutInterval) { m_timeoutInterval = timeoutInterval; }
+        double timeoutInterval() const;
+        void setTimeoutInterval(double timeoutInterval);
         
-        const KURL& mainDocumentURL() const { return m_mainDocumentURL; }
-        void setMainDocumentURL(const KURL& mainDocumentURL) { m_mainDocumentURL = mainDocumentURL; }
+        const KURL& mainDocumentURL() const;
+        void setMainDocumentURL(const KURL& mainDocumentURL);
         
-        const String& httpMethod() const { return m_httpMethod; }
-        void setHTTPMethod(const String& httpMethod) { m_httpMethod = httpMethod; }
+        const String& httpMethod() const;
+        void setHTTPMethod(const String& httpMethod);
         
-        const HTTPHeaderMap& httpHeaderFields() const { return m_httpHeaderFields; }
-        String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
-        void setHTTPHeaderField(const String& name, const String& value) { m_httpHeaderFields.set(name, value); }
+        const HTTPHeaderMap& httpHeaderFields() const;
+        String httpHeaderField(const String& name) const;
+        void setHTTPHeaderField(const String& name, const String& value);
         void addHTTPHeaderField(const String& name, const String& value);
         void addHTTPHeaderFields(const HTTPHeaderMap& headerFields);
         
@@ -114,13 +138,36 @@ namespace WebCore {
         String httpAccept() const { return httpHeaderField("Accept"); }
         void setHTTPAccept(const String& httpUserAgent) { setHTTPHeaderField("Accept", httpUserAgent); }
 
-        FormData* httpBody() const { return m_httpBody.get(); }
-        void setHTTPBody(PassRefPtr<FormData> httpBody) { m_httpBody = httpBody; } 
+        FormData* httpBody() const;
+        void setHTTPBody(PassRefPtr<FormData> httpBody);
         
-        bool allowHTTPCookies() const { return m_allowHTTPCookies; }
-        void setAllowHTTPCookies(bool allowHTTPCookies) { m_allowHTTPCookies = allowHTTPCookies; }
+        bool allowHTTPCookies() const;
+        void setAllowHTTPCookies(bool allowHTTPCookies);
 
+#if PLATFORM(MAC)
+        ResourceRequest(NSURLRequest* nsRequest)
+            : m_resourceRequestUpdated(false)
+            , m_platformRequestUpdated(true)
+            , m_nsRequest(nsRequest) { }
+        
+        NSURLRequest* nsURLRequest() const;
+#elif USE(CFNETWORK)
+        ResourceRequest(CFURLRequestRef cfRequest)
+            : m_resourceRequestUpdated(false)
+            , m_platformRequestUpdated(true)
+            , m_cfRequest(cfRequest) { }
+        
+        CFURLRequestRef cfURLRequest() const;       
+#endif
     private:
+        void updatePlatformRequest() const; 
+        void updateResourceRequest() const; 
+
+#if PLATFORM(MAC) || USE(CFNETWORK)
+        void doUpdatePlatformRequest();
+        void doUpdateResourceRequest();
+#endif
+        
         static const int defaultTimeoutInterval = 60;
 
         KURL m_url;
@@ -132,22 +179,14 @@ namespace WebCore {
         HTTPHeaderMap m_httpHeaderFields;
         RefPtr<FormData> m_httpBody;
         bool m_allowHTTPCookies;
+        bool m_resourceRequestUpdated;
+        bool m_platformRequestUpdated;
+#if PLATFORM(MAC)
+        RetainPtr<NSURLRequest> m_nsRequest;
+#elif USE(CFNETWORK)
+        RetainPtr<CFURLRequestRef> m_cfRequest;      
+#endif
     };
-
-    inline void ResourceRequest::addHTTPHeaderField(const String& name, const String& value) 
-    {
-        pair<HTTPHeaderMap::iterator, bool> result = m_httpHeaderFields.add(name, value); 
-        if (!result.second)
-            result.first->second += "," + value;
-    }
-
-    // FIXME: probably shouldn't inline this
-    inline void ResourceRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
-    {
-        HTTPHeaderMap::const_iterator end = headerFields.end();
-        for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it)
-            addHTTPHeaderField(it->first, it->second);
-    }
 
 } // namespace WebCore
 
