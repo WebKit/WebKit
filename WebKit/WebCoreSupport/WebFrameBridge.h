@@ -52,7 +52,7 @@ namespace WebCore {
     NSDictionary *lastDashboardRegions;
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView;
+- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView;
 - (void)close;
 
 - (WebFrame *)webFrame;

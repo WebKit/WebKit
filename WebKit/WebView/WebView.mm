@@ -1823,7 +1823,7 @@ NSMutableDictionary *countInvocations;
     WebCore::InitializeLoggingChannelsIfNecessary();
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self));
-    [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName view:frameView webView:self] release];
+    [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];

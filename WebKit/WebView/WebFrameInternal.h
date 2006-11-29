@@ -124,7 +124,7 @@ WebView *getWebView(WebFrame *webFrame);
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
 #ifdef __cplusplus
-- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v coreFrame:(WebCore::Frame*)coreFrame;
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge;
 #endif
 
 - (void)_addPlugInView:(NSView *)plugInView;

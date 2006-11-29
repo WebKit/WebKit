@@ -141,8 +141,8 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
     return 0;
 }
 
-FrameMac::FrameMac(Page* page, Element* ownerElement)
-    : Frame(page, ownerElement)
+FrameMac::FrameMac(Page* page, Element* ownerElement, FrameLoaderClient* frameLoaderClient)
+    : Frame(page, ownerElement, frameLoaderClient)
     , _bridge(nil)
     , _bindingRoot(0)
     , _windowScriptObject(0)

@@ -37,6 +37,7 @@
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameLoaderClient.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
@@ -74,7 +75,10 @@
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaVM/jni.h>
+#import <WebCore/Cache.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/Element.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
@@ -117,29 +121,41 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return kit(m_frame->page());
 }
 
-- (void)finishInitializingWithFrameName:(NSString *)name view:(WebFrameView *)view
+- (void)finishInitializingWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView ownerElement:(WebCoreElement *)ownerElement
 {
-    WebView *webView = [self webView];
-
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView coreFrame:m_frame];
     ++WebBridgeCount;
 
+    WebView *webView = kit(page);
+
+    _frame = [[WebFrame alloc] _initWithWebFrameView:frameView webView:webView bridge:self];
+
+    m_frame = new FrameMac(page, ownerElement, new WebFrameLoaderClient(_frame));
+    m_frame->setBridge(self);
     m_frame->tree()->setName(name);
     m_frame->setSettings([[webView _settings] settings]);
+    
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
+
+    // FIXME: This is one-time initialization, but it gets the value of the setting from the
+    // current WebView. That's a mismatch and not good!
+    static bool initializedObjectCacheSize;
+    if (!initializedObjectCacheSize) {
+        initializedObjectCacheSize = true;
+        WebCore::cache()->setMaximumSize([self getObjectCacheSize]);
+    }
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name view:(WebFrameView *)view webView:(WebView *)webView
+- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView
 {
-    self = [super initMainFrameWithPage:page];
-    [self finishInitializingWithFrameName:name view:view];
+    self = [super init];
+    [self finishInitializingWithPage:page frameName:name frameView:frameView ownerElement:0];
     return self;
 }
 
-- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
+- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name frameView:(WebFrameView *)frameView
 {
-    self = [super initSubframeWithOwnerElement:ownerElement];
-    [self finishInitializingWithFrameName:name view:view];
+    self = [super init];
+    [self finishInitializingWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
     return self;
 }
 
@@ -417,7 +433,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     [childView setAllowsScrolling:allowsScrolling];
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName view:childView];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName frameView:childView];
     [_frame _addChild:[newBridge webFrame]];
     [childView release];
 

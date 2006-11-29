@@ -819,15 +819,14 @@ WebView *getWebView(WebFrame *webFrame)
     }
 }
 
-- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v coreFrame:(Frame*)coreFrame
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
 {
     self = [super init];
     if (!self)
         return nil;
 
     _private = [[WebFramePrivate alloc] init];
-
-    _private->bridge = (WebFrameBridge *)Mac(coreFrame)->bridge();
+    _private->bridge = bridge;
 
     if (fv) {
         [_private setWebFrameView:fv];
@@ -835,8 +834,6 @@ WebView *getWebView(WebFrame *webFrame)
     }
 
     ++WebFrameCount;
-
-    [self _frameLoader]->setClient(new WebFrameLoaderClient(self));
 
     return self;
 }

@@ -229,9 +229,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
 
 @implementation WebCoreFrameBridge
 
-static bool initializedObjectCacheSize = false;
-static bool initializedKJS = false;
-
 static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     if (!frame)
@@ -252,41 +249,21 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge([document _document]->frame());
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page
+- (id)init
 {
+    static bool initializedKJS;
     if (!initializedKJS) {
+        initializedKJS = true;
+
         mainThread = pthread_self();
         RootObject::setFindRootObjectForNativeHandleFunction(rootForView);
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
-        initializedKJS = true;
     }
     
     if (!(self = [super init]))
         return nil;
 
-    m_frame = new FrameMac(page, 0);
-    m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
-
-    // FIXME: This is one-time initialization, but it gets the value of the setting from the
-    // current WebView. That's a mismatch and not good!
-    if (!initializedObjectCacheSize) {
-        WebCore::cache()->setMaximumSize([self getObjectCacheSize]);
-        initializedObjectCacheSize = true;
-    }
-    
-    return self;
-}
-
-- (id)initSubframeWithOwnerElement:(Element *)ownerElement
-{
-    if (!(self = [super init]))
-        return nil;
-    
-    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement);
-    m_frame->setBridge(self);
-    _shouldCreateRenderers = YES;
-
     return self;
 }
 

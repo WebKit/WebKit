@@ -1,3 +1,21 @@
+2006-11-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/4844855> Should clarify when to create clients in 
+        the WebCore client API
+        
+        All clients must now be supplied as constructor arguments. This clarifies 
+        when you need to create clients, and also guarantees that objects can't 
+        (for the most part) be in a clientless state.
+
+        Layout tests pass. No leaks reported.
+        
+        * WebCoreSupport/WebFrameBridge.mm: Shuffled around initialization and changed
+        some arguments to resolve ciruclar dependencies at init time.
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]): We no longer call setClient
+        here, because the client is set up at construction time.
+
 2006-11-28  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

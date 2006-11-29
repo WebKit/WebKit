@@ -160,7 +160,7 @@ namespace WebCore {
 
     class FrameLoader : Noncopyable {
     public:
-        FrameLoader(Frame*);
+        FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
 
         Frame* frame() const { return m_frame; }
@@ -332,7 +332,6 @@ namespace WebCore {
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
 #endif
 
-        void setClient(FrameLoaderClient*);
         FrameLoaderClient* client() const;
 
         void setDefersLoading(bool);
