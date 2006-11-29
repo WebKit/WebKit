@@ -222,4 +222,8 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element
+{
+}
+
 @end

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventTargetNode.h"
 
+#include "ContextMenuController.h"
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
@@ -39,6 +40,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RegisteredEventListener.h"
@@ -534,6 +536,13 @@ void EventTargetNode::defaultEventHandler(Event* event)
                 event->setDefaultHandled();
         }
     }
+#ifdef WEBCORE_CONTEXT_MENUS
+    else if (event->type() == contextmenuEvent) {
+        if (Frame* frame = document()->frame())
+            if (Page* page = frame->page())
+                page->contextMenuController()->handleContextMenuEvent(event);
+    }
+#endif
 }
 
 #ifndef NDEBUG

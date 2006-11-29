@@ -112,10 +112,10 @@ public:
     bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
     bool inputManagerHasMarkedText() const;
 
-    void handleMousePressEvent(const PlatformMouseEvent&);
-    void handleMouseMoveEvent(const PlatformMouseEvent&);
-    void handleMouseReleaseEvent(const PlatformMouseEvent&);
-    void handleWheelEvent(PlatformWheelEvent&);
+    bool handleMousePressEvent(const PlatformMouseEvent&);
+    bool handleMouseMoveEvent(const PlatformMouseEvent&);
+    bool handleMouseReleaseEvent(const PlatformMouseEvent&);
+    bool handleWheelEvent(PlatformWheelEvent&);
 
     bool sendContextMenuEvent(PlatformMouseEvent);
 
@@ -152,14 +152,14 @@ public:
 private:
     void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
 
-    void handleMouseDoubleClickEvent(const PlatformMouseEvent&);
+    bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
 
-    void handleMousePressEvent(const MouseEventWithHitTestResults&);
-    void handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
-    void handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
-    void handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
-    void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
-    void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
+    bool handleMousePressEvent(const MouseEventWithHitTestResults&);
+    bool handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
+    bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
+    bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
+    bool handleMouseMoveEvent(const MouseEventWithHitTestResults&);
+    bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
     void hoverTimerFired(Timer<EventHandler>*);
 

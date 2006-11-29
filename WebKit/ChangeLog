@@ -1,3 +1,17 @@
+2006-11-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        More WebCore context menu work.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m: New stub delegate method implementation.
+        (-[NSApplication webView:contextMenuItemSelected:forElement:]):
+        * WebCoreSupport/WebContextMenuClient.h: Updated to match ContextMenuClient.h changes.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::addCustomContextMenuItems): Updated for method name changes.
+        (WebContextMenuClient::contextMenuItemSelected): Added new client method.
+        * WebView/WebUIDelegatePrivate.h: New private delegate method declaration.
+
 2006-11-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Justin and Adam.

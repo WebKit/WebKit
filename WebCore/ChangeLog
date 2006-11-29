@@ -1,3 +1,91 @@
+2006-11-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        More WebCore context menu work (still not turned on, however).
+
+        Split ContextMenuItem into its own files and make it a class.
+
+        * WebCore.exp: Updated symbols.
+        * WebCore.xcodeproj/project.pbxproj: Added new ContextMenuItem files.
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Code cleanup.
+        * platform/ContextMenu.h: Split ContextMenuItem into a separate file,
+        removed redundant "Menu" part of platformMenuDescription(),
+        setPlatformMenuDescription().
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::hitTestResult):
+        (WebCore::ContextMenu::platformDescription):
+        * platform/ContextMenuItem.h: Added. Made ContextMenuItem a
+        full-fledged class.
+        (WebCore::):
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::menu):
+        (WebCore::ContextMenuItem::platformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        * platform/mac/ContextMenuItemMac.mm: Added.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        * platform/mac/ContextMenuMac.mm: Updated for ContextMenuItem changes.
+        (-[MenuTarget forwardContextMenuAction:]):
+        (getNSMenuItem): Handle separator items.
+        (ContextMenu::appendItem):
+        (ContextMenu::itemCount):
+        (ContextMenu::insertItem):
+        (ContextMenu::setPlatformDescription):
+        * page/ContextMenuController.h: Updated declaration, added getter.
+        (WebCore::ContextMenuController::contextMenu):
+
+        Added some more context menu plumbing.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler): Added code to call the
+        ContextMenuController when a context menu event is received.
+        * page/ContextMenuClient.h: New client method declaration.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Set the event
+        defaultHandled after handling it.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Take a
+        ContextMenuItem instead of a separate action and title.
+
+        Changed event-handling methods to return bools to signify whether the
+        event was handled or not. This is needed so we can know whether to hand
+        the event off to the OS. Also restructured some code to use early
+        returns instead of nesting ifs.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventDoubleClick):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+        * page/FrameView.h:
+        * platform/ScrollBar.h: More bool return values.
+        (WebCore::Scrollbar::handleMouseMoveEvent):
+        (WebCore::Scrollbar::handleMouseOutEvent):
+        * platform/Widget.h: Ditto.
+        (WebCore::Widget::handleMouseMoveEvent):
+        (WebCore::Widget::handleMouseReleaseEvent):
+
+        Reverted the changes made in r17805 so that we can have fewer header
+        #includes.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h: Ditto.
+        (WebCore::Page::dragCaretController):
+        (WebCore::Page::chrome):
+        (WebCore::Page::contextMenuController):
+
 2006-11-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Justin and Adam.

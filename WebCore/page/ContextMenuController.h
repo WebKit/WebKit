@@ -47,8 +47,10 @@ namespace WebCore {
 
         ContextMenuClient* client() { return m_client; }
 
+        ContextMenu* contextMenu() const { return m_contextMenu.get(); }
+
         void handleContextMenuEvent(Event*);
-        void contextMenuActionSelected(ContextMenuAction, String);
+        void contextMenuItemSelected(ContextMenuItem*);
 
     private:
         Page* m_page;

@@ -129,8 +129,8 @@ public:
 
     void setMediaType(const String&);
 
-    virtual void handleMouseMoveEvent(const PlatformMouseEvent&);
-    virtual void handleMouseReleaseEvent(const PlatformMouseEvent&);
+    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&);
+    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
 
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
 

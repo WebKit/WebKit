@@ -60,8 +60,8 @@
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    WebCore::ContextMenuAction action = static_cast<WebCore::ContextMenuAction>([sender tag]);
-    _menuController->contextMenuActionSelected(action, [sender title]);
+    WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], _menuController->contextMenu());
+    _menuController->contextMenuItemSelected(&item);
 }
 
 @end
@@ -70,10 +70,10 @@ using namespace WebCore;
 
 static MenuTarget* target;
  
-static NSMenuItem* getNSMenuItem(ContextMenu* menu, ContextMenuItem item)
+static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
 {
-    if (!menu->platformMenuDescription())
-        menu->setPlatformMenuDescription([[[NSMutableArray alloc] init] autorelease]);
+    if (!menu->platformDescription())
+        menu->setPlatformDescription([[[NSMutableArray alloc] init] autorelease]);
     
     ContextMenuController* currentController = menu->controller();
     if (!target)
@@ -81,35 +81,52 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, ContextMenuItem item)
     else if (currentController != [target menuController])
         [target setMenuController:currentController];
     
-    NSMenuItem* menuItem = [[[NSMenuItem alloc] init] autorelease];
-    [menuItem setTag: item.action];
-    [menuItem setTitle:item.title];
-    [menuItem setTarget:target];
-    [menuItem setAction:@selector(forwardContextMenuAction:)];
+    NSMenuItem* menuItem = 0;
+    switch (item.type()) {
+        case ActionType:
+            menuItem = [[NSMenuItem alloc] init];
+            [menuItem setTag:item.action()];
+            [menuItem setTitle:item.title()];
+            [menuItem setTarget:target];
+            [menuItem setAction:@selector(forwardContextMenuAction:)];
+            break;
+        case SeparatorType:
+            menuItem = [NSMenuItem separatorItem];
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+    }
     
     return menuItem;
 }
 
-void ContextMenu::appendItem(ContextMenuItem item)
+void ContextMenu::appendItem(const ContextMenuItem& item)
 {
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     [m_menu addObject:menuItem];
+    [menuItem release];
 }
 
-unsigned ContextMenu::itemCount()
+unsigned ContextMenu::itemCount() const
 {
     return [m_menu count];
 }
 
-void ContextMenu::insertItem(unsigned position, ContextMenuItem item)
+void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
 {
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     [m_menu insertObject:menuItem atIndex:position];
+    [menuItem release];
 }
 
-void ContextMenu::setPlatformMenuDescription(NSMutableArray* menu)
+void ContextMenu::setPlatformDescription(NSMutableArray* menu)
 {
-    m_menu = menu;
+    if (menu == m_menu)
+        return;
+    
+    [m_menu release]; 
+    m_menu = [menu retain];
 }
 
 void ContextMenu::show()

@@ -51,6 +51,8 @@ ContextMenuController* ContextMenu::controller() const
 
 void ContextMenu::populate()
 {
+    static ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
+
     MENU_ACTION_ITEM(OpenLinkInNewWindow, "Open Link in New Window");
     MENU_ACTION_ITEM(DownloadLinkToDisk, "Download Linked File");
     MENU_ACTION_ITEM(CopyLinkToClipboard, "Copy Link");
@@ -69,14 +71,13 @@ void ContextMenu::populate()
     MENU_ACTION_ITEM(NoGuessesFound, "No Guesses Found");
     MENU_ACTION_ITEM(IgnoreSpelling, "Ignore Spelling");
     MENU_ACTION_ITEM(LearnSpelling, "Learn Spelling");
-    #if PLATFORM(MAC)
+#if PLATFORM(MAC)
     MENU_ACTION_ITEM(SearchInSpotlight, "Search in Spotlight");
-    #endif
+#endif
     MENU_ACTION_ITEM(SearchWeb, "Search in Google");
     MENU_ACTION_ITEM(LookUpInDictionary, "Look Up in Dictionary");
     // FIXME: Add PDF action items
 
-    ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
     HitTestResult result = hitTestResult();
     
     Node* node = m_hitTestResult.innerNonSharedNode();
@@ -110,9 +111,9 @@ void ContextMenu::populate()
 
         if (imageURL.isEmpty() && linkURL.isEmpty()) {
             if (result.isSelected()) {
-    #if PLATFORM(MAC)
+#if PLATFORM(MAC)
                 appendItem(SearchInSpotlightItem);
-    #endif
+#endif
                 appendItem(SearchWebItem);
                 appendItem(SeparatorItem);
                 appendItem(LookUpInDictionaryItem);
@@ -147,8 +148,10 @@ void ContextMenu::populate()
             else {
                 for (unsigned i = 0; i < size; i++) {
                     String guess = guesses[i];
-                    if (!guess.isNull())
-                        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSpellingGuess, guess));
+                    if (!guess.isNull()) {
+                        ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
+                        appendItem(item);
+                    }
                 }
             }                
 
@@ -159,9 +162,9 @@ void ContextMenu::populate()
         }
 
         if (result.isSelected() && !inPasswordField) {
-    #if PLATFORM(MAC)
+#if PLATFORM(MAC)
             appendItem(SearchInSpotlightItem);
-    #endif
+#endif
             appendItem(SearchWebItem);
             appendItem(SeparatorItem);
      
@@ -172,9 +175,8 @@ void ContextMenu::populate()
         appendItem(CutItem);
         appendItem(CopyItem);
         appendItem(PasteItem);
-        appendItem(SeparatorItem);
 
-        // FIXME: Add "Spelling [and Grammar, on Leopard]", "Font", "Speech", "Writing Direction" submenus here.
+        // FIXME: Add a separator, then "Spelling [and Grammar, on Leopard]", "Font", "Speech", "Writing Direction" submenus here.
     }
 }
 

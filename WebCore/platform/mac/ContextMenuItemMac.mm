@@ -23,33 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ContextMenuClient_h
-#define ContextMenuClient_h
+#include "config.h"
+#include "ContextMenuItem.h"
 
 namespace WebCore {
-    class ContextMenu;
-    class ContextMenuItem;
-    class Frame;
-    class HitTestResult;
-    class KURL;
-
-    class ContextMenuClient {
-    public:
-        virtual ~ContextMenuClient() {  }
-        virtual void contextMenuDestroyed() = 0;
-        
-        virtual void addCustomContextMenuItems(ContextMenu*) = 0;
-        virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
-
-        virtual void copyLinkToClipboard(HitTestResult) = 0;
-        virtual void downloadURL(KURL url) = 0;
-        virtual void copyImageToClipboard(HitTestResult) = 0;
-        virtual void lookUpInDictionary(Frame*) = 0;
-
-#if PLATFORM(MAC)
-        virtual void searchWithSpotlight() = 0;
-#endif
-    };
+    
+ContextMenuItem::ContextMenuItem(NSMenuItem* item, ContextMenu* menu)
+    : m_menu(menu)
+    , m_platformDescription([item retain])
+{
+    if ([item isSeparatorItem]) {
+        m_type = SeparatorType;
+        m_title = String();
+        m_action = ContextMenuItemTagNoAction;
+    } else {
+        m_type = ActionType;
+        m_title = [item title];
+        ASSERT([item tag] >= 0);
+        m_action = static_cast<ContextMenuAction>([item tag]);
+    }
 }
 
-#endif
+ContextMenuItem::~ContextMenuItem()
+{
+    [m_platformDescription release];
+}
+
+}

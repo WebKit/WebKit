@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */; };
 		065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */; };
 		065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2988,6 +2990,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuItem.h; sourceTree = "<group>"; };
+		06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuItemMac.mm; sourceTree = "<group>"; };
 		065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuClient.h; sourceTree = "<group>"; };
 		065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuController.cpp; sourceTree = "<group>"; };
 		065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuController.h; sourceTree = "<group>"; };
@@ -6590,6 +6594,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
 				2D90660B0665D937006B6F1A /* ClipboardMac.h */,
@@ -8817,6 +8822,7 @@
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */,
 				93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */,
+				06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				1A98955A0AA78149005EF5EF /* CString.cpp */,
 				1A98955B0AA78149005EF5EF /* CString.h */,
@@ -10834,6 +10840,7 @@
 				B2D87C820B124E7300B0DE1E /* SVGPaintServerSolid.h in Headers */,
 				A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */,
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
+				06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10871,7 +10878,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10886,7 +10892,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12150,6 +12155,7 @@
 				B2D87C890B124E9500B0DE1E /* SVGPaintServerPatternCg.cpp in Sources */,
 				B2D87C8A0B124E9500B0DE1E /* SVGPaintServerSolidCg.cpp in Sources */,
 				A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */,
+				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

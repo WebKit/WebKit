@@ -21,10 +21,7 @@
 #ifndef Page_h
 #define Page_h
 
-#include "Chrome.h"
-#include "ContextMenuController.h"
 #include "PlatformString.h"
-#include "SelectionController.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -34,12 +31,15 @@ typedef struct HINSTANCE__* HINSTANCE;
 
 namespace WebCore {
 
+    class Chrome;
     class ChromeClient;
     class ContextMenuClient;
+    class ContextMenuController;
     class EditorClient;
     class Frame;
     class FrameNamespace;
     class FloatRect;
+    class SelectionController;
     class Settings;
     class Widget;
 
@@ -66,9 +66,9 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
-        SelectionController* dragCaretController() { return &m_dragCaretController; }
-        Chrome* chrome() { return &m_chrome; }
-        ContextMenuController* contextMenuController() { return &m_contextMenuController; }
+        SelectionController* dragCaretController() { return m_dragCaretController.get(); }
+        Chrome* chrome() { return m_chrome.get(); }
+        ContextMenuController* contextMenuController() { return m_contextMenuController.get(); }
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
@@ -80,9 +80,9 @@ namespace WebCore {
 #endif
 
     private:
-        SelectionController m_dragCaretController;
-        Chrome m_chrome;
-        ContextMenuController m_contextMenuController;
+        OwnPtr<SelectionController> m_dragCaretController;
+        OwnPtr<Chrome> m_chrome;
+        OwnPtr<ContextMenuController> m_contextMenuController;
 
         EditorClient* m_editorClient;
         RefPtr<Frame> m_mainFrame;

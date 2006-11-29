@@ -35,6 +35,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
@@ -57,8 +58,19 @@ void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
         NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:menu->hitTestResult()] autorelease];
-        NSArray *newMenu = [delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:menu->platformMenuDescription()];
-        menu->setPlatformMenuDescription(newMenu);
+        NSArray *newMenu = [delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:menu->platformDescription()];
+        menu->setPlatformDescription(newMenu);
+    }
+}
+
+void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item)
+{
+    ASSERT(item->menu());
+    
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webView:contextMenuItemSelected:forElement:)]) {
+        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:item->menu()->hitTestResult()] autorelease];
+        [delegate webView:m_webView contextMenuItemSelected:item->platformDescription() forElement:element];
     }
 }
 

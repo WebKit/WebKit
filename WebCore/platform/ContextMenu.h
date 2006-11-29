@@ -26,6 +26,9 @@
 #ifndef ContextMenu_h
 #define ContextMenu_h
 
+#include <wtf/Noncopyable.h>
+
+#include "ContextMenuItem.h"
 #include "HitTestResult.h"
 #include "PlatformString.h"
 
@@ -43,111 +46,47 @@ class QMenu;
 
 namespace WebCore {
 
-class ContextMenuController;
-
-// This enum needs to be in sync with WebMenuItemTag, which is defined in WebUIDelegate.h
-enum ContextMenuAction {
-    ContextMenuItemTagNoAction=0, // This item is not actually in WebUIDelegate.h
-    ContextMenuItemTagOpenLinkInNewWindow=1,
-    ContextMenuItemTagDownloadLinkToDisk,
-    ContextMenuItemTagCopyLinkToClipboard,
-    ContextMenuItemTagOpenImageInNewWindow,
-    ContextMenuItemTagDownloadImageToDisk,
-    ContextMenuItemTagCopyImageToClipboard,
-    ContextMenuItemTagOpenFrameInNewWindow,
-    ContextMenuItemTagCopy,
-    ContextMenuItemTagGoBack,
-    ContextMenuItemTagGoForward,
-    ContextMenuItemTagStop,
-    ContextMenuItemTagReload,
-    ContextMenuItemTagCut,
-    ContextMenuItemTagPaste,
-    ContextMenuItemTagSpellingGuess,
-    ContextMenuItemTagNoGuessesFound,
-    ContextMenuItemTagIgnoreSpelling,
-    ContextMenuItemTagLearnSpelling,
-    ContextMenuItemTagOther,
-    ContextMenuItemTagSearchInSpotlight,
-    ContextMenuItemTagSearchWeb,
-    ContextMenuItemTagLookUpInDictionary,
-    ContextMenuItemTagOpenWithDefaultApplication,
-    ContextMenuItemPDFActualSize,
-    ContextMenuItemPDFZoomIn,
-    ContextMenuItemPDFZoomOut,
-    ContextMenuItemPDFAutoSize,
-    ContextMenuItemPDFSinglePage,
-    ContextMenuItemPDFFacingPages,
-    ContextMenuItemPDFContinuous,
-    ContextMenuItemPDFNextPage,
-    ContextMenuItemPDFPreviousPage,
-};
-
-enum ContextMenuItemType {
-    ActionType,
-    SeparatorType,
-    SubmenuType
-};
-
-struct ContextMenuItem {
-    ContextMenuItem()
-        : type(SeparatorType)
-        , action(ContextMenuItemTagNoAction)
-        , title(String())
-    {
-    }
-
-    ContextMenuItem(ContextMenuItemType theType, ContextMenuAction theAction, const String& theTitle)
-        : type(theType)
-        , action(theAction)
-        , title(theTitle)
-    {
-    }
-
-    // FIXME: Need to support submenus (perhaps a Vector<ContextMenuItem>*?)
-    // FIXME: Do we need a keyboard accelerator here?
-
-    ContextMenuItemType type;
-    ContextMenuAction action;
-    String title;
-};
+    class ContextMenuController;
 
 #if PLATFORM(MAC)
-typedef NSMutableArray* PlatformMenuDescription;
+    typedef NSMutableArray* PlatformMenuDescription;
 #elif PLATFORM(WIN)
-typedef HMENU PlatformMenuDescription;
+    typedef HMENU PlatformMenuDescription;
 #elif PLATFORM(QT)
-typedef QMenu* PlatformMenuDescription;
+    typedef QMenu* PlatformMenuDescription;
 #endif
 
-class ContextMenu : Noncopyable
-{
-public:
-    ContextMenu(HitTestResult result)
-        : m_hitTestResult(result)
-        , m_menu(0)
+    class ContextMenu : Noncopyable
     {
-    }
+    public:
+        ContextMenu(HitTestResult result)
+            : m_hitTestResult(result)
+            , m_menu(0)
+        {
+        }
 
-    void populate();
+        void populate();
 
-    void show();
-    void hide();
+        void show();
+        void hide();
 
-    void insertItem(unsigned position, ContextMenuItem);
-    void appendItem(ContextMenuItem item);
+        void insertItem(unsigned position, const ContextMenuItem&);
+        void appendItem(const ContextMenuItem&);
+        
+        ContextMenuItem at(unsigned index);
 
-    unsigned itemCount();
+        unsigned itemCount() const;
 
-    HitTestResult hitTestResult() const { return m_hitTestResult; }
-    ContextMenuController* controller() const;
+        HitTestResult hitTestResult() const { return m_hitTestResult; }
+        ContextMenuController* controller() const;
 
-    PlatformMenuDescription platformMenuDescription() { return m_menu; }
-    void setPlatformMenuDescription(PlatformMenuDescription menu);
+        PlatformMenuDescription platformDescription() const { return m_menu; }
+        void setPlatformDescription(PlatformMenuDescription menu);
 
-private:
-    HitTestResult m_hitTestResult;
-    PlatformMenuDescription m_menu;
-};
+    private:
+        HitTestResult m_hitTestResult;
+        PlatformMenuDescription m_menu;
+    };
 
 }
 
