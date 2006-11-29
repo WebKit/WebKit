@@ -1,3 +1,12 @@
+2006-11-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix fast/dom/xmlhttprequest-get layout test failure.
+        
+        * platform/network/mac/ResourceResponseMac.mm:
+        Initialize the status code to 0 for non-http responses.
+        
 2006-11-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

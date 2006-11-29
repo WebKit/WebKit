@@ -62,8 +62,8 @@ void ResourceResponse::doUpdateResourceResponse()
         NSEnumerator *e = [headers keyEnumerator];
         while (NSString *name = [e nextObject])
             m_httpHeaderFields.set(name, [headers objectForKey:name]);
-    } 
-    
+    } else
+        m_httpStatusCode = 0;
 }
 
 }
