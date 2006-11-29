@@ -23,8 +23,6 @@
 
 #include "ChromeClient.h"
 #include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "Page.h"
 #include "ResourceLoader.h"
 #include <wtf/PassRefPtr.h>
@@ -57,7 +55,7 @@ FloatRect Chrome::windowRect() const
 
 FloatRect Chrome::pageRect() const
 {
-    return m_page->mainFrame()->view()->visibleContentRect();
+    return m_client->pageRect();
 }
         
 float Chrome::scaleFactor()

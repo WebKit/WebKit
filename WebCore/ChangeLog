@@ -1,5 +1,20 @@
 2006-11-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Anders Carlsson.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=11712
+        REGRESSION: Crash when clicking JS link on crateandbarrel.com (window.open("http[...]"))
+        
+        This was an accidental commit by Anders.
+
+        Chrome can't use the FrameView at window.open time, because it doesn't
+        exist yet.
+        
+        * page/Chrome.cpp:
+        (WebCore::Chrome::pageRect):
+
+2006-11-29  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Mitz Pettel.
         
         Fixed http://bugs.webkit.org/show_bug.cgi?id=11710
