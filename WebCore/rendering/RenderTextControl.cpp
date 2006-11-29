@@ -163,7 +163,7 @@ void RenderTextControl::updateFromElement()
             if (value.endsWith("\n") || value.endsWith("\r"))
                 m_div->appendChild(new HTMLBRElement(document()), ec);
             if (document()->frame())
-                document()->frame()->editor()->client()->clearUndoRedoOperations();
+                document()->frame()->editor()->clearUndoRedoOperations();
             setEdited(false);
         }
         element->setValueMatchesRenderer();

@@ -578,7 +578,7 @@ bool FrameLoader::closeURL()
 {
     saveDocumentState();
     stopLoading(true);
-    m_frame->editor()->client()->clearUndoRedoOperations();
+    m_frame->editor()->clearUndoRedoOperations();
     return true;
 }
 

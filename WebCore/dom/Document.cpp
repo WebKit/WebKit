@@ -1999,7 +1999,7 @@ bool Document::relinquishesEditingFocus(Node *node)
     if (!frame() || !root)
         return false;
 
-    return frame()->editor()->client()->shouldEndEditing(rangeOfContents(root).get());
+    return frame()->editor()->shouldEndEditing(rangeOfContents(root).get());
 }
 
 bool Document::acceptsEditingFocus(Node *node)
@@ -2011,23 +2011,7 @@ bool Document::acceptsEditingFocus(Node *node)
     if (!frame() || !root)
         return false;
 
-    return frame()->editor()->client()->shouldBeginEditing(rangeOfContents(root).get());
-}
-
-void Document::didBeginEditing()
-{
-    if (!frame())
-        return;
-    
-    frame()->editor()->client()->didBeginEditing();
-}
-
-void Document::didEndEditing()
-{
-    if (!frame())
-        return;
-    
-    frame()->editor()->client()->didEndEditing();
+    return frame()->editor()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
 #if PLATFORM(MAC)
@@ -2105,7 +2089,7 @@ bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)
             return true;
             
         if (oldFocusNode.get() == oldFocusNode->rootEditableElement())
-            didEndEditing();
+            frame()->editor()->didEndEditing();
     }
 
     if (newFocusNode) {
@@ -2134,7 +2118,7 @@ bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)
         m_focusNode->setFocus();
         
         if (m_focusNode.get() == m_focusNode->rootEditableElement())
-            didBeginEditing();
+            frame()->editor()->didBeginEditing();
         
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this

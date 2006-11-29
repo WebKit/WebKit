@@ -190,8 +190,8 @@ bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
 
 bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction)
 {
-    Node *child = fragment->firstChild();
     if (client()) {
+        Node *child = fragment->firstChild();
         if (fragment->lastChild() == child && child->isCharacterDataNode())
             return client()->shouldInsertText(((CharacterData *)child)->data(), replacingDOMRange.get(), givenAction);
         return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
@@ -860,13 +860,13 @@ static bool execToggleItalic(Frame* frame)
 
 static bool execRedo(Frame* frame)
 {
-    frame->editor()->client()->redo();
+    frame->editor()->redo();
     return true;
 }
 
 static bool execUndo(Frame* frame)
 {
-    frame->editor()->client()->undo();
+    frame->editor()->undo();
     return true;
 }
 
@@ -904,12 +904,12 @@ static bool hasRichlyEditableSelection(Frame* frame)
 
 static bool canRedo(Frame* frame)
 {
-    return frame->editor()->client()->canRedo();
+    return frame->editor()->canRedo();
 }
 
 static bool canUndo(Frame* frame)
 {
-    return frame->editor()->client()->canUndo();
+    return frame->editor()->canUndo();
 }
 
 struct Command {
@@ -1063,5 +1063,86 @@ void Editor::performDelete()
     }
     deleteSelection();
 }
+
+bool Editor::isContinuousSpellCheckingEnabled()
+{
+    if (client())
+        return client()->isContinuousSpellCheckingEnabled();
+    return false;
+}
+
+int Editor::spellCheckerDocumentTag()
+{
+    if (client())
+        return client()->spellCheckerDocumentTag();
+    return 0;
+}
+
+bool Editor::shouldEndEditing(Range* range)
+{
+    if (client())
+        return client()->shouldEndEditing(range);
+    return false;
+}
+
+bool Editor::shouldBeginEditing(Range* range)
+{
+    if (client())
+        return client()->shouldBeginEditing(range);
+    return false;
+}
+
+void Editor::clearUndoRedoOperations()
+{
+    if (client())
+        client()->clearUndoRedoOperations();
+}
+
+bool Editor::canUndo()
+{
+    if (client())
+        return client()->canUndo();
+    return false;
+}
+
+void Editor::undo()
+{
+    if (client())
+        client()->undo();
+}
+
+bool Editor::canRedo()
+{
+    if (client())
+        return client()->canRedo();
+    return false;
+}
+
+void Editor::redo()
+{
+    if (client())
+        client()->redo();
+}
+
+void Editor::didBeginEditing()
+{
+    if (client())
+        client()->didBeginEditing();
+}
+
+void Editor::didEndEditing()
+{
+    if (client())
+        client()->didEndEditing();
+}
+
+#if PLATFORM(MAC)
+NSString* Editor::_web_userVisibleString(NSURL* nsURL)
+{
+    if (client())
+        return client()->_web_userVisibleString(nsURL);
+    return nil;
+}
+#endif
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2006-11-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mitz Pettel.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=11710
+        REGRESSION (r17906): Crash in WebCore::FrameMac
+
+        Added null checks for EditorClient, since it can be NULL when the page
+        has been destroyed. Removed external access to EditorClient, since it's
+        an implementation detail of the Editor.
+
+        No test case because this crash depends on window tear-down. Layout tests
+        pass.
+        
 2006-11-29  Anders Carlsson  <acarlsson@apple.com>
 
         Fix build.

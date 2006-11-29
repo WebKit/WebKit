@@ -504,7 +504,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                 it.advance();
             else {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
-                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
+                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() wordCount:NULL];
 
 #if !defined(NDEBUG) || !defined(BUILDING_ON_TIGER)
                 NSDictionary *grammarDetail = nil;
@@ -1072,7 +1072,7 @@ void FrameMac::ignoreSpelling()
     String text = selectedText();
     ASSERT(text.length() != 0);
     [[NSSpellChecker sharedSpellChecker] ignoreWord:text 
-        inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag()];
+        inSpellDocumentWithTag:editor()->spellCheckerDocumentTag()];
 }
 
 void FrameMac::learnSpelling()
@@ -1092,7 +1092,7 @@ bool FrameMac::isSelectionMisspelled()
                                                                     startingAt:0
                                                                       language:nil
                                                                           wrap:NO 
-                                                        inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() 
+                                                        inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() 
                                                                      wordCount:NULL];
     return range.length == length;
 }
@@ -1119,7 +1119,7 @@ Vector<String> FrameMac::guessesForMisspelledSelection()
 
 void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
-    if (!editor()->client()->isContinuousSpellCheckingEnabled())
+    if (!editor()->isContinuousSpellCheckingEnabled())
         return;
     markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
 }
@@ -1129,7 +1129,7 @@ void FrameMac::markMisspellings(const Selection& selection)
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
 
-    if (!editor()->client()->isContinuousSpellCheckingEnabled())
+    if (!editor()->isContinuousSpellCheckingEnabled())
         return;
 
     RefPtr<Range> searchRange(selection.toRange());
@@ -1161,7 +1161,7 @@ void FrameMac::markMisspellings(const Selection& selection)
             int startIndex = 0;
             // Loop over the chunk to find each misspelled word or instance of questionable grammar in it.
             while (startIndex < len) {
-                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() wordCount:NULL];
+                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() wordCount:NULL];
 
 #if !defined(NDEBUG) || !defined(BUILDING_ON_TIGER)
                 NSDictionary *grammarDetail = nil;
@@ -1242,7 +1242,7 @@ void FrameMac::markMisspellings(const Selection& selection)
 void FrameMac::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
 {
     if (document()) {
-        if (editor()->client()->isContinuousSpellCheckingEnabled()) {
+        if (editor()->isContinuousSpellCheckingEnabled()) {
             Selection oldAdjacentWords;
             
             // If this is a change in selection resulting from a delete operation, oldSelection may no longer
