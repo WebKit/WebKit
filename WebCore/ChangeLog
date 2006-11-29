@@ -1,5 +1,13 @@
 2006-11-29  Anders Carlsson  <acarlsson@apple.com>
 
+        Fix build.
+        
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedResponse):
+        Fix tyop.
+
+2006-11-29  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Have ResourceResponse hold on to the platform object and do lazy

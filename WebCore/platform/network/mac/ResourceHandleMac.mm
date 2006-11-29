@@ -87,7 +87,7 @@ void ResourceHandle::receivedResponse(NSURLResponse* nsResponse)
 
     if (client()) {
         client()->receivedResponse(this, nsResponse);
-        client()->didReceiveResponse(this, nsRresponse);
+        client()->didReceiveResponse(this, nsResponse);
     }
 }
 
