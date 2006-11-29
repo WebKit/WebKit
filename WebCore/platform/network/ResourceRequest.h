@@ -33,15 +33,12 @@
 #include "HTTPHeaderMap.h"
 
 #if PLATFORM(MAC)
-
 #include "RetainPtr.h"
-
 #ifdef __OBJC__
 @class NSURLRequest;
 #else
 class NSURLRequest;
 #endif
-
 #elif USE(CFNETWORK)
 #include "RetainPtr.h"
 typedef const struct _CFURLRequest* CFURLRequestRef;
@@ -179,8 +176,8 @@ namespace WebCore {
         HTTPHeaderMap m_httpHeaderFields;
         RefPtr<FormData> m_httpBody;
         bool m_allowHTTPCookies;
-        bool m_resourceRequestUpdated;
-        bool m_platformRequestUpdated;
+        mutable bool m_resourceRequestUpdated;
+        mutable bool m_platformRequestUpdated;
 #if PLATFORM(MAC)
         RetainPtr<NSURLRequest> m_nsRequest;
 #elif USE(CFNETWORK)

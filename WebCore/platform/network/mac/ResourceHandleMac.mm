@@ -33,7 +33,6 @@
 #import "FrameMac.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
-#import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
 
 namespace WebCore {
@@ -88,9 +87,7 @@ void ResourceHandle::receivedResponse(NSURLResponse* nsResponse)
 
     if (client()) {
         client()->receivedResponse(this, nsResponse);
-        ResourceResponse response;
-        getResourceResponse(response, nsResponse);
-        client()->didReceiveResponse(this, response);
+        client()->didReceiveResponse(this, nsRresponse);
     }
 }
 
@@ -104,9 +101,7 @@ NSURLRequest *ResourceHandle::willSendRequest(NSURLRequest *nsRequest, NSURLResp
     ASSERT(nsRequest);
     if (ResourceHandleClient* c = client()) {
         ResourceRequest request(nsRequest);
-        ResourceResponse redirectResponse;
-        getResourceResponse(redirectResponse, nsRedirectResponse);
-        c->willSendRequest(this, request, redirectResponse);
+        c->willSendRequest(this, request, nsRedirectResponse);
         return request.nsURLRequest();
     }
 

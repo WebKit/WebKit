@@ -57,7 +57,6 @@
 #import "Plugin.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
-#import "ResourceResponseMac.h"
 #import "SubresourceLoader.h"
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
@@ -1242,7 +1241,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     [initialRequest release];
 
     if (error == nil)
-        getResourceResponse(r, response);
+        r = response;
     else {
         r = ResourceResponse(URL, String(), 0, String(), String());
         if ([error domain] == NSURLErrorDomain)

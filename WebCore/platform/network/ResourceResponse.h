@@ -30,6 +30,18 @@
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
 
+#if PLATFORM(MAC)
+#include "RetainPtr.h"
+#ifdef __OBJC__
+@class NSURLResponse;
+#else
+class NSURLResponse;
+#endif
+#elif USE(CFNETWORK)
+#include "RetainPtr.h"
+typedef struct _CFURLResponse* CFURLResponseRef;
+#endif
+
 namespace WebCore {
 
 class ResourceResponse {
@@ -38,7 +50,8 @@ public:
     ResourceResponse() 
         : m_expectedContentLength(0)
         , m_httpStatusCode(0)
-        , m_expirationDate(0) 
+        , m_expirationDate(0)
+        , m_isUpToDate(true)
     {
     }
 
@@ -50,34 +63,52 @@ public:
         , m_suggestedFilename(filename)
         , m_httpStatusCode(0)
         , m_expirationDate(0)
+        , m_isUpToDate(true)
     {
     }
  
-    const KURL& url() const { return m_url; }
-    const String& mimeType() const { return m_mimeType; }
-    long long expectedContentLength() const { return m_expectedContentLength; }
-    const String& textEncodingName() const { return m_textEncodingName; }
+    const KURL& url() const;
+    const String& mimeType() const;
+    long long expectedContentLength() const;
+    const String& textEncodingName() const;
 
     // FIXME should compute this on the fly
-    const String& suggestedFilename() const { return m_suggestedFilename; }
+    const String& suggestedFilename() const;
 
-    int httpStatusCode() const { return m_httpStatusCode; }
-    void setHTTPStatusCode(int statusCode) { m_httpStatusCode = statusCode; }
-    const String& httpStatusText() const { return m_httpStatusText; }
-    void setHTTPStatusText(const String& statusText) { m_httpStatusText = statusText; }
-    String httpHeaderField(const String& name) const { return m_httpHeaderFields.get(name); }
-    const HTTPHeaderMap& httpHeaderFields() const { return m_httpHeaderFields; }
-    HTTPHeaderMap& httpHeaderFields() { return m_httpHeaderFields; }
+    int httpStatusCode() const;
+    void setHTTPStatusCode(int);
+    
+    const String& httpStatusText() const;
+    void setHTTPStatusText(const String&);
+    
+    String httpHeaderField(const String& name) const;
+    const HTTPHeaderMap& httpHeaderFields() const;
 
-    bool isMultipart() const { return m_mimeType == "multipart/x-mixed-replace"; }
+    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
-    void setExpirationDate(time_t expirationDate) { m_expirationDate = expirationDate; }
-    time_t expirationDate() const { return m_expirationDate; }
+    void setExpirationDate(time_t);
+    time_t expirationDate() const;
 
-    void setLastModifiedDate(time_t lastModifiedDate) { m_lastModifiedDate = lastModifiedDate; }
-    time_t lastModifiedDate() const { return m_lastModifiedDate; }
+    void setLastModifiedDate(time_t);
+    time_t lastModifiedDate() const;
 
+#if PLATFORM(MAC)
+    ResourceResponse(NSURLResponse* nsResponse)
+        : m_isUpToDate(false)
+        , m_nsResponse(nsResponse) { }
+#elif USE(CFNETWORK)
+    ResourceResponse(CFURLResponseRef cfResponse)
+        : m_isUpToDate(false)
+        , m_cfResponse(cfResponse) { }
+#endif
+    
  private:
+    void updateResourceResponse() const; 
+    
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    void doUpdateResourceResponse();
+#endif
+    
     KURL m_url;
     String m_mimeType;
     long long m_expectedContentLength;
@@ -88,6 +119,13 @@ public:
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
     time_t m_lastModifiedDate;
+    mutable bool m_isUpToDate;
+#if PLATFORM(MAC)
+    RetainPtr<NSURLResponse> m_nsResponse;
+#elif USE(CFNETWORK)
+    RetainPtr<CFURLResponseRef> m_cfResponse;      
+#endif
+    
 };
 
 } // namespace WebCore

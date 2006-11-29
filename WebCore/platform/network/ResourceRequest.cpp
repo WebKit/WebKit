@@ -177,6 +177,7 @@ void ResourceRequest::updatePlatformRequest() const
         return;
     
     const_cast<ResourceRequest*>(this)->doUpdatePlatformRequest();
+    m_platformRequestUpdated = true;
 #endif
 }
 
@@ -187,6 +188,7 @@ void ResourceRequest::updateResourceRequest() const
         return;
 
     const_cast<ResourceRequest*>(this)->doUpdateResourceRequest();
+    m_resourceRequestUpdated = true;
 #endif
 }
 

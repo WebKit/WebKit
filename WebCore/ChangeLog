@@ -1,3 +1,43 @@
+2006-11-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Have ResourceResponse hold on to the platform object and do lazy
+        initialization of the data members.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * platform/network/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::updatePlatformRequest):
+        (WebCore::ResourceRequest::updateResourceRequest):
+        * platform/network/ResourceResponse.cpp: Added.
+        (WebCore::ResourceResponse::url):
+        (WebCore::ResourceResponse::mimeType):
+        (WebCore::ResourceResponse::expectedContentLength):
+        (WebCore::ResourceResponse::textEncodingName):
+        (WebCore::ResourceResponse::suggestedFilename):
+        (WebCore::ResourceResponse::httpStatusCode):
+        (WebCore::ResourceResponse::setHTTPStatusCode):
+        (WebCore::ResourceResponse::httpStatusText):
+        (WebCore::ResourceResponse::setHTTPStatusText):
+        (WebCore::ResourceResponse::httpHeaderField):
+        (WebCore::ResourceResponse::httpHeaderFields):
+        (WebCore::ResourceResponse::setExpirationDate):
+        (WebCore::ResourceResponse::expirationDate):
+        (WebCore::ResourceResponse::setLastModifiedDate):
+        (WebCore::ResourceResponse::lastModifiedDate):
+        (WebCore::ResourceResponse::updateResourceResponse):
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::isMultipart):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedResponse):
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceResponseMac.h: Removed.
+        * platform/network/mac/ResourceResponseMac.mm:
+        (-[NSURLResponse WebCore]):
+
 2006-11-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

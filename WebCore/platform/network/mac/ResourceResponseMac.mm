@@ -25,9 +25,8 @@
  */
 
 #import "config.h"
-#import "ResourceResponseMac.h"
-
 #import "ResourceResponse.h"
+
 #import <Foundation/Foundation.h>
 #import <limits>
 
@@ -37,31 +36,34 @@
 
 namespace WebCore {
 
-void getResourceResponse(ResourceResponse& response, NSURLResponse *nsResponse)
+void ResourceResponse::doUpdateResourceResponse()
 {
-    response = ResourceResponse([nsResponse URL], [nsResponse MIMEType],
-        [nsResponse expectedContentLength], [nsResponse textEncodingName],
-        [nsResponse suggestedFilename]);
-
+    m_url = [m_nsResponse.get() URL];
+    m_mimeType = [m_nsResponse.get() MIMEType];
+    m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
+    m_textEncodingName = [m_nsResponse.get() textEncodingName];
+    m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
+    
     const time_t maxTime = std::numeric_limits<time_t>::max();
-
-    NSTimeInterval expiration = [nsResponse _calculatedExpiration];
+    
+    NSTimeInterval expiration = [m_nsResponse.get() _calculatedExpiration];
     expiration += kCFAbsoluteTimeIntervalSince1970;
-    response.setExpirationDate(expiration > maxTime ? maxTime : static_cast<time_t>(expiration));
-
-    if ([nsResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)nsResponse;
-
-        response.setHTTPStatusCode([httpResponse statusCode]);
-
+    m_expirationDate = expiration > maxTime ? maxTime : static_cast<time_t>(expiration);
+    
+    if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
+        
+        m_httpStatusCode = [httpResponse statusCode];
+        
         // FIXME: it would be nice to have a way to get the real status text eventually.
-        response.setHTTPStatusText("OK");
-       
+        m_httpStatusText = "OK";
+        
         NSDictionary *headers = [httpResponse allHeaderFields];
         NSEnumerator *e = [headers keyEnumerator];
         while (NSString *name = [e nextObject])
-            response.httpHeaderFields().set(name, [headers objectForKey:name]);
-   } 
+            m_httpHeaderFields.set(name, [headers objectForKey:name]);
+    } 
+    
 }
 
 }
