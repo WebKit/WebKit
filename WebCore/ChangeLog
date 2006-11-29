@@ -1,3 +1,16 @@
+2006-11-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4852804> selection color does not get drawn over the missing image rectangle
+
+        Test:
+        * editing/selection/select-missing-image.html: Added.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        Draw the selection tint even if the image itself is not available.
+
 2006-11-28  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
@@ -132,6 +145,7 @@
         (WebCore::Page::chrome):
         (WebCore::Page::contextMenuController):
 
+>>>>>>> .r17911
 2006-11-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Justin and Adam.
@@ -209,6 +223,7 @@
         Added select portions of this file from WebKit because the pasteboard needed the following function:
         (-[NSAttributedString _web_attributedStringByStrippingAttachmentCharacters]):
 
+>>>>>>> .r17909
 2006-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

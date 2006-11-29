@@ -277,10 +277,11 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
         CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
         context->drawImage(image(), rect, compositeOperator);
-
-        if (drawSelectionTint)
-            context->fillRect(selectionRect(), selectionBackgroundColor());
     }
+
+    // draw the selection tint even if the image itself is not available
+    if (drawSelectionTint)
+        context->fillRect(selectionRect(), selectionBackgroundColor());
 }
 
 void RenderImage::layout()

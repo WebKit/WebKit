@@ -1,3 +1,14 @@
+2006-11-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4852804> selection color does not get drawn over the missing image rectangle
+
+        * editing/selection/select-missing-image-expected.checksum: Added.
+        * editing/selection/select-missing-image-expected.png: Added.
+        * editing/selection/select-missing-image-expected.txt: Added.
+        * editing/selection/select-missing-image.html: Added.
+
 2006-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
