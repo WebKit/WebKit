@@ -696,6 +696,8 @@
 			children = (
 				5241ADF30B1BC48A004012BD /* WebCache.h */,
 				5241ADF40B1BC48A004012BD /* WebCache.mm */,
+				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
+				F59EAE410253C8DE018635CA /* WebCoreStatistics.m */,
 				6578F5DE045F817400000128 /* WebDownload.h */,
 				6578F5DF045F817400000128 /* WebDownload.m */,
 				ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */,
@@ -939,8 +941,6 @@
 		F52CA6C002DF9D78018635CA /* Download */ = {
 			isa = PBXGroup;
 			children = (
-				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
-				F59EAE410253C8DE018635CA /* WebCoreStatistics.m */,
 				93AEB17D032C1735008635CE /* WebKitLogging.h */,
 				93AEB17E032C1735008635CE /* WebKitLogging.m */,
 				F53444CE02E87CBA018635CA /* WebKitStatistics.h */,

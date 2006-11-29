@@ -1,3 +1,14 @@
+2006-11-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim.
+
+        Add back methods in WebCoreStatistics that are still used by Tiger Safari.
+        
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.m:
+        (+[WebCoreStatistics emptyCache]):
+        (+[WebCoreStatistics setCacheDisabled:]):
+
 2006-11-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

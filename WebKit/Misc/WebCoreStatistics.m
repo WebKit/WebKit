@@ -96,6 +96,16 @@
     [WebCoreJavaScript setShouldPrintExceptions:print];
 }
 
++ (void)emptyCache
+{
+    [WebCache empty];
+}
+
++ (void)setCacheDisabled:(BOOL)disabled
+{
+    [WebCache setDisabled:disabled];
+}
+
 @end
 
 @implementation WebFrame (WebKitDebug)
