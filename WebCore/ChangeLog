@@ -1,5 +1,23 @@
 2006-11-28  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Ada.
+
+        Add platform-specific constructor/destructor to ContextMenu so we can
+        properly retain/release the platform menu description.
+
+        * platform/ContextMenu.h:
+        (WebCore::ContextMenu::platformDescription):
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::getNSMenuItem):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::setPlatformDescription):
+
+2006-11-28  Adam Roben  <aroben@apple.com>
+
         Build fix.
 
         * platform/network/mac/ResourceRequestMac.mm:

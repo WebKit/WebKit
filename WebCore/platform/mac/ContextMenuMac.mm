@@ -66,14 +66,25 @@
 
 @end
 
-using namespace WebCore;
+namespace WebCore {
 
 static MenuTarget* target;
+
+ContextMenu::ContextMenu(const HitTestResult& result)
+    : m_hitTestResult(result)
+    , m_platformDescription([NSMutableArray array])
+{
+}
+
+ContextMenu::~ContextMenu()
+{
+    [m_platformDescription release];
+}
  
 static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
 {
     if (!menu->platformDescription())
-        menu->setPlatformDescription([[[NSMutableArray alloc] init] autorelease]);
+        return 0;
     
     ContextMenuController* currentController = menu->controller();
     if (!target)
@@ -104,29 +115,35 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
 void ContextMenu::appendItem(const ContextMenuItem& item)
 {
     NSMenuItem* menuItem = getNSMenuItem(this, item);
-    [m_menu addObject:menuItem];
+    if (!menuItem)
+        return;
+        
+    [m_platformDescription addObject:menuItem];
     [menuItem release];
 }
 
 unsigned ContextMenu::itemCount() const
 {
-    return [m_menu count];
+    return [m_platformDescription count];
 }
 
 void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
 {
     NSMenuItem* menuItem = getNSMenuItem(this, item);
-    [m_menu insertObject:menuItem atIndex:position];
+    if (!menuItem)
+        return;
+        
+    [m_platformDescription insertObject:menuItem atIndex:position];
     [menuItem release];
 }
 
 void ContextMenu::setPlatformDescription(NSMutableArray* menu)
 {
-    if (menu == m_menu)
+    if (menu == m_platformDescription)
         return;
     
-    [m_menu release]; 
-    m_menu = [menu retain];
+    [m_platformDescription release]; 
+    m_platformDescription = [menu retain];
 }
 
 void ContextMenu::show()
@@ -135,4 +152,6 @@ void ContextMenu::show()
 
 void ContextMenu::hide()
 {
+}
+
 }

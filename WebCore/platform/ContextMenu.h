@@ -59,11 +59,8 @@ namespace WebCore {
     class ContextMenu : Noncopyable
     {
     public:
-        ContextMenu(HitTestResult result)
-            : m_hitTestResult(result)
-            , m_menu(0)
-        {
-        }
+        ContextMenu(const HitTestResult&);
+        ~ContextMenu();
 
         void populate();
 
@@ -80,12 +77,12 @@ namespace WebCore {
         HitTestResult hitTestResult() const { return m_hitTestResult; }
         ContextMenuController* controller() const;
 
-        PlatformMenuDescription platformDescription() const { return m_menu; }
-        void setPlatformDescription(PlatformMenuDescription menu);
+        PlatformMenuDescription platformDescription() const { return m_platformDescription; }
+        void setPlatformDescription(PlatformMenuDescription);
 
     private:
         HitTestResult m_hitTestResult;
-        PlatformMenuDescription m_menu;
+        PlatformMenuDescription m_platformDescription;
     };
 
 }
