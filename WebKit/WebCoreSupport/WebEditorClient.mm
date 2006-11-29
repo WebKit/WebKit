@@ -230,9 +230,9 @@ void WebEditorClient::didEndEditing()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
 }
 
-NSData* WebEditorClient::dataForArchivedSelectionInFrame()
+NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
 {
-    WebArchive *archive = [WebArchiver archiveSelectionInFrame:[m_webView selectedFrame]];
+    WebArchive *archive = [WebArchiver archiveSelectionInFrame:kit(frame)];
     return [archive data];
 }
 

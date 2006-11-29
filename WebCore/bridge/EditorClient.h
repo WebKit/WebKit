@@ -38,6 +38,7 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
+class Frame;
 class HTMLElement;
 class Node;
 class Range;
@@ -86,7 +87,7 @@ public:
     virtual void redo() = 0;
 
 #if PLATFORM(MAC)
-    virtual NSData* dataForArchivedSelectionInFrame() = 0; 
+    virtual NSData* dataForArchivedSelection(Frame*) = 0; 
     virtual NSString* _web_userVisibleString(NSURL*) = 0;
 #endif
 

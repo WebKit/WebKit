@@ -1,3 +1,14 @@
+2006-11-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        A fix for a couple failing layout tests involving copy/cut in iframes.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::dataForArchivedSelection):
+        Use the frame parameter instead of using the webview's selectedFrame. 
+
 2006-11-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoffff.

@@ -1,3 +1,17 @@
+2006-11-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        A fix for a couple failing layout tests involving copy/cut in iframes.
+
+        * bridge/EditorClient.h:
+        Add frame parameter to dataForArchivedSelectionInFrame instead of
+        just getting the webview's selectedFrame.
+
+        * platform/mac/PasteboardMac.mm:
+        (Pasteboard::writeSelection):
+        Pass in the frame
+
 2006-11-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

@@ -77,7 +77,7 @@ void Pasteboard::writeSelection(PassRefPtr<Range> selectedRange, bool canSmartCo
 
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        [m_pasteboard setData:frame->editor()->client()->dataForArchivedSelectionInFrame() forType:WebArchivePboardType];
+        [m_pasteboard setData:frame->editor()->client()->dataForArchivedSelection(frame) forType:WebArchivePboardType];
     }
 
     // Put the attributed string on the pasteboard (RTF/RTFD format).
