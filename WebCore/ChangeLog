@@ -1,3 +1,14 @@
+2006-11-30  Lou Amadio  <lamadio@apple.com>
+
+        Reviewed by Dave Hyatt
+        Cleaned up generated files.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isRecognizedTagName):
+                Uses the new method for retrieving the list of supported tags
+        * ksvg2/scripts/make_names.pl:
+                Generates tag lists without using macros.
+
 2006-11-30  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

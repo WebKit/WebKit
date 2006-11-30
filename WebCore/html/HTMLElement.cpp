@@ -716,8 +716,10 @@ bool HTMLElement::isRecognizedTagName(const QualifiedName& tagName)
 {
     static HashSet<AtomicStringImpl*> tagList;
     if (tagList.isEmpty()) {
-        #define ADD_TAG(name) tagList.add(name##Tag.localName().impl());
-        DOM_HTMLNAMES_FOR_EACH_TAG(ADD_TAG)
+        size_t tagCount = 0;
+        WebCore::QualifiedName** tags = HTMLNames::getHTMLTags(&tagCount);
+        for (size_t i = 0; i < tagCount; i++)
+            tagList.add(tags[i]->localName().impl());
     }
     return tagList.contains(tagName.localName().impl());
 }
