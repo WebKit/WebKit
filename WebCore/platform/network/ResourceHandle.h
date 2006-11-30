@@ -78,6 +78,7 @@ public:
 
 #if PLATFORM(MAC)
     NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *);
+    void didReceiveResponse(NSURLResponse *);  
     void addData(NSData *);
     void finishJobAndHandle(NSData *);
     void reportError(NSError* error);
@@ -105,8 +106,6 @@ public:
     void cancel();
     
     ResourceHandleClient* client() const;
-
-    void receivedResponse(PlatformResponse);
 
     const HTTPHeaderMap& requestHeaders() const;
     const KURL& url() const;

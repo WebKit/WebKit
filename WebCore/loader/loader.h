@@ -63,7 +63,6 @@ namespace WebCore {
         ResourceHandle* jobForRequest(const String& URL) const;
 
     private:
-        virtual void receivedResponse(ResourceHandle*, PlatformResponse);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int);
         virtual void receivedAllData(ResourceHandle*, PlatformData);

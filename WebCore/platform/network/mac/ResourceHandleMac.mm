@@ -81,14 +81,12 @@ bool ResourceHandle::start(DocLoader* docLoader)
     return false;
 }
 
-void ResourceHandle::receivedResponse(NSURLResponse* nsResponse)
+void ResourceHandle::didReceiveResponse(NSURLResponse* nsResponse)
 {
     ASSERT(nsResponse);
 
-    if (client()) {
-        client()->receivedResponse(this, nsResponse);
-        client()->didReceiveResponse(this, nsResponse);
-    }
+    if (ResourceHandleClient* c = client())
+        c->didReceiveResponse(this, nsResponse);
 }
 
 void ResourceHandle::cancel()

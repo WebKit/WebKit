@@ -49,7 +49,6 @@ CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePo
     m_inCache = false;
     m_cachePolicy = cachePolicy;
     m_request = 0;
-    m_platformResponse = 0;
     m_allData = 0;
     m_expireDateChanged = false;
     m_accessCount = 0;
@@ -68,7 +67,6 @@ CachedResource::~CachedResource()
 #ifndef NDEBUG
     m_deleted = true;
 #endif
-    setPlatformResponse(0);
     setAllData(0);
 }
 

@@ -45,7 +45,6 @@ void finishImageLoad(Document* document, CachedImage* image, const void* imageDa
 
     Frame* frame = document->frame();
     NSURLResponse *response = frame->loader()->documentLoader()->response();
-    image->setPlatformResponse(response);
 
     IntSize size = image->imageSize();
     if (size.width())

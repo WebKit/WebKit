@@ -136,17 +136,6 @@ void Loader::didFailWithError(ResourceHandle* handle, const ResourceError& error
     servePendingRequests();
 }
 
-void Loader::receivedResponse(ResourceHandle* handle, PlatformResponse response)
-{
-    Request* req = m_requestsLoading.get(handle);
-    ASSERT(req);
-#if !PLATFORM(WIN)
-    // FIXME: the win32 platform does not have PlatformResponse yet.
-    ASSERT(response);
-#endif
-    req->cachedResource()->setPlatformResponse(response);
-}
-
 void Loader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
     Request* req = m_requestsLoading.get(handle);

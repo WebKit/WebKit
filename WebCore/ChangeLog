@@ -1,3 +1,33 @@
+2006-11-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Get rid of PlatformResponse, the platform specific response object is stored inside of 
+        the ResourceResponse object now. This also gets rid of receivedResponse in ResourceHandleClient.
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::response):
+        * loader/loader.cpp:
+        * loader/loader.h:
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::nsURLResponse):
+        (WebCore::ResourceResponse::cfURLResponse):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveResponse):
+
 2006-11-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by sullivan

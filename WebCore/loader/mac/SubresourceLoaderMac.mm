@@ -125,7 +125,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_handle->receivedResponse(r);
+    m_handle->didReceiveResponse(r);
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
         return;

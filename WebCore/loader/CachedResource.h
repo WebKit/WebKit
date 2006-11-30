@@ -121,13 +121,12 @@ public:
 
     void setRequest(Request*);
 
-    PlatformResponse platformResponse() const { return m_platformResponse; }
-    void setPlatformResponse(PlatformResponse);
     PlatformData allData() const { return m_allData; }
     void setAllData(PlatformData);
 
     void setResponse(const ResourceResponse& response) { m_response = response; }
-
+    const ResourceResponse& response() const { return m_response; }
+    
     bool canDelete() const { return !referenced() && !m_request; }
 
     bool isExpired() const;
@@ -157,7 +156,6 @@ protected:
 #endif
 
     ResourceResponse m_response;
-    PlatformResponse m_platformResponse;
     PlatformData m_allData;
 
     Type m_type;
