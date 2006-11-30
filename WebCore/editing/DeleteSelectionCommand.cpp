@@ -97,8 +97,18 @@ void DeleteSelectionCommand::initializeStartEnd()
         if (!startSpecialContainer || !endSpecialContainer)
             break;
         
-        start = s;
-        end = e;
+        if (startSpecialContainer->isDescendantOf(endSpecialContainer))
+            // Don't adjust the end yet, it is the end of a special element that contains the start
+            // special element (which may or may not be fully selected).
+            start = s;
+        else if (endSpecialContainer->isDescendantOf(startSpecialContainer))
+            // Don't adjust the start yet, it is the start of a special element that contains the end
+            // special element (which may or may not be fully selected).
+            end = e;
+        else {
+            start = s;
+            end = e;
+        }
     }
  
     m_upstreamStart = start.upstream();

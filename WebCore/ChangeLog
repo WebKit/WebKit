@@ -1,3 +1,15 @@
+2006-11-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by sullivan
+        
+        <rdar://problem/4845371>
+        In Mail, a crash occurs at WebCore::Node::traverseNextNode() when cutting selected text from a HTML message
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): The start/end were
+        being inflated even when they were the start/end of a partially selected
+        special element.
+
 2006-11-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.
