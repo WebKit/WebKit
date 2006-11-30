@@ -123,10 +123,17 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [window setDelegate:self];
         [window setMinSize:NSMakeSize(280.0f, 450.0f)];
 
-        // Keep preferences separate from the rest of the client.
+        // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
         // One reason this is good is that it keeps the inspector out of history via "private browsing".
         WebPreferences *preferences = [[WebPreferences alloc] init];
         [preferences setPrivateBrowsingEnabled:YES];
+        [preferences setLoadsImagesAutomatically:YES];
+        [preferences setPlugInsEnabled:YES];
+        [preferences setJavaScriptEnabled:YES];
+        [preferences setUserStyleSheetEnabled:NO];
+        [preferences setTabsToLinks:NO];
+        [preferences setMinimumFontSize:0];
+        [preferences setMinimumLogicalFontSize:9];
 
         _private->webView = [[WebView alloc] initWithFrame:[[window contentView] frame] frameName:nil groupName:nil];
         [_private->webView setPreferences:preferences];
@@ -136,7 +143,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [_private->webView setProhibitsMainFrameScrolling:YES];
         [_private->webView _setDashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows to:YES];
         [_private->webView _setDashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse to:YES];
-        [[_private->webView windowScriptObject] setValue:self forKey:@"Inspector"];
 
         [preferences release];
 

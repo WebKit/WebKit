@@ -1,3 +1,13 @@
+2006-11-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver.
+
+        Keep preferences separate from the rest of the client, making sure we are using expected preference values.
+        This lets the inspector work when plugins are disabled for the WebView.
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow window]):
+
 2006-11-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim.
