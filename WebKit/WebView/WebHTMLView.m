@@ -69,6 +69,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -76,6 +77,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
@@ -2644,8 +2646,25 @@ static WebHTMLView *lastHitView = nil;
     _private->handlingMouseDownEvent = YES;
     BOOL handledEvent = core([self _frame])->eventHandler()->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
-    if (handledEvent)
+    
+    if (handledEvent) {
+#ifdef WEBCORE_CONTEXT_MENUS
+        if (Page* page = core([self _frame])->page()) {
+            NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
+            NSMenu* menu = nil;
+            if (menuItems && [menuItems count] > 0) {
+                menu = [[NSMenu alloc] init];
+                
+                unsigned i;
+                for (i = 0; i < [menuItems count]; i++)
+                    [menu addItem:[menuItems objectAtIndex:i]];
+            }
+            return [menu autorelease];
+        }
+#else
         return nil;
+#endif
+    }
 
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:point];

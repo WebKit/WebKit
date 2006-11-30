@@ -72,13 +72,14 @@ static MenuTarget* target;
 
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
-    , m_platformDescription([NSMutableArray array])
 {
+    NSMutableArray* array = [[NSMutableArray alloc] init];
+    m_platformDescription = array;
+    [array release];    
 }
 
 ContextMenu::~ContextMenu()
 {
-    [m_platformDescription release];
 }
  
 static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
@@ -102,7 +103,7 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
             [menuItem setAction:@selector(forwardContextMenuAction:)];
             break;
         case SeparatorType:
-            menuItem = [NSMenuItem separatorItem];
+            menuItem = [[NSMenuItem separatorItem] retain];
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -117,14 +118,14 @@ void ContextMenu::appendItem(const ContextMenuItem& item)
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     if (!menuItem)
         return;
-        
-    [m_platformDescription addObject:menuItem];
+
+    [m_platformDescription.get() addObject:menuItem];
     [menuItem release];
 }
 
 unsigned ContextMenu::itemCount() const
 {
-    return [m_platformDescription count];
+    return [m_platformDescription.get() count];
 }
 
 void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
@@ -132,18 +133,20 @@ void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     if (!menuItem)
         return;
-        
-    [m_platformDescription insertObject:menuItem atIndex:position];
+
+    [m_platformDescription.get() insertObject:menuItem atIndex:position];
     [menuItem release];
 }
 
 void ContextMenu::setPlatformDescription(NSMutableArray* menu)
 {
-    if (menu == m_platformDescription)
-        return;
-    
-    [m_platformDescription release]; 
-    m_platformDescription = [menu retain];
+    if (m_platformDescription.get() != menu)
+        m_platformDescription = menu;
+}
+
+NSMutableArray* ContextMenu::platformDescription() const
+{
+    return m_platformDescription.get();
 }
 
 void ContextMenu::show()

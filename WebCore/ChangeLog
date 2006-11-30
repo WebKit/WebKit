@@ -1,3 +1,24 @@
+2006-11-30  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Store ContextMenu's NSMutableArray inside a RetainPtr so that we
+        will retain/release it correctly.
+
+        * WebCore.exp:
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Added a FIXME.
+        * platform/ContextMenu.h:
+        * platform/mac/ContextMenuMac.mm: 
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::getNSMenuItem):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::platformDescription):
+
 2006-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric. Rubber stamped by Oliver.

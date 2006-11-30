@@ -105,7 +105,7 @@ void ContextMenu::populate()
 
             appendItem(OpenImageInNewWindowItem);
             appendItem(DownloadImageToDiskItem);
-            if (imageURL.isLocalFile())
+            if (imageURL.isLocalFile()) // FIXME: Should be checking if the image is local or we have a file wrapper for it
                 appendItem(CopyImageToClipboardItem);
         }
 

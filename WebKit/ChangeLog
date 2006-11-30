@@ -1,3 +1,13 @@
+2006-11-30  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Put code in place to use WebCore context menus when they are turned
+        on.
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray menuForEvent:]):
+
 2006-11-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver.
