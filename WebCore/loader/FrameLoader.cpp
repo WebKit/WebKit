@@ -2257,11 +2257,24 @@ void FrameLoader::frameDetached()
     detachFromParent();
 }
 
-#if PLATFORM(MAC)
-void FrameLoader::setTitle(const String& title)
+void FrameLoader::detachFromParent()
 {
-    documentLoader()->setTitle(title);
-}
+    RefPtr<Frame> protect(m_frame);
+
+    closeDocument();
+    stopAllLoaders();
+    m_client->detachedFromParent1();
+    detachChildren();
+    m_client->detachedFromParent2();
+    setDocumentLoader(0);
+    m_client->detachedFromParent3();
+    if (Frame* parent = m_frame->tree()->parent())
+        parent->tree()->removeChild(m_frame);
+    m_frame->setView(0);
+#if PLATFORM(MAC)
+    closeBridge();
 #endif
+    m_client->detachedFromParent4();
+}
 
 } // namespace WebCore

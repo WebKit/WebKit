@@ -1135,24 +1135,6 @@ void FrameLoader::post(const KURL& URL, const String& referrer, const String& fr
     [request release];
 }
 
-void FrameLoader::detachFromParent()
-{
-    RefPtr<Frame> protect(m_frame);
-
-    closeDocument();
-    stopAllLoaders();
-    m_client->detachedFromParent1();
-    detachChildren();
-    m_client->detachedFromParent2();
-    setDocumentLoader(0);
-    m_client->detachedFromParent3();
-    if (Frame* parent = m_frame->tree()->parent())
-        parent->tree()->removeChild(m_frame);
-    m_frame->setView(0);
-    [Mac(m_frame)->bridge() close];
-    m_client->detachedFromParent4();
-}
-
 void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mainResource, bool alwaysFromRequest)
 {
     applyUserAgent(request);
@@ -1429,6 +1411,16 @@ void FrameLoader::didFinishLoad(ResourceLoader* loader)
 {    
     m_client->completeProgress(loader->identifier());
     m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
+}
+
+void FrameLoader::setTitle(const String& title)
+{
+    documentLoader()->setTitle(title);
+}
+
+void FrameLoader::closeBridge()
+{
+    [Mac(m_frame)->bridge() close];
 }
 
 PolicyCheck::PolicyCheck()

@@ -1,3 +1,24 @@
+2006-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Fixed up garbage collection at window close time.
+
+        * bindings/js/kjs_proxy.cpp: Don't garbage collect in the KJSProxy
+        destructor, since the global object hasn't been freed yet.
+        * bindings/js/kjs_proxy.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent): Made this function cross-
+        platform.
+        * loader/FrameLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::setTitle): Moved this function to FrameLoaderMac,
+        since it's Mac-only.
+        (WebCore::FrameLoader::closeBridge):
+        * page/Page.cpp:
+        (WebCore::Page::~Page): Don't garbage collect in the Page destructor,
+        since the Interpreter destructor will do it for us.
+
 2006-11-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim's rubberstamp

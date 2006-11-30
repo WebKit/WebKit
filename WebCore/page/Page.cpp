@@ -72,9 +72,8 @@ Page::~Page()
     if (allPages->isEmpty()) {
         Frame::endAllLifeSupport();
 #ifndef NDEBUG
+        // Force garbage collection, to release all Nodes before exiting.
         m_mainFrame = 0;
-        JSLock lock;
-        Collector::collect();
 #endif
     }
     

@@ -272,6 +272,9 @@ Interpreter::~Interpreter()
     }
     
     interpreterMap().remove(m_globalObject);
+
+    // It's likely that destroying the interpreter has created a lot of garbage.
+    Collector::collect();
 }
 
 JSObject* Interpreter::globalObject() const

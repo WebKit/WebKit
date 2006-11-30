@@ -1,3 +1,14 @@
+2006-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Fixed up garbage collection at window close time.
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::~Interpreter): Garbage collect here, since
+        destroying the interpreter frees the global object and 
+        therefore creates a lot of garbage.
+
 2006-11-20  W. Andy Carrel  <wac@google.com>
 
         Reviewed by Maciej.
