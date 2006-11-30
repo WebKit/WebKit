@@ -231,7 +231,7 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const
     KURL documentURL(m_doc->URL());
 
     // a local file can load anything
-    if (documentURL.protocol().lower() == "file")
+    if (documentURL.protocol().lower() == "file" || documentURL.protocol().lower() == "applewebdata")
         return true;
 
     // but a remote document can only load from the same port on the server

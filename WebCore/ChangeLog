@@ -1,3 +1,16 @@
+2006-11-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady and Eric.
+
+        XMLHttpRequest fails in a page loaded with WebFrame's loadHTMLString: or loadData:
+        http://bugs.webkit.org/show_bug.cgi?id=11723
+
+        Allow cross-domain XMLHTTPRequest for applewebdata URLs. No automated way to test,
+        tested in Safari's debug Snippet Editor.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain):
+
 2006-11-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
