@@ -1,3 +1,11 @@
+2006-11-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim's rubberstamp
+
+        Amazingly, DocumentLoader.h survived all this time without a header guard...
+
+        * loader/DocumentLoader.h:  Added header guard
+
 2006-11-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady and Eric.
