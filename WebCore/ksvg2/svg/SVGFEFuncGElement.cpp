@@ -21,13 +21,14 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFEFuncGElement.h"
 
 namespace WebCore {
 
 SVGFEFuncGElement::SVGFEFuncGElement(const QualifiedName& tagName, Document* doc) : 
-SVGComponentTransferFunctionElement(tagName, doc)
+    SVGComponentTransferFunctionElement(tagName, doc)
 {
 }
 
@@ -37,6 +38,6 @@ SVGFEFuncGElement::~SVGFEFuncGElement()
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

@@ -49,7 +49,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(QT)
-        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
 #endif
 
     private:

@@ -26,7 +26,7 @@
 
 #include "Image.h"
 #include "SVGFEHelpersCg.h"
-#include "QuartzSupport.h"
+#include "CgSupport.h"
 
 namespace WebCore {
 

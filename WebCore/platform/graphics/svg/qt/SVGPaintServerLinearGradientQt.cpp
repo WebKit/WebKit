@@ -24,17 +24,22 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerLinearGradient.h"
 
-#include "KRenderingDeviceQt.h"
+#include "GraphicsContext.h"
 #include "RenderPath.h"
 
 #include <QLinearGradient>
+#include <QPainter>
+#include <QPainterPath>
 
 namespace WebCore {
 
-bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerLinearGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
-    Q_ASSERT(qtContext != 0);
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
+
+    QPainterPath* path(context ? context->currentPath() : 0);
+    Q_ASSERT(path);
 
     if (listener())
         listener()->resourceNotification();
@@ -43,7 +48,7 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
 
     double x1, x2, y1, y2;
     if (boundingBoxMode()) {
-        QRectF bbox = qtContext->pathBBox();
+        QRectF bbox = path->boundingRect();
         x1 = double(bbox.left()) + (double(gradientStart().x() / 100.0) * double(bbox.width()));
         y1 = double(bbox.top()) + (double(gradientStart().y() / 100.0) * double(bbox.height()));
         x2 = double(bbox.left()) + (double(gradientEnd().x() / 100.0)  * double(bbox.width()));
@@ -55,8 +60,8 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
         y2 = gradientEnd().y();
     }
 
-    qtContext->painter().setPen(Qt::NoPen);
-    qtContext->painter().setBrush(Qt::NoBrush);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::NoBrush);
 
     QLinearGradient gradient(QPointF(x1, y1), QPointF(x2, y2));
     if (spreadMethod() == SPREADMETHOD_REPEAT)
@@ -75,8 +80,8 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
 
         QBrush brush(gradient);
 
-        qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
+        painter->setBrush(brush);
+        context->setFillRule(renderStyle->svgStyle()->fillRule());
     }
 
     if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
@@ -88,7 +93,7 @@ bool SVGPaintServerLinearGradient::setup(KRenderingDeviceContext* context, const
         setPenProperties(object, renderStyle, pen);
         pen.setBrush(brush);
 
-        qtContext->painter().setPen(pen);
+        painter->setPen(pen);
     }
 
     return true;

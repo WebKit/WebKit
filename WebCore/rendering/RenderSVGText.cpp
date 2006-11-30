@@ -23,15 +23,16 @@
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderSVGText.h"
 
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingDevice.h"
 #include "SVGLengthList.h"
 #include "SVGTextElement.h"
 #include "SVGRootInlineBox.h"
+
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -114,12 +115,9 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int tx, int ty)
-{    
-    KRenderingDevice* device = renderingDevice();
-    RenderObject::PaintInfo pi = paintInfo;
-    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    pi.context = c.get();
-    pi.rect = (absoluteTransform()).invert().mapRect(paintInfo.rect);
+{   
+    RenderObject::PaintInfo pi(paintInfo);
+    pi.rect = (absoluteTransform()).invert().mapRect(pi.rect);
     RenderBlock::paint(pi, tx, ty);
 }
 

@@ -19,9 +19,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/editing
    ${CMAKE_CURRENT_BINARY_DIR}/html
    ${CMAKE_CURRENT_SOURCE_DIR}/html
-   ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas
-   ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas/device
-   ${CMAKE_CURRENT_SOURCE_DIR}/kcanvas/device/qt 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2 
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/css
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2/events 
@@ -533,10 +530,6 @@ set (SVG_SOURCES
     bindings/js/JSSVGNumber.cpp
     bindings/js/JSSVGPoint.cpp
     bindings/js/JSSVGRect.cpp
-
-    kcanvas/device/KRenderingDevice.cpp
-    kcanvas/device/qt/KRenderingDeviceQt.cpp
-    kcanvas/device/qt/RenderPathQt.cpp
 
     ksvg2/css/SVGCSSParser.cpp
     ksvg2/css/SVGCSSStyleSelector.cpp
@@ -1073,6 +1066,7 @@ set(WebCore_SRCS
     platform/graphics/svg/filters/SVGFilterEffect.cpp
     platform/graphics/svg/filters/SVGLightSource.cpp
 
+    platform/graphics/svg/qt/RenderPathQt.cpp
     platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp
     platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp
     platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp

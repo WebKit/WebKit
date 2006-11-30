@@ -22,11 +22,11 @@
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderSVGTSpan.h"
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingDevice.h"
 #include "SVGRootInlineBox.h"
 #include "SVGInlineFlowBox.h"
 #include "AffineTransform.h"
@@ -34,8 +34,10 @@
 #include "SVGLengthList.h"
 
 namespace WebCore {
-    
-RenderSVGTSpan::RenderSVGTSpan(Node* n) : RenderSVGInline(n) {}
+
+RenderSVGTSpan::RenderSVGTSpan(Node* n) : RenderSVGInline(n)
+{
+}
 
 void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {

@@ -34,10 +34,6 @@
 #include "Path.h"
 #include <wtf/MathExtras.h>
 
-#ifdef SVG_SUPPORT
-#include "KRenderingDeviceQuartz.h"
-#endif
-
 #include <GraphicsContextPlatformPrivate.h> // FIXME: Temporary.
 
 using namespace std;
@@ -528,13 +524,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
-#ifdef SVG_SUPPORT
-KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
-{
-    return new KRenderingDeviceContextQuartz(platformContext());
-}
-#endif
-
 void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
@@ -649,6 +638,16 @@ void GraphicsContext::setLineJoin(LineJoin join)
             CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
             break;
     }
+}
+ 
+void GraphicsContext::beginPath()
+{
+    CGContextBeginPath(platformContext());
+}
+
+void GraphicsContext::addPath(const Path& path)
+{
+    CGContextAddPath(platformContext(), path.platformPath());
 }
 
 void GraphicsContext::clip(const Path& path)

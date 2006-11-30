@@ -24,31 +24,36 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerRadialGradient.h"
 
-#include "KRenderingDeviceQt.h"
+#include "GraphicsContext.h"
 #include "RenderPath.h"
 
 #include <math.h>
+#include <QPainter>
+#include <QPainterPath>
 #include <QRadialGradient>
 
 namespace WebCore {
 
-bool SVGPaintServerRadialGradient:: setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerRadialGradient:: setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
-    Q_ASSERT(qtContext != 0);
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
+
+    QPainterPath* path(context ? context->currentPath() : 0);
+    Q_ASSERT(path);
 
     if (listener())
         listener()->resourceNotification();
 
     RenderStyle* renderStyle = object->style();
 
-    qtContext->painter().setPen(Qt::NoPen);
-    qtContext->painter().setBrush(Qt::NoBrush);
-    QMatrix mat = qtContext->ctm();
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::NoBrush);
+    QMatrix mat = painter->matrix();
 
     double cx, fx, cy, fy, r;
     if (boundingBoxMode()) {
-        QRectF bbox = qtContext->pathBBox();
+        QRectF bbox = path->boundingRect(); 
         cx = double(bbox.left()) + (double(gradientCenter().x() / 100.0) * double(bbox.width()));
         cy = double(bbox.top()) + (double(gradientCenter().y() / 100.0) * double(bbox.height()));
         fx = double(bbox.left()) + (double(gradientFocal().x() / 100.0) * double(bbox.width())) - cx;
@@ -100,15 +105,15 @@ bool SVGPaintServerRadialGradient:: setup(KRenderingDeviceContext* context, cons
 
     // AffineTransform gradientTrans = gradientTransform();
     // gradientTrans.map(cx, cy, &cx, &cy);
-    // qtContext->painter().setMatrix(mat);
+    // painter->setMatrix(mat);
 
     if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
         fillColorArray(gradient, gradientStops(), opacity);
 
         QBrush brush(gradient);
 
-        qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
+        painter->setBrush(brush);
+        context->setFillRule(renderStyle->svgStyle()->fillRule());
     }
 
     if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
@@ -120,7 +125,7 @@ bool SVGPaintServerRadialGradient:: setup(KRenderingDeviceContext* context, cons
         setPenProperties(object, renderStyle, pen);
         pen.setBrush(brush);
 
-        qtContext->painter().setPen(pen);
+        painter->setPen(pen);
     }
 
     return true;

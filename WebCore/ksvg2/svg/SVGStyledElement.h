@@ -34,7 +34,6 @@
 namespace WebCore {
 
     class CSSStyleDeclaration;
-    class KRenderingDevice;
     class RenderPath;
     class RenderView;
 

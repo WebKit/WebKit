@@ -24,16 +24,15 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerSolid.h"
 
+#include "GraphicsContext.h"
 #include "RenderObject.h"
-#include "KRenderingDeviceQuartz.h"
-#include "QuartzSupport.h"
+#include "CgSupport.h"
 
 namespace WebCore {
 
-bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
-    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(context);
-    CGContextRef contextRef = quartzContext->cgContext();
+    CGContextRef contextRef = context->platformContext();
     RenderStyle* style = object->style();
 
     CGContextSetAlpha(contextRef, style->opacity());

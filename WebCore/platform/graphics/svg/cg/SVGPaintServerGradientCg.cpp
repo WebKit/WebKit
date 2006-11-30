@@ -24,11 +24,11 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerGradient.h"
 
-#include "KRenderingDeviceQuartz.h"
+#include "GraphicsContext.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGPaintServerRadialGradient.h"
 #include "RenderPath.h"
-#include "QuartzSupport.h"
+#include "CgSupport.h"
 
 namespace WebCore {
 
@@ -167,11 +167,10 @@ void SVGPaintServerGradient::updateQuartzGradientCache(const SVGPaintServerGradi
     }
 }
 
-void SVGPaintServerGradient::teardown(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
     CGShadingRef shading = m_shadingCache;
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
-    CGContextRef contextRef = quartzDevice->currentCGContext();
+    CGContextRef contextRef = context->platformContext();
     RenderStyle* style = object->style();
     ASSERT(contextRef != NULL);
 
@@ -179,15 +178,19 @@ void SVGPaintServerGradient::teardown(KRenderingDeviceContext* context, const Re
         // workaround for filling the entire screen with the shading in the case that no text was intersected with the clip
         if (!isPaintingText() || (object->width() > 0 && object->height() > 0))
             CGContextDrawShading(contextRef, shading);
-        CGContextRestoreGState(contextRef);
+        CGContextRestoreGState(contextRef);        
     }
 
     if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         if (isPaintingText()) {
             int width  = 2048;
             int height = 2048; // FIXME??? SEE ABOVE
-            delete quartzDevice->popContext();
-            contextRef = quartzDevice->currentCGContext();
+
+            delete context;
+            context = m_savedContext;
+            contextRef = context->platformContext();
+            m_savedContext = 0;
+
             void* imageBuffer = fastMalloc(width * height);
             CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
             CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
@@ -199,16 +202,15 @@ void SVGPaintServerGradient::teardown(KRenderingDeviceContext* context, const Re
             CGImageRelease(grayscaleImage);
         }
         CGContextDrawShading(contextRef, shading);
-        CGContextRestoreGState(contextRef);
+        CGContextRestoreGState(contextRef);        
     }
 
     CGContextRestoreGState(contextRef);
 }
 
-void SVGPaintServerGradient::renderPath(KRenderingDeviceContext* context, const RenderPath* path, SVGPaintTargetType type) const
+void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderPath* path, SVGPaintTargetType type) const
 {
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
-    CGContextRef contextRef = quartzDevice->currentCGContext();
+    CGContextRef contextRef = context->platformContext();
     RenderStyle* style = path->style();
     ASSERT(contextRef != NULL);
 
@@ -233,7 +235,7 @@ void SVGPaintServerGradient::renderPath(KRenderingDeviceContext* context, const 
     CGContextConcatCTM(contextRef, transform);
 }
 
-bool SVGPaintServerGradient::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
     if (listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
@@ -243,8 +245,7 @@ bool SVGPaintServerGradient::setup(KRenderingDeviceContext* context, const Rende
     if (!m_shadingCache)
         const_cast<SVGPaintServerGradient*>(this)->updateQuartzGradientCache(this);
 
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
-    CGContextRef contextRef = quartzDevice->currentCGContext();
+    CGContextRef contextRef = context->platformContext();
     RenderStyle* style = object->style();
     ASSERT(contextRef != NULL);
 
@@ -252,13 +253,13 @@ bool SVGPaintServerGradient::setup(KRenderingDeviceContext* context, const Rende
     CGContextSetAlpha(contextRef, style->opacity());
 
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
-        CGContextSaveGState(contextRef);
+        CGContextSaveGState(contextRef);        
         if (isPaintingText())
             CGContextSetTextDrawingMode(contextRef, kCGTextClip);
     }
 
     if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
-        CGContextSaveGState(contextRef);
+        CGContextSaveGState(contextRef);        
         applyStrokeStyleToContext(contextRef, style, object); // FIXME: this seems like the wrong place for this.
         if (isPaintingText()) {
             m_maskImage = new SVGResourceImage();
@@ -266,11 +267,14 @@ bool SVGPaintServerGradient::setup(KRenderingDeviceContext* context, const Rende
             int height = 2048; // FIXME???
             IntSize size = IntSize(width, height);
             m_maskImage->init(size);
-            KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(m_maskImage.get());
-            quartzDevice->pushContext(maskImageContext);
-            CGContextRef maskContext = static_cast<KRenderingDeviceContextQuartz*>(maskImageContext)->cgContext();
+
+            GraphicsContext* maskImageContext = contextForImage(m_maskImage.get());
+            CGContextRef maskContext = maskImageContext->platformContext();
             const_cast<RenderObject*>(object)->style()->setColor(Color(255, 255, 255));
             CGContextSetTextDrawingMode(maskContext, kCGTextStroke);
+
+            m_savedContext = context;
+            context = maskImageContext;
         }
     }
 

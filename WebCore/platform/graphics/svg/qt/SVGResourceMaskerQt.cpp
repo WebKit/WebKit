@@ -20,13 +20,13 @@
 */
 
 #include "config.h"
-#include "SVGResourceMasker.h"
 
 #ifdef SVG_SUPPORT
+#include "SVGResourceMasker.h"
 
 namespace WebCore {
 
-void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
+void SVGResourceMasker::applyMask(GraphicsContext*, const FloatRect&) const
 {
     // FIXME: implement me :-)
 }

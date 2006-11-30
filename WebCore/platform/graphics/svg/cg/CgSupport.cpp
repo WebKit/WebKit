@@ -28,12 +28,12 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include <ApplicationServices/ApplicationServices.h>
-#include "QuartzSupport.h"
+#include "CgSupport.h"
 
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
 #include "RenderStyle.h"
-#include "wtf/Assertions.h"
+#include <wtf/Assertions.h>
 #include "SVGRenderStyle.h"
 
 namespace WebCore {

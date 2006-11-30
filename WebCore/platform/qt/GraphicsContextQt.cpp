@@ -49,10 +49,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#ifdef SVG_SUPPORT
-#include "KRenderingDeviceQt.h"
-#endif
-
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
@@ -219,6 +215,9 @@ public:
 
     IntRect focusRingClip;
     TextShadow shadow;
+
+    // Only used by SVG for now.
+    QPainterPath currentPath;
 
 private:
     QPainter* painter;
@@ -487,6 +486,26 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     m_data->p().fillRect(rect, QColor(c));
 }
 
+void GraphicsContext::beginPath()
+{
+    m_data->currentPath = QPainterPath();
+}
+
+void GraphicsContext::addPath(const Path& path)
+{
+    m_data->currentPath = *(path.platformPath());
+}
+
+void GraphicsContext::setFillRule(WindRule rule)
+{
+    m_data->currentPath.setFillRule(rule == RULE_EVENODD ? Qt::OddEvenFill : Qt::WindingFill);
+}
+
+PlatformPath* GraphicsContext::currentPath()
+{
+    return &m_data->currentPath;
+}
+
 void GraphicsContext::clip(const IntRect& rect)
 {
     if (paintingDisabled())
@@ -612,7 +631,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     if (paintingDisabled())
         return;
 
-    QPainterPath path; path.addRect(rect);
+    QPainterPath path;
+    path.addRect(rect);
     QPen nPen = m_data->p().pen();
     nPen.setWidthF(width);
     m_data->p().strokePath(path, nPen);
@@ -830,13 +850,10 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
     m_data->p().setBrush(QBrush(color));
 }
 
-#ifdef SVG_SUPPORT
-KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
+GraphicsContext* contextForImage(SVGResourceImage*)
 {
-    return new KRenderingDeviceContextQt(platformContext());
-}
-#endif
-
+    // FIXME!
+    return 0;
 }
 
 // vim: ts=4 sw=4 et

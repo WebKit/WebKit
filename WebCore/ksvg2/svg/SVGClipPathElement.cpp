@@ -25,7 +25,6 @@
 #include "SVGClipPathElement.h"
 
 #include "Document.h"
-#include "KRenderingDevice.h"
 #include "RenderView.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"

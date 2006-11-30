@@ -26,13 +26,13 @@
 
 namespace WebCore {
 
-bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
     // FIXME: Reactivate old pattern code
 
 /*
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
-    Q_ASSERT(qtContext != 0);
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
 
     QPainterPath* _path = static_cast<QPainterPath*>(qtContext->path());
     Q_ASSERT(_path != 0);
@@ -43,8 +43,8 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
 
     RenderStyle* renderStyle = object->style();
 
-    qtContext->painter().setPen(Qt::NoPen);
-    qtContext->painter().setBrush(Qt::NoBrush);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::NoBrush);
     QImage* patternimage = new QImage(tile()->bits(), tile()->width(), tile()->height(), QImage::Format_ARGB32_Premultiplied);
     patternimage->setAlphaBuffer(true);
     if (type & APPLY_TO_FILL) {
@@ -53,7 +53,7 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
         KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         QBrush brush(QPixmap::fromImage(*patternimage));
         _path->setFillRule(fillPainter.fillRule() == RULE_EVENODD ? Qt::OddEvenFill : Qt::WindingFill);
-        qtContext->painter().setBrush(brush);
+        painter->setBrush(brush);
     }
     if (type & APPLY_TO_STROKE) {
         //QColor c = color();
@@ -65,10 +65,10 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
 
         setPenProperties(strokePainter, pen);
         pen.setBrush(brush);
-        qtContext->painter().setPen(pen);
+        painter->setPen(pen);
     }
 
-    qtContext->painter().drawPath(*_path);
+    painter->drawPath(*_path);
 
     delete patternimage;
 */

@@ -21,18 +21,18 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+#include "SVGFEOffsetElement.h"
+
 #include "Attr.h"
-
-#include "KRenderingDevice.h"
-
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
-#include "SVGFEOffsetElement.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
-SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document *doc)
+SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_dx(0.0)
     , m_dy(0.0)
@@ -49,7 +49,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, String, String, string, In1, i
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, double, Number, number, Dx, dx, SVGNames::dxAttr.localName(), m_dx)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, double, Number, number, Dy, dy, SVGNames::dyAttr.localName(), m_dy)
 
-void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)
@@ -62,10 +62,10 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEOffset *SVGFEOffsetElement::filterEffect() const
+SVGFEOffset* SVGFEOffsetElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEOffset *>(renderingDevice()->createFilterEffect(FE_OFFSET));
+        m_filterEffect = static_cast<SVGFEOffset*>(SVGResourceFilter::createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());
@@ -77,6 +77,6 @@ SVGFEOffset *SVGFEOffsetElement::filterEffect() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

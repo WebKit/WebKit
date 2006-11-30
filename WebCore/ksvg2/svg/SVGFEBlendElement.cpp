@@ -24,8 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEBlendElement.h"
 
-#include "KRenderingDevice.h"
 #include "SVGHelper.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -70,7 +70,7 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEBlend* SVGFEBlendElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEBlend*>(renderingDevice()->createFilterEffect(FE_BLEND));
+        m_filterEffect = static_cast<SVGFEBlend*>(SVGResourceFilter::createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((SVGBlendModeType) mode());

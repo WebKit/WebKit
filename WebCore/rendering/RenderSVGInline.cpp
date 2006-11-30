@@ -22,6 +22,7 @@
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderSVGInline.h"
 #include "SVGInlineFlowBox.h"
@@ -30,13 +31,17 @@
 
 namespace WebCore {
     
-RenderSVGInline::RenderSVGInline(Node* n) : RenderInline(n) {}
-    
+RenderSVGInline::RenderSVGInline(Node* n) : RenderInline(n)
+{
+}
+
 InlineBox* RenderSVGInline::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
 {
-    assert(!(!isRootLineBox && (isReplaced() || makePlaceHolderBox)));
-    assert(isInlineFlow());
+    ASSERT(!(!isRootLineBox && (isReplaced() || makePlaceHolderBox)));
+    ASSERT(isInlineFlow());
+
     InlineFlowBox* flowBox = new (renderArena()) SVGInlineFlowBox(this);
+
     if (!m_firstLineBox)
         m_firstLineBox = m_lastLineBox = flowBox;
     else {

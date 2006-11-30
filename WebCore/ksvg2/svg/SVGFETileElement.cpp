@@ -23,17 +23,16 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-
 #include "SVGFETileElement.h"
 
 #include "Attr.h"
-#include "KRenderingDevice.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
-SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document *doc)
+SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_filterEffect(0)
 {
@@ -46,7 +45,7 @@ SVGFETileElement::~SVGFETileElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETileElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 
-void SVGFETileElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
@@ -55,10 +54,10 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFETile *SVGFETileElement::filterEffect() const
+SVGFETile* SVGFETileElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
+        m_filterEffect = static_cast<SVGFETile*>(SVGResourceFilter::createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());
@@ -68,6 +67,6 @@ SVGFETile *SVGFETileElement::filterEffect() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

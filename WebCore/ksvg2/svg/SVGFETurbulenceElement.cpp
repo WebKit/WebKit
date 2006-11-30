@@ -21,10 +21,10 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFETurbulenceElement.h"
-
-#include "KRenderingDevice.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -83,7 +83,7 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFETurbulence* SVGFETurbulenceElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETurbulence*>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<SVGFETurbulence*>(SVGResourceFilter::createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     
@@ -99,6 +99,6 @@ SVGFETurbulence* SVGFETurbulenceElement::filterEffect() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

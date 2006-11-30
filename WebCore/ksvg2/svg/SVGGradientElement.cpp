@@ -21,10 +21,11 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGGradientElement.h"
 
-#include "KRenderingDevice.h"
+#include "cssstyleselector.h"
 #include "RenderPath.h"
 #include "RenderView.h"
 #include "SVGHelper.h"
@@ -33,7 +34,8 @@
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "SVGUnitTypes.h"
-#include "cssstyleselector.h"
+#include "SVGPaintServerLinearGradient.h"
+#include "SVGPaintServerRadialGradient.h"
 
 namespace WebCore {
 
@@ -106,7 +108,11 @@ void SVGGradientElement::notifyAttributeChange() const
 SVGResource* SVGGradientElement::canvasResource()
 {
     if (!m_resource) {
-        m_resource = WTF::static_pointer_cast<SVGPaintServerGradient>(renderingDevice()->createPaintServer(gradientType()));
+        if (gradientType() == LinearGradientPaintServer)
+            m_resource = new SVGPaintServerLinearGradient();
+        else
+            m_resource = new SVGPaintServerRadialGradient();
+
         m_resource->setListener(this);
         buildGradient(m_resource);
     }

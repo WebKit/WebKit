@@ -33,6 +33,7 @@
 namespace WebCore {
 
     class FloatRect;
+    class GraphicsContext;
     class SVGResourceImage;
 
     class SVGResourceMasker : public SVGResource {
@@ -47,7 +48,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         // To be implemented by the specific rendering devices
-        void applyMask(const FloatRect& boundingBox) const;
+        void applyMask(GraphicsContext*, const FloatRect& boundingBox) const;
 
     private:
         RefPtr<SVGResourceImage> m_mask;

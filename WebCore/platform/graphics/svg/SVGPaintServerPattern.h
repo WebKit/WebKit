@@ -64,12 +64,12 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(CG)
-        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
-        virtual void teardown(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const; 
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
+        virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const; 
 #endif
 
 #if PLATFORM(QT)
-        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
 #endif
 
     private:

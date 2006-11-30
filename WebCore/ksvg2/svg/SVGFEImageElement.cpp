@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFEImageElement.h"
 
@@ -29,15 +30,15 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "SVGResourceImage.h"
-#include "KRenderingDevice.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
-SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document *doc)
+SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , SVGURIReference()
     , SVGLangSpace()
@@ -57,7 +58,7 @@ SVGFEImageElement::~SVGFEImageElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
-void SVGFEImageElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
@@ -80,16 +81,16 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-void SVGFEImageElement::notifyFinished(CachedResource *finishedObj)
+void SVGFEImageElement::notifyFinished(CachedResource* finishedObj)
 {
     if (finishedObj == m_cachedImage && filterEffect())
         filterEffect()->setCachedImage(m_cachedImage);
 }
 
-SVGFEImage *SVGFEImageElement::filterEffect() const
+SVGFEImage* SVGFEImageElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEImage *>(renderingDevice()->createFilterEffect(FE_IMAGE));
+        m_filterEffect = static_cast<SVGFEImage*>(SVGResourceFilter::createFilterEffect(FE_IMAGE));
     if (!m_filterEffect)
         return 0;
     setStandardAttributes(m_filterEffect);
@@ -98,6 +99,6 @@ SVGFEImage *SVGFEImageElement::filterEffect() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

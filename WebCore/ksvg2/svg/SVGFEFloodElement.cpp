@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFEFloodElement.h"
 
@@ -29,11 +30,11 @@
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "KRenderingDevice.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
-SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document *doc)
+SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_filterEffect(0)
 {
@@ -46,7 +47,7 @@ SVGFEFloodElement::~SVGFEFloodElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEFloodElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 
-void SVGFEFloodElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGFEFloodElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
@@ -55,16 +56,16 @@ void SVGFEFloodElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEFlood *SVGFEFloodElement::filterEffect() const
+SVGFEFlood* SVGFEFloodElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
+        m_filterEffect = static_cast<SVGFEFlood*>(SVGResourceFilter::createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
-    RenderStyle *filterStyle = const_cast<SVGFEFloodElement *>(this)->styleForRenderer(parentNode()->renderer());
-    const SVGRenderStyle *svgStyle = filterStyle->svgStyle();
+    RenderStyle* filterStyle = const_cast<SVGFEFloodElement *>(this)->styleForRenderer(parentNode()->renderer());
+    const SVGRenderStyle* svgStyle = filterStyle->svgStyle();
     m_filterEffect->setFloodColor(svgStyle->floodColor());
     m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());
     filterStyle->deref(view()->renderArena());
@@ -74,6 +75,6 @@ SVGFEFlood *SVGFEFloodElement::filterEffect() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

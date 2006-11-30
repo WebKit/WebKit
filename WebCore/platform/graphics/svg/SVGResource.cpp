@@ -66,16 +66,6 @@ const RenderPathList& SVGResource::clients() const
     return m_clients;
 }
 
-String SVGResource::idInRegistry() const
-{
-    return m_registryId;
-}
-
-void SVGResource::setIdInRegistry(const String& id)
-{
-    m_registryId = id;
-}
-
 TextStream& SVGResource::externalRepresentation(TextStream& ts) const
 {
     return ts;

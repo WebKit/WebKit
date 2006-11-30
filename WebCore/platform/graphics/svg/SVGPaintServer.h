@@ -54,10 +54,10 @@ namespace WebCore {
         ApplyToStrokeTargetType = 2
     };
 
+    class GraphicsContext;
     class RenderObject;
     class RenderPath;
     class RenderStyle;
-    class KRenderingDeviceContext; // FIXME: This is gone soon!
 
     class SVGPaintServer : public SVGResource {
     public:
@@ -76,11 +76,11 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const = 0;
 
         // To be implemented in platform specific code.
-        virtual void draw(KRenderingDeviceContext*, const RenderPath*, SVGPaintTargetType) const;
-        virtual void teardown(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
-        virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, SVGPaintTargetType) const;
+        virtual void draw(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
+        virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
+        virtual void renderPath(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
 
-        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const = 0;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const = 0;
 
     protected:
 #if PLATFORM(CG)

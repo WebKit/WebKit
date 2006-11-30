@@ -32,8 +32,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "KRenderingDevice.h"
-#include "MouseEvent.h"
 #include "MouseEvent.h"
 #include "RenderSVGContainer.h"
 #include "ResourceRequest.h"

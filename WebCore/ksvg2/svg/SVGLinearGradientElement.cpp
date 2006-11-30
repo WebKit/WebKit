@@ -21,10 +21,10 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGLinearGradientElement.h"
 
-#include "KRenderingDevice.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"

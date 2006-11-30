@@ -21,13 +21,13 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGPatternElement.h"
 
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "SVGResourceImage.h"
-#include "KRenderingDevice.h"
 #include "SVGPaintServerPattern.h"
 #include "RenderSVGContainer.h"
 #include "SVGHelper.h"
@@ -166,8 +166,6 @@ void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternEleme
 
 void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* target, const IntSize& newSize, AffineTransform patternTransformMatrix)
 {
-    KRenderingDevice* device = renderingDevice();
-    
     SVGStyledElement* activeElement = static_cast<SVGStyledElement*>(m_paintServer->activeClient()->element());
 
     bool bbox = (patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
@@ -185,14 +183,12 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
     m_tile = new SVGResourceImage();
     m_tile->init(newSize);
 
-    KRenderingDeviceContext* patternContext = device->contextForImage(m_tile.get());
-    device->pushContext(patternContext);
+    OwnPtr<GraphicsContext> patternContext(contextForImage(m_tile.get()));
+
     FloatRect rect(x()->value(), y()->value(), width()->value(), height()->value());
     m_paintServer->setBbox(rect);
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(m_tile.get());
-
-    OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
 
     for (Node* n = target->firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = svg_dynamic_cast(n);
@@ -233,8 +229,8 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
             item->setLocalTransform(newMatrix.matrix());
         }
 #endif
-
-        RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
+ 
+        RenderObject::PaintInfo info(patternContext.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
         item->paint(info, 0, 0);
 
 #if 0
@@ -247,9 +243,6 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
     if (savedContext)
         const_cast<SVGPatternElement*>(this)->pushAttributeContext(savedContext);
-
-    device->popContext();
-    delete patternContext;
 }
 
 void SVGPatternElement::notifyClientsToRepaint() const
@@ -326,7 +319,7 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
 SVGResource* SVGPatternElement::canvasResource()
 {
     if (!m_paintServer) {
-        m_paintServer = WTF::static_pointer_cast<SVGPaintServerPattern>(renderingDevice()->createPaintServer(SVGPaintServerType(PatternPaintServer)));
+        m_paintServer = new SVGPaintServerPattern();
         m_paintServer->setListener(const_cast<SVGPatternElement*>(this));
     }
     return m_paintServer.get();

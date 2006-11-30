@@ -28,8 +28,22 @@
 #ifdef SVG_SUPPORT
 #include "AffineTransform.h"
 #include "FoundationExtras.h"
-#include "KRenderingDeviceQuartz.h"
+#include "GraphicsContext.h"
 #include "SVGResourceFilter.h"
+
+#include "SVGFEBlend.h"
+#include "SVGFEColorMatrix.h"
+#include "SVGFEComponentTransfer.h"
+#include "SVGFEComposite.h"
+#include "SVGFEDiffuseLighting.h"
+#include "SVGFEDisplacementMap.h"
+#include "SVGFEFlood.h"
+#include "SVGFEGaussianBlur.h"
+#include "SVGFEImage.h"
+#include "SVGFEMerge.h"
+#include "SVGFEOffset.h"
+#include "SVGFESpecularLighting.h"
+#include "SVGFETile.h"
 
 #include <QuartzCore/CoreImage.h>
 
@@ -40,6 +54,7 @@ static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
 SVGResourceFilter::SVGResourceFilter()
     : m_filterCIContext(0)
     , m_filterCGLayer(0)
+    , m_savedContext(0)
 {
     m_imagesByName = HardRetainWithNSRelease([[NSMutableDictionary alloc] init]);
 }
@@ -51,19 +66,42 @@ SVGResourceFilter::~SVGResourceFilter()
     HardRelease(m_imagesByName);
 }
 
-void SVGResourceFilter::prepareFilter(const FloatRect &bbox)
+SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType& type)
 {
-    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
+    switch(type)
+    {
+    /* Light sources are contained by the diffuse/specular light blocks 
+    case FE_DISTANT_LIGHT: 
+    case FE_POINT_LIGHT: 
+    case FE_SPOT_LIGHT: 
+    */
+    case FE_BLEND: return new SVGFEBlend();
+    case FE_COLOR_MATRIX: return new SVGFEColorMatrix();
+    case FE_COMPONENT_TRANSFER: return new SVGFEComponentTransfer();
+    case FE_COMPOSITE: return new SVGFEComposite();
+//  case FE_CONVOLVE_MATRIX:
+    case FE_DIFFUSE_LIGHTING: return new SVGFEDiffuseLighting();
+    case FE_DISPLACEMENT_MAP: return new SVGFEDisplacementMap();
+    case FE_FLOOD: return new SVGFEFlood();
+    case FE_GAUSSIAN_BLUR: return new SVGFEGaussianBlur();
+    case FE_IMAGE: return new SVGFEImage();
+    case FE_MERGE: return new SVGFEMerge();
+//  case FE_MORPHOLOGY:
+    case FE_OFFSET: return new SVGFEOffset();
+    case FE_SPECULAR_LIGHTING: return new SVGFESpecularLighting();
+    case FE_TILE: return new SVGFETile();
+//  case FE_TURBULENCE:
+    default:
+        return 0;
+    }
+}
+
+void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect& bbox)
+{
+    if (bbox.isEmpty() || m_effects.isEmpty())
         return;
 
-    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(renderingDevice())->currentCGContext();
-
-    // get a CIContext, and CGLayer for drawing in.
-    bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
-    NSDictionary *contextOptions = nil;
-
-    if (useSoftware)
-        contextOptions = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
+    CGContextRef cgContext = context->platformContext();
 
     // Use of CGBegin/EndTransparencyLayer around this call causes over release
     // of cgContext due to it being created on an autorelease pool, and released
@@ -71,31 +109,28 @@ void SVGResourceFilter::prepareFilter(const FloatRect &bbox)
     // <http://bugs.webkit.org/show_bug.cgi?id=8425>
     // <http://bugs.webkit.org/show_bug.cgi?id=6947>
     // <rdar://problem/4647735>
-    NSAutoreleasePool *filterContextPool = [[NSAutoreleasePool alloc] init];
-    m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:contextOptions]);
+    NSAutoreleasePool* filterContextPool = [[NSAutoreleasePool alloc] init];
+    m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:nil]);
     [filterContextPool drain];
 
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
+    m_savedContext = context;
 
-    KRenderingDeviceContext* filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
-    renderingDevice()->pushContext(filterContext);
-
-    filterContext->concatCTM(AffineTransform().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
+    context = new GraphicsContext(CGLayerGetContext(m_filterCGLayer));
+    context->save();
+    context->concatCTM(AffineTransform().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
 
-void SVGResourceFilter::applyFilter(const FloatRect &bbox)
+void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& bbox)
 {
-    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
+    if (bbox.isEmpty() || m_effects.isEmpty())
         return;
 
-    // restore the previous context, delete the filter context.
-    delete (renderingDevice()->popContext());
-
     // actually apply the filter effects
-    CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
-    NSArray *filterStack = getCIFilterStack(inputImage);
+    CIImage* inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
+    NSArray* filterStack = getCIFilterStack(inputImage);
     if ([filterStack count]) {
-        CIImage *outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
+        CIImage* outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
         if (outputImage) {
             CGRect filterRect = CGRect(filterBBoxForItemBBox(bbox));
             CGRect translated = filterRect;
@@ -115,6 +150,10 @@ void SVGResourceFilter::applyFilter(const FloatRect &bbox)
 
     HardRelease(m_filterCIContext);
     m_filterCIContext = 0;
+
+    delete context;
+    context = m_savedContext;
+    m_savedContext = 0;
 }
 
 NSArray* SVGResourceFilter::getCIFilterStack(CIImage* inputImage)

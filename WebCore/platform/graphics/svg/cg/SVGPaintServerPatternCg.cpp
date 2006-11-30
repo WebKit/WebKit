@@ -24,10 +24,10 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerPattern.h"
 
-#include "KRenderingDeviceQuartz.h"
+#include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "SVGResourceImage.h"
-#include "QuartzSupport.h"
+#include "CgSupport.h"
 
 namespace WebCore {
 
@@ -37,15 +37,14 @@ static void patternCallback(void* info, CGContextRef context)
     CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
-bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
 
     RenderStyle* style = object->style();
 
-    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(context);
-    CGContextRef contextRef = quartzContext->cgContext();
+    CGContextRef contextRef = context->platformContext();
 
     RefPtr<SVGResourceImage> cell = tile();
     if (!cell)
@@ -102,10 +101,9 @@ bool SVGPaintServerPattern::setup(KRenderingDeviceContext* context, const Render
     return true;
 }
 
-void SVGPaintServerPattern::teardown(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
-    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(context);
-    CGContextRef contextRef = quartzContext->cgContext();
+    CGContextRef contextRef = context->platformContext();
     CGPatternRelease(m_pattern);
     CGColorSpaceRelease(m_patternSpace);
     CGContextRestoreGState(contextRef);

@@ -57,7 +57,6 @@ namespace WebCore {
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
     private:
-        void translateForAttributes();
         AffineTransform translationForAttributes();
         AffineTransform m_transform;
         IntRect m_absoluteBounds;

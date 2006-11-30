@@ -22,12 +22,12 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
 #include "SVGResourceImage.h"
-#include "KRenderingDevice.h"
 #include "RenderSVGContainer.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
@@ -99,33 +99,24 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
         SVGStyledElement::parseMappedAttribute(attr);
     }
 }
-
 SVGResourceImage* SVGMaskElement::drawMaskerContent()
 {
-    KRenderingDevice* device = renderingDevice();
-    if (!device->currentContext()) // FIXME: hack for now until Image::lockFocus exists
-        return 0;
-    if (!renderer())
-        return 0;
-
+    // FIXME: Masks are broken! This way it can NOT work!
+    // We need a image->createContext() function - as Eric suggested -
+    // to finally fix the problem in one function, and share it with patterns...
+    return 0;
     SVGResourceImage* maskImage = new SVGResourceImage();
 
     IntSize size = IntSize(lroundf(width()->value()), lroundf(height()->value()));
     maskImage->init(size);
 
-    KRenderingDeviceContext* patternContext = device->contextForImage(maskImage);
-    device->pushContext(patternContext);
-
-    OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
+    OwnPtr<GraphicsContext> context(contextForImage(maskImage));
 
     RenderSVGContainer* maskContainer = static_cast<RenderSVGContainer*>(renderer());
     RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
     maskContainer->setDrawsContents(false);
-    
-    device->popContext();
-    delete patternContext;
 
     return maskImage;
 }
@@ -146,7 +137,7 @@ SVGResource* SVGMaskElement::canvasResource()
     if (m_dirty) {
         RefPtr<SVGResourceImage> mask(drawMaskerContent());
         m_masker->setMask(mask);
-        m_dirty = (mask != 0);
+        m_dirty = (mask == 0);
     }
     return m_masker.get();
 }

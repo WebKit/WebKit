@@ -20,14 +20,15 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFESpecularLightingElement.h"
 
-#include "KRenderingDevice.h"
 #include "SVGColor.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGFELightElement.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& 
     , m_specularConstant(0.0)
     , m_specularExponent(0.0)
     , m_surfaceScale(0.0)
-    , m_lightingColor(new SVGColor())
+    , m_lightingColor(new SVGColor)
     , m_kernelUnitLengthX(0.0)
     , m_kernelUnitLengthY(0.0)
     , m_filterEffect(0)
@@ -83,7 +84,9 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<SVGFESpecularLighting*>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
+        m_filterEffect = static_cast<SVGFESpecularLighting*>(SVGResourceFilter::createFilterEffect(FE_SPECULAR_LIGHTING));
+    if (!m_filterEffect)
+        return 0;
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()));
@@ -103,7 +106,9 @@ void SVGFESpecularLightingElement::updateLights() const
 
     SVGLightSource* light = 0;    
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        if (n->hasTagName(SVGNames::feDistantLightTag)||n->hasTagName(SVGNames::fePointLightTag)||n->hasTagName(SVGNames::feSpotLightTag)) {
+        if (n->hasTagName(SVGNames::feDistantLightTag) || 
+            n->hasTagName(SVGNames::fePointLightTag) ||
+            n->hasTagName(SVGNames::feSpotLightTag)) {
             SVGFELightElement* lightNode = static_cast<SVGFELightElement*>(n); 
             light = lightNode->lightSource();
             break;
@@ -116,3 +121,4 @@ void SVGFESpecularLightingElement::updateLights() const
 
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

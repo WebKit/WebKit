@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #include "config.h"
 
 #ifdef SVG_SUPPORT
@@ -32,8 +31,8 @@
 #import "SVGResourceImage.h"
 #import "SVGRenderStyle.h"
 
-#import "KRenderingDeviceQuartz.h"
-#import "QuartzSupport.h"
+#import "GraphicsContext.h"
+#import "CgSupport.h"
 
 #import <QuartzCore/CoreImage.h>
 #import <QuartzCore/CIFilter.h>
@@ -88,7 +87,7 @@ static CIImage* transformImageIntoGrayscaleMask(CIImage* inputImage)
     return [multipliedGrayscale valueForKey:@"outputImage"];
 }
 
-void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
+void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox) const
 {
     if (!m_mask)
         return;
@@ -106,9 +105,9 @@ void SVGResourceMasker::applyMask(const FloatRect& boundingBox) const
     [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
 
     CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
-    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(renderingDevice())->currentCGContext();
+    CGContextRef cgContext = context->platformContext();
     CGContextClipToMask(cgContext, CGRectMake(0, 0, width, height), grayscaleImage);
-    
+
     CGImageRelease(grayscaleImage);
     CGContextRelease(grayscaleContext);
     fastFree(imageBuffer);

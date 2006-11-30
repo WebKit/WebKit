@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "Image.h"
 #include "IntRect.h"
+#include "Path.h"
 #include "Pen.h"
 #include "TextDirection.h"
 #include "UChar.h"
@@ -62,12 +63,9 @@ namespace WebCore {
     class GraphicsContextPlatformPrivate;
     class KURL;
     class Path;
+    class SVGResourceImage;
     class TextRun;
     class TextStyle;
-
-#ifdef SVG_SUPPORT
-    class KRenderingDeviceContext;
-#endif
 
     class GraphicsContext : Noncopyable {
     public:
@@ -157,6 +155,9 @@ namespace WebCore {
 
         void setCompositeOperation(CompositeOperator);
 
+        void beginPath();
+        void addPath(const Path& path);
+
         void clip(const Path&);
 
         void scale(const FloatSize&);
@@ -168,14 +169,15 @@ namespace WebCore {
 
         void concatCTM(const AffineTransform&);
 
-#ifdef SVG_SUPPORT
-        KRenderingDeviceContext* createRenderingDeviceContext();
-#endif
-
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
         HDC getWindowsContext(bool supportAlphaBlend = false, const IntRect* = 0); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, bool supportAlphaBlend = false, const IntRect* = 0);    // The passed in HDC should be the one handed back by getWindowsContext.
+#endif
+
+#if PLATFORM(QT)
+        void setFillRule(WindRule);
+        PlatformPath* currentPath();
 #endif
 
     private:
@@ -195,6 +197,10 @@ namespace WebCore {
         GraphicsContextPrivate* m_common;
         GraphicsContextPlatformPrivate* m_data;
     };
+
+#ifdef SVG_SUPPORT
+    GraphicsContext* contextForImage(SVGResourceImage*);
+#endif
 
 } // namespace WebCore
 

@@ -24,7 +24,6 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-
 #include "SVGInlineFlowBox.h"
 
 #include "GraphicsContext.h"
@@ -32,12 +31,11 @@
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
+#include "SVGPaintServer.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingDevice.h"
 #include "RootInlineBox.h"
 #include "SVGLengthList.h"
 #include "SVGTextPositioningElement.h"
-#include <wtf/OwnPtr.h>
 
 using namespace std;
 
@@ -63,77 +61,59 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
     if (paintInfo.context->paintingDisabled())
         return;
     
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* context = device->currentContext();
-    bool shouldPopContext = false;
-    if (context)
-        paintInfo.context->save();
-    else {
-        // Need to set up KCanvas rendering if it hasn't already been done.
-        context = paintInfo.context->createRenderingDeviceContext();
-        device->pushContext(context);
-        shouldPopContext = true;
-    }
-
-    context->concatCTM(object->localTransform());
+    paintInfo.context->save();
+    paintInfo.context->concatCTM(object->localTransform());
 
     FloatRect boundingBox(tx + flow->xPos(), ty + flow->yPos(), flow->width(), flow->height());
 
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (SVGResourceClipper* clipper = getClipperById(object->document(), svgStyle->clipPath().substring(1)))
-        clipper->applyClip(boundingBox);
+        clipper->applyClip(paintInfo.context, boundingBox);
 
     if (SVGResourceMasker* masker = getMaskerById(object->document(), svgStyle->maskElement().substring(1)))
-        masker->applyMask(boundingBox);
+        masker->applyMask(paintInfo.context, boundingBox);
 
     SVGResourceFilter* filter = getFilterById(object->document(), svgStyle->filter().substring(1));
     if (filter)
-        filter->prepareFilter(boundingBox);
+        filter->prepareFilter(paintInfo.context, boundingBox);
 
-    RenderObject::PaintInfo pi = paintInfo;
-    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    pi.context = c.get();
+    RenderObject::PaintInfo pi(paintInfo);
+    
     if (!flow->isRootInlineBox())
-        pi.rect = (object->localTransform()).invert().mapRect(paintInfo.rect);
+        pi.rect = (object->localTransform()).invert().mapRect(pi.rect);
 
     float opacity = object->style()->opacity();
     if (opacity < 1.0f) {
-        c->clip(enclosingIntRect(boundingBox));
-        c->beginTransparencyLayer(opacity);
+        paintInfo.context->clip(enclosingIntRect(boundingBox));
+        paintInfo.context->beginTransparencyLayer(opacity);
     }
     
     SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(object->style(), object);
     if (fillPaintServer) {
         fillPaintServer->setPaintingText(true);
-        if (fillPaintServer->setup(context, object, ApplyToFillTargetType)) {
+        if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType)) {
             flow->InlineFlowBox::paint(pi, tx, ty);
-            fillPaintServer->teardown(context, object, ApplyToFillTargetType);
+            fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType);
         }
         fillPaintServer->setPaintingText(false);
     }
     SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(object->style(), object);
     if (strokePaintServer) {
         strokePaintServer->setPaintingText(true);
-        if (strokePaintServer->setup(context, object, ApplyToStrokeTargetType)) {
+        if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType)) {
             flow->InlineFlowBox::paint(pi, tx, ty);
-            strokePaintServer->teardown(context, object, ApplyToStrokeTargetType);
+            strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType);
         }
         strokePaintServer->setPaintingText(false);
     }
 
     if (filter) 
-        filter->applyFilter(boundingBox);
+        filter->applyFilter(paintInfo.context, boundingBox);
 
     if (opacity < 1.0f)
-        c->endTransparencyLayer();
+        paintInfo.context->endTransparencyLayer();
 
-    // restore drawing state
-    if (!shouldPopContext)
-        paintInfo.context->restore();
-    else {
-        device->popContext();
-        delete context;
-    }
+    paintInfo.context->restore();
 }
 
 static bool translateBox(InlineBox* box, int x, int y, bool topLevel = true)

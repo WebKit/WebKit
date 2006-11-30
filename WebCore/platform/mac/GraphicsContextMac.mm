@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "GraphicsContext.h"
+#import "SVGResourceImage.h"
 
 #import "../graphics/cg/GraphicsContextPlatformPrivate.h"
 
@@ -176,6 +177,26 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
     NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
     
     CGContextRestoreGState(context);
+}
+
+GraphicsContext* contextForImage(SVGResourceImage* image)
+{
+    CGLayerRef cgLayer = image->cgLayer();
+
+    // FIXME: Using currentContext / graphicsPort here is a TOTAL hack. See SVGMaskElement comment for a possible solution!
+    CGContextRef currentContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+
+    if (!cgLayer) {
+        ASSERT(currentContext);
+
+        // FIXME: we might not get back a layer if this is a loaded image
+        // maybe this logic should go into SVGResourceImage?
+        cgLayer = CGLayerCreateWithContext(currentContext, CGSize(image->size() + IntSize(1,1)), NULL);  // FIXME + 1 is a hack
+        // FIXME: we should composite the original image onto the layer...
+        image->setCGLayer(cgLayer);
+        CGLayerRelease(cgLayer);
+    }
+    return new GraphicsContext(CGLayerGetContext(cgLayer));
 }
 
 }

@@ -77,10 +77,10 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(CG)
-        virtual void teardown(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
-        virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, SVGPaintTargetType) const;
+        virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
+        virtual void renderPath(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
 
-        virtual bool setup(KRenderingDeviceContext*, const RenderObject*, SVGPaintTargetType) const;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
 
         virtual void invalidate();
 
@@ -115,6 +115,8 @@ namespace WebCore {
 
         CGShadingRef m_shadingCache;
         mutable RefPtr<SVGResourceImage> m_maskImage;
+
+        mutable GraphicsContext* m_savedContext;
 #endif
     };
 

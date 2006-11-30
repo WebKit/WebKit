@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
- *           (C) 2006 Alexander Kellett <lypanov@kde.org>
- *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef CgSupport_H
+#define CgSupport_H
+
 #ifdef SVG_SUPPORT
 
-#include <wtf/Assertions.h>
-
 #include <ApplicationServices/ApplicationServices.h>
-#include "KCanvasRenderingStyle.h"
-#include "KRenderingDeviceQuartz.h"
-#include "QuartzSupport.h"
-#include "RenderPath.h"
-#include "SVGRenderStyle.h"
-#include "SVGStyledElement.h"
+#include "GraphicsTypes.h"
 
 namespace WebCore {
 
-FloatRect RenderPath::strokeBBox() const
-{
-    if (style()->svgStyle()->hasStroke())
-        return strokeBoundingBox(path(), style(), this);
+typedef struct CGPath *CGMutablePathRef;
 
-    return path().boundingRect();
+class Path;
+class FloatRect;
+class RenderStyle;
+class RenderObject;
+
+CFStringRef CFStringFromCGPath(CGPathRef);
+CFStringRef CFStringFromCGAffineTransform(CGAffineTransform);
+CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
+
+void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
+
+CGContextRef scratchContext();
+FloatRect strokeBoundingBox(const Path& path, RenderStyle*, const RenderObject*);
+
+static inline CGLineCap CGLineCapFromKC(LineCap cap)
+{
+    if (cap == ButtCap)
+        return kCGLineCapButt;
+    else if (cap == RoundCap)
+        return kCGLineCapRound;
+    else if (cap == SquareCap)
+        return kCGLineCapSquare;
+    
+    return kCGLineCapButt;
 }
 
-
-bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
+static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
 {
-    if (path().isEmpty())
-        return false;
-
-    if (requiresStroke && !KSVGPainterFactory::strokePaintServer(style(), this))
-        return false;
-
-    CGMutablePathRef cgPath = path().platformPath();
+    if (join == MiterJoin)
+        return kCGLineJoinMiter;
+    else if (join == RoundJoin)
+        return kCGLineJoinRound;
+    else if (join == BevelJoin)
+        return kCGLineJoinBevel;
     
-    CGContextRef context = scratchContext();
-    CGContextSaveGState(context);
-    
-    CGContextBeginPath(context);
-    CGContextAddPath(context, cgPath);
-    applyStrokeStyleToContext(context, style(), this);
-    bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
-    CGContextRestoreGState(context);
-    
-    return hitSuccess;
+    return kCGLineJoinMiter;
 }
 
 }
 
 #endif // SVG_SUPPORT
+#endif // !CgSupport_H

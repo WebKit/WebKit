@@ -34,7 +34,6 @@
 #include "HTMLNames.h"
 #include "RenderTreeAsText.h"
 #include "RenderSVGContainer.h"
-#include "KRenderingDevice.h"
 #include "SVGPaintServerGradient.h"
 #include "SVGPaintServerPattern.h"
 #include "SVGPaintServerSolid.h"
@@ -232,12 +231,8 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
         if (strokePaintServer) {
             TextStreamSeparator s(" ");
             ts << " [stroke={";
-            if (strokePaintServer) {
-                if (!strokePaintServer->idInRegistry().isEmpty())
-                    ts << s << "[id=\""<< strokePaintServer->idInRegistry() << "\"]"; 
-                else
-                    ts << s << *strokePaintServer;
-            } 
+            if (strokePaintServer)
+                ts << s << *strokePaintServer;
 
             double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0);
             const KCDashArray& dashArray = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
@@ -263,13 +258,9 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
         if (fillPaintServer) {
             TextStreamSeparator s(" ");
             ts << " [fill={";
-            if (fillPaintServer) {
-                if (!fillPaintServer->idInRegistry().isEmpty())
-                    ts << s << "[id=\"" << fillPaintServer->idInRegistry() << "\"]";
-                else
-                    ts << s << *fillPaintServer;
-            }
-            
+            if (fillPaintServer)
+                ts << s << *fillPaintServer;
+
             if (style->svgStyle()->fillOpacity() != 1.0f)
                 ts << s << "[opacity=" << style->svgStyle()->fillOpacity() << "]";
             if (style->svgStyle()->fillRule() != RULE_NONZERO)

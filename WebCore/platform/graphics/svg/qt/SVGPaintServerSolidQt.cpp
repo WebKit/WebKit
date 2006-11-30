@@ -24,17 +24,20 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerSolid.h"
 
-#include "KRenderingDeviceQt.h"
+#include "GraphicsContext.h"
 #include "RenderPath.h"
+
+#include <QPainter>
 
 namespace WebCore {
 
-bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
 {
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
 
     RenderStyle* renderStyle = object->style();
-    // TODO? qtContext->painter().setOpacity(renderStyle->opacity());
+    // TODO? painter->setOpacity(renderStyle->opacity());
 
     QColor c = color();
 
@@ -42,8 +45,8 @@ bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderOb
         c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
 
         QBrush brush(c);
-        qtContext->painter().setBrush(brush);
-        qtContext->setFillRule(renderStyle->svgStyle()->fillRule());
+        painter->setBrush(brush);
+        context->setFillRule(renderStyle->svgStyle()->fillRule());
 
         /* if(isPaintingText()) ... */
     }
@@ -53,7 +56,7 @@ bool SVGPaintServerSolid::setup(KRenderingDeviceContext* context, const RenderOb
 
         QPen pen(c);
         setPenProperties(object, renderStyle, pen);
-        qtContext->painter().setPen(pen);
+        painter->setPen(pen);
 
         /* if(isPaintingText()) ... */
     }

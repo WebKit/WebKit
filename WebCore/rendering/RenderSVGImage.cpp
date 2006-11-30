@@ -29,12 +29,10 @@
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
-#include "KRenderingDevice.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGImageElement.h"
 #include "SVGImageElement.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -127,46 +125,32 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
         return;
     
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* context = device->currentContext();
-    bool shouldPopContext = false;
-    if (context)
-        paintInfo.context->save();
-    else {
-        // Need to push a device context on the stack if empty.
-        context = paintInfo.context->createRenderingDeviceContext();
-        device->pushContext(context);
-        shouldPopContext = true;
-    }
+    paintInfo.context->save();
+    paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
+    paintInfo.context->concatCTM(localTransform());
+    paintInfo.context->concatCTM(translationForAttributes());
 
-    context->concatCTM(AffineTransform().translate(parentX, parentY));
-    context->concatCTM(localTransform());
-    translateForAttributes();
-    
     FloatRect boundingBox = FloatRect(0, 0, width(), height());
     const SVGRenderStyle* svgStyle = style()->svgStyle();
 
     if (SVGResourceClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
-        clipper->applyClip(boundingBox);
+        clipper->applyClip(paintInfo.context, boundingBox);
 
     if (SVGResourceMasker* masker = getMaskerById(document(), svgStyle->maskElement().substring(1)))
-        masker->applyMask(boundingBox);
+        masker->applyMask(paintInfo.context, boundingBox);
 
     SVGResourceFilter* filter = getFilterById(document(), svgStyle->filter().substring(1));
     if (filter)
-        filter->prepareFilter(boundingBox);
-    
-    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
+        filter->prepareFilter(paintInfo.context, boundingBox);
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
-        c->clip(enclosingIntRect(boundingBox));
-        c->beginTransparencyLayer(opacity);
+        paintInfo.context->clip(enclosingIntRect(boundingBox));
+        paintInfo.context->beginTransparencyLayer(opacity);
     }
 
     PaintInfo pi(paintInfo);
-    pi.context = c.get();
-    pi.rect = absoluteTransform().invert().mapRect(paintInfo.rect);
+    pi.rect = absoluteTransform().invert().mapRect(pi.rect);
 
     int x = 0, y = 0;
     if (shouldPaint(pi, x, y)) {
@@ -178,23 +162,17 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
             FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
             FloatRect srcRect(0, 0, image()->width(), image()->height());
             adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
-            c->drawImage(image(), destRect, srcRect);
+            paintInfo.context->drawImage(image(), destRect, srcRect);
         }
-
-        if (filter)
-            filter->applyFilter(boundingBox);
     }
-    
+
+    if (filter)
+        filter->applyFilter(paintInfo.context, boundingBox);
+
     if (opacity < 1.0f)
-        c->endTransparencyLayer();
+        paintInfo.context->endTransparencyLayer();
 
-    // restore drawing state
-    if (!shouldPopContext)
-        paintInfo.context->restore();
-    else {
-        device->popContext();
-        delete context;
-    }
+    paintInfo.context->restore();
 }
 
 void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
@@ -279,12 +257,6 @@ AffineTransform RenderSVGImage::translationForAttributes()
 {
     SVGImageElement *image = static_cast<SVGImageElement*>(node());
     return AffineTransform().translate(image->x()->value(), image->y()->value());
-}
-
-void RenderSVGImage::translateForAttributes()
-{
-    KRenderingDeviceContext* context = renderingDevice()->currentContext();
-    context->concatCTM(translationForAttributes());
 }
 
 }

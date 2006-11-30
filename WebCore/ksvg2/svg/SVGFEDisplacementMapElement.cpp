@@ -19,11 +19,12 @@
 
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFEDisplacementMapElement.h"
 
-#include "KRenderingDevice.h"
 #include "SVGHelper.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -81,11 +82,11 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEDisplacementMap *>(renderingDevice()->createFilterEffect(FE_DISPLACEMENT_MAP));
+        m_filterEffect = static_cast<SVGFEDisplacementMap*>(SVGResourceFilter::createFilterEffect(FE_DISPLACEMENT_MAP));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setXChannelSelector((SVGChannelSelectorType)(xChannelSelector()));
-    m_filterEffect->setYChannelSelector((SVGChannelSelectorType)(yChannelSelector()));
+    m_filterEffect->setXChannelSelector((SVGChannelSelectorType) xChannelSelector());
+    m_filterEffect->setYChannelSelector((SVGChannelSelectorType) yChannelSelector());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
     m_filterEffect->setScale(scale());
@@ -94,4 +95,7 @@ SVGFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
 }
 
 }
+
 #endif // SVG_SUPPORT
+
+// vim:ts=4:noet

@@ -22,22 +22,23 @@
 */
 
 #include "config.h"
-#include "SVGResourceClipper.h"
 
 #ifdef SVG_SUPPORT
+#include "SVGResourceClipper.h"
 
-#include "KRenderingDeviceQt.h"
+#include "GraphicsContext.h"
+
+#include <QPainter>
+#include <QPainterPath>
 
 namespace WebCore {
 
-void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
+void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& boundingBox) const
 {
-    KRenderingDeviceContext* context = renderingDevice()->currentContext();
-    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
     if (m_clipData.clipData().size() < 1)
         return;
 
-    context->clearPath();
+    context->beginPath();
 
     QPainterPath newPath;
 
@@ -113,7 +114,10 @@ void SVGResourceClipper::applyClip(const FloatRect& boundingBox) const
         // }
     }
 
-    qtContext->painter().setClipPath(newPath);
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
+
+    painter->setClipPath(newPath);
 }
 
 } // namespace WebCore

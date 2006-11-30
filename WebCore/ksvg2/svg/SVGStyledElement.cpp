@@ -21,13 +21,13 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGStyledElement.h"
 
 #include "Attr.h"
 #include "HTMLNames.h"
 #include "Document.h"
-#include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderView.h"
 #include "RenderPath.h"

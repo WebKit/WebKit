@@ -26,6 +26,7 @@
 
 #ifdef SVG_SUPPORT
 #include "SVGResource.h"
+#include "SVGFilterEffect.h"
 
 #include "FloatRect.h"
 
@@ -49,6 +50,7 @@ class NSMutableDictionary;
 
 namespace WebCore {
 
+class GraphicsContext;
 class SVGFilterEffect;
 
 class SVGResourceFilter : public SVGResource {
@@ -56,6 +58,8 @@ public:
     // To be implemented in platform specific code.
     SVGResourceFilter();
     virtual ~SVGResourceFilter();
+
+    static SVGFilterEffect* createFilterEffect(const SVGFilterEffectType&);
 
     virtual bool isFilter() const { return true; }
 
@@ -76,8 +80,8 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
     // To be implemented in platform specific code.
-    void prepareFilter(const FloatRect& bbox);
-    void applyFilter(const FloatRect& bbox);
+    void prepareFilter(GraphicsContext*&, const FloatRect& bbox);
+    void applyFilter(GraphicsContext*&, const FloatRect& bbox);
 
 #if PLATFORM(CI)
     CIImage* imageForName(const String&) const;
@@ -93,6 +97,7 @@ private:
 
     CIContext* m_filterCIContext;
     CGLayerRef m_filterCGLayer;
+    GraphicsContext* m_savedContext;
     NSMutableDictionary* m_imagesByName;
 #endif
 

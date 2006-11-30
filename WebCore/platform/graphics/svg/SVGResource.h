@@ -69,9 +69,6 @@ namespace WebCore {
 
         const RenderPathList& clients() const;
 
-        String idInRegistry() const;
-        void setIdInRegistry(const String&);
-
         virtual bool isPaintServer() const { return false; }
         virtual bool isFilter() const { return false; }
         virtual bool isClipper() const { return false; }
@@ -81,7 +78,6 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
     private:
-        String m_registryId;
         RenderPathList m_clients;
     };
 

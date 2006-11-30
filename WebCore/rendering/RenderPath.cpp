@@ -29,14 +29,13 @@
 
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
+#include "SVGPaintServer.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
 #include "SVGResourceMarker.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingDevice.h"
 #include "SVGStyledElement.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -173,62 +172,43 @@ void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN || path().isEmpty())
         return;
-    
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* context = device->currentContext();
-    bool shouldPopContext = false;
-    if (context)
-        paintInfo.context->save();
-    else {
-        // Need to set up KCanvas rendering if it hasn't already been done.
-        context = paintInfo.context->createRenderingDeviceContext();
-        device->pushContext(context);
-        shouldPopContext = true;
-    }
 
-    context->concatCTM(localTransform());
+    paintInfo.context->save();
+    paintInfo.context->concatCTM(localTransform());
 
     // setup to apply filters
     SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
-    if (filter) {
-        filter->prepareFilter(relativeBBox(true));
-        context = device->currentContext();
-    }
+    if (filter)
+        filter->prepareFilter(paintInfo.context, relativeBBox(true));
 
     if (SVGResourceClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
-        clipper->applyClip(relativeBBox(true));
+        clipper->applyClip(paintInfo.context, relativeBBox(true));
 
     if (SVGResourceMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
-        masker->applyMask(relativeBBox(true));
+        masker->applyMask(paintInfo.context, relativeBBox(true));
 
-    context->clearPath();
+    paintInfo.context->beginPath();
     
     SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
-        context->addPath(path());
+        paintInfo.context->addPath(path());
         fillPaintServer->setActiveClient(this);
-        fillPaintServer->draw(context, this, ApplyToFillTargetType);
+        fillPaintServer->draw(paintInfo.context, this, ApplyToFillTargetType);
     }
     SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
-        context->addPath(path()); // path is cleared when filled.
+        paintInfo.context->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
-        strokePaintServer->draw(context, this, ApplyToStrokeTargetType);
+        strokePaintServer->draw(paintInfo.context, this, ApplyToStrokeTargetType);
     }
 
     drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, path());
 
     // actually apply the filter
     if (filter)
-        filter->applyFilter(relativeBBox(true));
+        filter->applyFilter(paintInfo.context, relativeBBox(true));
 
-    // restore drawing state
-    if (!shouldPopContext)
-        paintInfo.context->restore();
-    else {
-        device->popContext();
-        delete context;
-    }
+    paintInfo.context->restore();
 }
 
 void RenderPath::absoluteRects(Vector<IntRect>& rects, int _tx, int _ty)

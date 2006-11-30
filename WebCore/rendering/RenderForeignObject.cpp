@@ -27,7 +27,6 @@
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
-#include "KRenderingDevice.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGLength.h"
 
@@ -49,22 +48,10 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled())
         return;
 
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* context = device->currentContext();
-    bool shouldPopContext = false;
-    if (!context) {
-        // Only need to setup for KCanvas rendering if it hasn't already been done.
-        context = paintInfo.context->createRenderingDeviceContext();
-        device->pushContext(context);
-        shouldPopContext = true;
-    }
-
     paintInfo.context->save();
-
-    context->concatCTM(AffineTransform().translate(parentX, parentY));
-    context->concatCTM(localTransform());
-    context->concatCTM(translationForAttributes());
-
+    paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
+    paintInfo.context->concatCTM(localTransform());
+    paintInfo.context->concatCTM(translationForAttributes());
     paintInfo.context->clip(getClipRect(parentX, parentY));
 
     float opacity = style()->opacity();
@@ -78,11 +65,6 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     if (opacity < 1.0f)
         paintInfo.context->endTransparencyLayer();
-
-    if (shouldPopContext) {
-        device->popContext();
-        delete context;
-    }
 
     paintInfo.context->restore();
 }

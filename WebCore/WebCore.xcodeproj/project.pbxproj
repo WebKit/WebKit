@@ -1836,13 +1836,6 @@
 		A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFDF0A15376B00B12A68 /* RenderReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFE00A15376B00B12A68 /* RenderWidget.h */; };
 		A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFE10A15376B00B12A68 /* RenderWidget.cpp */; };
-		A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */; };
-		A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB55089701F700BA5114 /* KRenderingDevice.h */; };
-		A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */; };
-		A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */; };
-		A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */; };
-		A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
-		A88AD3B60952486E001DD196 /* QuartzSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */; };
 		A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */; };
 		A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F700089701F100BA5114 /* SVGRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */; };
@@ -2233,13 +2226,15 @@
 		B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F6970AB771950022EFAD /* JSSVGAngle.h */; };
 		B222F69C0AB771B80022EFAD /* JSSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */; };
 		B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F69B0AB771B80022EFAD /* JSSVGElement.h */; };
+		B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B730B1F46A200D55D87 /* CgSupport.cpp */; };
+		B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B2310B740B1F46A200D55D87 /* CgSupport.h */; };
+		B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */; };
 		B27535560B053814002CE64F /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535270B053814002CE64F /* AffineTransform.cpp */; };
 		B27535570B053814002CE64F /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535280B053814002CE64F /* AffineTransform.h */; };
 		B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* AffineTransformCG.cpp */; };
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
 		B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352D0B053814002CE64F /* FloatSizeCG.cpp */; };
-		B275355C0B053814002CE64F /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352E0B053814002CE64F /* GraphicsContextCG.cpp */; };
 		B275355D0B053814002CE64F /* GraphicsContextPlatformPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = B275352F0B053814002CE64F /* GraphicsContextPlatformPrivate.h */; };
 		B275355E0B053814002CE64F /* ImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535300B053814002CE64F /* ImageCG.cpp */; };
 		B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535310B053814002CE64F /* ImageSourceCG.cpp */; };
@@ -2416,6 +2411,7 @@
 		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; };
 		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
 		B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */; };
+		B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */; };
 		B2FA3D360AB75A6F000E5AC4 /* JSSVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */; };
 		B2FA3D370AB75A6F000E5AC4 /* JSSVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */; };
 		B2FA3D380AB75A6F000E5AC4 /* JSSVGAnimatedAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */; };
@@ -5001,13 +4997,6 @@
 		A8C0F8EA089701F400BA5114 /* SVGViewElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGViewElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8EB089701F400BA5114 /* SVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomAndPan.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomAndPan.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDevice.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB55089701F700BA5114 /* KRenderingDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDevice.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasItemQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDeviceQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDeviceQuartz.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB76089701F800BA5114 /* QuartzSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QuartzSupport.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuartzSupport.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295C093BB7B2000B9CAC /* SVGFELightElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGFELightElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295D093BB7B2000B9CAC /* SVGFELightElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFELightElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDistantLightElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5190,13 +5179,15 @@
 		B222F6970AB771950022EFAD /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAngle.h; sourceTree = "<group>"; };
 		B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElement.cpp; sourceTree = "<group>"; };
 		B222F69B0AB771B80022EFAD /* JSSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGElement.h; sourceTree = "<group>"; };
+		B2310B730B1F46A200D55D87 /* CgSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CgSupport.cpp; sourceTree = "<group>"; };
+		B2310B740B1F46A200D55D87 /* CgSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CgSupport.h; sourceTree = "<group>"; };
+		B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPathCg.cpp; sourceTree = "<group>"; };
 		B27535270B053814002CE64F /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; };
 		B27535280B053814002CE64F /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AffineTransform.h; sourceTree = "<group>"; };
 		B275352A0B053814002CE64F /* AffineTransformCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransformCG.cpp; sourceTree = "<group>"; };
 		B275352B0B053814002CE64F /* FloatPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPointCG.cpp; sourceTree = "<group>"; };
 		B275352C0B053814002CE64F /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
 		B275352D0B053814002CE64F /* FloatSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeCG.cpp; sourceTree = "<group>"; };
-		B275352E0B053814002CE64F /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		B275352F0B053814002CE64F /* GraphicsContextPlatformPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivate.h; sourceTree = "<group>"; };
 		B27535300B053814002CE64F /* ImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageCG.cpp; sourceTree = "<group>"; };
 		B27535310B053814002CE64F /* ImageSourceCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceCG.cpp; sourceTree = "<group>"; };
@@ -5491,6 +5482,7 @@
 		B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPreserveAspectRatio.idl; sourceTree = "<group>"; };
 		B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderTreeAsText.cpp; sourceTree = "<group>"; };
 		B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGRenderTreeAsText.h; sourceTree = "<group>"; };
+		B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateColorElement.cpp; sourceTree = "<group>"; };
 		B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimateColorElement.h; sourceTree = "<group>"; };
 		B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedAngle.cpp; sourceTree = "<group>"; };
@@ -5995,7 +5987,6 @@
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
 				93EEC1EC09C2877700C515D1 /* html */,
-				A8C0FB51089701F700BA5114 /* kcanvas */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
@@ -8374,36 +8365,6 @@
 			path = svg;
 			sourceTree = "<group>";
 		};
-		A8C0FB51089701F700BA5114 /* kcanvas */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0FB53089701F700BA5114 /* device */,
-			);
-			path = kcanvas;
-			sourceTree = "<group>";
-		};
-		A8C0FB53089701F700BA5114 /* device */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */,
-				A8C0FB55089701F700BA5114 /* KRenderingDevice.h */,
-				A8C0FB68089701F800BA5114 /* quartz */,
-			);
-			path = device;
-			sourceTree = "<group>";
-		};
-		A8C0FB68089701F800BA5114 /* quartz */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.cpp */,
-				A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */,
-				A8C0FB72089701F800BA5114 /* KRenderingDeviceQuartz.cpp */,
-				A8C0FB76089701F800BA5114 /* QuartzSupport.h */,
-				A8C0FB77089701F800BA5114 /* QuartzSupport.cpp */,
-			);
-			path = quartz;
-			sourceTree = "<group>";
-		};
 		B27535290B053814002CE64F /* cg */ = {
 			isa = PBXGroup;
 			children = (
@@ -8411,7 +8372,7 @@
 				B275352B0B053814002CE64F /* FloatPointCG.cpp */,
 				B275352C0B053814002CE64F /* FloatRectCG.cpp */,
 				B275352D0B053814002CE64F /* FloatSizeCG.cpp */,
-				B275352E0B053814002CE64F /* GraphicsContextCG.cpp */,
+				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
 				B275352F0B053814002CE64F /* GraphicsContextPlatformPrivate.h */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
@@ -8516,6 +8477,9 @@
 		B2A015970AF6CD53006BCE0E /* cg */ = {
 			isa = PBXGroup;
 			children = (
+				B2310B730B1F46A200D55D87 /* CgSupport.cpp */,
+				B2310B740B1F46A200D55D87 /* CgSupport.h */,
+				B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */,
 				B2D87C830B124E9500B0DE1E /* SVGPaintServerCg.cpp */,
 				B2D87C840B124E9500B0DE1E /* SVGPaintServerGradientCg.cpp */,
 				B2D87C850B124E9500B0DE1E /* SVGPaintServerPatternCg.cpp */,
@@ -9457,9 +9421,6 @@
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
-				A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */,
-				A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */,
-				A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */,
 				A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */,
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,
 				A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */,
@@ -10839,6 +10800,7 @@
 				A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */,
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */,
+				B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11039,10 +11001,6 @@
 				BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */,
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
-				A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */,
-				A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.cpp in Sources */,
-				A88AD3B10952486E001DD196 /* KRenderingDeviceQuartz.cpp in Sources */,
-				A88AD3B60952486E001DD196 /* QuartzSupport.cpp in Sources */,
 				A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */,
 				A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */,
 				A88AD40A095248F0001DD196 /* SVGZoomEvent.cpp in Sources */,
@@ -12063,7 +12021,6 @@
 				B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */,
 				B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */,
 				B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */,
-				B275355C0B053814002CE64F /* GraphicsContextCG.cpp in Sources */,
 				B275355E0B053814002CE64F /* ImageCG.cpp in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				B27535600B053814002CE64F /* IntPointCG.cpp in Sources */,
@@ -12156,6 +12113,9 @@
 				1AD8CFCE0B1CED8900696DE0 /* ResourceRequest.cpp in Sources */,
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 				1A8180A50B1D4E4300CE46C4 /* ResourceResponse.cpp in Sources */,
+				B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */,
+				B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */,
+				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

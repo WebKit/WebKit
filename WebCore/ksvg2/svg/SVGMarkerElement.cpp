@@ -21,10 +21,10 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGMarkerElement.h"
 
-#include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderSVGContainer.h"
 #include "SVGAngle.h"

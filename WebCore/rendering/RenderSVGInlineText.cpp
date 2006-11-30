@@ -28,13 +28,14 @@
 
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
-#include "KRenderingDevice.h"
 #include "AffineTransform.h"
 
 namespace WebCore {
     
 RenderSVGInlineText::RenderSVGInlineText(Node* n, StringImpl* str) 
-    : RenderText(n, str) {}
+    : RenderText(n, str)
+{
+}
 
 void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {

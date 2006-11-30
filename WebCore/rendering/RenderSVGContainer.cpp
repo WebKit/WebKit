@@ -27,7 +27,6 @@
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
-#include "KRenderingDevice.h"
 #include "SVGStyledElement.h"
 #include "GraphicsContext.h"
 #include "SVGLength.h"
@@ -148,39 +147,31 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!firstChild() && !filter)
         return; // Spec: groups w/o children still may render filter content.
     
-    KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext* deviceContext = device->currentContext();
-    bool shouldPopContext = false;
-    if (!deviceContext) {
-        // I only need to setup for KCanvas rendering if it hasn't already been done.
-        deviceContext = paintInfo.context->createRenderingDeviceContext();
-        device->pushContext(deviceContext);
-        shouldPopContext = true;
-    } else
-        paintInfo.context->save();
+    paintInfo.context->save();
 
     if (parentX != 0 || parentY != 0) {
         // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
-        deviceContext->concatCTM(AffineTransform().translate(parentX, parentY));
+        paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
         parentX = parentY = 0;
     }
     
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
             paintInfo.context->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
-        deviceContext->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
+
+        paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
 
     if (!localTransform().isIdentity())
-        deviceContext->concatCTM(localTransform());
+        paintInfo.context->concatCTM(localTransform());
     
     FloatRect strokeBBox = relativeBBox(true);
     
-    if (SVGResourceClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
-        clipper->applyClip(strokeBBox);
+    if (SVGResourceClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
+        clipper->applyClip(paintInfo.context, strokeBBox);
 
-    if (SVGResourceMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
-        masker->applyMask(strokeBBox);
+    if (SVGResourceMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
+        masker->applyMask(paintInfo.context, strokeBBox);
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
@@ -189,25 +180,20 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
 
     if (filter)
-        filter->prepareFilter(strokeBBox);
-    
+        filter->prepareFilter(paintInfo.context, strokeBBox);
+
     if (!viewBox().isEmpty())
-        deviceContext->concatCTM(viewportTransform());
+        paintInfo.context->concatCTM(viewportTransform());
 
     RenderContainer::paint(paintInfo, 0, 0);
 
     if (filter)
-        filter->applyFilter(strokeBBox);
+        filter->applyFilter(paintInfo.context, strokeBBox);
 
     if (opacity < 1.0f)
         paintInfo.context->endTransparencyLayer();
 
-    // restore drawing state
-    if (shouldPopContext) {
-        device->popContext();
-        delete deviceContext;
-    } else
-        paintInfo.context->restore();
+    paintInfo.context->restore();
 }
 
 FloatRect RenderSVGContainer::viewport() const

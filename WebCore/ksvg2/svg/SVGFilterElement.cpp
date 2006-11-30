@@ -22,11 +22,11 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
-#include "KRenderingDevice.h"
 #include "SVGResourceFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGHelper.h"
@@ -113,7 +113,7 @@ SVGResource* SVGFilterElement::canvasResource()
         return 0;
 
     if (!m_filter)
-        m_filter = WTF::static_pointer_cast<SVGResourceFilter>(renderingDevice()->createResource(FilterResourceType));
+        m_filter = new SVGResourceFilter();
 
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);

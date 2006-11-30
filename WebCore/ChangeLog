@@ -1,3 +1,209 @@
+2006-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Rubber stamped by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10383
+     
+        This is the final patch after the long "die kcanvas" journey.
+
+        All old kcanvas code is gone now, and properly integrated within
+        WebCore (stuff like GraphicsContext changes etc.). It shares
+        the platform/ design concept: no subclassing, but instead
+        implementing parts of the classes/methods per-platform.
+
+        This commit removes the last pieces: KRenderingDevice & KRenderingDeviceContext.
+        This layer was just obsolete, given the powerful GraphicsContext API we have
+        since quite a while now. All the ugly pushContext/popContext stuff is gone now.
+
+        LayoutTests affected: svg/W3C-SVG-1.1/pservers-grad-11-b.svg
+        Radial gradients as fill color for texts, work again!
+        Though "Gradient on text stroke" remains broken. Funny thing:
+        With this patch, if you "select" the text using the mouse, as
+        soon as the selection rectangle is drawn, you see the correct
+        gradient on stroke rendering - at least a hint where it breaks!
+
+        All svg layout tests have subtle text rendering changes - with and without this
+        patch, it seems it was forgotton to update svg pixel test baseline, a while ago.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/KRenderingDevice.cpp: Removed.
+        * kcanvas/device/KRenderingDevice.h: Removed.
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp: Removed.
+        * kcanvas/device/qt/KRenderingDeviceQt.h: Removed.
+        * kcanvas/device/qt/RenderPathQt.cpp: Moved to platform/graphics/qt
+        * kcanvas/device/quartz/KCanvasItemQuartz.cpp: Moved to platform/graphics/svg/cg/RenderPathCg.cpp
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.cpp: Removed.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h: Removed.
+        * kcanvas/device/quartz/QuartzSupport.cpp: Moved to platform/graphics/svg/cg/CgSupport.cpp
+        * kcanvas/device/quartz/QuartzSupport.h: Moved to platform/graphics/svg/cg/CgSupport.h
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::sharedSolidPaintServer):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::parseMappedAttribute):
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        (WebCore::SVGFEDiffuseLightingElement::updateLights):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::SVGFEDistantLightElement):
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::parseMappedAttribute):
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEFuncAElement.cpp:
+        * ksvg2/svg/SVGFEFuncBElement.cpp:
+        * ksvg2/svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::SVGFEFuncGElement):
+        * ksvg2/svg/SVGFEFuncRElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::notifyFinished):
+        (WebCore::SVGFEImageElement::filterEffect):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::parseMappedAttribute):
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        (WebCore::SVGFESpecularLightingElement::updateLights):
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::SVGFESpotLightElement):
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        (WebCore::SVGFETileElement::parseMappedAttribute):
+        (WebCore::SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::canvasResource):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        (WebCore::SVGMaskElement::canvasResource):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::canvasResource):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/svg/SVGPaintServer.h:
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        * platform/graphics/svg/SVGPaintServerSolid.h:
+        * platform/graphics/svg/SVGResource.cpp:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceClipper.h:
+        * platform/graphics/svg/SVGResourceFilter.h:
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/RenderPathCg.cpp: Added.
+        * platform/graphics/svg/cg/SVGPaintServerCg.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        (WebCore::SVGPaintServerPattern::teardown):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/cg/SVGResourceClipperCg.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::createFilterEffect):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::setup):
+        * platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/qt/SVGResourceFilterQt.cpp:
+        (WebCore::SVGResourceFilter::createFilterEffect):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::currentPath):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::contextForImage):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::RenderSVGInline):
+        (WebCore::RenderSVGInline::createInlineBox):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::RenderSVGInlineText):
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::RenderSVGTSpan):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+
 2006-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
