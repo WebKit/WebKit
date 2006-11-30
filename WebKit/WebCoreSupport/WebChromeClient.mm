@@ -39,7 +39,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/ResourceRequestMac.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebCore/Screen.h>
 #import <wtf/PassRefPtr.h>
 
