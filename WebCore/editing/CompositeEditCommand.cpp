@@ -660,7 +660,11 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.    
     Position start = startOfParagraphToMove.deepEquivalent().downstream();
     Position end = endOfParagraphToMove.deepEquivalent().upstream();
-    RefPtr<Range> range = new Range(document(), start.node(), start.offset(), end.node(), end.offset());
+    
+    // start and end can't be used directly to create a Range; they are "editing positions"
+    Position startRangeCompliant = rangeCompliantEquivalent(start);
+    Position endRangeCompliant = rangeCompliantEquivalent(end);
+    RefPtr<Range> range = new Range(document(), startRangeCompliant.node(), startRangeCompliant.offset(), endRangeCompliant.node(), endRangeCompliant.offset());
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
     // shouldn't matter though, since moved paragraphs will usually be quite small.
@@ -704,7 +708,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (beforeParagraph.isNotNull() && !isEndOfParagraph(beforeParagraph))
         insertNodeAt(createBreakElement(document()).get(), beforeParagraph.deepEquivalent().node(), beforeParagraph.deepEquivalent().offset());
         
-    RefPtr<Range> startToDestinationRange(new Range(document(), Position(document(), 0), destination.deepEquivalent()));
+    RefPtr<Range> startToDestinationRange(new Range(document(), Position(document(), 0), rangeCompliantEquivalent(destination.deepEquivalent())));
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get());
     
     setEndingSelection(destination);

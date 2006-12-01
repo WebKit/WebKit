@@ -1,3 +1,33 @@
+2006-11-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Justin
+
+        With Darin, fixed a problem in the Range constructors found while implementing grammar checking.
+        That revealed another problem in the layout tests involving bad parameters passed to the Range
+        constructors.
+        
+        With these fixes in place, one layout test (editing/execCommand/create-list-from-range-selection.html)
+        no longer works as intended. This is apparently due to yet another bug being flushed out somewhere.
+        I'm going to update the results for that test and file a separate radar about it, which Justin will
+        investigate.
+
+        * dom/Position.h:
+        removed equivalentRangeCompliantPosition(), which was declared but not implemented or called.
+        
+        * dom/Range.cpp:
+        (WebCore::Range::Range):
+        Call setStart and setEnd in the two Range constructors that take parameters, rather than just 
+        directly setting the instance variables. This makes Range perform the boundary checks and
+        compensations that the DOM spec requires.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        Use rangeCompliantEquivalent() on "editing-style" Positions before creating Ranges from them.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        Assert that the boundary points of the range are valid.
+
 2006-11-30  Lou Amadio  <lamadio@apple.com>
 
         Reviewed by Dave Hyatt

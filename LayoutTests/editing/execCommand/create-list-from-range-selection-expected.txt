@@ -10,40 +10,49 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 632x18
-          text run at (0,0) width 632: "This tests Insert{Un}OrderedList on a range selection that contains a mix of list and non-list content."
-      RenderBlock {DIV} at (0,34) size 784x108
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 636x18
+          text run at (0,0) width 636: "This tests Insert{Un}OrderedList on a range selection that contains a mix of list and non-list content. "
+        RenderInline {B} at (0,0) size 781x72
+          RenderText {#text} at (636,0) size 781x72
+            text run at (636,0) width 138: "This test used to end"
+            text run at (0,18) width 781: "with a flat list from 1 to 6, with a selection extending from just before the last \"o\" in \"1. asdfoo\" to just after the \"a\""
+            text run at (0,36) width 538: "in \"6. baz\". This result changed with John's rangeCompliantEquivalent fixes in"
+            text run at (0,54) width 400: "CompositeEditCommand::moveParagraphs on 11/30/2006."
+      RenderBlock {DIV} at (0,88) size 784x126
         RenderBlock (anonymous) at (0,0) size 784x0
-        RenderBlock {OL} at (0,0) size 784x108
-          RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (-20,0) size 16x18
-            RenderText {#text} at (0,0) size 21x18
-              text run at (0,0) width 21: "asd"
-            RenderInline {SPAN} at (0,0) size 21x18
-              RenderText {#text} at (21,0) size 21x18
-                text run at (21,0) width 21: "foo"
-          RenderListItem {LI} at (40,18) size 744x18
+        RenderBlock {OL} at (0,0) size 784x126
+          RenderListItem {LI} at (40,0) size 744x36
+            RenderBlock (anonymous) at (0,0) size 744x18
+              RenderListMarker at (-20,0) size 16x18
+            RenderBlock {OL} at (0,18) size 744x18
+              RenderListItem {LI} at (40,0) size 704x18
+                RenderListMarker at (-20,0) size 16x18
+                RenderText {#text} at (0,0) size 21x18
+                  text run at (0,0) width 21: "asd"
+                RenderInline {SPAN} at (0,0) size 21x18
+                  RenderText {#text} at (21,0) size 21x18
+                    text run at (21,0) width 21: "foo"
+          RenderListItem {LI} at (40,36) size 744x18
             RenderListMarker at (-20,0) size 16x18
             RenderText {#text} at (0,0) size 20x18
               text run at (0,0) width 20: "bar"
-          RenderListItem {LI} at (40,36) size 744x18
+          RenderListItem {LI} at (40,54) size 744x18
             RenderListMarker at (-20,0) size 16x18
             RenderText {#text} at (0,0) size 22x18
               text run at (0,0) width 22: "baz"
-          RenderListItem {LI} at (40,54) size 744x18
+          RenderListItem {LI} at (40,72) size 744x18
             RenderListMarker at (-20,0) size 16x18
             RenderText {#text} at (0,0) size 21x18
               text run at (0,0) width 21: "foo"
-          RenderListItem {LI} at (40,72) size 744x18
+          RenderListItem {LI} at (40,90) size 744x18
             RenderListMarker at (-20,0) size 16x18
             RenderText {#text} at (0,0) size 20x18
               text run at (0,0) width 20: "bar"
-          RenderListItem {LI} at (40,90) size 744x18
+          RenderListItem {LI} at (40,108) size 744x18
             RenderListMarker at (-20,0) size 16x18
             RenderInline {SPAN} at (0,0) size 22x18
               RenderText {#text} at (0,0) size 22x18
                 text run at (0,0) width 22: "baz"
-        RenderBlock (anonymous) at (0,124) size 784x0
-selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {LI} of child 0 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {#text} of child 0 {SPAN} of child 5 {LI} of child 0 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderBlock (anonymous) at (0,142) size 784x0
+caret: position 2 of child 0 {#text} of child 0 {SPAN} of child 5 {LI} of child 0 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

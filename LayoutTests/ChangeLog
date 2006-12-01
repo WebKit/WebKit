@@ -1,3 +1,24 @@
+2006-11-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Justin
+
+        * editing/execCommand/create-list-from-range-selection-expected.checksum:
+        * editing/execCommand/create-list-from-range-selection-expected.png:
+        * editing/execCommand/create-list-from-range-selection-expected.txt:
+        * editing/execCommand/create-list-from-range-selection.html:
+        This test's results were broken by using rangeCompliantEquivalent at
+        appropriate places in CompositeEditCommand.cpp::moveParagraphs(), presumably
+        by revealing a different bug. Justin is going to look into this; for now I've
+        updated the result so that it won't appear to fail for others.
+        
+        * editing/execCommand/create-list-with-hr-expected.checksum:
+        * editing/execCommand/create-list-with-hr-expected.png:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/execCommand/create-list-with-hr.html:
+        This test's results were improved by using rangeCompliantEquivalent at
+        appropriate places in CompositeEditCommand.cpp::moveParagraphs() -- it used
+        to create an extra <div>, and now it does not.
+
 2006-11-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by sullivan

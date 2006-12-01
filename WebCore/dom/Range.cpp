@@ -56,22 +56,36 @@ Range::Range(Document* ownerDocument,
               Node* startContainer, int startOffset,
               Node* endContainer, int endOffset)
     : m_ownerDocument(ownerDocument)
-    , m_startContainer(startContainer)
-    , m_startOffset(startOffset)
-    , m_endContainer(endContainer)
-    , m_endOffset(endOffset)
+    , m_startContainer(ownerDocument)
+    , m_startOffset(0)
+    , m_endContainer(ownerDocument)
+    , m_endOffset(0)
     , m_detached(false)
 {
+    // Simply setting the containers and offsets directly would not do any of the checking
+    // that setStart and setEnd do, so we must call those functions.
+    ExceptionCode ec = 0;
+    setStart(startContainer, startOffset, ec);
+    ASSERT(ec == 0);
+    setEnd(endContainer, endOffset, ec);
+    ASSERT(ec == 0);
 }
 
 Range::Range(Document* ownerDocument, const Position& start, const Position& end)
     : m_ownerDocument(ownerDocument)
-    , m_startContainer(start.node())
-    , m_startOffset(start.offset())
-    , m_endContainer(end.node())
-    , m_endOffset(end.offset())
+    , m_startContainer(ownerDocument)
+    , m_startOffset(0)
+    , m_endContainer(ownerDocument)
+    , m_endOffset(0)
     , m_detached(false)
 {
+    // Simply setting the containers and offsets directly would not do any of the checking
+    // that setStart and setEnd do, so we must call those functions.
+    ExceptionCode ec = 0;
+    setStart(start.node(), start.offset(), ec);
+    ASSERT(ec == 0);
+    setEnd(end.node(), end.offset(), ec);
+    ASSERT(ec == 0);
 }
 
 Range::~Range()

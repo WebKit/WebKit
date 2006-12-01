@@ -92,6 +92,10 @@ TextIterator::TextIterator(const Range *r, IteratorKind kind) : m_endContainer(0
     if (ec != 0)
         return;
 
+    // Callers should be handing us well-formed ranges. If we discover that this isn't
+    // the case, we could consider changing this assertion to an early return.
+    ASSERT(r->boundaryPointsValid());
+
     // remember ending place - this does not change
     m_endContainer = endContainer;
     m_endOffset = endOffset;
