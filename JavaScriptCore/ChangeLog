@@ -1,3 +1,14 @@
+2006-11-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+        
+        Move WTF from JavaScriptCore project into a new WTF project.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Add WTF.vcproj to sln
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Remove WTF source files
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Add dependency on WTF.lib
+
 2006-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

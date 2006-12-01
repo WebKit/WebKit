@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
+				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib WTF$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitSDKDir)\lib&quot;"
@@ -151,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
+				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib WTF$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitSDKDir)\lib&quot;"

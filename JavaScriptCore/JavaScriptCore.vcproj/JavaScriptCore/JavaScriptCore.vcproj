@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;dir &gt; &quot;$(TargetDir)WTF$(ConfigSuffix).lib&quot;&#x0D;&#x0A;xcopy /y /i &quot;$(TargetPath)&quot; &quot;$(TargetDir)WTF$(ConfigSuffix).lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;dir &gt; &quot;$(TargetDir)WTF$(ConfigSuffix).lib&quot;&#x0D;&#x0A;xcopy /y /i &quot;$(TargetPath)&quot; &quot;$(TargetDir)WTF$(ConfigSuffix).lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -510,130 +510,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\value.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="WTF"
-			>
-			<File
-				RelativePath="..\..\wtf\AlwaysInline.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Assertions.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Assertions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\FastMalloc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\FastMalloc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\FastMallocInternal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Forward.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\GetPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashCountedSet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashFunctions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashSet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashTable.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashTable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\HashTraits.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\ListRefPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\MathExtras.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Noncopyable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\OwnArrayPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\OwnPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\PassRefPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Platform.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\RefPtr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\StringExtras.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\TCPageMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\TCSpinLock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\TCSystemAlloc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\UnusedParam.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\Vector.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtf\VectorTraits.h"
 				>
 			</File>
 		</Filter>
