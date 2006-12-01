@@ -62,6 +62,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
+#import <WebCore/Event.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>

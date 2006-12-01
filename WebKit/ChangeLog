@@ -1,3 +1,24 @@
+2006-12-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11628
+          REGRESSION (r17597): Command-return in native text fields doesn't open a new tab or window
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (findKeyStateEvent): Added. Helper that finds the mouse or keyboard event in a chain
+        of events and their underlying events.
+        (findMouseEvent): Added. Same, but specifically for mouse events.
+        (WebFrameLoaderClient::actionDictionary): Rewrote to use the above functions. This means we
+        use the modifiers from the underlying events rather than just the one from the event itself.
+        So if the event is a DOM activate event, we can still see the modifiers from the original
+        keyboard event that triggered it. Has no effect if the event is already the right type or
+        if there is no underlying event.
+
+        * WebView/WebFrame.mm: Added a newly-needed include.
+
+        * WebKit.xcodeproj/project.pbxproj: Xcode wants what it wants.
+
 2006-12-01  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Mitz.

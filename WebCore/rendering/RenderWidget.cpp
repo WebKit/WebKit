@@ -27,6 +27,7 @@
 #include "AXObjectCache.h" 
 #include "Document.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

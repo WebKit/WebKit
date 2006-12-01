@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -584,18 +585,9 @@ void HTMLElement::setContentEditable(const String &enabled)
         setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);
 }
 
-void HTMLElement::click(bool sendMouseEvents, bool showPressedLook)
+void HTMLElement::click()
 {
-    // send mousedown and mouseup before the click, if requested
-    if (sendMouseEvents)
-        dispatchSimulatedMouseEvent(mousedownEvent);
-    setActive(true, showPressedLook);
-    if (sendMouseEvents)
-        dispatchSimulatedMouseEvent(mouseupEvent);
-    setActive(false);
-
-    // always send click
-    dispatchSimulatedMouseEvent(clickEvent);
+    dispatchSimulatedClick(0);
 }
 
 // accessKeyAction is used by the accessibility support code
@@ -608,7 +600,7 @@ void HTMLElement::click(bool sendMouseEvents, bool showPressedLook)
 void HTMLElement::accessKeyAction(bool sendToAnyElement)
 {
     if (sendToAnyElement)
-        click(true);
+        dispatchSimulatedClick(0, true);
 }
 
 String HTMLElement::toString() const

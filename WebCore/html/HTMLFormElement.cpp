@@ -28,6 +28,7 @@
 #include "HTMLFormElement.h"
 
 #include "CString.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FormData.h"
 #include "FormDataList.h"
@@ -133,7 +134,7 @@ void HTMLFormElement::submitClick(Event* event)
             HTMLInputElement *element = static_cast<HTMLInputElement *>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
                 submitFound = true;
-                element->click(false);
+                element->dispatchSimulatedClick(event);
                 break;
             }
         }

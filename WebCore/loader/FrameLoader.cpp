@@ -39,6 +39,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FormState.h"

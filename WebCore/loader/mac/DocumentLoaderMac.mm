@@ -30,6 +30,7 @@
 #import "DocumentLoader.h"
 
 #import "Document.h"
+#import "Event.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "PlatformString.h"

@@ -628,34 +628,6 @@ void HTMLInputElement::setSelectionRange(int start, int end)
     }
 }
 
-void HTMLInputElement::click(bool sendMouseEvents, bool showPressedLook)
-{
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case IMAGE:
-        case ISINDEX:
-        case PASSWORD:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SEARCH:
-        case SUBMIT:
-        case TEXT:
-            break;
-        case FILE:
-            if (renderer()) {
-                static_cast<RenderFileUploadControl*>(renderer())->click(sendMouseEvents);
-                return;
-            }
-            break;
-        case HIDDEN:
-            // a no-op for this type
-            return;
-    }
-    HTMLGenericFormElement::click(sendMouseEvents, showPressedLook);
-}
-
 void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
 {
     switch (inputType()) {
@@ -670,7 +642,7 @@ void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
             // focus
             focus();
             // send the mouse button events iff the caller specified sendToAnyElement
-            click(sendToAnyElement);
+            dispatchSimulatedClick(0, sendToAnyElement);
             break;
         case HIDDEN:
             // a no-op for this type
@@ -1219,11 +1191,11 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
     }
 }
 
-void HTMLInputElement::defaultEventHandler(Event *evt)
+void HTMLInputElement::defaultEventHandler(Event* evt)
 {
     if (inputType() == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent) {
         // record the mouse position for when we get the DOMActivate event
-        MouseEvent *me = static_cast<MouseEvent*>(evt);
+        MouseEvent* me = static_cast<MouseEvent*>(evt);
         // FIXME: We could just call offsetX() and offsetY() on the event,
         // but that's currently broken, so for now do the computation here.
         if (me->isSimulated() || !renderer()) {
@@ -1240,7 +1212,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
 
     // DOMActivate events cause the input to be "activated" - in the case of image and submit inputs, this means
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
-    // on the element, or presses enter while it is the active element. Javacsript code wishing to activate the element
+    // on the element, or presses enter while it is the active element. JavaScript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
     if (evt->type() == DOMActivateEvent && !disabled()) {
         if (inputType() == IMAGE || inputType() == SUBMIT || inputType() == RESET) {
@@ -1257,7 +1229,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
                 m_activeSubmit = false;
             }
         } else if (inputType() == FILE && renderer())
-            static_cast<RenderFileUploadControl*>(renderer())->click(false);
+            static_cast<RenderFileUploadControl*>(renderer())->click();
     }
 
     // Use key press event here since sending simulated mouse events
@@ -1356,7 +1328,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
                             inputElt->isFocusable()) {
                             inputElt->setChecked(true);
                             document()->setFocusedNode(inputElt);
-                            inputElt->click(false, false);
+                            inputElt->dispatchSimulatedClick(evt, false, false);
                             evt->setDefaultHandled();
                             break;
                         }
@@ -1366,7 +1338,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         }
 
         if (clickElement) {
-            click(false);
+            dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
         } else if (clickDefaultFormButton && (inputType() != SEARCH || form())) {
             if (form()) {

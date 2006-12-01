@@ -182,7 +182,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             }
             if (k->keyEvent()) {
                 evt->setDefaultHandled();
-                click(false);
+                dispatchSimulatedClick(0);
                 return;
             }
         }
@@ -287,9 +287,8 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLAnchorElement::accessKeyAction(bool sendToAnyElement)
 {
-    // send the mouse button events iff the
-    // caller specified sendToAnyElement
-    click(sendToAnyElement);
+    // send the mouse button events iff the caller specified sendToAnyElement
+    dispatchSimulatedClick(0, sendToAnyElement);
 }
 
 bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const

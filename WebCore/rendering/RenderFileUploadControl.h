@@ -47,7 +47,7 @@ public:
     virtual void calcMinMaxWidth();
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
-    virtual void click(bool sendMouseEvents);
+    void click();
 
     void valueChanged();
 

@@ -29,9 +29,7 @@
 #ifndef NavigationAction_h
 #define NavigationAction_h
 
-#include "Event.h"
 #include "FrameLoaderTypes.h"
-#include "HitTestResult.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
 

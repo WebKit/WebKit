@@ -72,6 +72,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HitTestResult.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
@@ -1169,29 +1170,44 @@ String WebFrameLoaderClient::userAgent()
     return [getWebView(m_webFrame.get()) _userAgent];
 }
 
+static const UIEventWithKeyState* findKeyStateEvent(const Event* event)
+{
+    for (const Event* e = event; e; e = e->underlyingEvent())
+        if (e->isMouseEvent() || e->isKeyboardEvent())
+            return static_cast<const UIEventWithKeyState*>(e);
+    return 0;
+}
+
+static const MouseEvent* findMouseEvent(const Event* event)
+{
+    for (const Event* e = event; e; e = e->underlyingEvent())
+        if (e->isMouseEvent())
+            return static_cast<const MouseEvent*>(e);
+    return 0;
+}
+
 NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action) const
 {
     unsigned modifierFlags = 0;
     const Event* event = action.event();
-    if (event && (event->isMouseEvent() || event->isKeyboardEvent())) {
-        if (static_cast<const UIEventWithKeyState*>(event)->ctrlKey())
+    if (const UIEventWithKeyState* keyStateEvent = findKeyStateEvent(event)) {
+        if (keyStateEvent->ctrlKey())
             modifierFlags |= NSControlKeyMask;
-        if (static_cast<const UIEventWithKeyState*>(event)->altKey())
+        if (keyStateEvent->altKey())
             modifierFlags |= NSAlternateKeyMask;
-        if (static_cast<const UIEventWithKeyState*>(event)->shiftKey())
+        if (keyStateEvent->shiftKey())
             modifierFlags |= NSShiftKeyMask;
-        if (static_cast<const UIEventWithKeyState*>(event)->metaKey())
+        if (keyStateEvent->metaKey())
             modifierFlags |= NSCommandKeyMask;
     }
-    if (event && event->isMouseEvent()) {
-        IntPoint point(static_cast<const MouseEvent*>(event)->clientX(),
-            static_cast<const MouseEvent*>(event)->clientY());
+    if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
+        IntPoint point(mouseEvent->clientX(), mouseEvent->clientY());
         WebElementDictionary *element = [[WebElementDictionary alloc]
             initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
         NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
             element, WebActionElementKey,
-            [NSNumber numberWithInt:static_cast<const MouseEvent*>(event)->button()], WebActionButtonKey,
+            [NSNumber numberWithInt:mouseEvent->button()], WebActionButtonKey,
             [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
             action.URL().getNSURL(), WebActionOriginalURLKey,
             nil];

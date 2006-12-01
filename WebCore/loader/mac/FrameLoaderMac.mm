@@ -35,6 +35,7 @@
 #import "DOMElementInternal.h"
 #import "Document.h"
 #import "DocumentLoader.h"
+#import "Event.h"
 #import "FloatRect.h"
 #import "FormDataStreamMac.h"
 #import "FormState.h"

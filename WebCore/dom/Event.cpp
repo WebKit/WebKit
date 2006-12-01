@@ -133,15 +133,24 @@ void Event::storeResult(const String&)
 {
 }
 
-void Event::setTarget(Node* target)
+void Event::setTarget(PassRefPtr<Node> target)
 {
     m_target = target;
-    if (target)
+    if (m_target)
         receivedTarget();
 }
 
 void Event::receivedTarget()
 {
+}
+
+void Event::setUnderlyingEvent(PassRefPtr<Event> ue)
+{
+    // Prohibit creation of a cycle -- just do nothing in that case.
+    for (Event* e = ue.get(); e; e = e->underlyingEvent())
+        if (e == this)
+            return;
+    m_underlyingEvent = ue;
 }
 
 } // namespace WebCore

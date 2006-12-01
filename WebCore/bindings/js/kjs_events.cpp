@@ -396,7 +396,7 @@ JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
   case Bubbles:
     return jsBoolean(event.bubbles());
   case CancelBubble:
-    return jsBoolean(event.getCancelBubble());
+    return jsBoolean(event.cancelBubble());
   case ReturnValue:
     return jsBoolean(!event.defaultPrevented());
   case Cancelable:

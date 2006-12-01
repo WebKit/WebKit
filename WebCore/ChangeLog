@@ -1,3 +1,105 @@
+2006-12-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11628
+          REGRESSION (r17597): Command-return in native text fields doesn't open a new tab or window
+
+        I couldn't think of an easy way to make a regression test for this, but maybe
+        I'll get an idea later about how to do it.
+
+        The main thing I did was add a concept of a DOM event having an "underlying event".
+        That allows the DOM activate event to contain inside it the original keyboard event
+        that triggered the form submission, and thus allows WebKit to see the modifier keys
+        from that original event. The code that uses the underlying event is in WebKit, but
+        the code to set it up is here in WebCore.
+
+        - also do some clean-up to related event handling code
+
+        * bindings/js/kjs_events.cpp: (KJS::DOMEvent::getValueProperty): Updated for the
+        name change of cancelBubble.
+
+        * dom/Event.h: Removed a useless comment. Fixed some whitespace and formatting.
+        Renamed getCancelBubble to cancelBubble to match the DOM -- I suspect the old
+        name predated the use of the m_ prefix on data members. Added the underlying event,
+        and a getter and setter.
+        * dom/Event.cpp:
+        (WebCore::Event::setTarget): Updated to take a PassRefPtr.
+        (WebCore::Event::setUnderlyingEvent): Added.
+
+        * dom/EventTargetNode.h: Added an optional underlyingEvent parameter to
+        dispatchUIEvent, one of the overloads of dispatchMouseEvent, and
+        dispatchSimulatedMouseEvent. Added a new dispatchSimulatedClick function here that
+        mostly replaces the click function in HTMLElement.
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): Updated for the name change
+        of cancelBubble.
+        (WebCore::EventTargetNode::dispatchUIEvent): Added an underlying event parameter,
+        which gets attached to the UIEvent object after it's created.
+        (WebCore::EventTargetNode::dispatchMouseEvent): Tweaked formatting and parameter
+        name for the version that creates a mouse event for a real platform mouse event.
+        Added an underlying event parameter to the main version, and attached it to all
+        three of the events that can be dispatched.
+        (WebCore::EventTargetNode::dispatchSimulatedMouseEvent): Added an underlying
+        event parameter, passed it along to dispatchMouseEvent.
+        (WebCore::EventTargetNode::dispatchSimulatedClick): Moved this here from HTMLElement
+        and renamed it from click. Added an underlyingEvent parameter, and passed that along
+        in all three of the calls to dispatchSimulatedMouseEvent.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::shouldClose): Updated call to
+        setTarget that no longer needs a get().
+        * ksvg2/svg/SVGElement.cpp: (WebCore::SVGElement::sendSVGLoadEventIfPossible): Ditto.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Converted a call to click
+        to a call to dispatchSimulatedClick.
+        (WebCore::HTMLAnchorElement::accessKeyAction): Ditto.
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::accessKeyAction): Ditto.
+        * html/HTMLElement.h: Removed the parameters to click and made it non-virtual.
+        We could move it down to the input and button elements, now that it's just
+        a single function call, but it's also OK to just leave it here.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::click): Removed the parameters and changed this to just
+        call dispatchSimulatedClick. The real work is now in dispatchSimulatedClick.
+        (WebCore::HTMLElement::accessKeyAction): Converted a call to click to a call to
+        dispatchSimulatedClick.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitClick): Ditto. But unlike accessKeyAction callers,
+        pass the event along as the underlying event.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp: Removed override of virtual click function. The
+        special cases for the file control and hidden input elements aren't needed.
+        (WebCore::HTMLInputElement::accessKeyAction): Converted a call to click to a call to
+        dispatchSimulatedClick.
+        (WebCore::HTMLInputElement::defaultEventHandler): Converted calls to click to calls to
+        dispatchSimulatedClick, passing along the event as the underlying event.
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::defaultEventHandler): Converted a call to click to a call
+        to dispatchSimulatedClick, passing the event along as the underlying event. Also
+        changed the local variable for the element to a RefPtr since the code assumes it's
+        still around after calling arbitrary JavaScript code.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::accessKeyAction): Converted a call to click to a call to
+        dispatchSimulatedClick.
+
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::click):
+        Removed unneeded ignored parameter to the click function, and also made it non-virtual.
+
+        * loader/NavigationAction.h: Removed unneeded includes.
+        * loader/NavigationAction.cpp: Moved all the code here from NavigationActionMac.mm,
+        since none of it is Mac-specific any more.
+        * loader/mac/NavigationActionMac.mm: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Updated for removed file.
+
+        * ksvg2/svg/SVGAElement.cpp: Removed an unnecessary include.
+
+        * loader/FrameLoader.cpp: Added a newly-needed incluude.
+        * loader/mac/DocumentLoaderMac.mm: Ditto.
+        * loader/mac/FrameLoaderMac.mm: Ditto.
+        * rendering/RenderWidget.cpp: Ditto.
+
 2006-12-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

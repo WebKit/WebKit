@@ -1607,7 +1607,7 @@ bool FrameMac::shouldClose()
         return true;
 
     RefPtr<BeforeUnloadEvent> event = new BeforeUnloadEvent;
-    event->setTarget(doc.get());
+    event->setTarget(doc);
     doc->handleWindowEvent(event.get(), false);
 
     if (!event->defaultPrevented() && doc)

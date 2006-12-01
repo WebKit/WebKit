@@ -173,7 +173,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         
         // FIXME: This malloc could be avoided by walking the tree first to check if any listeners are present: http://bugs.webkit.org/show_bug.cgi?id=10264
         RefPtr<Event> event = new Event(loadEvent, false, false);
-        event->setTarget(currentTarget.get());
+        event->setTarget(currentTarget);
         ExceptionCode ignored = 0;
         dispatchGenericEvent(event.release(), ignored, false);
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
