@@ -684,7 +684,6 @@
         Added select portions of this file from WebKit because the pasteboard needed the following function:
         (-[NSAttributedString _web_attributedStringByStrippingAttachmentCharacters]):
 
->>>>>>> .r17909
 2006-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
