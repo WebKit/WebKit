@@ -112,8 +112,8 @@ NSView* EventHandler::nextKeyViewInFrame(Node* n, SelectionDirection direction, 
     RefPtr<Node> node = n;
     for (;;) {
         node = direction == SelectingNext
-            ? doc->nextFocusNode(node.get(), event.get())
-            : doc->previousFocusNode(node.get(), event.get());
+            ? doc->nextFocusedNode(node.get(), event.get())
+            : doc->previousFocusedNode(node.get(), event.get());
         if (!node)
             return nil;
         
@@ -161,7 +161,7 @@ NSView *EventHandler::nextKeyViewInFrameHierarchy(Node* node, SelectionDirection
     // have been made native.
     if (next && (next != [Mac(m_frame)->bridge() documentView] && !focusCallResultedInViewBeingCreated))
         if (Document* doc = m_frame->document())
-            doc->setFocusNode(0);
+            doc->setFocusedNode(0);
 
     // The common case where a view was created is when an <input> element changed from native 
     // to non-native. When this happens, HTMLGenericFormElement::attach() method will call setFocus()
@@ -306,7 +306,7 @@ bool EventHandler::keyEvent(NSEvent *event)
     Document* doc = m_frame->document();
     if (!doc)
         return false;
-    Node* node = doc->focusNode();
+    Node* node = doc->focusedNode();
     if (!node) {
         if (doc->isHTMLDocument())
             node = doc->body();

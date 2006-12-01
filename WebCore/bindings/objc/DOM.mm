@@ -528,7 +528,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 - (BOOL)isFocused
 {
     WebCore::Element* impl = [self _element];
-    if (impl->document()->focusNode() == impl)
+    if (impl->document()->focusedNode() == impl)
         return YES;
     return NO;
 }

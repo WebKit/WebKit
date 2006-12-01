@@ -78,7 +78,7 @@ void HTMLTextAreaElement::restoreState(const String& state)
 int HTMLTextAreaElement::selectionStart()
 {
     if (renderer()) {
-        if (document()->focusNode() != this && cachedSelStart >= 0)
+        if (document()->focusedNode() != this && cachedSelStart >= 0)
             return cachedSelStart;
         return static_cast<RenderTextControl *>(renderer())->selectionStart();
     }
@@ -88,7 +88,7 @@ int HTMLTextAreaElement::selectionStart()
 int HTMLTextAreaElement::selectionEnd()
 {
     if (renderer()) {
-        if (document()->focusNode() != this && cachedSelEnd >= 0)
+        if (document()->focusedNode() != this && cachedSelEnd >= 0)
             return cachedSelEnd;
         return static_cast<RenderTextControl *>(renderer())->selectionEnd();
     }
@@ -196,12 +196,12 @@ bool HTMLTextAreaElement::isMouseFocusable() const
 void HTMLTextAreaElement::focus()
 {
     Document* doc = document();
-    if (doc->focusNode() == this)
+    if (doc->focusedNode() == this)
         return;
     doc->updateLayout();
     if (!supportsFocus())
         return;
-    doc->setFocusNode(this);
+    doc->setFocusedNode(this);
     // FIXME: Should isFocusable do the updateLayout?
     if (!isFocusable()) {
         setNeedsFocusAppearanceUpdate(true);
@@ -271,7 +271,7 @@ void HTMLTextAreaElement::setValue(const String& value)
         
     // Restore a caret at the starting point of the old selection.
     // This matches Safari 2.0 behavior.
-    if (document()->focusNode() == this && cachedSelStart >= 0) {
+    if (document()->focusedNode() == this && cachedSelStart >= 0) {
         ASSERT(cachedSelEnd >= 0);
         setSelectionRange(cachedSelStart, cachedSelStart);
     }

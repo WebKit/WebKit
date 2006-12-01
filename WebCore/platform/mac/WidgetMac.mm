@@ -182,7 +182,7 @@ void Widget::clearFocus()
     Frame* frame = Frame::frameForWidget(this);
     if (!frame)
         return;
-    frame->document()->setFocusNode(0);
+    frame->document()->setFocusedNode(0);
 }
 
 Widget::FocusPolicy Widget::focusPolicy() const

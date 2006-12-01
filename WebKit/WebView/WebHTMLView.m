@@ -2688,7 +2688,7 @@ static WebHTMLView *lastHitView = nil;
     if (!document)
         return;
     
-    document->setFocusNode(0);
+    document->setFocusedNode(0);
 }
 
 - (BOOL)isOpaque

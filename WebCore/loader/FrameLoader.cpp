@@ -516,9 +516,9 @@ void FrameLoader::stopLoading(bool sendUnload)
     if (sendUnload) {
         if (m_frame->document()) {
             if (m_wasLoadEventEmitted && !m_wasUnloadEventEmitted) {
-                Node* currentFocusNode = m_frame->document()->focusNode();
-                if (currentFocusNode)
-                    currentFocusNode->aboutToUnload();
+                Node* currentFocusedNode = m_frame->document()->focusedNode();
+                if (currentFocusedNode)
+                    currentFocusedNode->aboutToUnload();
                 m_frame->document()->dispatchWindowEvent(unloadEvent, false, false);
                 if (m_frame->document())
                     m_frame->document()->updateRendering();

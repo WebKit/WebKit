@@ -94,10 +94,10 @@ void HTMLGenericFormElement::attach()
     
         // Delayed attachment in order to prevent FOUC can result in an object being
         // programmatically focused before it has a render object.  If we have been focused
-        // (i.e., if we are the focusNode) then go ahead and focus our corresponding native widget.
+        // (i.e., if we are the focusedNode) then go ahead and focus our corresponding native widget.
         // (Attach/detach can also happen as a result of display type changes, e.g., making a widget
         // block instead of inline, and focus should be restored in that case as well.)
-        if (document()->focusNode() == this && renderer()->isWidget() && 
+        if (document()->focusedNode() == this && renderer()->isWidget() && 
             static_cast<RenderWidget*>(renderer())->widget())
             static_cast<RenderWidget*>(renderer())->widget()->setFocus();
     }

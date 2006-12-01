@@ -1070,7 +1070,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return [self helpText];
     
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
-        return [NSNumber numberWithBool: (m_renderer->element() && m_renderer->document()->focusNode() == m_renderer->element())];
+        return [NSNumber numberWithBool: (m_renderer->element() && m_renderer->document()->focusedNode() == m_renderer->element())];
 
     if ([attributeName isEqualToString: NSAccessibilityEnabledAttribute])
         return [NSNumber numberWithBool: m_renderer->element() ? m_renderer->element()->isEnabled() : YES];
@@ -2378,11 +2378,11 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 - (id)accessibilityFocusedUIElement
 {
     // NOTE: BUG support nested WebAreas
-    Node* focusNode = m_renderer->document()->focusNode();
-    if (!focusNode || !focusNode->renderer())
+    Node* focusedNode = m_renderer->document()->focusedNode();
+    if (!focusedNode || !focusedNode->renderer())
         return nil;
 
-    WebCoreAXObject* obj = focusNode->renderer()->document()->axObjectCache()->get(focusNode->renderer());
+    WebCoreAXObject* obj = focusedNode->renderer()->document()->axObjectCache()->get(focusedNode->renderer());
     
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if ([obj accessibilityIsIgnored])
@@ -2410,8 +2410,8 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
 - (BOOL)canSetFocusAttribute
 {
-    // NOTE: It would be more accurate to ask the document whether setFocusNode() would 
-    // do anything.  For example, it setFocusNode() will do nothing if the current focused
+    // NOTE: It would be more accurate to ask the document whether setFocusedNode() would 
+    // do anything.  For example, it setFocusedNode() will do nothing if the current focused
     // node will not relinquish the focus.
     if (!m_renderer->element() || !m_renderer->element()->isEnabled())
         return NO;
@@ -2487,12 +2487,12 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
         ASSERT(number);
         if ([self canSetFocusAttribute] && number) {
             if ([number intValue] == 0)
-                m_renderer->document()->setFocusNode(0);
+                m_renderer->document()->setFocusedNode(0);
             else {
                 if (m_renderer->element()->isElementNode())
                     static_cast<Element*>(m_renderer->element())->focus();
                 else
-                    m_renderer->document()->setFocusNode(m_renderer->element());
+                    m_renderer->document()->setFocusedNode(m_renderer->element());
             }
         }
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {

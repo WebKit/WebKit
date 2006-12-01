@@ -1,3 +1,11 @@
+2006-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber Stamped by Anders Carlsson.
+
+        Global rename of Document::focusNode to Document::focusedNode. 'focusNode'
+        suggested a command, and conflicted with a different meaning for 'focusNode'
+        in the Mozilla selection API.
+
 2006-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Justin

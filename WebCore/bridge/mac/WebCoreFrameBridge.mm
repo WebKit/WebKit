@@ -763,7 +763,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->eventHandler()->nextKeyView(doc->focusNode(), SelectingNext);
+    return m_frame->eventHandler()->nextKeyView(doc->focusedNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -771,7 +771,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->eventHandler()->nextKeyView(doc->focusNode(), SelectingPrevious);
+    return m_frame->eventHandler()->nextKeyView(doc->focusedNode(), SelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebFrameViews
@@ -779,7 +779,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingNext);
+    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusedNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebFrameViews
@@ -787,7 +787,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingPrevious);
+    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusedNode(), SelectingPrevious);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string

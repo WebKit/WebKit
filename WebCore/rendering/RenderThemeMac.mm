@@ -258,7 +258,7 @@ void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject* o)
     // FIXME: Need to add a key window test here, or the element will look
     // focused even when in the background.
     bool oldFocused = [cell showsFirstResponder];
-    bool focused = (o->element() && o->document()->focusNode() == o->element()) && (o->style()->outlineStyleIsAuto());
+    bool focused = (o->element() && o->document()->focusedNode() == o->element()) && (o->style()->outlineStyleIsAuto());
     if (focused != oldFocused)
         [cell setShowsFirstResponder:focused];
 }

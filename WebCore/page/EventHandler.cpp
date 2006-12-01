@@ -484,7 +484,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     if (!m_frame->document())
         return false;
     
-    Node* node = m_frame->document()->focusNode();
+    Node* node = m_frame->document()->focusedNode();
     if (!node)
         node = m_mousePressNode.get();
     
@@ -966,8 +966,8 @@ bool EventHandler::advanceFocus(KeyboardEvent* event)
         return false;
 
     Node* node = event->shiftKey()
-        ? document->previousFocusNode(document->focusNode(), event)
-        : document->nextFocusNode(document->focusNode(), event);
+        ? document->previousFocusedNode(document->focusedNode(), event)
+        : document->nextFocusedNode(document->focusedNode(), event);
 
     if (!node)
         // FIXME: Need to support tabbing out of the document to the UI.
@@ -1046,10 +1046,10 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
         if (node && node->isMouseFocusable()) {
-            if (!m_frame->document()->setFocusNode(node))
+            if (!m_frame->document()->setFocusedNode(node))
                 swallowEvent = true;
         } else if (!node || !node->focused()) {
-            if (!m_frame->document()->setFocusNode(0))
+            if (!m_frame->document()->setFocusedNode(0))
                 swallowEvent = true;
         }
 

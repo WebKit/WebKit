@@ -402,8 +402,8 @@ public:
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
-    Node* focusNode() const { return m_focusNode.get(); }
-    bool setFocusNode(PassRefPtr<Node>);
+    Node* focusedNode() const { return m_focusedNode.get(); }
+    bool setFocusedNode(PassRefPtr<Node>);
     void clearSelectionIfNeeded(Node*);
 
     Node* hoverNode() const { return m_hoverNode.get(); }
@@ -469,7 +469,7 @@ public:
      *
      * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
      */
-    Node* nextFocusNode(Node* fromNode, KeyboardEvent*);
+    Node* nextFocusedNode(Node* fromNode, KeyboardEvent*);
 
     /**
      * Searches through the document, starting from fromNode, for the previous selectable element (that comes _before_)
@@ -482,7 +482,7 @@ public:
      *
      * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
      */
-    Node* previousFocusNode(Node* fromNode, KeyboardEvent*);
+    Node* previousFocusedNode(Node* fromNode, KeyboardEvent*);
 
     int nodeAbsIndex(Node*);
     Node* nodeWithAbsIndex(int absIndex);
@@ -650,7 +650,7 @@ protected:
 
     Color m_textColor;
 
-    RefPtr<Node> m_focusNode;
+    RefPtr<Node> m_focusedNode;
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
     mutable RefPtr<Element> m_documentElement;
