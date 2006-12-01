@@ -43,7 +43,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <div id="top">
     <div id="header">
         <div id="traverse"><button class="left" id="traverseUp" onclick="Inspector.traverseTreeBackward()"></button><button class="right" id="traverseDown" onclick="Inspector.traverseTreeForward()"></button></div>
-        <select size="1" id="treePopup" onchange="Inspector.selectNewRoot(this)"></select>
+        <select id="treePopup" onchange="Inspector.selectNewRoot(this)"></select>
         <div id="searchCount"></div>
         <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" onsearch="performSearch(this.value)" />
     </div>

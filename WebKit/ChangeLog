@@ -1,5 +1,18 @@
 2006-11-30  Matt Lilek  <pewtermoose@gmail.com>
 
+        Reviewed by Mitz.
+
+        Bug 10698: Scroll wheel causes inspector to shift up
+        http://bugs.webkit.org/show_bug.cgi?id=10698
+
+        Remove size attribute from the tree popup as a workaround for
+        http://bugs.webkit.org/show_bug.cgi?id=11362 Bug 11362: Native popup with size="1" wraps options
+
+        * WebInspector/webInspector/inspector.css:
+        * WebInspector/webInspector/inspector.html:
+
+2006-11-30  Matt Lilek  <pewtermoose@gmail.com>
+
         Reviewed by Tim H.
 
         Move web inspector style markup to javascript to fix http://bugs.webkit.org/show_bug.cgi?id=6724
