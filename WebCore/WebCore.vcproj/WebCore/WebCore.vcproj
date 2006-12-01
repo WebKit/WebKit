@@ -1247,10 +1247,6 @@
 			Name="platform"
 			>
 			<File
-				RelativePath="..\..\platform\AbstractShared.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\Arena.cpp"
 				>
 			</File>
@@ -1288,6 +1284,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\ContextMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ContextMenuItem.h"
 				>
 			</File>
 			<File
@@ -1464,6 +1464,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\MimeTypeRegistry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Pasteboard.h"
 				>
 			</File>
 			<File
@@ -2638,7 +2642,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\network\ResourceRequest.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\network\ResourceRequest.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\network\ResourceResponse.cpp"
 					>
 				</File>
 				<File
@@ -3824,6 +3836,10 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\Clipboard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ClipboardAccessPolicy.h"
 				>
 			</File>
 			<File

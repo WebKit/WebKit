@@ -44,8 +44,8 @@
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, Element* ownerElement,  PassRefPtr<EditorClient> editorClient, FrameWinClient* client)
-    : Frame(page, ownerElement, editorClient)
+FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
+    : Frame(page, ownerElement, new FrameLoaderClientWin())
     , m_client(client)
 {
     Settings* settings = new Settings();
@@ -58,9 +58,6 @@ FrameWin::FrameWin(Page* page, Element* ownerElement,  PassRefPtr<EditorClient> 
     settings->setStdFontName("Times New Roman");
     settings->setIsJavaScriptEnabled(true);
     setSettings(settings);
-
-    // FIXME: rework once FrameLoaderClientWin is even close to working
-    loader()->setClient(new FrameLoaderClientWin());
 }
 
 FrameWin::~FrameWin()
@@ -96,7 +93,7 @@ bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
     Document *doc = document();
     if (!doc)
         return false;
-    Node *node = doc->focusNode();
+    Node *node = doc->focusedNode();
     if (!node) {
         if (doc->isHTMLDocument())
             node = doc->body();
@@ -105,7 +102,7 @@ bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
         if (!node)
             return false;
     }
-    
+
     if (!keyEvent.isKeyUp())
         loader()->resetMultipleFormSubmissionProtection();
 
@@ -114,11 +111,6 @@ bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
     // FIXME: FrameMac has a keyDown/keyPress hack here which we are not copying.
 
     return result;
-}
-
-void FrameWin::createNewWindow(const FrameLoadRequest& request, const WindowFeatures& features, Frame*& newFrame)
-{
-    m_client->createNewWindow(request.resourceRequest(), features, newFrame);
 }
 
 } // namespace WebCore

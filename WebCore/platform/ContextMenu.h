@@ -31,7 +31,9 @@
 #include "ContextMenuItem.h"
 #include "HitTestResult.h"
 #include "PlatformString.h"
+#if PLATFORM(MAC)
 #include "RetainPtr.h"
+#endif
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__

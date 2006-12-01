@@ -35,11 +35,13 @@ namespace WebCore {
     class ContextMenuClientWin : public ContextMenuClient, public Shared<ContextMenuClientWin> {
     public:
         virtual ~ContextMenuClientWin() { }
+        virtual void contextMenuDestroyed();
 
         virtual void ref() { Shared<ContextMenuClientWin>::ref(); }
         virtual void deref() { Shared<ContextMenuClientWin>::deref(); }
 
         virtual void addCustomContextMenuItems(ContextMenu*);
+        virtual void contextMenuItemSelected(ContextMenuItem*);
 
         virtual void copyLinkToClipboard(HitTestResult);
         virtual void downloadURL(KURL);

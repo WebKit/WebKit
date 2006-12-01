@@ -34,13 +34,17 @@
 #include "AXObjectCache.h"
 #include "CachedResource.h"
 #include "ChromeClientWin.h"
+#include "Clipboard.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientWin.h"
+#include "ContextMenuItem.h"
 #include "CookieJar.h"
 #include "CString.h"
 #include "Cursor.h"
+#include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "EditCommand.h"
+#include "Editor.h"
 #include "EditorClientWin.h"
 #include "EventHandler.h"
 #include "FileChooser.h"
@@ -62,6 +66,7 @@
 #include "LocalizedStrings.h"
 #include "Node.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h"
@@ -122,9 +127,9 @@ String submitButtonDefaultLabel() { notImplemented(); return "Submit"; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-void CachedResource::setPlatformResponse(PlatformResponse) { notImplemented(); }
 void CachedResource::setAllData(PlatformData) { notImplemented(); }
 
+void ChromeClientWin::chromeDestroyed() { notImplemented(); }
 void ChromeClientWin::setWindowRect(const FloatRect&) { notImplemented(); }
 FloatRect ChromeClientWin::windowRect() { notImplemented(); return FloatRect(); }
 FloatRect ChromeClientWin::pageRect() { notImplemented(); return FloatRect(); }
@@ -145,15 +150,22 @@ bool ChromeClientWin::scrollbarsVisible() { notImplemented(); return false; }
 void ChromeClientWin::setMenubarVisible(bool) { notImplemented(); }
 bool ChromeClientWin::menubarVisible() { notImplemented(); return false; }
 void ChromeClientWin::setResizable(bool) { notImplemented(); }
+void ChromeClientWin::addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID) { notImplemented(); }
 
-void ContextMenu::appendItem(ContextMenuItem item) { notImplemented(); }
+ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result) { notImplemented(); }
+ContextMenu::~ContextMenu() { notImplemented(); }
+void ContextMenu::appendItem(const ContextMenuItem& item) { notImplemented(); }
 void ContextMenu::show() { notImplemented(); }
 
+void ContextMenuClientWin::contextMenuDestroyed() { notImplemented(); }
 void ContextMenuClientWin::addCustomContextMenuItems(ContextMenu*) { notImplemented(); }
+void ContextMenuClientWin::contextMenuItemSelected(ContextMenuItem*) { notImplemented(); }
 void ContextMenuClientWin::copyLinkToClipboard(HitTestResult) { notImplemented(); }
 void ContextMenuClientWin::downloadURL(KURL) { notImplemented(); }
 void ContextMenuClientWin::copyImageToClipboard(HitTestResult) { notImplemented(); }
 void ContextMenuClientWin::lookUpInDictionary(Frame*) { notImplemented(); }
+
+ContextMenuItem::~ContextMenuItem() { notImplemented(); }
 
 void DocumentLoader::setFrame(Frame*) { notImplemented(); }
 FrameLoader* DocumentLoader::frameLoader() const { notImplemented(); return m_frame->loader(); }
@@ -166,8 +178,12 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType) { notI
 bool DocumentLoader::isLoadingInAPISense() const { notImplemented(); return false; }
 void DocumentLoader::stopRecordingResponses() { notImplemented(); }
 
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy) { notImplemented(); return 0; }
+
+void EditorClientWin::pageDestroyed() { notImplemented(); }
 bool EditorClientWin::shouldDeleteRange(Range*) { notImplemented(); return false; }
 bool EditorClientWin::shouldShowDeleteInterface(HTMLElement*) { notImplemented(); return false; }
+bool EditorClientWin::smartInsertDeleteEnabled() { notImplemented(); return false; }
 bool EditorClientWin::isContinuousSpellCheckingEnabled() { notImplemented(); return false; }
 bool EditorClientWin::isGrammarCheckingEnabled() { notImplemented(); return false; }
 int EditorClientWin::spellCheckerDocumentTag() { notImplemented(); return 0; }
@@ -175,6 +191,7 @@ bool EditorClientWin::selectWordBeforeMenuEvent() { notImplemented(); return fal
 bool EditorClientWin::isEditable() { notImplemented(); return false; }
 bool EditorClientWin::shouldBeginEditing(Range*) { notImplemented(); return false; }
 bool EditorClientWin::shouldEndEditing(Range*) { notImplemented(); return false; }
+bool EditorClientWin::shouldInsertNode(Node*, Range*, EditorInsertAction) { notImplemented(); return false; }
 bool EditorClientWin::shouldInsertText(String, Range*, EditorInsertAction) { notImplemented(); return false; }
 bool EditorClientWin::shouldApplyStyle(CSSStyleDeclaration*, Range*) { notImplemented(); return false; }
 void EditorClientWin::didBeginEditing() { notImplemented(); }
@@ -231,11 +248,11 @@ KURL FrameLoader::originalRequestURL() const { notImplemented(); return KURL(); 
 bool FrameLoader::canGoBackOrForward(int) const { notImplemented(); return false; }
 ObjectContentType FrameLoader::objectContentType(const KURL&, const String&) { notImplemented(); return ObjectContentNone; }
 Widget* FrameLoader::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { notImplemented(); return 0; }
-void FrameLoader::detachFromParent() { notImplemented(); }
 void FrameLoader::checkLoadCompleteForThisFrame() { notImplemented(); }
 void FrameLoader::reload() { notImplemented(); }
 
-bool FrameLoaderClientWin::hasWebView() const { notImplemented(); return false; }
+void FrameLoaderClientWin::frameLoaderDestroyed() { notImplemented(); }
+bool FrameLoaderClientWin::hasWebView() const { notImplemented(); return true; }
 bool FrameLoaderClientWin::hasFrameView() const { notImplemented(); return false; }
 bool FrameLoaderClientWin::hasBackForwardList() const { notImplemented(); return false; }
 void FrameLoaderClientWin::resetBackForwardList() { notImplemented(); }
@@ -294,6 +311,7 @@ void FrameLoaderClientWin::setDefersLoading(bool) { notImplemented(); }
 bool FrameLoaderClientWin::isArchiveLoadPending(ResourceLoader*) const { notImplemented(); return false; }
 void FrameLoaderClientWin::cancelPendingArchiveLoad(ResourceLoader*) { notImplemented(); }
 void FrameLoaderClientWin::clearArchivedResources() { notImplemented(); }
+bool FrameLoaderClientWin::canHandleRequest(const ResourceRequest&) const { notImplemented(); return false; }
 bool FrameLoaderClientWin::canShowMIMEType(const String&) const { notImplemented(); return false; }
 bool FrameLoaderClientWin::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
 String FrameLoaderClientWin::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
@@ -311,15 +329,9 @@ void FrameView::updateBorder() { notImplemented(); }
 
 void FrameWin::focusWindow() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
-bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
-void FrameWin::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget*) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget*) { notImplemented(); return 0; }
 KJS::Bindings::RootObject* FrameWin::bindingRootObject() { notImplemented(); return 0; }
-bool FrameWin::canRedo() const { notImplemented(); return 0; }
-bool FrameWin::canUndo() const { notImplemented(); return 0; }
-void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
-void FrameWin::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
 bool FrameWin::runJavaScriptPrompt(String const&, String const&, String &) { notImplemented(); return 0; }
 bool FrameWin::shouldInterruptJavaScript() { notImplemented(); return false; }
 void FrameWin::print() { notImplemented(); }
@@ -327,31 +339,21 @@ KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImpl
 bool FrameWin::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
-bool FrameWin::passWheelEventToChildWidget(Node*) { notImplemented(); return 0; }
-void FrameWin::issueUndoCommand() { notImplemented(); }
 String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::markMisspellings(const WebCore::Selection&) { notImplemented(); }
-bool FrameWin::menubarVisible() { notImplemented(); return 0; }
-bool FrameWin::personalbarVisible() { notImplemented(); return 0; }
-bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
-bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
-bool FrameWin::canPaste() const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
 Range* FrameWin::markedTextRange() const { notImplemented(); return 0; }
-bool FrameWin::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame*) { notImplemented(); return false; }
-bool FrameWin::lastEventIsMouseUp() const { notImplemented(); return false; }
-void FrameWin::addMessageToConsole(String const&, unsigned int, String const&) { notImplemented(); }
 bool FrameWin::shouldChangeSelection(const Selection&, const Selection&, EAffinity, bool) const { notImplemented(); return true; }
 void FrameWin::respondToChangedSelection(const Selection&, bool) { notImplemented(); }
-void FrameWin::clearUndoRedoOperations(void) { notImplemented(); }
 void FrameWin::markMisspellingsInAdjacentWords(VisiblePosition const&) { notImplemented(); }
-void FrameWin::respondToChangedContents(const Selection&) { notImplemented(); }
 void FrameWin::ignoreSpelling() { notImplemented(); }
 void FrameWin::learnSpelling() { notImplemented(); }
+bool FrameWin::isSelectionMisspelled() { notImplemented(); return false; }
+Vector<String> FrameWin::guessesForMisspelledSelection() { notImplemented(); return Vector<String>(); }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
@@ -386,6 +388,20 @@ void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, Tile
 bool Image::getHBITMAP(HBITMAP) { notImplemented(); return false; }
 
 HINSTANCE Page::s_instanceHandle = 0;
+
+Pasteboard* Pasteboard::generalPasteboard() { notImplemented(); return 0; }
+void Pasteboard::writeSelection(PassRefPtr<Range>, bool canSmartCopyOrDelete, Frame*) { notImplemented(); }
+void Pasteboard::clearTypes() { notImplemented(); }
+bool Pasteboard::canSmartReplace() { notImplemented(); return false; }
+PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText) { notImplemented(); return 0; }
+String Pasteboard::plainText(Frame* frame) { notImplemented(); return String(); }
+Pasteboard::Pasteboard() { notImplemented(); }
+Pasteboard::~Pasteboard() { notImplemented(); }
+HashSet<int> Pasteboard::registerSelectionPasteboardTypes() { notImplemented(); return HashSet<int>(); }
+void Pasteboard::replaceNBSP(String&) { notImplemented(); }
+HGLOBAL Pasteboard::createHandle(String) { notImplemented(); return 0; }
+HGLOBAL Pasteboard::createHandle(CString) { notImplemented(); return 0; }
+DeprecatedCString Pasteboard::createCF_HTMLFromRange(PassRefPtr<Range>) { notImplemented(); return DeprecatedCString(); }
 
 Path::Path() { notImplemented(); }
 Path::~Path() { notImplemented(); }

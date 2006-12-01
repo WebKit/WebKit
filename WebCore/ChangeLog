@@ -1,3 +1,62 @@
+2006-12-01  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11732:
+        Windows build bustage.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ChromeClientWin.h:
+        * bridge/win/ContextMenuClientWin.h:
+        * bridge/win/EditorClientWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        (WebCore::FrameWin::keyPress):
+        * bridge/win/FrameWin.h:
+        * loader/win/FrameLoaderClientWin.h:
+        * platform/ContextMenu.h:
+        * platform/Widget.h:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ChromeClientWin::chromeDestroyed):
+        (WebCore::ChromeClientWin::addMessageToConsole):
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenuClientWin::contextMenuDestroyed):
+        (WebCore::ContextMenuClientWin::contextMenuItemSelected):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::EditorClientWin::pageDestroyed):
+        (WebCore::EditorClientWin::smartInsertDeleteEnabled):
+        (WebCore::EditorClientWin::shouldInsertNode):
+        (WebCore::FrameLoader::createPlugin):
+        (WebCore::FrameLoaderClientWin::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientWin::hasWebView):
+        (WebCore::FrameLoaderClientWin::canHandleRequest):
+        (WebCore::FrameWin::unfocusWindow):
+        (WebCore::FrameWin::bindingRootObject):
+        (WebCore::FrameWin::issueCopyCommand):
+        (WebCore::FrameWin::markMisspellings):
+        (WebCore::FrameWin::issueTransposeCommand):
+        (WebCore::FrameWin::markedTextRange):
+        (WebCore::FrameWin::respondToChangedSelection):
+        (WebCore::FrameWin::markMisspellingsInAdjacentWords):
+        (WebCore::FrameWin::isSelectionMisspelled):
+        (WebCore::FrameWin::guessesForMisspelledSelection):
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::clearTypes):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::~Pasteboard):
+        (WebCore::Pasteboard::registerSelectionPasteboardTypes):
+        (WebCore::Pasteboard::replaceNBSP):
+        (WebCore::Pasteboard::createHandle):
+        (WebCore::Pasteboard::createCF_HTMLFromRange):
+
 2006-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Anders Carlsson.

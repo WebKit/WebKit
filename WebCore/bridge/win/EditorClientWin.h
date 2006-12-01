@@ -35,13 +35,14 @@ namespace WebCore {
     class EditorClientWin : public EditorClient, public Shared<EditorClientWin> {
     public:
         virtual ~EditorClientWin() { }
+        virtual void pageDestroyed();
 
         virtual void ref() { Shared<EditorClientWin>::ref(); }
         virtual void deref() { Shared<EditorClientWin>::deref(); }
 
         virtual bool shouldDeleteRange(Range*);
         virtual bool shouldShowDeleteInterface(HTMLElement*);
-
+        virtual bool smartInsertDeleteEnabled();
         virtual bool isContinuousSpellCheckingEnabled();
         virtual bool isGrammarCheckingEnabled();
         virtual int spellCheckerDocumentTag();
@@ -51,6 +52,7 @@ namespace WebCore {
 
         virtual bool shouldBeginEditing(Range*);
         virtual bool shouldEndEditing(Range*);
+        virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
         virtual bool shouldInsertText(String, Range*, EditorInsertAction);
         virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
 
