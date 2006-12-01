@@ -1,3 +1,29 @@
+2006-12-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4826940>
+        Selection change performed even when delete delegate replies NO (11415)
+
+        No layout test for the bug fix, because there's no way to register a custom
+        editing delegate from a layout test.  Layout tests are effected by the change
+        to avoid sending unnecessary shouldChangeSelections, however. 
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Don't bother sending shouldChangeSelection
+        if the editing operation didn't change the selection.  Still call
+        setSelection though, because it does work in this case that's necessary,
+        like clearing the typing style.
+        (WebCore::Editor::unappliedEditing): Ditto.
+        (WebCore::Editor::reappliedEditing): Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Don't set the starting
+        selection if the editing delegate returns NO from shouldDeleteRange.
+        Notice we now call setStartingSelection in the case where
+        the current selection was a range selection.  This is fine because
+        it's a no-op (the starting selection is already the current selection).
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+
 2006-12-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

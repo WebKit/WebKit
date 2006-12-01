@@ -1,3 +1,66 @@
+2006-12-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4826940>
+        Selection change performed even when delete delegate replies NO (11415)
+
+        Removed unnecessary shouldChangeSelection calls;
+        * editing/deleting/delete-at-start-or-end-expected.txt:
+        * editing/deleting/delete-br-002-expected.txt:
+        * editing/deleting/delete-br-004-expected.txt:
+        * editing/deleting/delete-br-005-expected.txt:
+        * editing/deleting/delete-br-006-expected.txt:
+        * editing/deleting/delete-br-009-expected.txt:
+        * editing/deleting/delete-br-010-expected.txt:
+        * editing/deleting/delete-br-012-expected.txt:
+        * editing/deleting/delete-hr-expected.txt:
+        * editing/deleting/delete-tab-004-expected.txt:
+        * editing/deleting/forward-delete-expected.txt:
+        * editing/deleting/merge-into-empty-block-1-expected.txt:
+        * editing/deleting/merge-into-empty-block-2-expected.txt:
+        * editing/execCommand/format-block-expected.txt:
+        * editing/execCommand/outdent-selection-expected.txt:
+        * editing/inserting/editing-empty-divs-expected.txt:
+        * editing/inserting/insert-3800346-fix-expected.txt:
+        * editing/inserting/insert-br-004-expected.txt:
+        * editing/inserting/insert-br-005-expected.txt:
+        * editing/inserting/insert-br-006-expected.txt:
+        * editing/inserting/insert-br-008-expected.txt:
+        * editing/inserting/insert-div-006-expected.txt:
+        * editing/inserting/insert-div-008-expected.txt:
+        * editing/inserting/insert-div-010-expected.txt:
+        * editing/inserting/insert-div-011-expected.txt:
+        * editing/inserting/insert-div-013-expected.txt:
+        * editing/inserting/insert-div-015-expected.txt:
+        * editing/inserting/insert-div-019-expected.txt:
+        * editing/inserting/insert-div-021-expected.txt:
+        * editing/inserting/insert-paragraph-01-expected.txt:
+        * editing/inserting/insert-paragraph-03-expected.txt:
+        * editing/inserting/insert-tab-004-expected.txt:
+        * editing/inserting/insert-text-with-newlines-expected.txt:
+        * editing/inserting/line-break-expected.txt:
+        * editing/pasteboard/3976872-expected.txt:
+        * editing/pasteboard/paste-text-005-expected.txt:
+        * editing/pasteboard/paste-text-006-expected.txt:
+        * editing/pasteboard/paste-text-007-expected.txt:
+        * editing/pasteboard/paste-text-010-expected.txt:
+        * editing/pasteboard/paste-text-014-expected.txt:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/quirks-mode-br-2-expected.txt:
+        * editing/style/apple-style-editable-mix-expected.txt:
+        * editing/style/block-style-001-expected.txt:
+        * editing/style/block-style-002-expected.txt:
+        * editing/style/block-style-003-expected.txt:
+        * editing/style/block-style-006-expected.txt:
+        * editing/style/create-block-for-style-005-expected.txt:
+        * editing/style/create-block-for-style-006-expected.txt:
+        * editing/style/create-block-for-style-008-expected.txt:
+        * editing/style/relative-font-size-change-002-expected.txt:
+        * editing/style/relative-font-size-change-003-expected.txt:
+        * editing/style/relative-font-size-change-004-expected.txt:
+        * editing/style/table-selection-expected.txt:
+
 2006-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Justin

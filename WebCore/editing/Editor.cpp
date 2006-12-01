@@ -511,7 +511,9 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     RefPtr<Node> anchor = m_frame->editor()->removedAnchor();
     
     Selection newSelection(cmd->endingSelection());
-    if (m_frame->shouldChangeSelection(newSelection))
+    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
+    // because there is work that it must do in this situation.
+    if (newSelection == m_frame->selectionController()->selection() || m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection, false);
     
     m_frame->editor()->setRemovedAnchor(anchor);
@@ -545,7 +547,9 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
     dispatchEditableContentChangedEvents(*cmd);
     
     Selection newSelection(cmd->startingSelection());
-    if (m_frame->shouldChangeSelection(newSelection))
+    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
+    // because there is work that it must do in this situation.
+    if (newSelection == m_frame->selectionController()->selection() || m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
@@ -559,7 +563,9 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
     dispatchEditableContentChangedEvents(*cmd);
     
     Selection newSelection(cmd->endingSelection());
-    if (m_frame->shouldChangeSelection(newSelection))
+    // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
+    // because there is work that it must do in this situation.
+    if (newSelection == m_frame->selectionController()->selection() || m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection, true);
     
     m_lastEditCommand = 0;
