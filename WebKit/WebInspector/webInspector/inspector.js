@@ -412,10 +412,15 @@ function updateElementAttributes()
             span.title = attr.namespaceURI;
         span.textContent = attr.name;
         li.appendChild(span);
+        
+        span = document.createElement("span");
+        span.className = "relation";
+        span.textContent = "=";
+        li.appendChild(span);
 
         span = document.createElement("span");
         span.className = "value";
-        span.textContent = attr.value;
+        span.textContent = "\"" + attr.value + "\"";
         span.title = attr.value;
         li.appendChild(span);
 
@@ -691,7 +696,7 @@ function populateStyleListItem(li, prop, name)
 {
     var span = document.createElement("span");
     span.className = "property";
-    span.textContent = name;
+    span.textContent = name + ": ";
     li.appendChild(span);
 
     var value = prop.style.getPropertyValue(name);
@@ -704,7 +709,7 @@ function populateStyleListItem(li, prop, name)
     var priority = prop.style.getPropertyPriority(name);
     if (priority.length)
         textValue += " !" + priority;
-    span.textContent = textValue;
+    span.textContent = textValue + ";";
     span.title = textValue;
     li.appendChild(span);
 
@@ -901,7 +906,7 @@ function updatePropertiesPane()
 
         var span = document.createElement("span");
         span.className = "property";
-        span.textContent = name;
+        span.textContent = name + ": ";
         li.appendChild(span);
 
         var value = focusedNode[name];

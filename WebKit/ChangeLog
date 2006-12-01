@@ -1,3 +1,13 @@
+2006-11-30  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim H.
+
+        Move web inspector style markup to javascript to fix http://bugs.webkit.org/show_bug.cgi?id=6724
+        Bug 6724: Text copied from Web Inspector is different from actual text
+
+        * WebInspector/webInspector/inspector.css:
+        * WebInspector/webInspector/inspector.js:
+
 2006-11-30  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

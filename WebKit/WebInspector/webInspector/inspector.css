@@ -478,17 +478,12 @@ button.toggle.right {
     -webkit-user-select: text;
 }
 
-.attributeList li .property::after {
+.attributeList li .relation {
     margin: 0.3em;
-    content: "=";
 }
 
 .attributeList li .value {
     color: rgb(255,255,180);
-}
-
-.attributeList li .value::before, .attributeList li .value::after {
-    content: "\"";
 }
 
 .attributeList li .mapped {
@@ -658,20 +653,12 @@ button.toggle.right {
     -webkit-user-select: text;
 }
 
-.treeList li .property::after {
-    content: ": ";
-}
-
 .treeList li .value {
     color: rgb(255,255,180);
 }
 
 .treeList li.implicit .value {
     color: rgb(180,255,180);
-}
-
-.treeList li .value::after {
-    content: ";";
 }
 
 .treeList li.overloaded {
@@ -717,10 +704,6 @@ button.toggle.right {
 
 .propertyList li span {
     -webkit-user-select: text;
-}
-
-.propertyList li .property::after {
-    content: ": ";
 }
 
 .propertyList li .value {
