@@ -427,10 +427,155 @@ void FrameMac::unfocusWindow()
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+    
+static NSString *findFirstMisspellingInRange(NSSpellChecker *checker, int tag, Range* searchRange, int& offset)
+{
+    ASSERT_ARG(checker, checker);
+    ASSERT_ARG(searchRange, searchRange);
+    
+    WordAwareIterator it(searchRange);
+    offset = 0;
+
+    while (!it.atEnd()) {
+        const UChar* chars = it.characters();
+        int len = it.length();
+        
+        // Skip some work for one-space-char hunks
+        if (!(len == 1 && chars[0] == ' ')) {
+            
+            NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
+            NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:tag wordCount:NULL];
+            NSString *misspelledWord = (misspellingNSRange.length > 0) ? [chunk substringWithRange:misspellingNSRange] : nil;
+            [chunk release];
+            
+            if (misspelledWord) {
+                offset += misspellingNSRange.location;
+                return misspelledWord;
+            }
+        }
+
+        
+        offset += len;
+        it.advance();
+    }
+    
+    // No misspellings found, and we reached the end of the search range
+    ASSERT(it.atEnd());
+    return nil;
+}
+    
+#ifndef BUILDING_ON_TIGER
+
+static PassRefPtr<Range> paragraphAlignedRangeForRange(Range* arbitraryRange, int& offsetIntoParagraphAlignedRange, NSString*& paragraphNSString)
+{
+    ASSERT_ARG(arbitraryRange, arbitraryRange);
+    
+    ExceptionCode ec = 0;
+    
+    // Expand range to paragraph boundaries
+    RefPtr<Range> paragraphRange = arbitraryRange->cloneRange(ec);
+    setStart(paragraphRange.get(), startOfParagraph(arbitraryRange->startPosition()));
+    setEnd(paragraphRange.get(), endOfParagraph(arbitraryRange->endPosition()));
+    
+    // Compute offset from start of expanded range to start of original range
+    RefPtr<Range> offsetAsRange = new Range(paragraphRange->startContainer(ec)->document(), paragraphRange->startPosition(), arbitraryRange->startPosition());
+    offsetIntoParagraphAlignedRange = TextIterator::rangeLength(offsetAsRange.get());
+    
+    // Fill in out parameter with autoreleased string representing entire paragraph range.
+    // Someday we might have a caller that doesn't use this, but for now all callers do.
+    paragraphNSString = plainText(paragraphRange.get()).getNSString();
+
+    return paragraphRange;
+}
+
+static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Range* searchRange, NSDictionary*& outGrammarDetail, int& outGrammarPhraseOffset)
+{
+    ASSERT_ARG(checker, checker);
+    ASSERT_ARG(searchRange, searchRange);
+    
+    // Initialize out parameters; these will be updated if we find something to return.
+    outGrammarDetail = nil;
+    outGrammarPhraseOffset = 0;
+
+    // Expand the search range to encompass entire paragraphs, since grammar checking needs that much context.
+    // Determine the character offset from the start of the paragraph to the start of the original search range,
+    // since we will want to ignore results in this area.
+    int searchRangeStartOffset;
+    NSString *paragraphNSString;
+    RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(searchRange, searchRangeStartOffset, paragraphNSString);
+        
+    // Determine the character offset from the start of the paragraph to the end of the original search range, 
+    // since we will want to ignore results in this area also.
+    int searchRangeEndOffset = searchRangeStartOffset + TextIterator::rangeLength(searchRange);
+        
+    // Start checking from beginning of paragraph, but skip past results that occur before the start of the original search range.
+    NSInteger startOffset = 0;
+    while (startOffset < searchRangeEndOffset) {
+        NSArray *grammarDetails;
+        NSRange badGrammarPhraseNSRange = [checker checkGrammarOfString:paragraphNSString startingAt:startOffset language:nil wrap:NO inSpellDocumentWithTag:tag details:&grammarDetails];
+        
+        if (badGrammarPhraseNSRange.location == NSNotFound) {
+            ASSERT(badGrammarPhraseNSRange.length == 0);
+            return nil;
+        }
+        
+        // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
+        NSRange bestDetailNSRangeSoFar = NSMakeRange(NSNotFound, 0);
+        for (NSDictionary *detail in grammarDetails) {
+            NSValue *rangeAsNSValue = [detail objectForKey:NSGrammarRange];
+            NSRange detailNSRange = [rangeAsNSValue rangeValue];
+            ASSERT(detailNSRange.length > 0 && detailNSRange.location != NSNotFound);
+            
+            int detailStartOffsetInParagraph = badGrammarPhraseNSRange.location + detailNSRange.location;
+            
+            // Skip this detail if it starts before the original search range
+            if (detailStartOffsetInParagraph < searchRangeStartOffset)
+                continue;
+            
+            // Skip this detail if it starts after the original search range
+            if (detailStartOffsetInParagraph >= searchRangeEndOffset)
+                continue;
+            
+            // Skip this detail if it's not earlier than our current candidate (the details aren't in a guaranteed order)
+            if (outGrammarDetail && bestDetailNSRangeSoFar.location <= detailNSRange.location)
+                continue;
+            
+            // This detail is acceptable, and the bestest one yet, so remember it.
+            outGrammarDetail = detail;
+            bestDetailNSRangeSoFar = detailNSRange;
+            outGrammarPhraseOffset = badGrammarPhraseNSRange.location - searchRangeStartOffset;
+        }
+        
+        if (outGrammarDetail)
+            return [paragraphNSString substringWithRange:badGrammarPhraseNSRange];
+
+        // These results were all between the start of the paragraph and the start of the search range; look
+        // beyond this phrase.
+        startOffset = NSMaxRange(badGrammarPhraseNSRange);
+    }
+    
+    return nil;
+}
+    
+#endif /* not BUILDING_ON_TIGER */
+
+static PassRefPtr<Range> subrange(Range* entireRange, unsigned offset, unsigned length)
+{
+    ExceptionCode ec = 0;
+    PassRefPtr<Range> result(entireRange);
+    CharacterIterator chars(entireRange);
+    chars.advance(offset);
+    result->setStart(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
+    ASSERT(ec == 0);
+    chars.advance(length);
+    result->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
+    ASSERT(ec == 0);
+    return result;
+}
 
 void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    int exception = 0;
+    ExceptionCode ec = 0;
 
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
     // then we wrap and search from the doc start to (approximately) where we started.
@@ -438,7 +583,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
     Selection selection(selectionController()->selection());
-    RefPtr<Range> searchRange(rangeOfContents(document()));
+    RefPtr<Range> spellingSearchRange(rangeOfContents(document()));
     bool startedWithSelection = false;
     if (selection.start().node()) {
         startedWithSelection = true;
@@ -446,159 +591,126 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
             VisiblePosition start(selection.visibleStart());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
-            setStart(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
+            setStart(spellingSearchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else
-            setStart(searchRange.get(), selection.visibleEnd());
+            setStart(spellingSearchRange.get(), selection.visibleEnd());
     }
 
     // If we're not in an editable node, try to find one, make that our range to work in
-    Node *editableNode = searchRange->startContainer(exception);
+    Node *editableNode = spellingSearchRange->startContainer(ec);
     if (!editableNode->isContentEditable()) {
         editableNode = editableNode->nextEditable();
         if (!editableNode)
             return;
 
-        searchRange->setStartBefore(editableNode, exception);
+        spellingSearchRange->setStartBefore(editableNode, ec);
         startedWithSelection = false;   // won't need to wrap
     }
     
     // topNode defines the whole range we want to operate on 
     Node *topNode = editableNode->rootEditableElement();
-    searchRange->setEnd(topNode, maxDeepOffset(topNode), exception);
+    spellingSearchRange->setEnd(topNode, maxDeepOffset(topNode), ec);
 
-    // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
-    // forward by a word happens to do the trick.
+    // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking
+    // at a word boundary. Going back by one char and then forward by a word does the trick.
     if (startedWithSelection) {
-        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange.get(), DOWNSTREAM).previous();
+        VisiblePosition oneBeforeStart = startVisiblePosition(spellingSearchRange.get(), DOWNSTREAM).previous();
         if (oneBeforeStart.isNotNull()) {
-            setStart(searchRange.get(), endOfWord(oneBeforeStart));
+            setStart(spellingSearchRange.get(), endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
     }
     
-    if (searchRange->collapsed(exception))
+    if (spellingSearchRange->collapsed(ec))
         return;       // nothing to search in
     
     // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (checker == nil)
+    if (!checker)
         return;
         
-    WordAwareIterator it(searchRange.get());
-    bool wrapped = false;
-    
     // We go to the end of our first range instead of the start of it, just to be sure
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
-    Node *searchEndAfterWrapNode = it.range()->endContainer(exception);
-    int searchEndAfterWrapOffset = it.range()->endOffset(exception);
+    Node *searchEndNodeAfterWrap = spellingSearchRange->endContainer(ec);
+    int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
+    
+    int misspellingOffset;
+    NSString *misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset);
+    
+    NSString *badGrammarPhrase = nil;
 
-    // FIXME: We need to compute the entire paragraph(s?) containing the search range, and use that as "chunk" below,
-    // so there's enough context for the spell checker to evaluate grammar (4811175) and in some cases even spelling (4149250).
-    // That means we need to compute the right offset to pass to the NSSpellChecker methods.
-
-    while (1) {
-        if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
-            const UChar* chars = it.characters();
-            int len = it.length();
-            if (len == 1 && DeprecatedChar(chars[0]).isSpace())
-                it.advance();
-            else {
-                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
-                NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() wordCount:NULL];
-
-#if !defined(NDEBUG) || !defined(BUILDING_ON_TIGER)
-                NSDictionary *grammarDetail = nil;
-#endif
-                NSRange badGrammarNSRange = NSMakeRange(NSNotFound, 0);
-                NSRange grammarDetailNSRange = NSMakeRange(NSNotFound, 0);
 #ifndef BUILDING_ON_TIGER
-                if (editor()->client()->isGrammarCheckingEnabled()) {
-                    NSArray *grammarDetails = nil;
-                    // FIXME 4811175: grammar checking needs entire sentences (at least) to operate correctly. This code currently only
-                    // passes whatever chunk was computed for spell checking, which in most cases is not large enough and causes
-                    // spurious complaints of bad grammar.
-                    badGrammarNSRange = [checker checkGrammarOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:editor()->client()->spellCheckerDocumentTag() details:&grammarDetails];
-                    LOG(SpellingAndGrammar, "checked chunk \'%@\' starting at index %d, bad grammar range is %@', details:%@", chunk, 0, NSStringFromRange(badGrammarNSRange), grammarDetails);
+    int grammarPhraseOffset;
+    NSDictionary *grammarDetail = nil;
 
-                    // The grammar API allows for multiple details dictionaries for each range of questionable grammar.
-                    // Iterate through them to find the one whose detailRange is earliest (or shortest in case of tie).
-                    // The detailRange represents the small fragment (e.g., single word) that could be changed to make
-                    // the badGrammarNSRange (e.g., complete sentence) correct.
-                    for (NSDictionary *detail in grammarDetails) {
-                        NSValue *rangeAsNSValue = [detail objectForKey:NSGrammarRange];
-                        NSRange detailRange = [rangeAsNSValue rangeValue];
-                        ASSERT(detailRange.length > 0);
-                        detailRange.location += badGrammarNSRange.location;
-                        
-                        // Remember this detail if it's the first one, or if it starts earlier than the remembered one, or if it starts at the
-                        // same location as the remembered one but ends sooner.
-                        if (!grammarDetail || detailRange.location < grammarDetailNSRange.location 
-                            || (detailRange.location == grammarDetailNSRange.location && detailRange.length < grammarDetailNSRange.length)) {
-                            grammarDetail = detail;
-                            grammarDetailNSRange = detailRange;
-                        }
-                    }
-                }
+    // Search for bad grammar that occurs prior to the next misspelled word (if any)
+    RefPtr<Range> grammarSearchRange = spellingSearchRange->cloneRange(ec);
+    if (misspelledWord) {
+        // Stop looking at start of next misspelled word
+        CharacterIterator chars(grammarSearchRange.get());
+        chars.advance(misspellingOffset);
+        grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
+    }
+    
+    if (editor()->client()->isGrammarCheckingEnabled())
+        badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset);
 #endif
-                
-                bool hasMisspelling = misspellingNSRange.length > 0;
-                bool hasBadGrammar = badGrammarNSRange.length > 0;
-                
-                // If we found questionable grammar, we should have a detail dictionary and a non-empty detail range.
-                // If we didn't find questionable grammar, we should have no detail dictionary and an empty detail range.
-                ASSERT(hasBadGrammar == (grammarDetail != nil));
-                ASSERT(hasBadGrammar == (grammarDetailNSRange.length > 0));
-                
-                if (!hasMisspelling && !hasBadGrammar) {
-                    it.advance();
-                    [chunk release];
-                    continue;
-                }
-
-                // If we found both a misspelling and some questionable grammar, we only want to pay attention to the first
-                // of these two ranges. If they match exactly we'll treat it as a misspelling.
-                BOOL markMisspelling = !hasBadGrammar || (misspellingNSRange.location < grammarDetailNSRange.location) 
-                    || (misspellingNSRange.location == grammarDetailNSRange.location && misspellingNSRange.length <= grammarDetailNSRange.length);
-                
-                // Build up result range and string.  Note the bad range may span many text nodes,
-                // but the CharIterator insulates us from this complexity.
-                NSRange badNSRangeToMark = markMisspelling ? misspellingNSRange : grammarDetailNSRange;
-                RefPtr<Range> badRangeToMark(rangeOfContents(document()));
-                CharacterIterator chars(it.range().get());
-                chars.advance(badNSRangeToMark.location);
-                badRangeToMark->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                chars.advance(badNSRangeToMark.length);
-                badRangeToMark->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
-                selectionController()->setSelection(Selection(badRangeToMark.get(), DOWNSTREAM));
-                revealSelection();
-                
-                if (markMisspelling) {
-                    [checker updateSpellingPanelWithMisspelledWord:[chunk substringWithRange:misspellingNSRange]];
-                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Spelling);
-                }
-#ifndef BUILDING_ON_TIGER
-                else {
-                    [checker updateSpellingPanelWithGrammarString:[chunk substringWithRange:badGrammarNSRange] detail:grammarDetail];
-                    document()->addMarker(badRangeToMark.get(), DocumentMarker::Grammar, [grammarDetail objectForKey:NSGrammarUserDescription]);
-                }
-#endif
-                
-                [chunk release];
-                return;
-            }
-        }
+    
+    // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
+    // block rather than at a selection).
+    if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
+        spellingSearchRange->setStart(topNode, 0, ec);
+        // going until the end of the very first chunk we tested is far enough
+        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
         
-        if (it.atEnd()) {
-            if (wrapped || !startedWithSelection)
-                return;      // finished the second range, or we did the whole doc with the first range
+        misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset);
 
-            // we've gone from the selection to the end of doc, now wrap around
-            wrapped = YES;
-            searchRange->setStart(topNode, 0, exception);
-            // going until the end of the very first chunk we tested is far enough
-            searchRange->setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset, exception);
-            it = WordAwareIterator(searchRange.get());
-        }   
+#ifndef BUILDING_ON_TIGER
+        grammarSearchRange = spellingSearchRange->cloneRange(ec);
+        if (misspelledWord) {
+            // Stop looking at start of next misspelled word
+            CharacterIterator chars(grammarSearchRange.get());
+            chars.advance(misspellingOffset);
+            grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
+        }
+        if (editor()->client()->isGrammarCheckingEnabled())
+            badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset);
+#endif
+    }
+    
+    if (badGrammarPhrase) {
+#ifdef BUILDING_ON_TIGER
+        ASSERT_NOT_REACHED();
+#else
+        // We found bad grammar. Since we only searched for bad grammar up to the first misspelled word, the bad grammar
+        // takes precedence and we ignore any potential misspelled word. Select the grammar detail, update the spelling
+        // panel, and store a marker so we draw the green squiggle later.
+        
+        ASSERT([badGrammarPhrase length] > 0);
+        ASSERT(grammarDetail);
+        NSValue *detailRangeAsNSValue = [grammarDetail objectForKey:NSGrammarRange];
+        ASSERT(detailRangeAsNSValue);
+        NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+        ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
+        
+        // FIXME 4859190: This gets confused with doubled punctuation at the end of a paragraph
+        RefPtr<Range> badGrammarRange = subrange(grammarSearchRange.get(), grammarPhraseOffset + detailNSRange.location, detailNSRange.length);
+        selectionController()->setSelection(Selection(badGrammarRange.get(), SEL_DEFAULT_AFFINITY));
+        revealSelection();
+        
+        [checker updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetail];
+        document()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, [grammarDetail objectForKey:NSGrammarUserDescription]);
+#endif        
+    } else if (misspelledWord) {
+        // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
+        // a marker so we draw the red squiggle later.
+        
+        RefPtr<Range> misspellingRange = subrange(spellingSearchRange.get(), misspellingOffset, [misspelledWord length]);
+        selectionController()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
+        revealSelection();
+        
+        [checker updateSpellingPanelWithMisspelledWord:misspelledWord];
+        document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
     }
 }
 

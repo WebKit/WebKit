@@ -1,3 +1,35 @@
+2006-12-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        With these changes, grammar checking works correctly for the one-by-one case.
+        It still doesn't work correctly for the check-as-you-type case; I need to make these
+        same kinds of changes in markMisspellings, and refactor to share more code between
+        the two cases, but I wanted to get this working code in before modifying it further.
+
+        The major change here is that advanceToNextMisspelling used to look at small chunks of
+        text at a time, checking each one for both misspellings and questionable grammar. But
+        grammar checking needs at least paragraph-sized chunks of text to have enough context
+        to work correctly, so the old mechanism was causing many spurious complaints of bad
+        grammar (e.g., almost every word seemed to be at the start of a sentence so the checker
+        would complain about missing capitalization). So now the spell checker runs in the
+        specified range first. Then the grammar checker runs on the same range (stopping at the
+        next misspelling, if any), but expanded to paragraph-aligned boundaries.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::findFirstMisspellingInRange):
+        new function, extracted from advanceToNextMisspelling, and ignores grammar
+        (WebCore::paragraphAlignedRangeForRange):
+        new function, used by findNextBadGrammarInRange
+        (WebCore::findFirstBadGrammarInRange):
+        new function, extracted from advanceToNextMisspelling, and rewritten to use paragraph-aligned
+        chunks, and ignores spelling
+        (WebCore::subrange):
+        new helper function, used by advanceToNextMisspelling
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        now calls out to both findFirstMisspellingInRange and findFirstBadGrammarInRange separately
+        instead of trying to interweave the spelling and grammar logic
+
 2006-12-01  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Mitz.
@@ -65,6 +97,7 @@
         suggested a command, and conflicted with a different meaning for 'focusNode'
         in the Mozilla selection API.
 
+>>>>>>> .r17965
 2006-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Justin
