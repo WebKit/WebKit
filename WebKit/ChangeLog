@@ -1,3 +1,18 @@
+2006-12-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4841432> 9A312: iWeb crashes on launch; _WebReportError missing from WebKit
+
+        Added back WebReportAssertionFailure and WebReportError for apps that still need these symbols.
+
+        * Misc/OldWebAssertions.c: Added.
+        (WebReportAssertionFailure):
+        (WebReportError):
+        * WebKit.LP64.exp: added the new symbols, and sorted the file
+        * WebKit.exp: added the new symbols, and sorted the file
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Anders Carlsson.
