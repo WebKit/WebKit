@@ -97,7 +97,6 @@
         suggested a command, and conflicted with a different meaning for 'focusNode'
         in the Mozilla selection API.
 
->>>>>>> .r17965
 2006-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Justin
