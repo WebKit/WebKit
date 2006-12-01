@@ -559,20 +559,6 @@ static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Ra
     
 #endif /* not BUILDING_ON_TIGER */
 
-static PassRefPtr<Range> subrange(Range* entireRange, unsigned offset, unsigned length)
-{
-    ExceptionCode ec = 0;
-    PassRefPtr<Range> result(entireRange);
-    CharacterIterator chars(entireRange);
-    chars.advance(offset);
-    result->setStart(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
-    ASSERT(ec == 0);
-    chars.advance(length);
-    result->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
-    ASSERT(ec == 0);
-    return result;
-}
-
 void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 {
     ExceptionCode ec = 0;
@@ -694,7 +680,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
         
         // FIXME 4859190: This gets confused with doubled punctuation at the end of a paragraph
-        RefPtr<Range> badGrammarRange = subrange(grammarSearchRange.get(), grammarPhraseOffset + detailNSRange.location, detailNSRange.length);
+        RefPtr<Range> badGrammarRange = TextIterator::subrange(grammarSearchRange.get(), grammarPhraseOffset + detailNSRange.location, detailNSRange.length);
         selectionController()->setSelection(Selection(badGrammarRange.get(), SEL_DEFAULT_AFFINITY));
         revealSelection();
         
@@ -705,7 +691,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
         // a marker so we draw the red squiggle later.
         
-        RefPtr<Range> misspellingRange = subrange(spellingSearchRange.get(), misspellingOffset, [misspelledWord length]);
+        RefPtr<Range> misspellingRange = TextIterator::subrange(spellingSearchRange.get(), misspellingOffset, [misspelledWord length]);
         selectionController()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
         revealSelection();
         
@@ -1259,7 +1245,7 @@ static void markAllMisspellingsInRange(NSSpellChecker *checker, int tag, Range* 
             
             if (misspelledWord) {
                 // Compute range of misspelled word
-                RefPtr<Range> misspellingRange = subrange(searchRange, offsetFromStartOfSearchRange + misspellingNSRange.location, [misspelledWord length]);
+                RefPtr<Range> misspellingRange = TextIterator::subrange(searchRange, offsetFromStartOfSearchRange + misspellingNSRange.location, [misspelledWord length]);
                 
                 // Store marker for misspelled word
                 misspellingRange->startContainer(ec)->document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
@@ -1317,7 +1303,7 @@ static void markAllBadGrammarInRange(NSSpellChecker *checker, int tag, Range* se
                 continue;
             
             // This detail is in the search range, so we need to mark it.
-            RefPtr<Range> badGrammarRange = subrange(searchRange, badGrammarPhraseNSRange.location - searchRangeStartOffset + detailNSRange.location, detailNSRange.length);
+            RefPtr<Range> badGrammarRange = TextIterator::subrange(searchRange, badGrammarPhraseNSRange.location - searchRangeStartOffset + detailNSRange.location, detailNSRange.length);
             ExceptionCode ec = 0;
             badGrammarRange->startContainer(ec)->document()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, [detail objectForKey:NSGrammarUserDescription]);
             ASSERT(ec == 0);

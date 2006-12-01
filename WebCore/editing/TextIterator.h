@@ -72,6 +72,7 @@ public:
      
     static int rangeLength(const Range *r);
     static PassRefPtr<Range> rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength);
+    static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:
     void exitNode();
