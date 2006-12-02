@@ -1,3 +1,18 @@
+2006-12-02  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11709
+        DeprecatedString::format is broken on Windows
+
+        Use _vscprintf on Windows to compute the length of the buffer that
+        vsnprintf would need.
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::format):
+        * platform/String.cpp:
+        (WebCore::String::format):
+
 2006-12-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

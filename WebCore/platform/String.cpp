@@ -274,37 +274,25 @@ String String::format(const char *format, ...)
     va_start(args, format);
 
     Vector<char, 256> buffer;
-#if PLATFORM(WIN_OS)
-    // Windows vsnprintf does not return the expected size on overflow
-    // So we just have to keep looping until our vsprintf call works!
-    int result = 0;
-    do {
-        if (result < 0)
-            buffer.resize(buffer.capacity() * 2);
-        result = vsnprintf(buffer.data(), buffer.capacity(), format, args);
-        // Windows vsnprintf returns -1 for both errors. Since there is no
-        // way to distinguish between "not enough room" and "invalid format"
-        // we just keep trying until we hit an arbitrary size and then stop.
-    } while (result < 0 && (buffer.capacity() * 2) < 2048);
-    if (result == 0)
-        return String("");
-    else if (result < 0)
-        return String();
-    unsigned len = result;
-#else
+
     // Do the format once to get the length.
+#if PLATFORM(WIN_OS)
+    int result = _vscprintf(format, args);
+#else
     char ch;
     int result = vsnprintf(&ch, 1, format, args);
+#endif
+
     if (result == 0)
         return String("");
-    else if (result < 0)
+    if (result < 0)
         return String();
     unsigned len = result;
     buffer.resize(len + 1);
     
     // Now do the formatting again, guaranteed to fit.
     vsnprintf(buffer.data(), buffer.size(), format, args);
-#endif
+
     va_end(args);
     
     return new StringImpl(buffer.data(), len);
