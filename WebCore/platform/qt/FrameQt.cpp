@@ -434,8 +434,8 @@ bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
             return false;
     }
 
-    //if (!keyEvent.isKeyUp())
-    //    loader()->resetMultipleFormSubmissionProtection();
+    if (!keyEvent.isKeyUp())
+        loader()->resetMultipleFormSubmissionProtection();
 
     result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
 
