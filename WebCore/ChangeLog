@@ -1,3 +1,19 @@
+2006-12-01  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam.
+
+        - better solution to the ambiguous reference
+
+        * platform/Widget.h:
+        (WebCore::Widget::handleMouseMoveEvent):
+        (WebCore::Widget::handleMouseReleaseEvent):
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::keyEvent):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+
 2006-12-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

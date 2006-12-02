@@ -167,6 +167,10 @@ namespace WebCore {
 
         bool suppressInvalidation() const;
         void setSuppressInvalidation(bool);
+
+        // These methods will be called on a widget while it is capturing the mouse. 
+        virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; } 
+        virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
 #endif
 
 #if PLATFORM(GDK)

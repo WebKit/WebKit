@@ -433,6 +433,8 @@ void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { not
 void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
 void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
 void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
+bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent&) { notImplemented(); return false; }
+bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent&) { notImplemented(); return false; }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
