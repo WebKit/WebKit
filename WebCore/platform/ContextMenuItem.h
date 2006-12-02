@@ -28,7 +28,9 @@
 
 #include <wtf/Noncopyable.h>
 
+#include "PlatformMenuDescription.h"
 #include "PlatformString.h"
+#include "RetainPtr.h"
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -88,7 +90,36 @@ namespace WebCore {
         ContextMenuItemPDFContinuous,
         ContextMenuItemPDFNextPage,
         ContextMenuItemPDFPreviousPage,
-        ContextMenuItemBaseApplicationTag = 1000
+        // These are new tags! Not a part of API!!!!
+        ContextMenuItemTagOpenLink = 1000,
+#ifndef BUILDING_ON_TIGER
+        ContextMenuItemTagSpellingAndGrammarMenu, // Spelling sub-menu
+        ContextMenuItemTagShowSpellingAndGrammar,
+        ContextMenuItemTagCheckDocumentNow,
+        ContextMenuItemTagCheckSpellingWhileTyping,
+        ContextMenuItemTagCheckGrammarWithSpelling,
+#else
+        ContextMenuItemTagSpellingMenu, // Tiger Spelling sub-menu
+        ContextMenuItemTagSpellingMenuItem,
+        ContextMenuItemTagCheckSpelling,
+        ContextMenuItemTagCheckSpellingWhileTyping,
+#endif
+        ContextMenuItemTagFontMenu, // Font sub-menu
+        ContextMenuItemTagShowFonts,
+        ContextMenuItemTagBold,
+        ContextMenuItemTagItalic,
+        ContextMenuItemTagUnderline,
+        ContextMenuItemTagOutline,
+        ContextMenuItemTagStyles,
+        ContextMenuItemTagShowColors,
+        ContextMenuItemTagSpeechMenu, // Speech sub-menu
+        ContextMenuItemTagStartSpeaking,
+        ContextMenuItemTagStopSpeaking,
+        ContextMenuItemTagWritingDirectionMenu, // Writing Direction sub-menu
+        ContextMenuItemTagDefaultDirection,
+        ContextMenuItemTagLeftToRight,
+        ContextMenuItemTagRightToLeft,
+        ContextMenuItemBaseApplicationTag = 10000
     };
 
     enum ContextMenuItemType {
@@ -100,42 +131,36 @@ namespace WebCore {
     class ContextMenuItem : Noncopyable {
     public:
         ContextMenuItem(PlatformMenuItemDescription, ContextMenu*);
-
-        ContextMenuItem(ContextMenu* menu = 0)
-            : m_menu(menu)
-            , m_platformDescription(0)
-            , m_type(SeparatorType)
-            , m_action(ContextMenuItemTagNoAction)
-            , m_title(String())
-        {
-        }
-
-        ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* menu = 0)
-            : m_menu(menu)
-            , m_platformDescription(0)
-            , m_type(type)
-            , m_action(action)
-            , m_title(title)
-        {
-        }
-
+        ContextMenuItem(ContextMenu* parentMenu = 0, ContextMenu* subMenu = 0);
+        ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* parentMenu = 0, 
+            ContextMenu* subMenu = 0);
         ~ContextMenuItem();
 
-        ContextMenu* menu() const { return m_menu; }
-        const PlatformMenuItemDescription platformDescription() const { return m_platformDescription; }
-        ContextMenuItemType type() const { return m_type; }
-        ContextMenuAction action() const { return m_action; }
-        String title() const { return m_title; }
+        ContextMenu* parentMenu() const { return m_parentMenu; }
+        PlatformMenuItemDescription platformDescription() const;
 
-        // FIXME: Need to support submenus (perhaps a Vector<ContextMenuItem>*?)
+        ContextMenuItemType type() const { return m_type; }
+        void setType(ContextMenuItemType type) { m_type = type; }
+
+        ContextMenuAction action() const;
+        void setAction(ContextMenuAction action);
+
+        String title() const;
+        void setTitle(String title);
+
+        PlatformMenuDescription platformSubMenu() const;
+        void setSubMenu(ContextMenu* subMenu);
+
         // FIXME: Do we need a keyboard accelerator here?
 
     private:
-        ContextMenu* m_menu;
+        ContextMenu* m_parentMenu;
+#if PLATFORM(MAC)
+        RetainPtr<NSMenuItem> m_platformDescription;
+#else
         PlatformMenuItemDescription m_platformDescription;
+#endif
         ContextMenuItemType m_type;
-        ContextMenuAction m_action;
-        String m_title;
     };
 
 }

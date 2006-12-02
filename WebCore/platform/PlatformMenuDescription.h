@@ -23,59 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ContextMenu_h
-#define ContextMenu_h
+#ifndef PlatformMenuDescription_h
+#define PlatformMenuDescription_h
 
-#include <wtf/Noncopyable.h>
-
-#include "ContextMenuItem.h"
-#include "HitTestResult.h"
-#include "PlatformMenuDescription.h"
-#include "PlatformString.h"
 #if PLATFORM(MAC)
-#include "RetainPtr.h"
+#ifdef __OBJC__
+@class NSMutableArray;
+#else
+class NSMutableArray;
+#endif
+#elif PLATFORM(WIN)
+typedef struct HMENU__* HMENU;
+#elif PLATFORM(QT)
+class QMenu;
 #endif
 
 namespace WebCore {
 
-    class ContextMenuController;
-
-    class ContextMenu : Noncopyable
-    {
-    public:
-        ContextMenu(const HitTestResult&);
-        ContextMenu(const HitTestResult&, const PlatformMenuDescription);
-        ~ContextMenu();
-
-        void populate();
-
-        void show();
-        void hide();
-
-        void insertItem(unsigned position, const ContextMenuItem&);
-        void appendItem(const ContextMenuItem&);
-        
-        ContextMenuItem at(unsigned index);
-
-        unsigned itemCount() const;
-
-        HitTestResult hitTestResult() const { return m_hitTestResult; }
-        ContextMenuController* controller() const;
-
-        PlatformMenuDescription platformDescription() const;
-        void setPlatformDescription(PlatformMenuDescription);
-
-    private:
-        HitTestResult m_hitTestResult;
-        
 #if PLATFORM(MAC)
-        // Keep this in sync with the PlatformMenuDescription typedef
-        RetainPtr<NSMutableArray> m_platformDescription;
-#else
-        PlatformMenuDescription m_platformDescription;
+    typedef NSMutableArray* PlatformMenuDescription;
+#elif PLATFORM(WIN)
+    typedef HMENU PlatformMenuDescription;
+#elif PLATFORM(QT)
+    typedef QMenu* PlatformMenuDescription;
 #endif
-    };
 
-}
+} // namespace
 
-#endif // ContextMenu_h
+#endif // PlatformMenuDescription_h

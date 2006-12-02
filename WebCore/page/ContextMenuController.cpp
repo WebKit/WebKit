@@ -103,7 +103,7 @@ static String makeGoogleSearchURL(String searchString)
 
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
-    ASSERT(item->menu() == contextMenu());
+    ASSERT(item->parentMenu() == contextMenu());
     ASSERT(item->type() == ActionType);
 
     if (item->action() >= ContextMenuItemBaseApplicationTag) {
@@ -213,17 +213,30 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             // FIXME: Some day we may be able to do this from within WebCore.
             m_client->lookUpInDictionary(frame);
             break;
-        // PDF actions. Let's take care of this later. 
-        case ContextMenuItemTagOpenWithDefaultApplication:
-        case ContextMenuItemPDFActualSize:
-        case ContextMenuItemPDFZoomIn:
-        case ContextMenuItemPDFZoomOut:
-        case ContextMenuItemPDFAutoSize:
-        case ContextMenuItemPDFSinglePage:
-        case ContextMenuItemPDFFacingPages:
-        case ContextMenuItemPDFContinuous:
-        case ContextMenuItemPDFNextPage:
-        case ContextMenuItemPDFPreviousPage:
+        case ContextMenuItemTagOpenLink:
+        // Sub-menu actions.
+#ifndef BUILDING_ON_TIGER
+        case ContextMenuItemTagShowSpellingAndGrammar:
+        case ContextMenuItemTagCheckDocumentNow:
+        case ContextMenuItemTagCheckSpellingWhileTyping:
+        case ContextMenuItemTagCheckGrammarWithSpelling:
+#else
+        case ContextMenuItemTagSpellingMenuItem:
+        case ContextMenuItemTagCheckSpelling:
+        case ContextMenuItemTagCheckSpellingWhileTyping:
+#endif
+        case ContextMenuItemTagShowFonts:
+        case ContextMenuItemTagBold:
+        case ContextMenuItemTagItalic:
+        case ContextMenuItemTagUnderline:
+        case ContextMenuItemTagOutline:
+        case ContextMenuItemTagStyles:
+        case ContextMenuItemTagShowColors:
+        case ContextMenuItemTagStartSpeaking:
+        case ContextMenuItemTagStopSpeaking:
+        case ContextMenuItemTagDefaultDirection:
+        case ContextMenuItemTagLeftToRight:
+        case ContextMenuItemTagRightToLeft:
         default:
             break;
     }

@@ -1338,6 +1338,7 @@
 		9326DC0B09DAD5BE00AFC847 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9326DC0A09DAD5BE00AFC847 /* CharsetData.h */; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
+		932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 932871BF0B20DEB70049035A /* PlatformMenuDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932CA7650AAA1DF500AD1FAD /* TextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932CA7640AAA1DF500AD1FAD /* TextDecoder.cpp */; };
 		932CA7C10AAA20C100AD1FAD /* TextCodecLatin1.h in Headers */ = {isa = PBXBuildFile; fileRef = 932CA7C00AAA20C100AD1FAD /* TextCodecLatin1.h */; };
 		932CA7C50AAA20D200AD1FAD /* TextCodecLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932CA7C40AAA20D200AD1FAD /* TextCodecLatin1.cpp */; };
@@ -4312,6 +4313,7 @@
 		93126F6009D7A736008D9626 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
 		9326DC0A09DAD5BE00AFC847 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharsetData.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
+		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
 		932CA7420AAA198E00AD1FAD /* TextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDecoder.h; sourceTree = "<group>"; };
 		932CA7640AAA1DF500AD1FAD /* TextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecoder.cpp; sourceTree = "<group>"; };
 		932CA7C00AAA20C100AD1FAD /* TextCodecLatin1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecLatin1.h; sourceTree = "<group>"; };
@@ -8830,6 +8832,7 @@
 				A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
+				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
@@ -10798,6 +10801,7 @@
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */,
 				B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */,
+				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10848,7 +10852,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

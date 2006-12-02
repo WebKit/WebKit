@@ -78,6 +78,12 @@ ContextMenu::ContextMenu(const HitTestResult& result)
     [array release];    
 }
 
+ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
+    : m_hitTestResult(result)
+    , m_platformDescription(menu)
+{
+}
+
 ContextMenu::~ContextMenu()
 {
 }
@@ -93,23 +99,12 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
     else if (currentController != [target menuController])
         [target setMenuController:currentController];
     
-    NSMenuItem* menuItem = 0;
-    switch (item.type()) {
-        case ActionType:
-            menuItem = [[NSMenuItem alloc] init];
-            [menuItem setTag:item.action()];
-            [menuItem setTitle:item.title()];
-            [menuItem setTarget:target];
-            [menuItem setAction:@selector(forwardContextMenuAction:)];
-            break;
-        case SeparatorType:
-            menuItem = [[NSMenuItem separatorItem] retain];
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+    NSMenuItem* menuItem = item.platformDescription();
+    if (item.type() == ActionType) {
+        [menuItem setTarget:target];
+        [menuItem setAction:@selector(forwardContextMenuAction:)];
     }
-    
+
     return menuItem;
 }
 
@@ -123,11 +118,6 @@ void ContextMenu::appendItem(const ContextMenuItem& item)
     [menuItem release];
 }
 
-unsigned ContextMenu::itemCount() const
-{
-    return [m_platformDescription.get() count];
-}
-
 void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
 {
     NSMenuItem* menuItem = getNSMenuItem(this, item);
@@ -136,6 +126,11 @@ void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
 
     [m_platformDescription.get() insertObject:menuItem atIndex:position];
     [menuItem release];
+}
+
+unsigned ContextMenu::itemCount() const
+{
+    return [m_platformDescription.get() count];
 }
 
 void ContextMenu::setPlatformDescription(NSMutableArray* menu)

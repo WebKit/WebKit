@@ -1,3 +1,52 @@
+2006-12-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Support for sub-menus in WebCore context menus. This also re-
+        architects the ContextMenuItem class so that it is more like
+        ContextMenu in that the class is now really just a wrapper for the
+        platformDescription
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Add
+        place-holders for new tags for the sub-menu items. I will flesh
+        these out in a separate check-in.
+        * platform/ContextMenu.cpp:
+        (WebCore::createFontSubMenu):
+        (WebCore::createSpellingAndGrammarSubMenu):
+        (WebCore::createSpellingSubMenu):
+        (WebCore::createSpeechSubMenu):
+        (WebCore::createWritingDirectionSubMenu):
+        (WebCore::ContextMenu::populate): Call the above functions to add
+        the appropriate sub-menus to editing context menus.
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        (WebCore::): New tags in the ContextMenuAction enumeration.
+        (WebCore::ContextMenuItem::parentMenu):
+        (WebCore::ContextMenuItem::setType):
+        * platform/PlatformMenuDescription.h: Added. This defines
+        PlatformMenuDesciption. It needs to be its own header because we
+       have to include it from ContextMenu.h and ContextMenuItem.h
+        * platform/mac/ContextMenuItemMac.mm: Lots of adjustments here to
+        make this class basically just be a wrapper for NSMenuItem.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::platformDescription):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setSubMenu):
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::getNSMenuItem): Now we only have to get the
+        platformDescription of the ContextMenuItem and then set its target
+        and action.
+        (WebCore::ContextMenu::itemCount):
+
 2006-12-01  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by .

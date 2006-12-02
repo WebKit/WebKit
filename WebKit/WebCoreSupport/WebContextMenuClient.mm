@@ -65,11 +65,11 @@ void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item)
 {
-    ASSERT(item->menu());
+    ASSERT(item->parentMenu());
     
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:contextMenuItemSelected:forElement:)]) {
-        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:item->menu()->hitTestResult()] autorelease];
+        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:item->parentMenu()->hitTestResult()] autorelease];
         [delegate webView:m_webView contextMenuItemSelected:item->platformDescription() forElement:element];
     }
 }

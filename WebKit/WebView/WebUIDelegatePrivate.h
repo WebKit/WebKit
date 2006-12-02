@@ -28,9 +28,37 @@
 
 #import <WebKit/WebUIDelegate.h>
 
-// FIXME: This should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
+// FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
 enum { 
-    WebMenuItemTagOpenLink = 1000
+    WebMenuItemTagOpenLink = 1000,
+#ifndef BUILDING_ON_TIGER
+    WebMenuItemTagSpellingAndGrammarMenu,
+    WebMenuItemTagShowSpellingAndGrammar,
+    WebMenuItemTagCheckDocumentNow,
+    WebMenuItemTagCheckSpellingWhileTyping,
+    WebMenuItemTagCheckGrammarWithSpelling,
+#else
+    WebMenuItemTagSpellingMenu,
+    WebMenuItemTagSpellingMenuItem,
+    WebMenuItemTagCheckSpelling,
+    WebMenuItemTagCheckSpellingWhileTyping,
+#endif
+    WebMenuItemTagFontMenu,
+    WebMenuItemTagShowFonts,
+    WebMenuItemTagBold,
+    WebMenuItemTagItalic,
+    WebMenuItemTagUnderline,
+    WebMenuItemTagOutline,
+    WebMenuItemTagStyles,
+    WebMenuItemTagShowColors,
+    WebMenuItemTagSpeechMenu,
+    WebMenuItemTagStartSpeaking,
+    WebMenuItemTagStopSpeaking,
+    WebMenuItemTagWritingDirectionMenu,
+    WebMenuItemTagDefaultDirection,
+    WebMenuItemTagLeftToRight,
+    WebMenuItemTagRightToLeft,
+    WebMenuItemTagBaseApplication = 10000
 };
 
 @interface NSObject (WebUIDelegatePrivate)

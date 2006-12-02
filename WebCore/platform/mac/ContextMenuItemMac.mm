@@ -26,27 +26,100 @@
 #include "config.h"
 #include "ContextMenuItem.h"
 
+#include "ContextMenu.h"
+
 namespace WebCore {
-    
-ContextMenuItem::ContextMenuItem(NSMenuItem* item, ContextMenu* menu)
-    : m_menu(menu)
-    , m_platformDescription([item retain])
+
+ContextMenuItem::ContextMenuItem(NSMenuItem* item, ContextMenu* parentMenu)
+    : m_parentMenu(parentMenu)
+    , m_platformDescription(item)
 {
-    if ([item isSeparatorItem]) {
+    if ([item isSeparatorItem])
         m_type = SeparatorType;
-        m_title = String();
-        m_action = ContextMenuItemTagNoAction;
-    } else {
+    else if ([item hasSubmenu])
+        m_type = SubmenuType;
+    else
         m_type = ActionType;
-        m_title = [item title];
-        ASSERT([item tag] >= 0);
-        m_action = static_cast<ContextMenuAction>([item tag]);
-    }
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
+    : m_parentMenu(parentMenu)
+    , m_type(SeparatorType)
+{
+    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:String() action:nil keyEquivalent:nil];
+    m_platformDescription = item;
+    [item release];
+
+    [m_platformDescription.get() setTag:ContextMenuItemTagNoAction];
+    if (subMenu)
+        setSubMenu(subMenu);
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* parentMenu, 
+    ContextMenu* subMenu)
+    : m_parentMenu(parentMenu)
+    , m_type(type)
+{
+    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:nil];
+    m_platformDescription = item;
+    [item release];
+
+    [m_platformDescription.get() setTag:action];
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
 ContextMenuItem::~ContextMenuItem()
 {
-    [m_platformDescription release];
+}
+
+PlatformMenuItemDescription ContextMenuItem::platformDescription() const
+{
+    return m_platformDescription.get();
+}
+
+ContextMenuAction ContextMenuItem::action() const
+{ 
+    return static_cast<ContextMenuAction>([m_platformDescription.get() tag]);
+}
+
+String ContextMenuItem::title() const 
+{
+    return [m_platformDescription.get() title];
+}
+
+NSMutableArray* ContextMenuItem::platformSubMenu() const
+{
+    if (![m_platformDescription.get() hasSubmenu])
+        return nil;
+
+    NSMenu* subMenu = [m_platformDescription.get() submenu];
+    NSMutableArray* itemsArray = [NSMutableArray array];
+    int total = [subMenu numberOfItems];
+    for (int i = 0; i < total; i++)
+        [itemsArray addObject:[subMenu itemAtIndex:i]];
+
+    return itemsArray;
+}
+
+void ContextMenuItem::setAction(ContextMenuAction action)
+{
+    [m_platformDescription.get() setTag:action]; 
+}
+
+void ContextMenuItem::setTitle(String title)
+{
+    [m_platformDescription.get() setTitle:title];
+}
+
+void ContextMenuItem::setSubMenu(ContextMenu* menu)
+{
+    NSArray* subMenuArray = menu->platformDescription();
+    NSMenu* subMenu = [[NSMenu alloc] init];
+    for (unsigned i = 0; i < [subMenuArray count]; i++)
+        [subMenu insertItem:[subMenuArray objectAtIndex:i] atIndex:i];
+    [m_platformDescription.get() setSubmenu:subMenu];
+    [subMenu release];
 }
 
 }
