@@ -1,3 +1,27 @@
+2006-12-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick
+
+        Removed a couple of big chunks of duplicated code from the spelling and grammar stuff by merging
+        the find-next-instance functions with the mark-all-instances functions.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::findFirstMisspellingInRange):
+        added markAll parameter, and reworked loop so that if markAll parameter is true, this function loops
+        through the entire range and marks each misspelling
+        (WebCore::findFirstGrammarDetailInRange):
+        extracted from findFirstBadGrammarInRange; loops through the potentially-multiple details in a given
+        ungrammatical phrase (e.g., multiple grammar errors in one sentence). Has a markAll parameter akin
+        to the one in findFirstMisspellingInRange.
+        (WebCore::findFirstBadGrammarInRange):
+        added markAll parameter like the one in findFirstMisspellingInRange, and extracted findFirstGrammarDetailInRange
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        pass "false" for new markAll parameters
+        (WebCore::markAllMisspellingsInRange):
+        now just calls findFirstMisspellingInRange with markAll = true, thus removing a big hunk of duplicated code
+        (WebCore::markAllBadGrammarInRange):
+        now just calls findFirstBadGrammarInRange with markAll = true, thus removing a big hunk of duplicated code
+
 2006-12-02  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

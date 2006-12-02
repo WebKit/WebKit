@@ -428,13 +428,16 @@ void FrameMac::unfocusWindow()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
-static NSString *findFirstMisspellingInRange(NSSpellChecker *checker, int tag, Range* searchRange, int& offset)
+static NSString *findFirstMisspellingInRange(NSSpellChecker *checker, int tag, Range* searchRange, int& firstMisspellingOffset, bool markAll)
 {
     ASSERT_ARG(checker, checker);
     ASSERT_ARG(searchRange, searchRange);
     
     WordAwareIterator it(searchRange);
-    offset = 0;
+    firstMisspellingOffset = 0;
+    
+    NSString *firstMisspelling = nil;
+    int currentChunkOffset = 0;
 
     while (!it.atEnd()) {
         const UChar* chars = it.characters();
@@ -449,19 +452,32 @@ static NSString *findFirstMisspellingInRange(NSSpellChecker *checker, int tag, R
             [chunk release];
             
             if (misspelledWord) {
-                offset += misspellingNSRange.location;
-                return misspelledWord;
+                
+                // Remember first-encountered misspelling and its offset
+                if (!firstMisspelling) {
+                    firstMisspellingOffset = currentChunkOffset + misspellingNSRange.location;
+                    firstMisspelling = misspelledWord;
+                }
+                
+                // Mark this instance if we're marking all instances. Otherwise bail out because we found the first one.
+                if (!markAll)
+                    break;
+                
+                // Compute range of misspelled word
+                RefPtr<Range> misspellingRange = TextIterator::subrange(searchRange, currentChunkOffset + misspellingNSRange.location, [misspelledWord length]);
+                
+                // Store marker for misspelled word
+                ExceptionCode ec = 0;
+                misspellingRange->startContainer(ec)->document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                ASSERT(ec == 0);
             }
         }
-
         
-        offset += len;
+        currentChunkOffset += len;
         it.advance();
     }
     
-    // No misspellings found, and we reached the end of the search range
-    ASSERT(it.atEnd());
-    return nil;
+    return firstMisspelling;
 }
     
 #ifndef BUILDING_ON_TIGER
@@ -488,7 +504,45 @@ static PassRefPtr<Range> paragraphAlignedRangeForRange(Range* arbitraryRange, in
     return paragraphRange;
 }
 
-static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Range* searchRange, NSDictionary*& outGrammarDetail, int& outGrammarPhraseOffset)
+static NSDictionary *findFirstGrammarDetailInRange(NSArray *grammarDetails, NSRange badGrammarPhraseNSRange, Range *searchRange, int startOffset, int endOffset, bool markAll)
+{
+    // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
+    // Optionally add a DocumentMarker for each detail in the range.
+    NSRange earliestDetailNSRangeSoFar = NSMakeRange(NSNotFound, 0);
+    NSDictionary *earliestDetail = nil;
+    for (NSDictionary *detail in grammarDetails) {
+        NSValue *detailRangeAsNSValue = [detail objectForKey:NSGrammarRange];
+        NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+        ASSERT(detailNSRange.length > 0 && detailNSRange.location != NSNotFound);
+        
+        int detailStartOffsetInParagraph = badGrammarPhraseNSRange.location + detailNSRange.location;
+        
+        // Skip this detail if it starts before the original search range
+        if (detailStartOffsetInParagraph < startOffset)
+            continue;
+        
+        // Skip this detail if it starts after the original search range
+        if (detailStartOffsetInParagraph >= endOffset)
+            continue;
+        
+        if (markAll) {
+            RefPtr<Range> badGrammarRange = TextIterator::subrange(searchRange, badGrammarPhraseNSRange.location - startOffset + detailNSRange.location, detailNSRange.length);
+            ExceptionCode ec = 0;
+            badGrammarRange->startContainer(ec)->document()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, [detail objectForKey:NSGrammarUserDescription]);
+            ASSERT(ec == 0);
+        }
+        
+        // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)
+        if (!earliestDetail || earliestDetailNSRangeSoFar.location > detailNSRange.location) {
+            earliestDetail = detail;
+            earliestDetailNSRangeSoFar = detailNSRange;
+        }
+    }
+    
+    return earliestDetail;
+}
+    
+static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Range* searchRange, NSDictionary*& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll)
 {
     ASSERT_ARG(checker, checker);
     ASSERT_ARG(searchRange, searchRange);
@@ -496,6 +550,8 @@ static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Ra
     // Initialize out parameters; these will be updated if we find something to return.
     outGrammarDetail = nil;
     outGrammarPhraseOffset = 0;
+    
+    NSString *firstBadGrammarPhrase = nil;
 
     // Expand the search range to encompass entire paragraphs, since grammar checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
@@ -520,41 +576,25 @@ static NSString *findFirstBadGrammarInRange(NSSpellChecker *checker, int tag, Ra
         }
         
         // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
-        NSRange bestDetailNSRangeSoFar = NSMakeRange(NSNotFound, 0);
-        for (NSDictionary *detail in grammarDetails) {
-            NSValue *rangeAsNSValue = [detail objectForKey:NSGrammarRange];
-            NSRange detailNSRange = [rangeAsNSValue rangeValue];
-            ASSERT(detailNSRange.length > 0 && detailNSRange.location != NSNotFound);
-            
-            int detailStartOffsetInParagraph = badGrammarPhraseNSRange.location + detailNSRange.location;
-            
-            // Skip this detail if it starts before the original search range
-            if (detailStartOffsetInParagraph < searchRangeStartOffset)
-                continue;
-            
-            // Skip this detail if it starts after the original search range
-            if (detailStartOffsetInParagraph >= searchRangeEndOffset)
-                continue;
-            
-            // Skip this detail if it's not earlier than our current candidate (the details aren't in a guaranteed order)
-            if (outGrammarDetail && bestDetailNSRangeSoFar.location <= detailNSRange.location)
-                continue;
-            
-            // This detail is acceptable, and the bestest one yet, so remember it.
-            outGrammarDetail = detail;
-            bestDetailNSRangeSoFar = detailNSRange;
-            outGrammarPhraseOffset = badGrammarPhraseNSRange.location - searchRangeStartOffset;
-        }
+        outGrammarDetail = findFirstGrammarDetailInRange(grammarDetails, badGrammarPhraseNSRange, searchRange, searchRangeStartOffset, searchRangeEndOffset, markAll);
         
-        if (outGrammarDetail)
-            return [paragraphNSString substringWithRange:badGrammarPhraseNSRange];
+        // If we found a detail in range, then we have found the first bad phrase (unless we found one earlier but
+        // kept going so we could mark all instances).
+        if (outGrammarDetail && !firstBadGrammarPhrase) {
+            outGrammarPhraseOffset = badGrammarPhraseNSRange.location - searchRangeStartOffset;
+            firstBadGrammarPhrase = [paragraphNSString substringWithRange:badGrammarPhraseNSRange];
+            
+            // Found one. We're done now, unless we're marking each instance.
+            if (!markAll)
+                break;
+        }
 
         // These results were all between the start of the paragraph and the start of the search range; look
         // beyond this phrase.
         startOffset = NSMaxRange(badGrammarPhraseNSRange);
     }
     
-    return nil;
+    return firstBadGrammarPhrase;
 }
     
 #endif /* not BUILDING_ON_TIGER */
@@ -621,7 +661,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
     
     int misspellingOffset;
-    NSString *misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset);
+    NSString *misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
     
     NSString *badGrammarPhrase = nil;
 
@@ -639,7 +679,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     }
     
     if (editor()->client()->isGrammarCheckingEnabled())
-        badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset);
+        badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
 #endif
     
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
@@ -649,7 +689,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         // going until the end of the very first chunk we tested is far enough
         spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
         
-        misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset);
+        misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
 
 #ifndef BUILDING_ON_TIGER
         grammarSearchRange = spellingSearchRange->cloneRange(ec);
@@ -660,7 +700,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
             grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
         }
         if (editor()->client()->isGrammarCheckingEnabled())
-            badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset);
+            badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
 #endif
     }
     
@@ -1224,94 +1264,20 @@ void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)
     
 static void markAllMisspellingsInRange(NSSpellChecker *checker, int tag, Range* searchRange)
 {
-    ASSERT_ARG(checker, checker);
-    ASSERT_ARG(searchRange, searchRange);
-    
-    WordAwareIterator it(searchRange);
-    int offsetFromStartOfSearchRange = 0;
-    ExceptionCode ec = 0;
-    
-    while (!it.atEnd()) {
-        const UChar* chars = it.characters();
-        int len = it.length();
-        
-        // Skip some work for one-space-char hunks
-        if (!(len == 1 && chars[0] == ' ')) {
-            
-            NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
-            NSRange misspellingNSRange = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:tag wordCount:NULL];
-            NSString *misspelledWord = (misspellingNSRange.length > 0) ? [chunk substringWithRange:misspellingNSRange] : nil;
-            [chunk release];
-            
-            if (misspelledWord) {
-                // Compute range of misspelled word
-                RefPtr<Range> misspellingRange = TextIterator::subrange(searchRange, offsetFromStartOfSearchRange + misspellingNSRange.location, [misspelledWord length]);
-                
-                // Store marker for misspelled word
-                misspellingRange->startContainer(ec)->document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-                ASSERT(ec == 0);
-            }
-        }
-        
-        offsetFromStartOfSearchRange += len;
-        it.advance();
-    }
+    // Use the "markAll" feature of findFirstMisspellingInRange. Ignore the return value and the "out parameter";
+    // all we need to do is mark every instance.
+    int ignoredOffset;
+    findFirstMisspellingInRange(checker, tag, searchRange, ignoredOffset, true);
 }
 
 #ifndef BUILDING_ON_TIGER
 static void markAllBadGrammarInRange(NSSpellChecker *checker, int tag, Range* searchRange)
 {
-    ASSERT_ARG(checker, checker);
-    ASSERT_ARG(searchRange, searchRange);
-    
-    // Expand the search range to encompass entire paragraphs, since grammar checking needs that much context.
-    // Determine the character offset from the start of the paragraph to the start of the original search range,
-    // since we will want to ignore results in this area.
-    int searchRangeStartOffset;
-    NSString *paragraphNSString;
-    RefPtr<Range> paragraphRange = paragraphAlignedRangeForRange(searchRange, searchRangeStartOffset, paragraphNSString);
-    
-    // Determine the character offset from the start of the paragraph to the end of the original search range, 
-    // since we will want to ignore results in this area also.
-    int searchRangeEndOffset = searchRangeStartOffset + TextIterator::rangeLength(searchRange);
-    
-    // Start checking from beginning of paragraph, but skip past results that occur before the start of the original search range.
-    NSInteger startOffset = 0;
-    while (startOffset < searchRangeEndOffset) {
-        NSArray *grammarDetails;
-        NSRange badGrammarPhraseNSRange = [checker checkGrammarOfString:paragraphNSString startingAt:startOffset language:nil wrap:NO inSpellDocumentWithTag:tag details:&grammarDetails];
-        
-        if (badGrammarPhraseNSRange.location == NSNotFound) {
-            ASSERT(badGrammarPhraseNSRange.length == 0);
-            return;
-        }
-        
-        // Found some bad grammar. Mark all detail ranges that start in our search range (if any).
-        for (NSDictionary *detail in grammarDetails) {
-            NSValue *detailRangeAsNSValue = [detail objectForKey:NSGrammarRange];
-            NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
-            ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
-            
-            int detailStartOffsetInParagraph = badGrammarPhraseNSRange.location + detailNSRange.location;
-            
-            // Skip this detail if it starts before the original search range
-            if (detailStartOffsetInParagraph < searchRangeStartOffset)
-                continue;
-            
-            // Skip this detail if it starts after the original search range
-            if (detailStartOffsetInParagraph >= searchRangeEndOffset)
-                continue;
-            
-            // This detail is in the search range, so we need to mark it.
-            RefPtr<Range> badGrammarRange = TextIterator::subrange(searchRange, badGrammarPhraseNSRange.location - searchRangeStartOffset + detailNSRange.location, detailNSRange.length);
-            ExceptionCode ec = 0;
-            badGrammarRange->startContainer(ec)->document()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, [detail objectForKey:NSGrammarUserDescription]);
-            ASSERT(ec == 0);
-        }
-        
-        // Continue checking past the bad phrase we just handled.
-        startOffset = NSMaxRange(badGrammarPhraseNSRange);
-    }
+    // Use the "markAll" feature of findFirstBadGrammarInRange. Ignore the return value and "out parameters"; all we need to
+    // do is mark every instance.
+    NSDictionary *ignoredGrammarDetail;
+    int ignoredOffset;
+    findFirstBadGrammarInRange(checker, tag, searchRange, ignoredGrammarDetail, ignoredOffset, true);
 }
 #endif
 
