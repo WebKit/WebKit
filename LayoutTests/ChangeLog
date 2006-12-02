@@ -1,3 +1,15 @@
+2006-12-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11672
+          REGRESSION (r17068): Repro crash due to painting without layout
+
+        * fast/dynamic/containing-block-change-expected.checksum: Added.
+        * fast/dynamic/containing-block-change-expected.png: Added.
+        * fast/dynamic/containing-block-change-expected.txt: Added.
+        * fast/dynamic/containing-block-change.html: Added.
+
 2006-12-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

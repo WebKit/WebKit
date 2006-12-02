@@ -1,3 +1,17 @@
+2006-12-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11672
+          REGRESSION (r17068): Repro crash due to painting without layout
+
+        Test: fast/dynamic/containing-block-change.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Changed the logic used
+        to find absolutely positioned descendant's current containing block to
+        match the changes made to containingBlock() in the fix for bug 9347.
+
 2006-12-02  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.

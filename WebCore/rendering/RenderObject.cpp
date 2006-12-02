@@ -2164,7 +2164,7 @@ void RenderObject::setStyle(RenderStyle* style)
                     // Remove our absolutely positioned descendants from their current containing block.
                     // They will be inserted into our positioned objects list during layout.
                     RenderObject* cb = parent();
-                    while (cb && (cb->style()->position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRoot() && !cb->isRenderView()) {
+                    while (cb && (cb->style()->position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRenderView()) {
                         if (cb->style()->position() == RelativePosition && cb->isInline() && !cb->isReplaced()) {
                             cb = cb->containingBlock();
                             break;
