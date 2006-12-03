@@ -63,7 +63,6 @@ namespace WebCore {
     class GraphicsContextPlatformPrivate;
     class KURL;
     class Path;
-    class SVGResourceImage;
     class TextRun;
     class TextStyle;
 
@@ -199,6 +198,7 @@ namespace WebCore {
     };
 
 #ifdef SVG_SUPPORT
+    class SVGResourceImage;
     GraphicsContext* contextForImage(SVGResourceImage*);
 #endif
 

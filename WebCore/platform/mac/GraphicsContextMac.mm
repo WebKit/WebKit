@@ -179,6 +179,7 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
     CGContextRestoreGState(context);
 }
 
+#ifdef SVG_SUPPORT
 GraphicsContext* contextForImage(SVGResourceImage* image)
 {
     CGLayerRef cgLayer = image->cgLayer();
@@ -198,5 +199,6 @@ GraphicsContext* contextForImage(SVGResourceImage* image)
     }
     return new GraphicsContext(CGLayerGetContext(cgLayer));
 }
+#endif
 
 }
