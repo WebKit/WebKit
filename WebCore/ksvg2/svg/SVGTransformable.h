@@ -32,7 +32,7 @@ namespace WebCore {
     class SVGMatrix;
     class SVGTransformList;
 
-    class SVGTransformable : public SVGLocatable {
+    class SVGTransformable : virtual public SVGLocatable {
     public:
         SVGTransformable();
         virtual ~SVGTransformable();

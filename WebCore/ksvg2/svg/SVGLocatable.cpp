@@ -123,6 +123,24 @@ SVGMatrix* SVGLocatable::getScreenCTM(const SVGElement* element)
     return ctm;
 }
 
+SVGMatrix* SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec) const
+{
+    RefPtr<SVGMatrix> startctm(getCTM());
+    SVGMatrix* ctm = SVGSVGElement::createSVGMatrix();
+    ctm->multiply(startctm.get());
+
+    SVGElement* targetElement = svg_dynamic_cast(target);
+    if (targetElement && targetElement->isStyledLocatable()) {
+        RefPtr<SVGMatrix> targetCTM = static_cast<SVGStyledLocatableElement*>(targetElement)->getCTM();
+        targetCTM.get()->inverse(ec);
+        if (ec)
+            return ctm;
+        ctm->postMultiply(targetCTM.get());
+    }
+
+    return ctm;
+}
+
 }
 
 #endif // SVG_SUPPORT

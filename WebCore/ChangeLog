@@ -1,3 +1,37 @@
+2006-12-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11667
+        SVG: method .getTransformToElement(elt) in SVGLocatable not implemented
+
+        Implement getTransformToElement functionality. Introduce virtual
+        baseclass SVGLocatable to allow one implementation of the functionality.
+        Finally cleanup some code.
+
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * ksvg2/svg/SVGLocatable.h:
+        * ksvg2/svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::SVGStyledLocatableElement):
+        (WebCore::SVGStyledLocatableElement::nearestViewportElement):
+        (WebCore::SVGStyledLocatableElement::farthestViewportElement):
+        (WebCore::SVGStyledLocatableElement::getCTM):
+        (WebCore::SVGStyledLocatableElement::getScreenCTM):
+        * ksvg2/svg/SVGStyledLocatableElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        (WebCore::SVGStyledTransformableElement::localMatrix):
+        (WebCore::SVGStyledTransformableElement::getCTM):
+        (WebCore::SVGStyledTransformableElement::getScreenCTM):
+        (WebCore::SVGStyledTransformableElement::updateLocalTransform):
+        (WebCore::SVGStyledTransformableElement::parseMappedAttribute):
+        (WebCore::SVGStyledTransformableElement::nearestViewportElement):
+        (WebCore::SVGStyledTransformableElement::farthestViewportElement):
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTransformable.h:
+
 2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

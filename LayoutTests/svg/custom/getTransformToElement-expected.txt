@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    KCanvasContainer {svg} at (-2.50,15.50) size 122.71x196.63
+      KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}]
+      KCanvasContainer {g} at (-2.50,15.50) size 20.50x9 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,15.00)}]
+        RenderSVGText {text} at (50,150) size 800x36
+          RenderSVGInlineText {#text} at (0,-28) size 82x36
+            text run at (0,-28) width 82: "Passed"
+      KCanvasContainer {g} at (49.50,141.42) size 70.71x70.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+        KCanvasItem {rect} at (49.50,141.42) size 70.71x70.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [data="M50.00,50.00L120.00,50.00L120.00,80.00L50.00,80.00"]

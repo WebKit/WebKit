@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -45,20 +45,19 @@ namespace WebCore {
         virtual bool isStyledTransformable() const { return true; }
 
         // 'SVGTransformable' functions
-        virtual SVGMatrix *localMatrix() const;
+        virtual SVGMatrix* localMatrix() const;
 
         // Derived from: 'SVGLocatable'
-        virtual SVGMatrix *getCTM() const;
-        virtual SVGMatrix *getScreenCTM() const;
-        virtual SVGElement *nearestViewportElement() const;
-        virtual SVGElement *farthestViewportElement() const;
+        virtual SVGMatrix* getCTM() const;
+        virtual SVGMatrix* getScreenCTM() const;
+        virtual SVGElement* nearestViewportElement() const;
+        virtual SVGElement* farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual SVGMatrix *getTransformToElement(SVGElement*, ExceptionCode&) const;
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        void updateLocalTransform(SVGTransformList *localTransforms);
+        void updateLocalTransform(SVGTransformList* localTransforms);
         
         virtual void attach();
 
