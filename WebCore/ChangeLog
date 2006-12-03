@@ -1,3 +1,12 @@
+2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Dave.
+
+        Another missing piece in the platform/graphics move.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ImageAnimationObserver.h: Moved to platform/graphics.
+
 2006-12-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.
