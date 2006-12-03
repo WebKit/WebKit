@@ -1,50 +1,13 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x18
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 68x18 [color=#0000EE]
-          RenderText {#text} at (53,0) size 68x18
-            text run at (53,0) width 68: "bug 11450"
-        RenderText {#text} at (121,0) size 757x36
-          text run at (121,0) width 636: " REGRESSION: XMLHttpRequest::didFinishLoading() should immediately return if the request has"
-          text run at (0,18) width 131: "already been aborted"
-      RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 601x18
-          text run at (0,0) width 601: "If a frame has an active XMLHttpRequest that is still receiving data, and that frame is destroyed"
-        RenderBR {BR} at (601,14) size 0x0
-        RenderText {#text} at (0,18) size 659x18
-          text run at (0,18) width 659: "(or its load is otherwise stopped) the XMLHttpRequest gets an abort call then a didFinishedLoading call."
-      RenderBlock {P} at (0,104) size 784x18
-        RenderText {#text} at (0,0) size 738x18
-          text run at (0,0) width 621: "That didFinishedLoading() call should immediately exit and not update the object's state or do any "
-          text run at (621,0) width 117: "other notifications."
-      RenderBlock {UL} at (0,138) size 784x90
-        RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x18
-          RenderText {#text} at (0,0) size 175x18
-            text run at (0,0) width 175: "Loading subframe to cancel"
-        RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-17,0) size 7x18
-          RenderText {#text} at (0,0) size 92x18
-            text run at (0,0) width 92: "Ready State: 1"
-        RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-17,0) size 7x18
-          RenderText {#text} at (0,0) size 558x18
-            text run at (0,0) width 182: "Body of subframe is loaded. "
-            text run at (182,0) width 261: "XMLHttpRequest should be in progress. "
-            text run at (443,0) width 115: "Nuking the iframe"
-        RenderListItem {LI} at (40,54) size 744x18
-          RenderListMarker at (-17,0) size 7x18
-          RenderText {#text} at (0,0) size 103x18
-            text run at (0,0) width 103: "Iframe unloaded"
-        RenderListItem {LI} at (40,72) size 744x18
-          RenderListMarker at (-17,0) size 7x18
-          RenderText {#text} at (0,0) size 100x18
-            text run at (0,0) width 100: "Iframe removed"
-      RenderBlock {DIV} at (0,244) size 784x18
-        RenderText {#text} at (0,0) size 88x18
-          text run at (0,0) width 88: "Test complete"
+Test for bug 11450 REGRESSION: XMLHttpRequest::didFinishLoading() should immediately return if the request has already been aborted
+
+If a frame has an active XMLHttpRequest that is still receiving data, and that frame is destroyed
+(or its load is otherwise stopped) the XMLHttpRequest gets an abort call then a didFinishedLoading call.
+
+That didFinishedLoading() call should immediately exit and not update the object's state or do any other notifications.
+
+Loading subframe to cancel
+Ready State: 1
+Body of subframe is loaded. XMLHttpRequest should be in progress. Nuking the iframe
+Iframe unloaded
+Iframe removed
+

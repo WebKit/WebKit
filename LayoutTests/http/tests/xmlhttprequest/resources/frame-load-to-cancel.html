@@ -15,7 +15,7 @@ function loadXMLDoc()
         rq.overrideMimeType('text/xml');
         rq.onreadystatechange = readyStateChanged
         rq.open('GET', url, true);
-        rq.send();
+        rq.send(null);
       }
     } catch (ex) {
         rq = false;

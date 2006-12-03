@@ -19,8 +19,10 @@ other notifications.</p>
     
     function startTest()
     {
-        if (window.layoutTestController)
+        if (window.layoutTestController) {
             layoutTestController.waitUntilDone();
+            layoutTestController.dumpAsText();
+        }
         log("Loading subframe to cancel");
         framediv = document.getElementById('framediv');
         framediv.innerHTML = '<iframe src="resources/frame-load-to-cancel.html" width=0 height=0 border=0></iframe>';

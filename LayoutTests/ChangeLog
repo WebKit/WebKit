@@ -1,3 +1,15 @@
+2006-12-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        This test used to be a pixel one, but without pixel results provided - converted to text.
+
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort-expected.txt:
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort.html:
+
+        * http/tests/xmlhttprequest/resources/frame-load-to-cancel.html: Added a parameter to send()
+        to make the test work in Firefox.
+
 2006-12-02  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
