@@ -1434,7 +1434,6 @@
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
 		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; };
 		9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */; };
-		935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */; };
 		9353686B09AF78F600D35CD6 /* TextDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353686A09AF78F600D35CD6 /* TextDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C475D09AC4CA000A6AAB4 /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C475C09AC4CA000A6AAB4 /* History.h */; };
 		935C475F09AC4CAE00A6AAB4 /* HistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */; };
@@ -2274,6 +2273,7 @@
 		B27535810B053814002CE64F /* Pen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535540B053814002CE64F /* Pen.cpp */; };
 		B27535820B053814002CE64F /* Pen.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535550B053814002CE64F /* Pen.h */; };
 		B275358E0B053A66002CE64F /* IconMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B275358D0B053A66002CE64F /* IconMac.mm */; };
+		B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */; };
 		B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */; };
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; };
 		B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */; };
@@ -4409,7 +4409,6 @@
 		9352087609BD453400F2038D /* CookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJar.mm; sourceTree = "<group>"; };
 		9352088109BD45E900F2038D /* CookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieJar.h; sourceTree = "<group>"; };
 		9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewMac.mm; sourceTree = "<group>"; };
-		935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextMac.mm; sourceTree = "<group>"; };
 		9353686A09AF78F600D35CD6 /* TextDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDirection.h; sourceTree = "<group>"; };
 		935C475C09AC4CA000A6AAB4 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HistoryMac.mm; sourceTree = "<group>"; };
@@ -5227,6 +5226,7 @@
 		B27535540B053814002CE64F /* Pen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Pen.cpp; sourceTree = "<group>"; };
 		B27535550B053814002CE64F /* Pen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pen.h; sourceTree = "<group>"; };
 		B275358D0B053A66002CE64F /* IconMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IconMac.mm; sourceTree = "<group>"; };
+		B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextMac.mm; sourceTree = "<group>"; };
 		B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext.cpp; sourceTree = "<group>"; };
 		B2A015930AF6CD53006BCE0E /* GraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GraphicsContext.h; sourceTree = "<group>"; };
 		B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTypes.cpp; sourceTree = "<group>"; };
@@ -6604,7 +6604,6 @@
 				148A00100AF59F3F008CC700 /* FontPlatformData.h */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
 				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
-				935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				6593923909AE435C002C531F /* KURLMac.mm */,
 				9352084409BD43B900F2038D /* Language.mm */,
@@ -8388,6 +8387,7 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				B275354B0B053814002CE64F /* FloatPointMac.mm */,
@@ -11268,7 +11268,6 @@
 				6593923A09AE435C002C531F /* KURLMac.mm in Sources */,
 				BC6D6DD209AF906600F59759 /* Font.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
-				935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */,
 				657BD74D09AFDC54005A2056 /* TextCodec.cpp in Sources */,
 				657BD74F09AFDC54005A2056 /* TextEncoding.cpp in Sources */,
 				A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */,
@@ -12115,6 +12114,7 @@
 				B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */,
 				B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
+				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

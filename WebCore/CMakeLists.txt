@@ -1028,6 +1028,7 @@ set(WebCore_SRCS
     platform/graphics/qt/ColorQt.cpp
     platform/graphics/qt/FloatPointQt.cpp
     platform/graphics/qt/FloatRectQt.cpp
+    platform/graphics/qt/GraphicsContextQt.cpp
     platform/graphics/qt/IconQt.cpp
     platform/graphics/qt/ImageQt.cpp
     platform/graphics/qt/ImageSourceQt.cpp
@@ -1155,7 +1156,6 @@ set(WebCore_SRCS
     platform/qt/FrameQtClient.cpp
     platform/qt/FrameQt.cpp
     platform/qt/GlyphMapQt.cpp
-    platform/qt/GraphicsContextQt.cpp
 #   platform/qt/LineEditQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/MimeTypeRegistryQt.cpp

@@ -27,7 +27,7 @@
 #import "GraphicsContext.h"
 #import "SVGResourceImage.h"
 
-#import "../graphics/cg/GraphicsContextPlatformPrivate.h"
+#import "../cg/GraphicsContextPlatformPrivate.h"
 
 #import "WebCoreSystemInterface.h"
 
