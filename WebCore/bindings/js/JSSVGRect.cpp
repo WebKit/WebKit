@@ -35,10 +35,10 @@ namespace WebCore {
 const ClassInfo JSSVGRect::info = { "SVGRect", 0, &JSSVGRectTable, 0 };
 /*
 @begin JSSVGRectTable 4
-  x         WebCore::JSSVGRect::RectX           DontDelete|ReadOnly
-  y         WebCore::JSSVGRect::RectY           DontDelete|ReadOnly
-  width     WebCore::JSSVGRect::RectWidth       DontDelete|ReadOnly
-  height    WebCore::JSSVGRect::RectHeight      DontDelete|ReadOnly
+  x         WebCore::JSSVGRect::RectX           DontDelete
+  y         WebCore::JSSVGRect::RectY           DontDelete
+  width     WebCore::JSSVGRect::RectWidth       DontDelete
+  height    WebCore::JSSVGRect::RectHeight      DontDelete
 @end
 */
 
@@ -65,6 +65,29 @@ JSValue* JSSVGRect::getValueProperty(ExecState* exec, int token) const
     default:
         return 0;
     }
+}
+
+void JSSVGRect::put(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, int attr)
+{
+    lookupPut<JSSVGRect>(exec, propertyName, value, attr, &JSSVGRectTable, this);
+}
+
+void JSSVGRect::putValueProperty(KJS::ExecState* exec, int token, KJS::JSValue* value, int attr)
+{
+    switch (token) {
+    case RectX:
+        m_rect.setX(value->toNumber(exec));
+        break;
+    case RectY:
+        m_rect.setY(value->toNumber(exec));
+        break;
+    case RectWidth:
+        m_rect.setWidth(value->toNumber(exec));
+        break;
+    case RectHeight:
+        m_rect.setHeight(value->toNumber(exec));
+        break;
+    }  
 }
 
 JSValue* getJSSVGRect(ExecState* exec, const FloatRect& r)

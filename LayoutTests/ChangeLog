@@ -1,3 +1,29 @@
+2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add a new set of svg layout tests specifically testing SVGPoint/SVGRect/SVGNumber js wrapping.
+
+        It's related to following bugs:
+        http://bugs.webkit.org/show_bug.cgi?id=11734
+        http://bugs.webkit.org/show_bug.cgi?id=11685
+
+        * svg/custom/SVGNumber-interface-expected.checksum: Added.
+        * svg/custom/SVGNumber-interface-expected.png: Added.
+        * svg/custom/SVGNumber-interface-expected.txt: Added.
+        * svg/custom/SVGNumber-interface.svg: Added.
+        * svg/custom/SVGPoint-interface-expected.checksum: Added.
+        * svg/custom/SVGPoint-interface-expected.png: Added.
+        * svg/custom/SVGPoint-interface-expected.txt: Added.
+        * svg/custom/SVGPoint-interface.svg: Added.
+        * svg/custom/SVGPoint-matrixTransform-expected.checksum: Added.
+        * svg/custom/SVGPoint-matrixTransform-expected.txt: Added.
+        * svg/custom/SVGPoint-matrixTransform.svg: Added.
+        * svg/custom/SVGRect-interface-expected.checksum: Added.
+        * svg/custom/SVGRect-interface-expected.png: Added.
+        * svg/custom/SVGRect-interface-expected.txt: Added.
+        * svg/custom/SVGRect-interface.svg: Added.
+
 2006-12-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

@@ -34,13 +34,20 @@ class JSSVGNumber : public KJS::DOMObject {
 public:
     JSSVGNumber(KJS::ExecState*, double v) : m_value(v) { }
     ~JSSVGNumber();
-    
+
     virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-    static JSValue* getValue(KJS::ExecState*, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot);
-    // no put - all read-only
-    
+    JSValue* getValueProperty(KJS::ExecState*, int token) const;
+
+    virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);
+    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);
+
     virtual const KJS::ClassInfo* classInfo() const { return &info; }
     static const KJS::ClassInfo info;
+
+    enum { NumberValue };
+
+    double impl() { return m_value; }
+
 private:
     double m_value;
 };

@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "JSSVGMatrix.h"
 #include "JSSVGPoint.h"
+#include "SVGMatrix.h"
 
 #include "JSSVGPointTable.cpp"
 
@@ -35,10 +37,21 @@ namespace WebCore {
 const ClassInfo JSSVGPoint::info = { "SVGPoint", 0, &JSSVGPointTable, 0 };
 /*
 @begin JSSVGPointTable 4
-  x         WebCore::JSSVGPoint::PointX       DontDelete|ReadOnly
-  y         WebCore::JSSVGPoint::PointY       DontDelete|ReadOnly
+  x         WebCore::JSSVGPoint::PointX       DontDelete
+  y         WebCore::JSSVGPoint::PointY       DontDelete
+@end
+@begin JSSVGPointProtoTable 2
+ matrixTransform    WebCore::JSSVGPoint::MatrixTransform DontDelete|Function 1
 @end
 */
+
+KJS_IMPLEMENT_PROTOFUNC(JSSVGPointProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("JSSVGPoint", JSSVGPointProto, JSSVGPointProtoFunc)
+
+JSSVGPoint::JSSVGPoint(KJS::ExecState* exec, const FloatPoint& p) : m_point(p)
+{
+    setPrototype(JSSVGPointProto::self(exec));
+}
 
 JSSVGPoint::~JSSVGPoint()
 {
@@ -59,6 +72,42 @@ JSValue* JSSVGPoint::getValueProperty(ExecState* exec, int token) const
     default:
         return 0;
     }
+}
+
+void JSSVGPoint::put(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, int attr)
+{
+    lookupPut<JSSVGPoint>(exec, propertyName, value, attr, &JSSVGPointTable, this);
+}
+
+void JSSVGPoint::putValueProperty(KJS::ExecState* exec, int token, KJS::JSValue* value, int attr)
+{
+    switch (token) {
+    case PointX:
+        m_point.setX(value->toNumber(exec));
+        break;
+    case PointY:
+        m_point.setY(value->toNumber(exec));
+        break;
+    }
+}
+
+JSValue* JSSVGPointProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSSVGPoint::info))
+        return throwError(exec, TypeError);
+
+    FloatPoint point = static_cast<JSSVGPoint*>(thisObj)->impl();
+    switch (id) {
+        case JSSVGPoint::MatrixTransform: {
+            SVGMatrix* mat = toSVGMatrix(args[0]);
+            if (!mat)
+                return jsUndefined();
+            FloatPoint p = point.matrixTransform(mat->matrix());
+            return getJSSVGPoint(exec, p);
+        }
+    }
+
+    return jsUndefined();
 }
 
 JSValue* getJSSVGPoint(ExecState* exec, const FloatPoint& p)

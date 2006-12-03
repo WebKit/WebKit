@@ -455,6 +455,7 @@ all : \
     JSSVGPointTable.cpp \
     JSSVGPreserveAspectRatio.h \
     JSSVGRectTable.cpp \
+    JSSVGNumberTable.cpp \
     JSSVGElement.h \
     JSSVGSVGElement.h \
     JSSVGEllipseElement.h \

@@ -384,6 +384,7 @@ create_generated_cpp_helper( JSHTMLInputElementBaseTable.inl)
 
 IF (WEBKIT_USE_SVG_SUPPORT)
     create_cpp_lut( bindings/js/JSSVGNumber.cpp JSSVGNumberTable.inl bindings/js/JSSVGNumber.cpp )
+    create_generated_cpp_helper( JSSVGNumberTable.inl )
 
     create_cpp_lut( bindings/js/JSSVGPoint.cpp JSSVGPointTable.inl bindings/js/JSSVGPoint.cpp )
     create_generated_cpp_helper( JSSVGPointTable.inl )

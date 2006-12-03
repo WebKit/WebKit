@@ -31,23 +31,29 @@
 
 namespace WebCore {
 
+KJS_DEFINE_PROTOTYPE(JSSVGPointProto)
+
 class JSSVGPoint : public KJS::DOMObject {
 public:
-    JSSVGPoint(KJS::ExecState*, const FloatPoint& p) : m_point(p) { }
+    JSSVGPoint(KJS::ExecState*, const FloatPoint&);
     ~JSSVGPoint();
-    
+
     virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
     JSValue* getValueProperty(KJS::ExecState*, int token) const;
-    // no put - all read-only
-    
+
+    virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);
+    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);
+
     virtual const KJS::ClassInfo* classInfo() const { return &info; }
     static const KJS::ClassInfo info;
-    enum { PointX, PointY };
-    
+
+    enum { PointX, PointY, MatrixTransform };
+
     FloatPoint impl() { return m_point; }
-    
+ 
 private:
     FloatPoint m_point;
+    friend class JSSVGPointProto;
 };
 
 KJS::JSValue* getJSSVGPoint(KJS::ExecState*, const FloatPoint&);

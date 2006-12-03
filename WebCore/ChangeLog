@@ -1,5 +1,60 @@
 2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Oliver.
+
+        Fix following bugs:
+        http://bugs.webkit.org/show_bug.cgi?id=11734
+        http://bugs.webkit.org/show_bug.cgi?id=11685
+
+        SVGPoint/SVGRect/SVGNumber were missing put() support.
+        SVGPoint.matrixTransform() was missing.
+
+        In SVG DOM there are no cases where a readwrite property
+        exists of type SVGRect/SVGNumber/SVGPoint. Only function
+        calls returns instances of these objects. It would make
+        no sense to be able to write "someObj.getBbox().x = 100", and
+        modify the actual stored internal value of "someObj".
+
+        The only cases where these modification makes sense, is
+        when these SVGPoint/SVGRect/SVGNumber objects are created
+        via document.rootElement.createSVGPoint/Rect/Number (SVGSVGElement interface).
+
+        Result: The current implementation, where we just modify the stored FloatPoint/FloatRect/double
+        values in the JSSVGPoint/Rect/Number wrappers directly, is sufficient.
+
+        Patch created by Rob & me - co production.
+        Long live the great carto.next examples! :-)
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * bindings/js/JSSVGNumber.cpp:
+        (WebCore::):
+        (WebCore::JSSVGNumber::getOwnPropertySlot):
+        (WebCore::JSSVGNumber::getValueProperty):
+        (WebCore::JSSVGNumber::put):
+        (WebCore::JSSVGNumber::putValueProperty):
+        * bindings/js/JSSVGNumber.h:
+        (WebCore::JSSVGNumber::):
+        (WebCore::JSSVGNumber::impl):
+        * bindings/js/JSSVGPoint.cpp:
+        (WebCore::JSSVGPoint::JSSVGPoint):
+        (WebCore::JSSVGPoint::put):
+        (WebCore::JSSVGPoint::putValueProperty):
+        (WebCore::JSSVGPointProtoFunc::callAsFunction):
+        * bindings/js/JSSVGPoint.h:
+        (WebCore::JSSVGPoint::):
+        * bindings/js/JSSVGRect.cpp:
+        (WebCore::JSSVGRect::put):
+        (WebCore::JSSVGRect::putValueProperty):
+        * bindings/js/JSSVGRect.h:
+        * bindings/objc/DOMSVGPoint.mm:
+        (-[DOMSVGPoint matrixTransform:]):
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::matrixTransform):
+        * platform/graphics/FloatPoint.h:
+
+2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Dave.
 
         Another missing piece in the platform/graphics move.

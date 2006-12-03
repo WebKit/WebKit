@@ -31,7 +31,9 @@
 #import "DOMSVGPoint.h"
 
 #import "DOMInternal.h"
+#import "DOMSVGMatrix.h"
 #import "FloatPoint.h"
+#import "SVGMatrix.h"
 
 #define IMPL reinterpret_cast<WebCore::FloatPoint*>(_internal)
 
@@ -71,8 +73,8 @@
 
 - (DOMSVGPoint *)matrixTransform:(DOMSVGMatrix *)matrix
 {
-    // FIXME: IMPLEMENT ME
-    return [DOMSVGPoint _SVGPointWith:WebCore::FloatPoint()];
+    ASSERT(matrix);
+    return [DOMSVGPoint _SVGPointWith:IMPL->matrixTransform([matrix _SVGMatrix]->matrix())];
 }
 
 @end

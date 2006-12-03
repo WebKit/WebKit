@@ -25,14 +25,22 @@
  */
 
 #include "config.h"
-#include "IntPoint.h"
-
 #include "FloatPoint.h"
+
+#include "AffineTransform.h"
+#include "IntPoint.h"
 
 namespace WebCore {
 
 FloatPoint::FloatPoint(const IntPoint& p) : m_x(p.x()), m_y(p.y())
 {
+}
+
+FloatPoint FloatPoint::matrixTransform(const AffineTransform& transform) const
+{
+    double newX, newY;
+    transform.map((double)m_x, (double)m_y, &newX, &newY);
+    return FloatPoint(newX, newY);
 }
 
 }
