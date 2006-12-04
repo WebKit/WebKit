@@ -236,7 +236,7 @@ NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
     return [archive data];
 }
 
-NSString* WebEditorClient::_web_userVisibleString(NSURL *URL)
+NSString* WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];
 }

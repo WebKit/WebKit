@@ -34,8 +34,14 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    RefPtr<ClipboardMac> clipboard = new ClipboardMac(false, [NSPasteboard generalPasteboard], policy);
-    return clipboard.release();
+    return new ClipboardMac(false, [NSPasteboard generalPasteboard], policy);
+}
+
+NSString* Editor::userVisibleString(NSURL* nsURL)
+{
+    if (client())
+        return client()->userVisibleString(nsURL);
+    return nil;
 }
 
 } // namespace WebCore

@@ -61,7 +61,6 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-using namespace EventNames;
 
 EditorClient* Editor::client() const
 {
@@ -191,9 +190,9 @@ bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
 bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction)
 {
     if (client()) {
-        Node *child = fragment->firstChild();
+        Node* child = fragment->firstChild();
         if (fragment->lastChild() == child && child->isCharacterDataNode())
-            return client()->shouldInsertText(((CharacterData *)child)->data(), replacingDOMRange.get(), givenAction);
+            return client()->shouldInsertText(static_cast<CharacterData*>(child)->data(), replacingDOMRange.get(), givenAction);
         return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
     }
     return false;
@@ -389,7 +388,7 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
     return !noDefaultProcessing;
 }
 
-void Editor::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
+void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
     switch (m_frame->selectionController()->state()) {
         case Selection::NONE:
@@ -406,7 +405,7 @@ void Editor::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
     }
 }
 
-void Editor::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAction)
+void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
     switch (m_frame->selectionController()->state()) {
         case Selection::NONE:
@@ -1141,14 +1140,5 @@ void Editor::didEndEditing()
     if (client())
         client()->didEndEditing();
 }
-
-#if PLATFORM(MAC)
-NSString* Editor::_web_userVisibleString(NSURL* nsURL)
-{
-    if (client())
-        return client()->_web_userVisibleString(nsURL);
-    return nil;
-}
-#endif
 
 } // namespace WebCore

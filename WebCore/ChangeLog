@@ -1,3 +1,27 @@
+2006-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alice.
+
+        * bridge/EditorClient.h: Removed "_web_" prefix from
+        C++ userVisibleString member function. Alice will probably change
+        this so it's not on the editor client any more later.
+
+        * editing/Editor.h: Removed "_web_" prefix from
+        C++ userVisibleString member function.
+        * editing/Editor.cpp: Tweaked formatting a bit. Removed Mac-specific
+        code from this file.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard): Removed unnneded local variable.
+        (WebCore::Editor::userVisibleString): Moved this function here.
+
+        * platform/Pasteboard.h: Added some FIXMEs. Removed unneeded includes.
+        Made Pasteboard noncopyable. Removed use of "protected" where we should
+        be using "private". Removed s_generalPasteboard.
+        * platform/mac/PasteboardMac.mm: Added some FIXMEs. Removed the
+        s_generalPasteboard global. Removed the unused destructor. Updated call
+        to userVisibleString for name change. Tweaked formatting.
+
 2006-12-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.

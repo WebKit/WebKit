@@ -132,7 +132,7 @@ public:
     void didEndEditing();
 
 #if PLATFORM(MAC)
-    NSString* _web_userVisibleString(NSURL* nsURL);
+    NSString* userVisibleString(NSURL* nsURL);
 #endif
 
 private:

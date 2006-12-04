@@ -1,3 +1,14 @@
+2006-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alice.
+
+        * WebCoreSupport/WebEditorClient.h: Removed "_web_" prefix from
+        C++ userVisibleString member function.
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::userVisibleString):
+        Ditto.
+
+        * WebView/WebView.mm: (-[WebView selectedFrame]): Removed extra return statement.
+
 2006-12-04  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed and landed by Alexey.

@@ -2148,8 +2148,6 @@ NS_ENDHANDLER
     // If the first responder is outside of our view tree, we search for a frame containing a selection.
     // There should be at most only one of these.
     return [[self mainFrame] _findFrameWithSelection];
-    
-    return nil;
 }
 
 - (WebBackForwardList *)backForwardList

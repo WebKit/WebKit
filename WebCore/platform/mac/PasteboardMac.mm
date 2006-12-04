@@ -32,10 +32,9 @@
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 
-using namespace WebCore;
-
 NSString *WebArchivePboardType          = @"Apple Web Archive pasteboard type";
 NSString *WebSmartPastePboardType       = @"NeXT smart paste pasteboard type";
+// FIXME: The code to initialize these needs to be moved in here, and out of WebKit.
 NSString *WebURLNamePboardType          = nil;
 NSString *WebURLPboardType              = nil;
 NSString *WebURLsWithTitlesPboardType   = @"WebURLsWithTitlesPboardType";
@@ -44,24 +43,18 @@ NSString *WebURLsWithTitlesPboardType   = @"WebURLsWithTitlesPboardType";
 - (id)_initWithDOMRange:(DOMRange *)domRange;
 @end
 
-Pasteboard* Pasteboard::s_generalPasteboard = 0;
+namespace WebCore {
 
 Pasteboard* Pasteboard::generalPasteboard() 
 {
-    if (!s_generalPasteboard)
-        s_generalPasteboard = new Pasteboard([NSPasteboard generalPasteboard]);
-    return s_generalPasteboard;
-}
-
-Pasteboard::~Pasteboard()
-{
-    delete s_generalPasteboard;
-    s_generalPasteboard = 0;
+    static Pasteboard* pasteboard = new Pasteboard([NSPasteboard generalPasteboard]);
+    return pasteboard;
 }
 
 Pasteboard::Pasteboard(NSPasteboard* pboard)
-: m_pasteboard(pboard)
-{ }
+    : m_pasteboard(pboard)
+{
+}
 
 void Pasteboard::clearTypes()
 {
@@ -166,7 +159,7 @@ String Pasteboard::plainText(Frame* frame)
         // FIXME: using the editorClient to call into webkit, for now, since 
         // calling [URL _web_userVisibleString] from WebCore involves migrating a sizable web of 
         // helper code that should either be done in a separate patch or figured out in another way.
-        string = frame->editor()->client()->_web_userVisibleString(URL);
+        string = frame->editor()->client()->userVisibleString(URL);
         if ([string length] > 0)
             return string;
     }
@@ -206,3 +199,4 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     return 0;
 }
 
+}
