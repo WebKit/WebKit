@@ -56,15 +56,8 @@
     }
     log("new XMLHttpRequest()");
 
-    // According to the XHR spec, this should throw INVALID_STATE_ERR. However,
-    // widgets exist that depend on WebKit not throwing an exception here, and
-    // to make them keep working we have to go against spec and support this
-    // legacy behavior. See <rdar://problem/4758577> "REGRESSION: Business and
-    // People widgets fails to complete search query" for more details.
-    req.setRequestHeader("Foo", "bar");
-
+    shouldThrow('req.setRequestHeader("Foo", "bar")');
     shouldThrow('req.send(null)');
-
     shouldThrow('req.open("GET", "http://www.apple.com/", true)');
     
     req.open('GET', 'resources/zero-length.txt', false);
@@ -79,14 +72,7 @@
     log("send()");
 
     shouldThrow('req.send(null)');
-
-    // According to the XHR spec, this should throw INVALID_STATE_ERR. However,
-    // widgets exist that depend on WebKit not throwing an exception here, and
-    // to make them keep working we have to go against spec and support this
-    // legacy behavior. See <rdar://problem/4758577> "REGRESSION: Business and
-    // People widgets fails to complete search query" for more details.
-    req.setRequestHeader("Foo", "bar");
-
+    shouldThrow('req.setRequestHeader("Foo", "bar")');
     shouldThrow('req.getResponseHeader()');
    
 </script>

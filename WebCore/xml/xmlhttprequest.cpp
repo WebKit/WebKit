@@ -30,12 +30,14 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormData.h"
+#include "Frame.h"
 #include "HTMLDocument.h"
 #include "LoaderFunctions.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "Settings.h"
 #include "TextEncoding.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
@@ -384,9 +386,13 @@ void XMLHttpRequest::overrideMIMEType(const String& override)
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
-    if (m_state != Open)
-        // rdar 4758577: XHR spec says an exception should be thrown here.  However, doing so breaks the Business and People widgets.
+    if (m_state != Open) {
+        if (m_doc && m_doc->frame() && m_doc->frame()->settings()->shouldUseDashboardBackwardCompatibilityMode())
+            return;
+
+        ec = INVALID_STATE_ERR;
         return;
+    }
 
     if (!m_requestHeaders.contains(name)) {
         m_requestHeaders.set(name, value);

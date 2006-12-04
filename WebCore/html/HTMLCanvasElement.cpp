@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Chrome.h"
+#include "Settings.h"
 #include "Screen.h"
 #include <math.h>
 
@@ -44,7 +45,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// These value come from the specification.
+// These values come from the WhatWG spec.
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
@@ -63,6 +64,22 @@ HTMLCanvasElement::~HTMLCanvasElement()
         m_2DContext->detachCanvas();
     fastFree(m_data);
     delete m_drawingContext;
+}
+
+HTMLTagStatus HTMLCanvasElement::endTagRequirement() const 
+{ 
+    if (document()->frame() && document()->frame()->settings()->shouldUseDashboardBackwardCompatibilityMode())
+        return TagStatusForbidden; 
+
+    return HTMLElement::endTagRequirement();
+}
+
+int HTMLCanvasElement::tagPriority() const 
+{ 
+    if (document()->frame() && document()->frame()->settings()->shouldUseDashboardBackwardCompatibilityMode())
+        return 0; 
+
+    return HTMLElement::tagPriority();
 }
 
 void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)

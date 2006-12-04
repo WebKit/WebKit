@@ -1,3 +1,20 @@
+2006-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Added SPI for enabling Dashboard backward compatibility mode. For now,
+        we enable it unconditionally for Dashboard and Dashcode. Once they 
+        implement specific support for the backward compatibility mode behavior,
+        we can change that.
+        
+        Set the default WebDashboardBehaviorUseBackwardCompatibilityModeEnabled
+        to YES in order to turn this code on.
+
+        * WebView/WebView.mm:
+        (-[WebView _setDashboardBehavior:to:]):
+        (-[WebView _dashboardBehavior:]):
+        * WebView/WebViewPrivate.h:
+
 2006-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.

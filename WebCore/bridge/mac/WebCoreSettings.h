@@ -121,6 +121,9 @@ typedef WebCore::Settings WebCoreSettingsImpl;
 - (void)setEditableLinkBehavior:(int)behavior;
 - (int)editableLinkBehavior;
 
+- (void)setShouldUseDashboardBackwardCompatibilityMode:(BOOL)use;
+- (BOOL)shouldUseDashboardBackwardCompatibilityMode;
+
 - (WebCoreSettingsImpl *)settings;
 
 @end

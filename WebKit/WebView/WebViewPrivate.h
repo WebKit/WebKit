@@ -92,7 +92,8 @@ typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
     WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
     WebDashboardBehaviorAlwaysAcceptsFirstMouse,
-    WebDashboardBehaviorAllowWheelScrolling
+    WebDashboardBehaviorAllowWheelScrolling,
+    WebDashboardBehaviorUseBackwardCompatibilityMode
 } WebDashboardBehavior;
 
 @interface WebController : NSTreeController {

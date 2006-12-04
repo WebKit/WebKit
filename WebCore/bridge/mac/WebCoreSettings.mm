@@ -351,6 +351,16 @@ using namespace WebCore;
     return (int)settings->editableLinkBehavior();
 }
 
+- (void)setShouldUseDashboardBackwardCompatibilityMode:(BOOL)use
+{
+    settings->setShouldUseDashboardBackwardCompatibilityMode(use);
+}
+
+- (BOOL)shouldUseDashboardBackwardCompatibilityMode;
+{
+    return settings->shouldUseDashboardBackwardCompatibilityMode();
+}
+
 - (Settings *)settings
 {
     return settings;

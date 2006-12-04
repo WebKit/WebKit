@@ -26,18 +26,21 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "AffineTransform.h"
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasStyle.h"
+#include "Document.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
+#include "Settings.h"
 #include "cssparser.h"
-#include "AffineTransform.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -474,6 +477,9 @@ void CanvasRenderingContext2D::stroke()
         CGContextStrokePath(c->platformContext());
     }
 #endif
+
+    if (m_canvas && m_canvas->document()->frame() && m_canvas->document()->frame()->settings()->shouldUseDashboardBackwardCompatibilityMode())
+        state().m_path.clear();
 }
 
 void CanvasRenderingContext2D::clip()
