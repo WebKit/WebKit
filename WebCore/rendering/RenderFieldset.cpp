@@ -49,9 +49,30 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
             legend->setNeedsLayout(true);
         legend->layoutIfNeeded();
 
-        int xPos = borderLeft() + paddingLeft() + legend->marginLeft();
-        if (style()->direction() == RTL)
-            xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
+        int xPos;
+        if (style()->direction() == RTL) {
+            switch (legend->style()->textAlign()) {
+                case LEFT:
+                    xPos = borderLeft() + paddingLeft();
+                    break;
+                case CENTER:
+                    xPos = (m_width - legend->width()) / 2;
+                    break;
+                default:
+                    xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
+            }
+        } else {
+            switch (legend->style()->textAlign()) {
+                case RIGHT:
+                    xPos = m_width - paddingRight() - borderRight() - legend->width();
+                    break;
+                case CENTER:
+                    xPos = (m_width - legend->width()) / 2;
+                    break;
+                default:
+                    xPos = borderLeft() + paddingLeft() + legend->marginLeft();
+            }
+        }
         int b = borderTop();
         int h = legend->height();
         legend->setPos(xPos, max((b-h)/2, 0));

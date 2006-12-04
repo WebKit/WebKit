@@ -1,3 +1,20 @@
+2006-12-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by dhyatt.
+
+        Patch by pmax.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=3280
+        With LEGEND element, align=right value is not supported
+        http://bugs.webkit.org/show_bug.cgi?id=11544
+        <legend> rendering doesn't take align into account
+
+        * fast/forms/fieldset-align-expected.checksum: Added.
+        * fast/forms/fieldset-align-expected.png: Added.
+        * fast/forms/fieldset-align-expected.txt: Added.
+        * fast/forms/fieldset-align.html: Added.
+
 2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

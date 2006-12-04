@@ -1,3 +1,19 @@
+2006-12-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by dhyatt.
+
+        Patch by pmax.
+
+        http://bugs.webkit.org/show_bug.cgi?id=3280
+        With LEGEND element, align=right value is not supported
+        http://bugs.webkit.org/show_bug.cgi?id=11544
+        <legend> rendering doesn't take align into account
+
+        Allow aligning for legends in both RTL and LTR mode.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutLegend):
+
 2006-12-03  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Alexey.
