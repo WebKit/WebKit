@@ -1431,10 +1431,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ImageAnimationObserver.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\KURL.cpp"
 				>
 			</File>
@@ -1472,6 +1468,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\PlatformKeyboardEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\PlatformMenuDescription.h"
 				>
 			</File>
 			<File
@@ -1743,6 +1743,10 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\graphics\Image.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\ImageAnimationObserver.h"
 					>
 				</File>
 				<File

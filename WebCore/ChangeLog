@@ -1,3 +1,22 @@
+2006-12-04  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11748:
+        Windows build bustage.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/ContextMenuItem.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::platformDescription):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+
 2006-12-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

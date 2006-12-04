@@ -30,9 +30,10 @@
 
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
-#include "RetainPtr.h"
 
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
+
 #ifdef __OBJC__
 @class NSMenuItem;
 #else
