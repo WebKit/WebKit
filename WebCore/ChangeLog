@@ -1,3 +1,13 @@
+2006-12-03  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11730
+        Bug 11730: Meta HTTP Refresh that contains a fraction / decimal get ignored.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Parse the refresh interval as a double rather than an integer.
+
 2006-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

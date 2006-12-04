@@ -1661,8 +1661,8 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         if (pos == -1) // There can be no url (David)
         {
             bool ok = false;
-            int delay = 0;
-            delay = str.toInt(&ok);
+            double delay = 0;
+            delay = str.toDouble(&ok);
             // We want a new history item if the refresh timeout > 1 second
             if (ok && frame)
                 frame->loader()->scheduleRedirection(delay, frame->loader()->url().url(), delay <= 1);
