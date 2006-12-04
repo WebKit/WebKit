@@ -1,3 +1,15 @@
+2006-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        Moved EditorMac.mm to its appropriate location
+
+        * platform/mac/EditorMac.mm: Removed.
+        * editing/mac/EditorMac.mm: Added
+
+        * WebCore.xcodeproj/project.pbxproj:
+        updated for this change
+
 2006-12-04  Rob Buis  <buis@kde.org>
 
         Reviewed by dhyatt.
