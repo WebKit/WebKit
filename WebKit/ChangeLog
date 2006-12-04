@@ -1,3 +1,20 @@
+2006-12-04  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11738:
+        Make link clicking work again on Windows.
+
+        The WebKit changes are to ignore WM_MOUSEMOVED messages when the mouse
+        hasn't actually moved, which were preventing clicks from actually
+        getting dispatched in many cases.  It's a peculiarity of Windows mouse
+        handling that we receive these at all.
+
+        * COM/WebView.cpp:
+        (WebView::WebView):
+        (WebView::mouseMoved):
+        * COM/WebView.h:
+
 2006-12-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

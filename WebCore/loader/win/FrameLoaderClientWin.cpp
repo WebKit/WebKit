@@ -24,53 +24,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#include "config.h"
+#include "FrameLoaderClientWin.h"
 
-#ifndef ChromeClientWin_H
-#define ChromeClientWin_H
+#include "PlatformString.h"
 
-#include "ChromeClient.h"
+namespace WebCore
+{
 
-namespace WebCore {
-
-    class ChromeClientWin : public ChromeClient {
-    public:
-        virtual ~ChromeClientWin() { }
-        virtual void chromeDestroyed();
-
-        virtual void setWindowRect(const FloatRect&);
-        virtual FloatRect windowRect();
-
-        virtual FloatRect pageRect();
-
-        virtual float scaleFactor();
-
-        virtual void focus();
-        virtual void unfocus();
-
-        virtual Page* createWindow(const FrameLoadRequest&);
-        virtual Page* createModalDialog(const FrameLoadRequest&);
-        virtual void show();
-
-        virtual bool canRunModal();
-        virtual void runModal();
-
-        virtual void setToolbarsVisible(bool);
-        virtual bool toolbarsVisible();
-
-        virtual void setStatusbarVisible(bool);
-        virtual bool statusbarVisible();
-
-        virtual void setScrollbarsVisible(bool);
-        virtual bool scrollbarsVisible();
-
-        virtual void setMenubarVisible(bool);
-        virtual bool menubarVisible();
-
-        virtual void setResizable(bool);
-
-        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
-    };
-
+String FrameLoaderClientWin::userAgent()
+{
+    return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
 }
 
-#endif // ChromeClientWin_H
+}

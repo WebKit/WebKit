@@ -113,4 +113,9 @@ bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
     return result;
 }
 
+FrameWinClient* FrameWin::client() const
+{
+    return m_client;
+}
+
 } // namespace WebCore

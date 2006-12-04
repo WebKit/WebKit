@@ -1,5 +1,52 @@
 2006-12-04  Don Gibson  <dgibson77@gmail.com>
 
+        Reviewed and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11738:
+        Make link clicking work again on Windows.
+
+        This re-implements a few functions that used to be part of FrameWin in
+        their new loader-based locations, and copies a few things from the Mac
+        and Qt event handling code that aren't strictly necessary but are
+        pretty simple.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ChromeClientWin.h:
+        * bridge/win/ContextMenuClientWin.h:
+        * bridge/win/EditorClientWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::client):
+        * bridge/win/FrameWin.h:
+        * loader/win/DocumentLoaderWin.cpp: Added.
+        (WebCore::DocumentLoader::setTitle):
+        * loader/win/FrameLoaderClientWin.cpp: Added.
+        (WebCore::FrameLoaderClientWin::userAgent):
+        * loader/win/FrameLoaderClientWin.h:
+        * loader/win/FrameLoaderWin.cpp: Added.
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::setTitle):
+        * page/win/EventHandlerWin.cpp: Added.
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::EventHandler::tabsToLinks):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::lastEventIsMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::FrameLoader::getHistoryLength):
+        (WebCore::FrameLoader::historyURL):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoaderClientWin::setTitle):
+
+2006-12-04  Don Gibson  <dgibson77@gmail.com>
+
         Reviewed by Mitz.
 
         http://bugs.webkit.org/show_bug.cgi?id=11748:

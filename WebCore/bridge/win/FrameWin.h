@@ -83,6 +83,8 @@ namespace WebCore {
 
         virtual bool keyPress(const PlatformKeyboardEvent&);
 
+        FrameWinClient* client() const;
+
     protected:
         virtual bool isLoadTypeReload();
 

@@ -25,52 +25,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientWin_H
-#define ChromeClientWin_H
+#include "config.h"
+#include "DocumentLoader.h"
 
-#include "ChromeClient.h"
+#include "FrameWin.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
-    class ChromeClientWin : public ChromeClient {
-    public:
-        virtual ~ChromeClientWin() { }
-        virtual void chromeDestroyed();
+void DocumentLoader::setTitle(const String& title)
+{
+    String text = title;
+    text.replace('//', m_frame->backslashAsCurrencySymbol());
 
-        virtual void setWindowRect(const FloatRect&);
-        virtual FloatRect windowRect();
-
-        virtual FloatRect pageRect();
-
-        virtual float scaleFactor();
-
-        virtual void focus();
-        virtual void unfocus();
-
-        virtual Page* createWindow(const FrameLoadRequest&);
-        virtual Page* createModalDialog(const FrameLoadRequest&);
-        virtual void show();
-
-        virtual bool canRunModal();
-        virtual void runModal();
-
-        virtual void setToolbarsVisible(bool);
-        virtual bool toolbarsVisible();
-
-        virtual void setStatusbarVisible(bool);
-        virtual bool statusbarVisible();
-
-        virtual void setScrollbarsVisible(bool);
-        virtual bool scrollbarsVisible();
-
-        virtual void setMenubarVisible(bool);
-        virtual bool menubarVisible();
-
-        virtual void setResizable(bool);
-
-        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
-    };
-
+    FrameWin* frameWin = static_cast<FrameWin*>(m_frame);
+    if (frameWin->client())
+        frameWin->client()->setTitle(text);
 }
 
-#endif // ChromeClientWin_H
+}

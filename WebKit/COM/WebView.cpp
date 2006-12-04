@@ -70,6 +70,10 @@ WebView::WebView()
 {
     SetRectEmpty(&m_frame);
 
+    // set to impossible point so we always get the first mouse pos
+    m_lastMousePos.x = -1;
+    m_lastMousePos.y = -1;
+
     m_mainFrame = WebFrame::createInstance();
     m_backForwardList = WebBackForwardList::createInstance();
 
@@ -99,8 +103,16 @@ WebView* WebView::createInstance()
 
 void WebView::mouseMoved(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
-    m_mainFrame->impl()->eventHandler()->handleMouseMoveEvent(mouseEvent);
+    // don't send mouse move messages if the mouse hasn't moved.
+    if (LOWORD(lParam) != m_lastMousePos.x ||
+        HIWORD(lParam) != m_lastMousePos.y)
+    {
+        m_lastMousePos.x = LOWORD(lParam);
+        m_lastMousePos.y = HIWORD(lParam);
+
+        PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
+        m_mainFrame->impl()->eventHandler()->handleMouseMoveEvent(mouseEvent);
+    }
 }
 
 void WebView::mouseDown(UINT message, WPARAM wParam, LPARAM lParam)

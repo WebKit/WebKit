@@ -25,52 +25,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientWin_H
-#define ChromeClientWin_H
+#include "config.h"
+#include "FrameLoader.h"
 
-#include "ChromeClient.h"
+#include "DocumentLoader.h"
+#include "FrameLoadRequest.h"
+#include "FrameWin.h"
+#include "ResourceRequest.h"
 
 namespace WebCore {
 
-    class ChromeClientWin : public ChromeClient {
-    public:
-        virtual ~ChromeClientWin() { }
-        virtual void chromeDestroyed();
-
-        virtual void setWindowRect(const FloatRect&);
-        virtual FloatRect windowRect();
-
-        virtual FloatRect pageRect();
-
-        virtual float scaleFactor();
-
-        virtual void focus();
-        virtual void unfocus();
-
-        virtual Page* createWindow(const FrameLoadRequest&);
-        virtual Page* createModalDialog(const FrameLoadRequest&);
-        virtual void show();
-
-        virtual bool canRunModal();
-        virtual void runModal();
-
-        virtual void setToolbarsVisible(bool);
-        virtual bool toolbarsVisible();
-
-        virtual void setStatusbarVisible(bool);
-        virtual bool statusbarVisible();
-
-        virtual void setScrollbarsVisible(bool);
-        virtual bool scrollbarsVisible();
-
-        virtual void setMenubarVisible(bool);
-        virtual bool menubarVisible();
-
-        virtual void setResizable(bool);
-
-        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
-    };
-
+void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* /*triggering Event*/)
+{
+    FrameWin* frameWin = static_cast<FrameWin*>(m_frame);
+    if (frameWin->client())
+        frameWin->client()->openURL(request.resourceRequest().url().url(), request.lockHistory());
 }
 
-#endif // ChromeClientWin_H
+void FrameLoader::submitForm(const FrameLoadRequest& request, Event*)
+{
+    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
+    const ResourceRequest& resourceRequest = request.resourceRequest();
+    if (m_submittedFormURL == resourceRequest.url())
+        return;
+    m_submittedFormURL = resourceRequest.url();
+
+    FrameWin* frameWin = static_cast<FrameWin*>(m_frame);
+    if (frameWin->client())
+        frameWin->client()->submitForm(resourceRequest.httpMethod(), resourceRequest.url(), resourceRequest.httpBody());
+
+    clearRecordedFormValues();
+}
+
+void FrameLoader::setTitle(const String &title)
+{
+    documentLoader()->setTitle(title);
+}
+
+}

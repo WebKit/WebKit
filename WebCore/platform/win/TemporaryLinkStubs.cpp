@@ -215,19 +215,16 @@ bool EditorClientWin::canRedo() const { notImplemented(); return false; }
 void EditorClientWin::undo() { notImplemented(); }
 void EditorClientWin::redo() { notImplemented(); }
 
+bool EventHandler::tabsToLinks(KeyboardEvent* event) const { notImplemented(); return false; }
+bool EventHandler::tabsToAllControls(KeyboardEvent* event) const { notImplemented(); return false; }
 void EventHandler::focusDocumentView() { notImplemented(); }
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults&) { notImplemented(); return false; }
 bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults&) { notImplemented(); return false; }
 bool EventHandler::lastEventIsMouseUp() const { notImplemented(); return false; }
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { notImplemented(); return true; }
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { notImplemented(); return true; }
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { notImplemented(); return true; }
-bool EventHandler::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { notImplemented(); return false; }
-bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&) { notImplemented(); return false; }
-bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { notImplemented(); return false; }
 bool EventHandler::shouldDragAutoNode(Node*, const IntPoint&) const { notImplemented(); return false; }
-bool EventHandler::tabsToAllControls(KeyboardEvent*) const { notImplemented(); return false; }
-bool EventHandler::tabsToLinks(KeyboardEvent*) const { notImplemented(); return false; }
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe) { notImplemented(); return false; }
+bool EventHandler::passMouseDownEventToWidget(Widget*) { notImplemented(); return false; }
+bool EventHandler::passWheelEventToWidget(Widget*) { notImplemented(); return false; }
 
 FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
@@ -244,15 +241,12 @@ String FrameLoader::overrideMediaType() const { notImplemented(); return String(
 Widget* FrameLoader::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&) { notImplemented(); return 0; }
 void FrameLoader::redirectDataToPlugin(Widget* pluginWidget) { notImplemented(); }
 int FrameLoader::getHistoryLength() { notImplemented(); return 0; }
-void FrameLoader::setTitle(const String& title) { notImplemented(); }
 String FrameLoader::referrer() const { notImplemented(); return String(); }
 void FrameLoader::saveDocumentState() { notImplemented(); }
 void FrameLoader::restoreDocumentState() { notImplemented(); }
 void FrameLoader::goBackOrForward(int distance) { notImplemented(); }
 KURL FrameLoader::historyURL(int distance) { notImplemented(); return KURL();}
-void FrameLoader::urlSelected(const FrameLoadRequest&, Event*) { notImplemented(); }
 Frame* FrameLoader::createFrame(KURL const&, String const&, Element*, String const&) { notImplemented(); return 0; }
-void FrameLoader::submitForm(const FrameLoadRequest&, Event*) { notImplemented(); }
 void FrameLoader::partClearedInBegin() { notImplemented(); }
 KURL FrameLoader::originalRequestURL() const { notImplemented(); return KURL(); }
 bool FrameLoader::canGoBackOrForward(int) const { notImplemented(); return false; }
@@ -333,7 +327,6 @@ void FrameLoaderClientWin::addHistoryItemForFragmentScroll() { notImplemented();
 void FrameLoaderClientWin::didFinishLoad() { notImplemented(); }
 void FrameLoaderClientWin::prepareForDataSourceReplacement() { notImplemented(); }
 void FrameLoaderClientWin::setTitle(const String&, const KURL&) { notImplemented(); }
-String FrameLoaderClientWin::userAgent() { notImplemented(); return String(); }
 
 void FrameView::updateBorder() { notImplemented(); }
 

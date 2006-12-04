@@ -32,13 +32,10 @@
 
 namespace WebCore {
 
-    class EditorClientWin : public EditorClient, public Shared<EditorClientWin> {
+    class EditorClientWin : public EditorClient {
     public:
         virtual ~EditorClientWin() { }
         virtual void pageDestroyed();
-
-        virtual void ref() { Shared<EditorClientWin>::ref(); }
-        virtual void deref() { Shared<EditorClientWin>::deref(); }
 
         virtual bool shouldDeleteRange(Range*);
         virtual bool shouldShowDeleteInterface(HTMLElement*);

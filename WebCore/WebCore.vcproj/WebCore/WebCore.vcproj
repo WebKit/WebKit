@@ -1054,6 +1054,14 @@
 				RelativePath="..\..\page\Settings.h"
 				>
 			</File>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\..\page\win\EventHandlerWin.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="loader"
@@ -1238,7 +1246,19 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\loader\win\DocumentLoaderWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\loader\win\FrameLoaderClientWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\loader\win\FrameLoaderClientWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\loader\win\FrameLoaderWin.cpp"
 					>
 				</File>
 			</Filter>

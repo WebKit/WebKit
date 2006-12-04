@@ -408,6 +408,7 @@ protected:
     HWND m_hostWindow;
     HWND m_viewWindow;
     WebFrame* m_mainFrame;
+    POINT m_lastMousePos;
     IWebFrameLoadDelegate* m_frameLoadDelegate;
     IWebUIDelegate* m_uiDelegate;
     IWebBackForwardList* m_backForwardList;

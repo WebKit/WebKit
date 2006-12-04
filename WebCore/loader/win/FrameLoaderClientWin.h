@@ -32,13 +32,10 @@
 
 namespace WebCore {
 
-    class FrameLoaderClientWin : public FrameLoaderClient, public Shared<FrameLoaderClientWin> {
+    class FrameLoaderClientWin : public FrameLoaderClient {
     public:
         virtual ~FrameLoaderClientWin() { }
         virtual void frameLoaderDestroyed();
-
-        virtual void ref() { Shared<FrameLoaderClientWin>::ref(); }
-        virtual void deref() { Shared<FrameLoaderClientWin>::deref(); }
 
         virtual bool hasWebView() const;
         virtual bool hasFrameView() const;
