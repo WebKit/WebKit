@@ -1714,7 +1714,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isSelectionMisspelled
 {
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->isSelectionMisspelled();
+        return coreFrame->isSelectionMisspelled();
     return NO;
 }
 

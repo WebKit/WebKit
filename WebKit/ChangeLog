@@ -1,3 +1,15 @@
+2006-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        - fixed <rdar://problem/4857833> REGRESSION: When ctrl-clicking on a misspelled word, "Ignore Spelling" and "Learn Spelling" 
+          menu items not displayed in the contextual menu
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionMisspelled]):
+        We were computing isSelectionMisspelled by calling WebCore, but then ignoring the result and always
+        returning NO. D'oh!
+
 2006-12-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
