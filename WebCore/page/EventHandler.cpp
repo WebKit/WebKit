@@ -61,6 +61,15 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+// The link drag hysteresis is much larger than the others because there
+// needs to be enough space to cancel the link press without starting a link drag,
+// and because dragging links is rare.
+const float LinkDragHysteresis = 40.0;
+const float ImageDragHysteresis = 5.0;
+const float TextDragHysteresis = 3.0;
+const float GeneralDragHysteresis = 3.0;
+const double TextDragDelay = 0.15;
+
 #ifdef SVG_SUPPORT
 using namespace SVGNames;
 #endif
@@ -81,12 +90,12 @@ EventHandler::EventHandler(Frame* frame)
     , m_capturingMouseEventsNode(0)
     , m_ignoreWheelEvents(false)
     , m_clickCount(0)
+    , m_mouseDownTimestamp(0)
     , m_mouseDownWasInSubframe(false)
     , m_mouseDownMayStartSelect(false)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
-    , m_mouseDownTimestamp(0)
     , m_activationEventNumber(0)
 #endif
 {

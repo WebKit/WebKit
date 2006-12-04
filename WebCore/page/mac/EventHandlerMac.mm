@@ -53,15 +53,6 @@ namespace WebCore {
 
 using namespace EventNames;
 
-// The link drag hysteresis is much larger than the others because there
-// needs to be enough space to cancel the link press without starting a link drag,
-// and because dragging links is rare.
-const float LinkDragHysteresis = 40.0;
-const float ImageDragHysteresis = 5.0;
-const float TextDragHysteresis = 3.0;
-const float GeneralDragHysteresis = 3.0;
-const double TextDragDelay = 0.15;
-
 struct EventHandlerDragState {
     RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
     bool m_dragSrcIsLink;

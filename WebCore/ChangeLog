@@ -1,3 +1,19 @@
+2006-12-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver.
+
+        Moved some constants from EventHandlerMac.mm to EventHandler.cpp
+        Added some platform-specific data members and functions.
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        * platform/PlatformMouseEvent.h:
+        (WebCore::):
+        (WebCore::PlatformMouseEvent::timestamp):
+        (WebCore::PlatformMouseEvent::activatedWebView):
+        (WebCore::PlatformMouseEvent::type):
+
 2006-12-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin, Geoff.
