@@ -55,8 +55,6 @@ auto_ptr<IconLoader> IconLoader::create(Frame* frame)
 
 IconLoader::~IconLoader()
 {
-    if (m_handle)
-        m_handle->kill();
 }
 
 void IconLoader::startLoading()
@@ -90,8 +88,7 @@ void IconLoader::startLoading()
 
 void IconLoader::stopLoading()
 {
-    if (m_handle)
-        m_handle->kill();
+    m_handle = 0;
     clearLoadingState();
 }
 
@@ -102,7 +99,7 @@ void IconLoader::didReceiveResponse(ResourceHandle* handle, const ResourceRespon
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
         KURL iconURL = handle->url();
-        handle->kill();
+        m_handle = 0;
         finishLoading(iconURL);
     }
 }

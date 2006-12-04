@@ -1,3 +1,29 @@
+2006-12-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin, Geoff.
+
+        Get rid of ResourceHandle::kill(), all it did was to balance out a ref() in ResourceHandle::start().
+        We use RefPtrs to ResourceHandle instead.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::~IconLoader):
+        (WebCore::IconLoader::stopLoading):
+        (WebCore::IconLoader::didReceiveResponse):
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::jobForRequest):
+        * loader/loader.h:
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::finishJobAndHandle):
+        (WebCore::ResourceHandle::reportError):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2006-12-04  Oliver Hunt  <oliver@apple.com>
 
         Build fix for non-SVG builds

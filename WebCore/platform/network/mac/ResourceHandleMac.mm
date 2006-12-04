@@ -48,16 +48,13 @@ ResourceHandle::~ResourceHandle()
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
-    ref();
     d->m_loading = true;
 
     ASSERT(docLoader);
     
     FrameMac* frame = Mac(docLoader->frame());
-    if (!frame) {
-        kill();
+    if (!frame)
         return false;
-    }
 
     frame->loader()->didTellBridgeAboutLoad(url().url());
 
@@ -65,10 +62,8 @@ bool ResourceHandle::start(DocLoader* docLoader)
 
     // If we are no longer attached to a Page, this must be an attempted load from an
     // onUnload handler, so let's just block it.
-    if (!frame->page()) {
-        kill();
+    if (!frame->page())
         return false;
-    }
     
     d->m_subresourceLoader = SubresourceLoader::create(frame, this, d->m_request);
 
@@ -77,7 +72,6 @@ bool ResourceHandle::start(DocLoader* docLoader)
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    kill();
     return false;
 }
 
@@ -116,17 +110,17 @@ void ResourceHandle::addData(NSData *data)
 void ResourceHandle::finishJobAndHandle(NSData *data)
 {
     if (ResourceHandleClient* c = client()) {
+        // We must protect the resource handle in case the call to receivedAllData causes a deref.
+        RefPtr<ResourceHandle> protect(this);
         c->receivedAllData(this, data);
         c->didFinishLoading(this);
     }
-    kill();
 }
 
 void ResourceHandle::reportError(NSError* error)
 {
     if (ResourceHandleClient* c = client())
         c->didFailWithError(this, error);
-    kill();
 }
 
 } // namespace WebCore

@@ -362,10 +362,9 @@ void XMLHttpRequest::abort()
 {
     bool hadLoader = m_loader;
 
-    if (hadLoader) {
-        m_loader->kill();
+    if (hadLoader)
         m_loader = 0;
-    }
+
     m_decoder = 0;
     m_aborted = true;
 
@@ -496,7 +495,7 @@ void XMLHttpRequest::didFinishLoading(ResourceHandle* handle)
     if (m_aborted)
         return;
         
-    ASSERT(handle == m_loader);
+    ASSERT(handle == m_loader.get());
 
     if (m_state < Sent)
         changeState(Sent);

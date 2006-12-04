@@ -88,7 +88,7 @@ void Loader::servePendingRequests()
     RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, req->docLoader());
 
     if (loader)
-        m_requestsLoading.add(loader.get(), req);
+        m_requestsLoading.add(loader.release(), req);
 }
 
 void Loader::receivedAllData(ResourceHandle* job, PlatformData allData)
@@ -221,7 +221,7 @@ void Loader::cancelRequests(DocLoader* dl)
     for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
         Request* r = i->second;
         if (r->docLoader() == dl)
-            jobsToCancel.append(i->first);
+            jobsToCancel.append(i->first.get());
     }
 
     for (unsigned i = 0; i < jobsToCancel.size(); ++i) {
@@ -229,7 +229,6 @@ void Loader::cancelRequests(DocLoader* dl)
         Request* r = m_requestsLoading.get(job);
         m_requestsLoading.remove(job);
         cache()->remove(r->cachedResource());
-        job->kill();
     }
 
     DeprecatedPtrListIterator<Request> bdIt(m_requestsBackgroundDecoding);
@@ -254,7 +253,7 @@ ResourceHandle* Loader::jobForRequest(const String& URL) const
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {
         CachedResource* obj = i->second->cachedResource();
         if (obj && obj->url() == URL)
-            return i->first;
+            return i->first.get();
     }
     return 0;
 }
