@@ -1043,7 +1043,7 @@ bool EventHandler::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar* scrollbar)
 {
-    return passWheelEventToWidget(scrollbar);
+    return passMouseDownEventToWidget(scrollbar);
 }
 
 }

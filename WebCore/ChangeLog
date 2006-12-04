@@ -1,3 +1,18 @@
+2006-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11632
+          AKA <rdar://problem/4858866> REGRESSION (r17770): Overflow areas' scrollbars don't work
+
+        No test case added at the moment, but Beth said she'd investigate
+        adding one after the fact.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        Fix obvious-in-retrospect copy and paste error -- call
+        passMouseDownEventToWidget instead of passWheelEventToWidget.
+
 2006-12-04  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed and landed by Alexey.
