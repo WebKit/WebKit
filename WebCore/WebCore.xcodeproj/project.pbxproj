@@ -2289,7 +2289,7 @@
 		B2A015B80AF6CD53006BCE0E /* SVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A50AF6CD53006BCE0E /* SVGResourceMarker.h */; };
 		B2A015B90AF6CD53006BCE0E /* SVGResourceMasker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015A60AF6CD53006BCE0E /* SVGResourceMasker.cpp */; };
 		B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */; };
-		B2BFB5A00B22F76200567E80 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2BFB59F0B22F76200567E80 /* ImageAnimationObserver.h */; };
+		B2BFB5A00B22F76200567E80 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2BFB59F0B22F76200567E80 /* ImageAnimationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2CB41930AB75904004D9C45 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB414C0AB75904004D9C45 /* SVGRenderingIntent.h */; };
 		B2CB41A60AB75904004D9C45 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB415F0AB75904004D9C45 /* SVGUnitTypes.h */; };
 		B2D87C770B124E7300B0DE1E /* SVGPaintServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D87C6B0B124E7300B0DE1E /* SVGPaintServer.cpp */; };
