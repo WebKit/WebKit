@@ -96,6 +96,7 @@ JSValue* JSSVGPointProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj,
     if (!thisObj->inherits(&JSSVGPoint::info))
         return throwError(exec, TypeError);
 
+#ifdef SVG_SUPPORT
     FloatPoint point = static_cast<JSSVGPoint*>(thisObj)->impl();
     switch (id) {
         case JSSVGPoint::MatrixTransform: {
@@ -106,6 +107,7 @@ JSValue* JSSVGPointProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj,
             return getJSSVGPoint(exec, p);
         }
     }
+#endif
 
     return jsUndefined();
 }

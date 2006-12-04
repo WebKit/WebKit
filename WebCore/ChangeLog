@@ -1,3 +1,10 @@
+2006-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Build fix for non-SVG builds
+
+        * bindings/js/JSSVGPoint.cpp:
+        (WebCore::JSSVGPointProtoFunc::callAsFunction):
+
 2006-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.
