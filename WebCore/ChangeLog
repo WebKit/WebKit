@@ -1,3 +1,14 @@
+2006-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam
+
+        New context-menu mechanism fix for:
+        <rdar://problem/4864351> Should leave out "No Guesses Found" from context menu for bad grammar
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        Leave out "No Guesses Found" and separator for grammar-checking case.
+
 2006-12-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

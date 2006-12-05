@@ -312,6 +312,9 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // to WebCore soon where we won't have to do this.
             Vector<WebCore::String> guesses = core(webFrame)->guessesForUngrammaticalSelection();
             size_t count = guesses.size();
+            
+            // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
+            // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
             if (count > 0) {
                 for (unsigned i = 0; i < count; ++i) {
                     NSString *string = guesses.at(i);
@@ -319,10 +322,8 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
                     [item setTitle:string];
                     [menuItems addObject:item];
                 }
-            } else {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil representedObject:element]];
+                [menuItems addObject:[NSMenuItem separatorItem]];
             }
-            [menuItems addObject:[NSMenuItem separatorItem]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreGrammar target:nil representedObject:element]];
             [menuItems addObject:[NSMenuItem separatorItem]];
 #endif
