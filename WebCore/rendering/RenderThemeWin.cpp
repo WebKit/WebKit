@@ -170,10 +170,10 @@ unsigned RenderThemeWin::determineState(RenderObject* o)
         result = TFS_READONLY; // Readonly is supported on textfields.
     else if (supportsFocus(o->style()->appearance()) && isFocused(o))
         result = TS_FOCUSED;
+    else if (isPressed(o)) // Active overrides hover.
+        result = TS_ACTIVE;
     else if (isHovered(o))
         result = TS_HOVER;
-    else if (isPressed(o))
-        result = TS_ACTIVE;
     if (isChecked(o))
         result += 4; // 4 unchecked states, 4 checked states.
     return result;

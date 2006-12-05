@@ -1,5 +1,19 @@
 2006-12-05  Kirby White  <KWhiteRight@gmail.com>
 
+        Reviewed, tweaked and landed by Alexey.
+
+        <http://bugs.webkit.org/show_bug.cgi?id=11639> Form buttons don't look different when clicked
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::determineState): Moved test for active 
+        state before test for hover state, since active should override hover 
+        when both are true.
+
+        * platform/gdk/RenderThemeGdk.cpp: 
+        (WebCore::RenderThemeGdk::determineState): Same fix.
+
+2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+
         Reviewed and landed by Alexey.
 
         http://bugs.webkit.org/show_bug.cgi?id=11681
