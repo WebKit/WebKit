@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSSVGRect_H
-#define JSSVGRect_H
+#ifndef JSSVGRect_h
+#define JSSVGRect_h
+
+#ifdef SVG_SUPPORT
 
 #include "kjs_binding.h"
 #include "FloatRect.h"
@@ -56,6 +58,8 @@ private:
 KJS::JSValue* getJSSVGRect(KJS::ExecState*, const FloatRect&);
 FloatRect toFloatRect(KJS::JSValue*);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // SVG_SUPPORT
+
+#endif // JSSVGRect_h

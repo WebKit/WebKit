@@ -28,6 +28,7 @@
 #ifdef XSLT_SUPPORT
 
 #include "JSXSLTProcessor.h"
+
 #include "XSLTProcessor.h"
 #include "JSXSLTProcessor.lut.h"
 #include "kjs_dom.h"

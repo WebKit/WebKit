@@ -1,3 +1,19 @@
+2006-12-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim H.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11758
+        Don't compile custom SVG and XSLT bindings in non-svg build
+
+        * bindings/js/JSSVGNumber.cpp:
+        * bindings/js/JSSVGNumber.h:
+        * bindings/js/JSSVGPoint.cpp:
+        * bindings/js/JSSVGPoint.h:
+        * bindings/js/JSSVGRect.cpp:
+        * bindings/js/JSSVGRect.h:
+        * bindings/js/JSXSLTProcessor.cpp:
+        * bindings/js/JSXSLTProcessor.h:
+
 2006-12-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

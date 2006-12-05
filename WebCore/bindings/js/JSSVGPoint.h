@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSSVGPoint_H
-#define JSSVGPoint_H
+#ifndef JSSVGPoint_h
+#define JSSVGPoint_h
+
+#ifdef SVG_SUPPORT
 
 #include "kjs_binding.h"
 #include "FloatPoint.h"
@@ -59,6 +61,8 @@ private:
 KJS::JSValue* getJSSVGPoint(KJS::ExecState*, const FloatPoint&);
 FloatPoint toFloatPoint(KJS::JSValue*);
   
-}
+} // namespace WebCore
 
-#endif
+#endif // SVG_SUPPORT
+
+#endif // JSSVGPoint_h
