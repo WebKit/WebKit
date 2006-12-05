@@ -663,7 +663,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
     
     int misspellingOffset;
-    NSString *misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
+    NSString *misspelledWord = findFirstMisspellingInRange(checker, editor()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
     
     NSString *badGrammarPhrase = nil;
 
@@ -680,8 +680,8 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
     }
     
-    if (editor()->client()->isGrammarCheckingEnabled())
-        badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
+    if (editor()->isGrammarCheckingEnabled())
+        badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
 #endif
     
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
@@ -691,7 +691,7 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         // going until the end of the very first chunk we tested is far enough
         spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
         
-        misspelledWord = findFirstMisspellingInRange(checker, editor()->client()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
+        misspelledWord = findFirstMisspellingInRange(checker, editor()->spellCheckerDocumentTag(), spellingSearchRange.get(), misspellingOffset, false);
 
 #ifndef BUILDING_ON_TIGER
         grammarSearchRange = spellingSearchRange->cloneRange(ec);
@@ -701,8 +701,8 @@ void FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
             chars.advance(misspellingOffset);
             grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
         }
-        if (editor()->client()->isGrammarCheckingEnabled())
-            badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->client()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
+        if (editor()->isGrammarCheckingEnabled())
+            badGrammarPhrase = findFirstBadGrammarInRange(checker, editor()->spellCheckerDocumentTag(), grammarSearchRange.get(), grammarDetail, grammarPhraseOffset, false);
 #endif
     }
     
@@ -1398,7 +1398,7 @@ void FrameMac::markMisspellings(const Selection& selection)
     markAllMisspellingsInRange(checker, editor()->spellCheckerDocumentTag(), searchRange.get());
     
 #ifndef BUILDING_ON_TIGER
-    if (editor()->client()->isGrammarCheckingEnabled())
+    if (editor()->isGrammarCheckingEnabled())
         markAllBadGrammarInRange(checker, editor()->spellCheckerDocumentTag(), searchRange.get());
 #endif
 }

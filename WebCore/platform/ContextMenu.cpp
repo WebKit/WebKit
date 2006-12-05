@@ -226,7 +226,7 @@ void ContextMenu::populate()
             // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
             // is never considered a misspelling and bad grammar at the same time)
             bool misspelling = frame->isSelectionMisspelled();
-            bool badGrammar = !misspelling && (frame->editor()->client()->isGrammarCheckingEnabled() && frame->isSelectionUngrammatical());
+            bool badGrammar = !misspelling && (frame->editor()->isGrammarCheckingEnabled() && frame->isSelectionUngrammatical());
             
             if (misspelling || badGrammar) {
                 Vector<String> guesses = misspelling ? frame->guessesForMisspelledSelection() : frame->guessesForUngrammaticalSelection();

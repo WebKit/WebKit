@@ -1,3 +1,25 @@
+2006-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        Grammar/Spelling code re-homing, baby step one: put isGrammarCheckingEnabled in Editor
+        since that's where isContinousSpellCheckingEnabled lives.
+
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::isGrammarCheckingEnabled):
+        new method, calls through to client a la isContinuousSpellCheckingEnabled
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        call editor() rather than editor()->client()
+        (WebCore::FrameMac::markMisspellings):
+        ditto
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        ditto
+
 2006-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
