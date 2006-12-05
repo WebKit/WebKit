@@ -1,3 +1,17 @@
+2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+
+        Reviewed and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11681
+        Don't select the first option when resetting a listbox-style form 
+        control (i.e., a multi-select control or one with size > 1) that
+        has no default selection.
+
+        Test: fast/dom/HTMLSelectElement/listbox-select-reset.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::reset):
+
 2006-12-05  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
 
         Reviewed and landed by Alexey.

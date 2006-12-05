@@ -1,3 +1,10 @@
+2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+
+        Reviewed and landed by Alexey.
+
+        * fast/dom/HTMLSelectElement/listbox-select-reset-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/listbox-select-reset.html: Added.
+
 2006-12-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Rob.
