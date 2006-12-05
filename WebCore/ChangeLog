@@ -1,5 +1,30 @@
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Geoff Garen
+
+        * page/Frame.h:
+        remove declarations of ignoreSpelling() and learnSpelling()
+
+        * bridge/mac/FrameMac.h:
+        remove declarations of ignoreSpelling() and learnSpelling()
+        * bridge/mac/FrameMac.mm:
+        moved implementations of ignoreSpelling() and learnSpelling() from here
+
+        * editing/Editor.h:
+        added declarations of ignoreSpelling() and learnSpelling()
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::ignoreSpelling):
+        moved here from FrameMac.mm
+        (WebCore::Editor::learnSpelling):
+        ditto
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        updated callers to use frame()->editor() rather than frame()
+
+2006-12-05  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Adam
 
         New context-menu mechanism fix for:

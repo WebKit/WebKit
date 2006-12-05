@@ -165,8 +165,6 @@ public:
     
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
-    virtual void ignoreSpelling();
-    virtual void learnSpelling();
     virtual bool isSelectionUngrammatical();
     virtual bool isSelectionMisspelled();
     virtual Vector<String> guessesForMisspelledSelection();

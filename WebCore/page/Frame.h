@@ -256,8 +256,6 @@ public:
     void applyEditingStyleToElement(Element*) const;
     void removeEditingStyleFromElement(Element*) const;
 
-    virtual void ignoreSpelling() = 0;
-    virtual void learnSpelling() = 0;
     virtual bool isSelectionUngrammatical() = 0;
     virtual bool isSelectionMisspelled() = 0;
     virtual Vector<String> guessesForMisspelledSelection() = 0;

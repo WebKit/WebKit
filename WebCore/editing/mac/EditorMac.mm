@@ -44,4 +44,19 @@ NSString* Editor::userVisibleString(NSURL* nsURL)
     return nil;
 }
 
+void Editor::ignoreSpelling()
+{
+    String text = frame()->selectedText();
+    ASSERT(text.length() != 0);
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:text 
+                             inSpellDocumentWithTag:spellCheckerDocumentTag()];
+}
+
+void Editor::learnSpelling()
+{
+    String text = frame()->selectedText();
+    ASSERT(text.length() != 0);
+    [[NSSpellChecker sharedSpellChecker] learnWord:text];
+}
+    
 } // namespace WebCore

@@ -193,10 +193,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             }
             break;
         case ContextMenuItemTagIgnoreSpelling:
-            frame->ignoreSpelling();
+            frame->editor()->ignoreSpelling();
             break;
         case ContextMenuItemTagLearnSpelling:
-            frame->learnSpelling();
+            frame->editor()->learnSpelling();
             break;
         case ContextMenuItemTagSearchInSpotlight:
 #if PLATFORM(MAC)

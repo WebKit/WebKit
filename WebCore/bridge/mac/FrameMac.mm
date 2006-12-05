@@ -99,16 +99,6 @@
 - (NPObject *)createPluginScriptableObject;
 @end
 
-#ifndef BUILDING_ON_TIGER
-@interface NSSpellChecker (UpcomingAPI)
-- (void)updateSpellingPanelWithGrammarString:(NSString *)grammarString detail:(NSDictionary *)grammarDetail;
-@end
-#endif
-
-@interface NSSpellChecker (CurrentlyPrivateForTextView)
-- (void)learnWord:(NSString *)word;
-@end
-
 using namespace std;
 using namespace KJS::Bindings;
 
@@ -1205,21 +1195,6 @@ void FrameMac::issuePasteAndMatchStyleCommand()
 void FrameMac::issueTransposeCommand()
 {
     [_bridge issueTransposeCommand];
-}
-
-void FrameMac::ignoreSpelling()
-{
-    String text = selectedText();
-    ASSERT(text.length() != 0);
-    [[NSSpellChecker sharedSpellChecker] ignoreWord:text 
-        inSpellDocumentWithTag:editor()->spellCheckerDocumentTag()];
-}
-
-void FrameMac::learnSpelling()
-{
-    String text = selectedText();
-    ASSERT(text.length() != 0);
-    [[NSSpellChecker sharedSpellChecker] learnWord:text];
 }
 
 bool FrameMac::isSelectionMisspelled()
