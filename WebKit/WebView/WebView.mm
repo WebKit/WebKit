@@ -1445,14 +1445,10 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag
 {
-    // FIXME: Remove this defaults read once we decide to "turn on" compatibility
-    // mode support for good.
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebDashboardBehaviorUseBackwardCompatibilityModeEnabled"]) {
-        // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
-        // specific support for the backward compatibility mode flag.
-        if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO)
-            [_private->settings setShouldUseDashboardBackwardCompatibilityMode:YES];
-    }
+    // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
+    // specific support for the backward compatibility mode flag.
+    if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO)
+        [_private->settings setShouldUseDashboardBackwardCompatibilityMode:YES];
     
     switch (behavior) {
         case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
