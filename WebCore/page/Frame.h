@@ -258,8 +258,10 @@ public:
 
     virtual void ignoreSpelling() = 0;
     virtual void learnSpelling() = 0;
+    virtual bool isSelectionUngrammatical() = 0;
     virtual bool isSelectionMisspelled() = 0;
     virtual Vector<String> guessesForMisspelledSelection() = 0;
+    virtual Vector<String> guessesForUngrammaticalSelection() = 0;
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&) = 0;
     virtual void markMisspellings(const Selection&) = 0;
     virtual Range* markedTextRange() const = 0;

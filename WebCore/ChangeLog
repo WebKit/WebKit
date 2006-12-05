@@ -1,3 +1,39 @@
+2006-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        WebCore part of fix for:
+        <rdar://problem/4817188> Context menu for bad grammar should include suggestions and "Ignore Grammar"
+
+        The context menu mechanism is currently in flux; the old mechanism is still in place, but an
+        up-and-coming new mechanism is waiting in the wings. I updated both of them, but couldn't
+        test the new mechanism because it doesn't work well enough yet. Also, some of this code 
+        should move from Frame to Editor, but that will wait for another checkin.
+
+        * page/Frame.h:
+        added pure virtual function declarations for isSelectionUngrammatical() and guessesForUngrammaticalSelection()
+
+        * bridge/mac/FrameMac.h:
+        added virtual functions declarations for isSelectionUngrammatical() and guessesForUngrammaticalSelection()
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::isSelectionMisspelled):
+        now updates spelling panel (whether or not it's showing), since this is now needed to make -[NSSSpellChecker
+        ignoreWord:inSpellDocumentWithTag:] work correctly
+        (WebCore::isRangeUngrammatical):
+        new function, helper used by both isSelectionUngrammatical() and guessesForUngrammaticalSelection()
+        (WebCore::FrameMac::isSelectionUngrammatical):
+        new function, calls isRangeUngrammatical
+        (WebCore::FrameMac::guessesForUngrammaticalSelection):
+        ditto
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        now considers bad grammar as well as misspellings
+        
+        * platform/ContextMenuItem.h:
+        added ContextMenuItemTagIgnoreGrammar
+        
 2006-12-05  Kirby White  <KWhiteRight@gmail.com>
 
         Reviewed, tweaked and landed by Alexey.

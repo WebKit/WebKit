@@ -1711,6 +1711,13 @@ static WebHTMLView *lastHitView = nil;
     return coreFrame->selectionController()->isInPasswordField();
 }
 
+- (BOOL)_isSelectionUngrammatical
+{
+    if (Frame* coreFrame = core([self _frame]))
+        return coreFrame->isSelectionUngrammatical();
+    return NO;
+}
+
 - (BOOL)_isSelectionMisspelled
 {
     if (Frame* coreFrame = core([self _frame]))
@@ -1736,6 +1743,12 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([[self selectedString] length] != 0);
     [[NSSpellChecker sharedSpellChecker] ignoreWord:[self selectedString] inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
+}
+
+- (void)_ignoreGrammarFromMenu:(id)sender
+{
+    // NSSpellChecker uses the same API for ignoring grammar as for ignoring spelling
+    [self _ignoreSpellingFromMenu:(id)sender];
 }
 
 - (void)_learnSpellingFromMenu:(id)sender

@@ -31,6 +31,7 @@
 // FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
 enum { 
     WebMenuItemTagOpenLink = 1000,
+    WebMenuItemTagIgnoreGrammar,
 #ifndef BUILDING_ON_TIGER
     WebMenuItemTagSpellingAndGrammarMenu,
     WebMenuItemTagShowSpellingAndGrammar,

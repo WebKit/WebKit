@@ -147,6 +147,12 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             title = UI_STRING("Ignore Spelling", "Ignore Spelling context menu item");
             action = @selector(_ignoreSpellingFromMenu:);
             break;
+#ifndef BUILDING_ON_TIGER
+        case WebMenuItemTagIgnoreGrammar:
+            title = UI_STRING("Ignore Grammar", "Ignore Grammar context menu item");
+            action = @selector(_ignoreGrammarFromMenu:);
+            break;
+#endif
         case WebMenuItemTagLearnSpelling:
             title = UI_STRING("Learn Spelling", "Learn Spelling context menu item");
             action = @selector(_learnSpellingFromMenu:);
@@ -272,29 +278,55 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 {
     NSMutableArray *menuItems = [NSMutableArray array];
     NSMenuItem *item;
-    WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    WebHTMLView *HTMLView = (WebHTMLView *)[[webFrame frameView] documentView];
     ASSERT([HTMLView isKindOfClass:[WebHTMLView class]]);
     BOOL inPasswordField = [HTMLView _isSelectionInPasswordField];
 
-    // Add spelling-related context menu items.
-    if ([HTMLView _isSelectionMisspelled] && !inPasswordField) {
-        NSArray *guesses = [HTMLView _guessesForMisspelledSelection];
-        unsigned count = [guesses count];
-        if (count > 0) {
-            NSEnumerator *enumerator = [guesses objectEnumerator];
-            NSString *guess;
-            while ((guess = [enumerator nextObject]) != nil) {
-                item = [self menuItemWithTag:WebMenuItemTagSpellingGuess target:nil representedObject:element];
-                [item setTitle:guess];
-                [menuItems addObject:item];
+    if (!inPasswordField) {
+        // Consider adding spelling-related or grammar-related context menu items (never both)
+        if ([HTMLView _isSelectionMisspelled]) {
+            NSArray *guesses = [HTMLView _guessesForMisspelledSelection];
+            unsigned count = [guesses count];
+            if (count > 0) {
+                NSEnumerator *enumerator = [guesses objectEnumerator];
+                NSString *guess;
+                while ((guess = [enumerator nextObject]) != nil) {
+                    item = [self menuItemWithTag:WebMenuItemTagSpellingGuess target:nil representedObject:element];
+                    [item setTitle:guess];
+                    [menuItems addObject:item];
+                }
+            } else {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil representedObject:element]];
             }
-        } else {
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil representedObject:element]];
+            [menuItems addObject:[NSMenuItem separatorItem]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreSpelling target:nil representedObject:element]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling target:nil representedObject:element]];
+            [menuItems addObject:[NSMenuItem separatorItem]];
+        } else if ([[webFrame webView] isGrammarCheckingEnabled] && [HTMLView _isSelectionUngrammatical]) {
+#ifdef BUILDING_ON_TIGER
+            ASSERT_NOT_REACHED();
+#else
+            // These strings are being converted from NSString to WebCore::String and back again, which
+            // would offend our sensibilities something awful except that we're moving all the context menu code
+            // to WebCore soon where we won't have to do this.
+            Vector<WebCore::String> guesses = core(webFrame)->guessesForUngrammaticalSelection();
+            size_t count = guesses.size();
+            if (count > 0) {
+                for (unsigned i = 0; i < count; ++i) {
+                    NSString *string = guesses.at(i);
+                    item = [self menuItemWithTag:WebMenuItemTagSpellingGuess target:nil representedObject:element];
+                    [item setTitle:string];
+                    [menuItems addObject:item];
+                }
+            } else {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil representedObject:element]];
+            }
+            [menuItems addObject:[NSMenuItem separatorItem]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreGrammar target:nil representedObject:element]];
+            [menuItems addObject:[NSMenuItem separatorItem]];
+#endif
         }
-        [menuItems addObject:[NSMenuItem separatorItem]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreSpelling target:nil representedObject:element]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling target:nil representedObject:element]];
-        [menuItems addObject:[NSMenuItem separatorItem]];
     }
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];

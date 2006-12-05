@@ -1228,13 +1228,102 @@ bool FrameMac::isSelectionMisspelled()
     unsigned length = selectedString.length();
     if (length == 0)
         return false;
-    NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:selectedString
-                                                                    startingAt:0
-                                                                      language:nil
-                                                                          wrap:NO 
-                                                        inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() 
-                                                                     wordCount:NULL];
-    return range.length == length;
+    
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker)
+        return false;
+    
+    NSRange range = [checker checkSpellingOfString:selectedString
+                                        startingAt:0
+                                          language:nil
+                                              wrap:NO 
+                            inSpellDocumentWithTag:editor()->spellCheckerDocumentTag() 
+                                         wordCount:NULL];
+    
+    // The selection only counts as misspelled if the selected text is exactly one misspelled word
+    if (range.length != length)
+        return false;
+    
+    // Update the spelling panel to be displaying this error (whether or not the spelling panel is on screen).
+    // This is necessary to make a subsequent call to [NSSpellChecker ignoreWord:inSpellDocumentWithTag:] work
+    // correctly; that call behaves differently based on whether the spelling panel is displaying a misspelling
+    // or a grammar error.
+    [checker updateSpellingPanelWithMisspelledWord:selectedString];
+    
+    return true;
+}
+    
+#ifndef BUILDING_ON_TIGER
+static bool isRangeUngrammatical(int tag, Range *range, Vector<String>& guessesVector)
+{
+    // Returns true only if the passed range exactly corresponds to a bad grammar detail range. This is analogous
+    // to isSelectionMisspelled. It's not good enough for there to be some bad grammar somewhere in the range,
+    // or overlapping the range; the ranges must exactly match.
+    guessesVector.clear();
+    NSDictionary *grammarDetail;
+    int grammarPhraseOffset;
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker)
+        return false;
+    
+    NSString *badGrammarPhrase = findFirstBadGrammarInRange(checker, tag, range, grammarDetail, grammarPhraseOffset, false);    
+    
+    // No bad grammar in these parts at all.
+    if (!badGrammarPhrase)
+        return false;
+    
+    // Bad grammar, but phrase (e.g. sentence) starts beyond start of range.
+    if (grammarPhraseOffset > 0)
+        return false;
+    
+    ASSERT(grammarDetail);
+    NSValue *detailRangeAsNSValue = [grammarDetail objectForKey:NSGrammarRange];
+    ASSERT(detailRangeAsNSValue);
+    NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+    ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
+    
+    // Bad grammar, but start of detail (e.g. ungrammatical word) doesn't match start of range
+    if (detailNSRange.location + grammarPhraseOffset != 0)
+        return false;
+    
+    // Bad grammar at start of range, but end of bad grammar is before or after end of range
+    if ((int)detailNSRange.length != TextIterator::rangeLength(range))
+        return false;
+    
+    NSArray *guesses = [grammarDetail objectForKey:NSGrammarCorrections];
+    for (NSString *guess in guesses)
+        guessesVector.append(guess);
+
+    // Update the spelling panel to be displaying this error (whether or not the spelling panel is on screen).
+    // This is necessary to make a subsequent call to [NSSpellChecker ignoreWord:inSpellDocumentWithTag:] work
+    // correctly; that call behaves differently based on whether the spelling panel is displaying a misspelling
+    // or a grammar error.
+    [checker updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetail];
+
+    return true;
+}
+#endif
+    
+bool FrameMac::isSelectionUngrammatical()
+{
+#ifdef BUILDING_ON_TIGER
+    return false;
+#else
+    Vector<String> ignoredGuesses;
+    return isRangeUngrammatical(editor()->spellCheckerDocumentTag(), selectionController()->toRange().get(), ignoredGuesses);
+#endif
+}
+
+Vector<String> FrameMac::guessesForUngrammaticalSelection()
+{
+#ifdef BUILDING_ON_TIGER
+    return Vector<String>();
+#else
+    Vector<String> guesses;
+    // Ignore the result of isRangeUngrammatical; we just want the guesses, whether or not there are any
+    isRangeUngrammatical(editor()->spellCheckerDocumentTag(), selectionController()->toRange().get(), guesses);
+    return guesses;
+#endif
 }
 
 static Vector<String> core(NSArray* stringsArray)

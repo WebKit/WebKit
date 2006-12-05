@@ -1,3 +1,36 @@
+2006-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        WebKit part of fix for:
+        <rdar://problem/4817188> Context menu for bad grammar should include suggestions and "Ignore Grammar"
+
+        The context menu mechanism is currently in flux; the old mechanism is still in place, but an
+        up-and-coming new mechanism is waiting in the wings. I updated both of them, but couldn't
+        test the new mechanism because it doesn't work well enough yet. Most of this WebKit code
+        can be deleted when the new mechanism is in place.
+
+        * WebView/WebUIDelegatePrivate.h:
+        added WebMenuItemTagIgnoreGrammar
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        added case for WebMenuItemTagIgnoreGrammar
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        now considers adding grammar-related items as well as spelling-related items
+        
+        * WebView/WebHTMLViewPrivate.h:
+        declared _isSelectionUngrammatical
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionUngrammatical]):
+        new method, calls through to WebCore
+        (-[WebHTMLView _ignoreGrammarFromMenu:]):
+        new method, calls _ignoreSpellingFromMenu: since NSSpellChecker has one method for both
+
+        * English.lproj/Localizable.strings:
+        updated for "Ignore Grammar" menu item title
+
 2006-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

@@ -28,6 +28,7 @@
 
 #include "ContextMenuController.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KURL.h"
@@ -150,6 +151,7 @@ void ContextMenu::populate()
     MENU_ACTION_ITEM(SpellingGuess, "");
     MENU_ACTION_ITEM(NoGuessesFound, "No Guesses Found");
     MENU_ACTION_ITEM(IgnoreSpelling, "Ignore Spelling");
+    MENU_ACTION_ITEM(IgnoreGrammar, "Ignore Grammar");
     MENU_ACTION_ITEM(LearnSpelling, "Learn Spelling");
 #if PLATFORM(MAC)
     MENU_ACTION_ITEM(SearchInSpotlight, "Search in Spotlight");
@@ -219,27 +221,36 @@ void ContextMenu::populate()
     } else { // Make an editing context menu
         SelectionController* selectionController = frame->selectionController();
         bool inPasswordField = selectionController->isInPasswordField();
-
-        // Add spelling-related context menu items.
-        if (frame->isSelectionMisspelled() && !inPasswordField) {
-            Vector<String> guesses = frame->guessesForMisspelledSelection();
-            unsigned size = guesses.size();
-            if (size == 0)
-                appendItem(NoGuessesFoundItem);
-            else {
-                for (unsigned i = 0; i < size; i++) {
-                    String guess = guesses[i];
-                    if (!guess.isNull()) {
-                        ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
-                        appendItem(item);
+        
+        if (!inPasswordField) {
+            // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
+            // is never considered a misspelling and bad grammar at the same time)
+            bool misspelling = frame->isSelectionMisspelled();
+            bool badGrammar = !misspelling && (frame->editor()->client()->isGrammarCheckingEnabled() && frame->isSelectionUngrammatical());
+            
+            if (misspelling || badGrammar) {
+                Vector<String> guesses = misspelling ? frame->guessesForMisspelledSelection() : frame->guessesForUngrammaticalSelection();
+                size_t size = guesses.size();
+                if (size == 0)
+                    appendItem(NoGuessesFoundItem);
+                else {
+                    for (unsigned i = 0; i < size; i++) {
+                        const String &guess = guesses[i];
+                        if (!guess.isEmpty()) {
+                            ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
+                            appendItem(item);
+                        }
                     }
                 }
-            }                
-
-            appendItem(SeparatorItem);
-            appendItem(IgnoreSpellingItem);
-            appendItem(LearnSpellingItem);
-            appendItem(SeparatorItem);
+                
+                appendItem(SeparatorItem);
+                if (misspelling) {
+                    appendItem(IgnoreSpellingItem);
+                    appendItem(LearnSpellingItem);
+                } else
+                    appendItem(IgnoreGrammarItem);
+                appendItem(SeparatorItem);
+            }
         }
 
         if (result.isSelected() && !inPasswordField) {
