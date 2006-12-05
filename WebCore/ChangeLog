@@ -1,3 +1,24 @@
+2006-12-05  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11752
+        [CSS 3] missing support for cursor selector 'copy'
+
+        * Resources/copyCursor.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * manual-tests/cursor.html:
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::copyCursor):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+
 2006-12-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

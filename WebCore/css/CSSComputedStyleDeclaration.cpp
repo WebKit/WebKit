@@ -642,6 +642,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case CURSOR_ALIAS:
                 value = new CSSPrimitiveValue(CSS_VAL_ALIAS);
                 break;
+            case CURSOR_COPY:
+                value = new CSSPrimitiveValue(CSS_VAL_COPY);
+                break;
             case CURSOR_PROGRESS:
                 value = new CSSPrimitiveValue(CSS_VAL_PROGRESS);
                 break;

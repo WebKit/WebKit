@@ -170,7 +170,7 @@ no-repeat
 # CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
 #
 clear
-copy
+# copy
 source-over
 source-in
 source-out
@@ -270,6 +270,7 @@ vertical-text
 cell
 context-menu
 alias
+copy
 progress
 no-drop
 not-allowed
