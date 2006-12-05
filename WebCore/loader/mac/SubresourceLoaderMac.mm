@@ -56,6 +56,10 @@ SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* clie
     frameLoader()->addSubresourceLoader(this);
 }
 
+SubresourceLoader::~SubresourceLoader()
+{
+}
+
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request)
 {
     if (!frame)

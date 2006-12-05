@@ -1,5 +1,13 @@
 2006-12-04  Anders Carlsson  <acarlsson@apple.com>
 
+        Fix the build.
+        
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::~SubresourceLoader):
+        Add back the destructor.
+
+2006-12-04  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
         
         Change all ResourceHandleClients to be SubresourceLoaderClients instead. Also,
