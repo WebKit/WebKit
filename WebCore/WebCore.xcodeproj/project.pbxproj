@@ -1422,6 +1422,7 @@
 		93309EA2099EB78C0056E581 /* SharedTimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */; };
 		93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309EA0099EB78C0056E581 /* SharedTimer.h */; };
 		93309EA4099EB78C0056E581 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309EA1099EB78C0056E581 /* Timer.cpp */; };
+		93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */; };
 		934706AB0AACD809002C1D43 /* TextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 932CA7420AAA198E00AD1FAD /* TextDecoder.h */; };
 		9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071709BD3BA500F2038D /* StaticConstructors.h */; };
 		9352071A09BD3BA500F2038D /* TextBoundaries.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071809BD3BA500F2038D /* TextBoundaries.h */; };
@@ -4398,6 +4399,7 @@
 		93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedTimerMac.cpp; sourceTree = "<group>"; };
 		93309EA0099EB78C0056E581 /* SharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTimer.h; sourceTree = "<group>"; };
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
+		93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIEventWithKeyState.cpp; sourceTree = "<group>"; };
 		9352071709BD3BA500F2038D /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		9352071809BD3BA500F2038D /* TextBoundaries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBoundaries.h; sourceTree = "<group>"; };
 		9352071B09BD3BBB00F2038D /* TextBoundaries.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBoundaries.mm; sourceTree = "<group>"; };
@@ -9360,6 +9362,7 @@
 				1A750D3C0A90DE35000FF215 /* TreeWalker.idl */,
 				85031B370A44EFC700F992E0 /* UIEvent.cpp */,
 				85031B380A44EFC700F992E0 /* UIEvent.h */,
+				93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */,
 				85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */,
 				141B94EE09EC425A000E9413 /* UIEvent.idl */,
 				85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */,
@@ -12123,6 +12126,7 @@
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
+				93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

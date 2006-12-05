@@ -4215,6 +4215,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\UIEventWithKeyState.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\UIEventWithKeyState.h"
 				>
 			</File>

@@ -180,11 +180,9 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
                 HTMLElement::defaultEventHandler(evt);
                 return;
             }
-            if (k->keyEvent()) {
-                evt->setDefaultHandled();
-                dispatchSimulatedClick(0);
-                return;
-            }
+            evt->setDefaultHandled();
+            dispatchSimulatedClick(evt);
+            return;
         }
 
         String url = parseURL(getAttribute(hrefAttr));

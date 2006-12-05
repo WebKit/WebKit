@@ -796,6 +796,7 @@ set(WebCore_SRCS
     dom/Traversal.cpp
     dom/TreeWalker.cpp
     dom/UIEvent.cpp
+    dom/UIEventWithKeyState.cpp
     dom/WheelEvent.cpp
     dom/XMLTokenizer.cpp
 

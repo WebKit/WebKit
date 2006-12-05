@@ -385,10 +385,22 @@ void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
     PassRefPtr<Event> underlyingEvent)
 {
     assert(!eventDispatchForbidden());
+
+    bool ctrlKey = false;
+    bool altKey = false;
+    bool shiftKey = false;
+    bool metaKey = false;
+    if (UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get())) {
+        ctrlKey = keyStateEvent->ctrlKey();
+        altKey = keyStateEvent->altKey();
+        shiftKey = keyStateEvent->shiftKey();
+        metaKey = keyStateEvent->metaKey();
+    }
+
     // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
     // Internet Explorer instead gives the current mouse position and state.
     dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0,
-        false, false, false, false, true, 0, underlyingEvent);
+        ctrlKey, altKey, shiftKey, metaKey, true, 0, underlyingEvent);
 }
 
 void EventTargetNode::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)

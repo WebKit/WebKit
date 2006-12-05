@@ -1,3 +1,17 @@
+2006-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test the part of http://bugs.webkit.org/show_bug.cgi?id=11628
+          REGRESSION (r17597): Command-return in text fields doesn't open a new tab or window
+          that can easily be tested from the DOM -- this only checks that
+          simulated mouse events from clicking on a link have the key state
+          from the Enter key keyboard event, which is one part of the fix
+          for the bug above
+
+        * fast/events/simulated-key-state-expected.txt: Added.
+        * fast/events/simulated-key-state.html: Added.
+
 2006-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

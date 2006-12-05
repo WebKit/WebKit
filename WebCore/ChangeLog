@@ -1,3 +1,43 @@
+2006-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix another part of http://bugs.webkit.org/show_bug.cgi?id=11628
+          REGRESSION (r17597): Command-return in text fields doesn't open a new tab or window
+
+        This fixes command-return when the focus is on a link.
+        Despite the title of the bug, Mitz wanted me to fix both, and I will not
+        say no to him!
+
+        Test: fast/events/simulated-key-state.html
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSimulatedMouseEvent): Instead of always passing
+        false for all the key state in simulated mouse events, pass the state from the
+        first underlying event in the chain that has key state; in the case in the bug,
+        the keyboard event will be the underlying event itself and we'll propagate the
+        alt key modifier to the mouse event, resulting in the effect we want. It's nice
+        that JavaScript also gets to see the proper modifiers in the mouse event.
+
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler):
+        Added code to pass in an underlying event to dispatchSimulatedClick. After looking
+        at all the other callers, this seems to be the only one that needs to pass an
+        event that is currently passing 0. Also removed the code that only simulated a
+        click when the event has a PlatformKeyboardEvent -- no reason for that and it
+        prevented me from writing a layout test for the fix. 
+
+        * dom/UIEventWithKeyState.h: Added findEventWithKeyState function that walks the
+        underlyingEvent chain to find the first event that has key state. This already
+        existed in WebKit, but I wanted to use it in dispatchSimulatedMouseEvent.
+        * dom/UIEventWithKeyState.cpp: Added.
+
+        * CMakeLists.txt: Added UIEventWithKeyState.cpp.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added UIEventWithKeyState.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Added UIEventWithKeyState.cpp.
+        * WebCoreSources.bkl: Added UIEventWithKeyState.cpp.
+
+        * WebCore.exp: Added findEventWithKeyState, used by WebKit.
+
 2006-12-04  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Darin.

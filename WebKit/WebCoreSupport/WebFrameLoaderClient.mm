@@ -1170,14 +1170,6 @@ String WebFrameLoaderClient::userAgent()
     return [getWebView(m_webFrame.get()) _userAgent];
 }
 
-static const UIEventWithKeyState* findKeyStateEvent(const Event* event)
-{
-    for (const Event* e = event; e; e = e->underlyingEvent())
-        if (e->isMouseEvent() || e->isKeyboardEvent())
-            return static_cast<const UIEventWithKeyState*>(e);
-    return 0;
-}
-
 static const MouseEvent* findMouseEvent(const Event* event)
 {
     for (const Event* e = event; e; e = e->underlyingEvent())
@@ -1190,7 +1182,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 {
     unsigned modifierFlags = 0;
     const Event* event = action.event();
-    if (const UIEventWithKeyState* keyStateEvent = findKeyStateEvent(event)) {
+    if (const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event))) {
         if (keyStateEvent->ctrlKey())
             modifierFlags |= NSControlKeyMask;
         if (keyStateEvent->altKey())
