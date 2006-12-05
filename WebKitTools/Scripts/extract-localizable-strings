@@ -63,7 +63,7 @@ my %usedException;
 if (open EXCEPTIONS, $exceptionsFile) {
     while (<EXCEPTIONS>) {
         chomp;
-        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm)$/ or /^[-_\/\w.]+.(h|m|mm):"([^\\"]|\\.)*"$/) {
+        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm|cpp)$/ or /^[-_\/\w.]+.(h|m|mm|cpp):"([^\\"]|\\.)*"$/) {
             if ($exception{$_}) {
                 print "$exceptionsFile:$.:exception for $_ appears twice\n";
                 print "$exceptionsFile:$exception{$_}:first appearance\n";
@@ -77,12 +77,13 @@ if (open EXCEPTIONS, $exceptionsFile) {
     close EXCEPTIONS;
 }
 
-my @files = ( split "\n", `find . -name "*.h" -o -name "*.m" -o -name "*.mm"` );
+my @files = ( split "\n", `find . -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.cpp"` );
 
 for my $file (sort @files) {
 
     next if $file =~ /\/WebLocalizableStrings\.h$/;
     next if $file =~ /\/icu\//;
+    next if $file =~ /\/COM\//;
 
     $file =~ s-^./--;
 
