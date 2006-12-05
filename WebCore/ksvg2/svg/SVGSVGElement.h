@@ -107,7 +107,7 @@ namespace WebCore
         static float createSVGNumber();
         static SVGLength* createSVGLength();
         static SVGAngle* createSVGAngle();
-        static FloatPoint createSVGPoint(const IntPoint &p = IntPoint());
+        static FloatPoint createSVGPoint();
         static SVGMatrix* createSVGMatrix();
         static FloatRect createSVGRect();
         static SVGTransform* createSVGTransform();

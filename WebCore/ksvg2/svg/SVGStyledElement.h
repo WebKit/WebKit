@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
-#include "RenderStyle.h"
 #include "SVGElement.h"
 #include "SVGStylable.h"
 #include "SVGResource.h"

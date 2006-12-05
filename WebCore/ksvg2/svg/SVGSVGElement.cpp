@@ -280,9 +280,9 @@ SVGAngle* SVGSVGElement::createSVGAngle()
     return new SVGAngle(0);
 }
 
-FloatPoint SVGSVGElement::createSVGPoint(const IntPoint &p)
+FloatPoint SVGSVGElement::createSVGPoint()
 {
-    return FloatPoint(p);
+    return FloatPoint();
 }
 
 SVGMatrix* SVGSVGElement::createSVGMatrix()

@@ -1,5 +1,22 @@
 2006-12-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - a little cleanup
+
+        * html/HTMLInputElement.h: Removed unneeded includes of RenderObject.h
+        and RenderStyle.h.
+        * html/HTMLSelectElement.h: Removed unneeded include of RenderStyle.h.
+        * ksvg2/svg/SVGStyledElement.h: Removed unneeded include of RenderStyle.h.
+
+        * ksvg2/svg/SVGSVGElement.h: Remove unneeded parameter to createSVGPoint.
+        * ksvg2/svg/SVGSVGElement.cpp: (WebCore::SVGSVGElement::createSVGPoint):
+        Ditto.
+
+        * ksvg2/scripts/generateJSBindings.pl: Removed unused script.
+
+2006-12-05  Darin Adler  <darin@apple.com>
+
         * doc: Removed empty directory. It's not clear this is a good place for
         documentation, so lets add it back later if we actually start using it.
 

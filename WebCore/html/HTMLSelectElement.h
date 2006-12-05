@@ -27,9 +27,8 @@
 #define HTML_HTMLSelectElementImpl_H
 
 #include "Event.h"
-#include "HTMLGenericFormElement.h"
 #include "HTMLCollection.h"
-#include "RenderStyle.h"
+#include "HTMLGenericFormElement.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
