@@ -46,7 +46,7 @@ ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
     : m_parentMenu(parentMenu)
     , m_type(SeparatorType)
 {
-    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:String() action:nil keyEquivalent:nil];
+    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
     m_platformDescription = item;
     [item release];
 
@@ -60,7 +60,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     : m_parentMenu(parentMenu)
     , m_type(type)
 {
-    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:nil];
+    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
     m_platformDescription = item;
     [item release];
 

@@ -1,3 +1,32 @@
+2006-12-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        With the new changes to ContextMenuItems, WebCore context menus 
+        stopped appearing at all. And then when I got them to appear, they 
+        crashed. This fixes both of these problems.
+
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::ContextMenuItem): keyEquivalent cannot 
+        be nil. This was causing Obj-C to throw an exception preventing the 
+        menus from popping up at all. 
+        * platform/mac/ContextMenuMac.mm:
+        (+[WebCoreMenuTarget sharedMenuTarget]): Re-name our static 
+        MenuTarget so that it is more clear that it is a static and shared 
+        WebCoreMenuTarget.
+        (WebCore::ContextMenu::ContextMenu): Initialize the 
+        WebCoreMenuTarget's controller in the ContextMenu constructor 
+        instead of in getNSMenuItem since the controller will only possibly 
+        change when a new ContextMenu has been created.
+        (WebCore::ContextMenu::~ContextMenu): Set the target's controller 
+        to 0.
+        (WebCore::getNSMenuItem): A lot of this work is being done other 
+        places now. Call new class method on WebCoreMenuTarget to get the 
+        shared target.
+        (WebCore::ContextMenu::appendItem): We should not be releasing the 
+        menuItem here! This caused the crashes I saw.
+        (WebCore::ContextMenu::insertItem): Same.
+
 2006-12-04  Anders Carlsson  <acarlsson@apple.com>
 
         Fix the build.

@@ -27,25 +27,25 @@
 #include "ContextMenu.h"
 
 #include "ContextMenuController.h"
- 
-@interface MenuTarget : NSObject {
+
+@interface WebCoreMenuTarget : NSObject {
     WebCore::ContextMenuController* _menuController;
 }
++ (WebCoreMenuTarget*)sharedMenuTarget;
 - (WebCore::ContextMenuController*)menuController;
 - (void)setMenuController:(WebCore::ContextMenuController*)menuController;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-@implementation MenuTarget
+static WebCoreMenuTarget* target;
 
-- (id)initWithContextMenuController:(WebCore::ContextMenuController*)menuController
+@implementation WebCoreMenuTarget
+
++ (WebCoreMenuTarget*)sharedMenuTarget
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    _menuController = menuController;
-    return self;
+    if (!target)
+        target = [[WebCoreMenuTarget alloc] init];
+    return target;
 }
 
 - (WebCore::ContextMenuController*)menuController
@@ -68,24 +68,26 @@
 
 namespace WebCore {
 
-static MenuTarget* target;
-
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
 {
     NSMutableArray* array = [[NSMutableArray alloc] init];
     m_platformDescription = array;
-    [array release];    
+    [array release];
+
+    [[WebCoreMenuTarget sharedMenuTarget] setMenuController:controller()];
 }
 
 ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
     : m_hitTestResult(result)
     , m_platformDescription(menu)
 {
+    [[WebCoreMenuTarget sharedMenuTarget] setMenuController:controller()];
 }
 
 ContextMenu::~ContextMenu()
 {
+    [[WebCoreMenuTarget sharedMenuTarget] setMenuController:0];
 }
  
 static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
@@ -93,15 +95,9 @@ static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
     if (!menu->platformDescription())
         return 0;
     
-    ContextMenuController* currentController = menu->controller();
-    if (!target)
-        target = [[MenuTarget alloc] initWithContextMenuController:currentController];
-    else if (currentController != [target menuController])
-        [target setMenuController:currentController];
-    
     NSMenuItem* menuItem = item.platformDescription();
     if (item.type() == ActionType) {
-        [menuItem setTarget:target];
+        [menuItem setTarget:[WebCoreMenuTarget sharedMenuTarget]];
         [menuItem setAction:@selector(forwardContextMenuAction:)];
     }
 
@@ -113,9 +109,7 @@ void ContextMenu::appendItem(const ContextMenuItem& item)
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     if (!menuItem)
         return;
-
     [m_platformDescription.get() addObject:menuItem];
-    [menuItem release];
 }
 
 void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
@@ -123,9 +117,7 @@ void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
     NSMenuItem* menuItem = getNSMenuItem(this, item);
     if (!menuItem)
         return;
-
     [m_platformDescription.get() insertObject:menuItem atIndex:position];
-    [menuItem release];
 }
 
 unsigned ContextMenu::itemCount() const
