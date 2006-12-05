@@ -60,8 +60,9 @@ namespace WebCore {
     class ResourceHandleInternal
     {
     public:
-        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c)
+        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, SubresourceLoaderClient* client)
             : m_client(c)
+            , m_subresourceLoaderClient(client)
             , m_request(request)
             , status(0)
             , m_loading(false)
@@ -94,6 +95,9 @@ namespace WebCore {
         ResourceHandleClient* client() const { return m_client; }
        
         ResourceHandleClient* m_client;
+
+        // FIXME: This is only used on mac and should be removed when ResourceHandle no longer depends on SubresourceLoader.
+        SubresourceLoaderClient* m_subresourceLoaderClient;
         
         ResourceRequest m_request;
         
@@ -105,7 +109,7 @@ namespace WebCore {
 #if USE(CFNETWORK)
         CFURLConnectionRef m_connection;
 #elif PLATFORM(MAC)
-        RefPtr<WebCore::SubresourceLoader> m_subresourceLoader;
+        RefPtr<SubresourceLoader> m_subresourceLoader;
 #endif
 #if USE(WININET)
         HANDLE m_fileHandle;

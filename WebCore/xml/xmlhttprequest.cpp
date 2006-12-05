@@ -38,6 +38,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "Settings.h"
+#include "SubresourceLoader.h"
 #include "TextEncoding.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
@@ -357,7 +358,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     // create can return null here, for example if we're no longer attached to a page.
     // this is true while running onunload handlers
     // FIXME: Maybe create can return false for other reasons too?
-    m_loader = ResourceHandle::create(request, this, m_doc->docLoader());
+    m_loader = SubresourceLoader::create(m_doc->frame(), this, request);
 }
 
 void XMLHttpRequest::abort()
@@ -491,17 +492,17 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const Reso
     didFinishLoading(0);
 }
 
-void XMLHttpRequest::didFailWithError(ResourceHandle* handle, const ResourceError&)
+void XMLHttpRequest::didFailWithError(SubresourceLoader* loader, const ResourceError&)
 {
-    didFinishLoading(handle);
+    didFinishLoading(loader);
 }
 
-void XMLHttpRequest::didFinishLoading(ResourceHandle* handle)
+void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
 {
     if (m_aborted)
         return;
         
-    ASSERT(handle == m_loader.get());
+    ASSERT(loader == m_loader);
 
     if (m_state < Sent)
         changeState(Sent);
@@ -524,13 +525,13 @@ void XMLHttpRequest::didFinishLoading(ResourceHandle* handle)
     }
 }
 
-void XMLHttpRequest::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (!urlMatchesDocumentDomain(request.url()))
         abort();
 }
 
-void XMLHttpRequest::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceResponse& response)
 {
     m_response = response;
     m_encoding = getCharset(m_mimeTypeOverride);
@@ -539,7 +540,7 @@ void XMLHttpRequest::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 
 }
 
-void XMLHttpRequest::didReceiveData(ResourceHandle*, const char* data, int len)
+void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int len)
 {
     if (m_state < Sent)
         changeState(Sent);

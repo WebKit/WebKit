@@ -65,8 +65,9 @@ bool ResourceHandle::start(DocLoader* docLoader)
     if (!frame->page())
         return false;
     
-    d->m_subresourceLoader = SubresourceLoader::create(frame, this, d->m_request);
-
+    d->m_subresourceLoader = SubresourceLoader::create(frame, d->m_subresourceLoaderClient, this, d->m_request);
+    d->m_client = d->m_subresourceLoader->loaderAsResourceHandleClient();
+    
     if (d->m_subresourceLoader)
         return true;
 
@@ -109,18 +110,19 @@ void ResourceHandle::addData(NSData *data)
 
 void ResourceHandle::finishJobAndHandle(NSData *data)
 {
-    if (ResourceHandleClient* c = client()) {
-        // We must protect the resource handle in case the call to receivedAllData causes a deref.
-        RefPtr<ResourceHandle> protect(this);
-        c->receivedAllData(this, data);
+    if (ResourceHandleClient* c = client())
         c->didFinishLoading(this);
-    }
 }
 
 void ResourceHandle::reportError(NSError* error)
 {
     if (ResourceHandleClient* c = client())
         c->didFailWithError(this, error);
+}
+
+SubresourceLoader* ResourceHandle::loader() const
+{
+    return d->m_subresourceLoader.get();
 }
 
 } // namespace WebCore

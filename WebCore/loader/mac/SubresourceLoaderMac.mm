@@ -29,37 +29,51 @@
 #import "config.h"
 #import "SubresourceLoader.h"
 
+#import "Document.h"
 #import "FormDataStreamMac.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "LoaderFunctions.h"
 #import "LoaderNSURLExtras.h"
 #import "LoaderNSURLRequestExtras.h"
+#import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
+#import "ResourceResponse.h"
+#import "SubresourceLoaderClient.h"
 #import "WebCoreSystemInterface.h"
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 
 namespace WebCore {
 
-SubresourceLoader::SubresourceLoader(Frame* frame, ResourceHandle* handle)
+SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, ResourceHandle* handle)
     : ResourceLoader(frame)
+    , m_client(client)
     , m_handle(handle)
     , m_loadingMultipartContent(false)
 {
     frameLoader()->addSubresourceLoader(this);
 }
 
-SubresourceLoader::~SubresourceLoader()
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request)
 {
+    if (!frame)
+        return 0;
+    
+    RefPtr<ResourceHandle> handle = ResourceHandle::create(request, 0, frame->document()->docLoader(), client);
+    
+    if (!handle)
+        return 0;
+    
+    return handle->loader();
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHandle* handle, ResourceRequest& request)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, ResourceHandle* handle, ResourceRequest& request)
 {
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)
-        return nil;
+        return 0;
 
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
@@ -96,7 +110,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, ResourceHa
     
     fl->addExtraFieldsToRequest(newRequest, false, false);
 
-    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, handle));
+    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client, handle));
     if (!subloader->load(newRequest))
         return 0;
 
@@ -111,6 +125,7 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
         clientRequest = m_handle->willSendRequest(clientRequest, redirectResponse);
+    
     return clientRequest;
 }
 
@@ -126,6 +141,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     RefPtr<SubresourceLoader> protect(this);
 
     m_handle->didReceiveResponse(r);
+    
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
         return;
@@ -153,6 +169,7 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent)
         m_handle->addData(data);
+
     ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
 
@@ -165,8 +182,11 @@ void SubresourceLoader::didFinishLoading()
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (RefPtr<ResourceHandle> handle = m_handle.release())
+    if (RefPtr<ResourceHandle> handle = m_handle) {
         handle->finishJobAndHandle(resourceData());
+        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
+        m_handle = 0;
+    }
 
     if (cancelled())
         return;
@@ -183,9 +203,12 @@ void SubresourceLoader::didFail(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (RefPtr<ResourceHandle> handle = m_handle.release())
+    if (RefPtr<ResourceHandle> handle = m_handle) {
         handle->reportError(error);
-
+        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
+        m_handle = 0;
+    }
+    
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
@@ -198,9 +221,12 @@ void SubresourceLoader::didCancel(NSError *error)
 
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
-    
-    if (RefPtr<ResourceHandle> handle = m_handle.release())
+
+    if (RefPtr<ResourceHandle> handle = m_handle) {
         handle->reportError(error);
+        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
+        m_handle = 0;
+    }
 
     if (cancelled())
         return;

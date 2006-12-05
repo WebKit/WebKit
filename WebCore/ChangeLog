@@ -1,3 +1,83 @@
+2006-12-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+        
+        Change all ResourceHandleClients to be SubresourceLoaderClients instead. Also,
+        make SubresourceLoader a ResourceHandleClient. This is a first step towards turning ResourceHandle into a 
+        standalone class which doesn't need to know about SubresourceLoader.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::setDefersLoading):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::~SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFailWithError):
+        (WebCore::SubresourceLoader::receivedAllData):
+        * loader/SubresourceLoader.h:
+        (WebCore::SubresourceLoader::loaderAsResourceHandleClient):
+        (WebCore::SubresourceLoader::handle):
+        * loader/SubresourceLoaderClient.h: Added.
+        (WebCore::SubresourceLoaderClient::~SubresourceLoaderClient):
+        (WebCore::SubresourceLoaderClient::willSendRequest):
+        (WebCore::SubresourceLoaderClient::didReceiveResponse):
+        (WebCore::SubresourceLoaderClient::didReceiveData):
+        (WebCore::SubresourceLoaderClient::didFinishLoading):
+        (WebCore::SubresourceLoaderClient::didFailWithError):
+        (WebCore::SubresourceLoaderClient::receivedAllData):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::stopLoading):
+        (WebCore::IconLoader::didReceiveResponse):
+        (WebCore::IconLoader::didReceiveData):
+        (WebCore::IconLoader::didFailWithError):
+        (WebCore::IconLoader::didFinishLoading):
+        (WebCore::IconLoader::clearLoadingState):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::didFailWithError):
+        (WebCore::Loader::didReceiveResponse):
+        (WebCore::Loader::didReceiveData):
+        (WebCore::Loader::cancelRequests):
+        * loader/loader.h:
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::finishJobAndHandle):
+        (WebCore::ResourceHandle::loader):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::didFailWithError):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::willSendRequest):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
 2006-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

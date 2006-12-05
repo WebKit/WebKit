@@ -26,34 +26,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ResourceLoader.h"
+#ifndef SubresourceLoaderClient_h
+#define SubresourceLoaderClient_h
 
-#include "Frame.h"
-#include "Page.h"
+// FIXME: This is just to define PlatformData, it should go away
+#include "ResourceHandleClient.h"
 
 namespace WebCore {
 
-#if !PLATFORM(MAC)
-// FIXME: This is only temporary until ResourceLoader is truly platform independent.
+class ResourceRequest;
+class ResourceResponse;
+class SubresourceLoader;
+    
+class SubresourceLoaderClient {
+public:
+    virtual ~SubresourceLoaderClient() { } 
+    
+    // request may be modified
+    virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse) { }
 
-ResourceLoader::~ResourceLoader()
-{
-}
+    virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&) { }
+    virtual void didReceiveData(SubresourceLoader*, const char*, int) { }
+    virtual void didFinishLoading(SubresourceLoader*) { }
+    virtual void didFailWithError(SubresourceLoader*, const ResourceError&) { }
+    
+    // FIXME: Get rid of this function
+    virtual void receivedAllData(SubresourceLoader*, PlatformData) { }
+};
 
-ResourceLoader::ResourceLoader(Frame* frame)
-    : m_reachedTerminalState(false)
-    , m_cancelled(false)
-    , m_calledDidFinishLoad(false)
-    , m_frame(frame)
-    , m_defersLoading(frame->page()->defersLoading())
-{
-}
-
-void ResourceLoader::setDefersLoading(bool)
-{
 }
 
 #endif
-
-}

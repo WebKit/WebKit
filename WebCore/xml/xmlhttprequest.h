@@ -25,11 +25,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include "KURL.h"
-#include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "PlatformString.h"
 #include "HTTPHeaderMap.h"
 #include "StringHash.h"
+#include "SubresourceLoaderClient.h"
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ enum XMLHttpRequestState {
     Loaded = 4          // The data transfer has been completed.
 };
 
-class XMLHttpRequest : public Shared<XMLHttpRequest>, ResourceHandleClient {
+class XMLHttpRequest : public Shared<XMLHttpRequest>, private SubresourceLoaderClient {
 public:
     XMLHttpRequest(Document*);
     ~XMLHttpRequest();
@@ -82,11 +82,11 @@ public:
 private:
     bool urlMatchesDocumentDomain(const KURL&) const;
 
-    virtual void willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse);
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char* data, int size);
-    virtual void didFailWithError(ResourceHandle*, const ResourceError&);
-    virtual void didFinishLoading(ResourceHandle*);
+    virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);
+    virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
+    virtual void didReceiveData(SubresourceLoader*, const char* data, int size);
+    virtual void didFailWithError(SubresourceLoader*, const ResourceError&);
+    virtual void didFinishLoading(SubresourceLoader*);
 
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&);
 
@@ -107,7 +107,7 @@ private:
     String m_mimeTypeOverride;
     bool m_async;
 
-    RefPtr<ResourceHandle> m_loader;
+    RefPtr<SubresourceLoader> m_loader;
     XMLHttpRequestState m_state;
 
     ResourceResponse m_response;

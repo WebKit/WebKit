@@ -35,6 +35,7 @@
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include "SubresourceLoader.h"
 
 using namespace std;
 
@@ -59,7 +60,7 @@ IconLoader::~IconLoader()
 
 void IconLoader::startLoading()
 {    
-    if (m_handle)
+    if (m_resourceLoader)
         return;
 
     // FIXME: http://bugs.webkit.org/show_bug.cgi?id=10902
@@ -71,60 +72,59 @@ void IconLoader::startLoading()
     }
 
     // Set flag so we can detect the case where the load completes before
-    // ResourceHandle::create returns.
+    // SubresourceLoader::create returns.
     m_loadIsInProgress = true;
     m_buffer.reserveCapacity(defaultBufferSize);
 
-    RefPtr<ResourceHandle> loader = ResourceHandle::create(m_frame->loader()->iconURL(),
-        this, m_frame->document()->docLoader());
+    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(m_frame, this, m_frame->loader()->iconURL());
     if (!loader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().url().ascii());
 
     // Store the handle so we can cancel the load if stopLoading is called later.
     // But only do it if the load hasn't already completed.
     if (m_loadIsInProgress)
-        m_handle = loader.release();
+        m_resourceLoader = loader.release();
 }
 
 void IconLoader::stopLoading()
 {
-    m_handle = 0;
+    m_resourceLoader = 0;
     clearLoadingState();
 }
 
-void IconLoader::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
+void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const ResourceResponse& response)
 {
     // If we got a status code indicating an invalid response, then lets
     // ignore the data and not try to decode the error page as an icon.
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
-        KURL iconURL = handle->url();
-        m_handle = 0;
+        KURL iconURL = resourceLoader->handle()->url();
+        m_resourceLoader = 0;
         finishLoading(iconURL);
     }
 }
 
-void IconLoader::didReceiveData(ResourceHandle*, const char* data, int size)
+void IconLoader::didReceiveData(SubresourceLoader*, const char* data, int size)
 {
     ASSERT(data || size == 0);
     ASSERT(size >= 0);
     m_buffer.append(data, size);
 }
 
-void IconLoader::didFailWithError(ResourceHandle* handle, const ResourceError&)
+void IconLoader::didFailWithError(SubresourceLoader* resourceLoader, const ResourceError&)
 {
     ASSERT(m_loadIsInProgress);
     m_buffer.clear();
-    finishLoading(handle->url());
+    finishLoading(resourceLoader->handle()->url());
 }
 
-void IconLoader::didFinishLoading(ResourceHandle* handle)
+void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 {
     // If the icon load resulted in an error-response earlier, the ResourceHandle was killed and icon data commited via finishLoading().
     // In that case this didFinishLoading callback is pointless and we bail.  Otherwise, finishLoading() as expected
     if (m_loadIsInProgress) {
-        ASSERT(handle == m_handle);
-        finishLoading(handle->url());
+        ASSERT(resourceLoader == m_resourceLoader);
+        finishLoading(resourceLoader->handle()->url());
     }
 }
 
@@ -138,7 +138,7 @@ void IconLoader::finishLoading(const KURL& iconURL)
 
 void IconLoader::clearLoadingState()
 {
-    m_handle = 0;
+    m_resourceLoader = 0;
     m_buffer.clear();
     m_loadIsInProgress = false;
 }

@@ -59,6 +59,8 @@ class DocLoader;
 class FormData;
 class KURL;
 class ResourceHandleInternal;
+class SubresourceLoader;
+class SubresourceLoaderClient;
 
 struct ResourceRequest;
 
@@ -66,11 +68,11 @@ template <typename T> class Timer;
 
 class ResourceHandle : public Shared<ResourceHandle> {
 private:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*);
+    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, SubresourceLoaderClient*);
 
 public:
     // FIXME: should not need the DocLoader
-    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, DocLoader*);
+    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, DocLoader*, SubresourceLoaderClient* = 0);
 
     ~ResourceHandle();
 
@@ -80,6 +82,7 @@ public:
     void addData(NSData *);
     void finishJobAndHandle(NSData *);
     void reportError(NSError* error);
+    SubresourceLoader* loader() const;
 #endif
 
 #if USE(WININET)
@@ -104,7 +107,7 @@ public:
     void cancel();
     
     ResourceHandleClient* client() const;
-
+      
     const HTTPHeaderMap& requestHeaders() const;
     const KURL& url() const;
     const String& method() const;

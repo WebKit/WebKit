@@ -27,7 +27,7 @@
 #define ICONLOADER_H_
 
 #include "KURL.h"
-#include "ResourceHandleClient.h"
+#include "SubresourceLoaderClient.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class Frame;
 
-class IconLoader : public ResourceHandleClient, Noncopyable {
+class IconLoader : private SubresourceLoaderClient, Noncopyable {
 public:
     static std::auto_ptr<IconLoader> create(Frame*);
     ~IconLoader();
@@ -47,17 +47,17 @@ public:
 private:
     IconLoader(Frame*);
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int);
-    virtual void didFinishLoading(ResourceHandle*);
-    virtual void didFailWithError(ResourceHandle*, const ResourceError&);
+    virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
+    virtual void didReceiveData(SubresourceLoader*, const char*, int);
+    virtual void didFinishLoading(SubresourceLoader*);
+    virtual void didFailWithError(SubresourceLoader*, const ResourceError&);
 
     void finishLoading(const KURL&);
     void clearLoadingState();
 
     Frame* m_frame;
 
-    RefPtr<ResourceHandle> m_handle;
+    RefPtr<SubresourceLoader> m_resourceLoader;
     Vector<char> m_buffer;
     bool m_loadIsInProgress;
 }; // class IconLoader

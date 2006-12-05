@@ -29,6 +29,7 @@
 #ifndef SubresourceLoader_H_
 #define SubresourceLoader_H_
  
+#include "ResourceHandleClient.h"
 #include "ResourceLoader.h"
 #include <wtf/PassRefPtr.h>
  
@@ -44,10 +45,15 @@ namespace WebCore {
     class String;
     class ResourceHandle;
     class ResourceRequest;
+    class SubresourceLoaderClient;
     
-    class SubresourceLoader : public ResourceLoader {
+    class SubresourceLoader : public ResourceLoader, ResourceHandleClient {
     public:
-        static PassRefPtr<SubresourceLoader> create(Frame*, ResourceHandle*, ResourceRequest&);
+        static PassRefPtr<SubresourceLoader> create(Frame*, SubresourceLoaderClient*, const ResourceRequest&);
+        
+#if PLATFORM(MAC)
+        static PassRefPtr<SubresourceLoader> create(Frame*, SubresourceLoaderClient*, ResourceHandle*, ResourceRequest&);
+#endif
 
         virtual ~SubresourceLoader();
 
@@ -57,18 +63,33 @@ namespace WebCore {
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(NSError *);
+        
+        // FIXME: This function is here because we want ResourceHandleClient to be privately inherited, but 
+        // ResourceHandle needs to be passed a ResourceHandleClient.
+        ResourceHandleClient* loaderAsResourceHandleClient() { return this; }
 #endif
 
+        // ResourceHandleClient
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
+        
+        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+        virtual void didReceiveData(ResourceHandle*, const char*, int);
+        virtual void didFinishLoading(ResourceHandle*);
+        virtual void didFailWithError(ResourceHandle*, const ResourceError&);
+
+        virtual void receivedAllData(ResourceHandle*, PlatformData);
+
+        ResourceHandle* handle() const { return m_handle.get(); }
     private:
         static PassRefPtr<SubresourceLoader> create(Frame*, ResourceHandle*,
             NSMutableURLRequest *, NSDictionary *customHeaders, const String& referrer);
 
-        SubresourceLoader(Frame*, ResourceHandle*);
+        SubresourceLoader(Frame*, SubresourceLoaderClient*, ResourceHandle*);
 
 #if PLATFORM(MAC)
         virtual void didCancel(NSError *);
 #endif
-
+        SubresourceLoaderClient* m_client;
         RefPtr<ResourceHandle> m_handle;
         bool m_loadingMultipartContent;
     };
