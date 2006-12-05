@@ -1,3 +1,16 @@
+2006-12-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11686
+        WebKit draws Carto.net tabgroup example completely incorrectly (ff does fine)
+
+        Make sure the SVG render objects are laid out before measuring their 
+        dimensions using relativeBBox.
+
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox):
+
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

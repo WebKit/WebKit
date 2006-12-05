@@ -1,3 +1,14 @@
+2006-12-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11686
+        WebKit draws Carto.net tabgroup example completely incorrectly (ff does fine)
+
+        * svg/custom/getBBox-js-expected.txt: Added.
+        * svg/custom/getBBox-js.svg: Added.
+
 2006-12-05  Kirby White  <KWhiteRight@gmail.com>
 
         Reviewed and landed by Alexey.
