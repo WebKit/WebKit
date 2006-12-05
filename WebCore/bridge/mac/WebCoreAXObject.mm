@@ -885,10 +885,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
         Element* actionElement = [self actionElement];
         if (!actionElement)
             return;
-
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
         if (Frame* f = actionElement->document()->frame())
             f->loader()->resetMultipleFormSubmissionProtection();
-
+#endif
         actionElement->accessKeyAction(true);
     }
 }

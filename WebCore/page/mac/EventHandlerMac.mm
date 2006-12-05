@@ -306,9 +306,10 @@ bool EventHandler::keyEvent(NSEvent *event)
         if (!node)
             return false;
     }
-
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
     if ([event type] == NSKeyDown)
         m_frame->loader()->resetMultipleFormSubmissionProtection();
+#endif
 
     NSEvent *oldCurrentEvent = currentEvent;
     currentEvent = HardRetain(event);
@@ -798,9 +799,9 @@ void EventHandler::mouseDown(NSEvent *event)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
     m_frame->loader()->resetMultipleFormSubmissionProtection();
-
+#endif
     m_mouseDownView = nil;
     dragState().m_dragSrc = 0;
     

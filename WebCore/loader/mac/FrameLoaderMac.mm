@@ -402,9 +402,10 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
     }
     
     if (m_state == FrameStateProvisional) {
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
         NSURL *failedURL = [m_provisionalDocumentLoader->originalRequestCopy() URL];
         didNotOpenURL(failedURL);
-
+#endif
         // We might have made a page cache item, but now we're bailing out due to an error before we ever
         // transitioned to the new page (before WebFrameState == commit).  The goal here is to restore any state
         // so that the existing view (that wenever got far enough to replace) can continue being used.

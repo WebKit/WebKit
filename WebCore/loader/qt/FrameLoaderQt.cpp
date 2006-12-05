@@ -76,6 +76,7 @@ namespace WebCore {
 
 void FrameLoader::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
 {
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
     // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
     // We do not want to submit more than one form from the same page,
     // nor do we want to submit a single form more than once.
@@ -92,6 +93,7 @@ void FrameLoader::submitForm(const FrameLoadRequest& frameLoadRequest, Event*)
             return;
         m_submittedFormURL = frameLoadRequest.resourceRequest().url();
     }
+#endif
 
     RefPtr<FormData> formData = frameLoadRequest.resourceRequest().httpBody();
     if (formData && !formData->isEmpty() && QtFrame(m_frame)->client())
