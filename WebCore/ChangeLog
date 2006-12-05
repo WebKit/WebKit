@@ -2,6 +2,15 @@
 
         Reviewed by Geoff.
 
+        Fix from last check-in. This line was badbad.
+
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::~ContextMenu):
+
+2006-12-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
         With the new changes to ContextMenuItems, WebCore context menus 
         stopped appearing at all. And then when I got them to appear, they 
         crashed. This fixes both of these problems.

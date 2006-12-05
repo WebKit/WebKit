@@ -87,7 +87,6 @@ ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescript
 
 ContextMenu::~ContextMenu()
 {
-    [[WebCoreMenuTarget sharedMenuTarget] setMenuController:0];
 }
  
 static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
