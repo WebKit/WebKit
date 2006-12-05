@@ -94,7 +94,6 @@ void Loader::servePendingRequests()
 
 void Loader::receivedAllData(SubresourceLoader* loader, PlatformData allData)
 {
-    loader->ref();
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
