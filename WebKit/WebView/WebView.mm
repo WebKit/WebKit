@@ -3342,15 +3342,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
-#if !BUILDING_ON_TIGER
 @implementation WebView (WebViewGrammarChecking)
 
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (BOOL)isGrammarCheckingEnabled
 {
+#if BUILDING_ON_TIGER
+    return NO;
+#else
     return grammarCheckingEnabled;
+#endif
 }
 
+#if !BUILDING_ON_TIGER
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
@@ -3371,9 +3375,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     [self setGrammarCheckingEnabled:![self isGrammarCheckingEnabled]];
 }
+#endif
 
 @end
-#endif
 
 @implementation WebView (WebViewUndoableEditing)
 
