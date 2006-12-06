@@ -1,3 +1,18 @@
+2006-12-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10254
+        A few grammar and spelling corrections on the WebKit website
+
+        Grammar and spelling corrections by Jonathan Johnsson.
+
+        * coding/coding-style.html:
+        * projects/css/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * quality/reduction.html:
+
 2006-11-21  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Maciej.
