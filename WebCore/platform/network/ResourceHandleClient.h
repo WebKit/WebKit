@@ -69,7 +69,6 @@ namespace WebCore {
 #else
     // Not sure what the strategy for this will be on other platforms.
     typedef struct PlatformDataStruct* PlatformData;
-    typedef struct PlatformResponseStruct* PlatformResponse;
 #endif
 
     class KURL;

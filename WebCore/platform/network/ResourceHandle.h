@@ -26,8 +26,9 @@
 #ifndef ResourceHandle_h
 #define ResourceHandle_h
 
+#include <wtf/OwnPtr.h>
+
 #include "HTTPHeaderMap.h"
-#include "ResourceHandleClient.h" // for PlatformResponse
 
 #if PLATFORM(WIN)
 typedef unsigned long DWORD;
@@ -43,13 +44,15 @@ typedef LONG_PTR LRESULT;
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
+@class NSData;
+@class NSError;
 @class NSURLRequest;
 @class NSURLResponse;
-@class NSError;
 #else
+class NSData;
+class NSError;
 class NSURLRequest;
 class NSURLResponse;
-class NSError;
 #endif
 #endif
 
@@ -58,6 +61,7 @@ namespace WebCore {
 class DocLoader;
 class FormData;
 class KURL;
+class ResourceHandleClient;
 class ResourceHandleInternal;
 class SubresourceLoader;
 class SubresourceLoaderClient;
@@ -116,7 +120,7 @@ public:
 private:
     bool start(DocLoader*);
 
-    ResourceHandleInternal* d;
+    OwnPtr<ResourceHandleInternal> d;
 };
 
 }

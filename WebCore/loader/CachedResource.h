@@ -30,7 +30,7 @@
 
 #include "CachePolicy.h"
 #include "PlatformString.h"
-#include "ResourceHandleClient.h" // defines PlatformResponse and PlatformData
+#include "ResourceHandleClient.h" // defines PlatformData
 #include "ResourceResponse.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

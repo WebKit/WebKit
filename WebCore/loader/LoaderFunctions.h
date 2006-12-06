@@ -26,7 +26,6 @@
 #include <wtf/Vector.h>
 #include <wtf/HashMap.h>
 #include "PlatformString.h"
-#include "ResourceHandleClient.h"  // Defines PlatformResponse
 #include "HTTPHeaderMap.h"
 
 #ifdef __OBJC__
@@ -50,6 +49,7 @@ class DocLoader;
 class Loader;
 class Request;
 class ResourceRequest;
+class ResourceResponse;
 
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, ResourceResponse&);
 

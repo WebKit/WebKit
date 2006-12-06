@@ -43,7 +43,6 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 ResourceHandle::~ResourceHandle()
 {
-    delete d;
 }
 
 bool ResourceHandle::start(DocLoader* docLoader)

@@ -145,54 +145,6 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
     frame->loader()->didTellBridgeAboutLoad(cachedResource->url());
 }
 
-bool IsResponseURLEqualToURL(PlatformResponse response, const String& m_url)
-{
-    NSURL *responseURL = [(NSURLResponse *)response URL];
-    NSString *urlString = [responseURL absoluteString];
-
-    size_t length = m_url.length();
-    if (length != [urlString length])
-        return false;
-
-    Vector<UChar, 1024> buffer(length);
-    [urlString getCharacters:buffer.data()];    
-    return !memcmp(buffer.data(), m_url.characters(), length * sizeof(UChar));
-}
-
-DeprecatedString ResponseURL(PlatformResponse response)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSURL *responseURL = [(NSURLResponse *)response URL];
-    NSString *urlString = [responseURL absoluteString];
-    
-    DeprecatedString string;
-    string.setBufferFromCFString((CFStringRef)urlString);
-    return string;
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return NULL;
-}
-
-DeprecatedString ResponseMIMEType(PlatformResponse response)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return DeprecatedString::fromNSString([(NSURLResponse *)response MIMEType]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return DeprecatedString();
-}
-
-bool ResponseIsMultipart(PlatformResponse response)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[response MIMEType] isEqualToString:@"multipart/x-mixed-replace"];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return false;
-}
-
 void CachedResource::setAllData(PlatformData allData)
 {
     HardRetain(allData);
