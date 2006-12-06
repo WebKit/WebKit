@@ -1,5 +1,12 @@
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
+        Tiger build fix
+
+        * editing/mac/EditorMac.mm:
+        declare -[NSSpellChecker learnWord:], on Tiger only (it's API on Leopard)
+
+2006-12-05  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Geoff Garen
 
         * page/Frame.h:

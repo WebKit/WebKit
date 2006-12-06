@@ -30,6 +30,12 @@
 #include "Clipboard.h"
 #include "ClipboardMac.h"
 
+#ifdef BUILDING_ON_TIGER
+@interface NSSpellChecker (NotYetPublicMethods)
+- (void)learnWord:(NSString *)word;
+@end
+#endif
+
 namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
