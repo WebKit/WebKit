@@ -89,34 +89,29 @@ ContextMenu::~ContextMenu()
 {
 }
  
-static NSMenuItem* getNSMenuItem(ContextMenu* menu, const ContextMenuItem& item)
+static void setMenuItemTarget(const ContextMenuItem& item)
 {
-    if (!menu->platformDescription())
-        return 0;
-    
     NSMenuItem* menuItem = item.platformDescription();
     if (item.type() == ActionType) {
         [menuItem setTarget:[WebCoreMenuTarget sharedMenuTarget]];
         [menuItem setAction:@selector(forwardContextMenuAction:)];
     }
-
-    return menuItem;
 }
 
 void ContextMenu::appendItem(const ContextMenuItem& item)
 {
-    NSMenuItem* menuItem = getNSMenuItem(this, item);
-    if (!menuItem)
+    if (!item.platformDescription())
         return;
-    [m_platformDescription.get() addObject:menuItem];
+    setMenuItemTarget(item);
+    [m_platformDescription.get() addObject:item.platformDescription()];
 }
 
 void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
 {
-    NSMenuItem* menuItem = getNSMenuItem(this, item);
-    if (!menuItem)
+    if (!item.platformDescription())
         return;
-    [m_platformDescription.get() insertObject:menuItem atIndex:position];
+    setMenuItemTarget(item);
+    [m_platformDescription.get() insertObject:item.platformDescription() atIndex:position];
 }
 
 unsigned ContextMenu::itemCount() const

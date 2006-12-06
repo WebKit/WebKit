@@ -26,8 +26,6 @@
 #ifndef ContextMenuItem_h
 #define ContextMenuItem_h
 
-#include <wtf/Noncopyable.h>
-
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
 
@@ -130,7 +128,7 @@ namespace WebCore {
         SubmenuType
     };
 
-    class ContextMenuItem : Noncopyable {
+    class ContextMenuItem {
     public:
         ContextMenuItem(PlatformMenuItemDescription, ContextMenu*);
         ContextMenuItem(ContextMenu* parentMenu = 0, ContextMenu* subMenu = 0);
