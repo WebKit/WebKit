@@ -357,27 +357,27 @@ int maxDeepOffset(const Node *node)
     return 0;
 }
 
-void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int length)
+String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    ASSERT(node->isTextNode());
-    Text *textNode = static_cast<Text *>(node);
-    String text = textNode->data();
-    ASSERT(length <= text.length() && start + length <= text.length());
-    
-    String substring = text.substring(start, length);
+    static DeprecatedString twoSpaces("  ");
+    static DeprecatedString nbsp("\xa0");
+    static DeprecatedString pattern(" \xa0");
 
-    // FIXME: We rebalance with all nbsps, for simplicity (we don't need crazy sequences while editing
-    // because all editable regions will have -webkit-nbsp-mode: space.  We should produce sequences of 
-    // regular spaces and nbsps that are better for interchange when we serialize (10636).
-    substring.replace(' ', NON_BREAKING_SPACE);
-    substring.replace('\t', NON_BREAKING_SPACE);
-    substring.replace('\n', NON_BREAKING_SPACE);
+    DeprecatedString rebalancedString = string.copy().deprecatedString();
+
+    rebalancedString.replace(NON_BREAKING_SPACE, ' ');
+    rebalancedString.replace('\n', ' ');
+    rebalancedString.replace('\t', ' ');
     
-    ExceptionCode ec = 0;
-    textNode->deleteData(start, length, ec);
-    ASSERT(!ec);
-    textNode->insertData(start, String(substring), ec);
-    ASSERT(!ec);
+    rebalancedString.replace(twoSpaces, pattern);
+    
+    if (startIsStartOfParagraph && rebalancedString[0] == ' ')
+        rebalancedString.replace(0, 1, nbsp);
+    int end = rebalancedString.length() - 1;
+    if (endIsEndOfParagraph && rebalancedString[end] == ' ')
+        rebalancedString.replace(end, 1, nbsp);    
+
+    return String(rebalancedString);
 }
 
 bool isTableStructureNode(const Node *node)

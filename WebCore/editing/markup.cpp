@@ -595,6 +595,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const DeprecatedSt
 
     DeprecatedStringList tabList = DeprecatedStringList::split('\t', string, true);
     DeprecatedString tabText = "";
+    bool first = true;
     while (!tabList.isEmpty()) {
         DeprecatedString s = tabList.first();
         tabList.pop_front();
@@ -606,8 +607,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const DeprecatedSt
                 ASSERT(ec == 0);
                 tabText = "";
             }
-            RefPtr<Node> textNode = document->createTextNode(s);
-            rebalanceWhitespaceInTextNode(textNode.get(), 0, s.length());
+            RefPtr<Node> textNode = document->createTextNode(stringWithRebalancedWhitespace(s, first, tabList.isEmpty()));
             paragraph->appendChild(textNode.release(), ec);
             ASSERT(ec == 0);
         }
@@ -620,6 +620,8 @@ static void fillContainerFromString(ContainerNode* paragraph, const DeprecatedSt
             paragraph->appendChild(createTabSpanElement(document, tabText), ec);
             ASSERT(ec == 0);
         }
+        
+        first = false;
     }
 }
 

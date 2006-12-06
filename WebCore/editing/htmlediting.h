@@ -61,7 +61,7 @@ Element* editableRootForPosition(const Position&);
 bool isBlock(Node*);
 Node* enclosingBlock(Node*);
 
-void rebalanceWhitespaceInTextNode(Node*, unsigned start, unsigned length);
+String stringWithRebalancedWhitespace(const String&, bool, bool);
 const String& nonBreakingSpaceString();
 
 //------------------------------------------------------------------------------------------

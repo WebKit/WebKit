@@ -63,6 +63,7 @@ protected:
     void joinTextNodes(Text*, Text*);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
+    void prepareWhitespaceAtPositionForSplit(Position& position);
     void removeCSSProperty(CSSStyleDeclaration*, int property);
     void removeNodeAttribute(Element*, const QualifiedName& attribute);
     void removeChildrenInRange(Node*, int from, int to);

@@ -45,7 +45,6 @@
 #include "markup.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "Range.h"
-#include "RebalanceWhitespaceCommand.h"
 #include "RemoveCSSPropertyCommand.h"
 #include "RemoveNodeAttributeCommand.h"
 #include "RemoveNodeCommand.h"
@@ -327,27 +326,99 @@ void CompositeEditCommand::setNodeAttribute(Element* element, const QualifiedNam
     applyCommandToComposite(new SetNodeAttributeCommand(element, attribute, value));
 }
 
+static inline bool isWhitespace(UChar c)
+{
+    return c == NON_BREAKING_SPACE || c == ' ' || c == '\n' || c == '\t';
+}
+
+// FIXME: Doesn't go into text nodes that contribute adjacent text (siblings, cousins, etc).
 void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 {
-    Node* textNode = position.node();
-    if (!textNode || !textNode->isTextNode())
+    Node* node = position.node();
+    if (!node || !node->isTextNode())
         return;
-    if (static_cast<Text*>(textNode)->length() == 0)
+    Text* textNode = static_cast<Text*>(node);    
+    
+    if (textNode->length() == 0)
         return;
     RenderObject* renderer = textNode->renderer();
     if (renderer && !renderer->style()->collapseWhiteSpace())
         return;
-    applyCommandToComposite(new RebalanceWhitespaceCommand(position));    
+        
+    String text = textNode->data();
+    ASSERT(!text.isEmpty());
+
+    int offset = position.offset();
+    // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
+    if (!isWhitespace(text[offset])) {
+        offset--;
+        if (offset < 0 || !isWhitespace(text[offset]))
+            return;
+    }
+    
+    // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
+    int upstream = offset;
+    while (upstream > 0 && isWhitespace(text[upstream - 1]))
+        upstream--;
+    
+    int downstream = offset;
+    while ((unsigned)downstream + 1 < text.length() && isWhitespace(text[downstream + 1]))
+        downstream++;
+    
+    int length = downstream - upstream + 1;
+    ASSERT(length > 0);
+    
+    VisiblePosition visibleUpstreamPos(Position(position.node(), upstream));
+    VisiblePosition visibleDownstreamPos(Position(position.node(), downstream + 1));
+    
+    String string = text.substring(upstream, length);
+    String rebalancedString = stringWithRebalancedWhitespace(string,
+    // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
+    // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
+                                                             isStartOfParagraph(visibleUpstreamPos) || upstream == 0, 
+                                                             isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length() - 1);
+    
+    if (string != rebalancedString)
+        replaceTextInNode(textNode, upstream, length, rebalancedString);
+}
+
+void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
+{
+    Node* node = position.node();
+    if (!node || !node->isTextNode())
+        return;
+    Text* textNode = static_cast<Text*>(node);    
+    
+    if (textNode->length() == 0)
+        return;
+    RenderObject* renderer = textNode->renderer();
+    if (renderer && !renderer->style()->collapseWhiteSpace())
+        return;
+
+    // Delete collapsed whitespace so that inserting nbsps doesn't uncollapse it.
+    Position upstreamPos = position.upstream();
+    deleteInsignificantText(position.upstream(), position.downstream());
+    position = upstreamPos.downstream();
+
+    VisiblePosition visiblePos(position);
+    VisiblePosition previousVisiblePos(visiblePos.next());
+    Position previous(previousVisiblePos.deepEquivalent());
+    
+    if (isCollapsibleWhitespace(previousVisiblePos.characterAfter()) && previous.node()->isTextNode() && !previous.node()->hasTagName(brTag))
+        replaceTextInNode(static_cast<Text*>(previous.node()), previous.offset(), 1, nonBreakingSpaceString());
+    if (isCollapsibleWhitespace(visiblePos.characterAfter()) && position.node()->isTextNode() && !position.node()->hasTagName(brTag))
+        replaceTextInNode(static_cast<Text*>(position.node()), position.offset(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()
 {
     Selection selection = endingSelection();
-    if (selection.isCaretOrRange()) {
-        rebalanceWhitespaceAt(endingSelection().start());
-        if (selection.isRange())
-            rebalanceWhitespaceAt(endingSelection().end());
-    }
+    if (selection.isNone())
+        return;
+        
+    rebalanceWhitespaceAt(selection.start());
+    if (selection.isRange())
+        rebalanceWhitespaceAt(selection.end());
 }
 
 void CompositeEditCommand::deleteInsignificantText(Text* textNode, int start, int end)

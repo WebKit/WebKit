@@ -1385,8 +1385,6 @@
 		93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */; };
 		93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */; };
 		93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAD099E64910056E581 /* MoveSelectionCommand.h */; };
-		93309DFE099E64920056E581 /* RebalanceWhitespaceCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAF099E64910056E581 /* RebalanceWhitespaceCommand.cpp */; };
-		93309DFF099E64920056E581 /* RebalanceWhitespaceCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB0099E64910056E581 /* RebalanceWhitespaceCommand.h */; };
 		93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */; };
 		93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */; };
 		93309E02099E64920056E581 /* RemoveNodeAttributeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB3099E64910056E581 /* RemoveNodeAttributeCommand.cpp */; };
@@ -4364,8 +4362,6 @@
 		93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MergeIdenticalElementsCommand.h; sourceTree = "<group>"; };
 		93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveSelectionCommand.cpp; sourceTree = "<group>"; };
 		93309DAD099E64910056E581 /* MoveSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveSelectionCommand.h; sourceTree = "<group>"; };
-		93309DAF099E64910056E581 /* RebalanceWhitespaceCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RebalanceWhitespaceCommand.cpp; sourceTree = "<group>"; };
-		93309DB0099E64910056E581 /* RebalanceWhitespaceCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RebalanceWhitespaceCommand.h; sourceTree = "<group>"; };
 		93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveCSSPropertyCommand.cpp; sourceTree = "<group>"; };
 		93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveCSSPropertyCommand.h; sourceTree = "<group>"; };
 		93309DB3099E64910056E581 /* RemoveNodeAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveNodeAttributeCommand.cpp; sourceTree = "<group>"; };
@@ -7650,8 +7646,6 @@
 				C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */,
 				93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */,
 				93309DAD099E64910056E581 /* MoveSelectionCommand.h */,
-				93309DAF099E64910056E581 /* RebalanceWhitespaceCommand.cpp */,
-				93309DB0099E64910056E581 /* RebalanceWhitespaceCommand.h */,
 				93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */,
 				93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */,
 				93309DB3099E64910056E581 /* RemoveNodeAttributeCommand.cpp */,
@@ -9683,7 +9677,6 @@
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
-				93309DFF099E64920056E581 /* RebalanceWhitespaceCommand.h in Headers */,
 				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
 				93309E03099E64920056E581 /* RemoveNodeAttributeCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
@@ -10857,7 +10850,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -10872,7 +10864,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -11251,7 +11242,6 @@
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309DF9099E64920056E581 /* MergeIdenticalElementsCommand.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
-				93309DFE099E64920056E581 /* RebalanceWhitespaceCommand.cpp in Sources */,
 				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,
 				93309E02099E64920056E581 /* RemoveNodeAttributeCommand.cpp in Sources */,
 				93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */,
