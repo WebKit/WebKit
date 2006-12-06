@@ -45,6 +45,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Editor.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/WebCoreFrameBridge.h>
@@ -310,7 +311,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // These strings are being converted from NSString to WebCore::String and back again, which
             // would offend our sensibilities something awful except that we're moving all the context menu code
             // to WebCore soon where we won't have to do this.
-            Vector<WebCore::String> guesses = core(webFrame)->guessesForUngrammaticalSelection();
+            Vector<WebCore::String> guesses = core(webFrame)->editor()->guessesForUngrammaticalSelection();
             size_t count = guesses.size();
             
             // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions

@@ -256,12 +256,6 @@ public:
     void applyEditingStyleToElement(Element*) const;
     void removeEditingStyleFromElement(Element*) const;
 
-    virtual bool isSelectionUngrammatical() = 0;
-    virtual bool isSelectionMisspelled() = 0;
-    virtual Vector<String> guessesForMisspelledSelection() = 0;
-    virtual Vector<String> guessesForUngrammaticalSelection() = 0;
-    virtual void markMisspellingsInAdjacentWords(const VisiblePosition&) = 0;
-    virtual void markMisspellings(const Selection&) = 0;
     virtual Range* markedTextRange() const = 0;
     virtual void issueCutCommand() = 0;
     virtual void issueCopyCommand() = 0;

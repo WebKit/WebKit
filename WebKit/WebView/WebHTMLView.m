@@ -1714,14 +1714,14 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isSelectionUngrammatical
 {
     if (Frame* coreFrame = core([self _frame]))
-        return coreFrame->isSelectionUngrammatical();
+        return coreFrame->editor()->isSelectionUngrammatical();
     return NO;
 }
 
 - (BOOL)_isSelectionMisspelled
 {
     if (Frame* coreFrame = core([self _frame]))
-        return coreFrame->isSelectionMisspelled();
+        return coreFrame->editor()->isSelectionMisspelled();
     return NO;
 }
 
@@ -4555,7 +4555,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     }
     
-    core([self _frame])->advanceToNextMisspelling();
+    core([self _frame])->editor()->advanceToNextMisspelling();
 }
 
 - (void)showGuessPanel:(id)sender
@@ -4576,7 +4576,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 #endif
     
-    core([self _frame])->advanceToNextMisspelling(true);
+    core([self _frame])->editor()->advanceToNextMisspelling(true);
     [spellingPanel orderFront:sender];
 }
 

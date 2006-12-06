@@ -158,19 +158,11 @@ public:
 // === to be moved into Editor
 
 public:
-    void advanceToNextMisspelling(bool startBeforeSelection = false);
 
     NSFont* fontForSelection(bool* hasMultipleFonts) const;
     NSDictionary* fontAttributesForSelectionStart() const;
     
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
-
-    virtual bool isSelectionUngrammatical();
-    virtual bool isSelectionMisspelled();
-    virtual Vector<String> guessesForMisspelledSelection();
-    virtual Vector<String> guessesForUngrammaticalSelection();
-    virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
-    virtual void markMisspellings(const Selection&);
 
     virtual void issueCutCommand();
     virtual void issueCopyCommand();
