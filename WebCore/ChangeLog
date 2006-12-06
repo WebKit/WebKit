@@ -1,3 +1,12 @@
+2006-12-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by John.
+
+        - keydown is now a keydown event instead of a keypress event.
+          Fixes some form submission odditties.
+
+        * platform/win/KeyEventWin.cpp:
+
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
         Tiger build fix
@@ -373,6 +382,7 @@
 
         * WebCore.exp: Added findEventWithKeyState, used by WebKit.
 
+>>>>>>> .r18037
 2006-12-04  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Darin.

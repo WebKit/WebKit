@@ -27,7 +27,7 @@
 #include "PlatformKeyboardEvent.h"
 #include <windows.h>
 
-#define REPEAT_COUNT_MASK           0x0000FFFF
+#define REPEAT_COUNT_MASK           0x0000FFFE
 #define NEW_RELEASE_STATE_MASK      0x80000000
 #define PREVIOUS_DOWN_STATE_MASK    0x40000000
 #define ALT_KEY_DOWN_MASK           0x20000000
