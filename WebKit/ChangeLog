@@ -1,3 +1,20 @@
+2006-12-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam and Oliver
+
+        While working on http://bugs.webkit.org/show_bug.cgi?id=11675 I
+        decided to fix much of the null-deref problems that creeped in via 
+        the loader refactoring.  This isn't changing behavior, just reintroducing
+        the free nil checking we used to have with pure ObjC
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray menuForEvent:]):  Explicitly check for null frames
+        (-[NSArray mouseDown:]):  Ditto
+        (-[NSArray mouseDragged:]):  Ditto
+        (-[NSArray mouseUp:]):  Ditto
+        (-[NSArray performKeyEquivalent:]):  Ditto
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):  Ditto
+
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth

@@ -2657,12 +2657,15 @@ static WebHTMLView *lastHitView = nil;
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
     _private->handlingMouseDownEvent = YES;
-    BOOL handledEvent = core([self _frame])->eventHandler()->sendContextMenuEvent(event);
+    BOOL handledEvent = NO;
+    Frame* coreframe = core([self _frame]);
+    if (coreframe)
+        handledEvent = coreframe->eventHandler()->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
     
     if (handledEvent) {
 #ifdef WEBCORE_CONTEXT_MENUS
-        if (Page* page = core([self _frame])->page()) {
+        if (coreframe && Page* page = coreframe->page()) {
             NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
             NSMenu* menu = nil;
             if (menuItems && [menuItems count] > 0) {
@@ -2942,7 +2945,8 @@ static WebHTMLView *lastHitView = nil;
 
         // Let WebCore get a chance to deal with the event. This will call back to us
         // to start the autoscroll timer if appropriate.
-        core([self _frame])->eventHandler()->mouseDown(event);
+        if (Frame* coreframe = core([self _frame]))
+            coreframe->eventHandler()->mouseDown(event);
     }
 
 done:
@@ -2995,7 +2999,8 @@ done:
     [self retain];
 
     if (!_private->ignoringMouseDraggedEvents)
-        core([self _frame])->eventHandler()->mouseDragged(event);
+        if (Frame* coreframe = core([self _frame]))
+            coreframe->eventHandler()->mouseDragged(event);
 
     [self release];
 }
@@ -3078,7 +3083,8 @@ done:
     [self retain];
 
     [self _stopAutoscrollTimer];
-    core([self _frame])->eventHandler()->mouseUp(event);
+    if (Frame* coreframe = core([self _frame]))
+        coreframe->eventHandler()->mouseUp(event);
     [self _updateMouseoverWithFakeEvent];
 
     [self release];
@@ -4045,6 +4051,7 @@ done:
     if (!eventWasSentToWebCore 
             && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
             && [self _web_firstResponderIsSelfOrDescendantView]
+            && core([self _frame])
             && core([self _frame])->eventHandler()->keyEvent(event))
         ret = YES;
     else
@@ -6156,8 +6163,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 {
-    return [[[WebElementDictionary alloc] initWithHitTestResult:
-        core([self _frame])->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
+    Frame* coreframe = core([self _frame]);
+    if (coreframe) 
+        return [[[WebElementDictionary alloc] initWithHitTestResult:coreframe->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
+    return nil;
 }
 
 @end
