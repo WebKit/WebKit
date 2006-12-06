@@ -1,3 +1,13 @@
+2006-12-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof.
+
+        - Returned the semantic meaning of the mask to be the actual repeat count,
+        and changed auto_repeat to correctly differnetiate between keypressed and keydown.
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2006-12-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -87,6 +97,7 @@
         (WebCore::TypingCommand::markMisspellingsAfterTyping):
         updated for moved functions
 
+>>>>>>> .r18043
 2006-12-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

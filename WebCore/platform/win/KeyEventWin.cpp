@@ -27,7 +27,7 @@
 #include "PlatformKeyboardEvent.h"
 #include <windows.h>
 
-#define REPEAT_COUNT_MASK           0x0000FFFE
+#define REPEAT_COUNT_MASK           0x0000FFFF
 #define NEW_RELEASE_STATE_MASK      0x80000000
 #define PREVIOUS_DOWN_STATE_MASK    0x40000000
 #define ALT_KEY_DOWN_MASK           0x20000000
@@ -141,7 +141,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lP
     , m_unmodifiedText(singleCharacterString(wParam))
     , m_keyIdentifier(keyIdentifierForWindowsKeyCode(wParam))
     , m_isKeyUp((lParam & NEW_RELEASE_STATE_MASK))
-    , m_autoRepeat(lParam & REPEAT_COUNT_MASK)
+    , m_autoRepeat((lParam & REPEAT_COUNT_MASK) > 1)
     , m_WindowsKeyCode(wParam)
     , m_isKeypad(false) // FIXME
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
