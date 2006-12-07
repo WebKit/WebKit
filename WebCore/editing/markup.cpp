@@ -365,18 +365,13 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     Node *commonAncestorBlock = 0;
     if (commonAncestor) {
         commonAncestorBlock = enclosingBlock(commonAncestor);
-        if (commonAncestorBlock->hasTagName(tbodyTag)) {
+        if (commonAncestorBlock && commonAncestorBlock->hasTagName(tbodyTag)) {
             Node* table = commonAncestorBlock->parentNode();
             while (table && !table->hasTagName(tableTag))
                 table = table->parentNode();
             if (table)
                 commonAncestorBlock = table;
         }
-    }
-
-    if (!commonAncestorBlock) {
-        doc->frame()->editor()->deleteButtonController()->enable();
-        return "";
     }
 
     DeprecatedStringList markups;

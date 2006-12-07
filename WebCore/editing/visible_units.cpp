@@ -318,7 +318,7 @@ VisiblePosition startOfLine(const VisiblePosition &c)
     return VisiblePosition(startNode, startOffset, DOWNSTREAM);
 }
 
-VisiblePosition endOfLine(const VisiblePosition &c)
+VisiblePosition endOfLine(const VisiblePosition& c)
 {
     RootInlineBox *rootBox = rootBoxForLine(c);
     if (!rootBox)

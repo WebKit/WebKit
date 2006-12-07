@@ -1,3 +1,19 @@
+2006-12-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4854869>
+        Inserting a new line in a contenteditable=true SPAN whose parent is a DIV asserts
+
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingBlock): Use enclosingNodeWithType to prevent escape
+        from editable content.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): A null commonAncestorBlock will happen
+        if commonAncestor is inside an inline editable root that doesn't
+        contain any blocks.  Removed an early return for this case: the 
+        code below the early return can and must handle it.
+
 2006-12-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

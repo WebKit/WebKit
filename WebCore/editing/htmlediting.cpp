@@ -288,14 +288,7 @@ Node* enclosingBlock(Node* node)
     if (isBlock(node))
         return node;
         
-    while (1) {
-        node = node->parentNode();
-        if (!node)
-            break;
-        if (isBlock(node))
-            return node;
-    }
-    return 0;
+    return enclosingNodeOfType(node, &isBlock);
 }
 
 Position rangeCompliantEquivalent(const Position& pos)

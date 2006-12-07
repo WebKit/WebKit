@@ -1,5 +1,18 @@
 2006-12-06  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by john
+        
+        <rdar://problem/4854869>
+        Inserting a new line in a contenteditable=true SPAN whose parent is a DIV asserts
+
+        * editing/deleting/delete-mixed-editable-content-001-expected.txt:
+        * editing/inserting/editable-inline-element-expected.checksum: Added.
+        * editing/inserting/editable-inline-element-expected.txt: Added.
+        * editing/inserting/editable-inline-element-expected.png: Added.
+        * editing/inserting/editable-inline-element.html: Added.
+
+2006-12-06  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
         
         <rdar://problem/4753545>
