@@ -34,8 +34,34 @@
 #import "ResourceError.h"
 #import "ResourceResponse.h"
 #import "SubresourceLoader.h"
+#import "WebCoreSystemInterface.h"
+
+using namespace WebCore;
+
+@interface WebCoreResourceHandleAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
+{
+    ResourceHandle* m_handle;
+}
+- (id)initWithHandle:(ResourceHandle*)handle;
+- (void)detachHandle;
+@end
+
+@interface NSURLConnection (NSURLConnectionTigerPrivate)
+- (NSData *)_bufferedData;
+@end
+
+@interface NSURLProtocol (WebFoundationSecret) 
++ (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
+@end
 
 namespace WebCore {
+   
+static unsigned inNSURLConnectionCallback;
+static bool NSURLConnectionSupportsBufferedData;
+    
+#ifndef NDEBUG
+static bool isInitializingConnection;
+#endif
     
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -43,12 +69,11 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 ResourceHandle::~ResourceHandle()
 {
+    releaseDelegate();
 }
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
-    d->m_loading = true;
-
     ASSERT(docLoader);
     
     FrameMac* frame = Mac(docLoader->frame());
@@ -63,11 +88,20 @@ bool ResourceHandle::start(DocLoader* docLoader)
     // onUnload handler, so let's just block it.
     if (!frame->page())
         return false;
+  
+#ifndef NDEBUG
+    isInitializingConnection = YES;
+#endif
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate()];
+#ifndef NDEBUG
+    isInitializingConnection = NO;
+#endif
+    d->m_connection = connection;
+    [connection release];
+    if (d->m_defersLoading)
+        wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), YES);
     
-    d->m_subresourceLoader = SubresourceLoader::create(frame, d->m_subresourceLoaderClient, this, d->m_request);
-    d->m_client = d->m_subresourceLoader->loaderAsResourceHandleClient();
-    
-    if (d->m_subresourceLoader)
+    if (d->m_connection)
         return true;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -75,53 +109,179 @@ bool ResourceHandle::start(DocLoader* docLoader)
     return false;
 }
 
-void ResourceHandle::didReceiveResponse(NSURLResponse* nsResponse)
-{
-    ASSERT(nsResponse);
-
-    if (ResourceHandleClient* c = client())
-        c->didReceiveResponse(this, nsResponse);
-}
-
 void ResourceHandle::cancel()
 {
-    d->m_subresourceLoader->cancel();
+    [d->m_connection.get() cancel];
 }
 
-NSURLRequest *ResourceHandle::willSendRequest(NSURLRequest *nsRequest, NSURLResponse* nsRedirectResponse)
+void ResourceHandle::setDefersLoading(bool defers)
 {
-    ASSERT(nsRequest);
-    if (ResourceHandleClient* c = client()) {
-        ResourceRequest request(nsRequest);
-        c->willSendRequest(this, request, nsRedirectResponse);
-        return request.nsURLRequest();
+    d->m_defersLoading = defers;
+    wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
+}
+
+WebCoreResourceHandleAsDelegate *ResourceHandle::delegate()
+{
+    if (!d->m_delegate) {
+        WebCoreResourceHandleAsDelegate *delegate = [[WebCoreResourceHandleAsDelegate alloc] initWithHandle:this];
+        d->m_delegate = delegate;
+        [delegate release];
+    }
+    return d->m_delegate.get();
+}
+
+void ResourceHandle::releaseDelegate()
+{
+    if (!d->m_delegate)
+        return;
+    [d->m_delegate.get() detachHandle];
+    d->m_delegate = nil;
+}
+
+bool ResourceHandle::supportsBufferedData()
+{
+    static bool initialized = false;
+    if (!initialized) {
+        NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
+        initialized = true;
     }
 
-    return nsRequest;
+    return NSURLConnectionSupportsBufferedData;
 }
 
-void ResourceHandle::addData(NSData *data)
+NSData* ResourceHandle::bufferedData()
 {
-    ASSERT(data);
-    if (ResourceHandleClient* c = client())
-        c->didReceiveData(this, (const char *)[data bytes], [data length]);
-}
+    if (ResourceHandle::supportsBufferedData())
+        return [d->m_connection.get() _bufferedData];
 
-void ResourceHandle::finishJobAndHandle(NSData *data)
-{
-    if (ResourceHandleClient* c = client())
-        c->didFinishLoading(this);
-}
-
-void ResourceHandle::reportError(NSError* error)
-{
-    if (ResourceHandleClient* c = client())
-        c->didFailWithError(this, error);
-}
-
-SubresourceLoader* ResourceHandle::loader() const
-{
-    return d->m_subresourceLoader.get();
+    return nil;
 }
 
 } // namespace WebCore
+
+@implementation WebCoreResourceHandleAsDelegate
+
+- (id)initWithHandle:(ResourceHandle*)handle
+{
+    self = [self init];
+    if (!self)
+        return nil;
+    m_handle = handle;
+    return self;
+}
+
+- (void)detachHandle
+{
+    m_handle = 0;
+}
+
+- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+{
+    if (!m_handle)
+        return nil;
+    ++inNSURLConnectionCallback;
+    ResourceRequest request = newRequest;
+    m_handle->client()->willSendRequest(m_handle, request, redirectResponse);
+    --inNSURLConnectionCallback;
+    return request.nsURLRequest();
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didReceiveAuthenticationChallenge(m_handle, challenge);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didCancelAuthenticationChallenge(m_handle, challenge);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didReceiveResponse(m_handle, r);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], lengthReceived);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->willStopBufferingData(m_handle, data);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)con
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didFinishLoading(m_handle);
+    --inNSURLConnectionCallback;
+}
+
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
+{
+    if (!m_handle)
+        return;
+    ++inNSURLConnectionCallback;
+    m_handle->client()->didFail(m_handle, error);
+    --inNSURLConnectionCallback;
+}
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+{
+#ifndef NDEBUG
+    if (isInitializingConnection)
+        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
+#endif
+    if (!m_handle)
+        return nil;
+    ++inNSURLConnectionCallback;
+    NSCachedURLResponse *result = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
+    --inNSURLConnectionCallback;
+    return result;
+}
+
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (!m_handle)
+        return;
+    m_handle->client()->receivedCredential(m_handle, challenge, credential);
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (!m_handle)
+        return;
+    m_handle->client()->receivedRequestToContinueWithoutCredential(m_handle, challenge);
+}
+
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (!m_handle)
+        return;
+    m_handle->client()->receivedCancellation(m_handle, challenge);
+}
+
+@end

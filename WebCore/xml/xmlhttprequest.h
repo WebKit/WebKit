@@ -85,7 +85,7 @@ private:
     virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
     virtual void didReceiveData(SubresourceLoader*, const char* data, int size);
-    virtual void didFailWithError(SubresourceLoader*, const ResourceError&);
+    virtual void didFail(SubresourceLoader*, const ResourceError&);
     virtual void didFinishLoading(SubresourceLoader*);
 
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&);

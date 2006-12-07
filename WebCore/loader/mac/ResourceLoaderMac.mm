@@ -32,6 +32,7 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "Page.h"
+#import "ResourceHandle.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -62,7 +63,6 @@ using namespace WebCore;
 namespace WebCore {
 
 static unsigned inNSURLConnectionCallback;
-static bool NSURLConnectionSupportsBufferedData;
 
 #ifndef NDEBUG
 static bool isInitializingConnection;
@@ -76,11 +76,6 @@ ResourceLoader::ResourceLoader(Frame* frame)
     , m_currentConnectionChallenge(nil)
     , m_defersLoading(frame->page()->defersLoading())
 {
-    static bool initialized = false;
-    if (!initialized) {
-        NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
-        initialized = true;
-    }
 }
 
 ResourceLoader::~ResourceLoader()
@@ -166,7 +161,7 @@ void ResourceLoader::addData(NSData *data, bool allAtOnce)
         return;
     }
         
-    if (NSURLConnectionSupportsBufferedData) {
+    if (ResourceHandle::supportsBufferedData()) {
         // Buffer data only if the connection has handed us the data because is has stopped buffering it.
         if (m_resourceData)
             [m_resourceData.get() appendData:data];
@@ -187,7 +182,7 @@ NSData *ResourceLoader::resourceData()
         // before the caller of this method has an opportunity to retain the returned data (4070729).
         return [[m_resourceData.get() retain] autorelease];
 
-    if (NSURLConnectionSupportsBufferedData)
+    if (ResourceHandle::supportsBufferedData())
         return [m_connection.get() _bufferedData];
 
     return nil;

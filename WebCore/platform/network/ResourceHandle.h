@@ -48,11 +48,13 @@ typedef LONG_PTR LRESULT;
 @class NSError;
 @class NSURLRequest;
 @class NSURLResponse;
+@class WebCoreResourceHandleAsDelegate;
 #else
 class NSData;
 class NSError;
 class NSURLRequest;
 class NSURLResponse;
+class WebCoreResourceHandleAsDelegate;
 #endif
 #endif
 
@@ -72,21 +74,20 @@ template <typename T> class Timer;
 
 class ResourceHandle : public Shared<ResourceHandle> {
 private:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, SubresourceLoaderClient*);
+    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading);
 
 public:
     // FIXME: should not need the DocLoader
-    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, DocLoader*, SubresourceLoaderClient* = 0);
+    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, DocLoader*, bool defersLoading);
 
     ~ResourceHandle();
 
 #if PLATFORM(MAC)
-    NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *);
-    void didReceiveResponse(NSURLResponse *);  
-    void addData(NSData *);
-    void finishJobAndHandle(NSData *);
-    void reportError(NSError* error);
-    SubresourceLoader* loader() const;
+    WebCoreResourceHandleAsDelegate *delegate();
+    void releaseDelegate();
+    NSData* bufferedData();
+        
+    static bool supportsBufferedData();
 #endif
 
 #if USE(WININET)
@@ -111,12 +112,12 @@ public:
     void cancel();
     
     ResourceHandleClient* client() const;
+    void setDefersLoading(bool);
       
     const HTTPHeaderMap& requestHeaders() const;
     const KURL& url() const;
     const String& method() const;
     PassRefPtr<FormData> postData() const;
-
 private:
     bool start(DocLoader*);
 

@@ -48,7 +48,11 @@ typedef void CURL;
 #endif
 
 #if PLATFORM(MAC)
-#include "SubresourceLoader.h"
+#ifdef __OBJC__
+@class NSURLConnection;
+#else
+class NSURLConnection;
+#endif
 #endif
 
 // The allocations and releases in ResourceHandleInternal are
@@ -60,13 +64,11 @@ namespace WebCore {
     class ResourceHandleInternal
     {
     public:
-        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, SubresourceLoaderClient* client)
+        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading)
             : m_client(c)
-            , m_subresourceLoaderClient(client)
             , m_request(request)
             , status(0)
-            , m_loading(false)
-            , m_cancelled(false)
+            , m_defersLoading(defersLoading)
 #if USE(CFNETWORK)
             , m_connection(0)
 #endif
@@ -92,24 +94,18 @@ namespace WebCore {
         
         ~ResourceHandleInternal();
 
-        ResourceHandleClient* client() const { return m_client; }
-       
         ResourceHandleClient* m_client;
-
-        // FIXME: This is only used on mac and should be removed when ResourceHandle no longer depends on SubresourceLoader.
-        SubresourceLoaderClient* m_subresourceLoaderClient;
         
         ResourceRequest m_request;
         
         int status;
 
-        bool m_loading;
-        bool m_cancelled;
-
+        bool m_defersLoading;
 #if USE(CFNETWORK)
         CFURLConnectionRef m_connection;
 #elif PLATFORM(MAC)
-        RefPtr<SubresourceLoader> m_subresourceLoader;
+        RetainPtr<NSURLConnection> m_connection;
+        RetainPtr<WebCoreResourceHandleAsDelegate> m_delegate;
 #endif
 #if USE(WININET)
         HANDLE m_fileHandle;

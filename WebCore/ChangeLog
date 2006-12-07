@@ -1,3 +1,90 @@
+2006-12-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+        
+        Change SubresourceLoader to use a ResourceHandle, and change ResourceHandle to use a NSURLConnection.
+        
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        * loader/SubresourceLoader.h:
+        (WebCore::SubresourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::SubresourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::SubresourceLoader::willStopBufferingData):
+        (WebCore::SubresourceLoader::willCacheResponse):
+        (WebCore::SubresourceLoader::receivedCredential):
+        (WebCore::SubresourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebCore::SubresourceLoader::receivedCancellation):
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didFail):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didFail):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::didFail):
+        * loader/loader.h:
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::resourceData):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::setDefersLoading):
+        (WebCore::SubresourceLoader::resourceData):
+        (WebCore::SubresourceLoader::load):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didReceiveData):
+        (WebCore::ResourceHandleClient::didFail):
+        (WebCore::ResourceHandleClient::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandleClient::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandleClient::willStopBufferingData):
+        (WebCore::ResourceHandleClient::willCacheResponse):
+        (WebCore::ResourceHandleClient::receivedCredential):
+        (WebCore::ResourceHandleClient::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandleClient::receivedCancellation):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (WebCore::ResourceHandle::delegate):
+        (WebCore::ResourceHandle::releaseDelegate):
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::bufferedData):
+        (-[WebCoreResourceHandleAsDelegate initWithHandle:]):
+        (-[WebCoreResourceHandleAsDelegate detachHandle]):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+        (-[WebCoreResourceHandleAsDelegate useCredential:forAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate cancelAuthenticationChallenge:]):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::didFail):
+        * xml/xmlhttprequest.h:
+
 2006-12-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

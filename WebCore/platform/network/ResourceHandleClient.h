@@ -37,10 +37,16 @@
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
+@class NSCachedURLResponse;
 @class NSData;
+@class NSURLAuthenticationChallenge;
+@class NSURLCredential;
 @class NSURLResponse;
 #else
+class NSCachedURLResponse;
 class NSData;
+class NSURLAuthenticationChallenge;
+class NSURLCredential;
 class NSURLResponse;
 #endif
 #endif
@@ -88,12 +94,25 @@ namespace WebCore {
         // void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
-        virtual void didReceiveData(ResourceHandle*, const char*, int) { }
+        virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived) { }
         virtual void didFinishLoading(ResourceHandle*) { }
-        virtual void didFailWithError(ResourceHandle*, const ResourceError&) { }
+        virtual void didFail(ResourceHandle*, const ResourceError&) { }
 
         // cached response may be modified
         // void willCacheResponse(ResourceHandle*, CachedResourceResponse&) { }
+
+#if PLATFORM(MAC)
+        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
+        virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
+        
+        virtual void willStopBufferingData(ResourceHandle*, NSData *data) { } 
+        
+        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return cachedResponse; }
+
+        virtual void receivedCredential(ResourceHandle*, NSURLAuthenticationChallenge *, NSURLCredential *) { } 
+        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
+        virtual void receivedCancellation(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
+#endif
     };
 
 }

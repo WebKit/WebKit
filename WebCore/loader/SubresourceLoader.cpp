@@ -39,10 +39,9 @@ namespace WebCore {
 
 #if !PLATFORM(MAC)
 
-SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, ResourceHandle* handle)
+SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client)
     : ResourceLoader(frame)
     , m_client(client)
-    , m_handle(handle)
     , m_loadingMultipartContent(false)
 {
 }
@@ -54,14 +53,12 @@ SubresourceLoader::~SubresourceLoader()
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request)
 {
     // FIXME: This is only temporary until we get the Mac version of SubresourceLoader::create cross-platform.
-    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client, 0));
+    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
 
-    subloader->m_handle = ResourceHandle::create(request, subloader.get(), frame->document()->docLoader());
+    subloader->m_handle = ResourceHandle::create(request, subloader.get(), frame->document()->docLoader(), false);
 
     return subloader.release();
 }
-
-#endif
 
 void SubresourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
@@ -75,7 +72,7 @@ void SubresourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRespon
         m_client->didReceiveResponse(this, response);
 }
 
-void SubresourceLoader::didReceiveData(ResourceHandle*, const char* data, int length)
+void SubresourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
     if (m_client)
         m_client->didReceiveData(this, data, length);
@@ -87,25 +84,17 @@ void SubresourceLoader::didFinishLoading(ResourceHandle*)
         // We must protect the resource loader in case the call to receivedAllData causes a deref.
         RefPtr<SubresourceLoader> protect(this);
         
-#if PLATFORM(MAC)
-        m_client->receivedAllData(this, resourceData());
-#else
         m_client->receivedAllData(this, 0);
-#endif
         m_client->didFinishLoading(this);
     }
 }
 
-void SubresourceLoader::didFailWithError(ResourceHandle*, const ResourceError& error)
+void SubresourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     if (m_client)
-        m_client->didFailWithError(this, error);
+        m_client->didFail(this, error);
 }
 
-void SubresourceLoader::receivedAllData(ResourceHandle*, PlatformData data)
-{
-    if (m_client)
-        m_client->receivedAllData(this, data);
-}
+#endif
 
 }

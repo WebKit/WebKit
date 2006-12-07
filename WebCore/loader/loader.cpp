@@ -115,7 +115,7 @@ void Loader::receivedAllData(SubresourceLoader* loader, PlatformData allData)
     servePendingRequests();
 }
 
-void Loader::didFailWithError(SubresourceLoader* loader, const ResourceError& error)
+void Loader::didFail(SubresourceLoader* loader, const ResourceError& error)
 {
     ASSERT(loader->handle());
     RequestMap::iterator i = m_requestsLoading.find(loader);

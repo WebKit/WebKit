@@ -47,10 +47,9 @@
 
 namespace WebCore {
 
-SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, ResourceHandle* handle)
+SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client)
     : ResourceLoader(frame)
     , m_client(client)
-    , m_handle(handle)
     , m_loadingMultipartContent(false)
 {
     frameLoader()->addSubresourceLoader(this);
@@ -60,45 +59,73 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
+void SubresourceLoader::setDefersLoading(bool defers)
+{
+    m_defersLoading = defers;
+    m_handle->setDefersLoading(defers);
+}
+
+NSData *SubresourceLoader::resourceData()
+{
+    if (ResourceHandle::supportsBufferedData())
+        return m_handle->bufferedData();
+    
+    return ResourceLoader::resourceData();
+}
+
+bool SubresourceLoader::load(NSURLRequest *r)
+{
+    ASSERT(m_handle == nil);
+    ASSERT(!frameLoader()->isArchiveLoadPending(this));
+    
+    m_originalURL = [r URL];
+    
+    NSURLRequest *clientRequest = willSendRequest(r, nil);
+    if (clientRequest == nil) {
+        didFail(frameLoader()->cancelledError(r));
+        return false;
+    }
+    r = clientRequest;
+    
+    if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
+        return true;
+  
+    m_handle = ResourceHandle::create(r, this, m_frame->document()->docLoader(), m_defersLoading);
+
+    return true;
+}
+
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request)
 {
     if (!frame)
         return 0;
-    
-    RefPtr<ResourceHandle> handle = ResourceHandle::create(request, 0, frame->document()->docLoader(), client);
-    
-    if (!handle)
-        return 0;
-    
-    return handle->loader();
-}
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, ResourceHandle* handle, ResourceRequest& request)
-{
     FrameLoader* fl = frame->loader();
     if (fl->state() == FrameStateProvisional)
         return 0;
 
+    ResourceRequest newRequest = request;
+    
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     // FIXME: is that really the rule we want for subresources?
     bool hideReferrer;
     fl->canLoad(request.url().getNSURL(), fl->outgoingReferrer(), hideReferrer);
     if (!hideReferrer && !request.httpReferrer())
-        request.setHTTPReferrer(fl->outgoingReferrer());
+        newRequest.setHTTPReferrer(fl->outgoingReferrer());
 
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
+    NSMutableURLRequest *newNSURLRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
 
     // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
-    [newRequest setHTTPMethod:request.httpMethod()];
+    [newNSURLRequest setHTTPMethod:request.httpMethod()];
     RefPtr<FormData> formData = request.httpBody();
     if (formData && !formData->isEmpty())
-        setHTTPBody(newRequest, formData);
+        setHTTPBody(newNSURLRequest, formData);
 
-    wkSupportsMultipartXMixedReplace(newRequest);
+    wkSupportsMultipartXMixedReplace(newNSURLRequest);
 
     if (!request.httpHeaderFields().isEmpty())
-        [newRequest setAllHTTPHeaderFields:
+        [newNSURLRequest setAllHTTPHeaderFields:
             [NSDictionary _webcore_dictionaryWithHeaderMap:request.httpHeaderFields()]];
 
     // Use the original request's cache policy for two reasons:
@@ -107,18 +134,18 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     // 2. Delegates that modify the cache policy using willSendRequest: should
     //    not affect any other resources. Such changes need to be done
     //    per request.
-    if (isConditionalRequest(newRequest))
-        [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    if (isConditionalRequest(newNSURLRequest))
+        [newNSURLRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [newRequest setCachePolicy:[fl->originalRequest() cachePolicy]];
+        [newNSURLRequest setCachePolicy:[fl->originalRequest() cachePolicy]];
     
-    fl->addExtraFieldsToRequest(newRequest, false, false);
+    fl->addExtraFieldsToRequest(newNSURLRequest, false, false);
 
-    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client, handle));
-    if (!subloader->load(newRequest))
+    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
+    if (!subloader->load(newNSURLRequest))
         return 0;
 
-    [newRequest release];
+    [newNSURLRequest release];
 
     return subloader.release();
 }
@@ -127,8 +154,12 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
 {
     NSURL *oldURL = [request() URL];
     NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
-    if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
-        clientRequest = m_handle->willSendRequest(clientRequest, redirectResponse);
+    if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]]) {
+        ResourceRequest request = newRequest;
+        m_client->willSendRequest(this, request, redirectResponse);
+        
+        return request.nsURLRequest();
+    }
     
     return clientRequest;
 }
@@ -144,7 +175,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_handle->didReceiveResponse(r);
+    m_client->didReceiveResponse(this, r);
     
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
@@ -155,7 +186,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
         // Since a subresource loader does not load multipart sections progressively,
         // deliver the previously received data to the loader all at once now.
         // Then clear the data to make way for the next multipart section.
-        m_handle->addData(resourceData());
+        m_client->didReceiveData(this, (const char*)[resourceData() bytes], [resourceData() length]);
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -172,7 +203,7 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent)
-        m_handle->addData(data);
+        m_client->didReceiveData(this, (const char*)[data bytes], [data length]);
 
     ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
 }
@@ -186,11 +217,10 @@ void SubresourceLoader::didFinishLoading()
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (RefPtr<ResourceHandle> handle = m_handle) {
-        handle->finishJobAndHandle(resourceData());
-        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
-        m_handle = 0;
-    }
+    m_client->receivedAllData(this, resourceData());
+    m_client->didFinishLoading(this);
+    
+    m_handle = 0;
 
     if (cancelled())
         return;
@@ -207,11 +237,9 @@ void SubresourceLoader::didFail(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (RefPtr<ResourceHandle> handle = m_handle) {
-        handle->reportError(error);
-        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
-        m_handle = 0;
-    }
+    m_client->didFail(this, error);
+    
+    m_handle = 0;
     
     if (cancelled())
         return;
@@ -226,16 +254,45 @@ void SubresourceLoader::didCancel(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (RefPtr<ResourceHandle> handle = m_handle) {
-        handle->reportError(error);
-        // FIXME: Once SubresourceLoader::handle() is removed, we can move back .release() to the assignment expression
-        m_handle = 0;
-    }
+    m_client->didFail(this, error);
+    
+    // FIXME: Once ResourceLoader uses ResourceHandle, this should be done in ResourceLoader::didCancel.
+    m_handle->cancel();
+    m_handle = 0;
 
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
     ResourceLoader::didCancel(error);
+}
+
+void SubresourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    NSURLRequest* newRequest = willSendRequest(request.nsURLRequest(), redirectResponse.nsURLResponse());
+    
+    request = newRequest;
+}
+
+void SubresourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+{
+    didReceiveResponse(response.nsURLResponse());
+}
+
+void SubresourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
+{
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
+    didReceiveData(nsData, lengthReceived, false);
+    [nsData release];
+}
+
+void SubresourceLoader::didFinishLoading(ResourceHandle*)
+{
+    didFinishLoading();
+}
+
+void SubresourceLoader::didFail(ResourceHandle*, const ResourceError& error)
+{
+    didFail(error);
 }
 
 }

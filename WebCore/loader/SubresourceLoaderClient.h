@@ -48,7 +48,7 @@ public:
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&) { }
     virtual void didReceiveData(SubresourceLoader*, const char*, int) { }
     virtual void didFinishLoading(SubresourceLoader*) { }
-    virtual void didFailWithError(SubresourceLoader*, const ResourceError&) { }
+    virtual void didFail(SubresourceLoader*, const ResourceError&) { }
     
     // FIXME: Get rid of this function
     virtual void receivedAllData(SubresourceLoader*, PlatformData) { }
