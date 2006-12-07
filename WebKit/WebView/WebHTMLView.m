@@ -2663,9 +2663,9 @@ static WebHTMLView *lastHitView = nil;
         handledEvent = coreframe->eventHandler()->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
     
-    if (handledEvent) {
+    if (handledEvent && coreframe) {
 #ifdef WEBCORE_CONTEXT_MENUS
-        if (coreframe && Page* page = coreframe->page()) {
+        if (Page* page = coreframe->page()) {
             NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
             NSMenu* menu = nil;
             if (menuItems && [menuItems count] > 0) {

@@ -2,6 +2,15 @@
 
         Reviewed by Brady.
 
+        Build fix for WebCore ContextMenus. It got broken by r18046.
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray menuForEvent:]):
+
+2006-12-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
         Make some parameters const and const references.
 
         * WebCoreSupport/WebContextMenuClient.h:
