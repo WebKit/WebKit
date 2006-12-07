@@ -145,7 +145,7 @@ handleString:
                         # FIXME: Validate UTF-8 here?
                         $UIString = $string;
                         $expected = ",";
-                    } elsif ($macro eq "UI_STRING_KEY" and !defined $key) {
+                    } elsif (($macro eq "UI_STRING_KEY" or $macro eq "LPCTSTR_UI_STRING_KEY") and !defined $key) {
                         # FIXME: Validate UTF-8 here?
                         $key = $string;
                         $expected = ",";
@@ -204,7 +204,7 @@ handleString:
                     $sawError = 1;
                     $expected = "";
                 }
-                if ($token eq "UI_STRING" or $token eq "UI_STRING_KEY") {
+                if ($token eq "UI_STRING" or $token eq "UI_STRING_KEY" or $token eq "LPCTSTR_UI_STRING" or $token eq "LPCTSTR_UI_STRING_KEY") {
                     $expected = "(";
                     $macro = $token;
                     $UIString = undef;

@@ -1,3 +1,9 @@
+2006-12-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Support C strings for localization
+
+        * Scripts/extract-localizable-strings:
+
 2006-12-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin.
