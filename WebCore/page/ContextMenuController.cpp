@@ -101,6 +101,14 @@ static String makeGoogleSearchURL(String searchString)
     return url;
 }
 
+static void openNewWindow(const KURL& urlToLoad, const Frame* frame)
+{
+    Page* newPage = frame->page()->chrome()->createWindow(FrameLoadRequest(ResourceRequest(urlToLoad, 
+        frame->loader()->outgoingReferrer())));
+    if (newPage)
+        newPage->chrome()->show();
+}
+
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
     ASSERT(item->parentMenu() == contextMenu());
@@ -111,43 +119,38 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         return;
     }
 
-    Frame* frame = m_contextMenu->hitTestResult().innerNonSharedNode()->document()->frame();
+    HitTestResult result = m_contextMenu->hitTestResult();
+    Frame* frame = result.innerNonSharedNode()->document()->frame();
     if (!frame)
         return;
     ASSERT(m_page == frame->page());
     
     switch (item->action()) {
-        case ContextMenuItemTagOpenLinkInNewWindow: {
-            ResourceRequest request = ResourceRequest(m_contextMenu->hitTestResult().absoluteLinkURL());
-            String referrer = frame->loader()->referrer();
-            m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+        case ContextMenuItemTagOpenLinkInNewWindow: 
+            openNewWindow(result.absoluteLinkURL(), frame);
             break;
-        }
         case ContextMenuItemTagDownloadLinkToDisk:
             // FIXME: Some day we should be able to do this from within WebCore.
-            m_client->downloadURL(m_contextMenu->hitTestResult().absoluteLinkURL());
+            m_client->downloadURL(result.absoluteLinkURL());
             break;
         case ContextMenuItemTagCopyLinkToClipboard:
             // FIXME: The Pasteboard class is not written yet. This is what we should be able to do some day:
-            // generalPasteboard()->copy(m_contextMenu->hitTestResult().absoluteLinkURL(), 
+            // generalPasteboard()->copy(result.absoluteLinkURL(), 
             //      m_contextMenu->hitTestResult.textContent());
             // For now, call into the client. This is temporary!
-            m_client->copyLinkToClipboard(m_contextMenu->hitTestResult());
+            m_client->copyLinkToClipboard(result);
             break;
-        case ContextMenuItemTagOpenImageInNewWindow: {
-            ResourceRequest request = ResourceRequest(m_contextMenu->hitTestResult().absoluteImageURL());
-            String referrer = frame->loader()->referrer();
-            m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+        case ContextMenuItemTagOpenImageInNewWindow:
+            openNewWindow(result.absoluteImageURL(), frame);
             break;
-        }
         case ContextMenuItemTagDownloadImageToDisk:
             // FIXME: Some day we should be able to do this from within WebCore.
-            m_client->downloadURL(m_contextMenu->hitTestResult().absoluteImageURL());
+            m_client->downloadURL(result.absoluteImageURL());
             break;
         case ContextMenuItemTagCopyImageToClipboard:
             // FIXME: The Pasteboard class is not written yet
             // For now, call into the client. This is temporary!
-            m_client->copyImageToClipboard(m_contextMenu->hitTestResult());
+            m_client->copyImageToClipboard(result);
             break;
         case ContextMenuItemTagOpenFrameInNewWindow: {
             // FIXME: The DocumentLoader is all-Mac right now
@@ -155,10 +158,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             KURL unreachableURL = frame->loader()->documentLoader()->unreachableURL();
             if (frame && unreachableURL.isEmpty())
                 unreachableURL = frame->loader()->documentLoader()->URL();
-            ResourceRequest request = ResourceRequest(unreachableURL);
-            String referrer = frame->loader()->referrer();
-            if (m_page)
-                m_page->chrome()->createWindow(FrameLoadRequest(request, referrer));
+            openNewWindow(unreachableURL, frame);
 #endif
             break;
         }
@@ -213,7 +213,13 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             // FIXME: Some day we may be able to do this from within WebCore.
             m_client->lookUpInDictionary(frame);
             break;
-        case ContextMenuItemTagOpenLink:
+        case ContextMenuItemTagOpenLink: {
+            if (Frame* targetFrame = result.targetFrame())
+                targetFrame->loader()->load(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), 
+                    frame->loader()->outgoingReferrer())), true, new Event(), 0, HashMap<String, String>());
+            else
+                openNewWindow(result.absoluteLinkURL(), frame);
+        }
         // Sub-menu actions.
 #ifndef BUILDING_ON_TIGER
         case ContextMenuItemTagShowSpellingAndGrammar:

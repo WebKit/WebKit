@@ -63,7 +63,7 @@ void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
     }
 }
 
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item)
+void WebContextMenuClient::contextMenuItemSelected(const ContextMenuItem* item)
 {
     ASSERT(item->parentMenu());
     
@@ -74,7 +74,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item)
     }
 }
 
-void WebContextMenuClient::copyLinkToClipboard(HitTestResult hitTestResult)
+void WebContextMenuClient::copyLinkToClipboard(const HitTestResult& hitTestResult)
 {
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
@@ -82,12 +82,12 @@ void WebContextMenuClient::copyLinkToClipboard(HitTestResult hitTestResult)
     [m_webView _writeLinkElement:element withPasteboardTypes:types toPasteboard:pasteboard];
 }
 
-void WebContextMenuClient::downloadURL(KURL url)
+void WebContextMenuClient::downloadURL(const KURL& url)
 {
     [m_webView _downloadURL:url.getNSURL()];
 }
 
-void WebContextMenuClient::copyImageToClipboard(HitTestResult hitTestResult)
+void WebContextMenuClient::copyImageToClipboard(const HitTestResult& hitTestResult)
 {
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];

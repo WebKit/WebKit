@@ -1,3 +1,24 @@
+2006-12-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
+        Fixes "Open in new Window" item in WebCore ContextMenus. It wasn't 
+        doing anything before, and now it works! Also some formatting 
+        changes, etc.
+
+        * page/ContextMenuClient.h: Several of the parameters to several of 
+        the functions here should be const or const references. And now 
+        they are!
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow): Moved the open new window functionality 
+        into a helper function since it is used by several menu item tags. 
+        Now after calling chrome()->createWindow() we call chrome()->show() 
+        on the new window, and so it appears!
+        (WebCore::ContextMenuController::contextMenuItemSelected): Call new 
+        openNewWindow function to do the right thing. Shift some 
+        formatting, use local variable for HitTestResult. Implement action 
+        for ContextMenuItemTagOpenLink.
+
 2006-12-06  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by.

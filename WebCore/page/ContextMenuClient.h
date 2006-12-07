@@ -39,11 +39,11 @@ namespace WebCore {
         virtual void contextMenuDestroyed() = 0;
         
         virtual void addCustomContextMenuItems(ContextMenu*) = 0;
-        virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
+        virtual void contextMenuItemSelected(const ContextMenuItem*) = 0;
 
-        virtual void copyLinkToClipboard(HitTestResult) = 0;
-        virtual void downloadURL(KURL url) = 0;
-        virtual void copyImageToClipboard(HitTestResult) = 0;
+        virtual void copyLinkToClipboard(const HitTestResult&) = 0;
+        virtual void downloadURL(const KURL& url) = 0;
+        virtual void copyImageToClipboard(const HitTestResult&) = 0;
         virtual void lookUpInDictionary(Frame*) = 0;
 
 #if PLATFORM(MAC)
