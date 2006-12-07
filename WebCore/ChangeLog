@@ -1,3 +1,11 @@
+2006-12-06  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by.
+
+        - Removed a confilct marker
+
+        * ChangeLog:
+
 2006-12-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
