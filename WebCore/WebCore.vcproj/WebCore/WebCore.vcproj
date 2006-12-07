@@ -4519,14 +4519,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\RebalanceWhitespaceCommand.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\editing\RebalanceWhitespaceCommand.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\editing\RemoveCSSPropertyCommand.cpp"
 				>
 			</File>

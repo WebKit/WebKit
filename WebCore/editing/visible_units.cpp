@@ -283,11 +283,20 @@ static RootInlineBox *rootBoxForLine(const VisiblePosition &c)
     return box->root();
 }
 
-VisiblePosition startOfLine(const VisiblePosition &c)
+VisiblePosition startOfLine(const VisiblePosition& c)
 {
-    RootInlineBox *rootBox = rootBoxForLine(c);
-    if (!rootBox)
+    if (c.isNull())
         return VisiblePosition();
+        
+    RootInlineBox *rootBox = rootBoxForLine(c);
+    if (!rootBox) {
+        // There are VisiblePositions at offset 0 in blocks without
+        // RootInlineBoxes, like empty editable blocks and bordered blocks.
+        Position p = c.deepEquivalent();
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.offset() == 0)
+            return c;
+        return VisiblePosition();
+    }
     
     // Generated content (e.g. list markers and CSS :before and :after
     // pseudoelements) have no corresponding DOM element, and so cannot be
@@ -320,9 +329,18 @@ VisiblePosition startOfLine(const VisiblePosition &c)
 
 VisiblePosition endOfLine(const VisiblePosition& c)
 {
-    RootInlineBox *rootBox = rootBoxForLine(c);
-    if (!rootBox)
+    if (c.isNull())
         return VisiblePosition();
+        
+    RootInlineBox *rootBox = rootBoxForLine(c);
+    if (!rootBox) {
+        // There are VisiblePositions at offset 0 in blocks without
+        // RootInlineBoxes, like empty editable blocks and bordered blocks.
+        Position p = c.deepEquivalent();
+        if (p.node()->renderer() && p.node()->renderer()->isRenderBlock() && p.offset() == 0)
+            return c;
+        return VisiblePosition();
+    }
     
     // Generated content (e.g. list markers and CSS :before and :after
     // pseudoelements) have no corresponding DOM element, and so cannot be
