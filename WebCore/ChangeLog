@@ -243,7 +243,6 @@
         (WebCore::TypingCommand::markMisspellingsAfterTyping):
         updated for moved functions
 
->>>>>>> .r18043
 2006-12-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
