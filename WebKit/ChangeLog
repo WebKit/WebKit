@@ -1,5 +1,21 @@
 2006-12-06  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by John Sullivan
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11675 and <rdar://4857669>
+        Now we need to explicitly set the data source when loading from a page cache
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _scheduleRelease]): Enhanced a logging message
+        (+[WebHistoryItem _releasePageCache:]): Ditto
+        (+[WebHistoryItem _releaseAllPendingPageCaches]): Ditto
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setDocumentViewFromPageCache): Reset the View's DataSource from the cache, effectively reopening it
+        * WebView/WebHTMLView.m:
+        (-[NSArray setDataSource:]): Properly Handle resetting the DataSource and "reopening" the view
+
+2006-12-06  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam and Oliver
 
         While working on http://bugs.webkit.org/show_bug.cgi?id=11675 I

@@ -3191,7 +3191,11 @@ done:
 
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
+    ASSERT(dataSource);
+    if (_private->dataSource == dataSource)
+        return;
     ASSERT(!_private->dataSource);
+    _private->closed = NO; // setting a data source reopens a closed view
     _private->dataSource = [dataSource retain];
     [_private->pluginController setDataSource:dataSource];
     [self addMouseMovedObserver];

@@ -577,7 +577,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 - (void)_scheduleRelease
 {
-    LOG (PageCache, "Scheduling release of %@", [self URLString]);
+    LOG (PageCache, "WebKitPageCache - Scheduling release of %@ (0x%x)", [self URLString], _private->pageCache);
     [WebHistoryItem _scheduleReleaseTimer];
 
     if (_private->pageCache){
@@ -624,12 +624,12 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     _pageCacheReleaseTimer = nil;
 
     if ((userDelta < 0.5 || loadDelta < 1.25) && [_pendingPageCacheToRelease count] < 42){
-        LOG (PageCache, "postponing again because not quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
+        LOG (PageCache, "WebKitPageCache - postponing again because not quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
         [self _scheduleReleaseTimer];
         return;
     }
     else
-        LOG (PageCache, "releasing, quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
+        LOG (PageCache, "WebKitPageCache - releasing, quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
 
     [WebHistoryItem _releaseAllPendingPageCaches];
 }
@@ -719,7 +719,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 + (void)_releaseAllPendingPageCaches
 {
-    LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
+    LOG (PageCache, "WebKitPageCache - releasing %d items\n", [_pendingPageCacheToRelease count]);
     [WebHistoryItem _invalidateReleaseTimer];
     [self _closeObjectsInPendingPageCaches];
     [_pendingPageCacheToRelease removeAllObjects];

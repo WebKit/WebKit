@@ -213,8 +213,11 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
 
 void WebFrameLoaderClient::setDocumentViewFromPageCache(NSDictionary *pageCache)
 {
+    WebDataSource *cachedDataSource = [pageCache objectForKey:WebPageCacheDataSourceKey];
+    ASSERT(cachedDataSource != nil);
     NSView <WebDocumentView> *cachedView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
     ASSERT(cachedView != nil);
+    [cachedView setDataSource:cachedDataSource];
     [m_webFrame->_private->webFrameView _setDocumentView:cachedView];
 }
 
