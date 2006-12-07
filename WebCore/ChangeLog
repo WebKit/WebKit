@@ -2,7 +2,7 @@
 
         Reviewed by.
 
-        - Removed a confilct marker
+        - Removed a conflict marker
 
         * ChangeLog:
 
@@ -23,7 +23,7 @@
 
         Reviewed by.
 
-        - Removed a confilct marker
+        - Removed a conflict marker
 
         * ChangeLog:
 
@@ -292,7 +292,7 @@
         Reviewed by John.
 
         - keydown is now a keydown event instead of a keypress event.
-          Fixes some form submission odditties.
+          Fixes some form submission oddities.
 
         * platform/win/KeyEventWin.cpp:
 
