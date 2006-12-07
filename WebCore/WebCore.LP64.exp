@@ -1,0 +1,2 @@
+# This file gets appened to WebCore.exp for only 64-bit architectures
+_OBJC_IVAR_$_WebCoreFrameBridge.m_frame

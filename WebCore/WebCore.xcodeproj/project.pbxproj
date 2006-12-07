@@ -10930,6 +10930,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/WebCore.exp",
+				"$(SRCROOT)/WebCore.LP64.exp"
 			);
 			name = "Generate 64-bit Export File";
 			outputPaths = (
@@ -10937,7 +10938,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ \"${SRCROOT}/WebCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
+			shellScript = "sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ \"${SRCROOT}/WebCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\ncat \"${SRCROOT}/WebCore.LP64.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
 		};
 		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
