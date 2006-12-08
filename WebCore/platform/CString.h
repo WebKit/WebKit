@@ -44,6 +44,8 @@ namespace WebCore {
         Vector<char> m_vector;
     };
 
+    // A container for a null-terminated char array supporting copy-on-write
+    // assignment.  The contained char array may be null.
     class CString {
     public:
         CString() { }
