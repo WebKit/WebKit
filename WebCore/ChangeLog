@@ -1,3 +1,16 @@
+2006-12-07  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Oliver.
+
+        Some small context menu-related fixes.
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::defaultEventHandler): Don't try to
+        resize on a contextmenuEvent.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Only pass the event
+        off to HTMLGenericFormElement if we haven't handled it.
+
 2006-12-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

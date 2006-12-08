@@ -1378,8 +1378,9 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())
             slider->forwardEvent(evt);
     }
-            
-    HTMLGenericFormElement::defaultEventHandler(evt);
+
+    if (!evt->defaultHandled())
+        HTMLGenericFormElement::defaultEventHandler(evt);
 }
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const
