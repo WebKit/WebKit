@@ -1,0 +1,8 @@
+This test verifies that the ENTER key fires the change and then the blur event.
+
+
+PASS: blur event fired.
+
+PASS: blur event fired last.
+
+

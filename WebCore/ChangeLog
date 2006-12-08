@@ -1,3 +1,19 @@
+2006-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/4870551> 9A320: <input type="text"> no longer 
+        dispatches onchange event in response to enter key
+        
+        To match our old behavior and FF, we need to dispatch onchange in response to the
+        ENTER key. The strategy here is just to dispatch a blur event, since that's how
+        the search field always worked, and the DOM spec says onchange only fires
+        as a precursor to blur.
+
+        * ChangeLog:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+
 2006-12-07  Adam Roben  <aroben@apple.com>
 
         Reviewed by Oliver.

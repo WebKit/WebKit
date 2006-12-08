@@ -1340,14 +1340,15 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (clickElement) {
             dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
-        } else if (clickDefaultFormButton && (inputType() != SEARCH || form())) {
+        } else if (clickDefaultFormButton) {
+            blur();
+            // Form may never have been present, or may have been destroyed by the blur event.
             if (form()) {
-                blur();
-                // Make sure the form hasn't been destroyed during the blur.
-                if (form())
-                    form()->submitClick(evt);
+                form()->submitClick(evt);
+                evt->setDefaultHandled();
+            } else if (inputType() != SEARCH) {
+                evt->setDefaultHandled();
             }
-            evt->setDefaultHandled();
         }
     }
 
