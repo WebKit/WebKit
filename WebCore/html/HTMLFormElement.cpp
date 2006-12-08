@@ -495,6 +495,7 @@ void HTMLFormElement::registerFormElement(HTMLGenericFormElement* e)
             doc->radioButtonChecked(static_cast<HTMLInputElement*>(e), this);
     }
     formElements.insert(formElementIndex(e), e);
+    doc->incDOMTreeVersion();
 }
 
 void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
@@ -505,6 +506,7 @@ void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
             document()->removeRadioButtonGroup(e->name().impl(), this);
     }
     removeFromVector(formElements, e);
+    document()->incDOMTreeVersion();
 }
 
 bool HTMLFormElement::isURLAttribute(Attribute *attr) const

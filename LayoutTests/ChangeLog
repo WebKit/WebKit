@@ -1,5 +1,27 @@
 2006-12-08  Rob Buis  <buis@kde.org>
 
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=10188
+        Form elements added via appendChild() are not accessible via form.element
+
+        * fast/forms/form-collection-lookup-expected.txt: Added.
+        * fast/forms/form-collection-lookup.html: Added.
+
+2006-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=10188
+        Form elements added via appendChild() are not accessible via form.element
+
+        * fast/forms/form-collection-lookup-expected.txt: Added.
+        * fast/forms/form-collection-lookup.html: Added.
+
+2006-12-08  Rob Buis  <buis@kde.org>
+
         Reviewed by Adele.
 
         Testcase for:

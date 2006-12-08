@@ -1,5 +1,18 @@
 2006-12-08  Rob Buis  <buis@kde.org>
 
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10188
+        Form elements added via appendChild() are not accessible via form.element
+
+        Make sure looking up form elements works when the form is not appended
+        to the document.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerFormElement):
+
+2006-12-08  Rob Buis  <buis@kde.org>
+
         Reviewed by Adele.
 
         http://bugs.webkit.org/show_bug.cgi?id=11765
