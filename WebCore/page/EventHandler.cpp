@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +76,8 @@ using namespace SVGNames;
 #endif
 
 const double autoscrollInterval = 0.1;
+
+static Frame* subframeForTargetNode(Node* node);
 
 EventHandler::EventHandler(Frame* frame)
     : m_frame(frame)
@@ -254,8 +257,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     m_mouseDownMayStartDrag = singleClick;
 
-    m_mousePressNode = event.targetNode();
-    
     if (passWidgetMouseDownEventToWidget(event))
         return true;
 
@@ -472,6 +473,12 @@ void EventHandler::startAutoscrollTimer()
 
 void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
+    if (m_mouseDownWasInSubframe) {
+        Frame* subframe = subframeForTargetNode(m_mousePressNode.get());
+        subframe->eventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
+        return;
+    }
+
     if (!rendererIsBeingDestroyed && autoscrollRenderer())
         autoscrollRenderer()->stopAutoscroll();
     setAutoscrollRenderer(0);
@@ -685,6 +692,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressed = true;
     m_currentMousePosition = mouseEvent.pos();
+    m_mouseDownWasInSubframe = false;
     
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
 
@@ -692,6 +700,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         invalidateClick();
         return false;
     }
+
+    m_mousePressNode = mev.targetNode();
 
     Frame* subframe = subframeForTargetNode(mev.targetNode());
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {

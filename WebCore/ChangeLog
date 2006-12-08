@@ -2,6 +2,27 @@
 
         Reviewed by Geoff.
 
+        http://bugs.webkit.org/show_bug.cgi?id=11718
+        REGRESSION: When I mouse up after dragging a selection outside of a iframe, the iframe
+        continues to scroll automatically.
+
+        Test: manual-tests/autoscroll.html
+
+        * manual-tests/autoscroll.html: Added.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        Assign to m_mousePressNode earlier, so that it is available in the superframe as well.
+        Reset m_mouseDownWasInSubframe to false when starting to handle a mousedown - previously, its value
+        was only defined if the event was passed down to a widget or a subframe.
+
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        If the mouse down event was in a subframe, stop the subframe's timer.
+
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
         http://bugs.webkit.org/show_bug.cgi?id=6275
         XMLHttpRequest.getResponseHeader should return a null string for non-existent headers
 

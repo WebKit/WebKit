@@ -1,0 +1,28 @@
+<head>
+<script>
+function addFrameText() {
+  frameDoc = window.frames[0].document;
+  item = frameDoc.createElement("p");
+  item.appendChild(frameDoc.createTextNode("Hello, world!"));
+  for (i = 0; i < 1000; ++i) {
+    frameDoc.body.appendChild(item.cloneNode(true));
+  }
+}
+</script>
+</head>
+
+<body onload="javascript:addFrameText()">
+
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=11718">bug 11718</a>:
+When I mouse up after dragging a selection outside of a iframe, the iframe continues to scroll automatically.</p>
+
+<p>Make the frame autoscroll by moving the mouse pointer outside of it while selecting. 
+Autoscrolling should stop when you release the mouse button outside the frame (in the main frame, 
+in another subframe, or just outside the window).</p>
+
+<IFRAME FRAMEBORDER=1></IFRAME>
+<br>
+<IFRAME FRAMEBORDER=1></IFRAME>
+
+</body>
+</html>
