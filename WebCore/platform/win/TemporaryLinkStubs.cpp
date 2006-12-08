@@ -72,6 +72,7 @@
 #include "PlatformScrollBar.h"
 #include "PlugInInfoStore.h"
 #include "PopupMenu.h"
+#include "Range.h"
 #include "RenderTheme.h"
 #include "ResourceLoader.h"
 #include "RenderThemeWin.h"
@@ -92,12 +93,10 @@ namespace WebCore {
 static int frameNumber = 0;
 static Cursor localCursor;
 
-time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse) { notImplemented(); return 0; }
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { notImplemented(); }
 bool CheckIfReloading(DocLoader*) { notImplemented(); return false; }
 String defaultLanguage() { notImplemented(); return "en"; }
 String fileButtonChooseFileLabel() { notImplemented(); return "Browse..."; }
-String fileButtonNoFileSelectedLabel() { notImplemented(); return String(); }
 int findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 int findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 void findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplemented(); }
@@ -105,19 +104,16 @@ void findWordBoundary(UChar const* str, int len, int position, int* start, int* 
 Color focusRingColor() { notImplemented(); return 0xFF0000FF; }
 bool historyContains(DeprecatedString const&) { notImplemented(); return false; }
 String inputElementAltText() { notImplemented(); return DeprecatedString(); }
-bool IsResponseURLEqualToURL(PlatformResponse , const String&) { notImplemented(); return false; }
 const Cursor& aliasCursor() { notImplemented(); return localCursor; }
 const Cursor& cellCursor() { notImplemented(); return localCursor; }
 const Cursor& contextMenuCursor() { notImplemented(); return localCursor; }
+const Cursor& copyCursor() { notImplemented(); return localCursor; }
 const Cursor& moveCursor() { notImplemented(); return localCursor; }
 const Cursor& noDropCursor() { notImplemented(); return localCursor; }
 const Cursor& progressCursor() { notImplemented(); return localCursor; }
 const Cursor& verticalTextCursor() { notImplemented(); return localCursor; }
 void refreshPlugins(bool) { notImplemented(); }
 String resetButtonDefaultLabel() { notImplemented(); return "Reset"; }
-bool ResponseIsMultipart(PlatformResponse) { notImplemented(); return false; }
-DeprecatedString ResponseMIMEType(PlatformResponse) { notImplemented(); return DeprecatedString(); }
-DeprecatedString ResponseURL(PlatformResponse) { notImplemented(); return DeprecatedString(); }
 int screenDepthPerComponent(Widget*) { notImplemented(); return 8; }
 bool screenIsMonochrome(Widget*) { notImplemented(); return false; }
 String searchableIndexIntroduction() { notImplemented(); return String(); }
@@ -159,10 +155,10 @@ void ContextMenu::show() { notImplemented(); }
 
 void ContextMenuClientWin::contextMenuDestroyed() { notImplemented(); }
 void ContextMenuClientWin::addCustomContextMenuItems(ContextMenu*) { notImplemented(); }
-void ContextMenuClientWin::contextMenuItemSelected(ContextMenuItem*) { notImplemented(); }
-void ContextMenuClientWin::copyLinkToClipboard(HitTestResult) { notImplemented(); }
-void ContextMenuClientWin::downloadURL(KURL) { notImplemented(); }
-void ContextMenuClientWin::copyImageToClipboard(HitTestResult) { notImplemented(); }
+void ContextMenuClientWin::contextMenuItemSelected(const ContextMenuItem*) { notImplemented(); }
+void ContextMenuClientWin::copyLinkToClipboard(const HitTestResult&) { notImplemented(); }
+void ContextMenuClientWin::downloadURL(const KURL& url) { notImplemented(); }
+void ContextMenuClientWin::copyImageToClipboard(const HitTestResult&) { notImplemented(); }
 void ContextMenuClientWin::lookUpInDictionary(Frame*) { notImplemented(); }
 
 ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription, ContextMenu*) { notImplemented(); }
@@ -188,6 +184,13 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType) { notI
 bool DocumentLoader::isLoadingInAPISense() const { notImplemented(); return false; }
 void DocumentLoader::stopRecordingResponses() { notImplemented(); }
 
+void Editor::ignoreSpelling() { notImplemented(); }
+void Editor::learnSpelling() { notImplemented(); }
+bool Editor::isSelectionUngrammatical() { notImplemented(); return false; }
+bool Editor::isSelectionMisspelled() { notImplemented(); return false; }
+Vector<String> Editor::guessesForMisspelledSelection() { notImplemented(); return Vector<String>(); }
+Vector<String> Editor::guessesForUngrammaticalSelection() { notImplemented(); return Vector<String>(); }
+void Editor::markMisspellingsInAdjacentWords(const VisiblePosition&) { notImplemented(); }
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy) { notImplemented(); return 0; }
 
 void EditorClientWin::pageDestroyed() { notImplemented(); }
@@ -236,6 +239,7 @@ void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
+void FrameLoader::load(const FrameLoadRequest&, bool userGesture, Event*, Element* form, const HashMap<String, String>& formValues) { notImplemented(); }
 void FrameLoader::didFirstLayout() { notImplemented(); }
 String FrameLoader::overrideMediaType() const { notImplemented(); return String(); }
 Widget* FrameLoader::createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>&) { notImplemented(); return 0; }
@@ -345,18 +349,12 @@ void FrameWin::issueCopyCommand() { notImplemented(); }
 String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
-void FrameWin::markMisspellings(const WebCore::Selection&) { notImplemented(); }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
 Range* FrameWin::markedTextRange() const { notImplemented(); return 0; }
 bool FrameWin::shouldChangeSelection(const Selection&, const Selection&, EAffinity, bool) const { notImplemented(); return true; }
 void FrameWin::respondToChangedSelection(const Selection&, bool) { notImplemented(); }
-void FrameWin::markMisspellingsInAdjacentWords(VisiblePosition const&) { notImplemented(); }
-void FrameWin::ignoreSpelling() { notImplemented(); }
-void FrameWin::learnSpelling() { notImplemented(); }
-bool FrameWin::isSelectionMisspelled() { notImplemented(); return false; }
-Vector<String> FrameWin::guessesForMisspelledSelection() { notImplemented(); return Vector<String>(); }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }

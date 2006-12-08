@@ -64,12 +64,6 @@ namespace WebCore {
         virtual void unfocusWindow();
         virtual void print();
 
-        virtual void ignoreSpelling();
-        virtual void learnSpelling();
-        virtual bool isSelectionMisspelled();
-        virtual Vector<String> guessesForMisspelledSelection();
-        virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
-        virtual void markMisspellings(const Selection&);
         virtual Range* markedTextRange() const;
         virtual void issueCutCommand();
         virtual void issueCopyCommand();

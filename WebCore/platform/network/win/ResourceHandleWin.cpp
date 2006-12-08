@@ -236,9 +236,10 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
     while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)this)) && buffers.dwBufferLength) {
         if (!hasReceivedResponse()) {
             setHasReceivedResponse();
-            client()->receivedResponse(this, 0);
+            ResourceResponse response;
+            client()->didReceiveResponse(this, response);
         }
-        client()->didReceiveData(this, buffer, buffers.dwBufferLength);
+        client()->didReceiveData(this, buffer, buffers.dwBufferLength, 0);
         buffers.dwBufferLength = bufferSize;
     }
 
@@ -265,7 +266,6 @@ void ResourceHandle::onRequestComplete(LPARAM lParam)
         InternetCloseHandle(d->m_secondaryHandle);
     InternetCloseHandle(d->m_resourceHandle);
 
-    client()->receivedAllData(this, &platformData);
     client()->didFinishLoading(this);
     delete this;
 }
@@ -405,7 +405,8 @@ bool ResourceHandle::start(DocLoader* docLoader)
 
 void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
 {
-    client()->receivedResponse(this, 0);
+    ResourceResponse response;
+    client()->didReceiveResponse(this, response);
 
     bool result = false;
     DWORD bytesRead = 0;
@@ -415,7 +416,7 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
         char buffer[bufferSize];
         result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
         if (result && bytesRead)
-            client()->didReceiveData(this, buffer, bytesRead);
+            client()->didReceiveData(this, buffer, bytesRead, 0);
         // Check for end of file. 
     } while (result && bytesRead);
 
@@ -424,12 +425,6 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>* timer)
     CloseHandle(d->m_fileHandle);
     d->m_fileHandle = INVALID_HANDLE_VALUE;
 
-    PlatformDataStruct platformData;
-    platformData.errorString = 0;
-    platformData.error = 0;
-    platformData.loaded = TRUE;
-
-    client()->receivedAllData(this, &platformData);
     client()->didFinishLoading(this);
 }
 
@@ -440,18 +435,12 @@ void ResourceHandle::cancel()
     else
         d->m_fileLoadTimer.stop();
 
-    PlatformDataStruct platformData;
-    platformData.errorString = 0;
-    platformData.error = 0;
-    platformData.loaded = FALSE;
-
-    client()->receivedAllData(this, &platformData);
     client()->didFinishLoading(this); 
 
     if (!d->m_resourceHandle)
         // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.
         // FIXME: need real cancel error
-        client()->didFailWithError(this, ResourceError());
+        client()->didFail(this, ResourceError());
 }
 
 void ResourceHandle::setHasReceivedResponse(bool b)

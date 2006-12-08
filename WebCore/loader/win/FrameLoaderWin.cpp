@@ -44,11 +44,14 @@ void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* /*triggeri
 
 void FrameLoader::submitForm(const FrameLoadRequest& request, Event*)
 {
-    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     const ResourceRequest& resourceRequest = request.resourceRequest();
+
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
+    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
     if (m_submittedFormURL == resourceRequest.url())
         return;
     m_submittedFormURL = resourceRequest.url();
+#endif
 
     FrameWin* frameWin = static_cast<FrameWin*>(m_frame);
     if (frameWin->client())

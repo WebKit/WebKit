@@ -51,6 +51,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleWin.h"
 #include "ResourceRequest.h"
+#include "SubresourceLoader.h"
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -384,7 +385,7 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
                 }
 
                 ResourceRequest resourceRequest(kurl);
-                RefPtr<ResourceHandle> loader = ResourceHandle::create(resourceRequest, this, d->frame->document()->docLoader());
+                RefPtr<SubresourceLoader> loader = SubresourceLoader::create(d->frame.get(), this, resourceRequest);
 
                 IWebFrameLoadDelegate* frameLoadDelegate;
                 if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
@@ -471,74 +472,6 @@ void WebFrame::didReceiveData(WebCore::ResourceHandle*, const char* data, int le
     _ASSERT(m_dataSource && !m_provisionalDataSource);
 
     d->frame->loader()->write(data, length);
-}
-
-void WebFrame::receivedResponse(ResourceHandle* job, PlatformResponse)
-{
-    // Commit the provisional data source
-
-    if (m_provisionalDataSource) {
-        m_dataSource = m_provisionalDataSource;
-        m_provisionalDataSource = 0;
-    }
-
-    // Tell the Frame to expect new data.  We use the URL of the data source in
-    // order to account for redirects.
-
-    IWebMutableURLRequest* request;
-    m_dataSource->request(&request);
-
-    BSTR url;
-    request->URL(&url);
-    request->Release();
-
-    KURL kurl(DeprecatedString((DeprecatedChar*)url, SysStringLen(url)));
-    SysFreeString(url);
-
-    // Update MIME info (FIXME: get from PlatformResponse)
-    d->frame->loader()->setResponseMIMEType(String(L"text/html"));
-
-    d->frame->loader()->begin(kurl);
-
-    if (m_loadType != WebFrameLoadTypeBack && m_loadType != WebFrameLoadTypeForward && m_loadType != WebFrameLoadTypeIndexedBackForward && !m_quickRedirectComing) {
-        DeprecatedString urlStr = job->url().url();
-        BSTR urlBStr = SysAllocStringLen((LPCOLESTR)urlStr.unicode(), urlStr.length());
-        WebHistoryItem* historyItem = WebHistoryItem::createInstance();
-        if (SUCCEEDED(historyItem->initWithURLString(urlBStr, 0/*FIXME*/))) {
-            IWebBackForwardList* backForwardList;
-            if (SUCCEEDED(d->webView->backForwardList(&backForwardList))) {
-                backForwardList->addItem(historyItem);
-                backForwardList->Release();
-            }
-            historyItem->Release();
-        }
-    }
-
-    IWebFrameLoadDelegate* frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
-        frameLoadDelegate->didCommitLoadForFrame(d->webView, this);
-        frameLoadDelegate->Release();
-    }
-}
-
-void WebFrame::receivedAllData(ResourceHandle*, PlatformData data)
-{
-    IWebFrameLoadDelegate* frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
-
-        if (data->loaded) {
-            frameLoadDelegate->didFinishLoadForFrame(d->webView, this);
-        }
-        else {
-            frameLoadDelegate->didFailLoadWithError(d->webView, 0/*FIXME*/, this);
-            m_quickRedirectComing = false;
-            m_loadType = WebFrameLoadTypeStandard;
-        }
-
-        frameLoadDelegate->Release();
-    }
-
-    d->frame->loader()->end();
 }
 
 // FrameWinClient

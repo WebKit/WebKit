@@ -1191,6 +1191,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\loader\MainResourceLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\MainResourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\NavigationAction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\NavigationAction.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\NetscapePluginStreamLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\NetscapePluginStreamLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\loader\PluginDocument.cpp"
 				>
 			</File>
@@ -1212,6 +1236,18 @@
 			</File>
 			<File
 				RelativePath="..\..\loader\ResourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\SubresourceLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\SubresourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\SubresourceLoaderClient.h"
 				>
 			</File>
 			<File
@@ -2639,6 +2675,14 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\network\HTTPHeaderMap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\network\HTTPParsers.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\network\HTTPParsers.h"
 					>
 				</File>
 				<File

@@ -31,7 +31,7 @@
 #include "WebDataSource.h"
 
 #pragma warning(push, 0)
-#include "ResourceHandleClient.h"
+#include "SubresourceLoaderClient.h"
 #include "FrameWin.h"
 #include "PlatformString.h"
 #pragma warning(pop)
@@ -53,7 +53,7 @@ typedef enum {
     WebFrameLoadTypeReplace
 } WebFrameLoadType;
 
-class WebFrame : public IWebFrame, public WebCore::ResourceHandleClient, public WebCore::FrameWinClient
+class WebFrame : public IWebFrame, public WebCore::SubresourceLoaderClient, public WebCore::FrameWinClient
 {
 public:
     static WebFrame* createInstance();
@@ -132,8 +132,6 @@ public:
 
     // ResourceHandleClient
     virtual void didReceiveData(WebCore::ResourceHandle*, const char*, int);
-    virtual void receivedResponse(WebCore::ResourceHandle*, WebCore::PlatformResponse);
-    virtual void receivedAllData(WebCore::ResourceHandle*, WebCore::PlatformData);
 
     // FrameWinClient
     virtual void createNewWindow(const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebCore::Frame*& newFrame);
