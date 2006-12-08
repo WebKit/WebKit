@@ -60,6 +60,7 @@ namespace WebCore {
         String keyIdentifier() const { return m_keyIdentifier; }
         bool isKeyUp() const { return m_isKeyUp; }
         bool isAutoRepeat() const { return m_autoRepeat; }
+        void setIsAutoRepeat(bool in) { m_autoRepeat = in; }
         int WindowsKeyCode() const { return m_WindowsKeyCode; }
         bool isKeypad() const { return m_isKeypad; }
         bool shiftKey() const { return m_shiftKey; }
