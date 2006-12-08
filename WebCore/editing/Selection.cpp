@@ -338,9 +338,9 @@ void Selection::adjustForEditableContent()
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
 
-    Node* baseRoot = m_base.node()->rootEditableElement();
-    Node* startRoot = m_start.node()->rootEditableElement();
-    Node* endRoot = m_end.node()->rootEditableElement();
+    Node* baseRoot = highestEditableRoot(m_base);
+    Node* startRoot = highestEditableRoot(m_start);
+    Node* endRoot = highestEditableRoot(m_end);
     
     Node* baseEditableAncestor = lowestEditableAncestor(m_base.node());
     

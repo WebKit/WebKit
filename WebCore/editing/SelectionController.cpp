@@ -1044,7 +1044,7 @@ void SelectionController::selectAll()
     if (!document)
         return;
     
-    Node* root = isContentEditable() ? rootEditableElement() : document->documentElement();
+    Node* root = isContentEditable() ? highestEditableRoot(m_sel.start()) : document->documentElement();
     Selection newSelection(Selection::selectionFromContentsOfNode(root));
     if (m_frame->shouldChangeSelection(newSelection))
         setSelection(newSelection);

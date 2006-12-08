@@ -1,3 +1,19 @@
+2006-12-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4836287>
+        Cannot expand selection out of editable element when containing element is non-editable.
+
+        * editing/Selection.cpp:
+        (WebCore::Selection::adjustForEditableContent): Restrict the selection endpoints
+        to the same *highest* editable root.  This bug only happened when creating selections
+        based in an editable region and extending into a higher editable root, so this change 
+        doesn't expose any new kinds of deletions, but we should start thinking about how
+        those deletions should behave.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectAll): Ditto.
+
 2006-12-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
