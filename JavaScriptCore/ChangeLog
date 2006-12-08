@@ -2,7 +2,7 @@
 
         Reviewed by Anders.
 
-        This is a mo' better fix for ensuring we don't use macro definitiones
+        This is a mo' better fix for ensuring we don't use macro definitions
         of min/max.
 
         * kjs/config.h:
