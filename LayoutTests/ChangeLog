@@ -1,5 +1,25 @@
 2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6275
+        XMLHttpRequest.getResponseHeader should return a null string for non-existent headers
+
+        * http/tests/xmlhttprequest/methods-async-expected.txt:
+        * http/tests/xmlhttprequest/methods-expected.txt:
+        * http/tests/xmlhttprequest/methods-lower-case-expected.txt:
+        Updated the results.
+
+        * http/tests/xmlhttprequest/web-apps/008-expected.txt:
+        * http/tests/xmlhttprequest/web-apps/008-test.asis:
+        * http/tests/xmlhttprequest/web-apps/008.html:
+        Changed to test both missing and empty headers, also test case insensitivity
+        of header names.
+        Please note that neither Firefox nor IE passes this test now - the former returns
+        null in both cases, and the latter returns empty strings.
+
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Test for http://bugs.webkit.org/show_bug.cgi?id=9854

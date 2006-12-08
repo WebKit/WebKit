@@ -16,10 +16,14 @@
    var r = new XMLHttpRequest();
    r.open('GET', '008-test.asis', false);
    r.send(null);
+
+// Test modified for WebKit, because the specification for missing headers has changed.
+// http://bugs.webkit.org/show_bug.cgi?id=6275
    var s1 = r.getResponseHeader('test1');
    var s2 = r.getResponseHeader('test2');
    var s3 = r.getResponseHeader('test3');
-   p.firstChild.data = (s1 == 'test1' && s2 == 'a, b' && s3 == '') ? 'PASS' : 'FAIL ("' + s1 + '", "' + s2 + '", "' + s3 + '")';
+   var s4 = r.getResponseHeader('test4');
+   p.firstChild.data = (s1 == 'test1' && s2 == 'a, b' && s3 == '' && s4 == null) ? 'PASS' : 'FAIL ("' + s1 + '", "' + s2 + '", "' + s3 + '", "' + s4 + '")';
   </script>
  </body>
 </html>

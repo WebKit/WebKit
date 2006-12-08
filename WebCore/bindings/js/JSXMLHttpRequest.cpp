@@ -191,7 +191,7 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState* exec, JSObject* th
             if (args.size() < 1)
                 return throwError(exec, SyntaxError, "Not enough arguments");
 
-            return jsStringOrUndefined(request->m_impl->getResponseHeader(args[0]->toString(exec)));
+            return jsStringOrNull(request->m_impl->getResponseHeader(args[0]->toString(exec)));
 
         case JSXMLHttpRequest::Open: {
             if (args.size() < 2)
