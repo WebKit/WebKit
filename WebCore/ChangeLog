@@ -1,3 +1,15 @@
+2006-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11765
+        REGRESSION: Clicking on a select with size other than 1 and no children results in a crash
+
+        Make sure returned value is -1 for selects without children.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::listIndexAtOffset):
+
 2006-12-08  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

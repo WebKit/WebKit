@@ -1,3 +1,14 @@
+2006-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adele.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11765
+        REGRESSION: Clicking on a select with size other than 1 and no children results in a crash
+
+        * fast/forms/select-empty-list-expected.txt: Added.
+        * fast/forms/select-empty-list.html: Added.
+
 2006-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

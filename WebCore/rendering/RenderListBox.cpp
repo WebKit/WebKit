@@ -351,11 +351,13 @@ int RenderListBox::listIndexAtOffset(int offsetX, int offsetY)
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     const Vector<HTMLElement*>& listItems = select->listItems();
 
-    int newOffset = max(0, offsetY / (style()->font().height() + optionsSpacingMiddle)) + m_indexOffset;
-    newOffset = max(0, min((int)listItems.size() - 1, newOffset));
-    int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
-    if (offsetX >= borderLeft() + paddingLeft() && offsetX < absoluteBoundingBoxRect().width() - borderRight() - paddingRight() - scrollbarWidth)
-        return newOffset;
+    if ((int)listItems.size() > 0) {
+        int newOffset = max(0, offsetY / (style()->font().height() + optionsSpacingMiddle)) + m_indexOffset;
+        newOffset = max(0, min((int)listItems.size() - 1, newOffset));
+        int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
+        if (offsetX >= borderLeft() + paddingLeft() && offsetX < absoluteBoundingBoxRect().width() - borderRight() - paddingRight() - scrollbarWidth)
+            return newOffset;
+    }
             
     return -1;
 }
