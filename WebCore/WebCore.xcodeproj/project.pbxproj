@@ -10930,7 +10930,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/WebCore.exp",
-				"$(SRCROOT)/WebCore.LP64.exp"
+				"$(SRCROOT)/WebCore.LP64.exp",
 			);
 			name = "Generate 64-bit Export File";
 			outputPaths = (

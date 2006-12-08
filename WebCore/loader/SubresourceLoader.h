@@ -53,6 +53,8 @@ namespace WebCore {
         
         virtual ~SubresourceLoader();
 
+        void stopLoading();
+        
 #if PLATFORM(MAC)
         // FIXME: These should go away once ResourceLoader uses ResourceHandle.
         virtual bool load(NSURLRequest *);

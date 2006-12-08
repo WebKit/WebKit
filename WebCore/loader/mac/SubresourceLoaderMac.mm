@@ -156,7 +156,8 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]]) {
         ResourceRequest request = newRequest;
-        m_client->willSendRequest(this, request, redirectResponse);
+        if (m_client)
+            m_client->willSendRequest(this, request, redirectResponse);
         
         return request.nsURLRequest();
     }
@@ -175,7 +176,8 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_client->didReceiveResponse(this, r);
+    if (m_client)
+        m_client->didReceiveResponse(this, r);
     
     // The loader can cancel a load if it receives a multipart response for a non-image
     if (reachedTerminalState())
@@ -186,7 +188,8 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
         // Since a subresource loader does not load multipart sections progressively,
         // deliver the previously received data to the loader all at once now.
         // Then clear the data to make way for the next multipart section.
-        m_client->didReceiveData(this, (const char*)[resourceData() bytes], [resourceData() length]);
+        if (m_client)
+            m_client->didReceiveData(this, (const char*)[resourceData() bytes], [resourceData() length]);
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -202,7 +205,7 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
 
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
-    if (!m_loadingMultipartContent)
+    if (!m_loadingMultipartContent && m_client)
         m_client->didReceiveData(this, (const char*)[data bytes], [data length]);
 
     ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
@@ -217,8 +220,10 @@ void SubresourceLoader::didFinishLoading()
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_client->receivedAllData(this, resourceData());
-    m_client->didFinishLoading(this);
+    if (m_client) {
+        m_client->receivedAllData(this, resourceData());
+        m_client->didFinishLoading(this);
+    }
     
     m_handle = 0;
 
@@ -237,7 +242,8 @@ void SubresourceLoader::didFail(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_client->didFail(this, error);
+    if (m_client)
+        m_client->didFail(this, error);
     
     m_handle = 0;
     
@@ -254,7 +260,8 @@ void SubresourceLoader::didCancel(NSError *error)
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    m_client->didFail(this, error);
+    if (m_client)
+        m_client->didFail(this, error);
     
     // FIXME: Once ResourceLoader uses ResourceHandle, this should be done in ResourceLoader::didCancel.
     m_handle->cancel();

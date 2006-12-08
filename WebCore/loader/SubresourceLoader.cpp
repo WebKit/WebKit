@@ -37,6 +37,12 @@
 
 namespace WebCore {
 
+void SubresourceLoader::stopLoading()
+{
+    // FIXME: This should stop loading for real and not just clear the client.
+    m_client = 0;
+}
+    
 #if !PLATFORM(MAC)
 
 SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client)
