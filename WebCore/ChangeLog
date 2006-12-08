@@ -1,3 +1,13 @@
+2006-12-07  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11749
+        Don't call updateThumbProportion() unnecessarily.
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::setProportion):
+
 2006-12-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Brady.
