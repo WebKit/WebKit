@@ -1,5 +1,18 @@
 2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=9854
+        HTTP Refresh header with quotes is parsed incorrectly
+
+        * http/tests/misc/redirect-with-quotes-expected.txt: Added.
+        * http/tests/misc/redirect-with-quotes.php: Added.
+        * http/tests/misc/resources/redirect-step2.php: Added.
+        * http/tests/misc/resources/redirect-step3.php: Added.
+        * http/tests/misc/resources/redirect-step4.php: Added.
+
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Tim H.
 
         Test for http://bugs.webkit.org/show_bug.cgi?id=11772

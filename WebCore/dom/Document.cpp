@@ -49,6 +49,8 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
@@ -59,8 +61,7 @@
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
-#include "HitTestRequest.h"
-#include "HitTestResult.h"
+#include "HTTPParsers.h"
 #include "JSEditor.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
@@ -1652,37 +1653,14 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         m_preferredStylesheetSet = content;
         updateStyleSelector();
     } else if (equalIgnoringCase(equiv, "refresh")) {
-        // get delay and url
-        DeprecatedString str = content.stripWhiteSpace().deprecatedString();
-        int pos = str.find(RegularExpression("[;,]"));
-        if (pos == -1)
-            pos = str.find(RegularExpression("[ \t]"));
-
-        if (pos == -1) // There can be no url (David)
-        {
-            bool ok = false;
-            double delay = 0;
-            delay = str.toDouble(&ok);
-            // We want a new history item if the refresh timeout > 1 second
-            if (ok && frame)
+        double delay;
+        String url;
+        if (frame && parseHTTPRefresh(content, delay, url)) {
+            if (url.isEmpty())
                 frame->loader()->scheduleRedirection(delay, frame->loader()->url().url(), delay <= 1);
-        } else {
-            double delay = 0;
-            bool ok = false;
-            delay = str.left(pos).stripWhiteSpace().toDouble(&ok);
-
-            pos++;
-            while(pos < (int)str.length() && str[pos].isSpace()) pos++;
-            str = str.mid(pos);
-            if (str.find("url", 0,  false) == 0)
-                str = str.mid(3);
-            str = str.stripWhiteSpace();
-            if (str.length() && str[0] == '=')
-                str = str.mid(1).stripWhiteSpace();
-            str = parseURL(String(str)).deprecatedString();
-            if (ok && frame)
+            else
                 // We want a new history item if the refresh timeout > 1 second
-                frame->loader()->scheduleRedirection(delay, completeURL(str), delay <= 1);
+                frame->loader()->scheduleRedirection(delay, completeURL(url), delay <= 1);
         }
     } else if (equalIgnoringCase(equiv, "expires")) {
         String str = content.stripWhiteSpace();

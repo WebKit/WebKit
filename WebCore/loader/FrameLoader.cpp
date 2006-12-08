@@ -53,6 +53,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLPlugInElement.h"
+#include "HTTPParsers.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
 #include "MainResourceLoader.h"
@@ -762,41 +763,17 @@ void FrameLoader::receivedFirstData()
     m_workingURL = KURL();
 
     const String& refresh = m_responseRefreshHeader;
-    if (refresh.isEmpty())
-        return;
 
     double delay;
     String URL;
 
-    int pos = refresh.find(';');
-    if (pos == -1)
-        pos = refresh.find(',');
-    if (pos == -1) {
-        delay = refresh.stripWhiteSpace().toDouble();
+    if (!parseHTTPRefresh(refresh, delay, URL))
+        return;
+
+    if (URL.isEmpty())
         URL = m_URL.url();
-    } else {
-        int endPos = refresh.length();
-        delay = refresh.left(pos).stripWhiteSpace().toDouble();
-        while (refresh[++pos] == ' ')
-            ;
-        if (refresh.find("url", pos, false) == pos) {
-            pos += 3;
-            while (refresh[pos] == ' ' || refresh[pos] == '=')
-                pos++;
-            if (refresh[pos] == '"') {
-                pos++;
-                int index = endPos - 1;
-                while (index > pos) {
-                    if (refresh[index] == '"')
-                        break;
-                    index--;
-                }
-                if (index > pos)
-                    endPos = index;
-            }
-        }
-        URL = m_frame->document()->completeURL(refresh.substring(pos, endPos - pos));
-    }
+    else
+        URL = m_frame->document()->completeURL(URL);
 
     // We want a new history item if the refresh timeout > 1 second
     scheduleRedirection(delay, URL, delay <= 1);

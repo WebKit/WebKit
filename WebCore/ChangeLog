@@ -1,5 +1,29 @@
 2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9854
+        HTTP Refresh header with quotes is parsed incorrectly
+
+        Test: http/tests/misc/redirect-with-quotes.php
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Added HTTPParsers.{h,cpp}. I intend to move Content-Type parsing here, as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        Use the new implementation in HTTPHeaders.
+
+        * platform/network/HTTPParsers.cpp: Added.
+        (WebCore::skipWhiteSpace):
+        (WebCore::parseHTTPRefresh):
+        * platform/network/HTTPParsers.h: Added.
+        Merged and rewrote existing implementations for better Firefox compatibility.
+
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Tim H.
 
         http://bugs.webkit.org/show_bug.cgi?id=11772
