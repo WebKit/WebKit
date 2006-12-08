@@ -1,3 +1,13 @@
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Tim H.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11772
+        REGRESSION: XMLSerializer.serializeToString incorrect value for CDATA nodes
+
+        * fast/dom/serialize-cdata-expected.txt: Added.
+        * fast/dom/serialize-cdata.html: Added.
+
 2006-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

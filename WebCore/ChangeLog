@@ -1,3 +1,15 @@
+2006-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11772
+        REGRESSION: XMLSerializer.serializeToString incorrect value for CDATA nodes
+
+        Test: fast/dom/serialize-cdata.html
+
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Dump CDATA sections, too.
+
 2006-12-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by hyatt.
