@@ -49,9 +49,10 @@ typedef float CGFloat;
 #define WINVER 0x0500
 #endif
 
-// We need to define this in order to use the numeric limit 
-// values provided by the C++ standard library.
-#define NOMINMAX
+// If we don't define these, they get defined in windef.h. 
+// We want to use std::min and std::max
+#define max max
+#define min min
 
 // Hack to match configuration of JavaScriptCore.
 // Maybe there's a better way to do this.
