@@ -49,8 +49,15 @@
 	testcases[count++] = new TestCase( SECTION, "aString.concat(345)    ", "test string345",       aString.concat(345).toString());
 	testcases[count++] = new TestCase( SECTION, "aString.concat(true)   ", "test stringtrue",      aString.concat(true).toString());
 	testcases[count++] = new TestCase( SECTION, "aString.concat(null)   ", "test stringnull",      aString.concat(null).toString());
-	testcases[count++] = new TestCase( SECTION, "aString.concat([])     ", "test string[]",          aString.concat([]).toString());
-	testcases[count++] = new TestCase( SECTION, "aString.concat([1,2,3])", "test string[1, 2, 3]",     aString.concat([1,2,3]).toString());
+	/*
+	http://bugs.webkit.org/show_bug.cgi?id=11545#c3
+	According to ECMA 15.5.4.6, the argument of concat should send to ToString and
+	convert into a string value (not String object). So these arguments will be
+	convert into '' and '1,2,3' under ECMA-262v3, not the js1.2 expected '[]' and
+	'[1,2,3]'
+	*/
+	//testcases[count++] = new TestCase( SECTION, "aString.concat([])     ", "test string[]",          aString.concat([]).toString());
+	//testcases[count++] = new TestCase( SECTION, "aString.concat([1,2,3])", "test string[1, 2, 3]",     aString.concat([1,2,3]).toString());
 
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat(' more')", "abcde more",     'abcde'.concat(' more').toString());
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat(bString)", "abcde another ", 'abcde'.concat(bString).toString());
@@ -58,8 +65,15 @@
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat(345)    ", "abcde345",       'abcde'.concat(345).toString());
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat(true)   ", "abcdetrue",      'abcde'.concat(true).toString());
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat(null)   ", "abcdenull",      'abcde'.concat(null).toString());
-	testcases[count++] = new TestCase( SECTION, "'abcde'.concat([])     ", "abcde[]",          'abcde'.concat([]).toString());
-	testcases[count++] = new TestCase( SECTION, "'abcde'.concat([1,2,3])", "abcde[1, 2, 3]",     'abcde'.concat([1,2,3]).toString());
+	/*
+	http://bugs.webkit.org/show_bug.cgi?id=11545#c3
+	According to ECMA 15.5.4.6, the argument of concat should send to ToString and
+	convert into a string value (not String object). So these arguments will be
+	convert into '' and '1,2,3' under ECMA-262v3, not the js1.2 expected '[]' and
+	'[1,2,3]'
+	*/
+	//testcases[count++] = new TestCase( SECTION, "'abcde'.concat([])     ", "abcde[]",          'abcde'.concat([]).toString());
+	//testcases[count++] = new TestCase( SECTION, "'abcde'.concat([1,2,3])", "abcde[1, 2, 3]",     'abcde'.concat([1,2,3]).toString());
 
 	//what should this do:
 	testcases[count++] = new TestCase( SECTION, "'abcde'.concat()       ", "abcde",          'abcde'.concat().toString());

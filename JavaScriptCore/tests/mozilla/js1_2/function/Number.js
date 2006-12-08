@@ -59,11 +59,26 @@
 	testcases[count++] = new TestCase( SECTION, "Number(-45)             ",
 	                                            -45,  (Number(-45)));
 
-    // http://scopus.mcom.com/bugsplat/show_bug.cgi?id=123435
-    // under js1.2, Number([1,2,3]) should return 3.
+        // http://scopus.mcom.com/bugsplat/show_bug.cgi?id=123435
+        // under js1.2, Number([1,2,3]) should return 3.
 
-	testcases[count++] = new TestCase( SECTION, "Number([1,2,3])         ",
-	                                            3,  (Number([1,2,3])));
+	/*
+	http://bugs.webkit.org/show_bug.cgi?id=11545#c4
+	According to ECMA 9.3, when input type was Object, should call
+	ToPrimitive(input arg, hint Number) first, and than ToNumber() later. However,
+	ToPrimitive() will use [[DefaultValue]](hint) rule when input Type was Object
+	(ECMA 8.6.2.6). So the input [1,2,3] will applied [[DefaultValue]](hint) rule
+	with hint Number, and it looks like this:
+
+	toString(valuOf([1,2,3]))  => toString(1,2,3) => '1,2,3'
+
+	Than ToNumber('1,2,3') results NaN based on ECMA 9.3.1: If the grammar cannot
+	interpret the string as an expansion of StringNumericLiteral, then the result 
+	of ToNumber is NaN.
+	*/
+	
+	//testcases[count++] = new TestCase( SECTION, "Number([1,2,3])         ",
+	//                                            3,  (Number([1,2,3])));
 
 	function test()
 	{

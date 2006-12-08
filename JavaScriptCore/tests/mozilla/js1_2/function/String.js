@@ -47,12 +47,38 @@
 	                                            '-124',  (String(-124)));
 	testcases[count++] = new TestCase( SECTION, "String(1.23)          ",
 	                                            '1.23',  (String(1.23)));
-	testcases[count++] = new TestCase( SECTION, "String({p:1})           ",
-	                                            '{p:1}',  (String({p:1})));
+	/*
+	http://bugs.webkit.org/show_bug.cgi?id=11545#c5
+	According to ECMA 9.8, when input type of String object argument was Object, we
+	should applied ToPrimitive(input arg, hint String) first, and later ToString(). 
+	And just like previous one, ToPrimitive() will use [[DefaultValue]](hint)
+	with hint String to convert the input (toString() below uses the rule in ECMA 15.2.4.2):
+
+	valueOf(toString({p:1}) => valueOf('[object Object]') => '[object Object]'
+
+	And ToString() called after ToPrimitive(), so the correct result would be:
+
+	[object Object]
+	*/
+	//testcases[count++] = new TestCase( SECTION, "String({p:1})           ",
+	//                                            '{p:1}',  (String({p:1})));
 	testcases[count++] = new TestCase( SECTION, "String(null)            ",
 	                                            'null',  (String(null)));
-	testcases[count++] = new TestCase( SECTION, "String([1,2,3])            ",
-	                                            '[1, 2, 3]',  (String([1,2,3])));
+	/*
+	http://bugs.webkit.org/show_bug.cgi?id=11545#c5
+	According to ECMA 9.8, when input type of String object argument was Object, we
+	should applied ToPrimitive(input arg, hint String) first, and later ToString(). 
+	And just like previous one, ToPrimitive() will use [[DefaultValue]](hint)
+	with hint String to convert the input (toString() below uses the rule in ECMA 15.2.4.2):
+
+	valueOf(toString([1,2,3])) => valueOf('1,2,3') => '1,2,3'
+
+	And ToString() called after ToPrimitive(), so the correct result would be:
+
+	1,2,3
+	*/
+	//testcases[count++] = new TestCase( SECTION, "String([1,2,3])            ",
+	//                                            '[1, 2, 3]',  (String([1,2,3])));
 
 
 	function test()

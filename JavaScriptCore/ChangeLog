@@ -1,3 +1,22 @@
+2006-12-07  Kevin Fyure  <digdog@macports.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11545
+        Disable the testcases do not follow the ECMA-262v3 specification.
+        
+        * tests/mozilla/expected.html: Update Results.
+        * tests/mozilla/js1_2/String/concat.js:
+        4 tests disabled. The result of concat Array object is not followinig
+        ECMA 15.5.4.6
+        * tests/mozilla/js1_2/function/Number.js:
+        1 test disabled. The result of Array object to Number object conversion 
+        is not following ECMA 9.3. And the test was duplicated in 
+        ecma/TypeConversion/9.3-1.js
+        * tests/mozilla/js1_2/function/String.js:
+        2 tests disabled. The result of Object/Array object to String object 
+        conversion is not following ECMA 15.5.1.1 and ECMA 9.8
+
 2006-11-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.
