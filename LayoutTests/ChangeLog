@@ -1,3 +1,15 @@
+2006-12-07  Kirby White  <KWhiteRight@gmail.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11771
+        Bug 11771: Add a test for resetting a textarea form control
+
+        * fast/dom/HTMLTextAreaElement/reset-textarea-expected.checksum: Added.
+        * fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Added.
+        * fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt: Added.
+        * fast/dom/HTMLTextAreaElement/reset-textarea.html: Added.
+
 2006-12-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
