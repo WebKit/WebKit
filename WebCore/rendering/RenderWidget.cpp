@@ -39,11 +39,6 @@ namespace WebCore {
 
 using namespace EventNames;
 
-// Returns 1 since a replaced element can have the caret positioned 
-// at its beginning (0), or at its end (1).
-// NOTE: Yet, "select" elements can have any number of "option" elements
-// as children, so this "0 or 1" idea does not really hold up.
-
 RenderWidget::RenderWidget(Node* node)
       : RenderReplaced(node)
       , m_widget(0)

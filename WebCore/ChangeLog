@@ -1,3 +1,11 @@
+2006-12-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by hyatt.
+
+        Deleted misplaced comment.
+
+        * rendering/RenderWidget.cpp:
+
 2006-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
