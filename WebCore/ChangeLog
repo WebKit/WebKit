@@ -2,7 +2,7 @@
 
         Reviewed by Maciej.
 
-        Add a new member variable to ContectMenuItem to hold on to the sub-
+        Add a new member variable to ContextMenuItem to hold on to the sub-
         menu. The new member variable is an OwnPtr<ContextMenu>
 
         * platform/ContextMenu.cpp: Because of the OwnPtr in
