@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -272,8 +273,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         doc = new Document(this, 0);
 
     // now get the interesting parts of the doctype
-    if (doctype)
-        doc->setDocType(new DocumentType(doc.get(), *doctype));
+    if (doctype) {
+        doc->setDocType(doctype);
+        doctype->setDocument(doc.get());
+    }
 
     if (!qualifiedName.isEmpty())
         doc->addChild(doc->createElementNS(namespaceURI, qualifiedName, ec));

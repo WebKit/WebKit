@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,7 +19,10 @@
  */
 
 module xpath {
+
     interface [GenerateConstructor, CanBeConstructed] XMLSerializer {
-        DOMString serializeToString(in Node node);
+        DOMString serializeToString(in Node node)
+            raises(DOMException);
     };
+
 }
