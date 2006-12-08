@@ -85,9 +85,11 @@ void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
 
         ExceptionCode ec = 0;
         localTransforms->clear(ec);
-        
-        SVGTransformable::parseTransformAttribute(localTransforms, attr->value());
-        updateLocalTransform(localTransforms);
+ 
+        if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value()))
+            localTransforms->clear(ec);
+        else
+            updateLocalTransform(localTransforms);
     } else
         SVGStyledLocatableElement::parseMappedAttribute(attr);
 }

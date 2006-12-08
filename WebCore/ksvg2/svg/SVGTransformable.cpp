@@ -55,16 +55,16 @@ SVGMatrix* SVGTransformable::getScreenCTM(const SVGElement* element) const
     return ctm;
 }
 
-void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
+bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
     // Split string for handling 1 transform statement at a time
     Vector<String> subtransforms = transform.domString().simplifyWhiteSpace().split(')');
     Vector<String>::const_iterator end = subtransforms.end();
     for (Vector<String>::const_iterator it = subtransforms.begin(); it != end; ++it) {
         Vector<String> subtransform = (*it).split('(');
-        
+
         if (subtransform.size() < 2)
-            break; // invalid transform, ignore.
+            return false; // invalid transform, ignore.
 
         subtransform[0] = subtransform[0].stripWhiteSpace().lower();
         subtransform[1] = subtransform[1].simplifyWhiteSpace();
@@ -72,7 +72,7 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
 
         int pos = 0;
         Vector<String> params;
-        
+
         while (pos >= 0) {
             pos = reg.search(subtransform[1].deprecatedString(), pos);
             if (pos != -1) {
@@ -80,37 +80,38 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
                 pos += reg.matchedLength();
             }
         }
-        
-        if (params.size() < 1)
-            break;
+        int nparams = params.size();
+
+        if (nparams < 1)
+            return false; // invalid transform, ignore.
 
         if (subtransform[0].startsWith(";") || subtransform[0].startsWith(","))
             subtransform[0] = subtransform[0].substring(1).stripWhiteSpace();
 
         SVGTransform* t = new SVGTransform();
 
-        if (subtransform[0] == "rotate") {
-            if (params.size() == 3)
+        if (subtransform[0] == "rotate" && (nparams == 1 || nparams == 3)) {
+            if (nparams == 3)
                 t->setRotate(params[0].toDouble(),
                              params[1].toDouble(),
                               params[2].toDouble());
-            else if (params.size() == 1)
+            else
                 t->setRotate(params[0].toDouble(), 0, 0);
-        } else if (subtransform[0] == "translate") {
-            if (params.size() == 2)
+        } else if (subtransform[0] == "translate" && (nparams == 1 || nparams == 2)) {
+            if (nparams == 2)
                 t->setTranslate(params[0].toDouble(), params[1].toDouble());
-            else if (params.size() == 1) // Spec: if only one param given, assume 2nd param to be 0
+            else // Spec: if only one param given, assume 2nd param to be 0
                 t->setTranslate(params[0].toDouble(), 0);
-        } else if (subtransform[0] == "scale") {
-            if (params.size() == 2)
+        } else if (subtransform[0] == "scale" && (nparams == 1 || nparams == 2)) {
+            if (nparams == 2)
                 t->setScale(params[0].toDouble(), params[1].toDouble());
-            else if (params.size() == 1) // Spec: if only one param given, assume uniform scaling
+            else // Spec: if only one param given, assume uniform scaling
                 t->setScale(params[0].toDouble(), params[0].toDouble());
-        } else if (subtransform[0] == "skewx" && (params.size() == 1))
+        } else if (subtransform[0] == "skewx" && nparams == 1)
             t->setSkewX(params[0].toDouble());
-        else if (subtransform[0] == "skewy" && (params.size() == 1))
+        else if (subtransform[0] == "skewy" && nparams == 1)
             t->setSkewY(params[0].toDouble());
-        else if (subtransform[0] == "matrix" && (params.size() == 6)) {
+        else if (subtransform[0] == "matrix" && nparams == 6) {
             SVGMatrix* ret = new SVGMatrix(params[0].toDouble(),
                                            params[1].toDouble(),
                                            params[2].toDouble(),
@@ -118,16 +119,16 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
                                            params[4].toDouble(),
                                            params[5].toDouble());
             t->setMatrix(ret);
-        }
-        
-        if (t->type() == SVGTransform::SVG_TRANSFORM_UNKNOWN) {
+        } else {
             delete t;
-            break; // failed to parse a valid transform, abort.
+            return false; // failed to parse a valid transform, abort.
         }
 
         ExceptionCode ec = 0;
         list->appendItem(t, ec);
     }
+
+    return true;
 }
 
 }

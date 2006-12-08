@@ -1,3 +1,21 @@
+2006-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=6074
+        WebKit+SVG and FireFox disagree on invalid "transform" handling
+
+        Also new results for transform-ignore-after-invalid.svg.
+
+        * svg/custom/invalid-transforms-expected.checksum: Added.
+        * svg/custom/invalid-transforms-expected.png: Added.
+        * svg/custom/invalid-transforms-expected.txt: Added.
+        * svg/custom/invalid-transforms.svg: Added.
+        * svg/custom/transform-ignore-after-invalid-expected.checksum:
+        * svg/custom/transform-ignore-after-invalid-expected.png:
+        * svg/custom/transform-ignore-after-invalid-expected.txt:
+
 2006-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

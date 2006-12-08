@@ -67,7 +67,10 @@ void SVGGradientElement::parseMappedAttribute(MappedAttribute* attr)
             setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformList* gradientTransforms = gradientTransformBaseValue();
-        SVGTransformable::parseTransformAttribute(gradientTransforms, attr->value());
+        if (!SVGTransformable::parseTransformAttribute(gradientTransforms, attr->value())) {
+            ExceptionCode ec = 0;
+            gradientTransforms->clear(ec);
+        }
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if (value == "reflect")
             setSpreadMethodBaseValue(SVG_SPREADMETHOD_REFLECT);
