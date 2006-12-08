@@ -1,3 +1,29 @@
+2006-12-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Add a new member variable to ContectMenuItem to hold on to the sub-
+        menu. The new member variable is an OwnPtr<ContextMenu>
+
+        * platform/ContextMenu.cpp: Because of the OwnPtr in
+        ContextMenuItem, we have to separate the declaration of
+        ContextMenuItems away from the calls to appendItem(). Not doing so
+        causes a build failure because OwnPtr inherits from Noncopyable.
+        (WebCore::createFontSubMenu): Same.
+        (WebCore::createSpellingAndGrammarSubMenu): Same.
+        (WebCore::createSpellingSubMenu): Same.
+        (WebCore::createSpeechSubMenu): Same.
+        (WebCore::createWritingDirectionSubMenu): Same.
+        (WebCore::ContextMenu::populate): Same.
+        * platform/ContextMenuItem.h:  New member variable m_subMenu.
+        * platform/mac/ContextMenuItemMac.mm: Take care of setting
+        m_subMenu in addition to setting the submenu of the NSMenuItem when
+        we have a sub-menu.
+        (WebCore::menuToArray):
+        (WebCore::ContextMenuItem::ContextMenuItem): Same.
+        (WebCore::ContextMenuItem::platformSubMenu): Same.
+        (WebCore::ContextMenuItem::setSubMenu): Same.
+
 2006-12-08  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.

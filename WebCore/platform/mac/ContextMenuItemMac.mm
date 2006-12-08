@@ -30,20 +30,33 @@
 
 namespace WebCore {
 
+static NSMutableArray* menuToArray(NSMenu* menu)
+{
+    NSMutableArray* itemsArray = [NSMutableArray array];
+    int total = [menu numberOfItems];
+    for (int i = 0; i < total; i++)
+        [itemsArray addObject:[menu itemAtIndex:i]];
+
+    return itemsArray;
+}
+
 ContextMenuItem::ContextMenuItem(NSMenuItem* item, ContextMenu* parentMenu)
     : m_parentMenu(parentMenu)
     , m_platformDescription(item)
+    , m_subMenu(0)
 {
     if ([item isSeparatorItem])
         m_type = SeparatorType;
-    else if ([item hasSubmenu])
+    else if ([item hasSubmenu]) {
         m_type = SubmenuType;
-    else
+        m_subMenu.set(new ContextMenu(m_parentMenu->hitTestResult(), menuToArray([item submenu])));
+    } else
         m_type = ActionType;
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
     : m_parentMenu(parentMenu)
+    , m_subMenu(subMenu)
     , m_type(SeparatorType)
 {
     if (m_type == SeparatorType) {
@@ -63,6 +76,7 @@ ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* parentMenu, 
     ContextMenu* subMenu)
     : m_parentMenu(parentMenu)
+    , m_subMenu(subMenu)
     , m_type(type)
 {
     if (m_type == SeparatorType) {
@@ -100,16 +114,9 @@ String ContextMenuItem::title() const
 
 NSMutableArray* ContextMenuItem::platformSubMenu() const
 {
-    if (![m_platformDescription.get() hasSubmenu])
+    if (!m_subMenu)
         return nil;
-
-    NSMenu* subMenu = [m_platformDescription.get() submenu];
-    NSMutableArray* itemsArray = [NSMutableArray array];
-    int total = [subMenu numberOfItems];
-    for (int i = 0; i < total; i++)
-        [itemsArray addObject:[subMenu itemAtIndex:i]];
-
-    return itemsArray;
+    return m_subMenu->platformDescription();
 }
 
 void ContextMenuItem::setAction(ContextMenuAction action)
@@ -124,6 +131,8 @@ void ContextMenuItem::setTitle(String title)
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
+    m_subMenu.set(menu);
+
     NSArray* subMenuArray = menu->platformDescription();
     NSMenu* subMenu = [[NSMenu alloc] init];
     for (unsigned i = 0; i < [subMenuArray count]; i++)

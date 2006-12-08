@@ -50,39 +50,56 @@ ContextMenuController* ContextMenu::controller() const
 
 static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& fontMenuItem)
 {
-    ContextMenu fontMenu(result);
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagShowFonts, "Show Fonts"));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagBold, "Bold"));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagItalic, "Italic"));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagUnderline, "Underline"));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagOutline, "Outline"));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagStyles, "Styles..."));
-    fontMenu.appendItem(ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
-    fontMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagShowColors, "Show Colors"));
-    fontMenuItem.setSubMenu(&fontMenu);
+    ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, "Show Fonts");
+    ContextMenuItem bold(ActionType, ContextMenuItemTagBold, "Bold");
+    ContextMenuItem italic(ActionType, ContextMenuItemTagItalic, "Italic");
+    ContextMenuItem underline(ActionType, ContextMenuItemTagUnderline, "Underline");
+    ContextMenuItem outline(ActionType, ContextMenuItemTagOutline, "Outline");
+    ContextMenuItem styles(ActionType, ContextMenuItemTagStyles, "Styles...");
+    ContextMenuItem separator(SeparatorType, ContextMenuItemTagNoAction, String());
+    ContextMenuItem showColors(ActionType, ContextMenuItemTagShowColors, "Show Colors");
+
+    ContextMenu* fontMenu = new ContextMenu(result);   
+    fontMenu->appendItem(showFonts);
+    fontMenu->appendItem(bold);
+    fontMenu->appendItem(italic);
+    fontMenu->appendItem(underline);
+    fontMenu->appendItem(outline);
+    fontMenu->appendItem(styles);
+    fontMenu->appendItem(separator);
+    fontMenu->appendItem(showColors);
+
+    fontMenuItem.setSubMenu(fontMenu);
 }
 
 #ifndef BUILDING_ON_TIGER
 static void createSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
-    ContextMenu spellingAndGrammarMenu(result);
-    spellingAndGrammarMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagShowSpellingAndGrammar,
-        "Show Spelling and Grammar"));
-    spellingAndGrammarMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCheckDocumentNow, "Check Document Now"));
-    spellingAndGrammarMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCheckSpellingWhileTyping,
-        "Check Spelling While Typing"));
-    spellingAndGrammarMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCheckGrammarWithSpelling,
-        "Check Grammar With Spelling"));
-    spellingAndGrammarMenuItem.setSubMenu(&spellingAndGrammarMenu);
+    ContextMenuItem show(ActionType, ContextMenuItemTagShowSpellingAndGrammar, "Show Spelling and Grammar");
+    ContextMenuItem checkNow(ActionType, ContextMenuItemTagCheckDocumentNow, "Check Document Now");
+    ContextMenuItem checkWhileTyping(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling While Typing");
+    ContextMenuItem grammarWithSpelling(ActionType, ContextMenuItemTagCheckGrammarWithSpelling, "Check Grammar With Spelling");
+
+    ContextMenu* spellingAndGrammarMenu = new ContextMenu(result);
+    spellingAndGrammarMenu->appendItem(show);
+    spellingAndGrammarMenu->appendItem(checkNow);
+    spellingAndGrammarMenu->appendItem(checkWhileTyping);
+    spellingAndGrammarMenu->appendItem(grammarWithSpelling);
+
+    spellingAndGrammarMenuItem.setSubMenu(spellingAndGrammarMenu);
 }
 #else
 static void createSpellingSubMenu(const HitTestResult& result, const ContextMenuItem& spellingMenuItem)
 {
-    ContextMenu spellingMenu(result);
-    spellingMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSpellingMenuItem, "Spelling..."));
-    spellingMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCheckSpelling, "Check Spelling"));
-    spellingMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCheckSpellingWhileTyping,
-        "Check Spelling as You Type"));
+    ContextMenuItem spelling(ActionType, ContextMenuItemTagSpellingMenuItem, "Spelling...");
+    ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, "Check Spelling");
+    ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling as You Type");
+
+    ContextMenu* spellingMenu = new ContextMenu(result);
+    spellingMenu->appendItem(spelling);
+    spellingMenu->appendItem(checkSpelling);
+    spellingMenu->appendItem(checkAsYouType);
+
     spellingMenuItem.setSubMenu(spellingMenu);
 }
 #endif
@@ -90,24 +107,59 @@ static void createSpellingSubMenu(const HitTestResult& result, const ContextMenu
 #if PLATFORM(MAC)
 static void createSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
-    ContextMenu speechMenu(result);
-    speechMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagStartSpeaking, "Start Speaking"));
-    speechMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagStartSpeaking, "Stop Speaking"));
-    speechMenuItem.setSubMenu(&speechMenu);
+    ContextMenuItem start(ActionType, ContextMenuItemTagStartSpeaking, "Start Speaking");
+    ContextMenuItem stop(ActionType, ContextMenuItemTagStartSpeaking, "Stop Speaking");
+
+    ContextMenu* speechMenu = new ContextMenu(result);
+    speechMenu->appendItem(start);
+    speechMenu->appendItem(stop);
+
+    speechMenuItem.setSubMenu(speechMenu);
 }
 #endif
 
 static void createWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
 {
-    ContextMenu writingDirectionMenu(result);
-    writingDirectionMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagDefaultDirection, "Default"));
-    writingDirectionMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagLeftToRight, "Left to Right"));
-    writingDirectionMenu.appendItem(ContextMenuItem(ActionType, ContextMenuItemTagRightToLeft, "Right to Left"));
-    writingDirectionMenuItem.setSubMenu(&writingDirectionMenu);
+    ContextMenuItem defaultItem(ActionType, ContextMenuItemTagDefaultDirection, "Default");
+    ContextMenuItem ltr(ActionType, ContextMenuItemTagLeftToRight, "Left to Right");
+    ContextMenuItem rtl(ActionType, ContextMenuItemTagRightToLeft, "Right to Left");
+
+    ContextMenu* writingDirectionMenu = new ContextMenu(result);
+    writingDirectionMenu->appendItem(defaultItem);
+    writingDirectionMenu->appendItem(ltr);
+    writingDirectionMenu->appendItem(rtl);
+
+    writingDirectionMenuItem.setSubMenu(writingDirectionMenu);
 }
 
 void ContextMenu::populate()
 {
+    ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
+    ContextMenuItem OpenLinkItem(ActionType, ContextMenuItemTagOpenLink, "Open Link");
+    ContextMenuItem OpenLinkInNewWindowItem(ActionType, ContextMenuItemTagOpenLinkInNewWindow, "Open Link in New Window");
+    ContextMenuItem DownloadFileItem(ActionType, ContextMenuItemTagDownloadLinkToDisk, "Download Linked File");
+    ContextMenuItem CopyLinkItem(ActionType, ContextMenuItemTagCopyLinkToClipboard, "Copy Link");
+    ContextMenuItem OpenImageInNewWindowItem(ActionType, ContextMenuItemTagOpenImageInNewWindow, "Open Image in New Window");
+    ContextMenuItem DownloadImageItem(ActionType, ContextMenuItemTagDownloadImageToDisk, "Download Image");
+    ContextMenuItem CopyImageItem(ActionType, ContextMenuItemTagCopyImageToClipboard, "Copy Image");
+#if PLATFORM(MAC)
+    ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, "Search in Spotlight");
+#endif
+    ContextMenuItem SearchWebItem(ActionType, ContextMenuItemTagSearchWeb, "Search in Google");
+    ContextMenuItem LookInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, "Look Up in Dictionary");
+    ContextMenuItem CopyItem(ActionType, ContextMenuItemTagCopy, "Copy");
+    ContextMenuItem BackItem(ActionType, ContextMenuItemTagGoBack, "Back");
+    ContextMenuItem ForwardItem(ActionType, ContextMenuItemTagGoForward,  "Forward");
+    ContextMenuItem StopItem(ActionType, ContextMenuItemTagStop, "Stop");
+    ContextMenuItem ReloadItem(ActionType, ContextMenuItemTagReload, "Reload");
+    ContextMenuItem OpenFrameItem(ActionType, ContextMenuItemTagOpenFrameInNewWindow, "Open Frame in New Window");
+    ContextMenuItem NowGuessesItem(ActionType, ContextMenuItemTagNoGuessesFound, "No Guesses Found");
+    ContextMenuItem IgnoreSpellingItem(ActionType, ContextMenuItemTagIgnoreSpelling, "Ignore Spelling");
+    ContextMenuItem LearnSpellingItem(ActionType, ContextMenuItemTagLearnSpelling, "Learn Spelling");
+    ContextMenuItem IgnoreGrammarItem(ActionType, ContextMenuItemTagIgnoreGrammar, "Ignore Grammar");
+    ContextMenuItem CutItem(ActionType, ContextMenuItemTagCut, "Cut");
+    ContextMenuItem PasteItem(ActionType, ContextMenuItemTagPaste, "Paste");
+    
     HitTestResult result = hitTestResult();
     
     Node* node = m_hitTestResult.innerNonSharedNode();
@@ -117,18 +169,16 @@ void ContextMenu::populate()
     if (!frame)
         return;
 
-    ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
-
     if (!result.isContentEditable()) {
         FrameLoader* loader = frame->loader();
         KURL linkURL = result.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (loader->canHandleRequest(ResourceRequest(linkURL))) {
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagOpenLink, "Open Link"));
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagOpenLinkInNewWindow, "Open Link in New Window"));
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagDownloadLinkToDisk, "Download Linked File"));
+                appendItem(OpenLinkItem);
+                appendItem(OpenLinkInNewWindowItem);
+                appendItem(DownloadFileItem);
             }
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCopyLinkToClipboard, "Copy Link"));
+            appendItem(CopyLinkItem);
         }
 
         KURL imageURL = result.absoluteImageURL();
@@ -136,36 +186,36 @@ void ContextMenu::populate()
             if (!linkURL.isEmpty())
                 appendItem(SeparatorItem);
 
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagOpenImageInNewWindow, "Open Image in New Window"));
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagDownloadImageToDisk, "Download Image"));
+            appendItem(OpenImageInNewWindowItem);
+            appendItem(DownloadImageItem);
             if (imageURL.isLocalFile()) // FIXME: Should be checking if the image is local or we have a file wrapper for it
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCopyImageToClipboard, "Copy Image"));
+                appendItem(CopyImageItem);
         }
 
         if (imageURL.isEmpty() && linkURL.isEmpty()) {
             if (result.isSelected()) {
 #if PLATFORM(MAC)
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSearchInSpotlight, "Search in Spotlight"));
+                appendItem(SearchSpotlightItem);
 #endif
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSearchWeb, "Search in Google"));
+                appendItem(SearchWebItem);
                 appendItem(SeparatorItem);
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagLookUpInDictionary, "Look Up in Dictionary"));
+                appendItem(LookInDictionaryItem);
                 appendItem(SeparatorItem);
-                appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCopy, "Copy"));
+                appendItem(CopyItem);
             } else {
                 if (loader->canGoBackOrForward(-1))
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagGoBack, "Back"));
+                    appendItem(BackItem);
 
                 if (loader->canGoBackOrForward(1))
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagGoForward,  "Forward"));
+                    appendItem(ForwardItem);
 
                 if (loader->isLoading())
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagStop, "Stop"));
+                    appendItem(StopItem);
                 else
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagReload, "Reload"));
+                    appendItem(ReloadItem);
 
                 if (frame->page() && frame != frame->page()->mainFrame())
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagOpenFrameInNewWindow, "Open Frame in New Window"));
+                    appendItem(OpenFrameItem);
             }
         }
     } else { // Make an editing context menu
@@ -179,47 +229,50 @@ void ContextMenu::populate()
             bool badGrammar = !misspelling && (frame->editor()->isGrammarCheckingEnabled() && frame->editor()->isSelectionUngrammatical());
             
             if (misspelling || badGrammar) {
-                Vector<String> guesses = misspelling ? frame->editor()->guessesForMisspelledSelection() : frame->editor()->guessesForUngrammaticalSelection();
+                Vector<String> guesses = misspelling ? frame->editor()->guessesForMisspelledSelection()
+                    : frame->editor()->guessesForUngrammaticalSelection();
                 size_t size = guesses.size();
                 if (size == 0) {
                     // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
                     // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
                     if (misspelling) {
-                        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagNoGuessesFound, "No Guesses Found"));
+                        appendItem(NowGuessesItem);
                         appendItem(SeparatorItem);
                     }
                 } else {
                     for (unsigned i = 0; i < size; i++) {
                         const String &guess = guesses[i];
-                        if (!guess.isEmpty())
-                            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSpellingGuess, guess));
+                        if (!guess.isEmpty()) {
+                            ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
+                            appendItem(item);
+                        }
                     }
                     appendItem(SeparatorItem);                    
                 }
                 
                 if (misspelling) {
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagIgnoreSpelling, "Ignore Spelling"));
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagLearnSpelling, "Learn Spelling"));
+                    appendItem(IgnoreSpellingItem);
+                    appendItem(LearnSpellingItem);
                 } else
-                    appendItem(ContextMenuItem(ActionType, ContextMenuItemTagIgnoreGrammar, "Ignore Grammar"));
+                    appendItem(IgnoreGrammarItem);
                 appendItem(SeparatorItem);
             }
         }
 
         if (result.isSelected() && !inPasswordField) {
 #if PLATFORM(MAC)
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSearchInSpotlight, "Search in Spotlight"));
+            appendItem(SearchSpotlightItem);
 #endif
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagSearchWeb, "Search in Google"));
+            appendItem(SearchWebItem);
             appendItem(SeparatorItem);
      
-            appendItem(ContextMenuItem(ActionType, ContextMenuItemTagLookUpInDictionary, "Look Up in Dictionary"));
+            appendItem(LookInDictionaryItem);
             appendItem(SeparatorItem);
         }
 
-        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCut, "Cut"));
-        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagCopy, "Copy"));
-        appendItem(ContextMenuItem(ActionType, ContextMenuItemTagPaste, "Paste"));
+        appendItem(CutItem);
+        appendItem(CopyItem);
+        appendItem(PasteItem);
 
         if (!inPasswordField) {
             appendItem(SeparatorItem);

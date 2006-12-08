@@ -28,6 +28,7 @@
 
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
+#include <wtf/OwnPtr.h>
 
 #if PLATFORM(MAC)
 #include "RetainPtr.h"
@@ -160,6 +161,7 @@ namespace WebCore {
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif
+        OwnPtr<ContextMenu> m_subMenu;
         ContextMenuItemType m_type;
     };
 
