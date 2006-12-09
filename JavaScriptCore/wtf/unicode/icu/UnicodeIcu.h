@@ -154,7 +154,7 @@ namespace WTF {
     {
       UErrorCode status = U_ZERO_ERROR;
       int32_t realLength = u_strToLower(result, resultLength, src, srcLength, "", &status);
-      *error = U_FAILURE(status);
+      *error = !!U_FAILURE(status);
       return realLength;
     }
 
@@ -192,7 +192,7 @@ namespace WTF {
     {
       UErrorCode status = U_ZERO_ERROR;
       int32_t realLength = u_strToUpper(result, resultLength, src, srcLength, "", &status);
-      *error = U_FAILURE(status);
+      *error = !!U_FAILURE(status);
       return realLength;
     }
 
@@ -218,17 +218,17 @@ namespace WTF {
     
     inline bool isDigit(int32_t c)
     {
-      return u_isdigit(c);
+      return !!u_isdigit(c);
     }
 
     inline bool isSpace(int32_t c)
     {
-      return u_isspace(c);
+      return !!u_isspace(c);
     }
 
     inline bool isPunct(int32_t c)
     {
-      return u_ispunct(c);
+      return !!u_ispunct(c);
     }
 
     inline int32_t mirroredChar(int32_t c)
@@ -247,12 +247,12 @@ namespace WTF {
 
     inline bool isLower(int32_t c)
     {
-      return u_islower(c);
+      return !!u_islower(c);
     }
 
     inline bool isUpper(int32_t c)
     {
-      return u_isUUppercase(c);
+      return !!u_isUUppercase(c);
       }
 
     inline int digitValue(int32_t c)

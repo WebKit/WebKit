@@ -272,6 +272,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\unicode\Unicode.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\unicode\icu\UnicodeIcu.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\UnusedParam.h"
 			>
 		</File>

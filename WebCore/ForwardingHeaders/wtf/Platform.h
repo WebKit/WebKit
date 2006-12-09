@@ -1,1 +1,1 @@
-#import <JavaScriptCore/Platform.h>
+#include <JavaScriptCore/Platform.h>

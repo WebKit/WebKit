@@ -1,1 +1,1 @@
-#import <JavaScriptCore/Assertions.h>
+#include <JavaScriptCore/Assertions.h>

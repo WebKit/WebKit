@@ -1,1 +1,1 @@
-#import <JavaScriptCore/lookup.h>
+#include <JavaScriptCore/lookup.h>

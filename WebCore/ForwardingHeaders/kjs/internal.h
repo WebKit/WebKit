@@ -1,1 +1,1 @@
-#import <JavaScriptCore/internal.h>
+#include <JavaScriptCore/internal.h>

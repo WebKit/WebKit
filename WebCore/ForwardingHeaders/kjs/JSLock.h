@@ -1,1 +1,1 @@
-#import <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSLock.h>

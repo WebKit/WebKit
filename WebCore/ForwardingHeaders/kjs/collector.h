@@ -1,1 +1,1 @@
-#import <JavaScriptCore/collector.h>
+#include <JavaScriptCore/collector.h>

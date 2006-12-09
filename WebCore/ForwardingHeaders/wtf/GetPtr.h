@@ -1,1 +1,1 @@
-#import <JavaScriptCore/GetPtr.h>
+#include <JavaScriptCore/GetPtr.h>

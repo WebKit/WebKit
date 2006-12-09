@@ -1,1 +1,1 @@
-#import <JavaScriptCore/HashTraits.h>
+#include <JavaScriptCore/HashTraits.h>

@@ -1,3 +1,36 @@
+2006-12-09  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Changed all ForwardingHeaders to use #include instead of #import.
+
+        * ForwardingHeaders/kjs/JSLock.h:
+        * ForwardingHeaders/kjs/SavedBuiltins.h:
+        * ForwardingHeaders/kjs/collector.h:
+        * ForwardingHeaders/kjs/dtoa.h:
+        * ForwardingHeaders/kjs/internal.h:
+        * ForwardingHeaders/kjs/interpreter.h:
+        * ForwardingHeaders/kjs/lookup.h:
+        * ForwardingHeaders/kjs/object.h:
+        * ForwardingHeaders/kjs/property_map.h:
+        * ForwardingHeaders/kjs/protect.h:
+        * ForwardingHeaders/wtf/AlwaysInline.h:
+        * ForwardingHeaders/wtf/Assertions.h:
+        * ForwardingHeaders/wtf/FastMalloc.h:
+        * ForwardingHeaders/wtf/GetPtr.h:
+        * ForwardingHeaders/wtf/HashCountedSet.h:
+        * ForwardingHeaders/wtf/HashMap.h:
+        * ForwardingHeaders/wtf/HashSet.h:
+        * ForwardingHeaders/wtf/HashTraits.h:
+        * ForwardingHeaders/wtf/MathExtras.h:
+        * ForwardingHeaders/wtf/Noncopyable.h:
+        * ForwardingHeaders/wtf/OwnArrayPtr.h:
+        * ForwardingHeaders/wtf/OwnPtr.h:
+        * ForwardingHeaders/wtf/PassRefPtr.h:
+        * ForwardingHeaders/wtf/Platform.h:
+        * ForwardingHeaders/wtf/RefPtr.h:
+        * ForwardingHeaders/wtf/Vector.h:
+
 2006-12-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
