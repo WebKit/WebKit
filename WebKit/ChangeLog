@@ -1,3 +1,11 @@
+2006-12-08  Timothy Hatcher  <timothy@apple.com>
+
+        Rolling out a change that broke Mail stationary.
+        <rdar://problem/4699166> REGRESSION: Background images in Mail stationery do not load
+
+        * WebView/WebUnarchivingState.m:
+        (-[WebUnarchivingState archivedResourceForURL:]):
+
 2006-12-08  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed and landed by Alexey.

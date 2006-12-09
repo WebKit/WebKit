@@ -76,7 +76,9 @@
 
 - (WebResource *)archivedResourceForURL:(NSURL *)URL
 {
-    return [archivedResources objectForKey:[URL _web_originalDataAsString]];
+    // FIXME: <rdar://problem/4699166> REGRESSION: Background images in Mail stationery do not load
+    // This should be [URL _web_originalDataAsString]
+    return [archivedResources objectForKey:URL];
 }
 
 - (WebArchive *)popSubframeArchiveWithFrameName:(NSString *)frameName
