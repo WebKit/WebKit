@@ -269,6 +269,9 @@ sub builtDylibPathForName
 {
     my $framework = shift;
     determineConfigurationProductDir();
+    if (isQt()) {
+        return "$configurationProductDir/$framework";
+    }
     if (isOSX()) {
         return "$configurationProductDir/$framework.framework/Versions/A/$framework";
     }
@@ -278,9 +281,6 @@ sub builtDylibPathForName
         } else {
             return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
         }
-    }
-    if (isQt()) {
-        return "$configurationProductDir/$framework";
     }
 
     die "Unsupported platform, can't determine built library locations.";
@@ -342,7 +342,7 @@ sub checkWebCoreSVGSupport
 
 sub isQt()
 {
-    return ($^O eq "linux") and defined($ENV{'QTDIR'})
+    return defined($ENV{'QTDIR'})
 }
 
 sub isCygwin()

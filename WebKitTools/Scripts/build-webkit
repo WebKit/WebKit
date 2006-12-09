@@ -86,7 +86,11 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
-    if (isOSX()) {
+    if (isQt()) {
+        if ($dir eq "WebKit") {
+            $result = buildCMakeProject($dir, $colorSupport);
+        }
+    } elsif (isOSX()) {
         if ($dir eq "JavaScriptCore") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
         } elsif ($dir eq "WebCore") {
@@ -97,10 +101,6 @@ for my $dir (@projects) {
     } elsif (isCygwin()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);
-        }
-    } elsif (isQt()) {
-        if ($dir eq "WebKit") {
-            $result = buildCMakeProject($dir, $colorSupport);
         }
     }
 
