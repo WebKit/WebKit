@@ -561,7 +561,6 @@
         (WebCore::fillContainerFromString): Call stringWithRelabacedWhitespace.  Pass 
         it the startOfParagraph/endOfParagraph bools.
 
->>>>>>> .r18054
 2006-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth
