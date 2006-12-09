@@ -64,12 +64,12 @@ static bool parseFontSizeNumber(const String& s, int& size)
     }
     
     // Parse a single digit.
-    if (!u_isdigit(s[pos]))
+    if (!WTF::Unicode::isDigit(s[pos]))
         return false;
-    int num = u_charDigitValue(s[pos++]);
+    int num = WTF::Unicode::digitValue(s[pos++]);
     
     // Check for an additional digit.
-    if (u_isdigit(s[pos]))
+    if (WTF::Unicode::isDigit(s[pos]))
         num = 10;
     
     if (sawPlus) {

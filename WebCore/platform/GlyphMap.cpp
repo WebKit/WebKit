@@ -30,7 +30,7 @@
 #include "GlyphMap.h"
 
 #include "FontData.h"
-#include <unicode/uchar.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

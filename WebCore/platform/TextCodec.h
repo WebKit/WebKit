@@ -27,7 +27,7 @@
 #ifndef TextCodec_h
 #define TextCodec_h
 
-#include "UChar.h"
+#include "wtf/unicode/Unicode.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

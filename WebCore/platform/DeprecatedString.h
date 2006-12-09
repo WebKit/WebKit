@@ -27,7 +27,7 @@
 #define DeprecatedString_h
 
 #include <ctype.h>
-#include <unicode/uchar.h>
+#include <wtf/unicode/Unicode.h>
 #include "DeprecatedCString.h"
 
 #if PLATFORM(CF)
@@ -110,21 +110,33 @@ inline unsigned short DeprecatedChar::unicode() const
 
 inline bool DeprecatedChar::isSpace() const
 {
+#if USE(ICU_UNICODE)
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
     return c <= 0x7F ? isspace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
+#elif USE(QT4_UNICODE)
+    return QChar(c).isSpace();
+#endif
 }
 
 inline DeprecatedChar DeprecatedChar::lower() const
 {
+#if USE(ICU_UNICODE)
     // FIXME: If fast enough, we should just call u_tolower directly.
     return c <= 0x7F ? tolower(c) : u_tolower(c);
+#elif USE(QT4_UNICODE)
+    return QChar(c).toLower().unicode();
+#endif
 }
 
 inline DeprecatedChar DeprecatedChar::upper() const
 {
+#if USE(ICU_UNICODE)
     // FIXME: If fast enough, we should just call u_toupper directly.
     return c <= 0x7F ? toupper(c) : u_toupper(c);
+#elif USE(QT4_UNICODE)
+    return QChar(c).toUpper().unicode();
+#endif
 }
 
 inline char DeprecatedChar::latin1() const

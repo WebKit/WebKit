@@ -31,7 +31,7 @@
 #include "GlyphMap.h"
 
 #include "FontData.h"
-#include <unicode/utf16.h>
+#include <wtf/unicode/Unicode.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {

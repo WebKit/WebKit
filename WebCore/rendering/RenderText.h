@@ -28,8 +28,6 @@
 #include "RenderObject.h"
 #include "Text.h"
 
-typedef void UBreakIterator;
-
 namespace WebCore {
 
 // Define a constant for soft hyphen's unicode value.
@@ -185,8 +183,6 @@ protected:
     mutable bool m_allAscii:1;
     int m_monospaceCharacterWidth;
 };
-
-UBreakIterator* characterBreakIterator(const StringImpl*);
 
 } // namespace WebCore
 

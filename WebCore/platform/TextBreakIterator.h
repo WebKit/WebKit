@@ -1,7 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,23 +19,30 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-
-#ifndef break_lines_h
-#define break_lines_h
+#ifndef TextBreakIterator_h
+#define TextBreakIterator_h
 
 #include "wtf/unicode/Unicode.h"
 
+#if USE(ICU_UNICODE)
+#include <unicode/ubrk.h>
+typedef UBreakIterator TextBreakIterator;
+#elif USE(QT4_UNICODE)
 namespace WebCore {
+    class TextBreakIterator;
+}
+#endif
 
-    int nextBreakablePosition(const UChar*, int pos, int len, bool breakNBSP = false);
 
-    inline bool isBreakable(const UChar* str, int pos, int len, int& nextBreakable, bool breakNBSP = false)
-    {
-        if (pos > nextBreakable)
-            nextBreakable = nextBreakablePosition(str, pos, len, breakNBSP);
-        return pos == nextBreakable;
-    }
+namespace WebCore {
+    TextBreakIterator* wordBreakIterator(const UChar* string, int length);
+    TextBreakIterator* characterBreakIterator(const UChar* string, int length);
 
-} // namespace WebCore
-
-#endif // break_lines_h
+    int textBreakFirst(TextBreakIterator*);
+    int textBreakNext(TextBreakIterator*);
+    int textBreakCurrent(TextBreakIterator*);
+    int textBreakPreceding(TextBreakIterator*, int);
+    int textBreakFollowing(TextBreakIterator*, int);
+    enum { TextBreakDone = -1 };
+}
+#endif

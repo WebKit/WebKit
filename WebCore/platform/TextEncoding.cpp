@@ -32,7 +32,11 @@
 #include "TextCodec.h"
 #include "TextDecoder.h"
 #include "TextEncodingRegistry.h"
+#if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
+#elif USE(QT4_UNICODE)
+#include <QString>
+#endif
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -71,6 +75,7 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
     if (!length)
         return "";
 
+#if USE(ICU_UNICODE)
     // FIXME: What's the right place to do normalization?
     // It's a little strange to do it inside the encode function.
     // Perhaps normalization should be an explicit step done before calling encode.
@@ -95,8 +100,12 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
         source = normalizedCharacters.data();
         sourceLength = normalizedLength;
     }
-
     return newTextCodec(*this)->encode(source, sourceLength, allowEntities);
+#elif USE(QT4_UNICODE)
+    QString str(reinterpret_cast<const QChar*>(characters), length);
+    str = str.normalized(QString::NormalizationForm_C);
+    return newTextCodec(*this)->encode(str.utf16(), str.length(), allowEntities);
+#endif
 }
 
 bool TextEncoding::usesVisualOrdering() const

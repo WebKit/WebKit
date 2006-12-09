@@ -262,9 +262,8 @@
 		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D212022A0AD4310D00ED79B6 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21202280AD4310C00ED79B6 /* DateMath.cpp */; };
 		D212022B0AD4310D00ED79B6 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateMath.h */; };
-		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; };
-		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; };
-		E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679509E7CF1200B89D13 /* UnicodeCategory.h */; };
+		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -285,6 +284,23 @@
 			);
 		};
 /* End PBXBuildRule section */
+
+/* Begin PBXBuildStyle section */
+		BC4C649B0B2A359400E57352 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		BC4C649C0B2A359400E57352 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		141211350A48796100480255 /* PBXContainerItemProxy */ = {
@@ -540,7 +556,6 @@
 		D21202290AD4310C00ED79B6 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
 		E195678F09E7CF1200B89D13 /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
 		E195679409E7CF1200B89D13 /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
-		E195679509E7CF1200B89D13 /* UnicodeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeCategory.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = JavaScriptCorePrefix.h; path = ../JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5FFE656026B47A6018635CA /* nodes2string.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodes2string.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -992,7 +1007,6 @@
 			children = (
 				E195678E09E7CF1200B89D13 /* icu */,
 				E195679409E7CF1200B89D13 /* Unicode.h */,
-				E195679509E7CF1200B89D13 /* UnicodeCategory.h */,
 			);
 			path = unicode;
 			sourceTree = "<group>";
@@ -1125,7 +1139,6 @@
 				65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */,
 				E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */,
 				E195679809E7CF1200B89D13 /* Unicode.h in Headers */,
-				E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */,
 				935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */,
 				935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */,
 				BCF655590A2049710038A194 /* MathExtras.h in Headers */,
@@ -1254,13 +1267,16 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
-			compatibilityVersion = "Xcode 2.4";
+			buildSettings = {
+			};
+			buildStyles = (
+				BC4C649B0B2A359400E57352 /* Development */,
+				BC4C649C0B2A359400E57352 /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
 				935F69F508244FEA003D1A45 /* dftables */,

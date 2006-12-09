@@ -29,7 +29,7 @@
 #ifndef GLYPH_WIDTH_MAP_H
 #define GLYPH_WIDTH_MAP_H
 
-#include <unicode/umachine.h>
+#include <wtf/unicode/Unicode.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 

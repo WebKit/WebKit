@@ -31,7 +31,12 @@
 #include "RegularExpression.h"
 #include "TextEncoding.h"
 #include <wtf/Vector.h>
+#if USE(ICU_UNICODE)
 #include <unicode/uidna.h>
+#elif USE(QT4_UNICODE)
+#include <QUrl>
+#endif
+
 #include <assert.h>
 
 using namespace std;
@@ -1254,6 +1259,7 @@ static DeprecatedString encodeHostname(const DeprecatedString &s)
     if (s.isAllASCII() || s.length() > hostnameBufferLength)
         return s;
 
+#if USE(ICU_UNICODE)
     UChar buffer[hostnameBufferLength];    
     UErrorCode error = U_ZERO_ERROR;
     int32_t numCharactersConverted = uidna_IDNToASCII
@@ -1262,6 +1268,10 @@ static DeprecatedString encodeHostname(const DeprecatedString &s)
         return s;
     }
     return DeprecatedString(reinterpret_cast<DeprecatedChar *>(buffer), numCharactersConverted);
+#elif USE(QT4_UNICODE)
+    QByteArray result = QUrl::toAce(s);
+    return DeprecatedString(result.constData(), result.length());
+#endif
 }
 
 static Vector<pair<int, int> > findHostnamesInMailToURL(const DeprecatedString &s)

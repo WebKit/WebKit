@@ -1,3 +1,131 @@
+2006-12-08  David Hyatt  <hyatt@apple.com>
+
+        Land the new ICU abstraction layer (WTF::Unicode).  Patch
+        by Lars with a couple of fixes thrown in by me.
+
+        Reviewed by hyatt
+
+        * ForwardingHeaders/wtf/icu/UnicodeIcu.h: Added.
+        * ForwardingHeaders/wtf/unicode/Unicode.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssparser.cpp:
+        (WebCore::ParseString::lower):
+        * dom/Document.cpp:
+        (WebCore::isValidNameStart):
+        (WebCore::isValidNamePart):
+        * editing/TextIterator.cpp:
+        (WebCore::CircularSearchBuffer::append):
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSizeNumber):
+        * html/HTMLInputElement.cpp:
+        (WebCore::numGraphemeClusters):
+        (WebCore::numCharactersInGraphemeClusters):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::stripLeadingWhiteSpace):
+        * page/Frame.h:
+        * platform/DeprecatedString.h:
+        (WebCore::DeprecatedChar::isSpace):
+        (WebCore::DeprecatedChar::lower):
+        (WebCore::DeprecatedChar::upper):
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::normalizeVoicingMarks):
+        * platform/FontCache.h:
+        * platform/FontData.h:
+        * platform/GlyphMap.cpp:
+        * platform/GlyphMap.h:
+        * platform/GlyphWidthMap.h:
+        * platform/KURL.cpp:
+        (WebCore::encodeHostname):
+        * platform/StringHash.h:
+        (WTF::):
+        * platform/StringImpl.cpp:
+        (WebCore::isSpace):
+        (WebCore::parseLength):
+        (WebCore::StringImpl::isLower):
+        (WebCore::StringImpl::lower):
+        (WebCore::StringImpl::upper):
+        (WebCore::StringImpl::secure):
+        (WebCore::StringImpl::foldCase):
+        (WebCore::StringImpl::capitalize):
+        (WebCore::StringImpl::toInt):
+        (WebCore::equalIgnoringCase):
+        (WebCore::StringImpl::find):
+        * platform/StringImpl.h:
+        * platform/TextBoundaries.h:
+        * platform/TextBreakIterator.h: Added.
+        (WebCore::):
+        * platform/TextBreakIteratorICU.cpp: Added.
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::textBreakFirst):
+        (WebCore::textBreakNext):
+        (WebCore::textBreakPreceding):
+        (WebCore::textBreakFollowing):
+        (WebCore::textBreakCurrent):
+        * platform/TextCodec.h:
+        * platform/TextCodecLatin1.cpp:
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+        * platform/TextEncoding.h:
+        * platform/TextEncodingRegistry.cpp:
+        (WebCore::buildTextEncodingNameMap):
+        (WebCore::buildTextCodecMap):
+        * platform/TextEncodingRegistry.h:
+        * platform/UChar.h: Removed.
+        * platform/graphics/GraphicsContext.h:
+        * platform/qt/GlyphMapQt.cpp:
+        * platform/qt/TextBreakIteratorQt.cpp: Added.
+        (WebCore::TextBreakIterator::following):
+        (WebCore::TextBreakIterator::preceding):
+        (WebCore::WordBreakIteratorQt::first):
+        (WebCore::WordBreakIteratorQt::next):
+        (WebCore::WordBreakIteratorQt::previous):
+        (WebCore::CharBreakIteratorQt::first):
+        (WebCore::CharBreakIteratorQt::next):
+        (WebCore::CharBreakIteratorQt::previous):
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::textBreakFirst):
+        (WebCore::textBreakNext):
+        (WebCore::textBreakPreceding):
+        (WebCore::textBreakFollowing):
+        (WebCore::textBreakCurrent):
+        * platform/qt/TextCodecQt.cpp: Added.
+        (WebCore::getAtomicName):
+        (WebCore::TextCodecQt::registerEncodingNames):
+        (WebCore::newTextCodecQt):
+        (WebCore::TextCodecQt::registerCodecs):
+        (WebCore::TextCodecQt::TextCodecQt):
+        (WebCore::TextCodecQt::~TextCodecQt):
+        (WebCore::TextCodecQt::decode):
+        (WebCore::TextCodecQt::encode):
+        * platform/qt/TextCodecQt.h: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::nextOffset):
+        (WebCore::RenderText::widthFromCache):
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (WebCore::BidiState::BidiState):
+        (WebCore::BidiContext::BidiContext):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::BidiIterator::direction):
+        (WebCore::appendRun):
+        (WebCore::embed):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/bidi.h:
+        (WebCore::BidiStatus::BidiStatus):
+        (WebCore::BidiContext::dir):
+        (WebCore::BidiContext::basicDir):
+        (WebCore::BidiRun::BidiRun):
+        * rendering/break_lines.h:
+
 2006-12-08  Adam Roben  <aroben@apple.com>
 
         Rolling out r17865 because it caused a performance regression.

@@ -163,8 +163,12 @@ static inline bool isValidNameStart(UChar32 c)
         return true;
 
     // rules (a) and (f) above
-    const uint32_t nameStartMask = U_GC_LL_MASK | U_GC_LU_MASK | U_GC_LO_MASK | U_GC_LT_MASK | U_GC_NL_MASK;
-    if (!(U_GET_GC_MASK(c) & nameStartMask))
+    const uint32_t nameStartMask = WTF::Unicode::Letter_Lowercase |
+                                   WTF::Unicode::Letter_Uppercase |
+                                   WTF::Unicode::Letter_Other |
+                                   WTF::Unicode::Letter_Titlecase |
+                                   WTF::Unicode::Number_Letter;
+    if (!(WTF::Unicode::category(c) & nameStartMask))
         return false;
 
     // rule (c) above
@@ -172,8 +176,8 @@ static inline bool isValidNameStart(UChar32 c)
         return false;
 
     // rule (d) above
-    UDecompositionType decompType = static_cast<UDecompositionType>(u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE));
-    if (decompType == U_DT_FONT || decompType == U_DT_COMPAT)
+    WTF::Unicode::DecompositionType decompType = WTF::Unicode::decompositionType(c);
+    if (decompType == WTF::Unicode::DecompositionFont || decompType == WTF::Unicode::DecompositionCompat)
         return false;
 
     return true;
@@ -194,8 +198,12 @@ static inline bool isValidNamePart(UChar32 c)
         return true;
 
     // rules (b) and (f) above
-    const uint32_t otherNamePartMask = U_GC_MC_MASK | U_GC_ME_MASK | U_GC_MN_MASK | U_GC_LM_MASK | U_GC_ND_MASK;
-    if (!(U_GET_GC_MASK(c) & otherNamePartMask))
+    const uint32_t otherNamePartMask = WTF::Unicode::Mark_NonSpacing |
+                                       WTF::Unicode::Mark_Enclosing |
+                                       WTF::Unicode::Mark_SpacingCombining |
+                                       WTF::Unicode::Letter_Modifier |
+                                       WTF::Unicode::Number_DecimalDigit;
+    if (!(WTF::Unicode::category(c) & otherNamePartMask))
         return false;
 
     // rule (c) above
@@ -203,8 +211,8 @@ static inline bool isValidNamePart(UChar32 c)
         return false;
 
     // rule (d) above
-    UDecompositionType decompType = static_cast<UDecompositionType>(u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE));
-    if (decompType == U_DT_FONT || decompType == U_DT_COMPAT)
+    WTF::Unicode::DecompositionType decompType = WTF::Unicode::decompositionType(c);
+    if (decompType == WTF::Unicode::DecompositionFont || decompType == WTF::Unicode::DecompositionCompat)
         return false;
 
     return true;

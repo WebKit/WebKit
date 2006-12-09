@@ -28,7 +28,7 @@
 
 #include "CString.h"
 #include "PlatformString.h"
-#include <unicode/utf16.h>
+#include "wtf/unicode/Unicode.h"
 
 using std::auto_ptr;
 

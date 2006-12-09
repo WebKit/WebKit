@@ -32,7 +32,6 @@
 #include "Path.h"
 #include "Pen.h"
 #include "TextDirection.h"
-#include "UChar.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Platform.h>
 

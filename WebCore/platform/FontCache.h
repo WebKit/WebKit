@@ -29,7 +29,7 @@
 #ifndef FONTCACHE_H
 #define FONTCACHE_H
 
-#include <unicode/umachine.h>
+#include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(WIN)
 #include <mlang.h>

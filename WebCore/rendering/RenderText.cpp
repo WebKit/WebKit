@@ -35,47 +35,22 @@
 #include "RenderBlock.h"
 #include "TextStyle.h"
 #include "break_lines.h"
-#include <unicode/ubrk.h>
+#include "TextBreakIterator.h"
 #include <wtf/AlwaysInline.h>
 
 using namespace std;
 
 namespace WebCore {
 
-UBreakIterator* characterBreakIterator(const StringImpl* i)
-{
-    if (!i)
-        return 0;
-
-    // The locale is currently ignored when determining character cluster breaks.
-    // This may change in the future, according to Deborah Goldsmith.
-    static bool createdIterator = false;
-    static UBreakIterator* iterator;
-    UErrorCode status;
-    if (!createdIterator) {
-        status = U_ZERO_ERROR;
-        iterator = ubrk_open(UBRK_CHARACTER, "en_us", 0, 0, &status);
-        createdIterator = true;
-    }
-    if (!iterator)
-        return 0;
-
-    status = U_ZERO_ERROR;
-    ubrk_setText(iterator, reinterpret_cast<const UChar*>(i->characters()), i->length(), &status);
-    if (status != U_ZERO_ERROR)
-        return 0;
-
-    return iterator;
-}
-
 int RenderText::previousOffset(int current) const
 {
-    UBreakIterator* iterator = characterBreakIterator(str.get());
+    StringImpl *si = str.get();
+    TextBreakIterator* iterator = characterBreakIterator(si->characters(), si->length());
     if (!iterator)
         return current - 1;
 
-    long result = ubrk_preceding(iterator, current);
-    if (result == UBRK_DONE)
+    long result = textBreakPreceding(iterator, current);
+    if (result == TextBreakDone)
         result = current - 1;
 
     return result;
@@ -83,12 +58,13 @@ int RenderText::previousOffset(int current) const
 
 int RenderText::nextOffset(int current) const
 {
-    UBreakIterator* iterator = characterBreakIterator(str.get());
+    StringImpl *si = str.get();
+    TextBreakIterator* iterator = characterBreakIterator(si->characters(), si->length());
     if (!iterator)
         return current + 1;
     
-    long result = ubrk_following(iterator, current);
-    if (result == UBRK_DONE)
+    long result = textBreakFollowing(iterator, current);
+    if (result == TextBreakDone)
         result = current + 1;
 
     return result;
@@ -493,8 +469,8 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
         int i, w = 0;
         for (i = start; i < start+len; i++) {
             UChar c = (*str)[i];
-            UCharDirection dir = u_charDirection(c);
-            if (dir != U_DIR_NON_SPACING_MARK && dir != U_BOUNDARY_NEUTRAL) {
+            WTF::Unicode::Direction dir = WTF::Unicode::direction(c);
+            if (dir != WTF::Unicode::NonSpacingMark && dir != WTF::Unicode::BoundaryNeutral) {
                 if (c == '\t' && tabWidth != 0)
                     w += tabWidth - ((xpos + w) % tabWidth);
                 else

@@ -1,3 +1,51 @@
+2006-12-08  David Hyatt  <hyatt@apple.com>
+
+        Land the new ICU abstraction layer.  Patch by Lars.
+
+        Reviewed by me
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Platform.h:
+        * wtf/unicode/UnicodeCategory.h: Removed.
+        * wtf/unicode/UnicodeDecomposition.h: Removed.
+        * wtf/unicode/UnicodeDirection.h: Removed.
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::category):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::strcasecmp):
+        (WTF::Unicode::memset):
+        * wtf/unicode/qt4/UnicodeQt4.cpp: Removed.
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::strcasecmp):
+        (WTF::Unicode::memset):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+
 === Safari-521.32 ===
 
 2006-12-08  Adam Roben  <aroben@apple.com>

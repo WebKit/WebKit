@@ -28,8 +28,7 @@
 #include "GlyphWidthMap.h"
 #include <wtf/Noncopyable.h>
 
-// FIXME: Temporary. Only needed to support API that's going to move.
-#include <unicode/umachine.h>
+#include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(MAC)
 typedef struct OpaqueATSUStyle* ATSUStyle;

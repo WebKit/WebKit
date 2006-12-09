@@ -968,7 +968,7 @@ void CircularSearchBuffer::append(UChar c)
     if (m_isCaseSensitive)
         *m_cursor++ = c == nonBreakingSpace ? ' ' : c;
     else
-        *m_cursor++ = c == nonBreakingSpace ? ' ' : u_foldCase(c, U_FOLD_CASE_DEFAULT);
+        *m_cursor++ = c == nonBreakingSpace ? ' ' : WTF::Unicode::foldCase(c);
     if (m_cursor == m_buffer + length()) {
         m_cursor = m_buffer;
         m_bufferFull = true;
@@ -993,7 +993,7 @@ void CircularSearchBuffer::append(int count, const UChar* characters)
     } else {
         for (int i = 0; i != count; ++i) {
             UChar c = characters[i];
-            m_cursor[i] = c == nonBreakingSpace ? ' ' : u_foldCase(c, U_FOLD_CASE_DEFAULT);
+            m_cursor[i] = c == nonBreakingSpace ? ' ' : WTF::Unicode::foldCase(c);
         }
     }
     if (count < tailSpace)

@@ -155,7 +155,7 @@ void ParseString::lower()
         ored |= characters[i];
     if (ored & ~0x7F)
         for (int i = 0; i < length; i++)
-            characters[i] = u_tolower(characters[i]);
+            characters[i] = WTF::Unicode::toLower(characters[i]);
     else
         for (int i = 0; i < length; i++)
             characters[i] = tolower(characters[i]);

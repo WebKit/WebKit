@@ -33,7 +33,7 @@
 #include "RenderLayer.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"
-#include "UChar.h"
+#include "wtf/unicode/Unicode.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 

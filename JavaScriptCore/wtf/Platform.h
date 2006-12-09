@@ -176,9 +176,8 @@
 #endif
 
 /* for Unicode, KDE uses Qt, everything else uses ICU */
-#if PLATFORM(KDE)
-/* FIXME: Not using Qt4 unicode for now! */
-#define WTF_USE_ICU_UNICODE 1
+#if PLATFORM(KDE) || PLATFORM(QT)
+#define WTF_USE_QT4_UNICODE 1
 #elif PLATFORM(SYMBIAN)
 #define WTF_USE_SYMBIAN_UNICODE 1
 #else

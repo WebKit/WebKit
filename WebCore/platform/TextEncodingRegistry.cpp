@@ -39,6 +39,9 @@
 #if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif
+#if PLATFORM(QT)
+#include "qt/TextCodecQt.h"
+#endif
 
 namespace WebCore {
 
@@ -159,6 +162,9 @@ void buildTextEncodingNameMap()
 #if USE(ICU_UNICODE)
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
 #endif
+#if USE(QT4_UNICODE)
+    TextCodecQt::registerEncodingNames(addToTextEncodingNameMap);
+#endif
 #if PLATFORM(MAC)
     TextCodecMac::registerEncodingNames(addToTextEncodingNameMap);
 #endif
@@ -172,6 +178,9 @@ static void buildTextCodecMap()
     TextCodecLatin1::registerCodecs(addToTextCodecMap);
 #if USE(ICU_UNICODE)
     TextCodecICU::registerCodecs(addToTextCodecMap);
+#endif
+#if USE(QT4_UNICODE)
+    TextCodecQt::registerCodecs(addToTextCodecMap);
 #endif
 #if PLATFORM(MAC)
     TextCodecMac::registerCodecs(addToTextCodecMap);

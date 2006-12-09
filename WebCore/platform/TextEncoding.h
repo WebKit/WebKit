@@ -26,7 +26,7 @@
 #ifndef TextEncoding_h
 #define TextEncoding_h
 
-#include "UChar.h"
+#include "wtf/unicode/Unicode.h"
 
 namespace WebCore {
 

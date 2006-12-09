@@ -50,7 +50,7 @@
 #include "RenderTheme.h"
 #include "RenderSlider.h"
 #include "SelectionController.h"
-#include <unicode/ubrk.h>
+#include "TextBreakIterator.h"
 
 using namespace std;
 
@@ -61,24 +61,30 @@ using namespace HTMLNames;
 
 static int numGraphemeClusters(const StringImpl* s)
 {
-    UBreakIterator* it = characterBreakIterator(s);
+    if (!s)
+        return 0;
+
+    TextBreakIterator* it = characterBreakIterator(s->characters(), s->length());
     if (!it)
         return 0;
     int num = 0;
-    while (ubrk_next(it) != UBRK_DONE)
+    while (textBreakNext(it) != TextBreakDone)
         ++num;
     return num;
 }
 
 static int numCharactersInGraphemeClusters(const StringImpl* s, int numGraphemeClusters)
 {
-    UBreakIterator* it = characterBreakIterator(s);
+    if (!s)
+        return 0;
+
+    TextBreakIterator* it = characterBreakIterator(s->characters(), s->length());
     if (!it)
         return 0;
     for (int i = 0; i < numGraphemeClusters; ++i)
-        if (ubrk_next(it) == UBRK_DONE)
+        if (textBreakNext(it) == TextBreakDone)
             return s->length();
-    return ubrk_current(it);
+    return textBreakCurrent(it);
 }
 
 HTMLInputElement::HTMLInputElement(Document *doc, HTMLFormElement *f)
