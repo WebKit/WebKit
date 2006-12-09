@@ -793,6 +793,7 @@ set(WebCore_SRCS
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RegisteredEventListener.cpp
+    dom/StyleElement.cpp
     dom/StyledElement.cpp
     dom/Text.cpp
     dom/Traversal.cpp

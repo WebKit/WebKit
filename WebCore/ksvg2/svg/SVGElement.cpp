@@ -105,22 +105,6 @@ SVGElement* SVGElement::viewportElement() const
     return 0;
 }
 
-AtomicString SVGElement::tryGetAttribute(const String& name, AtomicString defaultVal) const
-{
-    if (hasAttribute(name))
-        return getAttribute(name);
-
-    return defaultVal;
-}
-
-AtomicString SVGElement::tryGetAttributeNS(const String& namespaceURI, const String& localName, AtomicString defaultVal) const
-{
-    if (hasAttributeNS(namespaceURI, localName))
-        return getAttributeNS(namespaceURI, localName);
-
-    return defaultVal;
-}
-
 void SVGElement::addSVGEventListener(const AtomicString& eventType, const Attribute* attr)
 {
     Element::setHTMLEventListener(eventType, document()->accessSVGExtensions()->

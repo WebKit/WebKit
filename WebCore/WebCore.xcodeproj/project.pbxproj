@@ -2201,6 +2201,8 @@
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */; };
 		AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */; };
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
+		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
 		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
 		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
 		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */; };
@@ -2823,23 +2825,6 @@
 			);
 		};
 /* End PBXBuildRule section */
-
-/* Begin PBXBuildStyle section */
-		BC18C5C70B2A883B0018461D /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		BC18C5C80B2A883B0018461D /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -5175,6 +5160,8 @@
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElement.h; sourceTree = "<group>"; };
 		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
+		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
+		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
 		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
 		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElement.cpp; sourceTree = "<group>"; };
@@ -9255,6 +9242,8 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				AA4C3A740B2B1679002334A2 /* StyleElement.cpp */,
+				AA4C3A750B2B1679002334A2 /* StyleElement.h */,
 				BC3B364705C9D5E200E42902 /* AtomicStringList.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
@@ -10840,6 +10829,7 @@
 				B2BFB5A00B22F76200567E80 /* ImageAnimationObserver.h in Headers */,
 				E1D8E3160B29E39C00F4BAF6 /* HTTPParsers.h in Headers */,
 				BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */,
+				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10877,12 +10867,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				BC18C5C70B2A883B0018461D /* Development */,
-				BC18C5C80B2A883B0018461D /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -12163,6 +12147,7 @@
 				93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */,
 				E1D8E31A0B29E3B600F4BAF6 /* HTTPParsers.cpp in Sources */,
 				BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */,
+				AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

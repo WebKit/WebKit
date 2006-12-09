@@ -26,8 +26,6 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
@@ -35,21 +33,13 @@ using namespace HTMLNames;
 
 HTMLStyleElement::HTMLStyleElement(Document* doc)
     : HTMLElement(styleTag, doc)
-    , m_loading(false)
 {
-}
-
-StyleSheet* HTMLStyleElement::sheet() const
-{
-    return m_sheet.get();
 }
 
 // other stuff...
 void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == typeAttr)
-        m_type = attr->value().domString().lower();
-    else if (attr->name() == mediaAttr)
+    if (attr->name() == mediaAttr)
         m_media = attr->value().deprecatedString().lower();
     else
         HTMLElement::parseMappedAttribute(attr);
@@ -58,48 +48,18 @@ void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
 void HTMLStyleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    if (m_sheet)
-        document()->updateStyleSelector();
+    StyleElement::insertedIntoDocument(document());
 }
 
 void HTMLStyleElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-    if (m_sheet)
-        document()->updateStyleSelector();
+    StyleElement::removedFromDocument(document());
 }
 
 void HTMLStyleElement::childrenChanged()
 {
-    String text = "";
-
-    for (Node* c = firstChild(); c; c = c->nextSibling())
-        if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE || c->nodeType() == COMMENT_NODE)
-            text += c->nodeValue();
-
-    if (m_sheet) {
-        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading())
-            document()->stylesheetLoaded(); // Remove ourselves from the sheet list.
-        m_sheet = 0;
-    }
-
-    m_loading = false;
-    if (m_type.isEmpty() || m_type == "text/css") { // Type must be empty or CSS
-        RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
-        MediaQueryEvaluator screenEval("screen", true);
-        MediaQueryEvaluator printEval("print", true);
-        if (screenEval.eval(media.get()) || printEval.eval(media.get())) {
-            document()->addPendingSheet();
-            m_loading = true;
-            m_sheet = new CSSStyleSheet(this, String(), document()->inputEncoding());
-            m_sheet->parseString(text, !document()->inCompatMode());
-            m_sheet->setMedia(media.get());
-            m_loading = false;
-        }
-    }
-
-    if (!isLoading() && m_sheet)
-        document()->stylesheetLoaded();
+    StyleElement::childrenChanged(this);
 }
 
 bool HTMLStyleElement::isLoading() const
@@ -130,22 +90,22 @@ void HTMLStyleElement::setDisabled(bool disabled)
     setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
-String HTMLStyleElement::media() const
+const AtomicString& HTMLStyleElement::media() const
 {
     return getAttribute(mediaAttr);
 }
 
-void HTMLStyleElement::setMedia(const String &value)
+void HTMLStyleElement::setMedia(const AtomicString &value)
 {
     setAttribute(mediaAttr, value);
 }
 
-String HTMLStyleElement::type() const
+const AtomicString& HTMLStyleElement::type() const
 {
     return getAttribute(typeAttr);
 }
 
-void HTMLStyleElement::setType(const String &value)
+void HTMLStyleElement::setType(const AtomicString &value)
 {
     setAttribute(typeAttr, value);
 }

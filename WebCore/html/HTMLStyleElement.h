@@ -24,12 +24,13 @@
 #ifndef HTMLStyleElement_H
 #define HTMLStyleElement_H
 
-#include "HTMLElement.h"
 #include "CSSStyleSheet.h"
+#include "HTMLElement.h"
+#include "StyleElement.h"
 
 namespace WebCore {
 
-class HTMLStyleElement : public HTMLElement
+class HTMLStyleElement : public HTMLElement, public StyleElement
 {
 public:
     HTMLStyleElement(Document*);
@@ -38,30 +39,25 @@ public:
     virtual int tagPriority() const { return 1; }
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
-    StyleSheet* sheet() const;
-
     // overload from HTMLElement
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged();
 
-    bool isLoading() const;
+    virtual bool isLoading() const;
     virtual bool sheetLoaded();
 
     bool disabled() const;
     void setDisabled(bool);
 
-    String media() const;
-    void setMedia(const String&);
+    const AtomicString& media() const;
+    void setMedia(const AtomicString&);
 
-    String type() const;
-    void setType(const String&);
+    const AtomicString& type() const;
+    void setType(const AtomicString&);
 
 protected:
-    RefPtr<CSSStyleSheet> m_sheet;
-    bool m_loading;
-    String m_type;
     String m_media;
 };
 

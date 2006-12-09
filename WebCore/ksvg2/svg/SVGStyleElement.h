@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,40 +25,31 @@
 #ifdef SVG_SUPPORT
 
 #include <SVGElement.h>
+#include "StyleElement.h"
 
 namespace WebCore {
 
-    class CSSStyleSheet;
-
-    class SVGStyleElement : public SVGElement {
+    class SVGStyleElement : public SVGElement, public StyleElement {
     public:
         SVGStyleElement(const QualifiedName&, Document*);
-        virtual ~SVGStyleElement();
 
         // Derived from: 'Element'
+        virtual void insertedIntoDocument();
+        virtual void removedFromDocument();
         virtual void childrenChanged();
 
         // 'SVGStyleElement' functions
-        AtomicString xmlspace() const;
+        const AtomicString& xmlspace() const;
         void setXmlspace(const AtomicString&, ExceptionCode&);
 
-        AtomicString type() const;
+        virtual const AtomicString& type() const;
         void setType(const AtomicString&, ExceptionCode&);
 
-        AtomicString media() const;
+        const AtomicString& media() const;
         void setMedia(const AtomicString&, ExceptionCode&);
 
-        AtomicString title() const;
+        const AtomicString& title() const;
         void setTitle(const AtomicString&, ExceptionCode&);
-
-        CSSStyleSheet *sheet();
-
-        // Internal
-        bool isLoading() const;
-
-    protected:
-        RefPtr<CSSStyleSheet> m_sheet;
-        bool m_loading;
     };
 
 } // namespace WebCore

@@ -1,3 +1,63 @@
+2006-12-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11625
+        Investigate possibility to share code between HTMLStyleElement and SVGStyleElement
+
+        Add a class shared by both HTMLStyleElement and SVGStyleElement that
+        encapsulates the common logic.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        Generalize stylesheet processing of svg and html.
+
+        * dom/StyleElement.cpp: Added.
+        (WebCore::StyleElement::StyleElement):
+        (WebCore::StyleElement::sheet):
+        (WebCore::StyleElement::insertedIntoDocument):
+        (WebCore::StyleElement::removedFromDocument):
+        (WebCore::StyleElement::childrenChanged):
+        * dom/StyleElement.h: Added.
+        (WebCore::StyleElement::~StyleElement):
+        (WebCore::StyleElement::isLoading):
+        Common base class for SVGStyleElement and HTMLStyleElement.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+        (WebCore::HTMLStyleElement::insertedIntoDocument):
+        (WebCore::HTMLStyleElement::removedFromDocument):
+        (WebCore::HTMLStyleElement::childrenChanged):
+        (WebCore::HTMLStyleElement::media):
+        (WebCore::HTMLStyleElement::setMedia):
+        (WebCore::HTMLStyleElement::type):
+        (WebCore::HTMLStyleElement::setType):
+        * html/HTMLStyleElement.h:
+        Use new common class.
+
+        * ksvg2/svg/SVGElement.cpp:
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::contentScriptType):
+        (WebCore::SVGSVGElement::contentStyleType):
+        * ksvg2/svg/SVGSVGElement.h:
+        Do not use tryGetAttribute(NS) anymore.
+
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        (WebCore::SVGStyleElement::xmlspace):
+        (WebCore::SVGStyleElement::type):
+        (WebCore::SVGStyleElement::media):
+        (WebCore::SVGStyleElement::title):
+        (WebCore::SVGStyleElement::insertedIntoDocument):
+        (WebCore::SVGStyleElement::removedFromDocument):
+        (WebCore::SVGStyleElement::childrenChanged):
+        * ksvg2/svg/SVGStyleElement.h:
+        Use new common class.
+
 2006-12-08  David Hyatt  <hyatt@apple.com>
 
         Land the new ICU abstraction layer (WTF::Unicode).  Patch
