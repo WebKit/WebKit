@@ -28,7 +28,7 @@
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"
 #elif USE(ICU_UNICODE)
-#include <wtf/unicode/icu/UnicodeIcu.h>
+#include <wtf/icu/UnicodeIcu.h>
 #else
 #error "Unknown Unicode implementation"
 #endif
