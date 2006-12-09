@@ -23,7 +23,7 @@
 #ifndef KJS_UNICODE_H
 #define KJS_UNICODE_H
 
-#include "../Platform.h"
+#include <wtf/Platform.h>
 
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"
