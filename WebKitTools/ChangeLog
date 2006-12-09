@@ -1,3 +1,14 @@
+2006-12-08  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix the compile after recent API changes.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2006-12-08  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

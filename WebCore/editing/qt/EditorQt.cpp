@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +24,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ContextMenuClientQt.h"
+#import "config.h"
+#import "Editor.h"
 
-#include "HitTestResult.h"
-#include "KURL.h"
-#include "Shared.h"
-
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
-           __FILE__, __LINE__, __FUNCTION__); } while(0)
+#import "ClipboardAccessPolicy.h"
+#import "Clipboard.h"
+#import "Document.h"
+#import "Element.h"
+#import "Selection.h"
+#import "SelectionController.h"
+#import "TextIterator.h"
+#import "htmlediting.h"
+#import "visible_units.h"
 
 namespace WebCore {
-    
-void ContextMenuClientQt::ref()
+
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    Shared<ContextMenuClientQt>::ref();
+    return 0;
 }
 
-void ContextMenuClientQt::deref()
+void Editor::ignoreSpelling()
 {
-    Shared<ContextMenuClientQt>::deref();
+    String text = frame()->selectedText();
 }
 
-void ContextMenuClientQt::addCustomContextMenuItems(ContextMenu*)
+void Editor::learnSpelling()
 {
-    notImplemented();
+    String text = frame()->selectedText();
 }
 
-void ContextMenuClientQt::copyLinkToClipboard(const HitTestResult&)
-{
-    notImplemented();
-}
-
-void ContextMenuClientQt::downloadURL(const KURL&)
-{
-    notImplemented();
-}
-
-void ContextMenuClientQt::copyImageToClipboard(const HitTestResult&)
-{
-    notImplemented();
-}
-
-void ContextMenuClientQt::lookUpInDictionary(Frame*)
-{
-    notImplemented();
-}
-
-void ContextMenuClientQt::contextMenuDestroyed()
+void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
 
 }
 
-void ContextMenuClientQt::contextMenuItemSelected(const ContextMenuItem*)
+bool Editor::isSelectionMisspelled()
+{
+    return false;
+}
+
+bool Editor::isSelectionUngrammatical()
+{
+    return false;
+}
+
+Vector<String> Editor::guessesForUngrammaticalSelection()
+{
+    return Vector<String>();
+}
+
+Vector<String> Editor::guessesForMisspelledSelection()
+{
+    String selectedString = frame()->selectedText();
+    return Vector<String>();
+}
+
+void Editor::markMisspellingsInAdjacentWords(const VisiblePosition &p)
+{
+    if (!isContinuousSpellCheckingEnabled())
+        return;
+}
+
+void Editor::markMisspellings(const Selection& selection)
 {
 
 }
 
-}
-
+} // namespace WebCore

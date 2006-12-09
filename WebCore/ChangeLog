@@ -1,3 +1,98 @@
+2006-12-08  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix the Qt/KDE build after all the API changes.
+
+        * CMakeLists.txt:
+        * editing/qt/EditorQt.cpp: Added.
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::isSelectionMisspelled):
+        (WebCore::Editor::isSelectionUngrammatical):
+        (WebCore::Editor::guessesForUngrammaticalSelection):
+        (WebCore::Editor::guessesForMisspelledSelection):
+        (WebCore::Editor::markMisspellingsInAdjacentWords):
+        (WebCore::Editor::markMisspellings):
+        * loader/NavigationAction.h:
+        * loader/qt/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientQt::canHandleRequest):
+        * loader/qt/FrameLoaderClientQt.h:
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::load):
+        * loader/qt/ResourceLoaderQt.cpp:
+        * platform/ContextMenu.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArc):
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::setup):
+        * platform/network/ResourceHandle.h:
+        (WebCore::ResourceHandle::getInternal):
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/qt/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::slotData):
+        (WebCore::ResourceHandleManager::remove):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        * platform/qt/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::addMessageToConsole):
+        (WebCore::ChromeClientQt::chromeDestroyed):
+        * platform/qt/ChromeClientQt.h:
+        * platform/qt/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::copyLinkToClipboard):
+        (WebCore::ContextMenuClientQt::downloadURL):
+        (WebCore::ContextMenuClientQt::copyImageToClipboard):
+        (WebCore::ContextMenuClientQt::contextMenuDestroyed):
+        (WebCore::ContextMenuClientQt::contextMenuItemSelected):
+        * platform/qt/ContextMenuClientQt.h:
+        * platform/qt/ContextMenuItemQt.cpp: Added.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::platformDescription):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setSubMenu):
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::setPlatformDescription):
+        * platform/qt/CursorQt.cpp:
+        (WebCore::copyCursor):
+        * platform/qt/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldInsertNode):
+        (WebCore::WebCore::EditorClientQt::pageDestroyed):
+        (WebCore::EditorClientQt::smartInsertDeleteEnabled):
+        * platform/qt/EditorClientQt.h:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::keyEvent):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        * platform/qt/LoaderFunctionsQt.cpp:
+        * platform/qt/PasteboardQt.cpp: Added.
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::clearTypes):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+
 === Safari-521.32 ===
 
 2006-12-08  Rob Buis  <buis@kde.org>

@@ -1,3 +1,14 @@
+2006-12-08  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix the build after the recent changes.
+
+        * QtLauncher/main.cpp:
+        (main):
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::initView):
+
 2006-11-19  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

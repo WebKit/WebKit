@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
     WebCore::DumpRenderTree dumper;
 
-    if (args->count() == 1 && args->arg(0) == QLatin1String("-"))
+    if (args->count() == 1 && args->arg(0) == QString::fromAscii("-"))
         dumper.open();
     else if (args->count() == 1)
         dumper.open(KURL(args->arg(0)));

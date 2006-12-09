@@ -39,10 +39,13 @@ namespace WebCore {
         virtual void ref();
         virtual void deref();
 
+        virtual void contextMenuDestroyed();
+        virtual void contextMenuItemSelected(const ContextMenuItem*);
+
         virtual void addCustomContextMenuItems(ContextMenu*);
-        virtual void copyLinkToClipboard(HitTestResult);
-        virtual void downloadURL(KURL);
-        virtual void copyImageToClipboard(HitTestResult);
+        virtual void copyLinkToClipboard(const HitTestResult&);
+        virtual void downloadURL(const KURL&);
+        virtual void copyImageToClipboard(const HitTestResult&);
         virtual void lookUpInDictionary(Frame*);
     };
 }

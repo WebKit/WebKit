@@ -95,6 +95,9 @@ namespace WebCore {
 
         virtual void loadedFromPageCache();
 
+        virtual void frameLoaderDestroyed();
+        virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
+
         virtual void dispatchDidHandleOnloadEvents();
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
         virtual void dispatchDidCancelClientRedirect();

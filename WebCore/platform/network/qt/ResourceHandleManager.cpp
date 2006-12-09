@@ -36,6 +36,7 @@
 
 #include "FrameQt.h"
 #include "ResourceHandleManager.h"
+#include "ResourceResponse.h"
 #include "ResourceHandleInternal.h"
 
 namespace WebCore {
@@ -106,7 +107,7 @@ void ResourceHandleManager::slotData(KIO::Job* kioJob, const QByteArray& data)
     if (!d || !d->m_client)
         return;
 
-    d->m_client->didReceiveData(job, data.data(), data.size());
+    d->m_client->didReceiveData(job, data.data(), data.size(), data.size());
 }
 
 void ResourceHandleManager::slotMimetype(KIO::Job* kioJob, const QString& type)
@@ -175,14 +176,10 @@ void ResourceHandleManager::remove(ResourceHandle* job)
         // Will take care of informing our client...
         // This must be called before didFinishLoading(),
         // otherwhise assembleResponseHeaders() is called too early...
-        RefPtr<PlatformResponseQt> response(new PlatformResponseQt());
-        response->data = headers;
-        response->url = job->url().url();
-
-        job->receivedResponse(response);
+        ResourceResponse response(job->url(), String(), 0, String(), String());
+        d->m_client->didReceiveResponse(job, response);
     }
 
-    d->m_client->receivedAllData(job, 0);
     d->m_client->didFinishLoading(job);
 
     m_jobToKioMap.remove(job);

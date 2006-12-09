@@ -49,13 +49,11 @@ ResourceHandleInternal::~ResourceHandleInternal()
 ResourceHandle::~ResourceHandle()
 {
     cancel();
-    delete d;
 }
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
     ref();
-    d->m_loading = true;
 
     FrameQt* frame = 0;
     if (docLoader) {
@@ -70,16 +68,6 @@ bool ResourceHandle::start(DocLoader* docLoader)
 void ResourceHandle::cancel()
 {
     ResourceHandleManager::self()->cancel(this);
-}
-
-void ResourceHandle::receivedResponse(PlatformResponse response)
-{
-    Q_ASSERT(method() == "POST");
-
-    d->m_response = response;
-
-    if (d->m_client)
-        d->m_client->receivedResponse(const_cast<ResourceHandle*>(this), response);
 }
 
 QString ResourceHandle::extractCharsetFromHeaders(QString headers) const

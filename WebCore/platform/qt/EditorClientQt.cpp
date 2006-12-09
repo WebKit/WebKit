@@ -166,6 +166,22 @@ void EditorClientQt::redo()
     notImplemented();
 }
 
+bool EditorClientQt::shouldInsertNode(Node*, Range*, EditorInsertAction)
+{
+    notImplemented();
+}
+
+void WebCore::EditorClientQt::pageDestroyed()
+{
+    notImplemented();
+}
+
+bool EditorClientQt::smartInsertDeleteEnabled()
+{
+    notImplemented();
+    return false;
+}
+
 }
 
 // vim: ts=4 sw=4 et

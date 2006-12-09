@@ -40,26 +40,6 @@
 
 namespace WebCore {
 
-ResourceLoader::ResourceLoader(Frame* frame)
-    : m_reachedTerminalState(false)
-    , m_cancelled(false)
-    , m_calledDidFinishLoad(false)
-    , m_frame(frame)
-    , m_defersLoading(frame->page()->defersLoading())
-{
-}
-
-ResourceLoader::~ResourceLoader()
-{
-    ASSERT(m_reachedTerminalState);
-}
-
-void ResourceLoader::setDefersLoading(bool defers)
-{
-    notImplemented();
-    m_defersLoading = defers;
-}
-
 void ResourceLoader::cancel()
 {
     notImplemented();

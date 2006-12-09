@@ -20,67 +20,62 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
-#include "ContextMenuClientQt.h"
+#include "ContextMenuItem.h"
 
-#include "HitTestResult.h"
-#include "KURL.h"
-#include "Shared.h"
-
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
-           __FILE__, __LINE__, __FUNCTION__); } while(0)
+#include "ContextMenu.h"
 
 namespace WebCore {
-    
-void ContextMenuClientQt::ref()
+
+ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
+    : m_parentMenu(parentMenu)
+    , m_subMenu(subMenu)
+    , m_type(SeparatorType)
 {
-    Shared<ContextMenuClientQt>::ref();
 }
 
-void ContextMenuClientQt::deref()
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action,
+                                 const String& title, ContextMenu* parentMenu,
+                                 ContextMenu* subMenu)
+    : m_parentMenu(parentMenu)
+    , m_subMenu(subMenu)
+    , m_type(type)
 {
-    Shared<ContextMenuClientQt>::deref();
 }
 
-void ContextMenuClientQt::addCustomContextMenuItems(ContextMenu*)
+ContextMenuItem::~ContextMenuItem()
 {
-    notImplemented();
 }
 
-void ContextMenuClientQt::copyLinkToClipboard(const HitTestResult&)
+PlatformMenuItemDescription ContextMenuItem::platformDescription() const
 {
-    notImplemented();
+    return PlatformMenuItemDescription();;
 }
 
-void ContextMenuClientQt::downloadURL(const KURL&)
+ContextMenuAction ContextMenuItem::action() const
+{ 
+    return ContextMenuAction();;
+}
+
+String ContextMenuItem::title() const 
 {
-    notImplemented();
+    return String();
 }
 
-void ContextMenuClientQt::copyImageToClipboard(const HitTestResult&)
+void ContextMenuItem::setAction(ContextMenuAction action)
 {
-    notImplemented();
 }
 
-void ContextMenuClientQt::lookUpInDictionary(Frame*)
+void ContextMenuItem::setTitle(String title)
 {
-    notImplemented();
 }
 
-void ContextMenuClientQt::contextMenuDestroyed()
+void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-
-}
-
-void ContextMenuClientQt::contextMenuItemSelected(const ContextMenuItem*)
-{
-
+    m_subMenu.set(menu);
 }
 
 }
-

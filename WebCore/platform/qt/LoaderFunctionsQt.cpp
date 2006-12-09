@@ -152,11 +152,6 @@ time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse)
     return 0;
 }
 
-void CachedResource::setPlatformResponse(PlatformResponse response)
-{
-    m_platformResponse = response;
-}
-
 void CachedResource::setAllData(PlatformData allData)
 {
     m_allData = allData;

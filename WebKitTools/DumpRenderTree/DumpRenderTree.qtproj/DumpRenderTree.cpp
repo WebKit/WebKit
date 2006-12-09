@@ -39,6 +39,7 @@
 #include "RenderTreeAsText.h"
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
+#include "EditorClientQt.h"
 
 #include <QDir>
 #include <QFile>
@@ -62,7 +63,7 @@ DumpRenderTree::DumpRenderTree()
     , m_notifier()
 {
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt());
+    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
     m_frame = new FrameQt(page, 0, m_client);
 
     FrameView* view = new FrameView(m_frame);

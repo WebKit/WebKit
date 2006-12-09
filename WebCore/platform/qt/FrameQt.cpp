@@ -101,7 +101,7 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 FrameQt::FrameQt(Page* page, Element* ownerElement,
                  FrameQtClient* frameClient,
                  EditorClient* editorClient)
-    : Frame(page, ownerElement, (editorClient ? editorClient : new EditorClientQt()))
+    : Frame(page, ownerElement, new FrameLoaderClientQt() )
     , m_bindingRoot(0)
 {
     Settings* settings = new Settings;
@@ -122,8 +122,6 @@ FrameQt::FrameQt(Page* page, Element* ownerElement,
 
     m_client = frameClient;
     m_client->setFrame(this);
-    //FIXME: rework once frameloaderclientqt is even close to working
-    loader()->setClient(new FrameLoaderClientQt());
 }
 
 FrameQt::~FrameQt()
@@ -423,7 +421,7 @@ bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
     if (!doc)
         return false;
 
-    Node* node = doc->focusNode();
+    Node* node = doc->focusedNode();
     if (!node) {
         if (doc->isHTMLDocument())
             node = doc->body();

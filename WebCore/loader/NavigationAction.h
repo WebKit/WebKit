@@ -29,13 +29,12 @@
 #ifndef NavigationAction_h
 #define NavigationAction_h
 
+#include "Event.h"
 #include "FrameLoaderTypes.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-    class Event;
 
     class NavigationAction {
     public:

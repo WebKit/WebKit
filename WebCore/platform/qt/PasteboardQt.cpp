@@ -20,67 +20,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ContextMenuClientQt.h"
+#import "config.h"
+#import "Pasteboard.h"
 
-#include "HitTestResult.h"
-#include "KURL.h"
-#include "Shared.h"
-
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
-           __FILE__, __LINE__, __FUNCTION__); } while(0)
+#import "DocumentFragment.h"
+#import "Editor.h"
+#import "markup.h"
 
 namespace WebCore {
-    
-void ContextMenuClientQt::ref()
+
+Pasteboard::Pasteboard()
 {
-    Shared<ContextMenuClientQt>::ref();
 }
 
-void ContextMenuClientQt::deref()
+Pasteboard* Pasteboard::generalPasteboard()
 {
-    Shared<ContextMenuClientQt>::deref();
+    static Pasteboard* pasteboard = new Pasteboard();
+    return pasteboard;
 }
 
-void ContextMenuClientQt::addCustomContextMenuItems(ContextMenu*)
+void Pasteboard::clearTypes()
 {
-    notImplemented();
 }
 
-void ContextMenuClientQt::copyLinkToClipboard(const HitTestResult&)
+void Pasteboard::writeSelection(PassRefPtr<Range> selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    notImplemented();
 }
 
-void ContextMenuClientQt::downloadURL(const KURL&)
+bool Pasteboard::canSmartReplace()
 {
-    notImplemented();
+    return false;
 }
 
-void ContextMenuClientQt::copyImageToClipboard(const HitTestResult&)
+String Pasteboard::plainText(Frame* frame)
 {
-    notImplemented();
+    return String();
 }
 
-void ContextMenuClientQt::lookUpInDictionary(Frame*)
+PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
+                                                          bool allowPlainText, bool& chosePlainText)
 {
-    notImplemented();
-}
-
-void ContextMenuClientQt::contextMenuDestroyed()
-{
-
-}
-
-void ContextMenuClientQt::contextMenuItemSelected(const ContextMenuItem*)
-{
-
+    return 0;
 }
 
 }
-

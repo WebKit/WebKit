@@ -34,6 +34,9 @@
 #include "PlatformString.h"
 #if PLATFORM(MAC)
 #include "RetainPtr.h"
+#elif PLATFORM(QT)
+#include <QMenu>
+typedef QMenu* PlatformMenuDescription;
 #endif
 
 namespace WebCore {
@@ -71,6 +74,8 @@ namespace WebCore {
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;
+#elif PLATFORM(QT)
+        QMenu *m_menu;
 #else
         PlatformMenuDescription m_platformDescription;
 #endif

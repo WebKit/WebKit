@@ -17,6 +17,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/dom
    ${CMAKE_CURRENT_SOURCE_DIR}/editing
+   ${CMAKE_CURRENT_SOURCE_DIR}/editing/qt
    ${CMAKE_CURRENT_BINARY_DIR}/html
    ${CMAKE_CURRENT_SOURCE_DIR}/html
    ${CMAKE_CURRENT_SOURCE_DIR}/ksvg2 
@@ -661,6 +662,7 @@ set (SVG_SOURCES
 
     rendering/RenderForeignObject.cpp
     rendering/RenderPath.cpp
+    rendering/RenderSVGBlock.cpp
     rendering/RenderSVGContainer.cpp
     rendering/RenderSVGImage.cpp
     rendering/RenderSVGInline.cpp
@@ -828,7 +830,6 @@ set(WebCore_SRCS
     editing/MergeIdenticalElementsCommand.cpp
     editing/ModifySelectionListLevel.cpp
     editing/MoveSelectionCommand.cpp
-    editing/RebalanceWhitespaceCommand.cpp
     editing/RemoveCSSPropertyCommand.cpp
     editing/RemoveNodeAttributeCommand.cpp
     editing/RemoveNodeCommand.cpp
@@ -846,6 +847,7 @@ set(WebCore_SRCS
     editing/VisiblePosition.cpp
     editing/visible_units.cpp
     editing/WrapContentsInDummySpanCommand.cpp
+    editing/qt/EditorQt.cpp
 
     html/CanvasGradient.cpp
     html/CanvasPattern.cpp
@@ -925,7 +927,7 @@ set(WebCore_SRCS
     html/HTMLTokenizer.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
- 
+
 #   icon/IconDatabase.cpp
 #   icon/SiteIcon.cpp
 #   icon/SQLDatabase.cpp
@@ -968,7 +970,7 @@ set(WebCore_SRCS
     page/Chrome.cpp
     page/ContextMenuController.cpp
     page/DOMWindow.cpp
-    page/EventHandler.cpp   
+    page/EventHandler.cpp
     page/Frame.cpp
     page/FrameTree.cpp
     page/FrameView.cpp
@@ -976,7 +978,7 @@ set(WebCore_SRCS
     page/Page.cpp
     page/PageState.cpp
 
-    page/qt/EventHandlerQt.cpp   
+    page/qt/EventHandlerQt.cpp
 
     platform/Arena.cpp
     platform/ArrayImpl.cpp
@@ -998,6 +1000,7 @@ set(WebCore_SRCS
     platform/KURL.cpp
     platform/Logging.cpp
     platform/MimeTypeRegistry.cpp
+#    plafform/Pasteboard.cpp
     platform/RegularExpression.cpp
     platform/SegmentedString.cpp
     platform/String.cpp
@@ -1139,14 +1142,18 @@ set(WebCore_SRCS
     platform/image-decoders/xbm/XBMImageDecoder.cpp
 
     platform/network/FormData.cpp
+    platform/network/HTTPParsers.cpp
     platform/network/ResourceHandle.cpp
-    
+    platform/network/ResourceRequest.cpp
+    platform/network/ResourceResponse.cpp
+
     platform/network/qt/ResourceHandleManager.cpp
     platform/network/qt/ResourceHandleQt.cpp
-    
+
     platform/qt/ChromeClientQt.cpp
     platform/qt/ContextMenuClientQt.cpp
     platform/qt/ContextMenuQt.cpp
+    platform/qt/ContextMenuItemQt.cpp
     platform/qt/CookieJarQt.cpp
     platform/qt/CursorQt.cpp
     platform/qt/EditorClientQt.cpp
@@ -1162,6 +1169,7 @@ set(WebCore_SRCS
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/MimeTypeRegistryQt.cpp
     platform/qt/PageQt.cpp
+    platform/qt/PasteboardQt.cpp
     platform/qt/PlatformKeyboardEventQt.cpp
     platform/qt/PlatformMouseEventQt.cpp
     platform/qt/PopupMenuQt.cpp

@@ -169,37 +169,18 @@ String FrameLoader::referrer() const
 }
 
 
-void FrameLoader::detachFromParent()
-{
-    RefPtr<Frame> protect(m_frame);
-
-    closeDocument();
-    stopAllLoaders();
-    m_client->detachedFromParent1();
-    detachChildren();
-    m_client->detachedFromParent2();
-    setDocumentLoader(0);
-    m_client->detachedFromParent3();
-
-    if (Frame* parent = m_frame->tree()->parent())
-        parent->tree()->removeChild(m_frame);
-    m_frame->setView(0);
-    
-    m_client->detachedFromParent4();
-}
-
 
 void FrameLoader::checkLoadCompleteForThisFrame()
 {
     ASSERT(m_client->hasWebView());
     notImplemented();
-    
+
     switch (m_state) {
     case FrameStateProvisional: {
     }
-        
+
     case FrameStateCommittedPage: {
-        DocumentLoader* dl = m_documentLoader.get();            
+        DocumentLoader* dl = m_documentLoader.get();
         if (dl->isLoadingInAPISense())
             return;
 
@@ -280,6 +261,25 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 void FrameLoader::redirectDataToPlugin(Widget* pluginWidget)
 {
     notImplemented();
+}
+
+
+void FrameLoader::load(const KURL&, Event*)
+{
+}
+void FrameLoader::load(const FrameLoadRequest&, bool userGesture,
+                       Event*, Element* form, const HashMap<String, String>& formValues)
+{
+}
+void FrameLoader::load(const KURL&, const String& referrer, FrameLoadType, const String& target,
+                       Event*, Element* form, const HashMap<String, String>& formValues)
+{
+}
+void FrameLoader::load(DocumentLoader*)
+{
+}
+void FrameLoader::load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>)
+{
 }
 
 PolicyCheck::PolicyCheck()
