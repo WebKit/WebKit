@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class DeprecatedChar;
+class DeprecatedCString;
 class DeprecatedString;
 class String;
 class TextStream;
@@ -56,6 +57,7 @@ public:
     TextStream& operator<<(const char*);
     TextStream& operator<<(const String&);
     TextStream& operator<<(const DeprecatedString&);
+    TextStream& operator<<(const DeprecatedCString&);
     TextStream& operator<<(void*);
 
     TextStream& operator<<(const TextStreamManipulator&);

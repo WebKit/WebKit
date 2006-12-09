@@ -53,18 +53,16 @@ namespace WebCore {
         CString(const char*, unsigned length);
         static CString newUninitialized(size_t length, char*& characterBuffer);
 
-        const char* data() const { return m_buffer ? m_buffer->data() : 0; }
+        const char* data() const;
         char* mutableData();
         unsigned length() const;
 
         operator const char*() const { return data(); }        
-        
+
         bool isNull() const { return !m_buffer; }
 
         CString(const DeprecatedCString&);
         DeprecatedCString deprecatedCString() const;
-
-        int find(const char*, int index=0) const;
 
     private:
         void copyBufferIfNeeded();
