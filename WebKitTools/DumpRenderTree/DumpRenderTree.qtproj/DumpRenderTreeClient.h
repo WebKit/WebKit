@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class DumpRenderTreeClient : public FrameQtClientDefault
+class DumpRenderTreeClient : public FrameQtClient
 {
 public:
     DumpRenderTreeClient();

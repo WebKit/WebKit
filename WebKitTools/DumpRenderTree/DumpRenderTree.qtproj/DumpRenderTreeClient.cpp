@@ -35,7 +35,7 @@
 namespace WebCore {
 
 DumpRenderTreeClient::DumpRenderTreeClient()
-    : FrameQtClientDefault()
+    : FrameQtClient()
 {
 }
 

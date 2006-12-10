@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved. 
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "DumpRenderTree.h"
+#include "DumpRenderTreeClient.h"
 
 #include "Page.h"
 #include "markup.h"
@@ -40,6 +41,7 @@
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
 #include "EditorClientQt.h"
+#include "FrameLoaderClientQt.h"
 
 #include <QDir>
 #include <QFile>
@@ -64,7 +66,7 @@ DumpRenderTree::DumpRenderTree()
 {
     // Initialize WebCore in Qt platform mode...
     Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
-    m_frame = new FrameQt(page, 0, m_client);
+    m_frame = new FrameQt(page, 0, m_client, new FrameLoaderClientQt());
 
     FrameView* view = new FrameView(m_frame);
     view->setScrollbarsMode(ScrollbarAlwaysOff);
@@ -96,8 +98,8 @@ DumpRenderTree::~DumpRenderTree()
 void DumpRenderTree::open()
 {
     if (!m_stdin)
-        m_stdin = new QTextStream(stdin, IO_ReadOnly);
-    
+        m_stdin = new QTextStream(stdin, QFile::ReadOnly);
+
     if (!m_notifier) {
         m_notifier = new QSocketNotifier(STDIN_FILENO, QSocketNotifier::Read);
         connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readStdin(int)));
@@ -109,7 +111,7 @@ void DumpRenderTree::open(const KURL& url)
     Q_ASSERT(url.isLocalFile());
 
     // Ignore skipped tests
-    if (m_skipped.indexOf(url.path()) != -1) { 
+    if (m_skipped.indexOf(url.path()) != -1) {
         fprintf(stdout, "#EOF\n");
         fflush(stdout);
         return;
@@ -124,8 +126,8 @@ void DumpRenderTree::open(const KURL& url)
 void DumpRenderTree::readStdin(int /* socket */)
 {
     // Read incoming data from stdin...
-    QString line = m_stdin->readLine(); 
-    if (!line.isEmpty()) 
+    QString line = m_stdin->readLine();
+    if (!line.isEmpty())
         open(KURL(line.toLatin1()));
 }
 
@@ -188,4 +190,3 @@ FrameQt* DumpRenderTree::frame() const
 
 }
 
-#include "DumpRenderTree.moc"

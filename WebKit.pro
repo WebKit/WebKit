@@ -3,5 +3,5 @@ CONFIG += ordered
 SUBDIRS = \
         JavaScriptCore \
         WebCore \
-	WebKitQt/QtLauncher 
-
+	WebKitQt/QtLauncher \
+	WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro
