@@ -480,7 +480,7 @@ sub buildQMakeProject($$)
 
     my @buildArgs = ("-r");
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
-    push @buildArgs, "../../webkit.pro";
+    push @buildArgs, "../../WebKit.pro";
 
     print "Calling 'qmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));

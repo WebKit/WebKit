@@ -561,7 +561,7 @@ SOURCES += \
     platform/qt/ContextMenuQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/ContextMenuClientQt.cpp \
-    platform/qt/PasteBoardQt.cpp \
+    platform/qt/PasteboardQt.cpp \
     platform/ContextMenu.cpp \
     platform/network/FormData.cpp \
     platform/network/ResourceHandle.cpp \

@@ -1,11 +1,10 @@
-2006-12-09  Simon Hausmann  <hausmann@kde.org>
+2006-12-09  Zack Rusin  <zack@kde.org>
 
-        Reviewed by hyatt.
+        Reviewed by Zack.
 
-        Add support for a QMake build using build-webkit --qmake
+        Use the correct filename.
 
-        * Scripts/build-webkit:
-        * Scripts/webkitdirs.pm:
+        * WebCore.pro: it's PasteboardQt.cpp
 
 2006-12-09  Zack Rusin  <zack@kde.org>
 
