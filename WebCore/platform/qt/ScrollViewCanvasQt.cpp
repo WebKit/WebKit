@@ -62,7 +62,7 @@ ScrollViewCanvasQt::ScrollViewCanvasQt(ScrollView* frameView, QWidget* parent)
 void ScrollViewCanvasQt::paintEvent(QPaintEvent* ev)
 {
     FrameView* fv = static_cast<FrameView*>(m_frameView);
-    if (!fv || !fv->frame())
+    if (!fv || !fv->frame() || !fv->frame()->renderer())
         return;
 
     QRect clip = ev->rect();
