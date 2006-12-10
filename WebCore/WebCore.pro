@@ -97,7 +97,7 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 MANUALMOC += \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/platform/qt/ScrollViewCanvasQt.h \
-    $$PWD/platform/network/qt/ResourceHandleManager.h \
+    $$PWD/platform/network/qt/ResourceHandleManagerQt.h
 
 LUT_FILES += \
     bindings/js/kjs_window.cpp \
@@ -568,8 +568,8 @@ SOURCES += \
     platform/network/ResourceRequest.cpp \
     platform/network/ResourceResponse.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
+    platform/network/qt/ResourceHandleManagerQt.cpp \
     platform/network/HTTPParsers.cpp \
-    platform/network/qt/ResourceHandleManager.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
