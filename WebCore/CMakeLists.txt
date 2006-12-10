@@ -1037,6 +1037,7 @@ set(WebCore_SRCS
     platform/graphics/qt/IconQt.cpp
     platform/graphics/qt/ImageQt.cpp
     platform/graphics/qt/ImageSourceQt.cpp
+    platform/graphics/qt/ImageDecoderQt.cpp
     platform/graphics/qt/IntPointQt.cpp
     platform/graphics/qt/IntRectQt.cpp
     platform/graphics/qt/IntSizeQt.cpp

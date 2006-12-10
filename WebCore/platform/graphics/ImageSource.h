@@ -47,8 +47,8 @@ typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
 typedef CFDataRef NativeBytePtr;
 #elif PLATFORM(QT)
-class ImageDecoder;
-typedef ImageDecoder* NativeImageSourcePtr;
+class ImageDecoderQt;
+typedef ImageDecoderQt* NativeImageSourcePtr;
 typedef const Vector<char>* NativeBytePtr;
 typedef QImage* NativeImagePtr;
 #else

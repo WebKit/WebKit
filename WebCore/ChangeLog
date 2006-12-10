@@ -1,3 +1,41 @@
+2006-12-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
+        Use the Qt image loading framework.
+
+        * CMakeLists.txt:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/ImageDecoderQt.cpp: Added.
+        (WebCore::ImageDecoderQt::ImageData::ImageData):
+        (WebCore::ImageDecoderQt::ReadContext::):
+        (WebCore::ImageDecoderQt::ReadContext::ReadContext):
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        (WebCore::ImageDecoderQt::~ImageDecoderQt):
+        (WebCore::ImageDecoderQt::hasFirstImageHeader):
+        (WebCore::ImageDecoderQt::reset):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::isSizeAvailable):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::repetitionCount):
+        (WebCore::ImageDecoderQt::ImageDecoderQt::supportsAlpha):
+        (WebCore::ImageDecoderQt::duration):
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        (WebCore::ImageDecoderQt::imageAtIndex):
+        * platform/graphics/qt/ImageDecoderQt.h: Added.
+        (WebCore::ImageDecoderQt::):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::):
+        (WebCore::detectImageFormat):
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+
 2006-12-09  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Maciej.

@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved. 
- * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2006 Trolltech ASA
  *
  * All rights reserved.
  *
@@ -29,60 +28,65 @@
 
 #include "config.h"
 #include "ImageSource.h"
+#include "ImageDecoderQt.h"
 
-#include "GIFImageDecoder.h"
-#include "JPEGImageDecoder.h"
-#include "PNGImageDecoder.h"
-#include "BMPImageDecoder.h"
-#include "ICOImageDecoder.h"
-#include "XBMImageDecoder.h"
 
 #include <QImage>
+#include <qdebug.h>
+
 
 namespace WebCore {
+    enum ImageFormat { ImageFormat_None, ImageFormat_GIF, ImageFormat_PNG, ImageFormat_JPEG,
+           ImageFormat_BMP,  ImageFormat_ICO,  ImageFormat_XBM };
 
-ImageDecoder* createDecoder(const Vector<char>& data)
+ImageFormat  detectImageFormat(const Vector<char>& data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     int length = data.size();
     if (length < 4)
-        return 0;
+        return ImageFormat_None;
 
     const unsigned char* uContents = (const unsigned char*) data.data();
     const char* contents = data.data();
 
     // GIFs begin with GIF8(7 or 9).
     if (strncmp(contents, "GIF8", 4) == 0)
-        return new GIFImageDecoder();
+        return ImageFormat_GIF;
 
     // Test for PNG.
     if (uContents[0] == 0x89 &&
         uContents[1] == 0x50 &&
         uContents[2] == 0x4E &&
         uContents[3] == 0x47)
-        return new PNGImageDecoder();
+        return ImageFormat_PNG;
 
     // JPEG
     if (uContents[0] == 0xFF &&
         uContents[1] == 0xD8 &&
         uContents[2] == 0xFF)
-        return new JPEGImageDecoder();
+        return ImageFormat_JPEG;
 
     // BMP
     if (strncmp(contents, "BM", 2) == 0)
-        return new BMPImageDecoder();
+        return ImageFormat_BMP;
 
     // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
     // CURs begin with 2-byte 0 followed by 2-byte 2.
     if (!memcmp(contents, "\000\000\001\000", 4) ||
         !memcmp(contents, "\000\000\002\000", 4))
-        return new ICOImageDecoder();
+        return ImageFormat_ICO;
 
     // XBMs require 8 bytes of info.
     if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
-        return new XBMImageDecoder();
+        return ImageFormat_XBM;
 
     // Give up. We don't know what the heck this is.
+    return ImageFormat_None;
+}
+    
+ImageDecoderQt* createDecoder(const Vector<char>& data) {
+    if (detectImageFormat(data) != ImageFormat_None) 
+        return new ImageDecoderQt();
     return 0;
 }
 
@@ -103,6 +107,10 @@ bool ImageSource::initialized() const
 
 void ImageSource::setData(const Vector<char>* data, bool allDataReceived)
 {
+    if ( m_decoder) {
+        delete  m_decoder;
+        m_decoder = 0;
+    }
     // Make the decoder by sniffing the bytes.
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
@@ -152,37 +160,32 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
+    
+    const QImage* source = m_decoder->imageAtIndex( index);
+    if (!source)
         return 0;
 
-    return new QImage(reinterpret_cast<unsigned char*>(buffer->bytes().data()),
-                      size().width(), buffer->height(),
-                      QImage::Format_ARGB32);
+    return new QImage(*source);
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
 {
     if (!m_decoder)
         return 0;
-
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
-        return 0;
-
-    return buffer->duration() / 1000.0f;
+    
+    return m_decoder->duration(index) / 1000.0f;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
     if (!m_decoder || !m_decoder->supportsAlpha())
         return false;
-
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
+    
+    const QImage* source = m_decoder->imageAtIndex( index);
+    if (!source)
         return false;
-
-    return buffer->hasAlpha();
+    
+    return source->hasAlphaChannel();
 }
 
 }
