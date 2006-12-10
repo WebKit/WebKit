@@ -36,6 +36,7 @@
 
 #include <QHash>
 #include <QFontInfo>
+#include <math.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     : m_font(new QFont("Times New Roman", 12))
 {
     m_font->setFamily(familyName.domString());
-    m_font->setPixelSize(fontDescription.computedSize());
+    m_font->setPixelSize(qRound(fontDescription.computedSize()));
     m_font->setItalic(fontDescription.italic());
     m_font->setWeight(fontDescription.weight());
 }
