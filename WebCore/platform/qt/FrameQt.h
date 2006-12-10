@@ -47,7 +47,7 @@ class EditorClient;
 class FrameQt : public Frame {
 public:
     // If 'client' remains nil, a default editor client will be constructed.
-    FrameQt(Page*, Element*, FrameQtClient*, EditorClient* client = 0);
+    FrameQt(Page*, Element*, FrameQtClient*, FrameLoaderClient *frameLoader);
     virtual ~FrameQt();
 
     virtual void scheduleClose();

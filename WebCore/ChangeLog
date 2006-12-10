@@ -1,5 +1,40 @@
 2006-12-10  Zack Rusin  <zack@kde.org>
 
+        Renaming FrameQtClientDefault to FrameQtClient.
+        Removing FrameQtClient. Adding FrameLoaderClient
+        as an argument. Clenaing up the code a bit.
+
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClient::FrameQtClient):
+        (WebCore::FrameQtClient::~FrameQtClient):
+        (WebCore::FrameQtClient::setFrame):
+        (WebCore::FrameQtClient::openURL):
+        (WebCore::FrameQtClient::submitForm):
+        (WebCore::FrameQtClient::checkLoaded):
+        (WebCore::FrameQtClient::runJavaScriptAlert):
+        (WebCore::FrameQtClient::runJavaScriptConfirm):
+        (WebCore::FrameQtClient::runJavaScriptPrompt):
+        (WebCore::FrameQtClient::menubarVisible):
+        (WebCore::FrameQtClient::toolbarVisible):
+        (WebCore::FrameQtClient::statusbarVisible):
+        (WebCore::FrameQtClient::personalbarVisible):
+        (WebCore::FrameQtClient::locationbarVisible):
+        (WebCore::FrameQtClient::loadFinished):
+        (WebCore::FrameQtClient::didReceiveResponse):
+        (WebCore::FrameQtClient::didFinishLoading):
+        (WebCore::FrameQtClient::didFail):
+        (WebCore::FrameQtClient::didReceiveData):
+        (WebCore::FrameQtClient::traverseNextFrameStayWithin):
+        (WebCore::FrameQtClient::numPendingOrLoadingRequests):
+        (WebCore::FrameQtClient::receivedAllData):
+        (WebCore::FrameQtClient::setTitle):
+        * platform/qt/FrameQtClient.h:
+
+2006-12-10  Zack Rusin  <zack@kde.org>
+
         Fixes compilation after the last removals.
 
         * WebCore.pro:

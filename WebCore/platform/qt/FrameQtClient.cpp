@@ -52,24 +52,23 @@
 
 namespace WebCore {
 
-FrameQtClientDefault::FrameQtClientDefault()
-    : FrameQtClient()
-    , ResourceHandleClient()
+FrameQtClient::FrameQtClient()
+    : ResourceHandleClient()
     , m_frame(0)
 {
 }
 
-FrameQtClientDefault::~FrameQtClientDefault()
+FrameQtClient::~FrameQtClient()
 {
 }
 
-void FrameQtClientDefault::setFrame(const FrameQt* frame)
+void FrameQtClient::setFrame(const FrameQt* frame)
 {
     ASSERT(frame);
     m_frame = const_cast<FrameQt*>(frame);
 }
 
-void FrameQtClientDefault::openURL(const KURL& url)
+void FrameQtClient::openURL(const KURL& url)
 {
     ASSERT(m_frame);
 
@@ -86,7 +85,7 @@ void FrameQtClientDefault::openURL(const KURL& url)
     loader.get()->ref();
 }
 
-void FrameQtClientDefault::submitForm(const String& method, const KURL& url, PassRefPtr<FormData> postData)
+void FrameQtClient::submitForm(const String& method, const KURL& url, PassRefPtr<FormData> postData)
 {
     ASSERT(m_frame);
 
@@ -100,7 +99,7 @@ void FrameQtClientDefault::submitForm(const String& method, const KURL& url, Pas
     loader.get()->ref();
 }
 
-void FrameQtClientDefault::checkLoaded()
+void FrameQtClient::checkLoaded()
 {
     ASSERT(m_frame && m_frame->document() && m_frame->document()->docLoader());
 
@@ -110,7 +109,7 @@ void FrameQtClientDefault::checkLoaded()
         loadFinished();
 }
 
-void FrameQtClientDefault::runJavaScriptAlert(String const& message)
+void FrameQtClient::runJavaScriptAlert(String const& message)
 {
 #if PLATFORM(KDE)
     KMessageBox::error(m_frame->view()->qwidget(), message, "JavaScript");
@@ -119,7 +118,7 @@ void FrameQtClientDefault::runJavaScriptAlert(String const& message)
 #endif
 }
 
-bool FrameQtClientDefault::runJavaScriptConfirm(const String& message)
+bool FrameQtClient::runJavaScriptConfirm(const String& message)
 {
 #if PLATFORM(KDE)
     return KMessageBox::warningYesNo(m_frame->view()->qwidget(), message,
@@ -132,7 +131,7 @@ bool FrameQtClientDefault::runJavaScriptConfirm(const String& message)
 #endif
 }
 
-bool FrameQtClientDefault::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
+bool FrameQtClient::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
 {
     bool ok;
 #if PLATFORM(KDE)
@@ -149,39 +148,39 @@ bool FrameQtClientDefault::runJavaScriptPrompt(const String& message, const Stri
     return ok;
 }
 
-bool FrameQtClientDefault::menubarVisible() const
+bool FrameQtClient::menubarVisible() const
 {
     return false;
 }
 
-bool FrameQtClientDefault::toolbarVisible() const
+bool FrameQtClient::toolbarVisible() const
 {
     return false;
 }
 
-bool FrameQtClientDefault::statusbarVisible() const
+bool FrameQtClient::statusbarVisible() const
 {
     return false;
 }
 
-bool FrameQtClientDefault::personalbarVisible() const
+bool FrameQtClient::personalbarVisible() const
 {
     return false;
 }
 
-bool FrameQtClientDefault::locationbarVisible() const
+bool FrameQtClient::locationbarVisible() const
 {
     return false;
 }
 
-void FrameQtClientDefault::loadFinished() const
+void FrameQtClient::loadFinished() const
 {
     // no-op
 }
 
-void FrameQtClientDefault::didReceiveResponse(ResourceHandle* job, const ResourceResponse& response)
+void FrameQtClient::didReceiveResponse(ResourceHandle* job, const ResourceResponse& response)
 {
-    // qDebug() << "----------> FrameQtClientDefault::didReceiveResponse";
+    // qDebug() << "----------> FrameQtClient::didReceiveResponse";
     // set mimetype and encoding
 
     // Assign correct mimetype _before_ calling begin()!
@@ -190,30 +189,30 @@ void FrameQtClientDefault::didReceiveResponse(ResourceHandle* job, const Resourc
     // TODO: Allow user overrides of the encoding...
     // This calls begin() for us, despite the misleading name
     if (response.textEncodingName().length()) {
-        // qDebug() << "FrameQtClientDefault: setting encoding to" << response.textEncodingName();
+        // qDebug() << "FrameQtClient: setting encoding to" << response.textEncodingName();
         m_frame->loader()->setEncoding(response.textEncodingName(), false);
     } else {
         m_frame->loader()->begin(job->url());
     }
 }
 
-void FrameQtClientDefault::didFinishLoading(ResourceHandle* handle)
+void FrameQtClient::didFinishLoading(ResourceHandle* handle)
 {
     handle->deref();
 }
 
-void FrameQtClientDefault::didFail(ResourceHandle* handle, const ResourceError&)
+void FrameQtClient::didFail(ResourceHandle* handle, const ResourceError&)
 {
     handle->deref();
 }
 
-void FrameQtClientDefault::didReceiveData(ResourceHandle* job, const char* data, int length, int)
+void FrameQtClient::didReceiveData(ResourceHandle* job, const char* data, int length, int)
 {
     // Feed with new data
     m_frame->loader()->write(data, length);
 }
 
-FrameQt* FrameQtClientDefault::traverseNextFrameStayWithin(FrameQt* frame) const
+FrameQt* FrameQtClient::traverseNextFrameStayWithin(FrameQt* frame) const
 {
     return QtFrame(m_frame->tree()->traverseNext(frame));
 }
@@ -226,7 +225,7 @@ static int numRequests(Document* document)
     return 0;
 }
 
-int FrameQtClientDefault::numPendingOrLoadingRequests(bool recurse) const
+int FrameQtClient::numPendingOrLoadingRequests(bool recurse) const
 {
     if (!recurse)
         return numRequests(m_frame->document());
@@ -238,14 +237,14 @@ int FrameQtClientDefault::numPendingOrLoadingRequests(bool recurse) const
     return num;
 }
 
-void FrameQtClientDefault::receivedAllData(ResourceHandle* job, PlatformData data)
+void FrameQtClient::receivedAllData(ResourceHandle* job, PlatformData data)
 {
     ASSERT(m_frame);
 
     m_frame->loader()->end();
 }
 
-void FrameQtClientDefault::setTitle(const String& title)
+void FrameQtClient::setTitle(const String& title)
 {
 }
 

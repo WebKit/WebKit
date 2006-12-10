@@ -1,3 +1,10 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+        Adjusting to the changes in platform/qt.
+
+        * QtLauncher/main.cpp:
+        (main):
+
 2006-12-09  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

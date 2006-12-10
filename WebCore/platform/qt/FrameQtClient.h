@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * All rights reserved.
@@ -37,41 +38,11 @@ class String;
 class FrameQt;
 class FormData;
 
-class FrameQtClient {
-public:
-    virtual ~FrameQtClient() { }
-
-    virtual void setFrame(const FrameQt*) = 0;
-
-    virtual void openURL(const KURL&) = 0;
-    virtual void submitForm(const String& method, const KURL&, PassRefPtr<FormData>) = 0;
-
-    // This is invoked after any ResourceHandle is done,
-    // to check wheter all items to be loaded are finished.
-    virtual void checkLoaded() = 0;
-
-    // WebKitPart / DumpRenderTree want to handle this differently.
-    virtual bool menubarVisible() const = 0;
-    virtual bool toolbarVisible() const = 0;
-    virtual bool statusbarVisible() const = 0;
-    virtual bool personalbarVisible() const = 0;
-    virtual bool locationbarVisible() const = 0;
-
-    virtual void loadFinished() const = 0;
-
-    virtual void setTitle(const String &title) = 0;
-
-    virtual void runJavaScriptAlert(String const& message) = 0;
-    virtual bool runJavaScriptConfirm(const String& message) = 0;
-    virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;
-};
-
-class FrameQtClientDefault : public FrameQtClient,
-                             public ResourceHandleClient
+class FrameQtClient : public ResourceHandleClient
 {
 public:
-    FrameQtClientDefault();
-    virtual ~FrameQtClientDefault();
+    FrameQtClient();
+    virtual ~FrameQtClient();
 
     // FrameQtClient
     virtual void setFrame(const FrameQt*);

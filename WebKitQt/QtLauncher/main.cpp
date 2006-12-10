@@ -46,6 +46,7 @@
 #include <KURL.h>
 
 #include <FrameQt.h>
+#include <FrameLoaderClientQt.h>
 #include <page/Page.h>
 
 #include <QVBoxLayout>
@@ -86,7 +87,7 @@ int main(int argc, char **argv)
  
     // Initialize WebCore in Qt platform mode...
     Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
-    Frame* frame = new FrameQt(page, 0, new FrameQtClientDefault());
+    Frame* frame = new FrameQt(page, 0, new FrameQtClient(), new FrameLoaderClientQt());
 
     FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);

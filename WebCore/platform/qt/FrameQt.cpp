@@ -41,7 +41,6 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "DOMWindow.h"
-#include "EditorClientQt.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "DOMImplementation.h"
@@ -99,9 +98,8 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 #endif
 
 FrameQt::FrameQt(Page* page, Element* ownerElement,
-                 FrameQtClient* frameClient,
-                 EditorClient* editorClient)
-    : Frame(page, ownerElement, new FrameLoaderClientQt())
+                 FrameQtClient* frameClient, FrameLoaderClient *frameLoader)
+    : Frame(page, ownerElement, frameLoader)
     , m_bindingRoot(0)
 {
     Settings* settings = new Settings;
