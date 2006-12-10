@@ -99,85 +99,6 @@ void FrameQtClient::submitForm(const String& method, const KURL& url, PassRefPtr
     loader.get()->ref();
 }
 
-void FrameQtClient::checkLoaded()
-{
-    ASSERT(m_frame && m_frame->document() && m_frame->document()->docLoader());
-
-    // Recursively check the frame tree for open requests...
-    int num = numPendingOrLoadingRequests(true);
-    if (!num)
-        loadFinished();
-}
-
-void FrameQtClient::runJavaScriptAlert(String const& message)
-{
-#if PLATFORM(KDE)
-    KMessageBox::error(m_frame->view()->qwidget(), message, "JavaScript");
-#else
-    QMessageBox::warning(m_frame->view()->qwidget(), "JavaScript", message);
-#endif
-}
-
-bool FrameQtClient::runJavaScriptConfirm(const String& message)
-{
-#if PLATFORM(KDE)
-    return KMessageBox::warningYesNo(m_frame->view()->qwidget(), message,
-                                     "JavaScript", KStdGuiItem::ok(), KStdGuiItem::cancel())
-                                     == KMessageBox::Yes;
-#else
-    return QMessageBox::warning(m_frame->view()->qwidget(), "JavaScript", message,
-                                QMessageBox::Yes | QMessageBox::No, 0, 0)
-                               == QMessageBox::Yes;
-#endif
-}
-
-bool FrameQtClient::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
-{
-    bool ok;
-#if PLATFORM(KDE)
-    result = KInputDialog::getText("JavaScript", message, defaultValue, &ok, m_frame->view()->qwidget());
-#else
-#ifndef QT_NO_INPUTDIALOG
-    result = QInputDialog::getText(m_frame->view()->qwidget(), "JavaScript", message,
-            QLineEdit::Normal, defaultValue, &ok);
-#else
-    abort(); // FIXME
-#endif
-#endif
-
-    return ok;
-}
-
-bool FrameQtClient::menubarVisible() const
-{
-    return false;
-}
-
-bool FrameQtClient::toolbarVisible() const
-{
-    return false;
-}
-
-bool FrameQtClient::statusbarVisible() const
-{
-    return false;
-}
-
-bool FrameQtClient::personalbarVisible() const
-{
-    return false;
-}
-
-bool FrameQtClient::locationbarVisible() const
-{
-    return false;
-}
-
-void FrameQtClient::loadFinished() const
-{
-    // no-op
-}
-
 void FrameQtClient::didReceiveResponse(ResourceHandle* job, const ResourceResponse& response)
 {
     // qDebug() << "----------> FrameQtClient::didReceiveResponse";
@@ -242,10 +163,6 @@ void FrameQtClient::receivedAllData(ResourceHandle* job, PlatformData data)
     ASSERT(m_frame);
 
     m_frame->loader()->end();
-}
-
-void FrameQtClient::setTitle(const String& title)
-{
 }
 
 }

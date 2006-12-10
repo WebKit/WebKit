@@ -1,3 +1,11 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+        Cleanup the FrameQtClient a little bit more. Remove
+        unused methods.
+
+        * platform/qt/FrameQtClient.cpp:
+        * platform/qt/FrameQtClient.h:
+
 2006-12-09  Adam Roben  <aroben@apple.com>
 
         Build fix.
