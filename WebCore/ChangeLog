@@ -1,3 +1,13 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+       Don't use my QTransform magic, affine QMatrix is fine for
+       SVG so use setMatrix.
+
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::setup):
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
