@@ -31,6 +31,7 @@
 #include <wtf/Platform.h>
 
 #include <QApplication>
+#include <QWidget>
 #if PLATFORM(KDE)
 #include <kapplication.h>
 #include <kcmdlineargs.h>

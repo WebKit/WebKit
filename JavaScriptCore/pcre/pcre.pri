@@ -1,0 +1,36 @@
+# Perl Compatible Regular Expressions - Qt4 build info
+VPATH += $$PWD
+INCLUDEPATH += $$PWD
+
+SOURCES += \
+    pcre_get.c \
+    pcre_printint.c \
+    pcre_refcount.c \
+    pcre_ucp_findchar.c \
+    pcre_compile.c \
+    pcre_globals.c \
+    pcre_config.c \
+    pcre_version.c \
+    pcre_info.c \
+    pcre_study.c \
+    pcre_exec.c \
+    pcre_xclass.c \
+    ucp_findchar.c \
+    pcre_tables.c \
+    pcre_maketables.c \
+    pcre_try_flipped.c \
+    pcre_ord2utf8.c \
+    pcre_fullinfo.c
+
+CTGENFILE += \
+    dftables.c
+
+
+# GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
+ctgen.output = tmp/chartables.c
+ctgen.commands = gcc ${QMAKE_FILE_NAME} -DBUILDING_QT__ -I$$PWD/../wtf -o tmp/${QMAKE_FILE_BASE} && ./tmp/${QMAKE_FILE_BASE} ${QMAKE_FILE_OUT}
+ctgen.input = CTGENFILE
+ctgen.CONFIG += target_predeps no_link
+ctgen.variable_out = GENERATED_SOURCES
+ctgen.dependency_type = TYPE_C
+QMAKE_EXTRA_COMPILERS += ctgen

@@ -1,3 +1,13 @@
+2006-12-09  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Make it possible to build WebKit with qmake.
+
+        * JavaScriptCore.pro: Added.
+        * kjs/kjs.pro: Removed.
+        * pcre/pcre.pri: Added.
+
 2006-12-09  Zack Rusin  <zack@kde.org>
 
         Fixing the compilation with platform kde after the icu changes.
