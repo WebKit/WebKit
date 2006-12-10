@@ -1,3 +1,9 @@
+2006-12-09  Zack Rusin  <zack@kde.org>
+
+        Fixing the compilation with platform kde after the icu changes.
+
+        * CMakeLists.txt:
+
 2006-12-09  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

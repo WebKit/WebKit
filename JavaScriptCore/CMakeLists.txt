@@ -16,6 +16,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/bindings/c
     ${CMAKE_CURRENT_BINARY_DIR}/kjs
     ${CMAKE_CURRENT_SOURCE_DIR}/kjs
+    ${CMAKE_CURRENT_SOURCE_DIR}/wtf
 
     ${QT_INCLUDES}
 )
@@ -74,7 +75,6 @@ ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 set(kjs-unity_LIB_SRCS
     ${kjs-unity_LIB_SRCS}
-    wtf/unicode/qt4/UnicodeQt4.cpp
     bindings/NP_jsobject.cpp
     bindings/npruntime.cpp
     bindings/runtime_array.cpp

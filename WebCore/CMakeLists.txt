@@ -1007,7 +1007,6 @@ set(WebCore_SRCS
     platform/String.cpp
     platform/StringImpl.cpp
     platform/TextCodec.cpp
-    platform/TextCodecICU.cpp
     platform/TextCodecLatin1.cpp
     platform/TextCodecUTF16.cpp
     platform/TextDecoder.cpp
@@ -1184,6 +1183,8 @@ set(WebCore_SRCS
     platform/qt/SystemTimeQt.cpp
     platform/qt/TemporaryLinkStubs.cpp
     platform/qt/TextBoundaries.cpp
+    platform/qt/TextBreakIteratorQt.cpp
+    platform/qt/TextCodecQt.cpp
 #   platform/qt/TextEditQt.cpp
     platform/qt/WidgetQt.cpp
 
