@@ -63,7 +63,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/kcanvas $$PWD/kcanvas/device $$PWD/kcanvas/device/qt \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
                 $$PWD/platform/image-decoders \
-                $$PWD/../WebKit/WebCoreSupport \
+                $$PWD/../WebKitQt/WebCoreSupport \
                 $$PWD/WebCore+SVG
 QT += network
 !mac:CONFIG += link_pkgconfig
