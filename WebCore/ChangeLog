@@ -1,3 +1,15 @@
+2006-12-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
+        Add some stubs required to link.
+
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::runJavaScriptAlert):
+        (WebCore::FrameQt::runJavaScriptConfirm):
+        (WebCore::FrameQt::runJavaScriptPrompt):
+        (WebCore::FrameQt::bindingRootObject):
+
 2006-12-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

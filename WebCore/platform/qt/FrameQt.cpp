@@ -300,6 +300,27 @@ KURL FrameQt::historyURL(int distance)
     return KURL();
 }
 
+void FrameQt::runJavaScriptAlert(const String& message) 
+{
+    notImplemented();
+} 
+ 
+bool FrameQt::runJavaScriptConfirm(const String& message) 
+{
+    notImplemented();
 }
 
+bool FrameQt::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) 
+{
+    notImplemented();
+}
+
+KJS::Bindings::RootObject* FrameQt::bindingRootObject() 
+{
+    ASSERT(javaScriptEnabled()); 
+    notImplemented();
+    return 0;
+}
+
+}
 // vim: ts=4 sw=4 et
