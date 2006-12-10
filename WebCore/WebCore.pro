@@ -21,10 +21,10 @@ CONFIG -= warn_on
 #PRE_TARGETDEPS += config.h
 
 # Optional components (look for defs in config.h and included files!)
-#DEFINES += XPATH_SUPPORT=1
+DEFINES += XPATH_SUPPORT=1
 DEFINES += XSLT_SUPPORT=1
 #DEFINES += XBL_SUPPORT=1
-#DEFINES += SVG_SUPPORT=1
+DEFINES += SVG_SUPPORT=1
 
 DEFINES += WTF_CHANGES=1 BUILDING_QT__=1
 
@@ -49,6 +49,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/graphics \
                 $$PWD/platform/graphics/qt \
                 $$PWD/platform/graphics/svg \
+                $$PWD/platform/graphics/svg/qt \
+                $$PWD/platform/graphics/svg/filters \
                 $$PWD/loader $$PWD/loader/icon $$PWD/loader/qt \
                 $$PWD/css \
                 $$PWD/dom \
@@ -516,6 +518,7 @@ SOURCES += \
     platform/graphics/IntRect.cpp \
     platform/Arena.cpp \
     platform/ArrayImpl.cpp \
+    platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
     platform/SegmentedString.cpp \
     platform/TextCodec.cpp \
@@ -674,10 +677,10 @@ contains(DEFINES, XPATH_SUPPORT=1) {
     }
 
     IDL_BINDINGS += \
-        xpath/XPathNSResolver.idl \
-        xpath/XPathExpression.idl \
-        xpath/XPathResult.idl \
-        xpath/XPathEvaluator.idl
+        xml/XPathNSResolver.idl \
+        xml/XPathExpression.idl \
+        xml/XPathResult.idl \
+        xml/XPathEvaluator.idl
 
     SOURCES += xml/XPathGrammar.cpp
 }
@@ -949,28 +952,48 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/misc/KCanvasRenderingStyle.cpp \
         ksvg2/events/JSSVGLazyEventListener.cpp \
         ksvg2/events/SVGZoomEvent.cpp \
-        kcanvas/KCanvasFilters.cpp \
-        kcanvas/device/KRenderingPaintServerGradient.cpp \
-        kcanvas/device/KRenderingPaintServerSolid.cpp \
-        kcanvas/device/KRenderingPaintServerPattern.cpp \
-        kcanvas/device/KRenderingDevice.cpp \
-        kcanvas/device/qt/RenderPathQt.cpp \
-        kcanvas/device/qt/KRenderingDeviceQt.cpp \
-        kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp \
-        kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp \
-        kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp \
-        kcanvas/device/qt/KRenderingPaintServerQt.cpp \
-#        kcanvas/device/qt/KCanvasFilterQt.cpp \
-#        kcanvas/device/qt/KCanvasImageItemQt.cpp \
+        platform/graphics/svg/SVGPaintServer.cpp \
+        platform/graphics/svg/SVGPaintServerGradient.cpp \
+        platform/graphics/svg/SVGPaintServerLinearGradient.cpp \
+        platform/graphics/svg/SVGPaintServerPattern.cpp \
+        platform/graphics/svg/SVGPaintServerRadialGradient.cpp \
+        platform/graphics/svg/SVGPaintServerSolid.cpp \
         platform/graphics/svg/SVGResource.cpp \
         platform/graphics/svg/SVGResourceClipper.cpp \
-        platform/graphics/svg/SVGResourceMasker.cpp \
+        platform/graphics/svg/SVGResourceFilter.cpp \
         platform/graphics/svg/SVGResourceMarker.cpp \
+        platform/graphics/svg/SVGResourceMasker.cpp \
+        platform/graphics/svg/filters/SVGFEBlend.cpp \
+        platform/graphics/svg/filters/SVGFEColorMatrix.cpp \
+        platform/graphics/svg/filters/SVGFEComponentTransfer.cpp \
+        platform/graphics/svg/filters/SVGFEComposite.cpp \
+        platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp \
+        platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp \
+        platform/graphics/svg/filters/SVGFEDisplacementMap.cpp \
+        platform/graphics/svg/filters/SVGFEFlood.cpp \
+        platform/graphics/svg/filters/SVGFEGaussianBlur.cpp \
+        platform/graphics/svg/filters/SVGFEImage.cpp \
+        platform/graphics/svg/filters/SVGFEMerge.cpp \
+        platform/graphics/svg/filters/SVGFEMorphology.cpp \
+        platform/graphics/svg/filters/SVGFEOffset.cpp \
+        platform/graphics/svg/filters/SVGFESpecularLighting.cpp \
+        platform/graphics/svg/filters/SVGFETurbulence.cpp \
+        platform/graphics/svg/filters/SVGFilterEffect.cpp \
+        platform/graphics/svg/filters/SVGLightSource.cpp \
+        platform/graphics/svg/qt/RenderPathQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp \
+        platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp \
         platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
         platform/graphics/svg/qt/SVGResourceImageQt.cpp \
         platform/graphics/svg/qt/SVGResourceMaskerQt.cpp \
+        platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
+        rendering/RenderSVGBlock.cpp \
         rendering/RenderSVGContainer.cpp \
         rendering/RenderSVGImage.cpp \
         rendering/RenderSVGInline.cpp \

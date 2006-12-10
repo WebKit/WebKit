@@ -1,5 +1,11 @@
 2006-12-10  Zack Rusin  <zack@kde.org>
 
+        Print out the method name if it's unimplemented.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
+2006-12-10  Zack Rusin  <zack@kde.org>
+
         Moving the clients from platform to their final location.
 
         * WebCoreSupport/FrameLoaderClientQt.cpp: Added.

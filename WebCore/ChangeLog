@@ -1,5 +1,12 @@
 2006-12-10  Zack Rusin  <zack@kde.org>
 
+        Enable the SVG build by default and make it build.
+
+        * WebCore.pro:
+        * loader/qt/FrameLoaderQt.cpp: Output the method name
+
+2006-12-10  Zack Rusin  <zack@kde.org>
+
         Move the client classes to WebKitQt/WebCoreSupport.
 
         * WebCore.pro:
