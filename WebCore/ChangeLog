@@ -1,3 +1,12 @@
+2006-12-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Maciej.
+
+        Remove an explicit ICU dependency.
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::charCat):
+
 2006-12-09  Zack Rusin  <zack@kde.org>
 
         Adjusting the build after the icu changes.

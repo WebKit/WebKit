@@ -57,22 +57,20 @@ static XMLCat charCat(UChar aChar)
 
     if (aChar == '.' || aChar == '-')
         return NameCont;
-    switch (u_charType(aChar)) {
-        case U_LOWERCASE_LETTER: //Ll
-        case U_UPPERCASE_LETTER: //Lu
-        case U_OTHER_LETTER:     //Lo
-        case U_TITLECASE_LETTER: //Lt
-        case U_LETTER_NUMBER:    //Nl
-            return NameStart;
-        case U_COMBINING_SPACING_MARK: //Mc
-        case U_ENCLOSING_MARK:         //Me
-        case U_NON_SPACING_MARK:       //Mn
-        case U_MODIFIER_LETTER:        //Lm
-        case U_DECIMAL_DIGIT_NUMBER:   //Nd
-            return NameCont;
-        default:
-            return NotPartOfName;
-    }
+    uint category = WTF::Unicode::category(aChar);
+    if (category & (WTF::Unicode::Letter_Uppercase|
+                    WTF::Unicode::Letter_Lowercase|
+                    WTF::Unicode::Letter_Other|
+                    WTF::Unicode::Letter_Titlecase|
+                    WTF::Unicode::Number_Letter))
+        return NameStart;
+    if (category & (WTF::Unicode::Mark_NonSpacing|
+                    WTF::Unicode::Mark_SpacingCombining|
+                    WTF::Unicode::Mark_Enclosing|
+                    WTF::Unicode::Letter_Modifier|
+                    WTF::Unicode::Number_DecimalDigit))
+        return NameCont;
+    return NotPartOfName;
 }
 
 static void setUpAxisNamesMap(HashMap<String, Step::Axis>& axisNames)
