@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
  *
  * All rights reserved.
  *
@@ -47,13 +48,14 @@
 #include <QMessageBox>
 #endif
 
+#include <qdebug.h>
+
 namespace WebCore {
 
 FrameQtClientDefault::FrameQtClientDefault()
     : FrameQtClient()
     , ResourceHandleClient()
     , m_frame(0)
-    , m_assignedMimetype(false)
 {
 }
 
@@ -72,7 +74,6 @@ void FrameQtClientDefault::openURL(const KURL& url)
     ASSERT(m_frame);
 
     m_frame->loader()->didOpenURL(url);
-    m_assignedMimetype = false;
 
     if (!m_frame->document())
         m_frame->loader()->createEmptyDocument();
@@ -80,20 +81,23 @@ void FrameQtClientDefault::openURL(const KURL& url)
     ASSERT(m_frame->document());
 
     ResourceRequest request(url);
-    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, m_frame->document()->docLoader(), false);
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this,
+                                                           m_frame->document()->docLoader(), false);
+    loader.get()->ref();
 }
 
 void FrameQtClientDefault::submitForm(const String& method, const KURL& url, PassRefPtr<FormData> postData)
 {
     ASSERT(m_frame);
 
-    m_assignedMimetype = false;
-
     ResourceRequest request(url);
     request.setHTTPMethod(method);
     request.setHTTPBody(postData);
 
-    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, m_frame->document() ? m_frame->document()->docLoader() : 0, false);
+    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this,
+                                                           m_frame->document() ? m_frame->document()->docLoader() : 0,
+                                                           false);
+    loader.get()->ref();
 }
 
 void FrameQtClientDefault::checkLoaded()
@@ -175,27 +179,36 @@ void FrameQtClientDefault::loadFinished() const
     // no-op
 }
 
-void FrameQtClientDefault::receivedResponse(ResourceHandle*, PlatformResponse)
+void FrameQtClientDefault::didReceiveResponse(ResourceHandle* job, const ResourceResponse& response)
 {
-    // no-op
-}
+    // qDebug() << "----------> FrameQtClientDefault::didReceiveResponse";
+    // set mimetype and encoding
 
-void FrameQtClientDefault::didReceiveData(ResourceHandle* job, const char* data, int length)
-{
-    ResourceHandleInternal* d = job->getInternal();
-    ASSERT(d);
-
-    if (!m_assignedMimetype) {
-        m_assignedMimetype = true;
-
-        // Assign correct mimetype _before_ calling begin()!
-        m_frame->loader()->setResponseMIMEType(d->m_mimetype);
-    }
+    // Assign correct mimetype _before_ calling begin()!
+    m_frame->loader()->setResponseMIMEType(response.mimeType());
 
     // TODO: Allow user overrides of the encoding...
     // This calls begin() for us, despite the misleading name
-    m_frame->loader()->setEncoding(d->m_charset, false);
+    if (response.textEncodingName().length()) {
+        // qDebug() << "FrameQtClientDefault: setting encoding to" << response.textEncodingName();
+        m_frame->loader()->setEncoding(response.textEncodingName(), false);
+    } else {
+        m_frame->loader()->begin(job->url());
+    }
+}
 
+void FrameQtClientDefault::didFinishLoading(ResourceHandle* handle)
+{
+    handle->deref();
+}
+
+void FrameQtClientDefault::didFail(ResourceHandle* handle, const ResourceError&)
+{
+    handle->deref();
+}
+
+void FrameQtClientDefault::didReceiveData(ResourceHandle* job, const char* data, int length, int)
+{
     // Feed with new data
     m_frame->loader()->write(data, length);
 }
@@ -228,9 +241,12 @@ int FrameQtClientDefault::numPendingOrLoadingRequests(bool recurse) const
 void FrameQtClientDefault::receivedAllData(ResourceHandle* job, PlatformData data)
 {
     ASSERT(m_frame);
-  
+
     m_frame->loader()->end();
-    m_assignedMimetype = false;
+}
+
+void FrameQtClientDefault::setTitle(const String& title)
+{
 }
 
 }

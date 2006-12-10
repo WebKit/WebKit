@@ -65,10 +65,10 @@
 #include "JSLock.h"
 #include "kjs_window.h"
 #include "runtime_root.h"
-
 #include <QScrollArea>
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
+           __FILE__, __LINE__, __FUNCTION__); } while(0)
 
 namespace WebCore {
 
@@ -101,7 +101,7 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 FrameQt::FrameQt(Page* page, Element* ownerElement,
                  FrameQtClient* frameClient,
                  EditorClient* editorClient)
-    : Frame(page, ownerElement, new FrameLoaderClientQt() )
+    : Frame(page, ownerElement, new FrameLoaderClientQt())
     , m_bindingRoot(0)
 {
     Settings* settings = new Settings;
@@ -436,7 +436,7 @@ bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
     if (!keyEvent.isKeyUp())
         loader()->resetMultipleFormSubmissionProtection();
 #endif
-
+    
     result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
 
     // FIXME: FrameMac has a keyDown/keyPress hack here which we are not copying.

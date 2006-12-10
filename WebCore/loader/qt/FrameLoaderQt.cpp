@@ -63,6 +63,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 #include "SelectionController.h"
+#include "Chrome.h"
 #include "Settings.h"
 #include "TypingCommand.h"
 #include "kjs_window.h"
@@ -264,22 +265,31 @@ void FrameLoader::redirectDataToPlugin(Widget* pluginWidget)
 }
 
 
+void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
+                       Element* submitForm, const HashMap<String, String>& formValues)
+{
+    notImplemented();
+}
+
+void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
+    const String& frameName, Event* event, Element* form, const HashMap<String, String>& values)
+{
+    notImplemented();
+}
+
+void FrameLoader::load(DocumentLoader* newDocumentLoader)
+{
+    notImplemented();
+}
+
 void FrameLoader::load(const KURL&, Event*)
 {
+    notImplemented();
 }
-void FrameLoader::load(const FrameLoadRequest&, bool userGesture,
-                       Event*, Element* form, const HashMap<String, String>& formValues)
+
+void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> formState)
 {
-}
-void FrameLoader::load(const KURL&, const String& referrer, FrameLoadType, const String& target,
-                       Event*, Element* form, const HashMap<String, String>& formValues)
-{
-}
-void FrameLoader::load(DocumentLoader*)
-{
-}
-void FrameLoader::load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>)
-{
+    notImplemented();
 }
 
 PolicyCheck::PolicyCheck()

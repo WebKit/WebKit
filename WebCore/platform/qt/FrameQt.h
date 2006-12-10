@@ -41,6 +41,7 @@ class QWidget;
 class QPaintEvent;
 
 namespace WebCore {
+
 class EditorClient;
 
 class FrameQt : public Frame {

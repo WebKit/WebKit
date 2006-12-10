@@ -37,7 +37,7 @@
 #include "DocLoader.h"
 #include "ResourceHandle.h"
 #include "DeprecatedString.h"
-#include "ResourceHandleManager.h"
+#include "ResourceHandleManagerQt.h"
 #include "ResourceHandleInternal.h"
 
 namespace WebCore {
@@ -53,8 +53,6 @@ ResourceHandle::~ResourceHandle()
 
 bool ResourceHandle::start(DocLoader* docLoader)
 {
-    ref();
-
     FrameQt* frame = 0;
     if (docLoader) {
         frame = QtFrame(docLoader->frame());
@@ -68,24 +66,6 @@ bool ResourceHandle::start(DocLoader* docLoader)
 void ResourceHandle::cancel()
 {
     ResourceHandleManager::self()->cancel(this);
-}
-
-QString ResourceHandle::extractCharsetFromHeaders(QString headers) const
-{
-    int pos = headers.indexOf("content-type:", 0, Qt::CaseInsensitive);
-
-    if (pos > -1) {
-        pos += 13;
-
-        int index = headers.indexOf('\n', pos);
-        QString type = headers.mid(pos, index - pos);
-        index = type.indexOf(';');
-
-        if (index > -1)
-            return type.mid(index + 1).remove(QRegExp("charset[ ]*=[ ]*", Qt::CaseInsensitive)).trimmed();
-    }
-
-    return QString();
 }
 
 } // namespace WebCore

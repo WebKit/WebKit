@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,8 @@ public:
 
     virtual void loadFinished() const = 0;
 
+    virtual void setTitle(const String &title) = 0;
+
     virtual void runJavaScriptAlert(String const& message) = 0;
     virtual bool runJavaScriptConfirm(const String& message) = 0;
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;
@@ -92,9 +94,13 @@ public:
     virtual void loadFinished() const;
 
     // ResourceHandleClient
-    virtual void receivedResponse(ResourceHandle*, PlatformResponse);
-    virtual void didReceiveData(ResourceHandle*, const char*, int);
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int);
+    virtual void didFinishLoading(ResourceHandle*);
+    virtual void didFail(ResourceHandle*, const ResourceError&);
     virtual void receivedAllData(ResourceHandle*, PlatformData);
+
+    virtual void setTitle(const String &title);
 
 private:
     // Internal helpers
@@ -102,7 +108,6 @@ private:
     int numPendingOrLoadingRequests(bool recurse) const;
 
     FrameQt* m_frame;
-    bool m_assignedMimetype : 1;
 };
 
 }

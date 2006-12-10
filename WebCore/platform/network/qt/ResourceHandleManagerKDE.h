@@ -33,7 +33,6 @@
 
 #include "ResourceHandle.h"
 
-// forward declarations for Qt-only build
 namespace KIO {
 class Job;
 }
@@ -42,23 +41,6 @@ class KJob;
 namespace WebCore {
 
 class FrameQtClient;
-
-    
-class QtJob : public QObject
-{
-    Q_OBJECT
-public:
-    QtJob(const QString& url);
-
-Q_SIGNALS:
-    void finished(QtJob* job, const QByteArray& data);
-
-protected:
-    virtual void timerEvent(QTimerEvent*);
-
-private:
-    QString m_path;
-};
 
 class ResourceHandleManager : public QObject
 {
@@ -74,22 +56,16 @@ public Q_SLOTS:
     void slotMimetype(KIO::Job*, const QString& type);
     void slotResult(KJob*);
     void deliverJobData(QtJob* , const QByteArray&);
-    
+
 private:
     ResourceHandleManager();
     ~ResourceHandleManager();
 
     void remove(ResourceHandle*);
 
-#if PLATFORM(KDE)
     // KIO Job <-> WebKit Job mapping
     QMap<ResourceHandle*, KIO::Job*> m_jobToKioMap;
     QMap<KIO::Job*, ResourceHandle*> m_kioToJobMap;
-#else
-    
-    QMap<ResourceHandle*, QtJob*> m_resourceToJob;
-    QMap<QtJob*, ResourceHandle*> m_jobToResource;
-#endif
 
     FrameQtClient* m_frameClient;
 };

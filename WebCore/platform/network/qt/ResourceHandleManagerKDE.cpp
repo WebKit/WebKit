@@ -27,16 +27,13 @@
 
 #include "config.h"
 
-#if PLATFORM(KDE)
 #include <kio/job.h>
-#endif
 
 #include <QEvent>
 #include <QFile>
 
 #include "FrameQt.h"
 #include "ResourceHandleManager.h"
-#include "ResourceResponse.h"
 #include "ResourceHandleInternal.h"
 
 namespace WebCore {
@@ -52,28 +49,6 @@ ResourceHandleManager* ResourceHandleManager::self()
     return s_self;
 }
 
-QtJob::QtJob(const QString& path)
-    : m_path(path)
-{
-    startTimer(0);
-}
-
-void QtJob::timerEvent(QTimerEvent* e)
-{
-    killTimer(e->timerId());
-
-    QFile f(m_path);
-    QByteArray data;
-    if (f.open(QIODevice::ReadOnly)) {
-        data = f.readAll();
-        f.close();
-    };
-
-    emit finished(this, data);
-
-    deleteLater();
-}
-#if PLATFORM(KDE)
 
 ResourceHandleManager::ResourceHandleManager()
     : m_jobToKioMap()
@@ -86,11 +61,6 @@ ResourceHandleManager::~ResourceHandleManager()
 {
 }
 
-
-void ResourceHandleManager::deliverJobData(QtJob*, const QByteArray&)
-{
-
-}
 void ResourceHandleManager::slotData(KIO::Job* kioJob, const QByteArray& data)
 {
     ResourceHandle* job = 0;
@@ -107,7 +77,7 @@ void ResourceHandleManager::slotData(KIO::Job* kioJob, const QByteArray& data)
     if (!d || !d->m_client)
         return;
 
-    d->m_client->didReceiveData(job, data.data(), data.size(), data.size());
+    d->m_client->didReceiveData(job, data.data(), data.size());
 }
 
 void ResourceHandleManager::slotMimetype(KIO::Job* kioJob, const QString& type)
@@ -145,8 +115,7 @@ void ResourceHandleManager::slotResult(KJob* kjob)
     if (!job)
         return;
 
-    //FIXME: should report an error
-    //job->setError(kjob->error());
+    job->setError(kjob->error());
     remove(job);
 
     ASSERT(m_frameClient);
@@ -176,10 +145,14 @@ void ResourceHandleManager::remove(ResourceHandle* job)
         // Will take care of informing our client...
         // This must be called before didFinishLoading(),
         // otherwhise assembleResponseHeaders() is called too early...
-        ResourceResponse response(job->url(), String(), 0, String(), String());
-        d->m_client->didReceiveResponse(job, response);
+        RefPtr<PlatformResponseQt> response(new PlatformResponseQt());
+        response->data = headers;
+        response->url = job->url().url();
+
+        job->receivedResponse(response);
     }
 
+    d->m_client->receivedAllData(job, 0);
     d->m_client->didFinishLoading(job);
 
     m_jobToKioMap.remove(job);
@@ -194,8 +167,7 @@ void ResourceHandleManager::add(ResourceHandle* job, FrameQtClient* frameClient)
     KIO::Job* kioJob = 0;
 
     if (job->method() == "POST") {
-        ASSERT(job->postData());
-        DeprecatedString postData = job->postData()->flattenToString().deprecatedString();
+        DeprecatedString postData = job->postData().flattenToString().deprecatedString();
         QByteArray postDataArray(postData.ascii(), postData.length());
 
         kioJob = KIO::http_post(KUrl(url), postDataArray, false);
@@ -222,104 +194,8 @@ void ResourceHandleManager::add(ResourceHandle* job, FrameQtClient* frameClient)
 void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     remove(job);
-    //FIXME set an error state
-    //job->setError(1);
+    job->setError(1);
 }
-
-// Qt Resource Handle Manager
-#else
-ResourceHandleManager::ResourceHandleManager()
-    : m_frameClient(0)
-{
-}
-
-ResourceHandleManager::~ResourceHandleManager()
-{
-}
-
-
-void ResourceHandleManager::remove(ResourceHandle* job)
-{
-    ResourceHandleInternal* d = job->getInternal();
-    if (!d || !d->m_client)
-        return;
-
-    // Check if we know about 'job'...
-    QtJob *qtJob = m_resourceToJob.value(job);
-    if (!qtJob)
-        return;
-
-    d->m_client->didFinishLoading(job);
-
-    m_resourceToJob.remove(job);
-    m_jobToResource.remove(qtJob);
-}
-
-void ResourceHandleManager::add(ResourceHandle* resource, FrameQtClient* frameClient)
-{
-    ResourceHandleInternal* d = resource->getInternal();
-
-    if (resource->method() == "POST"
-        || !d->m_request.url().isLocalFile()) {
-        // ### not supported for the local filesystem
-        return;
-    }
-    QtJob* qtJob =  new QtJob(d->m_request.url().path());
-    connect(qtJob, SIGNAL(finished(QtJob *, const QByteArray &)),
-            this, SLOT(deliverJobData(QtJob *, const QByteArray &)));
-
-    m_resourceToJob.insert(resource, qtJob);
-    m_jobToResource.insert(qtJob, resource);
-
-    if (!m_frameClient)
-        m_frameClient = frameClient;
-    else
-        ASSERT(m_frameClient == frameClient);
-}
-
-void ResourceHandleManager::cancel(ResourceHandle* job)
-{
-    remove(job);
-    //FIXME set an error state
-    //job->setError(1);
-}
-
-void ResourceHandleManager::slotData(KIO::Job*, const QByteArray& data)
-{
-    // dummy, never called in a Qt-only build
-}
-
-void ResourceHandleManager::slotMimetype(KIO::Job*, const QString& type)
-{
-    // dummy, never called in a Qt-only build
-}
-
-void ResourceHandleManager::slotResult(KJob*)
-{
-    // dummy, never called in a Qt-only build
-}
-
-void ResourceHandleManager::deliverJobData(QtJob* job, const QByteArray& data)
-{
-    ResourceHandle* handle = m_jobToResource.value(job);
-    if (!handle)
-        return;
-
-    ResourceHandleInternal* d = handle->getInternal();
-    if (!d || !d->m_client)
-        return;
-
-    d->m_client->didReceiveData(handle, data.data(), data.size(), data.size() /* FixMe */);
-
-    //FIXME: should report an error
-    //handle->setError(0);
-    remove(handle);
-
-    ASSERT(m_frameClient);
-    m_frameClient->checkLoaded();
-}
-
-#endif
 
 } // namespace WebCore
 

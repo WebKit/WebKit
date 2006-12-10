@@ -105,10 +105,6 @@ public:
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 
-#if PLATFORM(QT)
-    QString extractCharsetFromHeaders(QString headers) const;
-#endif
-
     void cancel();
     
     ResourceHandleClient* client() const;
@@ -118,6 +114,8 @@ public:
     const KURL& url() const;
     const String& method() const;
     PassRefPtr<FormData> postData() const;
+    const ResourceRequest& request() const;
+
 private:
     bool start(DocLoader*);
 
