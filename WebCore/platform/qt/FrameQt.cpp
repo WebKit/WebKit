@@ -130,33 +130,6 @@ FrameQt::~FrameQt()
     loader()->cancelAndClear();
 }
 
-void FrameQt::runJavaScriptAlert(String const& message)
-{
-    m_client->runJavaScriptAlert(message);
-}
-
-bool FrameQt::runJavaScriptConfirm(String const& message)
-{
-    return m_client->runJavaScriptConfirm(message);
-}
-
-bool FrameQt::locationbarVisible()
-{
-    return m_client->locationbarVisible();
-}
-
-bool FrameQt::passWheelEventToChildWidget(Node*)
-{
-    notImplemented();
-    return false;
-}
-
-bool FrameQt::passSubframeEventToSubframe(MouseEventWithHitTestResults& mev, Frame*)
-{
-    notImplemented();
-    return false;
-}
-
 bool FrameQt::passMouseDownEventToWidget(Widget*)
 {
     notImplemented();
@@ -169,26 +142,6 @@ bool FrameQt::isLoadTypeReload()
     return false;
 }
 
-bool FrameQt::menubarVisible()
-{
-    return m_client->menubarVisible();
-}
-
-bool FrameQt::personalbarVisible()
-{
-    return m_client->personalbarVisible();
-}
-
-bool FrameQt::statusbarVisible()
-{
-    return m_client->statusbarVisible();
-}
-
-bool FrameQt::toolbarVisible()
-{
-    return m_client->toolbarVisible();
-}
-
 Range* FrameQt::markedTextRange() const
 {
     // FIXME: Handle selections.
@@ -199,42 +152,6 @@ String FrameQt::mimeTypeForFileName(const String&) const
 {
     notImplemented();
     return String();
-}
-
-void FrameQt::ignoreSpelling()
-{
-    notImplemented();
-}
-
-void FrameQt::learnSpelling()
-{
-    notImplemented();
-}
-
-void FrameQt::markMisspellingsInAdjacentWords(const VisiblePosition&)
-{
-    notImplemented();
-}
-
-void FrameQt::markMisspellings(const Selection&)
-{
-    notImplemented();
-}
-
-bool FrameQt::lastEventIsMouseUp() const
-{
-    // no-op
-    return false;
-}
-
-void FrameQt::saveDocumentState()
-{
-    // FIXME: Implement this as soon a KPart is created...
-}
-
-void FrameQt::restoreDocumentState()
-{
-    // FIXME: Implement this as soon a KPart is created...
 }
 
 void FrameQt::scheduleClose()
@@ -260,17 +177,6 @@ void FrameQt::focusWindow()
         view()->qwidget()->setFocus();
 }
 
-void FrameQt::addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID)
-{
-    qDebug("[FrameQt::addMessageToConsole] message=%s lineNumber=%d sourceID=%s",
-           qPrintable(QString(message)), lineNumber, qPrintable(QString(sourceID)));
-}
-
-bool FrameQt::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
-{
-    return m_client->runJavaScriptPrompt(message, defaultValue, result);
-}
-
 KJS::Bindings::Instance* FrameQt::getEmbedInstanceForWidget(Widget*)
 {
     notImplemented();
@@ -287,53 +193,6 @@ KJS::Bindings::Instance* FrameQt::getAppletInstanceForWidget(Widget*)
 {
     notImplemented();
     return 0;
-}
-
-KJS::Bindings::RootObject* FrameQt::bindingRootObject()
-{
-    ASSERT(javaScriptEnabled());
-
-    if (!m_bindingRoot) {
-        KJS::JSLock lock;
-        m_bindingRoot = new KJS::Bindings::RootObject(0); // The root gets deleted by JavaScriptCore.
-
-        KJS::JSObject* win = KJS::Window::retrieveWindow(this);
-        m_bindingRoot->setRootObjectImp(win);
-        m_bindingRoot->setInterpreter(scriptProxy()->interpreter());
-        addPluginRootObject(m_bindingRoot);
-    }
-
-    return m_bindingRoot;
-}
-
-void FrameQt::addPluginRootObject(KJS::Bindings::RootObject* root)
-{
-    m_rootObjects.append(root);
-}
-
-void FrameQt::registerCommandForUndo(PassRefPtr<EditCommand>)
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-}
-
-void FrameQt::registerCommandForRedo(PassRefPtr<EditCommand>)
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-}
-
-void FrameQt::clearUndoRedoOperations()
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-}
-
-void FrameQt::issueUndoCommand()
-{
-    notImplemented();
-}
-
-void FrameQt::issueRedoCommand()
-{
-    notImplemented();
 }
 
 void FrameQt::issueCutCommand()
@@ -366,36 +225,10 @@ void FrameQt::respondToChangedSelection(const Selection& oldSelection, bool clos
     // TODO: If we want continous spell checking, we need to implement this.
 }
 
-void FrameQt::respondToChangedContents(const Selection& endingSelection)
-{
-    // TODO: If we want accessibility, we need to implement this.
-}
-
 bool FrameQt::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
     // no-op
     return true;
-}
-
-bool FrameQt::canPaste() const
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-    notImplemented();
-    return false;
-}
-
-bool FrameQt::canRedo() const
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-    notImplemented();
-    return false;
-}
-
-bool FrameQt::canUndo() const
-{
-    // FIXME: Implement this in the FrameQtClient, to be used within WebKitPart.
-    notImplemented();
-    return false;
 }
 
 void FrameQt::print()

@@ -1,5 +1,13 @@
 2006-12-10  Zack Rusin  <zack@kde.org>
 
+        Cleaning up the code after removals.
+
+        * platform/qt/FrameQt.cpp:
+        * platform/qt/FrameQt.h: Remove virtual methods
+        which have been moved to different objects
+
+2006-12-10  Zack Rusin  <zack@kde.org>
+
         Cleanup the FrameQtClient a little bit more. Remove
         unused methods.
 

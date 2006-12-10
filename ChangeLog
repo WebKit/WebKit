@@ -1,3 +1,9 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+        Fix the link directory location.
+
+        * WebKit.pri:
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
