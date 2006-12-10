@@ -20,7 +20,7 @@ DEFINES += BUILDING_QT__=1
 
 isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD
 
-LIBS += -L$$OUTPUT_DIR/lib -lWebKitQt -lJavaScriptCore
+LIBS += -L$$OUTPUT_DIR/WebKitBuild/Release/lib -lWebKitQt -lJavaScriptCore
 
 macx {
 	INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
