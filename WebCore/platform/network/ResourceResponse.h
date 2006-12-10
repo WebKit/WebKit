@@ -82,6 +82,7 @@ public:
     void setHTTPStatusText(const String&);
     
     String httpHeaderField(const String& name) const;
+    void setHTTPHeaderField(const String& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
 
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }

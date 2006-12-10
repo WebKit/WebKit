@@ -1,3 +1,14 @@
+2006-12-10  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11790
+        No way to initialize ResourceResponse::m_httpHeaderFields
+
+        * platform/network/ResourceResponse.cpp: impl setHTTPHeaderField
+        (WebCore::ResourceResponse::setHTTPHeaderField):
+        * platform/network/ResourceResponse.h: decl setHTTPHeaderField
+
 2006-12-10  Zack Rusin  <zack@kde.org>
 
         Cleaning up the code after removals.

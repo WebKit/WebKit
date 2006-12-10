@@ -100,6 +100,13 @@ String ResourceResponse::httpHeaderField(const String& name) const
     return m_httpHeaderFields.get(name); 
 }
 
+void ResourceResponse::setHTTPHeaderField(const String& name, const String& value)
+{
+    updateResourceResponse();
+
+    m_httpHeaderFields.set(name, value);
+}
+
 const HTTPHeaderMap& ResourceResponse::httpHeaderFields() const
 {
     updateResourceResponse();
