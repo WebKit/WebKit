@@ -50,7 +50,8 @@ struct WidgetPrivate
 
     QWidget* m_parent;
     QWidget* m_widget;
-    Font m_font;
+
+    Font     m_font;
 };
 
 Widget::Widget()
@@ -112,6 +113,7 @@ void Widget::setFont(const Font& font)
 {
     if (data->m_widget)
         data->m_widget->setFont(font);
+    data->m_font = font;
 }
 
 void Widget::setCursor(const Cursor& cursor)
