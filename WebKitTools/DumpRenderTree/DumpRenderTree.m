@@ -38,6 +38,7 @@
 #import "TextInputController.h"
 #import "UIDelegate.h"
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
+#import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
@@ -457,10 +458,7 @@ static void dump(void)
         dumpAsText |= [[[[frame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
-            if ([documentElement isKindOfClass:[DOMHTMLElement class]])
-                result = [[(DOMHTMLElement *)documentElement innerText] stringByAppendingString:@"\n"];
-            else
-                result = [[documentElement valueForKey:@"textContent"] stringByAppendingString:@"\n"];
+            result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
             if (isSVGW3CTest)

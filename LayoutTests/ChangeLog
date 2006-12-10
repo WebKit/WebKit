@@ -1,3 +1,77 @@
+2006-12-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Updated testcases due to:
+        http://bugs.webkit.org/show_bug.cgi?id=10996
+        WebKit needs (possibly private) XML/SVG innerText support (for DumpRenderTree)
+
+        * dom/svg/level3/xpath/Attribute_Nodes-expected.txt:
+        * dom/svg/level3/xpath/Attribute_Nodes_xmlns-expected.txt:
+        * dom/svg/level3/xpath/Comment_Nodes-expected.txt:
+        * dom/svg/level3/xpath/Conformance_Expressions-expected.txt:
+        * dom/svg/level3/xpath/Conformance_hasFeature_3-expected.txt:
+        * dom/svg/level3/xpath/Conformance_hasFeature_empty-expected.txt:
+        * dom/svg/level3/xpath/Conformance_hasFeature_null-expected.txt:
+        * dom/svg/level3/xpath/Conformance_isSupported_3-expected.txt:
+        * dom/svg/level3/xpath/Conformance_isSupported_empty-expected.txt:
+        * dom/svg/level3/xpath/Conformance_isSupported_null-expected.txt:
+        * dom/svg/level3/xpath/Element_Nodes-expected.txt:
+        * dom/svg/level3/xpath/Processing_Instruction_Nodes-expected.txt:
+        * dom/svg/level3/xpath/Text_Nodes-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluatorCast01-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_INVALID_EXPRESSION_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NAMESPACE_ERR_01-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NAMESPACE_ERR_02-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NS-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_no_NS-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_all-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_document-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_documentElement-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_INVALID_EXPRESSION_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_NAMESPACE_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_NOT_SUPPORTED_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_TYPE_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_WRONG_DOCUMENT_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_document-expected.txt:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_documentElement-expected.txt:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_NOT_SUPPORTED_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_WRONG_DOCUMENT_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_document-expected.txt:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_documentElement-expected.txt:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_nist_dmstc-expected.txt:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_null-expected.txt:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_prefix-expected.txt:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_xml-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_TYPE_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_booleanValue_false-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_booleanValue_true-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_UNORDERED_NODE_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_BOOLEAN_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_FIRST_ORDERED_NODE_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_NUMBER_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_STRING_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_UNORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_UNORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_iterateNext_INVALID_STATE_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_iteratorNext_ORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_numberValue-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_resultType-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_ANY_UNORDERED_NODE_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_FIRST_ORDERED_NODE_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_ORDERED_NODE_SNAPSHOT_TYPE_null-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_ORDERED_NODE_SNAPSHOT_TYPE_order-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_count-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_null-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_ORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_stringValue-expected.txt:
+        * svg/custom/getBBox-js-expected.txt:
+        * svg/custom/stroke-width-click-expected.txt:
+
 2006-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

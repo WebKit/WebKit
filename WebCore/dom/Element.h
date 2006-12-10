@@ -169,6 +169,9 @@ public:
 
     Node* insertAdjacentElement(const String& where, Node* newChild, int& exception);
     bool contains(const Node*) const;
+
+    String innerText() const;
+    String outerText() const;
  
 protected:
     virtual void createAttributeMap() const;

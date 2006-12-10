@@ -35,6 +35,7 @@
 #include "NamedAttrMap.h"
 #include "RenderBlock.h"
 #include "SelectionController.h"
+#include "TextIterator.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -921,5 +922,26 @@ void Element::stopUpdateFocusAppearanceTimer()
         setNeedsFocusAppearanceUpdate(false);
     }
 }
+
+String Element::innerText() const
+{
+    if (!renderer())
+        return textContent(true);
+
+    // We need to update layout, since plainText uses line boxes in the render tree.
+    document()->updateLayoutIgnorePendingStylesheets();
+    return plainText(rangeOfContents(const_cast<Element *>(this)).get());
+}
+
+String Element::outerText() const
+{
+    // Getting outerText is the same as getting innerText, only
+    // setting is different. You would think this should get the plain
+    // text for the outer range, but this is wrong, <br> for instance
+    // would return different values for inner and outer text by such
+    // a rule, but it doesn't in WinIE, and we want to match that.
+    return innerText();
+}
+
 
 }

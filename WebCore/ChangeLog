@@ -1,3 +1,21 @@
+2006-12-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10996
+        WebKit needs (possibly private) XML/SVG innerText support (for DumpRenderTree)
+
+        Create an internal method to create innerText functionality for non-HTML
+        nodes. When called from DRT this omits CDATA nodes.
+
+        * dom/Element.cpp:
+        (WebCore::Element::innerText):
+        (WebCore::Element::outerText):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+
 2006-12-10  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.

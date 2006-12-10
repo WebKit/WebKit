@@ -95,6 +95,11 @@ module core {
         void scrollByLines(in long lines);
         void scrollByPages(in long pages);
 
+#if defined(LANGUAGE_OBJECTIVE_C)
+        // Objective-C extensions
+        readonly attribute DOMString innerText;
+#endif /* defined(LANGUAGE_OBJECTIVE_C) */
+
     };
 
 }

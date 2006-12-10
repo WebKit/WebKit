@@ -65,8 +65,6 @@ public:
 
     String innerHTML() const;
     String outerHTML() const;
-    String innerText() const;
-    String outerText() const;
     PassRefPtr<DocumentFragment> createContextualFragment(const String&);
     void setInnerHTML(const String&, ExceptionCode&);
     void setOuterHTML(const String&, ExceptionCode&);
