@@ -1,3 +1,12 @@
+2006-12-09  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by hyatt.
+
+        Add support for a QMake build using build-webkit --qmake
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2006-12-09  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars.

@@ -345,6 +345,12 @@ sub isQt()
     return defined($ENV{'QTDIR'})
 }
 
+sub isQtWithQMake()
+{
+    our @qmakeBuild;
+    return (isQt() and (@qmakeBuild eq 1))
+}
+
 sub isCygwin()
 {
     return ($^O eq "cygwin");
@@ -454,6 +460,37 @@ sub buildCMakeProject($$)
     my $result = system "cmake", @buildArgs;
     if($result ne 0) {
        die "Failed to setup build environment using cmake!\n";
+    }
+
+    $result = system "make";
+    chdir ".." or die;
+    return $result;
+}
+
+sub buildQMakeProject($$)
+{
+    my ($project, $colorize) = @_;
+
+    if ($project ne "WebKit") {
+        die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
+    }
+
+    my $config = configuration();
+    my $prefix = $ENV{"WebKitInstallationPrefix"};
+
+    my @buildArgs = ("-r");
+    push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
+    push @buildArgs, "../../webkit.pro";
+
+    print "Calling 'qmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
+    print "Installation directory: $prefix\n" if(defined($prefix));
+
+    system "mkdir -p " . baseProductDir() . "/$config";
+    chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
+
+    my $result = system "qmake", @buildArgs;
+    if($result ne 0) {
+       die "Failed to setup build environment using qmake!\n";
     }
 
     $result = system "make";

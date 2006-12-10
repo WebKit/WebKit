@@ -38,8 +38,11 @@ use POSIX;
 my $svgSupport = 1;
 my $colorSupport = 1; # Default: colorize make output
 
+our @qmakeBuild;
+
 GetOptions('svg!' => \$svgSupport,
-           'color!' => \$colorSupport);
+           'color!' => \$colorSupport,
+           'qmake!' => \@qmakeBuild);
 
 checkRequiredSystemConfig();
 setConfiguration();
@@ -87,7 +90,9 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
     if (isQt()) {
-        if ($dir eq "WebKit") {
+        if (isQtWithQMake()) {
+            $result = buildQMakeProject($dir, $colorSupport);
+        } else {
             $result = buildCMakeProject($dir, $colorSupport);
         }
     } elsif (isOSX()) {
