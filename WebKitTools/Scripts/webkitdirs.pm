@@ -304,7 +304,7 @@ sub hasSVGSupport
     my $path = shift;
 
     if ((isQt()) and ($path =~ /WebCore/)) {
-        $path .= "/../lib/libWebCore.so";
+        $path .= "/../lib/libWebKitQt.so";
     }
 
     open NM, "-|", "nm", $path or die;

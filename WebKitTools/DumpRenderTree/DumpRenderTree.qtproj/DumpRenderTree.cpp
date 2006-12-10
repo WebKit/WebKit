@@ -51,6 +51,7 @@
 #include <QApplication>
 
 #include <unistd.h>
+#include <qdebug.h>
 
 namespace WebCore {
 
@@ -97,9 +98,11 @@ DumpRenderTree::~DumpRenderTree()
 
 void DumpRenderTree::open()
 {
-    if (!m_stdin)
-        m_stdin = new QTextStream(stdin, QFile::ReadOnly);
-
+    if (!m_stdin) {
+        m_stdin = new QFile;
+        m_stdin->open(stdin, QFile::ReadOnly);
+    }
+    
     if (!m_notifier) {
         m_notifier = new QSocketNotifier(STDIN_FILENO, QSocketNotifier::Read);
         connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readStdin(int)));
@@ -126,9 +129,11 @@ void DumpRenderTree::open(const KURL& url)
 void DumpRenderTree::readStdin(int /* socket */)
 {
     // Read incoming data from stdin...
-    QString line = m_stdin->readLine();
+    QByteArray line = m_stdin->readLine();
+    if (line.endsWith('\n'))
+        line.truncate(line.size()-1);
     if (!line.isEmpty())
-        open(KURL(line.toLatin1()));
+        open(KURL(line));
 }
 
 void DumpRenderTree::readSkipFile()

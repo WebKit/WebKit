@@ -33,6 +33,7 @@
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
+class QFile;
 
 #include "DumpRenderTreeClient.h"
 
@@ -66,7 +67,7 @@ private:
     FrameQt* m_frame;
     DumpRenderTreeClient* m_client;
 
-    QTextStream* m_stdin;
+    QFile *m_stdin;
     QSocketNotifier* m_notifier;
 
     // To be skipped tests

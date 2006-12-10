@@ -1,3 +1,18 @@
+2006-12-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Some more fixes to the dumprendertree application.
+        Fix the run-webkit-tests script for Qt.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro: Added.
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2006-12-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

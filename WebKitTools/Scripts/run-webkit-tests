@@ -813,11 +813,14 @@ sub openDumpRenderTreeIfNeeded()
     my $libraryPath = $ENV{'LD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
 
+    my $isQt = isQt();
     local %ENV;
-    $ENV{DISPLAY} = ":0" if isQt();
-    $ENV{HOME} = $homeDir if isQt();
-    $ENV{LD_LIBRARY_PATH} = $libraryPath if isQt();
-    $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress if isQt();
+    if ($isQt) {
+      $ENV{DISPLAY} = ":0";
+      $ENV{HOME} = $homeDir;
+      $ENV{LD_LIBRARY_PATH} = $libraryPath;
+      $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress;
+    }
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
     $ENV{MallocStackLogging} = 1 if $checkLeaks;
