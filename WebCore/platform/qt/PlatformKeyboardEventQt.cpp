@@ -163,7 +163,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_DIVIDE; // (6F) Divide key
 
         */
-        case Qt::Key_BackSpace:
+        case Qt::Key_Backspace:
             return VK_BACK; // (08) BACKSPACE key
         case Qt::Key_Tab:
             return VK_TAB; // (09) TAB key

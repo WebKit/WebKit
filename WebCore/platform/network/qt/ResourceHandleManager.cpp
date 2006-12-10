@@ -249,7 +249,6 @@ void ResourceHandleManager::remove(ResourceHandle* job)
     if (!qtJob)
         return;
 
-    d->m_client->receivedAllData(job, 0);
     d->m_client->didFinishLoading(job);
 
     m_resourceToJob.remove(job);
@@ -310,7 +309,7 @@ void ResourceHandleManager::deliverJobData(QtJob* job, const QByteArray& data)
     if (!d || !d->m_client)
         return;
 
-    d->m_client->didReceiveData(handle, data.data(), data.size());
+    d->m_client->didReceiveData(handle, data.data(), data.size(), data.size() /* FixMe */);
 
     //FIXME: should report an error
     //handle->setError(0);

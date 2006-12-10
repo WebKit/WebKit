@@ -72,12 +72,12 @@ void ResourceHandle::cancel()
 
 QString ResourceHandle::extractCharsetFromHeaders(QString headers) const
 {
-    int pos = headers.find("content-type:", 0, false);
+    int pos = headers.indexOf("content-type:", 0, Qt::CaseInsensitive);
 
     if (pos > -1) {
         pos += 13;
 
-        int index = headers.find('\n', pos);
+        int index = headers.indexOf('\n', pos);
         QString type = headers.mid(pos, index - pos);
         index = type.indexOf(';');
 

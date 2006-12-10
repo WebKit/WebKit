@@ -2,6 +2,21 @@
 
         Reviewed by Zack.
 
+        Compile after latest WebKit changes and don't depend
+        on deprecated methods in Qt.
+
+        * platform/network/qt/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::remove):
+        (WebCore::ResourceHandleManager::deliverJobData):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::extractCharsetFromHeaders):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
+2006-12-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
         Use the Qt image loading framework.
 
         * CMakeLists.txt:
