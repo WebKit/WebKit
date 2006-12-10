@@ -1,3 +1,17 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+        Move the client classes to WebKitQt/WebCoreSupport.
+
+        * WebCore.pro:
+        * loader/qt/FrameLoaderClientQt.cpp: Removed.
+        * loader/qt/FrameLoaderClientQt.h: Removed.
+        * platform/qt/ChromeClientQt.cpp: Removed.
+        * platform/qt/ChromeClientQt.h: Removed.
+        * platform/qt/ContextMenuClientQt.cpp: Removed.
+        * platform/qt/ContextMenuClientQt.h: Removed.
+        * platform/qt/EditorClientQt.cpp: Removed.
+        * platform/qt/EditorClientQt.h: Removed.
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

@@ -14,7 +14,8 @@ INCLUDEPATH += $$PWD/JavaScriptCore \
                $$PWD/WebCore/loader \
                $$PWD/WebCore/loader/qt \
                $$PWD/WebCore/css \
-               $$PWD/WebCore/bridge
+               $$PWD/WebCore/bridge \
+               $$PWD/WebKitQt/WebCoreSupport
 
 DEFINES += BUILDING_QT__=1
 

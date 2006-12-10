@@ -1,5 +1,18 @@
 2006-12-10  Zack Rusin  <zack@kde.org>
 
+        Moving the clients from platform to their final location.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Added.
+        * WebCoreSupport/FrameLoaderClientQt.h: Added.
+        * WebCoreSupport/ChromeClientQt.cpp: Added.
+        * WebCoreSupport/ChromeClientQt.h: Added.
+        * WebCoreSupport/ContextMenuClientQt.cpp: Added.
+        * WebCoreSupport/ContextMenuClientQt.h: Added.
+        * WebCoreSupport/EditorClientQt.cpp: Added.
+        * WebCoreSupport/EditorClientQt.h: Added.
+
+2006-12-10  Zack Rusin  <zack@kde.org>
+
         Adjusting to the changes in platform/qt.
 
         * QtLauncher/main.cpp:

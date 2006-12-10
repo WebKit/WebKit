@@ -63,6 +63,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/kcanvas $$PWD/kcanvas/device $$PWD/kcanvas/device/qt \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
                 $$PWD/platform/image-decoders \
+                $$PWD/../WebKit/WebCoreSupport \
                 $$PWD/WebCore+SVG
 QT += network
 !mac:CONFIG += link_pkgconfig
@@ -497,7 +498,6 @@ SOURCES += \
     loader/icon/SQLStatement.cpp \
     loader/icon/SQLDatabase.cpp \
     loader/qt/FrameLoaderQt.cpp \
-    loader/qt/FrameLoaderClientQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
     loader/qt/NavigationActionQt.cpp \
     loader/qt/ResourceLoaderQt.cpp \
@@ -537,7 +537,6 @@ SOURCES += \
     platform/graphics/Path.cpp \
     platform/MimeTypeRegistry.cpp \
     platform/qt/MimeTypeRegistryQt.cpp \
-    platform/qt/EditorClientQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/LoaderFunctionsQt.cpp \
     platform/qt/FileChooserQt.cpp \
@@ -557,10 +556,8 @@ SOURCES += \
     platform/qt/FontDataQt.cpp \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/PopupMenuQt.cpp \
-    platform/qt/ChromeClientQt.cpp \
     platform/qt/ContextMenuQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
-    platform/qt/ContextMenuClientQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/ContextMenu.cpp \
     platform/network/FormData.cpp \
@@ -659,7 +656,11 @@ SOURCES += \
     rendering/RenderBR.cpp \
     rendering/InlineTextBox.cpp \
     rendering/RenderFlow.cpp \
-    rendering/RenderSlider.cpp
+    rendering/RenderSlider.cpp \
+    ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp
 
 contains(DEFINES, XPATH_SUPPORT=1) {
     FEATURE_DEFINES_JAVASCRIPT += XPATH_SUPPORT
