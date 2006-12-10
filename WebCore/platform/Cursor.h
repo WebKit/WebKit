@@ -56,7 +56,7 @@ namespace WebCore {
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GDK)
     typedef GdkCursor* PlatformCursor;
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;
 #else
     typedef void* PlatformCursor;

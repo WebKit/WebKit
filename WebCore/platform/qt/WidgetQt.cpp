@@ -116,8 +116,10 @@ void Widget::setFont(const Font& font)
 
 void Widget::setCursor(const Cursor& cursor)
 {
+#ifndef QT_NO_CURSOR
     if (data->m_widget)
         data->m_widget->setCursor(cursor.impl());
+#endif
 }
 
 void Widget::show()

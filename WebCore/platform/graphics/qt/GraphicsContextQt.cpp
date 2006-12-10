@@ -108,7 +108,11 @@ static inline Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
 {
     switch (lj) {
         case MiterJoin:
+#if QT_VERSION < 0x040200
+            return Qt::MiterJoin;
+#else
             return Qt::SvgMiterJoin;
+#endif
         case RoundJoin:
             return Qt::RoundJoin;
         case BevelJoin:
@@ -153,7 +157,9 @@ struct TransparencyLayer
         painter->setPen(p.pen());
         painter->setBrush(p.brush());
         painter->setMatrix(p.matrix());
+#if QT_VERSION >= 0x040200
         painter->setOpacity(p.opacity());
+#endif
         painter->setFont(p.font());
         painter->setCompositionMode(p.compositionMode());
         painter->setClipPath(p.clipPath());
@@ -611,7 +617,9 @@ void GraphicsContext::endTransparencyLayer()
     layer.painter->end();
 
     m_data->p().save();
+#if QT_VERSION >= 0x040200
     m_data->p().setOpacity(layer.opacity);
+#endif
     m_data->p().drawPixmap(0, 0, layer.pixmap);
     m_data->p().restore();
     m_data->p().end();
@@ -684,7 +692,9 @@ void GraphicsContext::setAlpha(float opacity)
     if (paintingDisabled())
         return;
 
+#if QT_VERSION >= 0x040200
     m_data->p().setOpacity(opacity);
+#endif
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator op)
