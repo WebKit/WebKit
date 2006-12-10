@@ -18,7 +18,7 @@ INCLUDEPATH += $$PWD/JavaScriptCore \
 
 DEFINES += BUILDING_QT__=1
 
-isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD
+isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/WebKitBuild/Release
 
 LIBS += -L$$OUTPUT_DIR/lib -lWebKitQt -lJavaScriptCore
 
