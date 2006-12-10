@@ -1050,8 +1050,7 @@ QMAKE_EXTRA_COMPILERS += tokenizer
 
 # GENERATOR 4: CSS grammar
 cssbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-macx:cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} && mv css/${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && mv css/${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
-!macx:cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && mv ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
+cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && mv ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
 cssbison.depend = ${QMAKE_FILE_NAME}
 cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
