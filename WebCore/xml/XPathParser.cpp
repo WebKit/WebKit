@@ -57,7 +57,7 @@ static XMLCat charCat(UChar aChar)
 
     if (aChar == '.' || aChar == '-')
         return NameCont;
-    uint category = WTF::Unicode::category(aChar);
+    unsigned category = WTF::Unicode::category(aChar);
     if (category & (WTF::Unicode::Letter_Uppercase|
                     WTF::Unicode::Letter_Lowercase|
                     WTF::Unicode::Letter_Other|
