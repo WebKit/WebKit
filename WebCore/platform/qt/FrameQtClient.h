@@ -56,7 +56,6 @@ public:
     virtual void didReceiveData(ResourceHandle*, const char*, int, int);
     virtual void didFinishLoading(ResourceHandle*);
     virtual void didFail(ResourceHandle*, const ResourceError&);
-    virtual void receivedAllData(ResourceHandle*, PlatformData);
 private:
     // Internal helpers
     FrameQt* traverseNextFrameStayWithin(FrameQt*) const;

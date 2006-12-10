@@ -197,6 +197,11 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             && m_client->hasBackForwardList())
             m_client->restoreScrollPositionAndViewState();
 
+//         if (error)
+//             m_client->dispatchDidFailLoad(error);
+//         else
+            m_client->dispatchDidFinishLoad();
+            
         m_client->progressCompleted();
         return;
     }
@@ -244,7 +249,7 @@ void FrameLoader::partClearedInBegin()
 void FrameLoader::saveDocumentState()
 {
     // Do not save doc state if the page has a password field and a form that would be submitted via https.
-    notImplemented();
+    //notImplemented();
 }
 
 void FrameLoader::restoreDocumentState()

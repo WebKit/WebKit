@@ -81,7 +81,7 @@ void FrameQtClient::openURL(const KURL& url)
 
     ResourceRequest request(url);
     RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this,
-                                                           m_frame->document()->docLoader(), false);
+                                                    m_frame->document()->docLoader(), false);
     loader.get()->ref();
 }
 
@@ -101,7 +101,6 @@ void FrameQtClient::submitForm(const String& method, const KURL& url, PassRefPtr
 
 void FrameQtClient::didReceiveResponse(ResourceHandle* job, const ResourceResponse& response)
 {
-    // qDebug() << "----------> FrameQtClient::didReceiveResponse";
     // set mimetype and encoding
 
     // Assign correct mimetype _before_ calling begin()!
@@ -119,11 +118,15 @@ void FrameQtClient::didReceiveResponse(ResourceHandle* job, const ResourceRespon
 
 void FrameQtClient::didFinishLoading(ResourceHandle* handle)
 {
+    m_frame->loader()->end();
+    m_frame->loader()->checkCompleted();
     handle->deref();
 }
 
 void FrameQtClient::didFail(ResourceHandle* handle, const ResourceError&)
 {
+    m_frame->loader()->end();
+    m_frame->loader()->checkCompleted();
     handle->deref();
 }
 
@@ -156,13 +159,6 @@ int FrameQtClient::numPendingOrLoadingRequests(bool recurse) const
         num += numRequests(frame->document());
 
     return num;
-}
-
-void FrameQtClient::receivedAllData(ResourceHandle* job, PlatformData data)
-{
-    ASSERT(m_frame);
-
-    m_frame->loader()->end();
 }
 
 }

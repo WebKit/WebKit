@@ -141,7 +141,7 @@ void EditorClientQt::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand
 
 void EditorClientQt::clearUndoRedoOperations()
 {
-    notImplemented();
+    //notImplemented();
 }
 
 bool EditorClientQt::canUndo() const

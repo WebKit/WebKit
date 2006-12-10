@@ -1,3 +1,23 @@
+2006-12-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Make sure we call checkCompleted() on the FrameLoader
+        to get the regression tests running.
+
+        * WebCore.pro:
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::saveDocumentState):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::handleDrag):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClient::openURL):
+        (WebCore::FrameQtClient::didReceiveResponse):
+        (WebCore::FrameQtClient::didFinishLoading):
+        (WebCore::FrameQtClient::didFail):
+        * platform/qt/FrameQtClient.h:
+
 2006-12-10  Zack Rusin  <zack@kde.org>
 
         Enable the SVG build by default and make it build.

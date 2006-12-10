@@ -122,7 +122,7 @@ bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLoc
 
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
 {
-    notImplemented();
+    //notImplemented();
     return false;
 }
 
