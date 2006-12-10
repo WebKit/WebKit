@@ -28,6 +28,7 @@
  
 #include "config.h"
 #include "FrameLoaderClientQt.h"
+#include "DocumentLoader.h"
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
@@ -64,14 +65,14 @@ void FrameLoaderClientQt::deref()
 bool FrameLoaderClientQt::hasWebView() const
 {
     notImplemented();
-    return false;
+    return true;
 }
 
 
 bool FrameLoaderClientQt::hasFrameView() const
 {
     notImplemented();
-    return false;
+    return true;
 }
 
 
@@ -378,9 +379,9 @@ void FrameLoaderClientQt::willChangeTitle(DocumentLoader*)
 }
 
 
-void FrameLoaderClientQt::didChangeTitle(DocumentLoader*)
+void FrameLoaderClientQt::didChangeTitle(DocumentLoader *l)
 {
-    notImplemented();
+    setTitle(l->title(), l->URL());
 }
 
 
