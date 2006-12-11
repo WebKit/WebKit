@@ -53,7 +53,7 @@ static inline bool isSpace(UChar c)
 {
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
-    return c <= 0x7F ? isspace(c) : WTF::Unicode::isSpace(c);
+    return c <= 0x7F ? isspace(c) : Unicode::direction(c) == Unicode::WhiteSpaceNeutral;
 }    
     
 static inline UChar* newUCharVector(unsigned n)
