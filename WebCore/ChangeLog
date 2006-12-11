@@ -1,3 +1,12 @@
+2006-12-11  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix loading of local files.
+
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::FileLoader::request):
+
 2006-12-10  Zack Rusin  <zack@kde.org>
 
        Don't use my QTransform magic, affine QMatrix is fine for

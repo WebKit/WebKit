@@ -344,7 +344,7 @@ FileLoader::FileLoader()
 
 void FileLoader::request(RequestQt* request)
 {
-    DEBUG() << "request";
+    DEBUG() << "FileLoader::request";
     KURL url = request->url;
     Q_ASSERT(url.isLocalFile());
     int error = 0;
@@ -352,7 +352,10 @@ void FileLoader::request(RequestQt* request)
     if (request->postData.isEmpty()) {
         QFile f(QString(url.path()));
         DEBUG() << "opening" << QString(url.path());
+
         if (f.open(QIODevice::ReadOnly)) {
+            emit receivedResponse(request);
+        
             QByteArray data = f.readAll();
             emit receivedData(request, data);
         } else {
