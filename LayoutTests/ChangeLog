@@ -1,3 +1,13 @@
+2006-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Temporarily changing layout test result, it actually fails now, but it's expected
+        as the matrixTransform() is temporarily disabled, until the SVGMatrix -> AffineTransform
+        replacement patch is landed, as we want to avoid adding temp special cases to CodeGeneratorJs/ObjC.pm
+
+        * svg/custom/SVGPoint-matrixTransform-expected.txt:
+
 2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

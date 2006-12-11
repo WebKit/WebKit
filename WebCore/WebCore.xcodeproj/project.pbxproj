@@ -3826,11 +3826,11 @@
 		8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementWrapperFactory.cpp; sourceTree = "<group>"; };
 		8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGElementWrapperFactory.h; sourceTree = "<group>"; };
 		8574D1F30ADE6122004CBA11 /* JSSVGNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGNumber.cpp; sourceTree = "<group>"; };
-		8574D1F40ADE6122004CBA11 /* JSSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGNumber.h; sourceTree = "<group>"; };
+		8574D1F40ADE6122004CBA11 /* JSSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = JSSVGNumber.h; sourceTree = "<group>"; };
 		8574D1F50ADE6122004CBA11 /* JSSVGPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPoint.cpp; sourceTree = "<group>"; };
-		8574D1F60ADE6122004CBA11 /* JSSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGPoint.h; sourceTree = "<group>"; };
+		8574D1F60ADE6122004CBA11 /* JSSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = JSSVGPoint.h; sourceTree = "<group>"; };
 		8574D1F70ADE6122004CBA11 /* JSSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGRect.cpp; sourceTree = "<group>"; };
-		8574D1F80ADE6122004CBA11 /* JSSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGRect.h; sourceTree = "<group>"; };
+		8574D1F80ADE6122004CBA11 /* JSSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = JSSVGRect.h; sourceTree = "<group>"; };
 		8574D2390ADE7E3A004CBA11 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; };
 		857E0B230AB043460036E447 /* DOMMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMouseEvent.h; sourceTree = "<group>"; };
 		857E0B240AB043460036E447 /* DOMMouseEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMouseEvent.mm; sourceTree = "<group>"; };
@@ -6194,6 +6194,8 @@
 				B2FA3CC50AB75A6E000E5AC4 /* JSSVGMatrix.h */,
 				B2FA3CC60AB75A6E000E5AC4 /* JSSVGMetadataElement.cpp */,
 				B2FA3CC70AB75A6E000E5AC4 /* JSSVGMetadataElement.h */,
+				8574D1F30ADE6122004CBA11 /* JSSVGNumber.cpp */,
+				8574D1F40ADE6122004CBA11 /* JSSVGNumber.h */,
 				B2FA3CC80AB75A6E000E5AC4 /* JSSVGNumberList.cpp */,
 				B2FA3CC90AB75A6E000E5AC4 /* JSSVGNumberList.h */,
 				B2FA3CCA0AB75A6E000E5AC4 /* JSSVGPaint.cpp */,
@@ -6244,6 +6246,8 @@
 				B2FA3CF70AB75A6E000E5AC4 /* JSSVGPathSegMovetoRel.h */,
 				B2FA3CF80AB75A6E000E5AC4 /* JSSVGPatternElement.cpp */,
 				B2FA3CF90AB75A6E000E5AC4 /* JSSVGPatternElement.h */,
+				8574D1F50ADE6122004CBA11 /* JSSVGPoint.cpp */,
+				8574D1F60ADE6122004CBA11 /* JSSVGPoint.h */,
 				B2FA3CFA0AB75A6E000E5AC4 /* JSSVGPointList.cpp */,
 				B2FA3CFB0AB75A6E000E5AC4 /* JSSVGPointList.h */,
 				B2FA3CFD0AB75A6E000E5AC4 /* JSSVGPolygonElement.cpp */,
@@ -6254,6 +6258,8 @@
 				B2FA3D020AB75A6E000E5AC4 /* JSSVGPreserveAspectRatio.h */,
 				B2FA3D030AB75A6E000E5AC4 /* JSSVGRadialGradientElement.cpp */,
 				B2FA3D040AB75A6E000E5AC4 /* JSSVGRadialGradientElement.h */,
+				8574D1F70ADE6122004CBA11 /* JSSVGRect.cpp */,
+				8574D1F80ADE6122004CBA11 /* JSSVGRect.h */,
 				B2FA3D050AB75A6E000E5AC4 /* JSSVGRectElement.cpp */,
 				B2FA3D060AB75A6E000E5AC4 /* JSSVGRectElement.h */,
 				B2FA3D080AB75A6E000E5AC4 /* JSSVGRenderingIntent.cpp */,
@@ -6798,9 +6804,6 @@
 		8549492D0AC85A0A008AB035 /* SVG */ = {
 			isa = PBXGroup;
 			children = (
-				851620EE0AD2FD880059A7DE /* DOMSVGNumber.mm */,
-				851620F00AD2FD880059A7DE /* DOMSVGPoint.mm */,
-				851620F20AD2FD890059A7DE /* DOMSVGRect.mm */,
 				85CE1B010ADADA96003BBDEA /* DOMSVGPathSegInternal.mm */,
 			);
 			name = SVG;
@@ -7060,6 +7063,7 @@
 				8559F1100AC9BE9900A3439C /* DOMSVGMetadataElement.h */,
 				8559F1110AC9BE9900A3439C /* DOMSVGMetadataElement.mm */,
 				854074F90AD6C22E00620C57 /* DOMSVGNumber.h */,
+				851620EE0AD2FD880059A7DE /* DOMSVGNumber.mm */,
 				85C2397F0AD5907D003533E7 /* DOMSVGNumberList.h */,
 				85C239800AD5907D003533E7 /* DOMSVGNumberList.mm */,
 				85C9A3030AD7E94200FBFF1E /* DOMSVGPaint.h */,
@@ -7111,6 +7115,7 @@
 				859D62710AD888EE00012995 /* DOMSVGPatternElement.h */,
 				859D62720AD888EE00012995 /* DOMSVGPatternElement.mm */,
 				854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */,
+				851620F00AD2FD880059A7DE /* DOMSVGPoint.mm */,
 				859D62730AD888EE00012995 /* DOMSVGPointList.h */,
 				859D62740AD888EE00012995 /* DOMSVGPointList.mm */,
 				859D62750AD888EE00012995 /* DOMSVGPolygonElement.h */,
@@ -7122,6 +7127,7 @@
 				859D62790AD888EE00012995 /* DOMSVGRadialGradientElement.h */,
 				859D627A0AD888EE00012995 /* DOMSVGRadialGradientElement.mm */,
 				854074FB0AD6C22E00620C57 /* DOMSVGRect.h */,
+				851620F20AD2FD890059A7DE /* DOMSVGRect.mm */,
 				859C9C3D0ACACCCC00791611 /* DOMSVGRectElement.h */,
 				859C9C3E0ACACCCC00791611 /* DOMSVGRectElement.mm */,
 				859D627B0AD888EE00012995 /* DOMSVGRenderingIntent.h */,
@@ -8645,12 +8651,6 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
 				8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */,
-				8574D1F30ADE6122004CBA11 /* JSSVGNumber.cpp */,
-				8574D1F40ADE6122004CBA11 /* JSSVGNumber.h */,
-				8574D1F50ADE6122004CBA11 /* JSSVGPoint.cpp */,
-				8574D1F60ADE6122004CBA11 /* JSSVGPoint.h */,
-				8574D1F70ADE6122004CBA11 /* JSSVGRect.cpp */,
-				8574D1F80ADE6122004CBA11 /* JSSVGRect.h */,
 				1A750E330A90F89F000FF215 /* JSTreeWalkerCustom.cpp */,
 				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
 				93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */,

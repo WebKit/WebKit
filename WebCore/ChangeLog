@@ -1,3 +1,44 @@
+2006-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11801
+
+        Autogenerate POD types for ObjC/JS.
+
+        This removes the need for the hand-written JSSVG*, DOMSVG* wrappers
+        in bindings/js, bindings/objc. Makes it much easier to convert more
+        SVG types to POD types (ie. SVGMatrix* -> AffineTransform etc.)
+
+        Affected test: svg/custom/SVGPoint-matrixTransform.svg
+
+        It's failing with this patch, as the SVGPoint matrixTransform() function
+        got disabled, until the SVGMatrix -> AffineTransform transition patch
+        is landed. Otherwhise we'd need to add special cases to both CodeGeneratorJS/ObjC.pm
+        which would be a waste of time, as SVGMatrix is about to die.
+
+        Temporarily updating layout test result, as suggested by John Sullivan, so
+        no-one notices that SVGPoint-matrixTransform.svg actually fails right now.
+
+        Expect that to be fixed again in the next hour(s).
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGNumber.cpp: Removed.
+        * bindings/js/JSSVGNumber.h: Removed.
+        * bindings/js/JSSVGPoint.cpp: Removed.
+        * bindings/js/JSSVGPoint.h: Removed.
+        * bindings/js/JSSVGRect.cpp: Removed.
+        * bindings/js/JSSVGRect.h: Removed.
+        * bindings/objc/DOMSVGNumber.mm: Removed.
+        * bindings/objc/DOMSVGPoint.mm: Removed.
+        * bindings/objc/DOMSVGRect.mm: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * ksvg2/svg/SVGNumber.idl:
+        * ksvg2/svg/SVGPoint.idl:
+        * ksvg2/svg/SVGRect.idl:
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

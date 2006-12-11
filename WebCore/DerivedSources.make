@@ -424,14 +424,17 @@ all : \
     JSSVGPathSegLinetoVerticalRel.h \
     JSSVGPathSegMovetoAbs.h \
     JSSVGPathSegMovetoRel.h \
+    JSSVGNumber.h \
     JSSVGNumberList.h \
     JSSVGPaint.h \
     JSSVGPathSegList.h \
     JSSVGPatternElement.h \
+    JSSVGPoint.h \
     JSSVGPointList.h \
     JSSVGPolygonElement.h \
     JSSVGPolylineElement.h \
     JSSVGRadialGradientElement.h \
+    JSSVGRect.h \
     JSSVGRectElement.h \
     JSSVGRenderingIntent.h \
     JSSVGSetElement.h \
@@ -452,10 +455,7 @@ all : \
     JSSVGUnitTypes.h \
     JSSVGUseElement.h \
     JSSVGViewElement.h \
-    JSSVGPointTable.cpp \
     JSSVGPreserveAspectRatio.h \
-    JSSVGRectTable.cpp \
-    JSSVGNumberTable.cpp \
     JSSVGElement.h \
     JSSVGSVGElement.h \
     JSSVGEllipseElement.h \

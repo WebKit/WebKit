@@ -811,6 +811,13 @@ sub GenerateImplementation
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
 
+    my $podType = $dataNode->extendedAttributes->{"PODType"};
+    my $podTypeWithNamespace;
+
+    if ($podType) {
+        $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
+    }
+
     # - Add default header template.
     @implContentHeader = split("\r", $implementationLicenceTemplate);
 
@@ -825,8 +832,12 @@ sub GenerateImplementation
     } elsif ($interfaceName =~ /(\w+)(Abs|Rel)$/) {
         $implIncludes{"$1.h"} = 1;
     } else {
-        $implIncludes{"$implClassName.h"} = 1;
-    }
+        if (!$podType) {
+            $implIncludes{"$implClassName.h"} = 1;
+        } else {
+            $implIncludes{"$podType.h"} = 1 unless $podType eq "float";
+        }
+    } 
 
     $implIncludes{"DOMInternal.h"} = 1;
     $implIncludes{"ExceptionHandlers.h"} = 1;
@@ -834,7 +845,9 @@ sub GenerateImplementation
     @implContent = ();
 
     # add implementation accessor
-    if ($parentImplClassName eq "Object") {
+    if ($podType) {
+        push(@implContent, "#define IMPL reinterpret_cast<$podTypeWithNamespace*>(_internal)\n\n");
+    } elsif ($parentImplClassName eq "Object") {
         push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
     } else {
         my $baseClassWithNamespace = "WebCore::$baseClass";
@@ -862,6 +875,8 @@ sub GenerateImplementation
             push(@implContent, "        [self detach];\n");
             push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    };\n");
+        } elsif ($podType) {
+            push(@implContent, "    delete IMPL;\n");
         } else {
             push(@implContent, "    if (_internal)\n");
             push(@implContent, "        IMPL->deref();\n");
@@ -876,6 +891,8 @@ sub GenerateImplementation
             push(@implContent, "        [self detach];\n");
             push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    };\n");
+        } elsif ($podType) {
+            push(@implContent, "    delete IMPL;\n");
         } else {
             push(@implContent, "    if (_internal)\n");
             push(@implContent, "        IMPL->deref();\n");
@@ -922,6 +939,12 @@ sub GenerateImplementation
             my $hasGetterException = @{$attribute->getterExceptions};
             my $getterContentHead = "IMPL->$attributeName(";
             my $getterContentTail = ")";
+
+            # Special case for DOMSVGNumber
+            if ($podType and $podType eq "float") {
+                $getterContentHead = "*IMPL";
+                $getterContentTail = "";
+            }
 
             my $attributeTypeSansPtr = $attributeType;
             $attributeTypeSansPtr =~ s/ \*$//; # Remove trailing " *" from pointer types.
@@ -1027,7 +1050,14 @@ sub GenerateImplementation
                     push(@implContent, "    ASSERT($argName);\n\n");
                 }
 
-                if ($hasSetterException) {
+                # Special case for DOMSVGNumber
+                if ($podType) {
+                    if ($podType eq "float") {
+                        push(@implContent, "    *IMPL = $arg;\n");
+                    } else {
+                        push(@implContent, "    IMPL->$attributeName($arg);\n");
+                    }
+                } elsif ($hasSetterException) {
                     push(@implContent, "    $exceptionInit\n");
                     push(@implContent, "    IMPL->$attributeName($arg, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
@@ -1224,7 +1254,7 @@ sub GenerateImplementation
     # - Type-Getter
     # - (WebCore::FooBar *)_fooBar for implementation class FooBar
     my $typeGetterName = GetObjCTypeGetterName($interfaceName);
-    my $typeGetterSig = "- ($implClassNameWithNamespace *)$typeGetterName";
+    my $typeGetterSig = "- " . ($podType ? "($podTypeWithNamespace)" : "($implClassNameWithNamespace *)") . $typeGetterName;
 
     my @ivarsToRetain = ();
     my $ivarsToInit = "";
@@ -1248,6 +1278,7 @@ sub GenerateImplementation
     # - Type-Maker
     my $typeMakerName = GetObjCTypeMaker($interfaceName);
     my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
+    $typeMakerSig = "+ ($className *)$typeMakerName:($podTypeWithNamespace)impl" . $typeMakerSigAddition if $podType;
 
     # Generate interface definitions. 
     @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
@@ -1268,10 +1299,35 @@ sub GenerateImplementation
 
         push(@implContent, "$typeGetterSig\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return IMPL;\n");
+
+        if ($podType) {
+            push(@implContent, "    return *IMPL;\n");
+        } else {
+            push(@implContent, "    return IMPL;\n");
+        }
+
         push(@implContent, "}\n\n");
 
-        if ($parentImplClassName eq "Object") {        
+        if ($podType) {
+            # - (id)_initWithFooBar:(WebCore::FooBar)impl for implementation class FooBar
+            my $initWithImplName = "_initWith" . $implClassName;
+            my $initWithSig = "- (id)$initWithImplName:($podTypeWithNamespace)impl" . $typeMakerSigAddition;
+
+            # FIXME: Implement Caching
+            push(@implContent, "$initWithSig\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    [super _init];\n");
+            push(@implContent, "    $podTypeWithNamespace* _impl = new $podTypeWithNamespace(impl);\n");
+            push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(_impl);\n");
+            push(@implContent, "    return self;\n");
+            push(@implContent, "}\n\n");
+
+            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar)impl for implementation class FooBar
+            push(@implContent, "$typeMakerSig\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
+            push(@implContent, "}\n\n");
+        } elsif ($parentImplClassName eq "Object") {        
             # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             my $initWithImplName = "_initWith" . $implClassName;
             my $initWithSig = "- (id)$initWithImplName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;

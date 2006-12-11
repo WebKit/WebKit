@@ -24,13 +24,14 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCCustomImplementation] SVGPoint {
+    interface [Conditional=SVG, PODType=FloatPoint] SVGPoint {
                  attribute float x
                      setter raises(DOMException);
                  attribute float y
                      setter raises(DOMException);
 
-        SVGPoint matrixTransform(in SVGMatrix matrix);
+        // FIXME - Reenable this once SVGMatrix is converted to AffineTransform
+        //SVGPoint matrixTransform(in SVGMatrix matrix);
     };
 
 }

@@ -24,7 +24,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCCustomImplementation] SVGNumber {
+    interface [Conditional=SVG, PODType=float] SVGNumber {
                  attribute float value
                      setter raises(DOMException);
     };
