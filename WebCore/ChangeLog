@@ -1,3 +1,26 @@
+2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11807
+        Merge EventHandler::m_bMousePressed and EventHandler::m_mousePressed
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::mouseMoved):
+        Merge EventHandler::m_bMousePressed and EventHandler::m_mousePressed
+
+        (WebCore::EventHandler::lastEventIsMouseUp):
+        Check that the "new" event is newer than the "old" one - that's not always the case 
+        when running in DRT, as [NSApp currentEvent] isn't updated by eventSender.
+
 2006-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam Weinig.

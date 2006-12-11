@@ -449,10 +449,10 @@ bool EventHandler::lastEventIsMouseUp() const
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-    if (currentEvent != currentEventAfterHandlingMouseDown) {
-        if ([currentEventAfterHandlingMouseDown type] == NSLeftMouseUp)
+    if (currentEvent != currentEventAfterHandlingMouseDown &&
+        [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp &&
+        [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent timestamp])
             return true;
-    }
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
@@ -678,10 +678,10 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
             
     } else {
         // If we allowed the other side of the bridge to handle a drag
-        // last time, then m_bMousePressed might still be set. So we
+        // last time, then m_mousePressed might still be set. So we
         // clear it now to make sure the next move after a drag
         // doesn't look like a drag.
-        m_bMousePressed = false;
+        m_mousePressed = false;
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -942,7 +942,7 @@ void EventHandler::mouseMoved(NSEvent *event)
 {
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!m_frame->view() || m_bMousePressed || m_sendingEventToSubview)
+    if (!m_frame->view() || m_mousePressed || m_sendingEventToSubview)
         return;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
