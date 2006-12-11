@@ -228,11 +228,6 @@ namespace WTF {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Separator_Space;
     }
 
-    inline bool isSpace(int32_t c)
-    {
-      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isSpace();
-    }
-
     inline bool isPunct(int32_t c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPunct();
