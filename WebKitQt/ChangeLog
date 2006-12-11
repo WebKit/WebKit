@@ -1,3 +1,12 @@
+2006-12-10  George Staikos  <stakos@kde.org>
+
+        Reviewed by Zack.
+
+        Add a default user agent for now.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::userAgent):
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
