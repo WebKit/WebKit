@@ -671,7 +671,7 @@ contains(DEFINES, XPATH_SUPPORT=1) {
     # TODO: convert to generator
     !exists(xml/XPathGrammar.cpp) {
         message("generating xpath grammar")
-        !system( bison -d -p xpathyy xml/XPathGrammar.y ): error("error executing bison")
+        !system( bison -d -p xpathyy xml/XPathGrammar.y -o XPathGrammar.tab.c ): error("error executing bison")
         !system( mv XPathGrammar.tab.c xml/XPathGrammar.cpp ): error("error renaming XPathGrammar.cpp")
         !system( mv XPathGrammar.tab.h xml/XPathGrammar.h ): error("error renaming XPathGrammar.h")
     }
