@@ -1,3 +1,12 @@
+2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        Make this test faster by eliminating timeouts (which didn't work anyway, now that
+        mouse dragging events are stored and replayed on mouse-up).
+
+        * fast/text/atsui-rtl-override-selection.html:
+
 2006-12-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
