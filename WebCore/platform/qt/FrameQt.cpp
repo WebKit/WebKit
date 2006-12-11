@@ -97,8 +97,8 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 }
 #endif
 
-FrameQt::FrameQt(Page* page, Element* ownerElement,
-                 FrameQtClient* frameClient, FrameLoaderClient *frameLoader)
+FrameQt::FrameQt(Page* page, HTMLFrameOwnerElement* ownerElement,
+                 FrameQtClient* frameClient, FrameLoaderClient* frameLoader)
     : Frame(page, ownerElement, frameLoader)
     , m_bindingRoot(0)
 {

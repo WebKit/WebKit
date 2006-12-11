@@ -78,11 +78,11 @@
 #import <WebCore/Cache.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/Element.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/SubresourceLoader.h>
@@ -121,7 +121,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return kit(m_frame->page());
 }
 
-- (void)finishInitializingWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView ownerElement:(WebCoreElement *)ownerElement
+- (void)finishInitializingWithPage:(Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView ownerElement:(HTMLFrameOwnerElement*)ownerElement
 {
     ++WebBridgeCount;
 
@@ -141,18 +141,18 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     static bool initializedObjectCacheSize;
     if (!initializedObjectCacheSize) {
         initializedObjectCacheSize = true;
-        WebCore::cache()->setMaximumSize([self getObjectCacheSize]);
+        cache()->setMaximumSize([self getObjectCacheSize]);
     }
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView
+- (id)initMainFrameWithPage:(Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView
 {
     self = [super init];
     [self finishInitializingWithPage:page frameName:name frameView:frameView ownerElement:0];
     return self;
 }
 
-- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name frameView:(WebFrameView *)frameView
+- (id)initSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(NSString *)name frameView:(WebFrameView *)frameView
 {
     self = [super init];
     [self finishInitializingWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
@@ -420,7 +420,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
                                       withURL:(NSURL *)URL
                                      referrer:(const String&)referrer
-                                   ownerElement:(WebCoreElement *)ownerElement
+                                 ownerElement:(HTMLFrameOwnerElement*)ownerElement
                               allowsScrolling:(BOOL)allowsScrolling 
                                   marginWidth:(int)width
                                  marginHeight:(int)height
@@ -1059,7 +1059,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[self webView] isEditable];
 }
 
-- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(WebCore::EAffinity)selectionAffinity stillSelecting:(BOOL)flag
+- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(EAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
     return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:kit(selectionAffinity) stillSelecting:flag];
 }

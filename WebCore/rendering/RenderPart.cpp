@@ -29,7 +29,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderPart::RenderPart(HTMLElement* node)
+RenderPart::RenderPart(HTMLFrameOwnerElement* node)
     : RenderWidget(node)
 {
     // init RenderObject attributes

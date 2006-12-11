@@ -61,8 +61,7 @@ class NSURLConnection;
 
 namespace WebCore {
 
-    class ResourceHandleInternal
-    {
+    class ResourceHandleInternal : Noncopyable {
     public:
         ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading)
             : m_client(c)
@@ -125,7 +124,7 @@ namespace WebCore {
 #if USE(CURL)
         CURL* m_handle;
 #endif
-        };
+    };
 
 } // namespace WebCore
 

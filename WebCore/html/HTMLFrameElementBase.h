@@ -26,25 +26,16 @@
 #ifndef HTMLFrameElementBase_h
 #define HTMLFrameElementBase_h
 
-#include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
 
-class Frame;
-class HTMLFrameSetElement;
-
-class HTMLFrameElementBase : public HTMLElement
-{
-    friend class RenderFrame;
-    friend class RenderPartObject;
-
+class HTMLFrameElementBase : public HTMLFrameOwnerElement {
 public:
-    HTMLFrameElementBase(const QualifiedName&, Document*);
-
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    void insertedIntoDocument();
+    virtual void insertedIntoDocument();
     virtual void willRemove();
 
     virtual void attach();
@@ -53,14 +44,11 @@ public:
 
     virtual bool isFocusable() const;
     virtual void setFocus(bool);
-
-    Frame* contentFrame() const;
-    Document* contentDocument() const;
-    HTMLFrameSetElement* containingFrameSetElement() const;
     
     virtual bool isURLAttribute(Attribute*) const;
 
     ScrollbarMode scrollingMode() const { return m_scrolling; }
+    bool hasFrameBorder() const { return m_frameBorder; }
     int getMarginWidth() const { return m_marginWidth; }
     int getMarginHeight() const { return m_marginHeight; }
 
@@ -79,13 +67,13 @@ public:
     String name() const;
     void setName(const String&);
 
+    bool noResize() const { return m_noResize; }
     void setNoResize(bool);
-    bool noResize() { return m_noResize; }
 
     String scrolling() const;
     void setScrolling(const String&);
 
-    virtual String src() const;
+    String src() const;
     void setSrc(const String&);
 
     int width() const;
@@ -94,6 +82,8 @@ public:
     bool viewSourceMode() const { return m_viewSource; }
 
 protected:
+    HTMLFrameElementBase(const QualifiedName&, Document*);
+
     bool isURLAllowed(const AtomicString&) const;
     void openURL();
 
@@ -107,10 +97,10 @@ protected:
     int m_marginWidth;
     int m_marginHeight;
 
-    bool m_frameBorder : 1;
-    bool m_frameBorderSet : 1;
-    bool m_noResize : 1;
-    bool m_viewSource : 1;
+    bool m_frameBorder;
+    bool m_frameBorderSet;
+    bool m_noResize;
+    bool m_viewSource;
 };
 
 } // namespace WebCore

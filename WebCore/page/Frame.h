@@ -64,6 +64,7 @@ class EventHandler;
 class FloatRect;
 class FrameLoader;
 class FrameLoaderClient;
+class HTMLFrameOwnerElement;
 class FramePrivate;
 class FrameTree;
 class FrameView;
@@ -103,12 +104,12 @@ struct MarkedTextUnderline {
 
 class Frame : public Shared<Frame> {
 public:
-    Frame(Page*, Element*, FrameLoaderClient*);
+    Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     virtual void setView(FrameView*);
     virtual ~Frame();
 
     Page* page() const;
-    Element* ownerElement();
+    HTMLFrameOwnerElement* ownerElement() const;
 
     void pageDestroyed();
     void disconnectOwnerElement();

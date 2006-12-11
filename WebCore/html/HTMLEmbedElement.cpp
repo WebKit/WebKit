@@ -212,26 +212,6 @@ void HTMLEmbedElement::setType(const String& value)
 }
 
 #ifdef SVG_SUPPORT
-Document* HTMLEmbedElement::contentDocument() const
-{
-    // FIXME: The frame loading code should be moved out of the render tree
-    // and into the DOM.  Once that happens, this function should look more like
-    // HTMLFrameElement::contentDocument() and not depend on the renderer.
-    RenderObject* object = renderer();
-    if (object && object->isWidget()) {
-        RenderWidget* renderWidget = static_cast<RenderWidget*>(object);
-        if (renderWidget) {
-            Widget* widget = renderWidget->widget();
-            if (widget && widget->isFrameView()) {
-                FrameView* frameView = static_cast<FrameView*>(widget);
-                if (frameView->frame())
-                    return frameView->frame()->document();
-            }
-        }
-    }
-    return 0;
-}
-
 SVGDocument* HTMLEmbedElement::getSVGDocument(ExceptionCode& ec) const
 {
     Document* doc = contentDocument();

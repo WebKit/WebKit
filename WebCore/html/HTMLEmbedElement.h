@@ -29,16 +29,13 @@
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
 #include <JavaScriptCore/runtime.h>
-#else
-namespace KJS { namespace Bindings { class Instance; } }
 #endif
 
 namespace WebCore {
 
 class SVGDocument;
 
-class HTMLEmbedElement : public HTMLPlugInElement
-{
+class HTMLEmbedElement : public HTMLPlugInElement {
 public:
     HTMLEmbedElement(Document*);
     ~HTMLEmbedElement();
@@ -68,7 +65,6 @@ public:
     void setType(const String&);
     
 #ifdef SVG_SUPPORT
-    Document* contentDocument() const;
     SVGDocument* getSVGDocument(ExceptionCode&) const;
 #endif
 

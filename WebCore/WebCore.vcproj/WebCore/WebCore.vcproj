@@ -4943,6 +4943,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\html\HTMLFrameOwnerElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLFrameOwnerElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\html\HTMLFrameSetElement.cpp"
 				>
 			</File>

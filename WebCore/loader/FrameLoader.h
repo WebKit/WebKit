@@ -85,6 +85,7 @@ namespace WebCore {
     class Frame;
     class FrameLoaderClient;
     class HTMLFormElement;
+    class HTMLFrameOwnerElement;
     class IconLoader;
     class IntSize;
     class MainResourceLoader;
@@ -172,12 +173,12 @@ namespace WebCore {
         void finalSetupForReplace(DocumentLoader*);
         void load(const KURL&, Event*);
         void load(const FrameLoadRequest&, bool userGesture,
-            Event*, Element* form, const HashMap<String, String>& formValues);
+            Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
         void load(const KURL&, const String& referrer, FrameLoadType, const String& target,
-            Event*, Element* form, const HashMap<String, String>& formValues);
+            Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
         void post(const KURL&, const String& referrer, const String& target,
             PassRefPtr<FormData>, const String& contentType,
-            Event*, Element* form, const HashMap<String, String>& formValues);
+            Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
 #if PLATFORM(MAC)
         void load(NSURLRequest *);
         void load(NSURLRequest *, const String& frameName);
@@ -341,9 +342,9 @@ namespace WebCore {
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory = false);
         void urlSelected(const FrameLoadRequest&, Event*);
       
-        bool requestFrame(Element* ownerElement, const String& URL, const AtomicString& frameName);
-        Frame* createFrame(const KURL& URL, const String& name, Element* ownerElement, const String& referrer);
-        Frame* loadSubframe(Element* ownerElement, const KURL& URL, const String& name, const String& referrer);
+        bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
+        Frame* createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement*, const String& referrer);
+        Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
 
         void submitForm(const char* action, const String& URL, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
         void submitFormAgain();
@@ -482,7 +483,7 @@ namespace WebCore {
         void completed();
         void parentCompleted();
 
-        bool shouldUsePlugin(Node* element, const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
+        bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
         bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 

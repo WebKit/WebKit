@@ -159,26 +159,6 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLPlugInElement::parseMappedAttribute(attr);
 }
 
-Document* HTMLObjectElement::contentDocument() const
-{
-    // FIXME: The frame loading code should be moved out of the render tree
-    // and into the DOM.  Once that happens, this function should look more like
-    // HTMLFrameElement::contentDocument() and not depend on the renderer.
-    RenderObject* object = renderer();
-    if (object && object->isWidget()) {
-        RenderWidget* renderWidget = static_cast<RenderWidget*>(object);
-        if (renderWidget) {
-            Widget* widget = renderWidget->widget();
-            if (widget && widget->isFrameView()) {
-                FrameView* frameView = static_cast<FrameView*>(widget);
-                if (frameView->frame())
-                    return frameView->frame()->document();
-            }
-        }
-    }
-    return 0;
-}
-
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 {
     if (m_useFallbackContent || isImageType())

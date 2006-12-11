@@ -84,7 +84,7 @@ class FrameMac : public Frame {
     friend class Frame;
 
 public:
-    FrameMac(Page*, Element*, FrameLoaderClient*);
+    FrameMac(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     ~FrameMac();
 
     void setBridge(WebCoreFrameBridge*);

@@ -40,14 +40,14 @@ namespace WebCore {
 
     class FramePrivate {
     public:
-        FramePrivate(Page*, Frame* parent, Frame* thisFrame, Element* ownerElement, FrameLoaderClient*);
+        FramePrivate(Page*, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement*, FrameLoaderClient*);
         ~FramePrivate();
 
         Page* m_page;
         FrameTree m_treeNode;
         RefPtr<DOMWindow> m_domWindow;
 
-        Element* m_ownerElement;
+        HTMLFrameOwnerElement* m_ownerElement;
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 

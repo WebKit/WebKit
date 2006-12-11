@@ -25,20 +25,22 @@
 #ifndef HTMLPlugInElement_H
 #define HTMLPlugInElement_H
 
-#include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
+
 #if USE(JAVASCRIPTCORE_BINDINGS)
 #include <JavaScriptCore/runtime.h>
 #endif
+
 #if USE(NPOBJECT)
 #include <JavaScriptCore/npruntime.h>
 #endif
 
 namespace WebCore {
 
-class HTMLPlugInElement : public HTMLElement {
+class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
-    ~HTMLPlugInElement();
+    virtual ~HTMLPlugInElement();
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
@@ -68,6 +70,7 @@ public:
 #endif
 
     void setFrameName(const AtomicString& frameName) { m_frameName = frameName; }
+
 private:
 #if USE(NPOBJECT)
     NPObject* createNPObject();
@@ -81,6 +84,7 @@ protected:
 #if USE(NPOBJECT)
     NPObject* m_NPObject;
 #endif
+
 private:
     AtomicString m_frameName;
 };

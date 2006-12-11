@@ -30,11 +30,11 @@
 namespace WebCore {
 
 class Frame;
-class HTMLElement;
+class HTMLFrameOwnerElement;
 
 class RenderPart : public RenderWidget {
 public:
-    RenderPart(HTMLElement*);
+    RenderPart(HTMLFrameOwnerElement*);
     virtual ~RenderPart();
     
     virtual const char* renderName() const { return "RenderPart"; }

@@ -47,7 +47,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+    : HTMLFrameOwnerElement(tagName, doc)
 #if USE(NPOBJECT)
     , m_NPObject(0)
 #endif

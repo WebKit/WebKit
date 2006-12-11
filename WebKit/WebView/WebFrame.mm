@@ -66,7 +66,8 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/HTMLElement.h>
+#import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebDataProtocol.h>
@@ -1170,10 +1171,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = core(self);
     if (!coreFrame)
         return nil;
-    Element* element = coreFrame->ownerElement();
-    if (!element || !element->isHTMLElement())
-        return nil;
-    return kit(static_cast<HTMLElement*>(element));
+    return kit(coreFrame->ownerElement());
 }
 
 - (WebDataSource *)provisionalDataSource

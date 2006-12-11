@@ -46,8 +46,7 @@ class EditorClient;
 
 class FrameQt : public Frame {
 public:
-    // If 'client' remains nil, a default editor client will be constructed.
-    FrameQt(Page*, Element*, FrameQtClient*, FrameLoaderClient *frameLoader);
+    FrameQt(Page*, HTMLFrameOwnerElement*, FrameQtClient*, FrameLoaderClient*);
     virtual ~FrameQt();
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);

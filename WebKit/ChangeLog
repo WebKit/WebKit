@@ -1,3 +1,24 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11794
+          fix lifetime problems affecting Frame's ownerElement pointer
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:WebCore::frameName:frameView:ownerElement:]):
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:frameView:]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:ownerElement:allowsScrolling:marginWidth:marginHeight:]):
+        Use HTMLFrameOwnerElement.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Include the relevant headers for the
+        HTMLFormElement class.
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode have its way.
+
+        * WebView/WebFrame.mm: (-[WebFrame frameElement]): Update includes and types for the
+        change in return type of ownerElement.
+
 2006-12-11  David Harrison  <harrison@apple.com>
 
         Fix previous checkin where I committed the wrong file.

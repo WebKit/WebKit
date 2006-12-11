@@ -35,21 +35,21 @@
 
 namespace WebCore {
 
-    class Element;
     class Frame;
+    class HTMLFormElement;
 
     class FormState : public Shared<FormState> {
     public:
-        static PassRefPtr<FormState> create(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
 
-        Element* form() const { return m_form.get(); }
+        HTMLFormElement* form() const { return m_form.get(); }
         const HashMap<String, String>& values() const { return m_values; }
         Frame* sourceFrame() const { return m_sourceFrame.get(); }
 
     private:
-        FormState(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
+        FormState(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
 
-        RefPtr<Element> m_form;
+        RefPtr<HTMLFormElement> m_form;
         HashMap<String, String> m_values;
         RefPtr<Frame> m_sourceFrame;
     };

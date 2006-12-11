@@ -879,6 +879,7 @@ set(WebCore_SRCS
     html/HTMLFormElement.cpp
     html/HTMLFrameElementBase.cpp
     html/HTMLFrameElement.cpp
+    html/HTMLFrameOwnerElement.cpp
     html/HTMLFrameSetElement.cpp
     html/HTMLGenericFormElement.cpp
     html/HTMLHeadElement.cpp

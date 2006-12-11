@@ -37,6 +37,7 @@
 #include "FrameMac.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"

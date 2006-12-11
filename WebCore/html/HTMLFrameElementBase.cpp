@@ -44,7 +44,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document *doc)
-    : HTMLElement(tagName, doc)
+    : HTMLFrameOwnerElement(tagName, doc)
     , m_scrolling(ScrollbarAuto)
     , m_marginWidth(-1)
     , m_marginHeight(-1)
@@ -217,34 +217,6 @@ void HTMLFrameElementBase::setFocus(bool received)
         renderFrame->widget()->setFocus();
     else
         renderFrame->widget()->clearFocus();
-}
-
-Frame* HTMLFrameElementBase::contentFrame() const
-{
-    // Start with the part that contains this element, our ownerDocument.
-    Frame* parentFrame = document()->frame();
-    if (!parentFrame)
-        return 0;
-
-    // Find the part for the subframe that this element represents.
-    return parentFrame->tree()->child(m_name);
-}
-
-Document* HTMLFrameElementBase::contentDocument() const
-{
-    Frame* frame = contentFrame();
-    if (!frame)
-        return 0;
-    return frame->document();
-}
-
-HTMLFrameSetElement* HTMLFrameElementBase::containingFrameSetElement() const
-{
-    for (Node* node = parentNode(); node; node = node->parentNode())
-        if (node->hasTagName(framesetTag))
-            return static_cast<HTMLFrameSetElement*>(node);
-
-    return 0;
 }
 
 bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const

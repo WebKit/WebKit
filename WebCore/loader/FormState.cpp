@@ -29,17 +29,17 @@
 #include "config.h"
 #include "FormState.h"
 
-#include "Element.h"
 #include "Frame.h"
+#include "HTMLFormElement.h"
 
 namespace WebCore {
 
-PassRefPtr<FormState> FormState::create(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
+PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
 {
     return new FormState(form, values, sourceFrame);
 }
 
-FormState::FormState(PassRefPtr<Element> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
+FormState::FormState(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame)
     : m_form(form)
     , m_values(values)
     , m_sourceFrame(sourceFrame)

@@ -32,25 +32,12 @@
 #import <WebCore/TextAffinity.h>
 #import <WebCore/TextGranularity.h>
 
-#ifdef __cplusplus
-
 namespace WebCore {
-    class Element;
     class FrameMac;
+    class HTMLFrameOwnerElement;
     class Page;
     class String;
 }
-
-typedef WebCore::Element WebCoreElement;
-typedef WebCore::FrameMac WebCoreFrameMac;
-
-#else
-
-@class NSMenu;
-@class WebCoreElement;
-@class WebCoreFrameMac;
-
-#endif
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocument;
@@ -114,13 +101,13 @@ typedef enum {
 @interface WebCoreFrameBridge : NSObject
 {
 @public
-    WebCoreFrameMac* m_frame;
+    WebCore::FrameMac* m_frame;
 
     BOOL _shouldCreateRenderers;
     BOOL _closed;
 }
 
-- (WebCoreFrameMac*)_frame; // underscore to prevent conflict with -[NSView frame]
+- (WebCore::FrameMac*)_frame; // underscore to prevent conflict with -[NSView frame]
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
@@ -297,7 +284,8 @@ typedef enum {
 
 - (void)setStatusText:(NSString *)status;
 
-- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer ownerElement:(WebCoreElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
+- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
+    ownerElement:(WebCore::HTMLFrameOwnerElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (NSWindow *)window;
 

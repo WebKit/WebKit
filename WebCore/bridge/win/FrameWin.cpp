@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
+FrameWin::FrameWin(Page* page, HTMLFrameOwnerElement* ownerElement, FrameWinClient* client)
     : Frame(page, ownerElement, new FrameLoaderClientWin())
     , m_client(client)
 {

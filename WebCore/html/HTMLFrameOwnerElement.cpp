@@ -1,8 +1,4 @@
 /*
- * This file is part of the KDE project.
- *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,25 +18,28 @@
  *
  */
 
-#ifndef RenderPartObject_H
-#define RenderPartObject_H
+#include "config.h"
+#include "HTMLFrameOwnerElement.h"
 
-#include "RenderPart.h"
+#include "Frame.h"
 
 namespace WebCore {
 
-class RenderPartObject : public RenderPart {
-public:
-    RenderPartObject(HTMLFrameOwnerElement*);
+HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
+    , m_contentFrame(0)
+{
+}
 
-    virtual const char* renderName() const { return "RenderPartObject"; }
+HTMLFrameOwnerElement::~HTMLFrameOwnerElement()
+{
+    if (m_contentFrame)
+        m_contentFrame->disconnectOwnerElement();
+}
 
-    virtual void layout();
-    virtual void updateWidget();
+Document* HTMLFrameOwnerElement::contentDocument() const
+{
+    return m_contentFrame ? m_contentFrame->document() : 0;
+}
 
-    virtual void viewCleared();
-};
-
-} // namespace WebCore
-
-#endif // RenderPartObject_H
+}

@@ -54,6 +54,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
@@ -2358,7 +2359,7 @@ void Document::imageLoadEventTimerFired(Timer<Document>*)
     dispatchImageLoadEventsNow();
 }
 
-Element *Document::ownerElement() const
+Element* Document::ownerElement() const
 {
     if (!frame())
         return 0;

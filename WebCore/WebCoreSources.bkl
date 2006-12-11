@@ -627,6 +627,7 @@
         html/HTMLFormElement.cpp
         html/HTMLFrameElement.cpp
         html/HTMLFrameElementBase.cpp
+        html/HTMLFrameOwnerElement.cpp
         html/HTMLFrameSetElement.cpp
         html/HTMLGenericFormElement.cpp
         html/HTMLHRElement.cpp

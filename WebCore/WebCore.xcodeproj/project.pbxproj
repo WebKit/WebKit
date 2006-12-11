@@ -1524,6 +1524,8 @@
 		93E227E40AF589AD00D48324 /* SubresourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */; };
 		93E22A6F0AF5E94100D48324 /* PageState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E22A6E0AF5E94100D48324 /* PageState.cpp */; };
 		93E22A730AF5E94C00D48324 /* PageState.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E22A720AF5E94C00D48324 /* PageState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */; };
 		93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E62D990985F41600E1B5E3 /* SystemTime.h */; };
 		93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */; };
 		93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1715,7 +1717,7 @@
 		A81369CD097374F600D74463 /* HTMLInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B1097374F500D74463 /* HTMLInputElement.cpp */; };
 		A81369CE097374F600D74463 /* HTMLGenericFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B2097374F500D74463 /* HTMLGenericFormElement.h */; };
 		A81369CF097374F600D74463 /* HTMLGenericFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */; };
-		A81369D0097374F600D74463 /* HTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B4097374F500D74463 /* HTMLFormElement.h */; };
+		A81369D0097374F600D74463 /* HTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B4097374F500D74463 /* HTMLFormElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369D1097374F600D74463 /* HTMLFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B5097374F500D74463 /* HTMLFormElement.cpp */; };
 		A81369D2097374F600D74463 /* HTMLButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B6097374F500D74463 /* HTMLButtonElement.h */; };
 		A81369D3097374F600D74463 /* HTMLButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B7097374F500D74463 /* HTMLButtonElement.cpp */; };
@@ -4518,6 +4520,8 @@
 		93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubresourceLoader.cpp; sourceTree = "<group>"; };
 		93E22A6E0AF5E94100D48324 /* PageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageState.cpp; sourceTree = "<group>"; };
 		93E22A720AF5E94C00D48324 /* PageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageState.h; sourceTree = "<group>"; };
+		93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameOwnerElement.h; sourceTree = "<group>"; };
+		93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameOwnerElement.cpp; sourceTree = "<group>"; };
 		93E62D990985F41600E1B5E3 /* SystemTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemTime.h; sourceTree = "<group>"; };
 		93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSystemInterface.mm; sourceTree = "<group>"; };
 		93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSystemInterface.h; sourceTree = "<group>"; };
@@ -7819,6 +7823,8 @@
 				A871DE170A152AC800B12A68 /* HTMLFrameElement.cpp */,
 				A871DE1F0A152AC800B12A68 /* HTMLFrameElement.h */,
 				855542950AA4938800BA89F2 /* HTMLFrameElement.idl */,
+				93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */,
+				93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */,
 				A871DE220A152AC800B12A68 /* HTMLFrameSetElement.cpp */,
 				A871DE1C0A152AC800B12A68 /* HTMLFrameSetElement.h */,
 				855542960AA4938800BA89F2 /* HTMLFrameSetElement.idl */,
@@ -10830,6 +10836,7 @@
 				E1D8E3160B29E39C00F4BAF6 /* HTTPParsers.h in Headers */,
 				BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
+				93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12148,6 +12155,7 @@
 				E1D8E31A0B29E3B600F4BAF6 /* HTTPParsers.cpp in Sources */,
 				BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */,
 				AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */,
+				93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

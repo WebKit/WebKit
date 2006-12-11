@@ -1,3 +1,107 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11794
+          fix lifetime problems affecting Frame's ownerElement pointer
+
+        * CMakeLists.txt:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Updated for new source files.
+
+        * WebCore.exp: Updated for changes to entry point names.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::FrameMac):
+        * bridge/win/FrameWin.h:
+        * bridge/win/FrameWin.cpp: (WebCore::FrameWin::FrameWin):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQt.cpp: (WebCore::FrameQt::FrameQt):
+        Updated owner element type to HTMLFrameOwnerElement.
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed non-C++ case since we don't
+        use that any more. Updated owner element type to HTMLFrameOwnerElement.
+
+        * dom/Document.cpp: Added include so that the ownerElement function can
+        compile (since it downcasts an HTMLFrameOwnerElement to an Element).
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::containingFrameSetElement): Moved this function in here; it
+        doesn't need to be a member function.
+        (WebCore::HTMLFrameElement::attach): Updated to call this.
+
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase): Inherit from
+        HTMLFrameOwnerElement. Removed contentFrame, contentDocument, and
+        containingFrameSetElement. Removed friend classes.
+
+        * html/HTMLFrameOwnerElement.h: Added.
+        * html/HTMLFrameOwnerElement.cpp: Added.
+
+        * html/HTMLEmbedElement.h:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLObjectElement.h:
+        * html/HTMLObjectElement.cpp:
+        Remove now-unneeded contentDocument functions.
+
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): Inherit from
+        HTMLFrameOwnerElement.
+
+        * loader/FormState.h:
+        * loader/FormState.cpp: Use HTMLFormElement instead of just Element.
+
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame): Use HTMLFormElement.
+        (WebCore::FrameLoader::loadSubframe): Ditto.
+        (WebCore::FrameLoader::requestObject): Don't pass an element parameter
+        to shouldUsePlugin, and remove now-unneeded type casts.
+        (WebCore::FrameLoader::shouldUsePlugin): Removed unneeded element parameter.
+        (WebCore::FrameLoader::handleFallbackContent): Use HTMLFrameOwnerElement.
+        (WebCore::FrameLoader::updateBaseURLForEmptyDocument): Ditto.
+        (WebCore::FrameLoader::isHostedByObjectElement): Ditto.
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load): Use HTMLFormElement.
+        (WebCore::FrameLoader::post): Ditto.
+        (WebCore::FrameLoader::createFrame): Use HTMLFrameOwnerElement.
+
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/Frame.cpp:
+        (WebCore::parentFromOwnerElement): Use HTMLFrameOwnerElement.
+        (WebCore::Frame::Frame): Ditto. Also set m_contentFrame on the owner element.
+        (WebCore::Frame::ownerElement): Ditto.
+        (WebCore::Frame::ownerRenderer): Ditto.
+        (WebCore::Frame::disconnectOwnerElement): Clear m_contentFrame on the owner
+        element before disconnecting it.
+        (WebCore::FramePrivate::FramePrivate): Use HTMLFrameOwnerElement.
+
+        * page/mac/EventHandlerMac.mm: Include HTMLFrameOwnerElement.h so that
+        the code here will compile (no code changes needed).
+
+        * rendering/RenderFrame.cpp: (WebCore::RenderFrame::viewCleared):
+        Updated so that RenderFrame doesn't need to be a friend of HTMLFrameElementBase.
+
+        * rendering/RenderPart.h:
+        * rendering/RenderPart.cpp: (WebCore::RenderPart::RenderPart):
+        Use HTMLFrameOwnerElement.
+
+        * rendering/RenderPartObject.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::RenderPartObject): Use HTMLFrameOwnerElement.
+        (WebCore::RenderPartObject::viewCleared): Updated so that RenderFrame doesn't
+        need to be a friend of HTMLFrameElementBase.
+
+        - other changes
+
+        * platform/network/ResourceHandleInternal.h: Added Noncopyable and
+        fixed indentation.
+
 2006-12-11  David Hyatt  <hyatt@apple.com>
 
         Fix failing layout test.  Remove WTF::Unicode::isSpace and just revert

@@ -72,6 +72,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HTMLFormElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/MouseEvent.h>
@@ -83,7 +84,7 @@
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCorePageState.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebKit/DOMElement.h>
+#import <WebKit/DOMHTMLFormElement.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassRefPtr.h>
 

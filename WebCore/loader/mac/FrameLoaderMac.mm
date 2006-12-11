@@ -75,7 +75,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
-    Element* submitForm, const HashMap<String, String>& formValues)
+    HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
 {
     String referrer;
     String argsReferrer = request.resourceRequest().httpReferrer();
@@ -114,7 +114,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
 }
 
 void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
-    const String& frameName, Event* event, Element* form, const HashMap<String, String>& values)
+    const String& frameName, Event* event, HTMLFormElement* form, const HashMap<String, String>& values)
 {
     bool isFormSubmission = !values.isEmpty();
     
@@ -1104,7 +1104,7 @@ void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResp
 }
 
 void FrameLoader::post(const KURL& URL, const String& referrer, const String& frameName, PassRefPtr<FormData> formData, 
-    const String& contentType, Event* event, Element* form, const HashMap<String, String>& formValues)
+    const String& contentType, Event* event, HTMLFormElement* form, const HashMap<String, String>& formValues)
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1240,7 +1240,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     memcpy(data.data(), [result bytes], [result length]);
 }
 
-Frame* FrameLoader::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
+Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
 {
     BOOL allowsScrolling = YES;
     int marginWidth = -1;
