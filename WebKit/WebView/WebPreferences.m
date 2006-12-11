@@ -682,11 +682,8 @@ NS_ENDHANDLER
         // ensure that a valid result is returned
         value = WebKitEditableLinkDefaultBehavior;
     }
-
-    if (value != WebKitEditableLinkDefaultBehavior)
-        return value;
     
-    return WebKitEditableLinkOnlyLiveWithShiftKey;
+    return value;
 }
 
 - (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior

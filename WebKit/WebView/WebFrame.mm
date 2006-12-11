@@ -1171,7 +1171,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!coreFrame)
         return nil;
     Element* element = coreFrame->ownerElement();
-    if (!element->isHTMLElement())
+    if (!element || !element->isHTMLElement())
         return nil;
     return kit(static_cast<HTMLElement*>(element));
 }

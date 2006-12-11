@@ -1,3 +1,17 @@
+2006-12-11  David Harrison  <harrison@apple.com>
+
+        Fix previous checkin where I committed the wrong file.
+
+        <rdar://problem/4863611> Xyle Scope crashes at launch due to WebCore-521.29.3
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame frameElement]):
+        Add nil check.
+        
+        * WebView/WebPreferences.m:
+        (-[WebPreferences editableLinkBehavior]):
+        Reverted to previous.
+
 2006-12-08  David Hyatt  <hyatt@apple.com>
 
         Land new ICU abstraction layer.  Patch by Lars.
