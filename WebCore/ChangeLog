@@ -1,3 +1,14 @@
+2006-12-10  Zack Rusin  <zack@kde.org>
+
+        Set the widgetclient correctly. This code
+        should be platform independent!
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::setClient):
+        (WebCore::Widget::client):
+        (WebCore::Widget::focusPolicy):
+
 2006-12-11  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
