@@ -38,7 +38,8 @@ namespace WebCore {
     class Page;
     struct FrameLoadRequest;
 
-    class ChromeClientQt : public ChromeClient, public Shared<ChromeClientQt> {
+    class ChromeClientQt : public ChromeClient,
+                           public Shared<ChromeClientQt> {
     public:
         ChromeClientQt();
         virtual ~ChromeClientQt();
@@ -49,11 +50,11 @@ namespace WebCore {
 
         virtual void setWindowRect(const FloatRect&);
         virtual FloatRect windowRect();
-        
+
         virtual FloatRect pageRect();
-        
+
         virtual float scaleFactor();
-    
+
         virtual void focus();
         virtual void unfocus();
 
@@ -66,13 +67,13 @@ namespace WebCore {
 
         virtual void setToolbarsVisible(bool);
         virtual bool toolbarsVisible();
-        
+
         virtual void setStatusbarVisible(bool);
         virtual bool statusbarVisible();
-        
+
         virtual void setScrollbarsVisible(bool);
         virtual bool scrollbarsVisible();
-        
+
         virtual void setMenubarVisible(bool);
         virtual bool menubarVisible();
 
