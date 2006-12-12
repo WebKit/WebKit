@@ -1,3 +1,50 @@
+2006-12-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Primarily, this patch implements/hooks-up actions for the sub-menu
+        items in WebCore context menus. I fixed a few other things along
+        the way too:
+                -Made BUILDING_ON_TIGER ifdef work within C++ as well as
+                 Obj-C
+                -Fixed bug where we would throw and Obj-C exception and
+                 fail to pop up menus with more than one separator item.
+                -Re-named some of the spelling/grammar tags since Tiger and
+                 Leopard share more of the actions than initially
+                 anticipated.
+
+        * WebCorePrefix.h: Make BUILDING_ON_TIGER available to C++
+        * bridge/EditorClient.h: New functions to toggle
+        spelling/grammar checking.
+        * editing/Editor.cpp:
+        (WebCore::Editor::toggleContinuousSpellChecking): Call into client.
+        (WebCore::Editor::toggleGrammarChecking): Same.
+        (WebCore::Editor::toggleBold): call execToggleBold()
+        (WebCore::Editor::toggleUnderline): Create appropriate underline
+        style and apply to selection.
+        (WebCore::Editor::setBaseWritingDirection): Create appropriate
+        writing direction and apply to selection.
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm: New functions to show spelling guesses,
+        fonts, styles, and color panels.
+        * page/ContextMenuClient.h: New functions for the speech sub-menu.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Fill in
+        editing sub-menu actions.
+        * platform/ContextMenu.cpp:
+        (WebCore::separatorItem): Helper function to create a separator 
+        item.
+        (WebCore::createFontSubMenu): Put very mac-specific things within a
+        platform ifdef.
+        (WebCore::createSpellingAndGrammarSubMenu): Re-named some of the
+        spelling sub-menu tags.
+        (WebCore::createSpellingSubMenu): Same.
+        (WebCore::ContextMenu::populate): We can't share the separator
+        item. When we do, menus with more than one separator throw and obj-
+        c exception and fail to pop-up.
+        * platform/ContextMenuItem.h:
+        (WebCore::): Re-named some of the spelling sub-menu tags.
+
 2006-12-11  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff, Adam.

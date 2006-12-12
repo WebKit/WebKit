@@ -32,17 +32,12 @@
 enum { 
     WebMenuItemTagOpenLink = 1000,
     WebMenuItemTagIgnoreGrammar,
-#ifndef BUILDING_ON_TIGER
-    WebMenuItemTagSpellingAndGrammarMenu,
-    WebMenuItemTagShowSpellingAndGrammar,
-    WebMenuItemTagCheckDocumentNow,
-    WebMenuItemTagCheckSpellingWhileTyping,
-    WebMenuItemTagCheckGrammarWithSpelling,
-#else
-    WebMenuItemTagSpellingMenu,
-    WebMenuItemTagSpellingMenuItem,
+    WebtMenuItemTagSpellingMenu,
+    WebMenuItemTagShowSpellingPanel,
     WebMenuItemTagCheckSpelling,
     WebMenuItemTagCheckSpellingWhileTyping,
+#ifndef BUILDING_ON_TIGER
+    WebMenuItemTagCheckGrammarWithSpelling,
 #endif
     WebMenuItemTagFontMenu,
     WebMenuItemTagShowFonts,

@@ -145,12 +145,24 @@ bool WebEditorClient::isContinuousSpellCheckingEnabled()
     return [m_webView isContinuousSpellCheckingEnabled];
 }
 
+void WebEditorClient::toggleContinuousSpellChecking()
+{
+    [m_webView toggleContinuousSpellChecking:nil];
+}
+
 bool WebEditorClient::isGrammarCheckingEnabled()
 {
 #ifdef BUILDING_ON_TIGER
     return false;
 #else
     return [m_webView isGrammarCheckingEnabled];
+#endif
+}
+
+void WebEditorClient::toggleGrammarChecking()
+{
+#ifndef BUILDING_ON_TIGER
+    [m_webView toggleGrammarChecking:nil];
 #endif
 }
 

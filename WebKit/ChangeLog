@@ -1,3 +1,22 @@
+2006-12-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit support for editing sub-menu actions.
+
+        * WebCoreSupport/WebContextMenuClient.h: New functions for the
+        speech sub-menu.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::speak):
+        (WebContextMenuClient::stopSpeaking):
+        * WebCoreSupport/WebEditorClient.h: New functions to toggle
+        spelling/grammar checking.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::toggleContinuousSpellChecking):
+        (WebEditorClient::toggleGrammarChecking):
+        * WebView/WebUIDelegatePrivate.h: Re-named some of the spelling
+        sub-menu tags.
+
 2006-12-11  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff, Adam.

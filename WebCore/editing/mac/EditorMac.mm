@@ -508,6 +508,28 @@ Vector<String> Editor::guessesForMisspelledSelection()
     return core([[NSSpellChecker sharedSpellChecker] guessesForWord:selectedString]);
 }
 
+void Editor::showGuessPanel()
+{
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        LOG_ERROR("No NSSpellChecker");
+        return;
+    }
+    
+    NSPanel *spellingPanel = [checker spellingPanel];
+#ifndef BUILDING_ON_TIGER
+    // Post-Tiger, this menu item is a show/hide toggle, to match AppKit. Leave Tiger behavior alone
+    // to match rest of OS X.
+    if ([spellingPanel isVisible]) {
+        [spellingPanel orderOut:nil];
+        return;
+    }
+#endif
+    
+    advanceToNextMisspelling(true);
+    [spellingPanel orderFront:nil];
+}
+
 void Editor::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
     if (!isContinuousSpellCheckingEnabled())
@@ -563,6 +585,21 @@ void Editor::markMisspellings(const Selection& selection)
     if (isGrammarCheckingEnabled())
         markAllBadGrammarInRange(checker, spellCheckerDocumentTag(), searchRange.get());
 #endif
+}
+
+void Editor::showFontPanel()
+{
+    [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
+}
+
+void Editor::showStylesPanel()
+{
+    [[NSFontManager sharedFontManager] orderFrontStylesPanel:nil];
+}
+
+void Editor::showColorPanel()
+{
+    [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
     
 } // namespace WebCore

@@ -119,7 +119,9 @@ public:
     bool execCommand(const String&);
     
     bool isContinuousSpellCheckingEnabled();
+    void toggleContinuousSpellChecking();
     bool isGrammarCheckingEnabled();
+    void toggleGrammarChecking();
     void ignoreSpelling();
     void learnSpelling();
     int spellCheckerDocumentTag();
@@ -127,6 +129,7 @@ public:
     bool isSelectionMisspelled();
     Vector<String> guessesForMisspelledSelection();
     Vector<String> guessesForUngrammaticalSelection();
+    void showGuessPanel();
     void markMisspellingsInAdjacentWords(const VisiblePosition&);
     void markMisspellings(const Selection&);
     void advanceToNextMisspelling(bool startBeforeSelection = false);
@@ -142,6 +145,13 @@ public:
 
     void didBeginEditing();
     void didEndEditing();
+    
+    void showFontPanel();
+    void showStylesPanel();
+    void showColorPanel();
+    void toggleBold();
+    void toggleUnderline();
+    void setBaseWritingDirection(String);
 
 #if PLATFORM(MAC)
     NSString* userVisibleString(NSURL* nsURL);

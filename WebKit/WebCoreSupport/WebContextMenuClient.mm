@@ -43,6 +43,10 @@
 
 using namespace WebCore;
 
+@interface NSApplication (AppKitSecretsIKnowAbout)
+- (void)speakString:(NSString *)string;
+@end
+
 WebContextMenuClient::WebContextMenuClient(WebView *webView) 
     : m_webView(webView)
 {
@@ -108,4 +112,14 @@ void WebContextMenuClient::lookUpInDictionary(Frame* frame)
     if(![htmlView isKindOfClass:[WebHTMLView class]])
         return;
     [htmlView _lookUpInDictionaryFromMenu:nil];
+}
+
+void WebContextMenuClient::speak(const String& string)
+{
+    [NSApp speakString:[[(NSString*)string copy] autorelease]];
+}
+
+void WebContextMenuClient::stopSpeaking()
+{
+    [NSApp stopSpeaking];
 }

@@ -181,7 +181,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             break;
         case ContextMenuItemTagSpellingGuess:
             ASSERT(frame->selectedText().length());
-            if (frame->editor()->shouldInsertText(item->title(), frame->selectionController()->toRange().get(), EditorInsertActionPasted)) {
+            if (frame->editor()->shouldInsertText(item->title(), frame->selectionController()->toRange().get(),
+                EditorInsertActionPasted)) {
                 Document* document = frame->document();
                 applyCommand(new ReplaceSelectionCommand(document, createFragmentFromMarkup(document, item->title(), ""),
                     true, false, true));
@@ -193,11 +194,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             break;
         case ContextMenuItemTagLearnSpelling:
             frame->editor()->learnSpelling();
-            break;
-        case ContextMenuItemTagSearchInSpotlight:
-#if PLATFORM(MAC)
-            m_client->searchWithSpotlight();
-#endif
             break;
         case ContextMenuItemTagSearchWeb: {
             String url = makeGoogleSearchURL(frame->selectedText());
@@ -216,29 +212,70 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             else
                 openNewWindow(result.absoluteLinkURL(), frame);
         }
-        // Sub-menu actions.
-#ifndef BUILDING_ON_TIGER
-        case ContextMenuItemTagShowSpellingAndGrammar:
-        case ContextMenuItemTagCheckDocumentNow:
-        case ContextMenuItemTagCheckSpellingWhileTyping:
-        case ContextMenuItemTagCheckGrammarWithSpelling:
-#else
-        case ContextMenuItemTagSpellingMenuItem:
+        case ContextMenuItemTagBold:
+            frame->editor()->execCommand("ToggleBold");
+            break;
+        case ContextMenuItemTagItalic:
+            frame->editor()->execCommand("ToggleItalic");
+            break;
+        case ContextMenuItemTagUnderline:
+            frame->editor()->toggleUnderline();
+            break;
+        case ContextMenuItemTagOutline:
+            // We actually never enable this because CSS does not have a way to specify an outline font,
+            // which may make this difficult to implement. Maybe a special case of text-shadow?
+            break;
+        case ContextMenuItemTagStartSpeaking: {
+            ExceptionCode ec;
+            RefPtr<Range> selectedRange = frame->selectionController()->toRange();
+            if (!selectedRange || selectedRange->collapsed(ec)) {
+                Document* document = result.innerNonSharedNode()->document();
+                selectedRange = document->createRange();
+                selectedRange->selectNode(document->documentElement(), ec);
+            }
+            m_client->speak(selectedRange->toString(true, ec));
+            break;
+        }
+        case ContextMenuItemTagStopSpeaking:
+            m_client->stopSpeaking();
+            break;
+        case ContextMenuItemTagDefaultDirection:
+            frame->editor()->setBaseWritingDirection("inherit");
+            break;
+        case ContextMenuItemTagLeftToRight:
+            frame->editor()->setBaseWritingDirection("ltr");
+            break;
+        case ContextMenuItemTagRightToLeft:
+            frame->editor()->setBaseWritingDirection("rtl");
+            break;
+#if PLATFORM(MAC)
+        case ContextMenuItemTagSearchInSpotlight:
+            m_client->searchWithSpotlight();
+            break;
+        case ContextMenuItemTagShowSpellingPanel:
+            frame->editor()->showGuessPanel();
+            break;
         case ContextMenuItemTagCheckSpelling:
+            frame->editor()->advanceToNextMisspelling();
+            break;
         case ContextMenuItemTagCheckSpellingWhileTyping:
+            frame->editor()->toggleContinuousSpellChecking();
+            break;
+#ifndef BUILDING_ON_TIGER
+        case ContextMenuItemTagCheckGrammarWithSpelling:
+            frame->editor()->toggleGrammarChecking();
+            break;
 #endif
         case ContextMenuItemTagShowFonts:
-        case ContextMenuItemTagBold:
-        case ContextMenuItemTagItalic:
-        case ContextMenuItemTagUnderline:
-        case ContextMenuItemTagOutline:
+            frame->editor()->showFontPanel();
+            break;
         case ContextMenuItemTagStyles:
+            frame->editor()->showStylesPanel();
+            break;
         case ContextMenuItemTagShowColors:
-        case ContextMenuItemTagStartSpeaking:
-        case ContextMenuItemTagStopSpeaking:
-        case ContextMenuItemTagDefaultDirection:
-        case ContextMenuItemTagLeftToRight:
-        case ContextMenuItemTagRightToLeft:
+            frame->editor()->showColorPanel();
+            break;
+#endif
         default:
             break;
     }

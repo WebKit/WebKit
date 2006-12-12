@@ -51,9 +51,11 @@ public:
     
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
-    virtual bool smartInsertDeleteEnabled() = 0;    
+    virtual bool smartInsertDeleteEnabled() = 0; 
     virtual bool isContinuousSpellCheckingEnabled() = 0;
+    virtual void toggleContinuousSpellChecking() = 0;
     virtual bool isGrammarCheckingEnabled() = 0;
+    virtual void toggleGrammarChecking() = 0;
     virtual int spellCheckerDocumentTag() = 0;
     
     virtual bool selectWordBeforeMenuEvent() = 0;

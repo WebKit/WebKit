@@ -48,26 +48,38 @@ ContextMenuController* ContextMenu::controller() const
     return 0;
 }
 
+static const ContextMenuItem* separatorItem()
+{
+    return new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String());
+}
+
 static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& fontMenuItem)
 {
+#if PLATFORM(MAC)
     ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, "Show Fonts");
+#endif
     ContextMenuItem bold(ActionType, ContextMenuItemTagBold, "Bold");
     ContextMenuItem italic(ActionType, ContextMenuItemTagItalic, "Italic");
     ContextMenuItem underline(ActionType, ContextMenuItemTagUnderline, "Underline");
     ContextMenuItem outline(ActionType, ContextMenuItemTagOutline, "Outline");
+#if PLATFORM(MAC)
     ContextMenuItem styles(ActionType, ContextMenuItemTagStyles, "Styles...");
-    ContextMenuItem separator(SeparatorType, ContextMenuItemTagNoAction, String());
     ContextMenuItem showColors(ActionType, ContextMenuItemTagShowColors, "Show Colors");
+#endif
 
-    ContextMenu* fontMenu = new ContextMenu(result);   
+    ContextMenu* fontMenu = new ContextMenu(result);
+#if PLATFORM(MAC)
     fontMenu->appendItem(showFonts);
+#endif
     fontMenu->appendItem(bold);
     fontMenu->appendItem(italic);
     fontMenu->appendItem(underline);
     fontMenu->appendItem(outline);
+#if PLATFORM(MAC)
     fontMenu->appendItem(styles);
-    fontMenu->appendItem(separator);
+    fontMenu->appendItem(*separatorItem());
     fontMenu->appendItem(showColors);
+#endif
 
     fontMenuItem.setSubMenu(fontMenu);
 }
@@ -75,28 +87,28 @@ static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& font
 #ifndef BUILDING_ON_TIGER
 static void createSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
-    ContextMenuItem show(ActionType, ContextMenuItemTagShowSpellingAndGrammar, "Show Spelling and Grammar");
-    ContextMenuItem checkNow(ActionType, ContextMenuItemTagCheckDocumentNow, "Check Document Now");
-    ContextMenuItem checkWhileTyping(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling While Typing");
+    ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, "Show Spelling and Grammar");
+    ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, "Check Document Now");
+    ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling While Typing");
     ContextMenuItem grammarWithSpelling(ActionType, ContextMenuItemTagCheckGrammarWithSpelling, "Check Grammar With Spelling");
 
     ContextMenu* spellingAndGrammarMenu = new ContextMenu(result);
-    spellingAndGrammarMenu->appendItem(show);
-    spellingAndGrammarMenu->appendItem(checkNow);
-    spellingAndGrammarMenu->appendItem(checkWhileTyping);
+    spellingAndGrammarMenu->appendItem(showSpellingPanel);
+    spellingAndGrammarMenu->appendItem(checkSpelling);
+    spellingAndGrammarMenu->appendItem(checkAsYouType);
     spellingAndGrammarMenu->appendItem(grammarWithSpelling);
 
     spellingAndGrammarMenuItem.setSubMenu(spellingAndGrammarMenu);
 }
 #else
-static void createSpellingSubMenu(const HitTestResult& result, const ContextMenuItem& spellingMenuItem)
+static void createSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
 {
-    ContextMenuItem spelling(ActionType, ContextMenuItemTagSpellingMenuItem, "Spelling...");
+    ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, "Spelling...");
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, "Check Spelling");
     ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling as You Type");
 
     ContextMenu* spellingMenu = new ContextMenu(result);
-    spellingMenu->appendItem(spelling);
+    spellingMenu->appendItem(showSpellingPanel);
     spellingMenu->appendItem(checkSpelling);
     spellingMenu->appendItem(checkAsYouType);
 
@@ -134,7 +146,6 @@ static void createWritingDirectionSubMenu(const HitTestResult& result, ContextMe
 
 void ContextMenu::populate()
 {
-    ContextMenuItem SeparatorItem(SeparatorType, ContextMenuItemTagNoAction, String());
     ContextMenuItem OpenLinkItem(ActionType, ContextMenuItemTagOpenLink, "Open Link");
     ContextMenuItem OpenLinkInNewWindowItem(ActionType, ContextMenuItemTagOpenLinkInNewWindow, "Open Link in New Window");
     ContextMenuItem DownloadFileItem(ActionType, ContextMenuItemTagDownloadLinkToDisk, "Download Linked File");
@@ -184,7 +195,7 @@ void ContextMenu::populate()
         KURL imageURL = result.absoluteImageURL();
         if (!imageURL.isEmpty()) {
             if (!linkURL.isEmpty())
-                appendItem(SeparatorItem);
+                appendItem(*separatorItem());
 
             appendItem(OpenImageInNewWindowItem);
             appendItem(DownloadImageItem);
@@ -198,9 +209,9 @@ void ContextMenu::populate()
                 appendItem(SearchSpotlightItem);
 #endif
                 appendItem(SearchWebItem);
-                appendItem(SeparatorItem);
+                appendItem(*separatorItem());
                 appendItem(LookInDictionaryItem);
-                appendItem(SeparatorItem);
+                appendItem(*separatorItem());
                 appendItem(CopyItem);
             } else {
                 if (loader->canGoBackOrForward(-1))
@@ -237,7 +248,7 @@ void ContextMenu::populate()
                     // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
                     if (misspelling) {
                         appendItem(NowGuessesItem);
-                        appendItem(SeparatorItem);
+                        appendItem(*separatorItem());
                     }
                 } else {
                     for (unsigned i = 0; i < size; i++) {
@@ -247,7 +258,7 @@ void ContextMenu::populate()
                             appendItem(item);
                         }
                     }
-                    appendItem(SeparatorItem);                    
+                    appendItem(*separatorItem());                    
                 }
                 
                 if (misspelling) {
@@ -255,7 +266,7 @@ void ContextMenu::populate()
                     appendItem(LearnSpellingItem);
                 } else
                     appendItem(IgnoreGrammarItem);
-                appendItem(SeparatorItem);
+                appendItem(*separatorItem());
             }
         }
 
@@ -264,10 +275,10 @@ void ContextMenu::populate()
             appendItem(SearchSpotlightItem);
 #endif
             appendItem(SearchWebItem);
-            appendItem(SeparatorItem);
+            appendItem(*separatorItem());
      
             appendItem(LookInDictionaryItem);
-            appendItem(SeparatorItem);
+            appendItem(*separatorItem());
         }
 
         appendItem(CutItem);
@@ -275,10 +286,9 @@ void ContextMenu::populate()
         appendItem(PasteItem);
 
         if (!inPasswordField) {
-            appendItem(SeparatorItem);
+            appendItem(*separatorItem());
 #ifndef BUILDING_ON_TIGER
-            ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingAndGrammarMenu,
-                "Spelling and Grammar");
+            ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, "Spelling and Grammar");
             createSpellingAndGrammarSubMenu(m_hitTestResult, SpellingAndGrammarMenuItem);
             appendItem(SpellingAndGrammarMenuItem);
 #else

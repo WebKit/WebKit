@@ -93,17 +93,12 @@ namespace WebCore {
         // These are new tags! Not a part of API!!!!
         ContextMenuItemTagOpenLink = 1000,
         ContextMenuItemTagIgnoreGrammar,
-#ifndef BUILDING_ON_TIGER
-        ContextMenuItemTagSpellingAndGrammarMenu, // Spelling sub-menu
-        ContextMenuItemTagShowSpellingAndGrammar,
-        ContextMenuItemTagCheckDocumentNow,
-        ContextMenuItemTagCheckSpellingWhileTyping,
-        ContextMenuItemTagCheckGrammarWithSpelling,
-#else
-        ContextMenuItemTagSpellingMenu, // Tiger Spelling sub-menu
-        ContextMenuItemTagSpellingMenuItem,
+        ContextMenuItemTagSpellingMenu, // Spelling or Spelling/Grammar sub-menu
+        ContextMenuItemTagShowSpellingPanel,
         ContextMenuItemTagCheckSpelling,
         ContextMenuItemTagCheckSpellingWhileTyping,
+#ifndef BUILDING_ON_TIGER
+        ContextMenuItemTagCheckGrammarWithSpelling,
 #endif
         ContextMenuItemTagFontMenu, // Font sub-menu
         ContextMenuItemTagShowFonts,

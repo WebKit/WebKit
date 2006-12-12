@@ -85,14 +85,14 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 
-#ifdef __OBJC__
-
-#import <Cocoa/Cocoa.h>
+#include <AvailabilityMacros.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define BUILDING_ON_TIGER 1
 #endif
 
+#ifdef __OBJC__
+#import <Cocoa/Cocoa.h>
 #endif
 
 #ifdef __cplusplus

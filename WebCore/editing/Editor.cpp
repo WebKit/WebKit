@@ -1082,11 +1082,23 @@ bool Editor::isContinuousSpellCheckingEnabled()
     return false;
 }
 
+void Editor::toggleContinuousSpellChecking()
+{
+    if (client())
+        client()->toggleContinuousSpellChecking();
+}
+
 bool Editor::isGrammarCheckingEnabled()
 {
     if (client())
         return client()->isGrammarCheckingEnabled();
     return false;
+}
+
+void Editor::toggleGrammarChecking()
+{
+    if (client())
+        client()->toggleGrammarChecking();
 }
 
 int Editor::spellCheckerDocumentTag()
@@ -1152,6 +1164,31 @@ void Editor::didEndEditing()
 {
     if (client())
         client()->didEndEditing();
+}
+
+void Editor::toggleBold()
+{
+    execToggleBold(frame());
+}
+
+void Editor::toggleUnderline()
+{
+    ExceptionCode ec = 0;
+
+    RefPtr<CSSStyleDeclaration> style = frame()->document()->createCSSStyleDeclaration();
+    style->setProperty(CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "underline", false, ec);
+    if (selectionStartHasStyle(style.get()))
+        style->setProperty(CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "none", false, ec);
+    applyStyleToSelection(style.get(), EditActionUnderline);
+}
+
+void Editor::setBaseWritingDirection(String direction)
+{
+    ExceptionCode ec = 0;
+
+    RefPtr<CSSStyleDeclaration> style = frame()->document()->createCSSStyleDeclaration();
+    style->setProperty(CSS_PROP_DIRECTION, direction, false, ec);
+    applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 
 } // namespace WebCore
