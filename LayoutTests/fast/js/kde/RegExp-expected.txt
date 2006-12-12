@@ -62,7 +62,7 @@ PASS '1test2test3'.replace(/\d/g,'') is 'testtest'
 PASS '1test2test3'.replace(/x/g,'') is '1test2test3'
 PASS 'test1test2'.replace(/(te)(st)/g,'$2$1') is 'stte1stte2'
 PASS 'foo+bar'.replace(/\+/g,'%2B') is 'foo%2Bbar'
-FAIL caught should be true (of type boolean). Was false (of type boolean).
+PASS caught is true
 PASS 'foo'.replace(/z?/g,'x') is 'xfxoxox'
 PASS 'test test'.replace(/\s*/g,'') is 'testtest'
 PASS 'abc$%@'.replace(/[^0-9a-z]*/gi,'') is 'abc'

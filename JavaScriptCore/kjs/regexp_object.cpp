@@ -382,7 +382,6 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
   bool global = (flags.find("g") >= 0);
   bool ignoreCase = (flags.find("i") >= 0);
   bool multiline = (flags.find("m") >= 0);
-  // TODO: throw a syntax error on invalid flags
 
   dat->putDirect("global", jsBoolean(global), DontDelete | ReadOnly | DontEnum);
   dat->putDirect("ignoreCase", jsBoolean(ignoreCase), DontDelete | ReadOnly | DontEnum);
@@ -398,7 +397,12 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
       reflags |= RegExp::IgnoreCase;
   if (multiline)
       reflags |= RegExp::Multiline;
-  dat->setRegExp(new RegExp(p, reflags));
+  RegExp* re = new RegExp(p, reflags);
+  if (!re->isValid()) {
+    delete re;
+    return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(re->errorMessage()));
+  }
+  dat->setRegExp(re);
 
   return dat;
 }
@@ -406,7 +410,5 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
 // ECMA 15.10.3
 JSValue *RegExpObjectImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const List &args)
 {
-  // TODO: handle RegExp argument case (15.10.3.1)
-
   return construct(exec, args);
 }

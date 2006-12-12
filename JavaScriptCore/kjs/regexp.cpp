@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2001,2004 Harri Porten (porten@kde.org)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@
 #include "config.h"
 #include "regexp.h"
 
+#include "lexer.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +32,7 @@
 namespace KJS {
 
 RegExp::RegExp(const UString &p, int flags)
-  : _flags(flags), _numSubPatterns(0)
+  : m_flags(flags), m_constructionError(0), m_numSubPatterns(0)
 {
 #if HAVE(PCREPOSIX)
 
@@ -48,20 +50,22 @@ RegExp::RegExp(const UString &p, int flags)
   UString pattern(p);
   
   pattern.append('\0');
-  _regex = pcre_compile(reinterpret_cast<const uint16_t*>(pattern.data()),
+  m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(pattern.data()),
                         options, &errorMessage, &errorOffset, NULL);
-  if (!_regex) {
+  if (!m_regex) {
     // Try again, this time handle any \u we might find.
     UString uPattern = sanitizePattern(pattern);
-    _regex = pcre_compile(reinterpret_cast<const uint16_t*>(uPattern.data()),
+    m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(uPattern.data()),
                           options, &errorMessage, &errorOffset, NULL);
-    if (!_regex) 
+    if (!m_regex) {
+      m_constructionError = strdup(errorMessage);
       return;
+    }
   }
 
 #ifdef PCRE_INFO_CAPTURECOUNT
   // Get number of subpatterns that will be returned.
-  pcre_fullinfo(_regex, NULL, PCRE_INFO_CAPTURECOUNT, &_numSubPatterns);
+  pcre_fullinfo(m_regex, NULL, PCRE_INFO_CAPTURECOUNT, &m_numSubPatterns);
 #endif
 
 #else /* HAVE(PCREPOSIX) */
@@ -80,8 +84,14 @@ RegExp::RegExp(const UString &p, int flags)
   //    ;
   // Note: the Global flag is already handled by RegExpProtoFunc::execute
 
-  regcomp(&_regex, p.ascii(), regflags);
-  /* TODO check for errors */
+  // FIXME: support \u Unicode escapes.
+
+  int errorCode = regcomp(&m_regex, intern.ascii(), regflags);
+  if (errorCode != 0) {
+    char errorMessage[80];
+    regerror(errorCode, &m_regex, errorMessage, sizeof errorMessage);
+    m_constructionError = strdup(errorMessage);
+  }
 
 #endif
 }
@@ -89,11 +99,12 @@ RegExp::RegExp(const UString &p, int flags)
 RegExp::~RegExp()
 {
 #if HAVE(PCREPOSIX)
-  pcre_free(_regex);
+  pcre_free(m_regex);
 #else
   /* TODO: is this really okay after an error ? */
-  regfree(&_regex);
+  regfree(&m_regex);
 #endif
+  free(m_constructionError);
 }
 
 UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
@@ -112,7 +123,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
 
 #if HAVE(PCREPOSIX)
 
-  if (!_regex)
+  if (!m_regex)
     return UString::null();
 
   // Set up the offset vector for the result.
@@ -124,11 +135,11 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
     offsetVectorSize = 3;
     offsetVector = fixedSizeOffsetVector;
   } else {
-    offsetVectorSize = (_numSubPatterns + 1) * 3;
+    offsetVectorSize = (m_numSubPatterns + 1) * 3;
     offsetVector = new int [offsetVectorSize];
   }
 
-  const int numMatches = pcre_exec(_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
+  const int numMatches = pcre_exec(m_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG
@@ -151,7 +162,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   regmatch_t rmatch[maxMatch];
 
   char *str = strdup(s.ascii()); // TODO: why ???
-  if (regexec(&_regex, str + i, maxMatch, rmatch, 0)) {
+  if (regexec(&m_regex, str + i, maxMatch, rmatch, 0)) {
     free(str);
     return UString::null();
   }
@@ -163,12 +174,12 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   }
 
   // map rmatch array to ovector used in PCRE case
-  _numSubPatterns = 0;
+  m_numSubPatterns = 0;
   for(unsigned j = 1; j < maxMatch && rmatch[j].rm_so >= 0 ; j++)
-      _numSubPatterns++;
-  int ovecsize = (_numSubPatterns+1)*3; // see above
+      m_numSubPatterns++;
+  int ovecsize = (m_numSubPatterns+1)*3; // see above
   *ovector = new int[ovecsize];
-  for (unsigned j = 0; j < _numSubPatterns + 1; j++) {
+  for (unsigned j = 0; j < m_numSubPatterns + 1; j++) {
     if (j>maxMatch)
       break;
     (*ovector)[2*j] = rmatch[j].rm_so + i;

@@ -57,8 +57,9 @@ function test()
   printBugNumber(bug);
   printStatus(summary);
 
-  testThis(500, NO_BACKREFS, 'hello', 'goodbye');
-  testThis(500, DO_BACKREFS, 'hello', 'goodbye');
+  // Changed the parameter from 500 to 200 for WebKit, because PCRE reports an error for more parentheses.
+  testThis(200, NO_BACKREFS, 'hello', 'goodbye');
+  testThis(200, DO_BACKREFS, 'hello', 'goodbye');
 
   exitFunc('test');
 }

@@ -1,3 +1,28 @@
+2006-12-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff. Based on a patch by Maks Orlovich.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6257
+        Throw errors on invalid expressions (KJS merge)
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        (KJS::RegExp::~RegExp):
+        (KJS::RegExp::match):
+        * kjs/regexp.h:
+        (KJS::RegExp::flags):
+        (KJS::RegExp::isValid):
+        (KJS::RegExp::errorMessage):
+        (KJS::RegExp::subPatterns):
+        Remember and report RegExp construction failures. Renamed data members not to start with underscores.
+
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::construct): Raise an exception if RegExp construction fails.
+        (RegExpObjectImp::callAsFunction): Removed an obsolete comment.
+
+        * tests/mozilla/ecma_3/RegExp/regress-119909.js: Reduced the number of nested parentheses to 
+        a value supported by PCRE.
+
 2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
