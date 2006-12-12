@@ -29,21 +29,52 @@
 #import "DOMRangeInternal.h"
 #import "DocumentFragment.h"
 #import "Editor.h"
+#import "KURL.h"
 #import "WebNSAttributedStringExtras.h"
+#import "WebCoreSystemInterface.h"
 #import "markup.h"
-
-NSString *WebArchivePboardType          = @"Apple Web Archive pasteboard type";
-NSString *WebSmartPastePboardType       = @"NeXT smart paste pasteboard type";
-// FIXME: The code to initialize these needs to be moved in here, and out of WebKit.
-NSString *WebURLNamePboardType          = nil;
-NSString *WebURLPboardType              = nil;
-NSString *WebURLsWithTitlesPboardType   = @"WebURLsWithTitlesPboardType";
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;
 @end
 
 namespace WebCore {
+
+NSString *WebArchivePboardType;
+NSString *WebSmartPastePboardType;
+NSString *WebURLNamePboardType;
+NSString *WebURLPboardType;
+NSString *WebURLsWithTitlesPboardType;
+
+static NSArray* selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments)
+{
+    if (selectionContainsAttachments) {
+        if (canSmartCopyOrDelete)
+            return [NSArray arrayWithObjects:WebSmartPastePboardType, WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+        else
+            return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+    } else { // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
+        if (canSmartCopyOrDelete)
+            return [NSArray arrayWithObjects:WebSmartPastePboardType, WebArchivePboardType, NSRTFPboardType, NSStringPboardType, nil];
+        else
+            return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFPboardType, NSStringPboardType, nil];
+    }
+}
+
+static NSArray* writableTypesForURL()
+{
+    static NSArray *types = nil;
+    if (!types) {
+        types = [[NSArray alloc] initWithObjects:
+            WebURLsWithTitlesPboardType,
+            NSURLPboardType,
+            WebURLPboardType,
+            WebURLNamePboardType,
+            NSStringPboardType,
+            nil];
+    }
+    return types;
+}
 
 Pasteboard* Pasteboard::generalPasteboard() 
 {
@@ -54,16 +85,21 @@ Pasteboard* Pasteboard::generalPasteboard()
 Pasteboard::Pasteboard(NSPasteboard* pboard)
     : m_pasteboard(pboard)
 {
+    WebArchivePboardType          = @"Apple Web Archive pasteboard type";
+    WebSmartPastePboardType       = @"NeXT smart paste pasteboard type";
+    WebURLNamePboardType          = wkCreateURLNPasteboardFlavorTypeName();
+    WebURLPboardType              = wkCreateURLPasteboardFlavorTypeName();
+    WebURLsWithTitlesPboardType   = @"WebURLsWithTitlesPboardType";
 }
 
-void Pasteboard::clearTypes()
+void Pasteboard::clear()
 {
     [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
-void Pasteboard::writeSelection(PassRefPtr<Range> selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:[DOMRange _rangeWith:selectedRange.get()]] autorelease];
+    NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:[DOMRange _rangeWith:selectedRange]] autorelease];
     NSArray* types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
 
     [m_pasteboard declareTypes:types owner:nil];
@@ -106,20 +142,32 @@ void Pasteboard::writeSelection(PassRefPtr<Range> selectedRange, bool canSmartCo
     }
 }
 
-NSArray* Pasteboard::selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments)
+void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 {
-    if (selectionContainsAttachments) {
-        if (canSmartCopyOrDelete)
-            return [NSArray arrayWithObjects:WebSmartPastePboardType, WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
-        else
-            return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
-    } else { // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
-        if (canSmartCopyOrDelete)
-            return [NSArray arrayWithObjects:WebSmartPastePboardType, WebArchivePboardType, NSRTFPboardType, NSStringPboardType, nil];
-        else
-            return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFPboardType, NSStringPboardType, nil];
+    ASSERT(!url.isEmpty());
+    
+    NSURL *URL = url.getNSURL();
+    NSString *userVisibleString = frame->editor()->client()->userVisibleString(URL);
+
+    NSString *title = (NSString*)titleStr;
+    if ([title length] == 0) {
+        title = [[URL path] lastPathComponent];
+        if ([title length] == 0)
+            title = userVisibleString;
     }
+
+    [m_pasteboard declareTypes:writableTypesForURL() owner:nil];
+
+    [m_pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
+                                                            [NSArray arrayWithObject:(NSString*)titleStr.stripWhiteSpace()], 
+                                                            nil]
+                          forType:WebURLsWithTitlesPboardType];
+    [URL writeToPasteboard:m_pasteboard];
+    [m_pasteboard setString:userVisibleString forType:WebURLPboardType];
+    [m_pasteboard setString:title forType:WebURLNamePboardType];
+    [m_pasteboard setString:userVisibleString forType:NSStringPboardType];
 }
+
 
 bool Pasteboard::canSmartReplace()
 {

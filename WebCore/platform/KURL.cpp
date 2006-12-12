@@ -490,6 +490,15 @@ bool KURL::hasPath() const
     return m_isValid && pathEndPos != portEndPos;
 }
 
+DeprecatedString KURL::lastPathComponent() const
+{
+    if (!hasPath())
+        return DeprecatedString();
+
+    int start = urlString.findRev('/', pathEndPos);    
+    return urlString.mid(start + 1, pathEndPos - start - 1);
+}
+
 DeprecatedString KURL::protocol() const
 {
     if (!m_isValid) {

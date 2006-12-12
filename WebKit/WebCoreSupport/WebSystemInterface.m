@@ -44,6 +44,8 @@ void InitWebCoreSystemInterface(void)
     INIT(ConvertCharToGlyphs);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
+    INIT(CreateURLPasteboardFlavorTypeName);
+    INIT(CreateURLNPasteboardFlavorTypeName);
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);

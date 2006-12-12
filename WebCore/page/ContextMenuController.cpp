@@ -134,11 +134,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->downloadURL(result.absoluteLinkURL());
             break;
         case ContextMenuItemTagCopyLinkToClipboard:
-            // FIXME: The Pasteboard class is not written yet. This is what we should be able to do some day:
-            // generalPasteboard()->copy(result.absoluteLinkURL(), 
-            //      m_contextMenu->hitTestResult.textContent());
-            // For now, call into the client. This is temporary!
-            m_client->copyLinkToClipboard(result);
+            frame->editor()->copyURL(m_contextMenu->hitTestResult().absoluteLinkURL(), m_contextMenu->hitTestResult().textContent());
             break;
         case ContextMenuItemTagOpenImageInNewWindow:
             openNewWindow(result.absoluteImageURL(), frame);

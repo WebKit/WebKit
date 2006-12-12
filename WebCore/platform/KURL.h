@@ -78,6 +78,7 @@ public:
     DeprecatedString user() const;
     DeprecatedString pass() const;
     DeprecatedString path() const;
+    DeprecatedString lastPathComponent() const;
     DeprecatedString query() const;
     DeprecatedString ref() const;
     bool hasRef() const;

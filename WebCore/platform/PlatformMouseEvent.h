@@ -58,15 +58,8 @@ class QMouseEvent;
 
 namespace WebCore {
 
-    // These button numbers match the one used in the DOM API.
-    enum MouseButton { LeftButton, MiddleButton, RightButton };
-
-#if PLATFORM(WIN)
-    enum MouseEventType {   MouseMoved,
-                            LeftMouseDown, LeftMouseUp, LeftMouseDragged,
-                            RightMouseDown, RightMouseUp, RightMouseDragged,
-                            MiddleMouseDown, MiddleMouseUp, MiddleMouseDragged };
-#endif
+    // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
+    enum MouseButton { NoButton = -1, LeftButton, MiddleButton, RightButton };
 
     class PlatformMouseEvent {
     public:
@@ -115,7 +108,6 @@ namespace WebCore {
         void setClickCount(int count) { m_clickCount = count; }
         double timestamp() const { return m_timestamp; }
         bool activatedWebView() const { return m_activatedWebView; }
-        MouseEventType type() const { return m_type; }
 #endif
 #if PLATFORM(GDK) 
         PlatformMouseEvent(GdkEvent*);
@@ -137,7 +129,6 @@ namespace WebCore {
 #if PLATFORM(WIN)
         double m_timestamp; // unit: seconds
         bool m_activatedWebView;
-        MouseEventType m_type;
 #endif
     };
 

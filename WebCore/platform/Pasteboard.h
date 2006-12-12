@@ -44,8 +44,9 @@ class NSArray;
 typedef struct HWND__* HWND;
 #endif
 
+namespace WebCore {
+
 #if PLATFORM(MAC)
-// FIXME: These should be moved into the WebCore namespace.
 extern NSString *WebArchivePboardType;
 extern NSString *WebSmartPastePboardType;
 extern NSString *WebURLNamePboardType;
@@ -53,20 +54,20 @@ extern NSString *WebURLPboardType;
 extern NSString *WebURLsWithTitlesPboardType;
 #endif
 
-namespace WebCore {
-
 class CString;
 class DeprecatedCString;
 class DocumentFragment;
 class Frame;
+class KURL;
 class Range;
 class String;
 
 class Pasteboard : Noncopyable {
 public:
     static Pasteboard* generalPasteboard();
-    void writeSelection(PassRefPtr<Range>, bool canSmartCopyOrDelete, Frame*);
-    void clearTypes();
+    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
+    void writeURL(const KURL&, const String&, Frame* = 0);
+    void clear();
     bool canSmartReplace();
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
@@ -77,16 +78,10 @@ private:
 
 #if PLATFORM(MAC)
     Pasteboard(NSPasteboard *);
-    NSArray *selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments);
     NSPasteboard *m_pasteboard;
 #endif
 
 #if PLATFORM(WIN)
-    HashSet<int> registerSelectionPasteboardTypes();
-    void replaceNBSP(String&);
-    HGLOBAL createHandle(String);
-    HGLOBAL createHandle(CString);
-    DeprecatedCString createCF_HTMLFromRange(PassRefPtr<Range>);
     HWND m_owner;
 #endif
 };

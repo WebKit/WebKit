@@ -48,6 +48,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/KURL.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMPrivate.h>
@@ -469,12 +470,9 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 - (void)copyLinkToClipboard:(id)sender
 {
     NSDictionary *element = [sender representedObject];
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    NSArray *types = [NSPasteboard _web_writableTypesForURL];
-    [pasteboard declareTypes:types owner:self];    
-    [[[element objectForKey:WebElementFrameKey] webView] _writeLinkElement:element 
-                                                       withPasteboardTypes:types
-                                                              toPasteboard:pasteboard];
+    WebCore::FrameMac *frame = core((WebFrame*)[element objectForKey:WebElementFrameKey]);
+    if (frame)
+        frame->editor()->copyURL([element objectForKey:WebElementLinkURLKey], [element objectForKey:WebElementLinkLabelKey]);                                                          
 }
 
 - (void)openImageInNewWindow:(id)sender

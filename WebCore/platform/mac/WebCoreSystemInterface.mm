@@ -29,6 +29,8 @@
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 void (*wkClearGlyphVector)(void* glyphs);
 OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
+NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
+NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);

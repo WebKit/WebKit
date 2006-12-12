@@ -1,3 +1,53 @@
+2006-12-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff, Adam.
+
+        Switch to use the Editor for copying URLs.  Also some Pasteboard and PlatformMouseEvent cleanup.
+
+        All layout tests pass as they would without this patch. 
+
+        * WebCore.exp:
+        added Editor::copyURL to be called from WebKit
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        Pasteboard::clearTypes() changed to clear()
+
+        (WebCore::Editor::writeSelectionToPasteboard):        
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        Changed signature of writeSelection to take raw pointer instead of PassRefPtr
+
+        (WebCore::Editor::copyURL):
+        * editing/Editor.h:
+        Added copyURL.
+        
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Removed copyLinkToClipboard
+        
+        * platform/KURL.cpp:
+        (WebCore::KURL::lastPathComponent):
+        * platform/KURL.h:
+        Added lastPathComponent. 
+        
+        * platform/Pasteboard.h:
+        Changed some function names.
+        Moved some functions out of class to static.
+        
+        * platform/PlatformMouseEvent.h:
+        (WebCore::):
+        Removed MouseEventType enum, added NoButton to MouseButton without disturbing other button values.
+        
+        * platform/mac/PasteboardMac.mm:
+        Added writeURL, and moved some things around
+        
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Add some calls necessary for Pasteboard::writeURL to work
+
 2006-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

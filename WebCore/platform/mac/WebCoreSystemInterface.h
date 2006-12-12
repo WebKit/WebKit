@@ -78,6 +78,8 @@ extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadS
     void *context);
 extern OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 extern id (*wkCreateNSURLConnectionDelegateProxy)(void);
+extern NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
+extern NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);

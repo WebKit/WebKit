@@ -47,6 +47,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
+#include "KURL.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "Range.h"
@@ -240,7 +241,7 @@ bool Editor::tryDHTMLCopy()
 
     // Must be done before oncopy adds types and data to the pboard,
     // also done for security, as it erases data from the last copy/paste.
-    Pasteboard::generalPasteboard()->clearTypes();
+    Pasteboard::generalPasteboard()->clear();
 
     return !dispatchCPPEvent(copyEvent, ClipboardWritable);
 }
@@ -252,7 +253,7 @@ bool Editor::tryDHTMLCut()
 
     // Must be done before oncut adds types and data to the pboard,
     // also done for security, as it erases data from the last copy/paste.
-    Pasteboard::generalPasteboard()->clearTypes();
+    Pasteboard::generalPasteboard()->clear();
 
     return !dispatchCPPEvent(cutEvent, ClipboardWritable);
 }
@@ -264,7 +265,7 @@ bool Editor::tryDHTMLPaste()
 
 void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
 {
-    pasteboard->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
+    pasteboard->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
 }
 
 bool Editor::shouldInsertText(String text, Range* range, EditorInsertAction action) const
@@ -1030,9 +1031,9 @@ void Editor::cut()
         systemBeep();
         return;
     }
-    
-    if (shouldDeleteRange(selectedRange().get())) {
-        Pasteboard::generalPasteboard()->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
+    RefPtr<Range> selection = selectedRange();
+    if (shouldDeleteRange(selection.get())) {
+        Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
     }
 }
@@ -1045,7 +1046,7 @@ void Editor::copy()
         systemBeep();
         return;
     }
-    Pasteboard::generalPasteboard()->writeSelection(selectedRange(), canSmartCopyOrDelete(), m_frame);
+    Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
 }
 
 void Editor::paste()
@@ -1067,6 +1068,11 @@ void Editor::performDelete()
         return;
     }
     deleteSelection();
+}
+
+void Editor::copyURL(const KURL& url, const String& title)
+{
+    Pasteboard::generalPasteboard()->writeURL(url, title, m_frame);
 }
 
 bool Editor::isContinuousSpellCheckingEnabled()
