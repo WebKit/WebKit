@@ -27,6 +27,8 @@
 #include "SVGTransform.h"
 #include "SVGSVGElement.h"
 
+#include <math.h>
+
 using namespace WebCore;
 
 SVGTransform::SVGTransform()

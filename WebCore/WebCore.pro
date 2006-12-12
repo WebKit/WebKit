@@ -826,6 +826,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
         bindings/js/JSSVGElementWrapperFactory.cpp \
+	bindings/js/JSSVGMatrixCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
@@ -856,7 +857,6 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGPathSegLinetoVertical.cpp \
         ksvg2/svg/SVGFitToViewBox.cpp \
         ksvg2/svg/SVGRadialGradientElement.cpp \
-        ksvg2/svg/SVGMatrix.cpp \
         ksvg2/svg/SVGMaskElement.cpp \
         ksvg2/svg/SVGTitleElement.cpp \
         ksvg2/svg/SVGTRefElement.cpp \
