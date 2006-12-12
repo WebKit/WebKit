@@ -61,7 +61,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     // FIXME: This is only temporary until we get the Mac version of SubresourceLoader::create cross-platform.
     RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
 
-    subloader->m_handle = ResourceHandle::create(request, subloader.get(), frame->document()->docLoader(), false);
+    subloader->m_handle = ResourceHandle::create(request, subloader.get(), frame, false);
 
     return subloader.release();
 }

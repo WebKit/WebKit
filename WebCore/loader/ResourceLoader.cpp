@@ -27,6 +27,7 @@
  */
 
 #include "config.h"
+#include "ResourceHandle.h"
 #include "ResourceLoader.h"
 
 #include "Frame.h"
@@ -51,6 +52,26 @@ ResourceLoader::ResourceLoader(Frame* frame)
 }
 
 void ResourceLoader::setDefersLoading(bool)
+{
+}
+
+void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+}
+
+void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+{
+}
+
+void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
+{
+}
+
+void ResourceLoader::didFinishLoading(ResourceHandle*)
+{
+}
+
+void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
 }
 

@@ -1,5 +1,19 @@
 2006-12-12  Anders Carlsson  <acarlsson@apple.com>
 
+        Try fixing the non-Mac builds.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+
+2006-12-12  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Turn ResourceLoader into a ResourceHandleClient and stop using NSURLConnection in the loader.
