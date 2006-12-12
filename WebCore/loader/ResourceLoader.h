@@ -31,6 +31,7 @@
 
 #include "Shared.h"
 #include <wtf/RefPtr.h>
+#include "ResourceHandleClient.h"
 
 #if PLATFORM(MAC)
 
@@ -44,7 +45,6 @@
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
-@class WebCoreResourceLoaderAsDelegate;
 #else
 class NSCachedURLResponse;
 class NSData;
@@ -57,7 +57,6 @@ class NSURLConnection;
 class NSURLCredential;
 class NSURLRequest;
 class NSURLResponse;
-class WebCoreResourceLoaderAsDelegate;
 #endif
 
 #endif
@@ -66,8 +65,9 @@ namespace WebCore {
 
     class Frame;
     class FrameLoader;
-
-    class ResourceLoader : public Shared<ResourceLoader> {
+    class ResourceHandle;
+    
+    class ResourceLoader : public Shared<ResourceLoader>, protected ResourceHandleClient {
     public:
         virtual ~ResourceLoader();
 
@@ -111,30 +111,44 @@ namespace WebCore {
 
 #endif
 
-        // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the one you're in.
-        static bool loadsBlocked();
+        // ResourceHandleClient
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
+        
+        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+        virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
+        virtual void didFinishLoading(ResourceHandle*);
+        virtual void didFail(ResourceHandle*, const ResourceError&);
+        
+#if PLATFORM(MAC)
+        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didReceiveAuthenticationChallenge(challenge); } 
+        virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didCancelAuthenticationChallenge(challenge); } 
+        
+        virtual void willStopBufferingData(ResourceHandle*, NSData *data) { willStopBufferingData(data); } 
+        
+        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
+        
+        virtual void receivedCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge, NSURLCredential *credential) { receivedCredential(challenge, credential); }
+        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { receivedRequestToContinueWithoutCredential(challenge); } 
+        virtual void receivedCancellation(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { receivedCancellation(challenge); }
+#endif
+        
+        ResourceHandle* handle() const { return m_handle.get(); }
 
     protected:
         ResourceLoader(Frame*);
 
 #if PLATFORM(MAC)
-        WebCoreResourceLoaderAsDelegate *delegate();
-        virtual void releaseDelegate();
-
         virtual void didCancel(NSError *);
         void didFinishLoadingOnePart();
 
-        NSURLConnection *connection() const { return m_connection.get(); }
         NSURLRequest *request() const { return m_request.get(); }
 #endif
         bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
         bool defersLoading() const { return m_defersLoading; }
 
-#if PLATFORM(MAC)
-        RetainPtr<NSURLConnection> m_connection;
-#endif
-
+        RefPtr<ResourceHandle> m_handle;
+        
     private:
 #if PLATFORM(MAC)
         RetainPtr<NSURLRequest> m_request;
@@ -154,7 +168,6 @@ protected:
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
         RetainPtr<NSURL> m_originalURL;
         RetainPtr<NSMutableData> m_resourceData;
-        RetainPtr<WebCoreResourceLoaderAsDelegate> m_delegate;
 #endif
         bool m_defersLoading;
     };

@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading))
+ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool mightDownloadFromHandle)
+    : d(new ResourceHandleInternal(this, request, client, defersLoading, mightDownloadFromHandle))
 {
 }
 
-PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, DocLoader* dl, bool defersLoading)
+PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, Frame* frame, bool defersLoading, bool mightDownloadFromHandle)
 {
-    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, defersLoading));
+    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, defersLoading, mightDownloadFromHandle));
     
-    if (newLoader->start(dl))
+    if (newLoader->start(frame))
         return newLoader.release();
 
     return 0;

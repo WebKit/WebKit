@@ -24,7 +24,7 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Page.h"
-#include "ResourceLoader.h"
+#include "ResourceHandle.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -97,7 +97,7 @@ bool Chrome::canRunModalNow() const
 {
     // If loads are blocked, we can't run modal because the contents
     // of the modal dialog will never show up!
-    return canRunModal() && !ResourceLoader::loadsBlocked();
+    return canRunModal() && !ResourceHandle::loadsBlocked();
 }
 
 void Chrome::runModal() const

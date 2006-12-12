@@ -97,7 +97,7 @@ private:
 
     virtual void loadedFromPageCache();
 
-    virtual void download(NSURLConnection *, NSURLRequest *, NSURLResponse *, id proxy);
+    virtual void download(WebCore::ResourceHandle*, NSURLRequest *, NSURLResponse *);
 
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, NSURLRequest *);
     virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse);

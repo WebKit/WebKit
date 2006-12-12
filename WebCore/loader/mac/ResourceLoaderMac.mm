@@ -32,7 +32,10 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "Page.h"
+#import "ResourceError.h"
 #import "ResourceHandle.h"
+#import "ResourceRequest.h"
+#import "ResourceResponse.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -44,29 +47,11 @@
 
 using namespace WebCore;
 
-@interface WebCoreResourceLoaderAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
-{
-    ResourceLoader* m_loader;
-}
-- (id)initWithLoader:(ResourceLoader*)loader;
-- (void)detachLoader;
-@end
-
-@interface NSURLConnection (NSURLConnectionTigerPrivate)
-- (NSData *)_bufferedData;
-@end
-
 @interface NSURLProtocol (WebFoundationSecret) 
 + (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
 @end
 
 namespace WebCore {
-
-static unsigned inNSURLConnectionCallback;
-
-#ifndef NDEBUG
-static bool isInitializingConnection;
-#endif
 
 ResourceLoader::ResourceLoader(Frame* frame)
     : m_reachedTerminalState(false)
@@ -81,7 +66,6 @@ ResourceLoader::ResourceLoader(Frame* frame)
 ResourceLoader::~ResourceLoader()
 {
     ASSERT(m_reachedTerminalState);
-    releaseDelegate();
 }
 
 void ResourceLoader::releaseResources()
@@ -101,15 +85,13 @@ void ResourceLoader::releaseResources()
     m_reachedTerminalState = true;
 
     m_identifier = nil;
-    m_connection = nil;
+    m_handle = 0;
     m_resourceData = nil;
-
-    releaseDelegate();
 }
 
 bool ResourceLoader::load(NSURLRequest *r)
 {
-    ASSERT(m_connection == nil);
+    ASSERT(!m_handle);
     ASSERT(!frameLoader()->isArchiveLoadPending(this));
     
     m_originalURL = [r URL];
@@ -124,17 +106,7 @@ bool ResourceLoader::load(NSURLRequest *r)
     if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
         return true;
     
-#ifndef NDEBUG
-    isInitializingConnection = YES;
-#endif
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:r delegate:delegate()];
-#ifndef NDEBUG
-    isInitializingConnection = NO;
-#endif
-    m_connection = connection;
-    [connection release];
-    if (m_defersLoading)
-        wkSetNSURLConnectionDefersCallbacks(m_connection.get(), YES);
+    m_handle = ResourceHandle::create(r, this, m_frame.get(), m_defersLoading);
 
     return true;
 }
@@ -142,7 +114,8 @@ bool ResourceLoader::load(NSURLRequest *r)
 void ResourceLoader::setDefersLoading(bool defers)
 {
     m_defersLoading = defers;
-    wkSetNSURLConnectionDefersCallbacks(m_connection.get(), defers);
+    if (m_handle)
+        m_handle->setDefersLoading(defers);
 }
 
 FrameLoader* ResourceLoader::frameLoader() const
@@ -182,9 +155,9 @@ NSData *ResourceLoader::resourceData()
         // before the caller of this method has an opportunity to retain the returned data (4070729).
         return [[m_resourceData.get() retain] autorelease];
 
-    if (ResourceHandle::supportsBufferedData())
-        return [m_connection.get() _bufferedData];
-
+    if (ResourceHandle::supportsBufferedData() && m_handle)
+        return m_handle->bufferedData();
+    
     return nil;
 }
 
@@ -259,7 +232,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChalle
     RefPtr<ResourceLoader> protector(this);
 
     m_currentConnectionChallenge = challenge;
-    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:delegate()];
+    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:(id<NSURLAuthenticationChallengeSender>)m_handle->delegate()];
     m_currentWebChallenge = webChallenge;
 
     frameLoader()->didReceiveAuthenticationChallenge(this, webChallenge);
@@ -391,7 +364,8 @@ void ResourceLoader::didCancel(NSError *error)
     m_currentWebChallenge = nil;
 
     frameLoader()->cancelPendingArchiveLoad(this);
-    [m_connection.get() cancel];
+    if (m_handle)
+        m_handle->cancel();
 
     frameLoader()->didFailToLoad(this, error);
 
@@ -421,12 +395,6 @@ void ResourceLoader::setIdentifier(id identifier)
 NSURLResponse *ResourceLoader::response() const
 {
     return m_response.get();
-}
-
-// FIXME: We should move this to ResourceHandle, once it implements all the connection callbacks
-bool ResourceLoader::loadsBlocked()
-{
-    return inNSURLConnectionCallback != 0;
 }
 
 NSError *ResourceLoader::cancelledError()
@@ -466,148 +434,32 @@ void ResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challeng
     cancel();
 }
 
-WebCoreResourceLoaderAsDelegate *ResourceLoader::delegate()
+void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    if (!m_delegate) {
-        WebCoreResourceLoaderAsDelegate *d = [[WebCoreResourceLoaderAsDelegate alloc] initWithLoader:this];
-        m_delegate = d;
-        [d release];
-    }
-    return m_delegate.get();
+    request = willSendRequest(request.nsURLRequest(), redirectResponse.nsURLResponse());
 }
 
-void ResourceLoader::releaseDelegate()
+void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-    if (!m_delegate)
-        return;
-    [m_delegate.get() detachLoader];
-    m_delegate = nil;
+    didReceiveResponse(response.nsURLResponse());
 }
 
-}
-
-@implementation WebCoreResourceLoaderAsDelegate
-
-- (id)initWithLoader:(ResourceLoader*)loader
+void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
-    self = [self init];
-    if (!self)
-        return nil;
-    m_loader = loader;
-    return self;
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
+    didReceiveData(nsData, lengthReceived, false);
+    [nsData release];
 }
 
-- (void)detachLoader
+void ResourceLoader::didFinishLoading(ResourceHandle*)
 {
-    m_loader = nil;
+    didFinishLoading();
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
-    if (!m_loader)
-        return nil;
-    ++inNSURLConnectionCallback;
-    NSURLRequest *result = m_loader->willSendRequest(newRequest, redirectResponse);
-    --inNSURLConnectionCallback;
-    return result;
+    didFail(error);
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didReceiveAuthenticationChallenge(challenge);
-    --inNSURLConnectionCallback;
 }
 
-- (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didCancelAuthenticationChallenge(challenge);
-    --inNSURLConnectionCallback;
-}
-
-- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didReceiveResponse(r);
-    --inNSURLConnectionCallback;
-}
-
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didReceiveData(data, lengthReceived, false);
-    --inNSURLConnectionCallback;
-}
-
-- (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->willStopBufferingData(data);
-    --inNSURLConnectionCallback;
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)con
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didFinishLoading();
-    --inNSURLConnectionCallback;
-}
-
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
-{
-    if (!m_loader)
-        return;
-    ++inNSURLConnectionCallback;
-    m_loader->didFail(error);
-    --inNSURLConnectionCallback;
-}
-
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
-{
-#ifndef NDEBUG
-    if (isInitializingConnection)
-        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
-#endif
-    if (!m_loader)
-        return nil;
-    ++inNSURLConnectionCallback;
-    NSCachedURLResponse *result = m_loader->willCacheResponse(cachedResponse);
-    --inNSURLConnectionCallback;
-    return result;
-}
-
-- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_loader)
-        return;
-    m_loader->receivedCredential(challenge, credential);
-}
-
-- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_loader)
-        return;
-    m_loader->receivedRequestToContinueWithoutCredential(challenge);
-}
-
-- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_loader)
-        return;
-    m_loader->receivedCancellation(challenge);
-}
-
-@end

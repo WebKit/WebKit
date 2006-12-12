@@ -47,7 +47,7 @@ namespace WebCore {
     class ResourceRequest;
     class SubresourceLoaderClient;
     
-    class SubresourceLoader : public ResourceLoader, ResourceHandleClient {
+    class SubresourceLoader : public ResourceLoader {
     public:
         static PassRefPtr<SubresourceLoader> create(Frame*, SubresourceLoaderClient*, const ResourceRequest&);
         
@@ -56,10 +56,7 @@ namespace WebCore {
         void stopLoading();
         
 #if PLATFORM(MAC)
-        // FIXME: These should go away once ResourceLoader uses ResourceHandle.
         virtual bool load(NSURLRequest *);
-        virtual NSData *resourceData();
-        virtual void setDefersLoading(bool);             
         
         virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
         virtual void didReceiveResponse(NSURLResponse *);
@@ -72,28 +69,6 @@ namespace WebCore {
         ResourceHandleClient* loaderAsResourceHandleClient() { return this; }
 #endif
 
-        // ResourceHandleClient
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
-        
-        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
-        virtual void didFinishLoading(ResourceHandle*);
-        virtual void didFail(ResourceHandle*, const ResourceError&);
-
-#if PLATFORM(MAC)
-        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { ResourceLoader::didReceiveAuthenticationChallenge(challenge); } 
-        virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { ResourceLoader::didCancelAuthenticationChallenge(challenge); } 
-        
-        virtual void willStopBufferingData(ResourceHandle*, NSData *data) { ResourceLoader::willStopBufferingData(data); } 
-        
-        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return ResourceLoader::willCacheResponse(cachedResponse); }
-        
-        virtual void receivedCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge, NSURLCredential *credential) { ResourceLoader::receivedCredential(challenge, credential); }
-        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { ResourceLoader::receivedRequestToContinueWithoutCredential(challenge); } 
-        virtual void receivedCancellation(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { ResourceLoader::receivedCancellation(challenge); }
-#endif
-        
-        ResourceHandle* handle() const { return m_handle.get(); }
     private:
         SubresourceLoader(Frame*, SubresourceLoaderClient*);
 
@@ -101,7 +76,6 @@ namespace WebCore {
         virtual void didCancel(NSError *);
 #endif
         SubresourceLoaderClient* m_client;
-        RefPtr<ResourceHandle> m_handle;
         bool m_loadingMultipartContent;
     };
 

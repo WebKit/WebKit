@@ -50,6 +50,7 @@ namespace WebCore {
     class KURL;
     class NavigationAction;
     class String;
+    class ResourceHandle;
     class ResourceLoader;
     class ResourceRequest;
 
@@ -107,7 +108,7 @@ namespace WebCore {
         virtual void loadedFromPageCache() = 0;
 
 #if PLATFORM(MAC)
-        virtual void download(NSURLConnection *, NSURLRequest *, NSURLResponse *, id proxy) = 0;
+        virtual void download(ResourceHandle*, NSURLRequest *, NSURLResponse *) = 0;
 
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, NSURLRequest *) = 0;
         virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) = 0;

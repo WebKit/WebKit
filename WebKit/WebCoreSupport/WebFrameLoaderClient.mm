@@ -79,6 +79,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreFrameBridge.h>
@@ -414,10 +415,11 @@ void WebFrameLoaderClient::loadedFromPageCache()
     [m_webFrame->_private->currentItem setHasPageCache:NO];
 }
 
-void WebFrameLoaderClient::download(NSURLConnection *connection, NSURLRequest *request,
-    NSURLResponse *response, id proxy)
+void WebFrameLoaderClient::download(ResourceHandle* handle, NSURLRequest *request, NSURLResponse *response)
 {
-    [WebDownload _downloadWithLoadingConnection:connection
+    id proxy = handle->releaseProxy();
+    ASSERT(proxy);
+    [WebDownload _downloadWithLoadingConnection:handle->connection()
                                         request:request
                                        response:response
                                        delegate:[getWebView(m_webFrame.get()) downloadDelegate]

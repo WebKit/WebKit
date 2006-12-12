@@ -59,41 +59,11 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
-void SubresourceLoader::setDefersLoading(bool defers)
-{
-    m_defersLoading = defers;
-    m_handle->setDefersLoading(defers);
-}
-
-NSData *SubresourceLoader::resourceData()
-{
-    if (ResourceHandle::supportsBufferedData())
-        return m_handle->bufferedData();
-    
-    return ResourceLoader::resourceData();
-}
-
 bool SubresourceLoader::load(NSURLRequest *r)
 {
-    ASSERT(m_handle == nil);
-    ASSERT(!frameLoader()->isArchiveLoadPending(this));
+    m_frame->loader()->didTellBridgeAboutLoad(KURL([r URL]).url());
     
-    m_originalURL = [r URL];
-    
-    NSURLRequest *clientRequest = willSendRequest(r, nil);
-    if (clientRequest == nil) {
-        didFail(frameLoader()->cancelledError(r));
-        return false;
-    }
-    r = clientRequest;
-    
-    if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
-        return true;
-  
-    m_frame->loader()->didTellBridgeAboutLoad(KURL([r URL]).url()); 
-    m_handle = ResourceHandle::create(r, this, m_frame->document()->docLoader(), m_defersLoading);
-
-    return true;
+    return ResourceLoader::load(r);
 }
 
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request)
@@ -272,35 +242,6 @@ void SubresourceLoader::didCancel(NSError *error)
         return;
     frameLoader()->removeSubresourceLoader(this);
     ResourceLoader::didCancel(error);
-}
-
-void SubresourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    NSURLRequest* newRequest = willSendRequest(request.nsURLRequest(), redirectResponse.nsURLResponse());
-    
-    request = newRequest;
-}
-
-void SubresourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
-{
-    didReceiveResponse(response.nsURLResponse());
-}
-
-void SubresourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
-{
-    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
-    didReceiveData(nsData, lengthReceived, false);
-    [nsData release];
-}
-
-void SubresourceLoader::didFinishLoading(ResourceHandle*)
-{
-    didFinishLoading();
-}
-
-void SubresourceLoader::didFail(ResourceHandle*, const ResourceError& error)
-{
-    didFail(error);
 }
 
 }

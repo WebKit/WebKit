@@ -1,5 +1,76 @@
 2006-12-12  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        Turn ResourceLoader into a ResourceHandleClient and stop using NSURLConnection in the loader.
+
+        * WebCore.exp:
+        Add new methods needed by WebKit.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Make ResourceHandle.h a private header.
+        
+        * loader/FrameLoaderClient.h:
+        Change the download method to take a ResourceHandle instead of an NSURLConnection.
+        
+        * loader/MainResourceLoader.h:
+        Get rid of the proxy instance variable, that's handled by ResourceHandlw now.
+        
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::willCacheResponse):
+        (WebCore::ResourceLoader::receivedCredential):
+        (WebCore::ResourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceLoader::receivedCancellation):
+        (WebCore::ResourceLoader::handle):
+        * loader/SubresourceLoader.h:
+        Make ResourceLoader a ResourceHandleClient, moving the methods from SubresourceLoader.
+        
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::load):
+        Use a ResourceHandle instead of an NSURLConnection.
+        
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::setDefersLoading):
+        (WebCore::ResourceLoader::resourceData):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        Remove the WebCoreResourceLoaderAsDelegate class, use a ResourceHandle instead of an NSURLConnection.
+        
+        * loader/mac/SubresourceLoaderMac.mm:
+        Remove ResourceHandleClient methods.
+        
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        Add an extra argument denoting whether this ResourceHandle can possibly be "converted" into one used for downloads.
+        
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::releaseProxy):
+        (WebCore::ResourceHandle::connection):
+        New methods for creating a NSURLConnectionDelegateProxy which is used when creating a NSURLDownload from an existing
+        connection.
+
+2006-12-12  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         * loader/mac/SubresourceLoaderMac.mm:

@@ -60,8 +60,6 @@ namespace WebCore {
 #if PLATFORM(MAC)
         virtual void didCancel(NSError *);
 
-        virtual void releaseDelegate();
-
         NSURLRequest *loadNow(NSURLRequest *);
 
         void receivedError(NSError *);
@@ -77,7 +75,6 @@ namespace WebCore {
         void continueAfterContentPolicy(PolicyAction, NSURLResponse *);
 
         RetainPtr<NSURLResponse> m_response;
-        RetainPtr<id> m_proxy;
         RetainPtr<NSURLRequest> m_initialRequest;
 #endif
 

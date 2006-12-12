@@ -345,7 +345,7 @@
 		656B84E20AEA1D3100A095B4 /* ResourceHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656B84E30AEA1D3100A095B4 /* ResourceHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */; };
 		656B84EB0AEA1DDA00A095B4 /* ResourceHandleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */; };
-		656B85380AEA1F9A00A095B4 /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B85370AEA1F9A00A095B4 /* ResourceHandle.h */; };
+		656B85380AEA1F9A00A095B4 /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B85370AEA1F9A00A095B4 /* ResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */; };
 		656D37340ADBA5DE00A4554D /* WebDataProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371C0ADBA5DE00A4554D /* WebDataProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };

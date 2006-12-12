@@ -33,6 +33,8 @@
 #import "FrameLoaderClient.h"
 #import "KURL.h"
 #import "PlatformString.h"
+#import "ResourceHandle.h"
+#import "ResourceRequest.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSHTTPCookie.h>
@@ -53,22 +55,13 @@ const size_t URLBufferLength = 2048;
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : ResourceLoader(frame)
-    , m_proxy(wkCreateNSURLConnectionDelegateProxy())
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
 {
-    [m_proxy.get() setDelegate:delegate()];
-    [m_proxy.get() release];
 }
 
 MainResourceLoader::~MainResourceLoader()
 {
-}
-
-void MainResourceLoader::releaseDelegate()
-{
-    [m_proxy.get() setDelegate:nil];
-    ResourceLoader::releaseDelegate();
 }
 
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
@@ -226,9 +219,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     }
 
     case PolicyDownload:
-        [m_proxy.get() setDelegate:nil];
-        frameLoader()->client()->download(connection(), request(), r, m_proxy.get());
-        m_proxy = nil;
+        frameLoader()->client()->download(m_handle.get(), request(), r);
         receivedError(interruptionForPolicyChangeError());
         return;
 
@@ -342,7 +333,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
 {
     bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument([r URL]);
 
-    ASSERT(!connection());
+    ASSERT(!m_handle);
     ASSERT(shouldLoadEmptyBeforeRedirect || !defersLoading());
 
     // Send this synthetic delegate callback since clients expect it, and
@@ -373,9 +364,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
         didReceiveResponse(resp);
         [resp release];
     } else {
-        NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:r delegate:m_proxy.get()];
-        m_connection = conn;
-        [conn release];
+        m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
     }
 
     return nil;
@@ -383,7 +372,7 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
 
 bool MainResourceLoader::load(NSURLRequest *r)
 {
-    ASSERT(!connection());
+    ASSERT(!m_handle);
 
     bool defer = defersLoading();
     if (defer) {

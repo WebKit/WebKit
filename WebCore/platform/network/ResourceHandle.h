@@ -46,22 +46,25 @@ typedef LONG_PTR LRESULT;
 #ifdef __OBJC__
 @class NSData;
 @class NSError;
+@class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
 @class WebCoreResourceHandleAsDelegate;
 #else
 class NSData;
 class NSError;
+class NSURLConnection;
 class NSURLRequest;
 class NSURLResponse;
 class WebCoreResourceHandleAsDelegate;
+typedef struct objc_object *id;
 #endif
 #endif
 
 namespace WebCore {
 
-class DocLoader;
 class FormData;
+class Frame;
 class KURL;
 class ResourceHandleClient;
 class ResourceHandleInternal;
@@ -74,20 +77,23 @@ template <typename T> class Timer;
 
 class ResourceHandle : public Shared<ResourceHandle> {
 private:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading);
+    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool mightDownloadFromHandle);
 
 public:
-    // FIXME: should not need the DocLoader
-    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, DocLoader*, bool defersLoading);
+    // FIXME: should not need the Frame
+    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool mightDownloadFromHandle = false);
 
     ~ResourceHandle();
 
 #if PLATFORM(MAC)
+    NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
     NSData* bufferedData();
-        
+    
     static bool supportsBufferedData();
+    
+    id releaseProxy();
 #endif
 
 #if USE(WININET)
@@ -105,6 +111,9 @@ public:
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 
+    // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the one you're in.
+    static bool loadsBlocked();    
+    
     void cancel();
     
     ResourceHandleClient* client() const;
@@ -117,7 +126,7 @@ public:
     const ResourceRequest& request() const;
 
 private:
-    bool start(DocLoader*);
+    bool start(Frame*);
 
     OwnPtr<ResourceHandleInternal> d;
 };

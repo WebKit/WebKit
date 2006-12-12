@@ -72,11 +72,8 @@ ResourceHandle::~ResourceHandle()
     releaseDelegate();
 }
 
-bool ResourceHandle::start(DocLoader* docLoader)
+bool ResourceHandle::start(Frame* frame)
 {
-    ASSERT(docLoader);
-    
-    FrameMac* frame = Mac(docLoader->frame());
     if (!frame)
         return false;
 
@@ -90,7 +87,19 @@ bool ResourceHandle::start(DocLoader* docLoader)
 #ifndef NDEBUG
     isInitializingConnection = YES;
 #endif
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate()];
+    id delegate;
+    
+    if (d->m_mightDownloadFromHandle) {
+        ASSERT(!d->m_proxy);
+        d->m_proxy = wkCreateNSURLConnectionDelegateProxy();
+        [d->m_proxy.get() setDelegate:ResourceHandle::delegate()];
+        [d->m_proxy.get() release];
+        
+        delegate = d->m_proxy.get();
+    } else 
+        delegate = ResourceHandle::delegate();
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
@@ -153,6 +162,24 @@ NSData* ResourceHandle::bufferedData()
         return [d->m_connection.get() _bufferedData];
 
     return nil;
+}
+
+id ResourceHandle::releaseProxy()
+{
+    id proxy = [[d->m_proxy.get() retain] autorelease];
+    d->m_proxy = nil;
+    [proxy setDelegate:nil];
+    return proxy;
+}
+
+NSURLConnection *ResourceHandle::connection() const
+{
+    return d->m_connection.get();
+}
+
+bool ResourceHandle::loadsBlocked()
+{
+    return inNSURLConnectionCallback != 0;
 }
 
 } // namespace WebCore
