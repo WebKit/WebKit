@@ -36,6 +36,7 @@ namespace WebCore {
     class ContextMenuClient;
     class ContextMenuController;
     class EditorClient;
+    class FocusController;
     class Frame;
     class FrameNamespace;
     class FloatRect;
@@ -57,9 +58,6 @@ namespace WebCore {
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
 
-        bool setFocusedNode(PassRefPtr<Node>);
-        Node* focusedNode() const { return m_focusedNode.get(); }
-
         const HashSet<Page*>* frameNamespace() const;
         static const HashSet<Page*>* frameNamespace(const String&);
 
@@ -70,8 +68,9 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
-        SelectionController* dragCaretController() { return m_dragCaretController.get(); }
         Chrome* chrome() { return m_chrome.get(); }
+        SelectionController* dragCaretController() { return m_dragCaretController.get(); }
+        FocusController* focusController() { return m_focusController.get(); }
         ContextMenuController* contextMenuController() { return m_contextMenuController.get(); }
 
         void setDefersLoading(bool);
@@ -84,8 +83,9 @@ namespace WebCore {
 #endif
 
     private:
-        OwnPtr<SelectionController> m_dragCaretController;
         OwnPtr<Chrome> m_chrome;
+        OwnPtr<SelectionController> m_dragCaretController;
+        OwnPtr<FocusController> m_focusController;
         OwnPtr<ContextMenuController> m_contextMenuController;
 
         EditorClient* m_editorClient;

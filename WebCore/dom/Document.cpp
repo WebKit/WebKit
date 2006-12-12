@@ -45,6 +45,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
@@ -810,9 +811,20 @@ Node::NodeType Document::nodeType() const
     return DOCUMENT_NODE;
 }
 
+FrameView* Document::view() const
+{
+    return m_view;
+}
+
 Frame* Document::frame() const 
 {
     return m_view ? m_view->frame() : 0; 
+}
+
+Page* Document::page() const
+{
+    Frame* frame = this->frame();
+    return frame ? frame->page() : 0;    
 }
 
 PassRefPtr<Range> Document::createRange()
@@ -1943,6 +1955,14 @@ void Document::setActiveNode(PassRefPtr<Node> newActiveNode)
     m_activeNode = newActiveNode;
 }
 
+void Document::focusedNodeDetached(Node* node)
+{
+    Page* page = this->page();
+    if (!page)
+        return;
+    page->focusController()->focusedNodeDetached(node);
+}
+
 void Document::hoveredNodeDetached(Node* node)
 {
     if (!m_hoverNode || (node != m_hoverNode && (!m_hoverNode->isTextNode() || node != m_hoverNode->parent())))
@@ -1980,28 +2000,20 @@ void Document::setDashboardRegions(const Vector<DashboardRegionValue>& regions)
 
 bool Document::setFocusedNode(PassRefPtr<Node> node)
 {
-    Frame* frame = this->frame();
-    if (!frame)
-        return false;
-    
-    Page* page = frame->page();
+    Page* page = this->page();
     if (!page)
         return false;
     
-    return page->setFocusedNode(node);
+    return page->focusController()->setFocusedNode(node);
 }
 
 Node* Document::focusedNode() const
 {
-    Frame* frame = this->frame();
-    if (!frame)
-        return 0;
-    
-    Page* page = frame->page();
+    Page* page = this->page();
     if (!page)
         return 0;
     
-    return page->focusedNode();
+    return page->focusController()->focusedNode();
 }
 
 void Document::setCSSTarget(Node* n)
