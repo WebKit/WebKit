@@ -27,11 +27,11 @@
  */
 
 #include "config.h"
-#include "ResourceHandle.h"
 #include "ResourceLoader.h"
 
 #include "Frame.h"
 #include "Page.h"
+#include "ResourceHandle.h"
 
 namespace WebCore {
 
