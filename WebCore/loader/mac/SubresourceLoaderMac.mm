@@ -90,6 +90,7 @@ bool SubresourceLoader::load(NSURLRequest *r)
     if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
         return true;
   
+    m_frame->loader()->didTellBridgeAboutLoad(KURL([r URL]).url()); 
     m_handle = ResourceHandle::create(r, this, m_frame->document()->docLoader(), m_defersLoading);
 
     return true;

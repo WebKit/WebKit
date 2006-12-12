@@ -80,8 +80,6 @@ bool ResourceHandle::start(DocLoader* docLoader)
     if (!frame)
         return false;
 
-    frame->loader()->didTellBridgeAboutLoad(url().url());
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // If we are no longer attached to a Page, this must be an attempted load from an
