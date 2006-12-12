@@ -31,7 +31,6 @@
 #include "SVGFitToViewBox.h"
 #include "SVGHelper.h"
 #include "SVGLength.h"
-#include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"

@@ -24,8 +24,9 @@
 #ifdef SVG_SUPPORT
 #include "SVGLocatable.h"
 
+#include "AffineTransform.h"
 #include "RenderPath.h"
-#include "SVGMatrix.h"
+#include "SVGException.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -88,57 +89,56 @@ FloatRect SVGLocatable::getBBox(const SVGStyledElement* e)
     return bboxRect;
 }
 
-SVGMatrix* SVGLocatable::getCTM(const SVGElement* element)
+AffineTransform SVGLocatable::getCTM(const SVGElement* element)
 {
     if (!element)
-        return 0;
+        return AffineTransform();
 
-    SVGMatrix* ctm = SVGSVGElement::createSVGMatrix();
+    AffineTransform ctm;
 
     Node* parent = element->parentNode();
     if (parent && parent->isElementNode()) {
         SVGElement* parentElement = svg_dynamic_cast(parent);
         if (parentElement && parentElement->isStyledLocatable()) {
-            RefPtr<SVGMatrix> parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getCTM();
-            ctm->multiply(parentCTM.get());
+            AffineTransform parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getCTM();
+            ctm = parentCTM * ctm;
         }
     }
 
     return ctm;
 }
 
-SVGMatrix* SVGLocatable::getScreenCTM(const SVGElement* element)
+AffineTransform SVGLocatable::getScreenCTM(const SVGElement* element)
 {
     if (!element)
-        return 0;
+        return AffineTransform();
 
-    SVGMatrix* ctm = SVGSVGElement::createSVGMatrix();
+    AffineTransform ctm;
 
     Node* parent = element->parentNode();
     if (parent && parent->isElementNode()) {
         SVGElement* parentElement = static_cast<SVGElement*>(parent);
         if (parentElement->isStyledLocatable()) {
-            RefPtr<SVGMatrix> parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getScreenCTM();
-            ctm->multiply(parentCTM.get());
+            AffineTransform parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getScreenCTM();
+            ctm = parentCTM * ctm;
         }
     }
 
     return ctm;
 }
 
-SVGMatrix* SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec) const
+AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec) const
 {
-    RefPtr<SVGMatrix> startctm(getCTM());
-    SVGMatrix* ctm = SVGSVGElement::createSVGMatrix();
-    ctm->multiply(startctm.get());
+    AffineTransform ctm = getCTM();
 
     SVGElement* targetElement = svg_dynamic_cast(target);
     if (targetElement && targetElement->isStyledLocatable()) {
-        RefPtr<SVGMatrix> targetCTM = static_cast<SVGStyledLocatableElement*>(targetElement)->getCTM();
-        targetCTM.get()->inverse(ec);
-        if (ec)
+        AffineTransform targetCTM = static_cast<SVGStyledLocatableElement*>(targetElement)->getCTM();
+        if (!targetCTM.isInvertible()) {
+            ec = SVG_MATRIX_NOT_INVERTABLE;
             return ctm;
-        ctm->postMultiply(targetCTM.get());
+        }
+        ctm *= targetCTM.inverse();
     }
 
     return ctm;

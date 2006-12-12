@@ -29,7 +29,7 @@
 namespace WebCore {
     
     class AtomicString;
-    class SVGMatrix;
+    class AffineTransform;
     class SVGTransformList;
 
     class SVGTransformable : virtual public SVGLocatable {
@@ -38,13 +38,13 @@ namespace WebCore {
         virtual ~SVGTransformable();
 
         // 'SVGTransformable' functions
-        virtual SVGMatrix* localMatrix() const = 0;
+        virtual AffineTransform localMatrix() const = 0;
 
         virtual void updateLocalTransform(SVGTransformList*) = 0;
 
         static bool parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
-        SVGMatrix* getCTM(const SVGElement*) const;
-        SVGMatrix* getScreenCTM(const SVGElement*) const;
+        AffineTransform getCTM(const SVGElement*) const;
+        AffineTransform getScreenCTM(const SVGElement*) const;
     };
 
 } // namespace WebCore

@@ -147,11 +147,11 @@ TextStream& operator<<(TextStream& ts, const AffineTransform &m)
 {
     if (m.isIdentity())
         ts << "identity";
-    else 
-    {
-        ts << "{m=((" << m.m11() << "," << m.m12() << ")(" << m.m21() << "," << m.m22() << "))";
-        ts << " t=(" << m.dx() << "," << m.dy() << ")}";
+    else {
+        ts << "{m=((" << m.a() << "," << m.b() << ")(" << m.c() << "," << m.d() << "))";
+        ts << " t=(" << m.e() << "," << m.f() << ")}";
     }
+
     return ts;
 }
 

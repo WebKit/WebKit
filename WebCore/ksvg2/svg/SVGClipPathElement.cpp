@@ -27,7 +27,6 @@
 #include "Document.h"
 #include "RenderView.h"
 #include "SVGHelper.h"
-#include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
 #include "cssstyleselector.h"
@@ -88,7 +87,7 @@ SVGResource* SVGClipPathElement::canvasResource()
             RenderStyle* pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
             Path pathData = styled->toPathData();
             if (e->isStyledTransformable())
-                pathData.transform(static_cast<SVGStyledTransformableElement*>(e)->localMatrix()->matrix());
+                pathData.transform(static_cast<SVGStyledTransformableElement*>(e)->localMatrix());
             if (!pathData.isEmpty())
                 m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
             pathStyle->deref(view()->renderArena());

@@ -31,7 +31,7 @@
 #include "RenderPath.h"
 #include "SVGDocument.h"
 #include "SVGHelper.h"
-#include "SVGMatrix.h"
+#include "AffineTransform.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
 
@@ -50,17 +50,17 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGStyledTransformableElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
-SVGMatrix* SVGStyledTransformableElement::localMatrix() const
+AffineTransform SVGStyledTransformableElement::localMatrix() const
 {
-    return lazy_create<SVGMatrix>(m_localMatrix);
+    return m_localMatrix;
 }
 
-SVGMatrix* SVGStyledTransformableElement::getCTM() const
+AffineTransform SVGStyledTransformableElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
 }
 
-SVGMatrix* SVGStyledTransformableElement::getScreenCTM() const
+AffineTransform SVGStyledTransformableElement::getScreenCTM() const
 {
     return SVGTransformable::getScreenCTM(this);
 }
@@ -72,7 +72,7 @@ void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList* local
     if(localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix->matrix());
+            renderer()->setLocalTransform(m_localMatrix);
             renderer()->setNeedsLayout(true);
         }
     }
@@ -113,8 +113,8 @@ void SVGStyledTransformableElement::attach()
 {
     SVGStyledElement::attach();
 
-    if (renderer() && m_localMatrix)
-        renderer()->setLocalTransform(m_localMatrix->matrix());
+    if (renderer() && !m_localMatrix.isIdentity())
+        renderer()->setLocalTransform(m_localMatrix);
 }
 
 }

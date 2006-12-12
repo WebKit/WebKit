@@ -24,7 +24,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGMatrix { 
+    interface [Conditional=SVG, PODType=AffineTransform] SVGMatrix { 
         attribute float a;
         attribute float b;
         attribute float c;
@@ -33,13 +33,13 @@ module svg {
         attribute float f;
 
         SVGMatrix multiply(in SVGMatrix secondMatrix);
-        SVGMatrix inverse()
+        [Custom] SVGMatrix inverse()
             raises(SVGException);
         SVGMatrix translate(in float x, in float y);
         SVGMatrix scale(in float scaleFactor);
         SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
         SVGMatrix rotate(in float angle);
-        SVGMatrix rotateFromVector(in float x, in float y)
+        [Custom] SVGMatrix rotateFromVector(in float x, in float y)
             raises(SVGException);
         SVGMatrix flipX();
         SVGMatrix flipY();

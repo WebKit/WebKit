@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-    class SVGMatrix;
     class SVGElement;
 
     class SVGStyledLocatableElement : public SVGStyledElement, virtual public SVGLocatable {
@@ -44,8 +43,8 @@ namespace WebCore {
         virtual SVGElement* farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual SVGMatrix* getCTM() const;
-        virtual SVGMatrix* getScreenCTM() const;
+        virtual AffineTransform getCTM() const;
+        virtual AffineTransform getScreenCTM() const;
     };
 
 } // namespace WebCore

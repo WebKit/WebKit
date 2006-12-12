@@ -24,10 +24,10 @@
 #ifdef SVG_SUPPORT
 #include "SVGTextElement.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGText.h"
 #include "SVGLengthList.h"
-#include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
 #include "SVGTransformList.h"
@@ -47,9 +47,9 @@ SVGTextElement::~SVGTextElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
-SVGMatrix* SVGTextElement::localMatrix() const
+AffineTransform SVGTextElement::localMatrix() const
 {
-    return lazy_create<SVGMatrix>(m_localMatrix);
+    return m_localMatrix;
 }
 
 void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
@@ -75,7 +75,7 @@ void SVGTextElement::updateLocalTransform(SVGTransformList* localTransforms)
     if (localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix->matrix());
+            renderer()->setLocalTransform(m_localMatrix);
             renderer()->setNeedsLayout(true);
         }
     }
@@ -85,8 +85,8 @@ void SVGTextElement::attach()
 {
     SVGStyledElement::attach();
 
-    if (renderer() && m_localMatrix)
-        renderer()->setLocalTransform(m_localMatrix->matrix());
+    if (renderer() && !m_localMatrix.isIdentity())
+        renderer()->setLocalTransform(m_localMatrix);
 }
 
 SVGElement* SVGTextElement::nearestViewportElement() const
@@ -104,12 +104,12 @@ FloatRect SVGTextElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-SVGMatrix* SVGTextElement::getScreenCTM() const
+AffineTransform SVGTextElement::getScreenCTM() const
 {
     return SVGTransformable::getScreenCTM(this);
 }
 
-SVGMatrix* SVGTextElement::getCTM() const
+AffineTransform SVGTextElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
 }

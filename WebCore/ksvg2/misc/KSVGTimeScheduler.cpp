@@ -30,7 +30,6 @@
 #include "SVGAnimateTransformElement.h"
 #include "SVGTransformList.h"
 #include "SVGDOMImplementation.h"
-#include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGStyledTransformableElement.h"

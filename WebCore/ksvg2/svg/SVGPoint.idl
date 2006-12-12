@@ -30,8 +30,7 @@ module svg {
                  attribute float y
                      setter raises(DOMException);
 
-        // FIXME - Reenable this once SVGMatrix is converted to AffineTransform
-        //SVGPoint matrixTransform(in SVGMatrix matrix);
+        SVGPoint matrixTransform(in SVGMatrix matrix);
     };
 
 }

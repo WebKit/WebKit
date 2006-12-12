@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGPreserveAspectRatio.h"
 
-#include "SVGMatrix.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -101,12 +100,12 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         m_context->notifyAttributeChange();
 }
 
-SVGMatrix* SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
-                                          float logicWidth, float logicHeight,
-                                          float /*physX*/, float /*physY*/,
-                                          float physWidth, float physHeight)
+AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
+                                               float logicWidth, float logicHeight,
+                                               float /*physX*/, float /*physY*/,
+                                               float physWidth, float physHeight)
 {
-    SVGMatrix* temp = SVGSVGElement::createSVGMatrix();
+    AffineTransform temp;
 
     if (align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return temp;
@@ -115,26 +114,26 @@ SVGMatrix* SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
     float svgar = physWidth / physHeight;
 
     if (align() == SVG_PRESERVEASPECTRATIO_NONE) {
-        temp->scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
-        temp->translate(-logicX, -logicY);
+        temp.scale(physWidth / logicWidth, physHeight / logicHeight);
+        temp.translate(-logicX, -logicY);
     } else if (vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE)) {
-        temp->scale(physHeight / logicHeight);
+        temp.scale(physHeight / logicHeight, physHeight / logicHeight);
 
         if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMINYMAX)
-            temp->translate(-logicX, -logicY);
+            temp.translate(-logicX, -logicY);
         else if (align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMAX)
-            temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
+            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
         else
-            temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
+            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
     } else {
-        temp->scale(physWidth / logicWidth);
+        temp.scale(physWidth / logicWidth, physWidth / logicWidth);
 
         if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMAXYMIN)
-            temp->translate(-logicX, -logicY);
+            temp.translate(-logicX, -logicY);
         else if (align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMAXYMID)
-            temp->translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
+            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
         else
-            temp->translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
+            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
     }
 
     return temp;

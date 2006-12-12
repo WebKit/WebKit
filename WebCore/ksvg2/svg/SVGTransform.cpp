@@ -23,7 +23,7 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 
-#include "SVGMatrix.h"
+#include "SVGAngle.h"
 #include "SVGTransform.h"
 #include "SVGSVGElement.h"
 
@@ -31,7 +31,6 @@ using namespace WebCore;
 
 SVGTransform::SVGTransform()
     : Shared<SVGTransform>()
-    , m_matrix(SVGSVGElement::createSVGMatrix())
 {
     m_type = SVG_TRANSFORM_UNKNOWN;
     m_angle = 0;
@@ -46,9 +45,9 @@ unsigned short SVGTransform::type() const
     return m_type;
 }
 
-SVGMatrix *SVGTransform::matrix() const
+AffineTransform SVGTransform::matrix() const
 {
-    return m_matrix.get();
+    return m_matrix;
 }
 
 double SVGTransform::angle() const
@@ -56,11 +55,11 @@ double SVGTransform::angle() const
     return m_angle;
 }
 
-void SVGTransform::setMatrix(SVGMatrix *matrix)
+void SVGTransform::setMatrix(const AffineTransform& matrix)
 {
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;
-    
+
     m_matrix = matrix;
 }
 
@@ -68,48 +67,48 @@ void SVGTransform::setTranslate(double tx, double ty)
 {
     m_type = SVG_TRANSFORM_TRANSLATE;
     m_angle = 0;
-    
-    m_matrix->reset();
-    m_matrix->translate(tx, ty);
+
+    m_matrix.reset();
+    m_matrix.translate(tx, ty);
 }
 
 void SVGTransform::setScale(double sx, double sy)
 {
     m_type = SVG_TRANSFORM_SCALE;
     m_angle = 0;
-    
-    m_matrix->reset();
-    m_matrix->scaleNonUniform(sx, sy);
+
+    m_matrix.reset();
+    m_matrix.scale(sx, sy);
 }
 
 void SVGTransform::setRotate(double angle, double cx, double cy)
 {
     m_type = SVG_TRANSFORM_ROTATE;
     m_angle = angle;
-    
+
     // TODO: toString() implementation, which can show cx, cy (need to be stored?)
-    m_matrix->reset();
-    m_matrix->translate(cx, cy);
-    m_matrix->rotate(angle);
-    m_matrix->translate(-cx, -cy);
+    m_matrix.reset();
+    m_matrix.translate(cx, cy);
+    m_matrix.rotate(angle);
+    m_matrix.translate(-cx, -cy);
 }
 
 void SVGTransform::setSkewX(double angle)
 {
     m_type = SVG_TRANSFORM_SKEWX;
     m_angle = angle;
-    
-    m_matrix->reset();
-    m_matrix->skewX(angle);
+
+    m_matrix.reset();
+    m_matrix.shear(tan(SVGAngle::torad(angle)), 0.0f);
 }
 
 void SVGTransform::setSkewY(double angle)
 {
     m_type = SVG_TRANSFORM_SKEWY;
     m_angle = angle;
-    
-    m_matrix->reset();
-    m_matrix->skewY(angle);
+
+    m_matrix.reset();
+    m_matrix.shear(0.0f, tan(SVGAngle::torad(angle)));
 }
 
 // vim:ts=4:noet

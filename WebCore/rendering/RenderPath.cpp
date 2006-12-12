@@ -68,7 +68,7 @@ FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
     // absolute transform? 
     double localX;
     double localY;
-    absoluteTransform().invert().map(point.x(), point.y(), &localX, &localY);
+    absoluteTransform().inverse().map(point.x(), point.y(), &localX, &localY);
     return FloatPoint(localX, localY);
 }
 

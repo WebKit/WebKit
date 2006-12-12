@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGNumberList.h"
 
-#include "SVGMatrix.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {

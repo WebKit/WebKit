@@ -71,34 +71,64 @@ bool AffineTransform::isIdentity() const
     return m_transform.isIdentity();
 }
 
-double AffineTransform::m11() const
+double AffineTransform::a() const
 {
     return m_transform.m11();
 }
 
-double AffineTransform::m12() const
+void AffineTransform::setA(double a)
+{
+    m_transform.setMatrix(a, b(), c(), d(), e(), f());
+}
+
+double AffineTransform::b() const
 {
     return m_transform.m12();
 }
 
-double AffineTransform::m21() const
+void AffineTransform::setB(double b)
+{
+    m_transform.setMatrix(a(), b, c(), d(), e(), f());
+}
+
+double AffineTransform::c() const
 {
     return m_transform.m21();
 }
 
-double AffineTransform::m22() const
+void AffineTransform::setC(double c)
+{
+    m_transform.setMatrix(a(), b(), c, d(), e(), f());
+}
+
+double AffineTransform::d() const
 {
     return m_transform.m22();
 }
 
-double AffineTransform::dx() const
+void AffineTransform::setD(double d)
+{
+    m_transform.setMatrix(a(), b(), c(), d, e(), f());
+}
+
+double AffineTransform::e() const
 {
     return m_transform.dx();
 }
 
-double AffineTransform::dy() const
+void AffineTransform::setE(double e)
+{
+    m_transform.setMatrix(a(), b(), c(), d(), e, f());
+}
+
+double AffineTransform::f() const
 {
     return m_transform.dy();
+}
+
+void AffineTransform::setF(double f)
+{
+    m_transform.setMatrix(a(), b(), c(), d(), e(), f);
 }
 
 void AffineTransform::reset()
@@ -135,7 +165,7 @@ double AffineTransform::det() const
     return m_transform.det();
 }
 
-AffineTransform AffineTransform::invert() const
+AffineTransform AffineTransform::inverse() const
 {
     if(!isInvertible())
         return AffineTransform();

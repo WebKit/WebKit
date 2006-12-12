@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
+    class AffineTransform;
     class FloatRect;
     class SVGElement;
-    class SVGMatrix;
     class SVGStyledElement;
 
     class SVGLocatable {
@@ -44,16 +44,16 @@ namespace WebCore {
         virtual SVGElement* farthestViewportElement() const = 0;
 
         virtual FloatRect getBBox() const = 0;
-        virtual SVGMatrix* getCTM() const = 0;
-        virtual SVGMatrix* getScreenCTM() const = 0;
-        SVGMatrix* getTransformToElement(SVGElement*, ExceptionCode&) const;
+        virtual AffineTransform getCTM() const = 0;
+        virtual AffineTransform getScreenCTM() const = 0;
+        AffineTransform getTransformToElement(SVGElement*, ExceptionCode&) const;
 
     protected:
         static SVGElement* nearestViewportElement(const SVGStyledElement*);
         static SVGElement* farthestViewportElement(const SVGStyledElement*);
         static FloatRect getBBox(const SVGStyledElement*);
-        static SVGMatrix* getCTM(const SVGElement*);
-        static SVGMatrix* getScreenCTM(const SVGElement*);
+        static AffineTransform getCTM(const SVGElement*);
+        static AffineTransform getScreenCTM(const SVGElement*);
     };
 
 } // namespace WebCore

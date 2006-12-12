@@ -77,34 +77,64 @@ bool AffineTransform::isIdentity() const
     return CGAffineTransformIsIdentity(m_transform);
 }
 
-double AffineTransform::m11() const
+double AffineTransform::a() const
 {
     return m_transform.a;
 }
 
-double AffineTransform::m12() const
+void AffineTransform::setA(double a)
+{
+    m_transform.a = a;
+}
+
+double AffineTransform::b() const
 {
     return m_transform.b;
 }
 
-double AffineTransform::m21() const
+void AffineTransform::setB(double b)
+{
+    m_transform.b = b;
+}
+
+double AffineTransform::c() const
 {
     return m_transform.c;
 }
 
-double AffineTransform::m22() const
+void AffineTransform::setC(double c)
+{
+    m_transform.c = c;
+}
+
+double AffineTransform::d() const
 {
     return m_transform.d;
 }
 
-double AffineTransform::dx() const
+void AffineTransform::setD(double d)
+{
+    m_transform.d = d;
+}
+
+double AffineTransform::e() const
 {
     return m_transform.tx;
 }
 
-double AffineTransform::dy() const
+void AffineTransform::setE(double e)
+{
+    m_transform.tx = e;
+}
+
+double AffineTransform::f() const
 {
     return m_transform.ty;
+}
+
+void AffineTransform::setF(double f)
+{
+    m_transform.ty = f;
 }
 
 void AffineTransform::reset()
@@ -142,7 +172,7 @@ double AffineTransform::det() const
     return m_transform.a * m_transform.d - m_transform.b * m_transform.c;
 }
 
-AffineTransform AffineTransform::invert() const
+AffineTransform AffineTransform::inverse() const
 {
     if (isInvertible())
         return AffineTransform(CGAffineTransformInvert(m_transform));

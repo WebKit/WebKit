@@ -24,12 +24,12 @@
 #define KSVG_SVGTransformImpl_H
 #ifdef SVG_SUPPORT
 
+#include "AffineTransform.h"
 #include "Shared.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class SVGMatrix;
     class SVGTransform : public Shared<SVGTransform> {
     public:
         enum SVGTransformType {
@@ -47,11 +47,11 @@ namespace WebCore {
                
         unsigned short type() const;
 
-        SVGMatrix* matrix() const;
+        AffineTransform matrix() const;
     
         double angle() const;
 
-        void setMatrix(SVGMatrix*);
+        void setMatrix(const AffineTransform&);
         void setTranslate(double tx, double ty);
         void setScale(double sx, double sy);
         void setRotate(double angle, double cx, double cy);
@@ -61,7 +61,7 @@ namespace WebCore {
     private:
         double m_angle;
         unsigned short m_type;
-        RefPtr<SVGMatrix> m_matrix;
+        AffineTransform m_matrix;
     };
 
 } // namespace WebCore

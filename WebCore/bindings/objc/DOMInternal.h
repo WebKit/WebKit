@@ -31,12 +31,6 @@
 #import "DOMObject.h"
 #import "DOMRGBColor.h"
 
-#ifdef SVG_SUPPORT
-#import "DOMSVGNumber.h"
-#import "DOMSVGPoint.h"
-#import "DOMSVGRect.h"
-#endif // SVG_SUPPORT
-
 #ifdef XPATH_SUPPORT
 #import "DOMXPathNSResolver.h"
 #endif // XPATH_SUPPORT
@@ -212,6 +206,7 @@
 #import "DOMSVGMaskElementInternal.h"
 #import "DOMSVGMatrixInternal.h"
 #import "DOMSVGMetadataElementInternal.h"
+#import "DOMSVGNumberInternal.h"
 #import "DOMSVGNumberListInternal.h"
 #import "DOMSVGPaintInternal.h"
 #import "DOMSVGPathElementInternal.h"
@@ -237,12 +232,14 @@
 #import "DOMSVGPathSegMovetoAbsInternal.h"
 #import "DOMSVGPathSegMovetoRelInternal.h"
 #import "DOMSVGPatternElementInternal.h"
+#import "DOMSVGPointInternal.h"
 #import "DOMSVGPointListInternal.h"
 #import "DOMSVGPolygonElementInternal.h"
 #import "DOMSVGPolylineElementInternal.h"
 #import "DOMSVGPreserveAspectRatioInternal.h"
 #import "DOMSVGRadialGradientElementInternal.h"
 #import "DOMSVGRectElementInternal.h"
+#import "DOMSVGRectInternal.h"
 #import "DOMSVGRenderingIntentInternal.h"
 #import "DOMSVGSVGElementInternal.h"
 #import "DOMSVGScriptElementInternal.h"
@@ -275,6 +272,7 @@ namespace WebCore {
     class NodeFilter;
 
 #ifdef SVG_SUPPORT
+    class AffineTransform;
     class FloatPoint;
     class FloatRect;
 #endif // SVG_SUPPORT
@@ -302,27 +300,6 @@ namespace WebCore {
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 + (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
 @end
-
-
-#ifdef SVG_SUPPORT
-// SVG Internal Interfaces
-
-@interface DOMSVGNumber (WebCoreInternal)
-+ (DOMSVGNumber *)_SVGNumberWith:(float)value;
-- (float)_SVGNumber;
-@end
-
-@interface DOMSVGPoint (WebCoreInternal)
-+ (DOMSVGPoint *)_SVGPointWith:(WebCore::FloatPoint)impl;
-- (WebCore::FloatPoint)_SVGPoint;
-@end
-
-@interface DOMSVGRect (WebCoreInternal)
-+ (DOMSVGRect *)_SVGRectWith:(WebCore::FloatRect)impl;
-- (WebCore::FloatRect)_SVGRect;
-@end
-
-#endif // SVG_SUPPORT
 
 
 #ifdef XPATH_SUPPORT

@@ -33,7 +33,6 @@
 #include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGHelper.h"
-#include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"

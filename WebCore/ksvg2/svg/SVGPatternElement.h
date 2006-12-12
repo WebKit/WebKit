@@ -66,7 +66,7 @@ namespace WebCore
         virtual SVGResource* canvasResource();
 
         // 'virtual SVGLocatable' functions
-        virtual SVGMatrix* getCTM() const;
+        virtual AffineTransform getCTM() const;
 
     protected:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)

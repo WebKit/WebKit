@@ -33,7 +33,7 @@
 #include "RenderSVGContainer.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
-#include "SVGMatrix.h"
+#include "AffineTransform.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransform.h"
@@ -108,9 +108,9 @@ FloatRect SVGSVGElement::viewport() const
     double _y = y()->value();
     double w = width()->value();
     double h = height()->value();
-    RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
-    viewBox->matrix().map(_x, _y, &_x, &_y);
-    viewBox->matrix().map(w, h, &w, &h);
+    AffineTransform viewBox = viewBoxToViewTransform(w, h);
+    viewBox.map(_x, _y, &_x, &_y);
+    viewBox.map(w, h, &w, &h);
     return FloatRect(_x, _y, w, h);
 }
 
@@ -271,9 +271,9 @@ void SVGSVGElement::deselectAll()
     // FIXME: Implement me (see bug 11275)
 }
 
-float SVGSVGElement::createSVGNumber()
+double SVGSVGElement::createSVGNumber()
 {
-    return 0;
+    return 0.0;
 }
 
 SVGLength* SVGSVGElement::createSVGLength()
@@ -291,9 +291,9 @@ FloatPoint SVGSVGElement::createSVGPoint()
     return FloatPoint();
 }
 
-SVGMatrix* SVGSVGElement::createSVGMatrix()
+AffineTransform SVGSVGElement::createSVGMatrix()
 {
-    return new SVGMatrix();
+    return AffineTransform();
 }
 
 FloatRect SVGSVGElement::createSVGRect()
@@ -306,38 +306,34 @@ SVGTransform* SVGSVGElement::createSVGTransform()
     return new SVGTransform();
 }
 
-SVGTransform* SVGSVGElement::createSVGTransformFromMatrix(SVGMatrix* matrix)
+SVGTransform* SVGSVGElement::createSVGTransformFromMatrix(const AffineTransform& matrix)
 {    
     SVGTransform* obj = SVGSVGElement::createSVGTransform();
     obj->setMatrix(matrix);
     return obj;
 }
 
-SVGMatrix* SVGSVGElement::getCTM() const
+AffineTransform SVGSVGElement::getCTM() const
 {
-    SVGMatrix* mat = createSVGMatrix();
-    if (mat) {
-        mat->translate(x()->value(), y()->value());
+    AffineTransform mat;
+    mat.translate(x()->value(), y()->value());
 
-        if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
-            mat->multiply(viewBox.get());
-        }
+    if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
+        AffineTransform viewBox = viewBoxToViewTransform(width()->value(), height()->value());
+        mat = viewBox * mat;
     }
 
     return mat;
 }
 
-SVGMatrix* SVGSVGElement::getScreenCTM() const
+AffineTransform SVGSVGElement::getScreenCTM() const
 {
-    SVGMatrix* mat = SVGStyledLocatableElement::getScreenCTM();
-    if (mat) {
-        mat->translate(x()->value(), y()->value());
+    AffineTransform mat = SVGStyledLocatableElement::getScreenCTM();
+    mat.translate(x()->value(), y()->value());
 
-        if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
-            mat->multiply(viewBox.get());
-        }
+    if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
+        AffineTransform viewBox = viewBoxToViewTransform(width()->value(), height()->value());
+        mat = viewBox * mat;
     }
 
     return mat;

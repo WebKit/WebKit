@@ -26,7 +26,7 @@
 
 #include "RegularExpression.h"
 #include "SVGHelper.h"
-#include "SVGMatrix.h"
+#include "AffineTransform.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
@@ -41,18 +41,16 @@ SVGTransformable::~SVGTransformable()
 {
 }
 
-SVGMatrix* SVGTransformable::getCTM(const SVGElement* element) const
+AffineTransform SVGTransformable::getCTM(const SVGElement* element) const
 {
-    SVGMatrix* ctm = SVGLocatable::getCTM(element);
-    ctm->multiply(localMatrix());
-    return ctm;
+    AffineTransform ctm = SVGLocatable::getCTM(element);
+    return localMatrix() * ctm;
 }
 
-SVGMatrix* SVGTransformable::getScreenCTM(const SVGElement* element) const
+AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
 {
-    SVGMatrix* ctm = SVGLocatable::getScreenCTM(element);
-    ctm->multiply(localMatrix());
-    return ctm;
+    AffineTransform ctm = SVGLocatable::getScreenCTM(element);
+    return localMatrix() * ctm;
 }
 
 bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
@@ -112,12 +110,12 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
         else if (subtransform[0] == "skewy" && nparams == 1)
             t->setSkewY(params[0].toDouble());
         else if (subtransform[0] == "matrix" && nparams == 6) {
-            SVGMatrix* ret = new SVGMatrix(params[0].toDouble(),
-                                           params[1].toDouble(),
-                                           params[2].toDouble(),
-                                           params[3].toDouble(),
-                                           params[4].toDouble(),
-                                           params[5].toDouble());
+            AffineTransform ret(params[0].toDouble(),
+                                params[1].toDouble(),
+                                params[2].toDouble(),
+                                params[3].toDouble(),
+                                params[4].toDouble(),
+                                params[5].toDouble());
             t->setMatrix(ret);
         } else {
             delete t;

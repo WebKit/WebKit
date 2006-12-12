@@ -26,10 +26,9 @@
 #include "DocLoader.h"
 #include "Document.h"
 
-#include "SVGNames.h"
 #include "SVGImageElement.h"
 #include "SVGLength.h"
-#include "SVGMatrix.h"
+#include "SVGNames.h"
 
 #include "RenderImage.h"
 

@@ -80,7 +80,7 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
     RenderObject::PaintInfo pi(paintInfo);
     
     if (!flow->isRootInlineBox())
-        pi.rect = (object->localTransform()).invert().mapRect(pi.rect);
+        pi.rect = (object->localTransform()).inverse().mapRect(pi.rect);
 
     float opacity = object->style()->opacity();
     if (opacity < 1.0f) {

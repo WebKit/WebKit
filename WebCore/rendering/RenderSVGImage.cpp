@@ -150,7 +150,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
 
     PaintInfo pi(paintInfo);
-    pi.rect = absoluteTransform().invert().mapRect(pi.rect);
+    pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
 
     int x = 0, y = 0;
     if (shouldPaint(pi, x, y)) {
@@ -188,7 +188,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     AffineTransform totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
-    totalTransform.invert().map(_x + _tx, _y + _ty, &localX, &localY);
+    totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
     return RenderImage::nodeAtPoint(request, result, (int)localX, (int)localY, 0, 0, hitTestAction);
 }
 

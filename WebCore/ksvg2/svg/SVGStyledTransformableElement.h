@@ -34,8 +34,6 @@ namespace WebCore {
     class Node;
     class StringImpl;
     class SVGTransformList;
-    class SVGMatrix;
-    class SVGTransformList;
 
     class SVGStyledTransformableElement : public SVGStyledLocatableElement, public SVGTransformable {
     public:
@@ -45,11 +43,11 @@ namespace WebCore {
         virtual bool isStyledTransformable() const { return true; }
 
         // 'SVGTransformable' functions
-        virtual SVGMatrix* localMatrix() const;
+        virtual AffineTransform localMatrix() const;
 
         // Derived from: 'SVGLocatable'
-        virtual SVGMatrix* getCTM() const;
-        virtual SVGMatrix* getScreenCTM() const;
+        virtual AffineTransform getCTM() const;
+        virtual AffineTransform getScreenCTM() const;
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;
 
@@ -62,7 +60,7 @@ namespace WebCore {
         virtual void attach();
 
     protected:
-        mutable RefPtr<SVGMatrix> m_localMatrix;
+        mutable AffineTransform m_localMatrix;
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
     };
 

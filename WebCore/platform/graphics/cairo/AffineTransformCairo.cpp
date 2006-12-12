@@ -133,34 +133,64 @@ bool AffineTransform::isIdentity() const
          && (m_transform.x0 == 0) && (m_transform.y0 == 0));
 }
 
-double AffineTransform::m11() const
+double AffineTransform::a() const
 {
     return m_transform.xx;
 }
 
-double AffineTransform::m12() const
+void AffineTransform::setA(double a)
+{
+    m_transform.xx = a;
+}
+
+double AffineTransform::b() const
 {
     return m_transform.xy;
 }
 
-double AffineTransform::m21() const
+void AffineTransform::setB(double b)
+{
+    m_transform.xy = b;
+}
+
+double AffineTransform::c() const
 {
     return m_transform.yx;
 }
 
-double AffineTransform::m22() const
+void AffineTransform::setC(double c)
+{
+    m_transform.yx = c;
+}
+
+double AffineTransform::d() const
 {
     return m_transform.yy;
 }
 
-double AffineTransform::dx() const
+void AffineTransform::setD(double d)
+{
+    m_transform.yy = d;
+}
+
+double AffineTransform::e() const
 {
     return m_transform.x0;
 }
 
-double AffineTransform::dy() const
+void AffineTransform::setE(double e)
+{
+    m_transform.x0 = e;
+}
+
+double AffineTransform::f() const
 {
     return m_transform.y0;
+}
+
+void AffineTransform::setF(double f)
+{
+    m_transform.y0 = f;
 }
 
 void AffineTransform::reset()
@@ -203,7 +233,7 @@ double AffineTransform::det() const
     return m_transform.xx * m_transform.yy - m_transform.xy * m_transform.yx;
 }
 
-AffineTransform AffineTransform::invert() const
+AffineTransform AffineTransform::inverse() const
 {
     if (!isInvertible()) return AffineTransform();
 

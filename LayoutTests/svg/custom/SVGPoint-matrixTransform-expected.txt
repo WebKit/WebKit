@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (80,24) size 156x72
+    KCanvasContainer {svg} at (80,24) size 172x72
       RenderSVGText {text} at (20,20) size 800x18
-        RenderSVGInlineText {#text} at (0,-14) size 39x18
-          text run at (0,-14) width 39: "Failed"
+        RenderSVGInlineText {#text} at (0,-14) size 43x18
+          text run at (0,-14) width 43: "Passed"

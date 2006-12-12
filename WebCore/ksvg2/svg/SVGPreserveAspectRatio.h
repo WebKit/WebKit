@@ -30,7 +30,7 @@
 namespace WebCore {
 
     class String;
-    class SVGMatrix;
+    class AffineTransform;
     class SVGStyledElement;
 
     class SVGPreserveAspectRatio : public Shared<SVGPreserveAspectRatio> { 
@@ -64,10 +64,10 @@ namespace WebCore {
         void setMeetOrSlice(unsigned short);
         unsigned short meetOrSlice() const;
         
-        SVGMatrix* getCTM(float logicX, float logicY,
-                          float logicWidth, float logicHeight,
-                          float physX, float physY,
-                          float physWidth, float physHeight);
+        AffineTransform getCTM(float logicX, float logicY,
+                               float logicWidth, float logicHeight,
+                               float physX, float physY,
+                               float physWidth, float physHeight);
 
         // Helper
         void parsePreserveAspectRatio(const String&);

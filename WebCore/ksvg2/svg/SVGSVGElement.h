@@ -35,7 +35,6 @@ namespace WebCore
 {
     class SVGAngle;
     class SVGLength;
-    class SVGMatrix;
     class SVGTransform;
     class SVGLength;
     class TimeScheduler;
@@ -104,20 +103,20 @@ namespace WebCore
         bool checkEnclosure(SVGElement*, const FloatRect&);
         void deselectAll();
 
-        static float createSVGNumber();
+        static double createSVGNumber();
         static SVGLength* createSVGLength();
         static SVGAngle* createSVGAngle();
         static FloatPoint createSVGPoint();
-        static SVGMatrix* createSVGMatrix();
+        static AffineTransform createSVGMatrix();
         static FloatRect createSVGRect();
         static SVGTransform* createSVGTransform();
-        static SVGTransform* createSVGTransformFromMatrix(SVGMatrix*);
+        static SVGTransform* createSVGTransformFromMatrix(const AffineTransform&);
 
         virtual void parseMappedAttribute(MappedAttribute*);
 
         // 'virtual SVGLocatable' functions
-        virtual SVGMatrix* getCTM() const;
-        virtual SVGMatrix* getScreenCTM() const;
+        virtual AffineTransform getCTM() const;
+        virtual AffineTransform getScreenCTM() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

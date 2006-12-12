@@ -1,7 +1,5 @@
 #
-# KDOM IDL parser
-#
-# Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
+# Copyright (C) 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
@@ -155,8 +153,8 @@ sub AvoidInclusionOfType
 {
     my $type = shift;
 
-    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h do not exist.
-    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber";
+    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h / SVGMatrix.h do not exist.
+    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix";
     return 0;
 }
 
@@ -267,7 +265,7 @@ sub GenerateHeader
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $passType = $podType ? "const $podType&" : "$implClassName*";
 
-    push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
+    push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "double";
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -797,7 +795,7 @@ sub GenerateImplementation
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
 
                 if ($podType) {
-                    if ($podType eq "float") { # Special case for JSSVGNumber
+                    if ($podType eq "double") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp") . ";\n");
                     } else {
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp.$name()") . ";\n");
@@ -871,7 +869,7 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    case " . WK_ucfirst($name) ."AttrNum: {\n");
                         if ($podType) {
-                            if ($podType eq "float") { # Special case for JSSVGNumber
+                            if ($podType eq "double") { # Special case for JSSVGNumber
                                 push(@implContent, "        imp = " . JSValueToNative($attribute->signature, "value") . ";\n");
                             } else {
                                 push(@implContent, "        imp.set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value") . ");\n");
@@ -1012,7 +1010,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
 
         push(@implContent, "    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : ");
-        if ($podType and $podType ne "float") {
+        if ($podType and $podType ne "double") {
             push(@implContent, "$podType();\n}\n");
         } else {
             push(@implContent, "0;\n}\n");
@@ -1076,6 +1074,7 @@ sub GetNativeType
     return "EventTargetNode*" if $type eq "EventTarget";
     return "FloatRect" if $type eq "SVGRect";
     return "FloatPoint" if $type eq "SVGPoint";
+    return "AffineTransform" if $type eq "SVGMatrix";
     return "double" if $type eq "SVGNumber";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
 
@@ -1224,7 +1223,7 @@ sub NativeToJSValue
         return "getDOMRGBColor(exec, $value)";
     }
 
-    if ($type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber") {
+    if ($type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix") {
         $implIncludes{"JS$type.h"} = 1;
         return "toJS(exec, $value)";
     }

@@ -28,7 +28,7 @@
 
 namespace WebCore {
     class Attribute;
-    class SVGMatrix;
+    class AffineTransform;
     class SVGPreserveAspectRatio;
     class StringImpl;
 
@@ -39,7 +39,7 @@ namespace WebCore {
 
         // 'SVGFitToViewBox' functions
         void parseViewBox(const String&);
-        SVGMatrix* viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         bool parseMappedAttribute(MappedAttribute*);
 

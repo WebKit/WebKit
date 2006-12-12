@@ -36,7 +36,7 @@ namespace WebCore {
         SVGTransformList();
         virtual ~SVGTransformList();
 
-        RefPtr<SVGTransform> createSVGTransformFromMatrix(SVGMatrix*) const;
+        RefPtr<SVGTransform> createSVGTransformFromMatrix(const AffineTransform&) const;
         RefPtr<SVGTransform> consolidate();
 
         // Internal use only

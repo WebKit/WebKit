@@ -44,8 +44,8 @@ namespace WebCore {
         RefPtr<SVGTransform> parseTransformValue(const String&) const;
         void calculateRotationFromMatrix(const AffineTransform&, double& angle, double& cx, double& cy) const;
 
-        SVGMatrix* initialMatrix() const;
-        SVGMatrix* transformMatrix() const;
+        AffineTransform initialMatrix() const;
+        AffineTransform transformMatrix() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -58,8 +58,8 @@ namespace WebCore {
         RefPtr<SVGTransform> m_fromTransform;
         RefPtr<SVGTransform> m_initialTransform;
 
-        RefPtr<SVGMatrix> m_lastMatrix;
-        RefPtr<SVGMatrix> m_transformMatrix;
+        AffineTransform m_lastMatrix;
+        AffineTransform m_transformMatrix;
 
         mutable bool m_rotateSpecialCase : 1;
         bool m_toRotateSpecialCase : 1;

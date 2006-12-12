@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-    class IntRect;
-    class FloatRect;
+class IntRect;
+class FloatRect;
 
 class AffineTransform {
 public:
     AffineTransform();
-    AffineTransform(double a, double b, double c, double d, double tx, double ty);
+    AffineTransform(double a, double b, double c, double d, double e, double f);
 #if PLATFORM(CG)
     AffineTransform(CGAffineTransform transform);
 #elif PLATFORM(QT)
@@ -51,30 +51,49 @@ public:
     AffineTransform(const cairo_matrix_t &matrix);
 #endif
 
-    void setMatrix(double a, double b, double c, double d, double tx, double ty);
+    void setMatrix(double a, double b, double c, double d, double e, double f);
     void map(double x, double y, double *x2, double *y2) const;
     IntRect mapRect(const IntRect&) const;
     FloatRect mapRect(const FloatRect&) const;
     
     bool isIdentity() const;
     
-    double m11() const;
-    double m12() const;
-    double m21() const;
-    double m22() const;
-    double dx() const;
-    double dy() const;
+    double a() const;
+    void setA(double a);
+
+    double b() const;
+    void setB(double b);
+
+    double c() const;
+    void setC(double c);
+
+    double d() const;
+    void setD(double d);
+
+    double e() const;
+    void setE(double e);
+
+    double f() const;
+    void setF(double f);
 
     void reset();
-    
-    AffineTransform &scale(double sx, double sy);
-    AffineTransform &rotate(double d);
-    AffineTransform &translate(double tx, double ty);
-    AffineTransform &shear(double sx, double sy);
-    
+
+    AffineTransform& multiply(const AffineTransform&);
+    AffineTransform& scale(double); 
+    AffineTransform& scale(double sx, double sy); 
+    AffineTransform& scaleNonUniform(double sx, double sy);
+    AffineTransform& rotate(double d);
+    AffineTransform& rotateFromVector(double x, double y);
+    AffineTransform& translate(double tx, double ty);
+    AffineTransform& shear(double sx, double sy);
+    AffineTransform& flipX();
+    AffineTransform& flipY();
+    AffineTransform& skewX(double angle);
+    AffineTransform& skewY(double angle);
+ 
     double det() const;
     bool isInvertible() const;
-    AffineTransform invert() const;
+    AffineTransform inverse() const;
 
 #if PLATFORM(CG)
     operator CGAffineTransform() const;
