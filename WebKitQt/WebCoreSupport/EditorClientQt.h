@@ -71,6 +71,9 @@ public:
     virtual bool canRedo() const;
     virtual void undo();
     virtual void redo();
+
+    virtual void toggleContinuousSpellChecking();
+    virtual void toggleGrammarChecking();
 };
 
 }

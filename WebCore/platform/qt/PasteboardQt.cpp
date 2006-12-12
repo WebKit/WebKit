@@ -42,11 +42,7 @@ Pasteboard* Pasteboard::generalPasteboard()
     return pasteboard;
 }
 
-void Pasteboard::clearTypes()
-{
-}
-
-void Pasteboard::writeSelection(PassRefPtr<Range> selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
 }
 
@@ -64,6 +60,14 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                                                           bool allowPlainText, bool& chosePlainText)
 {
     return 0;
+}
+
+void Pasteboard::writeURL(const KURL&, const String&, Frame*)
+{
+}
+
+void Pasteboard::clear()
+{
 }
 
 }

@@ -47,6 +47,8 @@ namespace WebCore {
         virtual void downloadURL(const KURL&);
         virtual void copyImageToClipboard(const HitTestResult&);
         virtual void lookUpInDictionary(Frame*);
+        virtual void speak(const String&);
+        virtual void stopSpeaking();
     };
 }
 

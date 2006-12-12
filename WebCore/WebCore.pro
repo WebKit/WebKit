@@ -403,6 +403,7 @@ SOURCES += \
     html/HTMLFrameSetElement.cpp \
     html/HTMLBodyElement.cpp \
     html/HTMLBRElement.cpp \
+    html/HTMLFrameOwnerElement.cpp \
     html/HTMLNameCollection.cpp \
     html/HTMLLegendElement.cpp \
     html/HTMLLIElement.cpp \
@@ -505,6 +506,7 @@ SOURCES += \
     loader/qt/ResourceLoaderQt.cpp \
     platform/CString.cpp \
     platform/AtomicString.cpp \
+    platform/Base64.cpp \
     platform/graphics/AffineTransform.cpp \
     platform/TextStream.cpp \
     platform/Widget.cpp \
@@ -816,18 +818,13 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGUnitTypes.idl \
         ksvg2/svg/SVGUseElement.idl \
         ksvg2/svg/SVGViewElement.idl \
-        ksvg2/events/SVGZoomEvent.idl
-
-    LUT_TABLE_FILES += \
-        bindings/js/JSSVGNumber.cpp \
-        bindings/js/JSSVGPoint.cpp \
-        bindings/js/JSSVGRect.cpp
+        ksvg2/events/SVGZoomEvent.idl \
+        ksvg2/svg/SVGNumber.idl \
+        ksvg2/svg/SVGPoint.idl \
+        ksvg2/svg/SVGRect.idl
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
-        bindings/js/JSSVGPoint.cpp \
-        bindings/js/JSSVGRect.cpp \
-        bindings/js/JSSVGNumber.cpp \
         bindings/js/JSSVGElementWrapperFactory.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \

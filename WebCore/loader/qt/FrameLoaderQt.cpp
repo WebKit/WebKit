@@ -50,6 +50,7 @@
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
+#include "HTMLFormElement.h"
 #include "JSLock.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
@@ -120,7 +121,7 @@ void FrameLoader::setTitle(const String& title)
     client()->setTitle(title, URL());
 }
 
-Frame* FrameLoader::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
+Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
 {
     notImplemented();
     return 0;
@@ -270,13 +271,13 @@ void FrameLoader::redirectDataToPlugin(Widget* pluginWidget)
 
 
 void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
-                       Element* submitForm, const HashMap<String, String>& formValues)
+                       HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
 {
     notImplemented();
 }
 
 void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
-    const String& frameName, Event* event, Element* form, const HashMap<String, String>& values)
+    const String& frameName, Event* event, HTMLFormElement* form, const HashMap<String, String>& values)
 {
     notImplemented();
 }
