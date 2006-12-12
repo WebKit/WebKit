@@ -1,0 +1,1 @@
+#import <JavaScriptCore/StringExtras.h>

@@ -1,3 +1,22 @@
+2006-12-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9673
+        Add support for window.atob() and window.btoa()
+
+        * WebCore.xcodeproj/project.pbxproj: Added Base64.{h,cpp}
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * platform/Base64.cpp: Added.
+        (base64Encode):
+        (base64Decode):
+        * platform/Base64.h: Added.
+        * ForwardingHeaders/wtf/StringExtras.h: Added.
+        * platform/DeprecatedString.cpp: Use strncasecmp from StringExtras.
+
 2006-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

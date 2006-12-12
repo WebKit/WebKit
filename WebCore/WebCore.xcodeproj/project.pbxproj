@@ -2792,6 +2792,8 @@
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
+		E11D51930B2E7A5F0056C188 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51910B2E7A5F0056C188 /* Base64.h */; };
+		E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11D51920B2E7A5F0056C188 /* Base64.cpp */; };
 		E14842DE0A674934007E4D39 /* TextCodecICU.h in Headers */ = {isa = PBXBuildFile; fileRef = E14842DD0A674934007E4D39 /* TextCodecICU.h */; };
 		E14842FF0A674A31007E4D39 /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */; };
 		E148432F0A674FC2007E4D39 /* TextCodecMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E148432E0A674FC2007E4D39 /* TextCodecMac.h */; };
@@ -5889,6 +5891,8 @@
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
+		E11D51910B2E7A5F0056C188 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		E11D51920B2E7A5F0056C188 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		E14842DD0A674934007E4D39 /* TextCodecICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecICU.h; sourceTree = "<group>"; };
 		E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecICU.cpp; sourceTree = "<group>"; };
 		E148432E0A674FC2007E4D39 /* TextCodecMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TextCodecMac.h; path = mac/TextCodecMac.h; sourceTree = "<group>"; };
@@ -8801,6 +8805,8 @@
 				93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */,
 				93CD4FD80995F9EA007ECC97 /* AtomicString.h */,
 				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
+				E11D51910B2E7A5F0056C188 /* Base64.h */,
+				E11D51920B2E7A5F0056C188 /* Base64.cpp */,
 				65F5382009B2B55700F3DC4A /* character-sets.txt */,
 				9326DC0A09DAD5BE00AFC847 /* CharsetData.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
@@ -10837,6 +10843,7 @@
 				BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
 				93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */,
+				E11D51930B2E7A5F0056C188 /* Base64.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12156,6 +12163,7 @@
 				BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */,
 				AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */,
 				93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */,
+				E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

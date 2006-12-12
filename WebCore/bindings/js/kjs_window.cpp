@@ -4,6 +4,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,12 +24,14 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "Base64.h"
 #include "Chrome.h"
 #include "CString.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -220,6 +223,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
 @begin WindowTable 103
+  atob          Window::AToB            DontDelete|Function 1
+  btoa          Window::BToA            DontDelete|Function 1
   closed        Window::Closed          DontDelete|ReadOnly
   crypto        Window::Crypto          DontDelete|ReadOnly
   defaultStatus Window::DefaultStatus   DontDelete
@@ -1535,6 +1540,30 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     frame->runJavaScriptAlert(str);
     exec->dynamicInterpreter()->resumeTimeoutCheck();
     return jsUndefined();
+  case Window::AToB:
+  case Window::BToA: {
+    if (args.size() < 1)
+        return throwError(exec, SyntaxError, "Not enough arguments");
+    if (v->isNull())
+        return jsString();
+    if (!s.is8Bit()) {
+        setDOMException(exec, INVALID_CHARACTER_ERR);
+        return jsUndefined();
+    }
+    
+    Vector<char> in(s.size());
+    for (int i = 0; i < s.size(); ++i)
+        in[i] = static_cast<char>(s.data()[i].unicode());
+    Vector<char> out;
+
+    if (id == Window::AToB) {
+        if (!base64Decode(in, out))
+            return throwError(exec, GeneralError, "Cannot decode base64");
+    } else
+        base64Encode(in, out);
+    
+    return jsString(String(out.data(), out.size()));
+  }
   case Window::Confirm: {
     if (frame && frame->document())
       frame->document()->updateRendering();

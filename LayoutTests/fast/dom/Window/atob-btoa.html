@@ -1,0 +1,64 @@
+﻿<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+shouldBe('window.atob("YQ==")', '"a"');
+shouldBe('window.atob("YWI=")', '"ab"');
+shouldBe('window.atob("YWJj")', '"abc"');
+shouldBe('window.atob("YWJjZA==")', '"abcd"');
+shouldBe('window.atob("YWJjZGU=")', '"abcde"');
+shouldBe('window.atob("YWJjZGVm")', '"abcdef"');
+shouldBe('window.btoa("a")', '"YQ=="');
+shouldBe('window.btoa("ab")', '"YWI="');
+shouldBe('window.btoa("abc")', '"YWJj"');
+shouldBe('window.btoa("abcd")', '"YWJjZA=="');
+shouldBe('window.btoa("abcde")', '"YWJjZGU="');
+shouldBe('window.btoa("abcdef")', '"YWJjZGVm"');
+
+shouldBe('typeof window.btoa', '"function"');
+shouldThrow('window.btoa()');
+shouldBe('window.btoa("")', '""');
+shouldBe('window.btoa(null)', '""');
+shouldBe('window.btoa(window)', '"W29iamVjdCBXaW5kb3dd"'); // "[object Window]"
+shouldBe('window.btoa("éé")', '"6ek="');
+shouldBe('window.btoa("\\u0080\\u0081")', '"gIE="');
+shouldThrow('window.btoa("тест")');
+window.btoa = 0;
+shouldBe('window.btoa', '0');
+shouldBe('typeof window.btoa', '"number"');
+
+shouldBe('typeof window.atob', '"function"');
+shouldThrow('window.atob()');
+shouldBe('window.atob("")', '""');
+shouldBe('window.atob(null)', '""');
+shouldThrow('window.atob(" YQ==")');
+shouldThrow('window.atob("YQ==\\u000a")');
+shouldBe('window.atob("6ek=")', '"éé"');
+shouldBe('window.atob("6ek")', '"éé"');
+shouldBe('window.atob("gIE=")', '"\u0080\u0081"');
+shouldThrow('window.atob("тест")');
+shouldThrow('window.atob("z")');
+shouldBe('window.atob("zz")', '"Ï"');
+shouldBe('window.atob("zzz")', '"Ï\u003C"');
+shouldBe('window.atob("zzzz")', '"Ï\u003Có"');
+shouldThrow('window.atob("zzzzz")');
+shouldThrow('window.atob("=")');
+shouldThrow('window.atob("==")');
+shouldThrow('window.atob("===")');
+shouldThrow('window.atob("====")');
+shouldThrow('window.atob("=====")');
+window.atob = 0;
+shouldBe('window.atob', '0');
+shouldBe('typeof window.atob', '"number"');
+
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

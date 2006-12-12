@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <wtf/Platform.h>
+#include <wtf/StringExtras.h>
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>
@@ -827,13 +828,6 @@ bool DeprecatedString::startsWith(const char *prefix) const
         return true;
     }
 }
-
-#if PLATFORM(WIN_OS)
-inline int strncasecmp(const char *first, const char *second, size_t maxLength)
-{
-    return _strnicmp(first, second, maxLength);
-}
-#endif
 
 bool DeprecatedString::startsWith(const char *prefix, bool caseSensitive) const
 {
