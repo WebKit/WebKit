@@ -1,3 +1,27 @@
+2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11053
+        XMLHttpRequest should be an EventTarget
+
+        Test: http/tests/xmlhttprequest/event-target.html
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::mark):
+        (KJS::JSXMLHttpRequest::~JSXMLHttpRequest):
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction):
+        * bindings/js/JSXMLHttpRequest.h:
+        (KJS::JSXMLHttpRequest::):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::addEventListener):
+        (WebCore::XMLHttpRequest::removeEventListener):
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        * xml/xmlhttprequest.h:
+        (WebCore::XMLHttpRequest::eventListeners):
+        Implement EventTarget methods (except for NS variations, which Firefox doesn't have either).
+
 2006-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

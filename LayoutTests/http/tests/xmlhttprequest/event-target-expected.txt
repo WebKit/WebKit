@@ -1,0 +1,11 @@
+Tests for bug 11053 - XMLHttpRequest should be an EventTarget.
+
+fooListener
+onload
+eventListener
+eventListener2
+eventListener3
+onload
+eventListener
+eventListener2
+

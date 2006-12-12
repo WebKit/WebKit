@@ -49,8 +49,8 @@ public:
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Onload, Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status,
-        StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader,
-        OverrideMIMEType };
+        StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader, OverrideMIMEType,
+        AddEventListener, RemoveEventListener, DispatchEvent };
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;

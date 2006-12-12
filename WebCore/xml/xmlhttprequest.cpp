@@ -193,6 +193,53 @@ void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
     m_onLoadListener = eventListener;
 }
 
+void XMLHttpRequest::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
+{
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    if (iter == m_eventListeners.end()) {
+        ListenerVector listeners;
+        listeners.append(eventListener);
+        m_eventListeners.add(eventType.impl(), listeners);
+    } else {
+        ListenerVector& listeners = iter->second;
+        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
+            if (*listenerIter == eventListener)
+                return;
+        
+        listeners.append(eventListener);
+        m_eventListeners.add(eventType.impl(), listeners);
+    }
+}
+
+void XMLHttpRequest::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
+{
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    if (iter == m_eventListeners.end())
+        return;
+
+    ListenerVector& listeners = iter->second;
+    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
+        if (*listenerIter == eventListener) {
+            listeners.remove(listenerIter - listeners.begin());
+            return;
+        }
+}
+
+bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec)
+{
+    // FIXME: check for other error conditions enumerated in the spec.
+    if (evt->type().isEmpty()) {
+        ec = UNSPECIFIED_EVENT_TYPE_ERR;
+        return true;
+    }
+
+    ListenerVector listenersCopy = m_eventListeners.get(evt->type().impl());
+    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter)
+        listenerIter->get()->handleEvent(evt.get(), true);
+
+    return !evt->defaultPrevented();
+}
+
 XMLHttpRequest::XMLHttpRequest(Document* d)
     : m_doc(d)
     , m_async(true)
@@ -225,8 +272,14 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (m_doc && m_doc->frame() && m_onReadyStateChangeListener)
         m_onReadyStateChangeListener->handleEvent(new Event(readystatechangeEvent, true, true), true);
     
-    if (m_doc && m_doc->frame() && m_state == Loaded && m_onLoadListener)
-        m_onLoadListener->handleEvent(new Event(loadEvent, true, true), true);
+    if (m_doc && m_doc->frame() && m_state == Loaded) {
+        if (m_onLoadListener)
+            m_onLoadListener->handleEvent(new Event(loadEvent, true, true), true);
+        
+        ListenerVector listenersCopy = m_eventListeners.get(loadEvent.impl());
+        for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter)
+            listenerIter->get()->handleEvent(new Event(loadEvent, true, true), true);
+    }
 }
 
 bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const

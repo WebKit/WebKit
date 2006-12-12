@@ -1,9 +1,19 @@
+2006-12-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11053
+        XMLHttpRequest should be an EventTarget
+
+        * http/tests/xmlhttprequest/event-target-expected.txt: Added.
+        * http/tests/xmlhttprequest/event-target.html: Added.
+
 2006-12-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=9673
         Add support for window.atob() and window.btoa()
-
-        Reviewed by Darin.
 
         * fast/dom/Window/atob-btoa-expected.txt: Added.
         * fast/dom/Window/atob-btoa.html: Added.

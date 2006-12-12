@@ -1,0 +1,68 @@
+<html>
+<body>
+<p>Tests for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=11053"> bug 11053</a> - 
+XMLHttpRequest should be an EventTarget.</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    
+    var console_messages = document.createElement("ul");
+    document.body.appendChild(console_messages);
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+
+
+    function onLoad() {
+        log("onload");
+        req.removeEventListener("load", eventListener4, false);
+    }
+
+    function eventListener() { log("eventListener"); }
+
+    function eventListener2() {
+        log("eventListener2");
+        // It is too late to remove this listener, so it will still fire.
+        req.removeEventListener("load", eventListener3, false);
+    }
+
+    function eventListener3() { log("eventListener3"); }
+    
+    // This one is removed just in time to be really removed.
+    function eventListener4() { log("eventListener4"); }
+
+    function fooListener() { log("fooListener"); }
+
+
+    req = new XMLHttpRequest;
+    req.onload = onLoad;
+    req.addEventListener("load", eventListener, false);
+    req.addEventListener("load", eventListener2, false);
+    req.addEventListener("load", eventListener, false); // eventListener must not be called  twice, but it does in Mozilla 1.8.
+    req.addEventListener("load", eventListener3, false);
+    
+    // XMLHttpRequest.dispatchEvent is not implemeted in Mozilla 1.8
+    // Furthermore, they raise an exception when trying to add any event listener except for "load" and "error".
+    try {
+        event = document.createEvent("Event");
+        event.initEvent("foo", false, false);
+        req.addEventListener("foo", fooListener, false);
+        req.dispatchEvent(event);
+    } catch (ex) {
+        log("foo: " + ex);
+    }
+
+    req.open("GET", "resources/reply.xml", false);
+    req.send("");
+
+    // WebKit doesn't remove event listeners when re-opening a request, unlike Mozilla.
+    req.open("GET", "resources/reply.xml", false);
+    req.send("");
+
+</script>
+</body>
+</html>

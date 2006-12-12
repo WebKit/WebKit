@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
+#include "Event.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "kjs_events.h"
@@ -44,6 +45,11 @@ namespace KJS {
   overrideMimeType      JSXMLHttpRequest::OverrideMIMEType        DontDelete|Function 1
   send                  JSXMLHttpRequest::Send                    DontDelete|Function 1
   setRequestHeader      JSXMLHttpRequest::SetRequestHeader        DontDelete|Function 2
+# from the EventTarget interface
+# FIXME: add DOM3 EventTarget methods (addEventListenerNS, removeEventListenerNS).
+  addEventListener      JSXMLHttpRequest::AddEventListener        DontDelete|Function 3
+  removeEventListener   JSXMLHttpRequest::RemoveEventListener     DontDelete|Function 3
+  dispatchEvent         JSXMLHttpRequest::DispatchEvent           DontDelete|Function 1
 @end
 */
 KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestProto)
@@ -153,6 +159,16 @@ void JSXMLHttpRequest::mark()
 
     if (onLoadListener)
         onLoadListener->mark();
+    
+    typedef XMLHttpRequest::EventListenersMap EventListenersMap;
+    typedef XMLHttpRequest::ListenerVector ListenerVector;
+    EventListenersMap& eventListeners = m_impl->eventListeners();
+    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
+        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) {
+            JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(vecIter->get());
+            listener->mark();
+        }
+    }
 }
 
 
@@ -167,6 +183,7 @@ JSXMLHttpRequest::~JSXMLHttpRequest()
 {
     m_impl->setOnReadyStateChangeListener(0);
     m_impl->setOnLoadListener(0);
+    m_impl->eventListeners().clear();
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
@@ -253,6 +270,24 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState* exec, JSObject* th
 
             request->m_impl->overrideMIMEType(args[0]->toString(exec));
             return jsUndefined();
+        
+        case JSXMLHttpRequest::AddEventListener: {
+            JSUnprotectedEventListener* listener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(args[1], true);
+            if (listener)
+                request->m_impl->addEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
+            return jsUndefined();
+        }
+        case JSXMLHttpRequest::RemoveEventListener: {
+            JSUnprotectedEventListener* listener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(args[1], true);
+            if (listener)
+                request->m_impl->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
+            return jsUndefined();
+        }
+        case JSXMLHttpRequest::DispatchEvent: {
+            bool result = request->m_impl->dispatchEvent(toEvent(args[0]), ec);
+            setDOMException(exec, ec);
+            return jsBoolean(result);
+        }
     }
 
     return jsUndefined();
