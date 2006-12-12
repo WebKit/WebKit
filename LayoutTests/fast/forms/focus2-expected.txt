@@ -1,0 +1,85 @@
+This test tabs between lots of elements, printing out the events you see along the way.
+
+
+anchor
+
+PARENT DOCUMENT:
+focus event: [to] BUTTON
+keypress event: [to] BUTTON
+blur event: [to] BUTTON
+focus event: [to] CHECKBOX
+keypress event: [to] CHECKBOX
+blur event: [to] CHECKBOX
+focus event: [to] FILE
+keypress event: [to] FILE
+blur event: [to] FILE
+focus event: [to] ISINDEX
+keypress event: [to] ISINDEX
+blur event: [to] ISINDEX
+focus event: [to] PASSWORD
+keypress event: [to] PASSWORD
+blur event: [to] PASSWORD
+focus event: [to] RANGE
+keypress event: [to] RANGE
+blur event: [to] RANGE
+focus event: [to] RESET
+keypress event: [to] RESET
+blur event: [to] RESET
+focus event: [to] SEARCH
+keypress event: [to] SEARCH
+blur event: [to] SEARCH
+focus event: [to] SUBMIT
+keypress event: [to] SUBMIT
+blur event: [to] SUBMIT
+focus event: [to] TEXT
+keypress event: [to] TEXT
+blur event: [to] TEXT
+focus event: [to] TEXTAREA
+keypress event: [to] TEXTAREA
+blur event: [to] TEXTAREA
+focus event: [to] DIV
+keypress event: [to] DIV
+blur event: [to] DIV
+keypress event: [to] DIV
+focus event: [to] IFRAME
+
+IFRAME DOCUMENT:
+blur event: [to] IFRAME
+focus event: [to] BUTTON
+keypress event: [to] BUTTON
+blur event: [to] BUTTON
+focus event: [to] CHECKBOX
+keypress event: [to] CHECKBOX
+blur event: [to] CHECKBOX
+focus event: [to] FILE
+keypress event: [to] FILE
+blur event: [to] FILE
+focus event: [to] ISINDEX
+keypress event: [to] ISINDEX
+blur event: [to] ISINDEX
+focus event: [to] PASSWORD
+keypress event: [to] PASSWORD
+blur event: [to] PASSWORD
+focus event: [to] RANGE
+keypress event: [to] RANGE
+blur event: [to] RANGE
+focus event: [to] RESET
+keypress event: [to] RESET
+blur event: [to] RESET
+focus event: [to] SEARCH
+keypress event: [to] SEARCH
+blur event: [to] SEARCH
+focus event: [to] SUBMIT
+keypress event: [to] SUBMIT
+blur event: [to] SUBMIT
+focus event: [to] TEXT
+keypress event: [to] TEXT
+blur event: [to] TEXT
+focus event: [to] TEXTAREA
+keypress event: [to] TEXTAREA
+blur event: [to] TEXTAREA
+focus event: [to] DIV
+keypress event: [to] DIV
+blur event: [to] DIV
+keypress event: [to] DIV
+

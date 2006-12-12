@@ -402,9 +402,8 @@ public:
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
-    Node* focusedNode() const { return m_focusedNode.get(); }
     bool setFocusedNode(PassRefPtr<Node>);
-    void clearSelectionIfNeeded(Node*);
+    Node* focusedNode() const;
 
     Node* hoverNode() const { return m_hoverNode.get(); }
     void setHoverNode(PassRefPtr<Node>);
@@ -650,7 +649,6 @@ protected:
 
     Color m_textColor;
 
-    RefPtr<Node> m_focusedNode;
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
     mutable RefPtr<Element> m_documentElement;
@@ -780,10 +778,7 @@ private:
     void imageLoadEventTimerFired(Timer<Document>*);
 
     JSEditor* jsEditor();
-
     JSEditor* m_jsEditor;
-    bool relinquishesEditingFocus(Node*);
-    bool acceptsEditingFocus(Node*);
 
     mutable String m_domain;
     RenderObject* m_savedRenderer;

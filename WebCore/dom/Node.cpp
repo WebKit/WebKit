@@ -716,6 +716,8 @@ void Node::detach()
     setRenderer(0);
 
     Document* doc = document();
+    if (m_focused)
+        doc->setFocusedNode(0);
     if (m_hovered)
         doc->hoveredNodeDetached(this);
     if (m_inActiveChain)
