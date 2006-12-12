@@ -255,26 +255,26 @@ static bool isKeyboardOptionTab(KeyboardEvent* event)
 
 bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 {
-    if ([Mac(m_frame)->bridge() keyboardUIMode] & WebCoreKeyboardAccessTabsToLinks)
+    if ([Mac(m_frame)->bridge() keyboardUIMode] & KeyboardAccessTabsToLinks)
         return !isKeyboardOptionTab(event);
     return isKeyboardOptionTab(event);
 }
 
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
-    WebCoreKeyboardUIMode keyboardUIMode = [Mac(m_frame)->bridge() keyboardUIMode];
+    KeyboardUIMode keyboardUIMode = [Mac(m_frame)->bridge() keyboardUIMode];
     bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls
-    if ((keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
+    if ((keyboardUIMode & KeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
         return true;
     
     // If system preferences say to include all controls, we always include all controls
-    if (keyboardUIMode & WebCoreKeyboardAccessFull)
+    if (keyboardUIMode & KeyboardAccessFull)
         return true;
     
     // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
-    if (keyboardUIMode & WebCoreKeyboardAccessTabsToLinks)
+    if (keyboardUIMode & KeyboardAccessTabsToLinks)
         return !handlingOptionTab;
     
     return handlingOptionTab;
@@ -972,13 +972,13 @@ bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
     return [Mac(m_frame)->bridge() mayStartDragAtEventLocation:m_frame->view()->contentsToWindow(point)];
 }
 
-WebCoreKeyboardUIMode EventHandler::keyboardUIMode() const
+KeyboardUIMode EventHandler::keyboardUIMode() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [Mac(m_frame)->bridge() keyboardUIMode];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return WebCoreKeyboardAccessDefault;
+    return KeyboardAccessDefault;
 }
 
 void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event)

@@ -1,3 +1,30 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - did some of the Mac-specific file moves mentioned in my recent mail to the WebKit list
+
+        * WebCore.xcodeproj/project.pbxproj: Updated project for file moves.
+
+        * bridge/mac/FrameMac.h: Moved to page/mac.
+        * bridge/mac/FrameMac.mm: Ditto.
+        * bridge/mac/WebCoreFrameBridge.h: Ditto.
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto.
+        * bridge/mac/WebCoreFrameView.h: Ditto.
+        * bridge/mac/WebCoreViewFactory.h: Ditto.
+        * bridge/mac/WebCoreViewFactory.m: Ditto.
+        * bridge/mac/WebDashboardRegion.h: Ditto.
+        * bridge/mac/WebDashboardRegion.m: Ditto.
+
+        * bridge/mac/WebCoreKeyboardAccess.h: Moved to page/mac,
+        renamed WebCoreKeyboardUIMode.h, and made a C++ header.
+
+        * page/EventHandler.h: Updated for change to WebCoreKeyboardAccess.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::tabsToLinks): Ditto.
+        (WebCore::EventHandler::tabsToAllControls): Ditto.
+        (WebCore::EventHandler::keyboardUIMode): Ditto.
+
 2006-12-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

@@ -43,7 +43,7 @@ namespace WebCore {
     WebFrame *_frame;
 
 @private
-    WebCoreKeyboardUIMode _keyboardUIMode;
+    WebCore::KeyboardUIMode _keyboardUIMode;
     BOOL _keyboardUIModeAccessed;
     BOOL _doingClientRedirect;
     BOOL _inNextKeyViewOutsideWebFrameViews;

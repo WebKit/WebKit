@@ -26,10 +26,7 @@
 #ifndef FrameMac_h
 #define FrameMac_h
 
-#import "ClipboardAccessPolicy.h"
 #import "Frame.h"
-#import "PlatformMouseEvent.h"
-#import "WebCoreKeyboardAccess.h"
 
 class NPObject;
 
@@ -44,13 +41,11 @@ namespace KJS {
 
 @class NSArray;
 @class NSDictionary;
-@class NSEvent;
 @class NSFont;
 @class NSImage;
 @class NSMenu;
 @class NSMutableDictionary;
 @class NSString;
-@class NSView;
 @class WebCoreFrameBridge;
 @class WebScriptObject;
 
@@ -58,13 +53,11 @@ namespace KJS {
 
 class NSArray;
 class NSDictionary;
-class NSEvent;
 class NSFont;
 class NSImage;
 class NSMenu;
 class NSMutableDictionary;
 class NSString;
-class NSView;
 class WebCoreFrameBridge;
 class WebScriptObject;
 

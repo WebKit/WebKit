@@ -1570,7 +1570,7 @@
 		93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F565AE8502ECA583018635CA /* WebCoreSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855402DE375901EA4122 /* WebCoreViewFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B808245E59001E9ABC /* ScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B2AF80450824100A8000F /* ScrollBar.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199BB08245E59001E9ABC /* WebCoreKeyboardAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BC08245E59001E9ABC /* WebCoreAXObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */; };
 		93F199BD08245E59001E9ABC /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5C052B59CC0017A6C1 /* AXObjectCache.h */; };
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5871,7 +5871,7 @@
 		BE8560510701F91100239769 /* WebCoreView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardAccess.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardUIMode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -6729,20 +6729,14 @@
 			isa = PBXGroup;
 			children = (
 				55998A5D052B59CC0017A6C1 /* AXObjectCacheMac.mm */,
-				65BF023B0974819000C43196 /* FrameMac.h */,
-				65BF023C0974819000C43196 /* FrameMac.mm */,
 				9380F68609A143B2001FDB34 /* FrameViewMac.mm */,
 				935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */,
 				55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */,
 				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
 				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
 				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
-				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
-				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
-				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 				F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */,
 				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
-				BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */,
 				9394E0A403AA5BBE008635CE /* WebCorePageState.h */,
 				9394E0A503AA5BBE008635CE /* WebCorePageState.mm */,
 				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
@@ -6751,10 +6745,6 @@
 				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
 				65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */,
 				65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */,
-				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
-				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
-				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
-				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
 				A7D23C520B03E41300582A4F /* WebMimeTypeRegistryBridge.h */,
 				A7D23C530B03E41300582A4F /* WebMimeTypeRegistryBridge.mm */,
 			);
@@ -7736,6 +7726,16 @@
 			isa = PBXGroup;
 			children = (
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
+				65BF023B0974819000C43196 /* FrameMac.h */,
+				65BF023C0974819000C43196 /* FrameMac.mm */,
+				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
+				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
+				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
+				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
+				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
+				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
+				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
+				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -9436,7 +9436,7 @@
 				93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */,
 				93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */,
 				93F199B808245E59001E9ABC /* ScrollBar.h in Headers */,
-				93F199BB08245E59001E9ABC /* WebCoreKeyboardAccess.h in Headers */,
+				93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */,
 				93F199BC08245E59001E9ABC /* WebCoreAXObject.h in Headers */,
 				93F199BD08245E59001E9ABC /* AXObjectCache.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,

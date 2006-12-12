@@ -205,14 +205,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // I do not know that we would ever get one bit on and the other off since
     // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
     // turns on both bits.
-    _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
+    _keyboardUIMode = (mode & 0x2) ? KeyboardAccessFull : KeyboardAccessDefault;
     
     // check for tabbing to links
     if ([[self _preferences] tabsToLinks])
-        _keyboardUIMode = (WebCoreKeyboardUIMode)(_keyboardUIMode | WebCoreKeyboardAccessTabsToLinks);
+        _keyboardUIMode = (KeyboardUIMode)(_keyboardUIMode | KeyboardAccessTabsToLinks);
 }
 
-- (WebCoreKeyboardUIMode)keyboardUIMode
+- (KeyboardUIMode)keyboardUIMode
 {
     if (!_keyboardUIModeAccessed) {
         _keyboardUIModeAccessed = YES;

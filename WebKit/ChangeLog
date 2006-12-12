@@ -1,3 +1,14 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - did some of the Mac-specific file moves mentioned in my recent mail to the WebKit list
+
+        * WebCoreSupport/WebFrameBridge.h: Updated for change to WebCoreKeyboardAccess.
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge _retrieveKeyboardUIModeFromPreferences:]): Ditto.
+        (-[WebFrameBridge keyboardUIMode]): Ditto.
+
 2006-12-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
