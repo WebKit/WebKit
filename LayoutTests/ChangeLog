@@ -1,3 +1,11 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        * fast/frames/iframe-option-crash-expected.txt: Updated results for this test.
+        My recent change to owner element lifetime management changed these results,
+        but since the point of the test is simply to check if the page crashes, the
+        new result is probably OK. Or there could be some problem, but if so we need
+        some other investigation -- I couldn't see anything.
+
 2006-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Update SVG pixel tests - hasn't been done for a long time.
