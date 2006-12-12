@@ -1,3 +1,10 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Let Xcode update this
+        (I think Hyatt is using an old Xcode).
+
 2006-12-11  David Hyatt  <hyatt@apple.com>
 
         Fix the failing layout test.  Just remove Unicode::isSpace and
