@@ -60,18 +60,66 @@ UString DOMObject::toString(ExecState*) const
     return "[object " + className() + "]";
 }
 
-static DOMObjectMap* domObjects()
-{ 
-    static DOMObjectMap* staticDomObjects = new DOMObjectMap();
-    return staticDomObjects;
-}
+// For debugging, keep a set of wrappers currently registered, and check that
+// all are unregistered before they are destroyed. This has helped us fix at
+// least one bug.
 
-static NodePerDocMap* domNodesPerDocument()
+#ifdef NDEBUG
+
+#define ADD_WRAPPER(wrapper)
+#define REMOVE_WRAPPER(wrapper)
+#define REMOVE_WRAPPERS(wrappers)
+
+#else
+
+#define ADD_WRAPPER(wrapper) addWrapper(wrapper)
+#define REMOVE_WRAPPER(wrapper) removeWrapper(wrapper)
+#define REMOVE_WRAPPERS(wrappers) removeWrappers(wrappers)
+
+static HashSet<DOMObject*>& wrapperSet()
 {
-  static NodePerDocMap* staticDOMNodesPerDocument = new NodePerDocMap();
-  return staticDOMNodesPerDocument;
+    static HashSet<DOMObject*> staticWrapperSet;
+    return staticWrapperSet;
 }
 
+static void addWrapper(DOMObject* wrapper)
+{
+    ASSERT(!wrapperSet().contains(wrapper));
+    wrapperSet().add(wrapper);
+}
+
+static void removeWrapper(DOMObject* wrapper)
+{
+    if (!wrapper)
+        return;
+    ASSERT(wrapperSet().contains(wrapper));
+    wrapperSet().remove(wrapper);
+}
+
+static void removeWrappers(const NodeMap& wrappers)
+{
+    for (NodeMap::const_iterator it = wrappers.begin(); it != wrappers.end(); ++it)
+        removeWrapper(it->second);
+}
+
+DOMObject::~DOMObject()
+{
+    ASSERT(!wrapperSet().contains(this));
+}
+
+#endif
+
+static DOMObjectMap& domObjects()
+{ 
+    static DOMObjectMap staticDOMObjects;
+    return staticDOMObjects;
+}
+
+static NodePerDocMap& domNodesPerDocument()
+{
+    static NodePerDocMap staticDOMNodesPerDocument;
+    return staticDOMNodesPerDocument;
+}
 
 ScriptInterpreter::ScriptInterpreter(JSObject* global, Frame* frame)
     : Interpreter(global)
@@ -86,24 +134,26 @@ ScriptInterpreter::ScriptInterpreter(JSObject* global, Frame* frame)
 
 DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 
 {
-    return domObjects()->get(objectHandle);
+    return domObjects().get(objectHandle);
 }
 
-void ScriptInterpreter::putDOMObject(void* objectHandle, DOMObject* obj) 
+void ScriptInterpreter::putDOMObject(void* objectHandle, DOMObject* wrapper) 
 {
-    domObjects()->set(objectHandle, obj);
+    ADD_WRAPPER(wrapper);
+    domObjects().set(objectHandle, wrapper);
 }
 
 void ScriptInterpreter::forgetDOMObject(void* objectHandle)
 {
-    domObjects()->remove(objectHandle);
+    REMOVE_WRAPPER(domObjects().get(objectHandle));
+    domObjects().remove(objectHandle);
 }
 
 DOMNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node)
 {
     if (!document)
-        return static_cast<DOMNode*>(domObjects()->get(node));
-    NodeMap* documentDict = domNodesPerDocument()->get(document);
+        return static_cast<DOMNode*>(domObjects().get(node));
+    NodeMap* documentDict = domNodesPerDocument().get(document);
     if (documentDict)
         return documentDict->get(node);
     return NULL;
@@ -111,43 +161,46 @@ DOMNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node
 
 void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, Node* node)
 {
+    REMOVE_WRAPPER(getDOMNodeForDocument(document, node));
     if (!document) {
-        domObjects()->remove(node);
+        domObjects().remove(node);
         return;
     }
-    NodeMap* documentDict = domNodesPerDocument()->get(document);
+    NodeMap* documentDict = domNodesPerDocument().get(document);
     if (documentDict)
         documentDict->remove(node);
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(Document* document, Node* node, DOMNode* nodeWrapper)
+void ScriptInterpreter::putDOMNodeForDocument(Document* document, Node* node, DOMNode* wrapper)
 {
+    ADD_WRAPPER(wrapper);
     if (!document) {
-        domObjects()->set(node, nodeWrapper);
+        domObjects().set(node, wrapper);
         return;
     }
-    NodeMap* documentDict = domNodesPerDocument()->get(document);
+    NodeMap* documentDict = domNodesPerDocument().get(document);
     if (!documentDict) {
         documentDict = new NodeMap;
-        domNodesPerDocument()->set(document, documentDict);
+        domNodesPerDocument().set(document, documentDict);
     }
-    documentDict->set(node, nodeWrapper);
+    documentDict->set(node, wrapper);
 }
 
 void ScriptInterpreter::forgetAllDOMNodesForDocument(Document* document)
 {
-    assert(document);
-    NodePerDocMap::iterator it = domNodesPerDocument()->find(document);
-    if (it != domNodesPerDocument()->end()) {
+    ASSERT(document);
+    NodePerDocMap::iterator it = domNodesPerDocument().find(document);
+    if (it != domNodesPerDocument().end()) {
+        REMOVE_WRAPPERS(*it->second);
         delete it->second;
-        domNodesPerDocument()->remove(it);
+        domNodesPerDocument().remove(it);
     }
 }
 
 void ScriptInterpreter::mark(bool currentThreadIsMainThread)
 {
-    NodePerDocMap::iterator dictEnd = domNodesPerDocument()->end();
-    for (NodePerDocMap::iterator dictIt = domNodesPerDocument()->begin(); dictIt != dictEnd; ++dictIt) {
+    NodePerDocMap::iterator dictEnd = domNodesPerDocument().end();
+    for (NodePerDocMap::iterator dictIt = domNodesPerDocument().begin(); dictIt != dictEnd; ++dictIt) {
         NodeMap* nodeDict = dictIt->second;
         NodeMap::iterator nodeEnd = nodeDict->end();
         for (NodeMap::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
@@ -159,18 +212,18 @@ void ScriptInterpreter::mark(bool currentThreadIsMainThread)
                 node->mark();
         }
     }
-  
+
     if (!currentThreadIsMainThread) {
         // On alternate threads, DOMObjects remain in the cache because they're not collected.
         // So, they need an opportunity to mark their children.
-        DOMObjectMap::iterator objectEnd = domObjects()->end();
-        for (DOMObjectMap::iterator objectIt = domObjects()->begin(); objectIt != objectEnd; ++objectIt) {
+        DOMObjectMap::iterator objectEnd = domObjects().end();
+        for (DOMObjectMap::iterator objectIt = domObjects().begin(); objectIt != objectEnd; ++objectIt) {
             DOMObject* object = objectIt->second;
             if (!object->marked())
                 object->mark();
         }
     }
-  
+
     Interpreter::mark(currentThreadIsMainThread);
 }
 
@@ -184,10 +237,13 @@ ExecState* ScriptInterpreter::globalExec()
 
 void ScriptInterpreter::updateDOMNodeDocument(Node* node, Document* oldDoc, Document* newDoc)
 {
-    DOMNode* cachedResource = getDOMNodeForDocument(oldDoc, node);
-    if (cachedResource) {
-        putDOMNodeForDocument(newDoc, node, cachedResource);
+    ASSERT(oldDoc != newDoc);
+    DOMNode* wrapper = getDOMNodeForDocument(oldDoc, node);
+    if (wrapper) {
+        REMOVE_WRAPPER(wrapper);
+        putDOMNodeForDocument(newDoc, node, wrapper);
         forgetDOMNodeForDocument(oldDoc, node);
+        ADD_WRAPPER(wrapper);
     }
 }
 
@@ -196,15 +252,15 @@ bool ScriptInterpreter::wasRunByUserGesture() const
     if (m_currentEvent) {
         const AtomicString& type = m_currentEvent->type();
         bool eventOk = ( // mouse events
-        type == clickEvent || type == mousedownEvent ||
-        type == mouseupEvent || type == dblclickEvent ||
-        // keyboard events
-        type == keydownEvent || type == keypressEvent ||
-        type == keyupEvent ||
-        // other accepted events
-        type == selectEvent || type == changeEvent ||
-        type == focusEvent || type == blurEvent ||
-        type == submitEvent);
+            type == clickEvent || type == mousedownEvent ||
+            type == mouseupEvent || type == dblclickEvent ||
+            // keyboard events
+            type == keydownEvent || type == keypressEvent ||
+            type == keyupEvent ||
+            // other accepted events
+            type == selectEvent || type == changeEvent ||
+            type == focusEvent || type == blurEvent ||
+            type == submitEvent);
         if (eventOk)
             return true;
     } else { // no event

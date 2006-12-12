@@ -1,3 +1,39 @@
+2006-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11809
+          fast/dom/gc-8.html crash in alternate-thread marking code in ScriptInterpreter
+
+        DocumentType objects were getting filed under the wrong document in the
+        DOM objects structure.
+
+        * bindings/js/kjs_binding.h: Added a destructor for debugging purposes only.
+        * bindings/js/kjs_binding.cpp:
+        (KJS::wrapperSet): Added. Set of outstanding wrappers for debugging.
+        (KJS::addWrapper): Added.
+        (KJS::removeWrapper): Added.
+        (KJS::removeWrappers): Added.
+        (KJS::DOMObject::~DOMObject): Added. Asserts that there is no outstanding reference
+        to this wrapper since it's being destroyed.
+        (KJS::ScriptInterpreter::putDOMObject): Added a call to ADD_WRAPPER.
+        (KJS::ScriptInterpreter::forgetDOMObject): Added a call to REMOVE_WRAPPER.
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument): Added a call to REMOVE_WRAPPER.
+        (KJS::ScriptInterpreter::putDOMNodeForDocument): Added a call to ADD_WRAPPER.
+        (KJS::ScriptInterpreter::forgetAllDOMNodesForDocument): Added a call to REMOVE_WRAPPERS.
+        (KJS::ScriptInterpreter::updateDOMNodeDocument): Added calls to REMOVE_WRAPPER and
+        ADD_WRAPPER so the out-of-order transaction doesn't upset the assertions in the functions
+        we're calling. Another solution would be to reorder the two, but I think that would
+        create a race where another thread could garbage collect after the forget but before the put.
+        (KJS::ScriptInterpreter::wasRunByUserGesture): Tweaked formatting.
+
+        * dom/Document.cpp: (WebCore::Document::adoptNode): Removed call to updateDOMNodeDocument
+        since setDocument now takes care of that.
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): Added call to updateDOMNodeDocument here.
+        (WebCore::Node::checkAddChild): Removed call to updateDOMNodeDocument since setDocument
+        now takes care of that.
+
 2006-12-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

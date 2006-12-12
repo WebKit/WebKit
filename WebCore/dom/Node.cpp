@@ -129,11 +129,12 @@ Node::Node(Document *doc)
 #endif
 }
 
-void Node::setDocument(Document *doc)
+void Node::setDocument(Document* doc)
 {
-    if (inDocument())
+    if (inDocument() || m_document == doc)
         return;
-    
+
+    KJS::ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
     m_document = doc;
 }
 
@@ -603,12 +604,9 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
     }
     
     // change the document pointer of newChild and all of its children to be the new document
-    if (shouldAdoptChild) {
-        for (Node* node = newChild; node; node = node->traverseNextNode(newChild)) {
-            KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->document(), document());
+    if (shouldAdoptChild)
+        for (Node* node = newChild; node; node = node->traverseNextNode(newChild))
             node->setDocument(document());
-        }
-    }
 }
 
 bool Node::isDescendantOf(const Node *other) const

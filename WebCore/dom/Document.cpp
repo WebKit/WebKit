@@ -591,10 +591,8 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
                 source->parentNode()->removeChild(source.get(), ec);
     }
                 
-    for (Node* node = source.get(); node; node = node->traverseNextNode(source.get())) {
-        KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->document(), this);
+    for (Node* node = source.get(); node; node = node->traverseNextNode(source.get()))
         node->setDocument(this);
-    }
 
     return source;
 }
