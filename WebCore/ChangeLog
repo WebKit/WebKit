@@ -1,5 +1,13 @@
 2006-12-12  Anders Carlsson  <acarlsson@apple.com>
 
+        Rubber Stamped by Geoff.
+
+        * platform/Base64.cpp:
+        * platform/Base64.h:
+        Put functions inside of the WebCore namespace.
+
+2006-12-12  Anders Carlsson  <acarlsson@apple.com>
+
         Try fixing the non-Mac builds.
         
         * loader/ResourceLoader.cpp:

@@ -25,6 +25,8 @@
 #include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
 
+namespace WebCore {
+
 static const char base64EncMap[64] =
 {
   0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
@@ -164,4 +166,6 @@ bool base64Decode(const Vector<char>& in, Vector<char>& out)
         out.resize(outLen);
 
     return true;
+}
+
 }
