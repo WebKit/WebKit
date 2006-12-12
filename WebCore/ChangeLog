@@ -1,3 +1,10 @@
+2006-12-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver.
+
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        added #ifdef SVG_SUPPORT
+
 2006-12-12  Anders Carlsson  <acarlsson@apple.com>
 
         Suggested by Darin.

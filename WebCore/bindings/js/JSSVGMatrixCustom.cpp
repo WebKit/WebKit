@@ -18,6 +18,9 @@
  */
 
 #include "config.h"
+
+#ifdef SVG_SUPPORT
+
 #include "JSSVGMatrix.h"
 
 #include "AffineTransform.h"
@@ -54,5 +57,7 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
 }
     
 }
+
+#endif // SVG_SUPPORT
 
 // vim:ts=4:noet
