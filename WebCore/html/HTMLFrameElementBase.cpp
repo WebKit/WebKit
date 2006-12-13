@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
@@ -210,13 +211,8 @@ bool HTMLFrameElementBase::isFocusable() const
 void HTMLFrameElementBase::setFocus(bool received)
 {
     HTMLElement::setFocus(received);
-    RenderFrame* renderFrame = static_cast<RenderFrame*>(renderer());
-    if (!renderFrame || !renderFrame->widget())
-        return;
-    if (received)
-        renderFrame->widget()->setFocus();
-    else
-        renderFrame->widget()->clearFocus();
+    if (Page* page = document()->page())
+        page->focusController()->setFocusedFrame(received ? contentFrame() : 0);
 }
 
 bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const

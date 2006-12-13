@@ -31,6 +31,7 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -39,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -995,11 +997,11 @@ bool SelectionController::contains(const IntPoint& point)
 void SelectionController::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    Frame *parent = m_frame->tree()->parent();
+    Frame* parent = m_frame->tree()->parent();
     if (!parent)
         return;
-    FrameView *parentView = parent->view();
-    if (!parentView)
+    Page* page = m_frame->page();
+    if (!page)
         return;
 
     // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
@@ -1011,13 +1013,13 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    Document *doc = m_frame->document();
+    Document* doc = m_frame->document();
     if (!doc)
         return;
-    Element *ownerElement = doc->ownerElement();
+    Element* ownerElement = doc->ownerElement();
     if (!ownerElement)
         return;
-    Node *ownerElementParent = ownerElement->parentNode();
+    Node* ownerElementParent = ownerElement->parentNode();
     if (!ownerElementParent)
         return;
         
@@ -1033,7 +1035,7 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
     // Focus on the parent frame, and then select from before this element to after.
     Selection newSelection(beforeOwnerElement, afterOwnerElement);
     if (parent->shouldChangeSelection(newSelection)) {
-        parentView->setFocus();
+        page->focusController()->setFocusedFrame(parent);
         parent->selectionController()->setSelection(newSelection);
     }
 }

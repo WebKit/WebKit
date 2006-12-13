@@ -1072,12 +1072,6 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
             if (!m_frame->document()->setFocusedNode(0))
                 swallowEvent = true;
         }
-
-#if PLATFORM(WIN)
-        // It's ok to shift focus to this view now that we know that no focus change got blocked.
-        if (!swallowEvent && !m_frame->view()->hasFocus())
-            m_frame->view()->setFocus();
-#endif
     }
 
     return swallowEvent;

@@ -47,7 +47,7 @@ static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient)
     : m_chrome(new Chrome(this, chromeClient))
     , m_dragCaretController(new SelectionController(0, true))
-    , m_focusController(new FocusController)
+    , m_focusController(new FocusController(this))
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
     , m_editorClient(editorClient)
     , m_frameCount(0)

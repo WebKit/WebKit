@@ -102,6 +102,11 @@ static Widget* widgetForNode(Node* node)
     return static_cast<RenderWidget*>(renderer)->widget();
 }
 
+FocusController::FocusController(Page* page)
+    : m_page(page)
+{
+}
+
 bool FocusController::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 {    
     if (m_focusedNode == newFocusedNode)
@@ -179,27 +184,27 @@ bool FocusController::setFocusedNode(PassRefPtr<Node> newFocusedNode)
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
         }
-        m_focusedNode->setFocus();
+
+        if (Page* page = m_focusedNode->document()->page())
+            page->focusController()->setFocusedFrame(m_focusedNode->document()->frame());
         
+        m_focusedNode->setFocus();
+
         if (m_focusedNode.get() == m_focusedNode->rootEditableElement())
             if (Frame* frame = m_focusedNode->document()->frame())
                 frame->editor()->didBeginEditing();
         
-        // This only matters for searchfield
-        if (m_focusedNode->document()->view()) {
-            Widget* focusedWidget = widgetForNode(m_focusedNode.get());
-            if (focusedWidget) {
-                // Make sure a widget has the right size before giving it focus.
-                // Otherwise, we are testing edge cases of the Widget code.
-                // Specifically, in WebCore this does not work well for text fields.
-                m_focusedNode->document()->updateLayout();
-                // Re-get the widget in case updating the layout changed things.
-                focusedWidget = widgetForNode(m_focusedNode.get());
-            }
+        // This only matters for <input type=search>, until it becomes an engine-based control.
+        Widget* focusedWidget = widgetForNode(m_focusedNode.get());
+        if (focusedWidget) {
+            // Make sure a widget has the right size before giving it focus.
+            // Otherwise, we are testing edge cases of the Widget code.
+            // Specifically, in WebCore this does not work well for text fields.
+            m_focusedNode->document()->updateLayout();
+            // Re-get the widget in case updating the layout changed things.
+            focusedWidget = widgetForNode(m_focusedNode.get());
             if (focusedWidget)
                 focusedWidget->setFocus();
-            else
-                m_focusedNode->document()->view()->setFocus();
         }
    }
 
@@ -217,6 +222,33 @@ void FocusController::focusedNodeDetached(Node* node)
 {
     ASSERT(node == m_focusedNode);
     setFocusedNode(0);
+}
+
+void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
+{
+    if (m_focusedFrame == frame)
+        return;
+
+    if (m_focusedFrame) {
+        m_focusedFrame->setWindowHasFocus(false);
+        m_focusedFrame->setIsActive(false);
+    }
+
+    m_focusedFrame = frame;
+
+    if (m_focusedFrame) {
+        m_focusedFrame->setWindowHasFocus(true);
+        m_focusedFrame->setIsActive(true);
+    }
+}
+
+Frame* FocusController::focusedOrMainFrame()
+{
+    Frame* frame = focusedFrame();
+    if (!frame)
+        setFocusedFrame(m_page->mainFrame());
+    ASSERT(focusedFrame());
+    return focusedFrame();
 }
 
 } // namespace WebCore
