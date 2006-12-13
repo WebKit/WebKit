@@ -1,3 +1,9 @@
+2006-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady and Anders.
+
+        * Makefile.shared: Stop spewing the environment all the time, at least for command-line builds.
+
 2006-12-10  Zack Rusin  <zack@kde.org>
 
         Client classes have been moved to WebKitQt/WebCoreSupport so

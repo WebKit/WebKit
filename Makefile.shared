@@ -1,20 +1,20 @@
 XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
 all:
-	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv
 
 debug d development dev develop: force
 	../WebKitTools/Scripts/set-webkit-configuration --debug
-	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv
 
 release r deployment dep deploy: force
 	../WebKitTools/Scripts/set-webkit-configuration --release
-	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv
 
 universal u: force
-	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386'
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386' | grep -v setenv
 
 clean:
-	xcodebuild -alltargets clean $(XCODE_OPTIONS)
+	xcodebuild -alltargets clean $(XCODE_OPTIONS) | grep -v setenv
 
 force: ;
