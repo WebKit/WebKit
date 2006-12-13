@@ -337,9 +337,11 @@ void Document::removedLastRef()
 
 Document::~Document()
 {
-    assert(!renderer());
-    assert(!m_inPageCache);
-    assert(m_savedRenderer == 0);
+    ASSERT(!renderer());
+    ASSERT(!m_inPageCache);
+    ASSERT(!m_savedRenderer);
+
+    removeAllEventListeners();
 
 #ifdef SVG_SUPPORT
     delete m_svgExtensions;
@@ -3008,7 +3010,7 @@ Document *Document::topDocument() const
 {
     Document *doc = const_cast<Document *>(this);
     Element *element;
-    while ((element = doc->ownerElement()) != 0)
+    while ((element = doc->ownerElement()))
         doc = element->document();
     
     return doc;

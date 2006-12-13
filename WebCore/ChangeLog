@@ -1,3 +1,14 @@
+2006-12-13  Brady Eidson  <beidson@apple.com>
+
+        Implicitly reviewed by Darin, Hyatt, Maciej, and others!
+
+        Fixes a document tear down crash.
+        Changes a few long standing assertions to our new style
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::topDocument):
+
 2006-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
