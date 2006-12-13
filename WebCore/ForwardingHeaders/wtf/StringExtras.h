@@ -1,1 +1,1 @@
-#import <JavaScriptCore/StringExtras.h>
+#include <JavaScriptCore/StringExtras.h>
