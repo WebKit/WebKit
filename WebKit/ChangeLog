@@ -1,3 +1,32 @@
+2006-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - adjusted for changes from NSURLRequest to ResourceRequest
+
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateHistoryForReload):
+        (WebFrameLoaderClient::dispatchIdentifierForInitialRequest):
+        (WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::startDownload):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::createDocumentLoader):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _initWithDocumentLoader:]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame loadArchive:]):
+
 2006-12-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

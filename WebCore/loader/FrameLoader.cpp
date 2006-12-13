@@ -2058,7 +2058,7 @@ void FrameLoader::stopPolicyCheck()
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
     check.clearRequest();
-    check.call();
+    check.call(false);
 }
 
 void FrameLoader::continueAfterContentPolicy(PolicyAction policy)

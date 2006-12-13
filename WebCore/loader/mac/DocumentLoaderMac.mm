@@ -100,11 +100,11 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     return String::adopt(stringBuilder);
 }
 
-DocumentLoader::DocumentLoader(NSURLRequest *req)
+DocumentLoader::DocumentLoader(const ResourceRequest& req)
     : m_frame(0)
     , m_originalRequest(req)
-    , m_originalRequestCopy([req copy])
-    , m_request([req mutableCopy])
+    , m_originalRequestCopy(req)
+    , m_request(req)
     , m_loadingStartedTime(0)
     , m_committed(false)
     , m_stopping(false)
@@ -114,9 +114,6 @@ DocumentLoader::DocumentLoader(NSURLRequest *req)
     , m_isClientRedirect(false)
     , m_stopRecordingResponses(false)
 {
-    [m_originalRequestCopy.get() release];
-    [m_request.get() release];
-    wkSupportsMultipartXMixedReplace(m_request.get());
 }
 
 FrameLoader* DocumentLoader::frameLoader() const
@@ -141,69 +138,64 @@ NSData *DocumentLoader::mainResourceData() const
     return m_mainResourceData ? m_mainResourceData.get() : frameLoader()->mainResourceData();
 }
 
-NSURLRequest *DocumentLoader::originalRequest() const
+const ResourceRequest& DocumentLoader::originalRequest() const
 {
-    return m_originalRequest.get();
+    return m_originalRequest;
 }
 
-NSURLRequest *DocumentLoader::originalRequestCopy() const
+const ResourceRequest& DocumentLoader::originalRequestCopy() const
 {
-    return m_originalRequestCopy.get();
+    return m_originalRequestCopy;
 }
 
-NSMutableURLRequest *DocumentLoader::request()
+const ResourceRequest& DocumentLoader::request() const
 {
-    NSMutableURLRequest *clientRequest = [m_request.get() _webDataRequestExternalRequest];
-    if (!clientRequest)
-        clientRequest = m_request.get();
-    return clientRequest;
+    // FIXME: need a better way to handle data loads
+    return m_request;
 }
 
-NSURLRequest *DocumentLoader::initialRequest() const
+ResourceRequest& DocumentLoader::request()
 {
-    NSURLRequest *clientRequest = [m_originalRequest.get() _webDataRequestExternalRequest];
-    if (!clientRequest)
-        clientRequest = m_originalRequest.get();
-    return clientRequest;
+    // FIXME: need a better way to handle data loads
+    return m_request;
 }
 
-NSMutableURLRequest *DocumentLoader::actualRequest()
+const ResourceRequest& DocumentLoader::initialRequest() const
 {
-    return m_request.get();
+    // FIXME: need a better way to handle data loads
+    return m_originalRequest;
 }
 
-KURL DocumentLoader::URL() const
+ResourceRequest& DocumentLoader::actualRequest()
 {
-    return [const_cast<DocumentLoader*>(this)->request() URL];
+    return m_request;
 }
 
-KURL DocumentLoader::unreachableURL() const
+const KURL& DocumentLoader::URL() const
 {
-    return [m_originalRequest.get() _webDataRequestUnreachableURL];
+    return request().url();
+}
+
+const KURL DocumentLoader::unreachableURL() const
+{
+    return [m_originalRequest.nsURLRequest() _webDataRequestUnreachableURL];
 }
 
 void DocumentLoader::replaceRequestURLForAnchorScroll(const KURL& URL)
 {
-    NSURL *newURL = URL.getNSURL();
-
-    NSMutableURLRequest *newOriginalRequest = [m_originalRequestCopy.get() mutableCopy];
-    [newOriginalRequest setURL:newURL];
-    m_originalRequestCopy = newOriginalRequest;
-    [newOriginalRequest release];
-    
-    NSMutableURLRequest *newRequest = [m_request.get() mutableCopy];
-    [newRequest setURL:newURL];
-    m_request = newRequest;
-    [newRequest release];
+    m_originalRequestCopy.setURL(URL);
+    m_request.setURL(URL);
 }
 
-void DocumentLoader::setRequest(NSURLRequest *req)
+void DocumentLoader::setRequest(const ResourceRequest& req)
 {
-    ASSERT_ARG(req, req != m_request);
-
     // Replacing an unreachable URL with alternate content looks like a server-side
     // redirect at this point, but we can replace a committed dataSource.
-    bool handlingUnreachableURL = [req _webDataRequestUnreachableURL] != nil;
+    bool handlingUnreachableURL = false;
+
+    // FIXME: need a better way to handle data loads
+    handlingUnreachableURL = [req.nsURLRequest() _webDataRequestUnreachableURL];
+
     if (handlingUnreachableURL)
         m_committed = false;
 
@@ -212,17 +204,13 @@ void DocumentLoader::setRequest(NSURLRequest *req)
     // would be a WebFoundation bug if it sent a redirect callback after commit.
     ASSERT(!m_committed);
 
-    NSURLRequest *oldRequest = [m_request.get() retain];
-    NSMutableURLRequest *copy = [req mutableCopy];
-    m_request = copy;
-    [copy release];
+    KURL oldURL = m_request.url();
+    m_request = req;
 
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     // Also, don't send it when replacing unreachable URLs with alternate content.
-    if (!handlingUnreachableURL && ![[oldRequest URL] isEqual:[req URL]])
+    if (!handlingUnreachableURL && oldURL.url() != req.url().url())
         frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
-
-    [oldRequest release];
 }
 
 void DocumentLoader::setResponse(NSURLResponse *resp)
@@ -287,11 +275,12 @@ void DocumentLoader::stopLoading()
     else if (frameLoader->isLoadingSubresources())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
-        setMainDocumentError(frameLoader->cancelledError(m_request.get()));
+
+        setMainDocumentError(frameLoader->cancelledError(m_request.nsURLRequest()));
     else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        mainReceivedError(frameLoader->cancelledError(m_request.get()), true);
+        mainReceivedError(frameLoader->cancelledError(m_request.nsURLRequest()), true);
     
     frameLoader->stopLoadingSubresources();
     frameLoader->stopLoadingPlugIns();
@@ -500,18 +489,14 @@ String DocumentLoader::title() const
     return m_pageTitle;
 }
 
-void DocumentLoader::setLastCheckedRequest(NSURLRequest *req)
+void DocumentLoader::setLastCheckedRequest(const ResourceRequest& req)
 {
-    NSURLRequest *copy = [req copy];
     m_lastCheckedRequest = req;
-    [copy release];
 }
 
-NSURLRequest *DocumentLoader::lastCheckedRequest() const
+const ResourceRequest& DocumentLoader::lastCheckedRequest() const
 {
-    // It's OK not to make a copy here because we know the caller
-    // isn't going to modify this request
-    return [[m_lastCheckedRequest.get() retain] autorelease];
+    return m_lastCheckedRequest;
 }
 
 const NavigationAction& DocumentLoader::triggeringAction() const
@@ -557,10 +542,13 @@ KURL DocumentLoader::URLForHistory() const
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-    NSURL *URL = [m_originalRequestCopy.get() URL];
-    if ([WebDataProtocol _webIsDataProtocolURL:URL])
-        URL = [m_originalRequestCopy.get() _webDataRequestUnreachableURL];
-    return URL;
+
+    KURL url = [m_originalRequestCopy.nsURLRequest() _webDataRequestUnreachableURL];
+
+    if (url.isEmpty())
+        url = m_originalRequestCopy.url();
+
+    return url;
 }
 
 }

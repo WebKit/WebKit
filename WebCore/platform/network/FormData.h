@@ -37,6 +37,23 @@ public:
     String m_filename;
 };
 
+inline bool operator==(const FormDataElement& a, const FormDataElement& b)
+{
+    if (a.m_type != b.m_type)
+        return false;
+    if (a.m_data != b.m_data)
+        return false;
+    if (a.m_filename != b.m_filename)
+        return false;
+
+    return true;
+}
+ 
+inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
+{
+    return !(a == b);
+}
+ 
 class FormData : public Shared<FormData> {
 public:
     FormData() { } 
@@ -55,6 +72,16 @@ public:
 private:
      Vector<FormDataElement> m_elements;
 };
+
+inline bool operator==(const FormData& a, const FormData& b)
+{
+    return a.elements() == b.elements();
+}
+
+inline bool operator!=(const FormData& a, const FormData& b)
+{
+    return a.elements() != b.elements();
+}
 
 } // namespace WebCore
 

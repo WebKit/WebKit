@@ -55,6 +55,10 @@ KURL::KURL(NSURL *url)
 
 NSURL *KURL::getNSURL() const
 {
+    // FIXME: CFURL can't hold an empty URL, unlike NSURL
+    if (isEmpty())
+        return [NSURL URLWithString:@""];
+
     return HardAutorelease(createCFURL());
 }
 

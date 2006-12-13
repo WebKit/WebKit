@@ -33,18 +33,7 @@
 #import <wtf/Assertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
-static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
-
-@interface WebDataRequestParameters : NSObject <NSCopying>
-{
-@public
-    NSData *data;
-    NSString *MIMEType;
-    NSString *encoding;
-    NSURL *baseURL;
-    NSURL *unreachableURL;
-}
-@end
+NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @implementation WebDataRequestParameters
 

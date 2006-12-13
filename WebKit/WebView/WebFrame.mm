@@ -72,11 +72,14 @@
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebDataProtocol.h>
 #import <WebCore/FormState.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLElement.h>
 #import <WebKit/DOMNode.h>
 #import <WebKit/DOMRange.h>
+
+using namespace WebCore;
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -282,27 +285,28 @@ WebView *getWebView(WebFrame *webFrame)
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal
 {
     WebDataSource *dataSrc = [self dataSource];
-    NSURLRequest *request;
+    ResourceRequest request;
     NSURL *unreachableURL = [dataSrc unreachableURL];
     NSURL *URL;
     NSURL *originalURL;
     WebHistoryItem *bfItem;
     WebCoreDocumentLoader *documentLoader = [dataSrc _documentLoader];
 
-    if (useOriginal)
-        request = documentLoader ? documentLoader->originalRequestCopy() : nil;
-    else
-        request = [dataSrc request];
+    if (documentLoader)
+        if (useOriginal)
+            request =  documentLoader->originalRequestCopy();
+        else
+            request = documentLoader->request();
 
     if (unreachableURL != nil) {
         URL = unreachableURL;
         originalURL = unreachableURL;
     } else {
-        URL = [request URL];
-        originalURL = documentLoader ? [documentLoader->originalRequestCopy() URL] : nil;
+        URL = request.url().getNSURL();
+        originalURL = documentLoader ? documentLoader->originalRequestCopy().url().getNSURL() : nil;
     }
 
-    LOG (History, "creating item for %@", request);
+    LOG (History, "creating item for %@", request.nsURLRequest());
     
     // Frames that have never successfully loaded any content
     // may have no URL at all. Currently our history code can't
@@ -320,7 +324,7 @@ WebView *getWebView(WebFrame *webFrame)
     [bfItem setOriginalURLString:[originalURL _web_originalDataAsString]];
 
     // save form state if this is a POST
-    [bfItem _setFormInfoFromRequest:request];
+    [bfItem _setFormInfoFromRequest:request.nsURLRequest()];
 
     // Set the item for which we will save document state
     [self _setPreviousItem:_private->currentItem];
@@ -557,7 +561,7 @@ WebView *getWebView(WebFrame *webFrame)
 
                 action = NavigationAction(itemOriginalURL, loadType, false);
             }
-
+            
             [self _frameLoader]->load(request, action, loadType, 0);
             [request release];
         }

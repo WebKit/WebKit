@@ -305,6 +305,31 @@ namespace WTF {
         m_impl.clear();
     }
 
+    template<typename T, typename U, typename V, typename W, typename X>
+    bool operator==(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W, X>& b)
+    {
+        if (a.size() != b.size())
+            return false;
+
+        typedef typename HashMap<T, U, V, W, X>::const_iterator const_iterator;
+
+        const_iterator end = a.end();
+        const_iterator notFound = b.end();
+        for (const_iterator it = a.begin(); it != end; ++it) {
+            const_iterator bPos = b.find(it->first);
+            if (bPos == notFound || it->second != bPos->second)
+                return false;
+        }
+
+        return true;
+    }
+
+    template<typename T, typename U, typename V, typename W, typename X>
+    inline bool operator!=(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W, X>& b)
+    {
+        return !(a == b);
+    }
+
     template<typename MappedType, typename HashTableType>
     void deleteAllPairSeconds(HashTableType& collection)
     {

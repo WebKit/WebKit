@@ -118,11 +118,12 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
 {
     bool isFormSubmission = !values.isEmpty();
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL.getNSURL()];
-    setHTTPReferrer(request, referrer);
+    ResourceRequest request(URL);
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
     addExtraFieldsToRequest(request, true, event || isFormSubmission);
     if (newLoadType == FrameLoadTypeReload)
-        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        request.setCachePolicy(ReloadIgnoringCacheData);
 
     ASSERT(newLoadType != FrameLoadTypeSame);
 
@@ -137,7 +138,6 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
             targetFrame->loader()->load(URL, referrer, newLoadType, String(), event, form, values);
         else
             checkNewWindowPolicy(action, request, formState.release(), frameName);
-        [request release];
         return;
     }
 
@@ -182,18 +182,16 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
             // frame, where the user has clicked on the same link repeatedly.
             m_loadType = FrameLoadTypeSame;
     }
-    
-    [request release];
 }
 
-void FrameLoader::load(NSURLRequest *request)
+void FrameLoader::load(const ResourceRequest& request)
 {
     // FIXME: is this the right place to reset loadType? Perhaps this should be done after loading is finished or aborted.
     m_loadType = FrameLoadTypeStandard;
     load(m_client->createDocumentLoader(request).get());
 }
 
-void FrameLoader::load(NSURLRequest *request, const String& frameName)
+void FrameLoader::load(const ResourceRequest& request, const String& frameName)
 {
     if (frameName.isEmpty()) {
         load(request);
@@ -206,11 +204,10 @@ void FrameLoader::load(NSURLRequest *request, const String& frameName)
         return;
     }
 
-    checkNewWindowPolicy(NavigationAction([request URL], NavigationTypeOther),
-        request, 0, frameName);
+    checkNewWindowPolicy(NavigationAction(request.url(), NavigationTypeOther), request, 0, frameName);
 }
 
-void FrameLoader::load(NSURLRequest *request, const NavigationAction& action, FrameLoadType type, PassRefPtr<FormState> formState)
+void FrameLoader::load(const ResourceRequest& request, const NavigationAction& action, FrameLoadType type, PassRefPtr<FormState> formState)
 {
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request);
     setPolicyDocumentLoader(loader.get());
@@ -227,11 +224,11 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     stopPolicyCheck();
     setPolicyDocumentLoader(newDocumentLoader);
 
-    NSMutableURLRequest *r = newDocumentLoader->request();
+    ResourceRequest& r = newDocumentLoader->request();
     addExtraFieldsToRequest(r, true, false);
     FrameLoadType type;
-    if (m_client->shouldTreatURLAsSameAsCurrent([newDocumentLoader->originalRequest() URL])) {
-        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    if (m_client->shouldTreatURLAsSameAsCurrent(newDocumentLoader->originalRequest().url())) {
+        r.setCachePolicy(ReloadIgnoringCacheData);
         type = FrameLoadTypeSame;
     } else
         type = FrameLoadTypeStandard;
@@ -283,16 +280,17 @@ bool FrameLoader::canLoad(NSURL *URL, const String& referrer, bool& hideReferrer
     return !URLIsFileURL || referrerIsLocalURL;
 }
 
-bool FrameLoader::startLoadingMainResource(NSMutableURLRequest *request, id identifier)
+bool FrameLoader::startLoadingMainResource(ResourceRequest& request, id identifier)
 {
     ASSERT(!m_mainResourceLoader);
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
     m_mainResourceLoader->setIdentifier(identifier);
+    // FIXME: is there any way the extra fields could have not been added by now?
     addExtraFieldsToRequest(request, true, false);
-    if (!m_mainResourceLoader->load(request)) {
+    if (!m_mainResourceLoader->load(request.nsURLRequest())) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
-        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [request URL]);
+        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", request.url().getNSURL());
         m_mainResourceLoader = 0;
         return false;
     }
@@ -344,6 +342,13 @@ void FrameLoader::applyUserAgent(NSMutableURLRequest *request)
     [request setValue:lastUserAgentNSString.get() forHTTPHeaderField:@"User-Agent"];
 }
 
+void FrameLoader::applyUserAgent(ResourceRequest& request)
+{
+    String userAgent = client()->userAgent();
+    ASSERT(!userAgent.isNull());
+    request.setHTTPUserAgent(userAgent);
+}
+
 NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, NSURLResponse *redirectResponse)
 {
     applyUserAgent(clientRequest);
@@ -381,7 +386,7 @@ void FrameLoader::didFailToLoad(ResourceLoader* loader, NSError *error)
         m_client->dispatchDidFailLoading(activeDocumentLoader(), loader->identifier(), error);
 }
 
-NSURLRequest *FrameLoader::originalRequest() const
+const ResourceRequest& FrameLoader::originalRequest() const
 {
     return activeDocumentLoader()->originalRequestCopy();
 }
@@ -403,7 +408,7 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
     
     if (m_state == FrameStateProvisional) {
 #ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
-        NSURL *failedURL = [m_provisionalDocumentLoader->originalRequestCopy() URL];
+        KURL failedURL = m_provisionalDocumentLoader->originalRequestCopy().url();
         didNotOpenURL(failedURL);
 #endif
         // We might have made a page cache item, but now we're bailing out due to an error before we ever
@@ -428,18 +433,15 @@ void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
 }
 
 void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument,
-    NSURLRequest *request, PassRefPtr<FormState>)
+    const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
 {
     FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueFragmentScrollAfterNavigationPolicy(request);
+    loader->continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
 }
 
-void FrameLoader::continueFragmentScrollAfterNavigationPolicy(NSURLRequest *request)
+void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    if (!request)
-        return;
-    
-    NSURL *URL = [request URL];
+    KURL URL = request.url();
     
     bool isRedirect = m_quickRedirectComing;
     m_quickRedirectComing = false;
@@ -529,11 +531,16 @@ void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
     } else {
         NSURLResponse *response = pdl->response();
     
-        NSURL *URL = [pdl->request() _webDataRequestBaseURL];
-        if (!URL)
+        KURL URL;
+#if PLATFORM(MAC)
+        if (WebDataRequestParameters* params = [pdl->request().nsURLRequest() _webDataRequestParametersForReading])
+            URL = params->baseURL;
+#endif
+
+        if (URL.isEmpty())
             URL = [response URL];
-        if (!URL || urlIsEmpty(URL))
-            URL = [NSURL URLWithString:@"about:blank"];    
+        if (URL.isEmpty())
+            URL = "about:blank";    
 
         m_responseMIMEType = [response MIMEType];
         if (didOpenURL(URL)) {
@@ -547,7 +554,7 @@ void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
     opened();
 }
 
-NSURLRequest *FrameLoader::initialRequest() const
+const ResourceRequest& FrameLoader::initialRequest() const
 {
     return activeDocumentLoader()->initialRequest();
 }
@@ -557,7 +564,7 @@ void FrameLoader::receivedData(NSData *data)
     activeDocumentLoader()->receivedData(data);
 }
 
-void FrameLoader::setRequest(NSURLRequest *request)
+void FrameLoader::setRequest(const ResourceRequest& request)
 {
     activeDocumentLoader()->setRequest(request);
 }
@@ -604,8 +611,7 @@ NSError *FrameLoader::interruptionForPolicyChangeError(NSURLRequest *request)
     return m_client->interruptForPolicyChangeError(request);
 }
 
-void FrameLoader::checkNavigationPolicy(NSURLRequest *newRequest,
-    NavigationPolicyDecisionFunction function, void* argument)
+void FrameLoader::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function, void* argument)
 {
     checkNavigationPolicy(newRequest, activeDocumentLoader(), 0, function, argument);
 }
@@ -617,10 +623,14 @@ void FrameLoader::checkContentPolicy(const String& MIMEType, ContentPolicyDecisi
         MIMEType, activeDocumentLoader()->request());
 }
 
-bool FrameLoader::shouldReloadToHandleUnreachableURL(NSURLRequest *request)
+bool FrameLoader::shouldReloadToHandleUnreachableURL(const ResourceRequest& request)
 {
-    NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
-    if (unreachableURL == nil)
+    KURL unreachableURL;
+#if PLATFORM(MAC)
+    unreachableURL = [request.nsURLRequest() _webDataRequestUnreachableURL];
+#endif
+
+    if (unreachableURL.isEmpty())
         return false;
 
     if (!isBackForwardLoadType(m_policyLoadType))
@@ -637,7 +647,7 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(NSURLRequest *request)
     else if (m_delegateIsHandlingProvisionalLoadError)
         compareDocumentLoader = m_provisionalDocumentLoader.get();
 
-    return compareDocumentLoader && [unreachableURL isEqual:[compareDocumentLoader->request() URL]];
+    return compareDocumentLoader && unreachableURL != compareDocumentLoader->request().url();
 }
 
 void FrameLoader::reloadAllowingStaleData(const String& encoding)
@@ -645,17 +655,15 @@ void FrameLoader::reloadAllowingStaleData(const String& encoding)
     if (!m_documentLoader)
         return;
 
-    NSMutableURLRequest *request = [m_documentLoader->request() mutableCopy];
+    ResourceRequest request = m_documentLoader->request();
     KURL unreachableURL = m_documentLoader->unreachableURL();
     if (!unreachableURL.isEmpty())
-        [request setURL:unreachableURL.getNSURL()];
+        request.setURL(unreachableURL);
 
-    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+    request.setCachePolicy(ReturnCacheDataElseLoad);
 
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request);
     setPolicyDocumentLoader(loader.get());
-
-    [request release];
 
     loader->setOverrideEncoding(encoding);
 
@@ -667,28 +675,31 @@ void FrameLoader::reload()
     if (!m_documentLoader)
         return;
 
-    NSMutableURLRequest *initialRequest = m_documentLoader->request();
+    ResourceRequest& initialRequest = m_documentLoader->request();
     
     // If a window is created by javascript, its main frame can have an empty but non-nil URL.
     // Reloading in this case will lose the current contents (see 4151001).
-    if ([[[initialRequest URL] absoluteString] length] == 0)
+    if (initialRequest.url().isEmpty())
         return;
 
     // Replace error-page URL with the URL we were trying to reach.
-    NSURL *unreachableURL = [initialRequest _webDataRequestUnreachableURL];
-    if (unreachableURL != nil)
-        initialRequest = [NSURLRequest requestWithURL:unreachableURL];
+    KURL unreachableURL;
+#if PLATFORM(MAC)
+    unreachableURL = [initialRequest.nsURLRequest() _webDataRequestUnreachableURL];
+#endif
+    if (!unreachableURL.isEmpty())
+        initialRequest = ResourceRequest(unreachableURL);
     
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(initialRequest);
     setPolicyDocumentLoader(loader.get());
 
-    NSMutableURLRequest *request = loader->request();
+    ResourceRequest& request = loader->request();
 
-    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    request.setCachePolicy(ReloadIgnoringCacheData);
 
     // If we're about to re-post, set up action so the application can warn the user.
-    if ([[request HTTPMethod] isEqualToString:@"POST"])
-        loader->setTriggeringAction(NavigationAction([request URL], NavigationTypeFormResubmitted));
+    if (request.httpMethod() == "POST")
+        loader->setTriggeringAction(NavigationAction(request.url(), NavigationTypeFormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
@@ -727,7 +738,7 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
         }
 }
 
-void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, NSURLRequest *request,
+void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, const ResourceRequest& request,
     PassRefPtr<FormState> formState, const String& frameName)
 {
     m_policyCheck.set(request, formState, frameName,
@@ -753,33 +764,35 @@ void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
             break;
     }
 
-    check.call();
+    check.call(policy == PolicyUse);
 }
 
-void FrameLoader::checkNavigationPolicy(NSURLRequest *request, DocumentLoader* loader,
+void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader,
     PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function, void* argument)
 {
     NavigationAction action = loader->triggeringAction();
     if (action.isEmpty()) {
-        action = NavigationAction([request URL], NavigationTypeOther);
+        action = NavigationAction(request.url(), NavigationTypeOther);
         loader->setTriggeringAction(action);
     }
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:loader->lastCheckedRequest()] || urlIsEmpty([request URL])) {
-        function(argument, request, 0);
+    if (request == loader->lastCheckedRequest() || request.url().isEmpty()) {
+        function(argument, request, 0, true);
         return;
     }
     
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
-    if ([request _webDataRequestUnreachableURL] != nil) {
+#if PLATFORM(MAC)
+    if ([request.nsURLRequest() _webDataRequestUnreachableURL]) {
         if (isBackForwardLoadType(m_policyLoadType))
             m_policyLoadType = FrameLoadTypeReload;
-        function(argument, request, 0);
+        function(argument, request, 0, true);
         return;
     }
+#endif
     
     loader->setLastCheckedRequest(request);
 
@@ -814,18 +827,17 @@ void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
         }
     }
 
-    check.call();
+    check.call(policy == PolicyUse);
 }
 
 void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,
-    NSURLRequest *request, PassRefPtr<FormState> formState)
+    const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue)
 {
     FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueLoadAfterNavigationPolicy(request, formState);
+    loader->continueLoadAfterNavigationPolicy(request, formState, shouldContinue);
 }
 
-void FrameLoader::continueLoadAfterNavigationPolicy(NSURLRequest *request,
-    PassRefPtr<FormState> formState)
+void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
@@ -839,7 +851,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(NSURLRequest *request,
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
-    bool canContinue = request && (!isLoadingMainFrame() || Mac(m_frame)->shouldClose());
+    bool canContinue = shouldContinue && (!isLoadingMainFrame() || Mac(m_frame)->shouldClose());
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
@@ -990,7 +1002,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                     clearProvisionalLoad();
                 else if (m_documentLoader) {
                     KURL unreachableURL = m_documentLoader->unreachableURL();
-                    if (!unreachableURL.isEmpty() && unreachableURL == [pdl->request() URL])
+                    if (!unreachableURL.isEmpty() && unreachableURL == pdl->request().url())
                         shouldReset = false;
                 }
             }
@@ -1040,16 +1052,16 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 }
 
 void FrameLoader::callContinueLoadAfterNewWindowPolicy(void* argument,
-    NSURLRequest *request, PassRefPtr<FormState> formState, const String& frameName)
+    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, bool shouldContinue)
 {
     FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueLoadAfterNewWindowPolicy(request, formState, frameName);
+    loader->continueLoadAfterNewWindowPolicy(request, formState, frameName, shouldContinue);
 }
 
-void FrameLoader::continueLoadAfterNewWindowPolicy(NSURLRequest *request,
-    PassRefPtr<FormState> formState, const String& frameName)
+void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,
+    PassRefPtr<FormState> formState, const String& frameName, bool shouldContinue)
 {
-    if (!request)
+    if (!shouldContinue)
         return;
 
     RefPtr<Frame> frame = m_frame;
@@ -1112,13 +1124,14 @@ void FrameLoader::post(const KURL& URL, const String& referrer, const String& fr
 
     // FIXME: Where's the code that implements what the comment above says?
 
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL.getNSURL()];
+    ResourceRequest request(URL);
     addExtraFieldsToRequest(request, true, true);
 
-    setHTTPReferrer(request, referrer);
-    [request setHTTPMethod:@"POST"];
-    setHTTPBody(request, formData);
-    [request setValue:contentType forHTTPHeaderField:@"Content-Type"];
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
+    request.setHTTPMethod("POST");
+    request.setHTTPBody(formData);
+    request.setHTTPContentType(contentType);
 
     NavigationAction action(URL, FrameLoadTypeStandard, true, event);
 
@@ -1133,8 +1146,25 @@ void FrameLoader::post(const KURL& URL, const String& referrer, const String& fr
             checkNewWindowPolicy(action, request, formState.release(), frameName);
     } else
         load(request, action, FrameLoadTypeStandard, formState.release());
+}
 
-    [request release];
+void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainResource, bool alwaysFromRequest)
+{
+    applyUserAgent(request);
+    
+    if (m_loadType == FrameLoadTypeReload)
+        request.setHTTPHeaderField("Cache-Control", "max-age=0");
+    
+    // Don't set the cookie policy URL if it's already been set.
+    if (request.mainDocumentURL().isEmpty()) {
+        if (mainResource && (isLoadingMainFrame() || alwaysFromRequest))
+            request.setMainDocumentURL(request.url());
+        else
+            request.setMainDocumentURL(m_frame->page()->mainFrame()->loader()->url());
+    }
+    
+    if (mainResource)
+        request.setHTTPAccept("text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
 }
 
 void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mainResource, bool alwaysFromRequest)
@@ -1158,21 +1188,18 @@ void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mai
 
 bool FrameLoader::isReloading() const
 {
-    return [documentLoader()->request() cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+    return documentLoader()->request().cachePolicy() == ReloadIgnoringCacheData;
 }
 
 String FrameLoader::referrer() const
 {
-    return [documentLoader()->request() valueForHTTPHeaderField:@"Referer"];
+    return documentLoader()->request().httpReferrer();
 }
 
 void FrameLoader::loadEmptyDocumentSynchronously()
 {
-    NSURL *url = [[NSURL alloc] initWithString:@""];
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+    ResourceRequest request(KURL(""));
     load(request);
-    [request release];
-    [url release];
 }
 
 void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r)
@@ -1203,12 +1230,12 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vect
     if (isConditionalRequest(initialRequest))
         [initialRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [initialRequest setCachePolicy:[documentLoader()->request() cachePolicy]];
+        [initialRequest setCachePolicy:(NSURLRequestCachePolicy)documentLoader()->request().cachePolicy()];
     
     if (!referrer.isEmpty())
         setHTTPReferrer(initialRequest, referrer);
     
-    [initialRequest setMainDocumentURL:[m_frame->page()->mainFrame()->loader()->documentLoader()->request() URL]];
+    [initialRequest setMainDocumentURL:m_frame->page()->mainFrame()->loader()->documentLoader()->request().url().getNSURL()];
     applyUserAgent(initialRequest);
     
     NSError *error = nil;
@@ -1386,7 +1413,7 @@ bool FrameLoader::canGoBackOrForward(int distance) const
 
 KURL FrameLoader::originalRequestURL() const
 {
-    return [activeDocumentLoader()->initialRequest() URL];
+    return activeDocumentLoader()->initialRequest().url();
 }
 
 int FrameLoader::getHistoryLength()
@@ -1440,7 +1467,7 @@ void PolicyCheck::clear()
     m_contentFunction = 0;
 }
 
-void PolicyCheck::set(NSURLRequest *request, PassRefPtr<FormState> formState,
+void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
     NavigationPolicyDecisionFunction function, void* argument)
 {
     m_request = request;
@@ -1453,7 +1480,7 @@ void PolicyCheck::set(NSURLRequest *request, PassRefPtr<FormState> formState,
     m_argument = argument;
 }
 
-void PolicyCheck::set(NSURLRequest *request, PassRefPtr<FormState> formState,
+void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
     const String& frameName, NewWindowPolicyDecisionFunction function, void* argument)
 {
     m_request = request;
@@ -1468,7 +1495,7 @@ void PolicyCheck::set(NSURLRequest *request, PassRefPtr<FormState> formState,
 
 void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
 {
-    m_request = nil;
+    m_request = ResourceRequest();
     m_formState = 0;
     m_frameName = String();
 
@@ -1478,12 +1505,12 @@ void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
     m_argument = argument;
 }
 
-void PolicyCheck::call()
+void PolicyCheck::call(bool shouldContinue)
 {
     if (m_navigationFunction)
-        m_navigationFunction(m_argument, m_request.get(), m_formState.get());
+        m_navigationFunction(m_argument, m_request, m_formState.get(), shouldContinue);
     if (m_newWindowFunction)
-        m_newWindowFunction(m_argument, m_request.get(), m_formState.get(), m_frameName);
+        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, shouldContinue);
     ASSERT(!m_contentFunction);
 }
 
@@ -1497,7 +1524,7 @@ void PolicyCheck::call(PolicyAction action)
 
 void PolicyCheck::clearRequest()
 {
-    m_request = nil;
+    m_request = ResourceRequest();
     m_formState = 0;
     m_frameName = String();
 }

@@ -662,6 +662,26 @@ namespace WTF {
         a.swap(b);
     }
 
+    template<typename T, size_t inlineCapacity>
+    void operator==(Vector<T, inlineCapacity>& a, Vector<T, inlineCapacity>& b)
+    {
+        if (a.size() != b.size())
+            return false;
+
+        for (int i = 0; i < a.size(); ++i)
+            if (a[i] != b[i])
+                return false;
+
+        return true;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    inline void operator!=(Vector<T, inlineCapacity>& a, Vector<T, inlineCapacity>& b)
+    {
+        return !(a == b);
+    }
+
+
 } // namespace WTF
 
 using WTF::Vector;

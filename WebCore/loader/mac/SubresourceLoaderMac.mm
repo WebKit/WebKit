@@ -108,7 +108,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     if (isConditionalRequest(newNSURLRequest))
         [newNSURLRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [newNSURLRequest setCachePolicy:[fl->originalRequest() cachePolicy]];
+        [newNSURLRequest setCachePolicy:(NSURLRequestCachePolicy)fl->originalRequest().cachePolicy()];
     
     fl->addExtraFieldsToRequest(newNSURLRequest, false, false);
 

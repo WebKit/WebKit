@@ -53,6 +53,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
 #import <WebKit/DOMHTML.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -366,7 +367,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     _private->loader = loader;
     loader->ref();
         
-    LOG(Loading, "creating datasource for %@", [_private->loader->request() URL]);
+    LOG(Loading, "creating datasource for %@", _private->loader->request().url().getNSURL());
     
     ++WebDataSourceCount;
     
@@ -418,12 +419,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURLRequest *)initialRequest
 {
-    return _private->loader->initialRequest();
+    return _private->loader->initialRequest().nsURLRequest();
 }
 
 - (NSMutableURLRequest *)request
 {
-    return _private->loader->request();
+    // FIXME: XXX
+    return (NSMutableURLRequest*)_private->loader->request().nsURLRequest();
 }
 
 - (NSURLResponse *)response

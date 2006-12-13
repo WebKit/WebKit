@@ -40,11 +40,11 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include "ResourceRequest.h"
 
 #if PLATFORM(MAC)
 
-#import "RetainPtr.h"
-#import <objc/objc.h>
+typedef struct objc_object* id;
 
 #ifdef __OBJC__
 
@@ -115,12 +115,10 @@ namespace WebCore {
 
     bool isBackForwardLoadType(FrameLoadType);
 
-#if PLATFORM(MAC)
     typedef void (*NavigationPolicyDecisionFunction)(void* argument,
-        NSURLRequest *, PassRefPtr<FormState>);
+        const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     typedef void (*NewWindowPolicyDecisionFunction)(void* argument,
-        NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
-#endif
+        const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
     typedef void (*ContentPolicyDecisionFunction)(void* argument, PolicyAction);
 
     class PolicyCheck {
@@ -128,33 +126,25 @@ namespace WebCore {
         PolicyCheck();
 
         void clear();
-#if PLATFORM(MAC)
-        void set(NSURLRequest *, PassRefPtr<FormState>,
+        void set(const ResourceRequest&, PassRefPtr<FormState>,
             NavigationPolicyDecisionFunction, void* argument);
-        void set(NSURLRequest *, PassRefPtr<FormState>, const String& frameName,
+        void set(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName,
             NewWindowPolicyDecisionFunction, void* argument);
-#endif
         void set(ContentPolicyDecisionFunction, void* argument);
 
-#if PLATFORM(MAC)
-        NSURLRequest *request() const { return m_request.get(); }
-#endif
+        const ResourceRequest& request() const { return m_request; }
         void clearRequest();
 
-        void call();
+        void call(bool shouldContinue);
         void call(PolicyAction);
 
     private:
-#if PLATFORM(MAC)
-        RetainPtr<NSURLRequest> m_request;
-#endif
+        ResourceRequest m_request;
         RefPtr<FormState> m_formState;
         String m_frameName;
 
-#if PLATFORM(MAC)
         NavigationPolicyDecisionFunction m_navigationFunction;
         NewWindowPolicyDecisionFunction m_newWindowFunction;
-#endif
         ContentPolicyDecisionFunction m_contentFunction;
         void* m_argument;
     };
@@ -179,11 +169,9 @@ namespace WebCore {
         void post(const KURL&, const String& referrer, const String& target,
             PassRefPtr<FormData>, const String& contentType,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
-#if PLATFORM(MAC)
-        void load(NSURLRequest *);
-        void load(NSURLRequest *, const String& frameName);
-        void load(NSURLRequest *, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
-#endif
+        void load(const ResourceRequest&);
+        void load(const ResourceRequest&, const String& frameName);
+        void load(const ResourceRequest&, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
 
@@ -246,12 +234,12 @@ namespace WebCore {
         void didFailToLoad(ResourceLoader*, NSError *);
 #endif
         bool privateBrowsingEnabled() const;
+        const ResourceRequest& originalRequest() const;
+        const ResourceRequest& initialRequest() const;
+        void setRequest(const ResourceRequest&);
 #if PLATFORM(MAC)
-        NSURLRequest *originalRequest() const;
         void receivedMainResourceError(NSError *, bool isComplete);
-        NSURLRequest *initialRequest() const;
         void receivedData(NSData *);
-        void setRequest(NSURLRequest *);
 #endif
         void handleFallbackContent();
         bool isStopping() const;
@@ -281,9 +269,7 @@ namespace WebCore {
 
         void notifyIconChanged();
 
-#if PLATFORM(MAC)
-        void checkNavigationPolicy(NSURLRequest *, NavigationPolicyDecisionFunction, void* argument);
-#endif
+        void checkNavigationPolicy(const ResourceRequest&, NavigationPolicyDecisionFunction function, void* argument);
         void checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction, void* argument);
         void cancelContentPolicyCheck();
 
@@ -333,6 +319,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
 #endif
+        void addExtraFieldsToRequest(ResourceRequest&, bool isMainResource, bool alwaysFromRequest);
 
         FrameLoaderClient* client() const;
 
@@ -500,9 +487,7 @@ namespace WebCore {
 
         // Also not cool.
         void startLoading();
-#if PLATFORM(MAC)
-        bool startLoadingMainResource(NSMutableURLRequest *, id identifier);
-#endif
+        bool startLoadingMainResource(ResourceRequest&, id identifier);
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
@@ -516,26 +501,22 @@ namespace WebCore {
 
         void setLoadType(FrameLoadType);
 
-#if PLATFORM(MAC)
-        void checkNavigationPolicy(NSURLRequest *, DocumentLoader*, PassRefPtr<FormState>,
-            NavigationPolicyDecisionFunction, void* argument);
-        void checkNewWindowPolicy(const NavigationAction&,
-            NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
-#endif
+        void checkNavigationPolicy(const ResourceRequest&, DocumentLoader*, PassRefPtr<FormState>,
+                                   NavigationPolicyDecisionFunction, void* argument);
+        void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, 
+                                  PassRefPtr<FormState>, const String& frameName);
 
         void continueAfterNavigationPolicy(PolicyAction);
         void continueAfterNewWindowPolicy(PolicyAction);
         void continueAfterContentPolicy(PolicyAction);
         void continueAfterWillSubmitForm(PolicyAction = PolicyUse);
 
-#if PLATFORM(MAC)
-        static void callContinueLoadAfterNavigationPolicy(void*, NSURLRequest *, PassRefPtr<FormState>);
-        void continueLoadAfterNavigationPolicy(NSURLRequest *, PassRefPtr<FormState>);
-        static void callContinueLoadAfterNewWindowPolicy(void*, NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
-        void continueLoadAfterNewWindowPolicy(NSURLRequest *, PassRefPtr<FormState>, const String& frameName);
-        static void callContinueFragmentScrollAfterNavigationPolicy(void*, NSURLRequest *, PassRefPtr<FormState>);
-        void continueFragmentScrollAfterNavigationPolicy(NSURLRequest *);
-#endif
+        static void callContinueLoadAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        void continueLoadAfterNavigationPolicy(const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        static void callContinueLoadAfterNewWindowPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
+        void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
+        static void callContinueFragmentScrollAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
         void stopPolicyCheck();
 
@@ -558,12 +539,13 @@ namespace WebCore {
         void open(PageState&);
         void opened();
 
+        bool shouldReloadToHandleUnreachableURL(const ResourceRequest&);
 #if PLATFORM(MAC)
         void handleUnimplementablePolicy(NSError *);
-        bool shouldReloadToHandleUnreachableURL(NSURLRequest *);
 
         void applyUserAgent(NSMutableURLRequest *);
 #endif
+        void applyUserAgent(ResourceRequest& request);
 
         bool canTarget(Frame*) const;
 

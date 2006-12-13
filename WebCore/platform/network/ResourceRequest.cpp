@@ -207,4 +207,34 @@ void ResourceRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
         addHTTPHeaderField(it->first, it->second);
 }
 
+
+bool operator==(const ResourceRequest& a, const ResourceRequest& b)
+{
+    if (a.url() != b.url())
+        return false;
+
+    if (a.cachePolicy() != b.cachePolicy())
+        return false;
+
+    if (a.timeoutInterval() != b.timeoutInterval())
+        return false;
+ 
+    if (a.mainDocumentURL() != b.mainDocumentURL())
+        return false;
+
+    if (a.httpMethod() != b.httpMethod())
+        return false;
+
+    if (a.httpBody() != b.httpBody())
+        return false;
+
+    if (a.allowHTTPCookies() != b.allowHTTPCookies())
+        return false;
+
+    if (a.httpHeaderFields() != b.httpHeaderFields())
+        return false;
+
+     return true;
+}
+
 }

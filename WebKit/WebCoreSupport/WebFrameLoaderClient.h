@@ -100,6 +100,7 @@ private:
     virtual void download(WebCore::ResourceHandle*, NSURLRequest *, NSURLResponse *);
 
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, NSURLRequest *);
+    virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
     virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse);
     virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
     virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
@@ -127,11 +128,11 @@ private:
     virtual void dispatchShow();
 
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction,
-        const WebCore::String& MIMEType, NSURLRequest *);
+        const WebCore::String& MIMEType, const WebCore::ResourceRequest&);
     virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction,
-        const WebCore::NavigationAction&, NSURLRequest *, const WebCore::String& frameName);
+        const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction,
-        const WebCore::NavigationAction&, NSURLRequest *);
+        const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
     virtual void cancelPolicyCheck();
 
     virtual void dispatchUnableToImplementPolicy(NSError *);
@@ -155,7 +156,7 @@ private:
 
     virtual void setMainFrameDocumentReady(bool);
 
-    virtual void startDownload(NSURLRequest *);
+    virtual void startDownload(const WebCore::ResourceRequest&);
 
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
@@ -165,7 +166,7 @@ private:
     virtual void finalSetupForReplace(WebCore::DocumentLoader*);
 
     virtual NSError *cancelledError(NSURLRequest *);
-    virtual NSError *cannotShowURLError(NSURLRequest *);
+    virtual NSError *cannotShowURLError(const WebCore::ResourceRequest&);
     virtual NSError *interruptForPolicyChangeError(NSURLRequest *);
 
     virtual NSError *cannotShowMIMETypeError(NSURLResponse *);
@@ -194,7 +195,7 @@ private:
     virtual void addHistoryItemForFragmentScroll();
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
-    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(NSURLRequest *);
+    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&);
     virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
 
     void deliverArchivedResourcesAfterDelay() const;

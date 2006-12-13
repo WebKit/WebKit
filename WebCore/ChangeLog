@@ -1,3 +1,87 @@
+2006-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - converted many places to use ResourceRequest instead of NSURLRequest
+
+        * WebCore.exp:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopPolicyCheck):
+        * loader/FrameLoader.h:
+        (WebCore::PolicyCheck::request):
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::originalRequest):
+        (WebCore::DocumentLoader::originalRequestCopy):
+        (WebCore::DocumentLoader::request):
+        (WebCore::DocumentLoader::initialRequest):
+        (WebCore::DocumentLoader::actualRequest):
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::unreachableURL):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::setLastCheckedRequest):
+        (WebCore::DocumentLoader::lastCheckedRequest):
+        (WebCore::DocumentLoader::URLForHistory):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::applyUserAgent):
+        (WebCore::FrameLoader::originalRequest):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::callContinueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::initialRequest):
+        (WebCore::FrameLoader::setRequest):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::callContinueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::callContinueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::isReloading):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::loadEmptyDocumentSynchronously):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::originalRequestURL):
+        (WebCore::PolicyCheck::set):
+        (WebCore::PolicyCheck::call):
+        (WebCore::PolicyCheck::clearRequest):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::callContinueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::isPostOrRedirectAfterPost):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::create):
+        * loader/mac/WebDataProtocol.h:
+        * loader/mac/WebDataProtocol.mm:
+        * platform/KURL.cpp:
+        (WebCore::operator!=):
+        * platform/KURL.h:
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::getNSURL):
+        * platform/network/FormData.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/network/ResourceRequest.cpp:
+        (WebCore::operator==):
+        * platform/network/ResourceRequest.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2006-12-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Dave Hyatt.

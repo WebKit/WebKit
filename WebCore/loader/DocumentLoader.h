@@ -31,6 +31,7 @@
 #include "NavigationAction.h"
 #include "Shared.h"
 #include "PlatformString.h"
+#include "ResourceRequest.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -62,11 +63,7 @@ namespace WebCore {
 
     class DocumentLoader : public Shared<DocumentLoader> {
     public:
-#if PLATFORM(MAC)
-        DocumentLoader(NSURLRequest *);
-#elif PLATFORM(QT)
-        DocumentLoader();
-#endif
+        DocumentLoader(const ResourceRequest&);
         virtual ~DocumentLoader();
 
         void setFrame(Frame*);
@@ -76,15 +73,19 @@ namespace WebCore {
         FrameLoader* frameLoader() const;
 #if PLATFORM(MAC)
         NSData *mainResourceData() const;
-        NSURLRequest *originalRequest() const;
-        NSURLRequest *originalRequestCopy() const;
-        NSMutableURLRequest *request();
-        void setRequest(NSURLRequest *);
-        NSMutableURLRequest *actualRequest();
-        NSURLRequest *initialRequest() const;
 #endif
-        KURL URL() const;
-        KURL unreachableURL() const;
+        const ResourceRequest& originalRequest() const;
+        const ResourceRequest& originalRequestCopy() const;
+
+        const ResourceRequest& request() const;
+        ResourceRequest& request();
+        void setRequest(const ResourceRequest&);
+        const ResourceRequest& actualRequest() const;
+        ResourceRequest& actualRequest();
+        const ResourceRequest& initialRequest() const;
+
+        const KURL& URL() const;
+        const KURL unreachableURL() const;
         void replaceRequestURLForAnchorScroll(const KURL&);
         bool isStopping() const;
         void stopLoading();
@@ -118,10 +119,9 @@ namespace WebCore {
         const NavigationAction& triggeringAction() const;
         void setTriggeringAction(const NavigationAction&);
         void setOverrideEncoding(const String&);
-#if PLATFORM(MAC)
-        void setLastCheckedRequest(NSURLRequest *request);
-        NSURLRequest *lastCheckedRequest() const;
-#endif
+        void setLastCheckedRequest(const ResourceRequest& request);
+        const ResourceRequest& lastCheckedRequest() const;
+
         void stopRecordingResponses();
         String title() const;
         KURL URLForHistory() const;
@@ -144,22 +144,26 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         RetainPtr<NSData> m_mainResourceData;
+#endif
 
         // A reference to actual request used to create the data source.
         // This should only be used by the resourceLoadDelegate's
         // identifierForInitialRequest:fromDatasource: method. It is
         // not guaranteed to remain unchanged, as requests are mutable.
-        RetainPtr<NSURLRequest> m_originalRequest;    
+        ResourceRequest m_originalRequest;    
 
         // A copy of the original request used to create the data source.
         // We have to copy the request because requests are mutable.
-        RetainPtr<NSURLRequest> m_originalRequestCopy;
+        ResourceRequest m_originalRequestCopy;
         
         // The 'working' request. It may be mutated
         // several times from the original request to include additional
         // headers, cookie information, canonicalization and redirects.
-        RetainPtr<NSMutableURLRequest> m_request;
+        ResourceRequest m_request;
 
+        mutable ResourceRequest m_externalRequest;
+
+#if PLATFORM(MAC)
         RetainPtr<NSURLResponse> m_response;
     
         RetainPtr<NSError> m_mainDocumentError;    
@@ -183,11 +187,11 @@ namespace WebCore {
         // benefit of the various policy handlers.
         NavigationAction m_triggeringAction;
 
-#if PLATFORM(MAC)
         // The last request that we checked click policy for - kept around
         // so we can avoid asking again needlessly.
-        RetainPtr<NSURLRequest> m_lastCheckedRequest;
+        ResourceRequest m_lastCheckedRequest;
 
+#if PLATFORM(MAC)
         // We retain all the received responses so we can play back the
         // WebResourceLoadDelegate messages if the item is loaded from the
         // page cache.

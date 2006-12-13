@@ -112,14 +112,14 @@ void MainResourceLoader::stopLoadingForPolicyChange()
     cancel(interruptionForPolicyChangeError());
 }
 
-void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, NSURLRequest *request, PassRefPtr<FormState>)
+void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
 {
-    static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request);
+    static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
 }
 
-void MainResourceLoader::continueAfterNavigationPolicy(NSURLRequest *request)
+void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    if (!request)
+    if (!shouldContinue)
         stopLoadingForPolicyChange();
     deref(); // balances ref in willSendRequest
 }
@@ -132,7 +132,7 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSU
     if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
         int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
         if (((status >= 301 && status <= 303) || status == 307)
-                && [[frameLoader()->initialRequest() HTTPMethod] isEqualToString:@"POST"])
+            && frameLoader()->initialRequest().httpMethod() == "POST")
             return true;
     }
     

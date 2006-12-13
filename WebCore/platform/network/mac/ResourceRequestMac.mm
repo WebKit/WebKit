@@ -26,6 +26,8 @@
 
 #import "config.h"
 #import "ResourceRequest.h"
+#import "WebCoreSystemInterface.h"
+#import "WebDataProtocol.h"
 
 #import "FormDataStreamMac.h"
 
@@ -66,7 +68,12 @@ void ResourceRequest::doUpdateResourceRequest()
 
 void ResourceRequest::doUpdatePlatformRequest()
 {
-    NSMutableURLRequest* nsRequest = [[NSMutableURLRequest alloc] initWithURL:url().getNSURL()];
+    NSMutableURLRequest* nsRequest = [m_nsRequest.get() mutableCopy];
+
+    if (nsRequest)
+        [nsRequest setURL:url().getNSURL()];
+    else
+        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url().getNSURL()];
     
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     [nsRequest setTimeoutInterval:timeoutInterval()];

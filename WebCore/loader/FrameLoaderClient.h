@@ -110,6 +110,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         virtual void download(ResourceHandle*, NSURLRequest *, NSURLResponse *) = 0;
 
+        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, NSURLRequest *) = 0;
         virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) = 0;
         virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
@@ -144,9 +145,9 @@ namespace WebCore {
         virtual void dispatchShow() = 0;
 
 #if PLATFORM(MAC)
-        virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction, const String& MIMEType, NSURLRequest *) = 0;
-        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, NSURLRequest *, const String& frameName) = 0;
-        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, NSURLRequest *) = 0;
+        virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction, const String& MIMEType, const ResourceRequest&) = 0;
+        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, const String& frameName) = 0;
+        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&) = 0;
 #endif
         virtual void cancelPolicyCheck() = 0;
 
@@ -177,7 +178,7 @@ namespace WebCore {
         virtual void setMainFrameDocumentReady(bool) = 0;
 
 #if PLATFORM(MAC)
-        virtual void startDownload(NSURLRequest *) = 0;
+        virtual void startDownload(const ResourceRequest&) = 0;
 #endif
 
         virtual void willChangeTitle(DocumentLoader*) = 0;
@@ -191,7 +192,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         virtual NSError *cancelledError(NSURLRequest *) = 0;
-        virtual NSError *cannotShowURLError(NSURLRequest *) = 0;
+        virtual NSError *cannotShowURLError(const ResourceRequest&) = 0;
         virtual NSError *interruptForPolicyChangeError(NSURLRequest *) = 0;
 
         virtual NSError *cannotShowMIMETypeError(NSURLResponse *) = 0;
@@ -221,8 +222,9 @@ namespace WebCore {
         virtual void addHistoryItemForFragmentScroll() = 0;
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
+
 #if PLATFORM(MAC)
-        virtual PassRefPtr<DocumentLoader> createDocumentLoader(NSURLRequest *) = 0;
+        virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&) = 0;
 #endif
         virtual void setTitle(const String& title, const KURL&) = 0;
 

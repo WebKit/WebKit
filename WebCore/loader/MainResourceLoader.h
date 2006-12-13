@@ -33,6 +33,7 @@
 namespace WebCore {
 
     class FormState;
+    class ResourceRequest;
 
     class MainResourceLoader : public ResourceLoader {
     public:
@@ -67,8 +68,8 @@ namespace WebCore {
         void stopLoadingForPolicyChange();
         bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 
-        static void callContinueAfterNavigationPolicy(void*, NSURLRequest *, PassRefPtr<FormState>);
-        void continueAfterNavigationPolicy(NSURLRequest *);
+        static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
         static void callContinueAfterContentPolicy(void*, PolicyAction);
         void continueAfterContentPolicy(PolicyAction);

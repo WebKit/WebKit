@@ -281,7 +281,7 @@ void WebFrameLoaderClient::updateHistoryForReload()
     if ([request _webDataRequestUnreachableURL] == nil)
         [currItem setURL:[request URL]];
     // Update the last visited time. Mostly interesting for URL autocompletion statistics.
-    NSURL *URL = [[[dataSource _documentLoader]->originalRequestCopy() URL] _webkit_canonicalize];
+    NSURL *URL = [[dataSource _documentLoader]->originalRequestCopy().url().getNSURL() _webkit_canonicalize];
     WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
     WebHistoryItem *oldItem = [sharedHistory itemForURL:URL];
     if (oldItem)
@@ -437,6 +437,11 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
 
     implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request, response, length, dataSource(loader));
     return true;
+}
+
+id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loader, const ResourceRequest& request)
+{
+    return dispatchIdentifierForInitialRequest(loader, request.nsURLRequest());
 }
 
 id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loader, NSURLRequest *request)
@@ -658,35 +663,35 @@ void WebFrameLoaderClient::dispatchShow()
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function,
-    const String& MIMEType, NSURLRequest *request)
+    const String& MIMEType, const ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());
 
     [[webView _policyDelegateForwarder] webView:webView
                         decidePolicyForMIMEType:MIMEType
-                                        request:request
+                                        request:request.nsURLRequest()
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function,
-    const NavigationAction& action, NSURLRequest *request, const String& frameName)
+    const NavigationAction& action, const ResourceRequest& request, const String& frameName)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:actionDictionary(action)
-                                   request:request
+                                   request:request.nsURLRequest()
                               newFrameName:frameName
                           decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function,
-    const NavigationAction& action, NSURLRequest *request)
+    const NavigationAction& action, const ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:actionDictionary(action)
-                                        request:request
+                                        request:request.nsURLRequest()
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];
 }
@@ -790,10 +795,10 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
     [getWebView(m_webFrame.get()) setMainFrameDocumentReady:ready];
 }
 
-void WebFrameLoaderClient::startDownload(NSURLRequest *request)
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request)
 {
     // FIXME: Should download full request.
-    [getWebView(m_webFrame.get()) _downloadURL:[request URL]];
+    [getWebView(m_webFrame.get()) _downloadURL:request.url().getNSURL()];
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader* loader)
@@ -828,9 +833,9 @@ NSError *WebFrameLoaderClient::cancelledError(NSURLRequest *request)
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
 }
 
-NSError *WebFrameLoaderClient::cannotShowURLError(NSURLRequest *request)
+NSError *WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:[request URL]];
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:request.url().getNSURL()];
 }
 
 NSError *WebFrameLoaderClient::interruptForPolicyChangeError(NSURLRequest *request)
@@ -1039,7 +1044,7 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     core(m_webFrame.get())->loader()->detachChildren();
 }
 
-PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(NSURLRequest *request)
+PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request)
 {
     RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request);
 

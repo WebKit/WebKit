@@ -127,7 +127,7 @@ namespace WebCore {
         void setHTTPContentType(const String& httpContentType) { setHTTPHeaderField("Content-Type", httpContentType); }
         
         String httpReferrer() const { return httpHeaderField("Referer"); }
-        void setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
+        void ResourceRequest::setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
         
         String httpUserAgent() const { return httpHeaderField("User-Agent"); }
         void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }
@@ -184,6 +184,8 @@ namespace WebCore {
         RetainPtr<CFURLRequestRef> m_cfRequest;      
 #endif
     };
+
+    bool operator==(const ResourceRequest& a, const ResourceRequest& b);
 
 } // namespace WebCore
 

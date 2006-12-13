@@ -30,7 +30,9 @@
 
 #import <JavaScriptCore/Assertions.h>
 
-WebDocumentLoaderMac::WebDocumentLoaderMac(NSURLRequest *request)
+using namespace WebCore;
+
+WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request)
     : DocumentLoader(request)
     , m_detachedDataSource(nil)
 {
