@@ -1,3 +1,18 @@
+2006-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+
+        <rdar://problem/4818145>
+        Cannot setSelectedDOMRange to non-editable island unless it has editable content on both sides
+        
+        There are editable positions before/after a "non-editable island" if its 
+        a table, but the code in canonicalPosition was not using 
+        editableRootForPosition to find root editable elements.
+        
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition): Use editableRootForPosition
+        to fix the table case.
+
 2006-12-13  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.

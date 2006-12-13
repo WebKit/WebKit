@@ -146,15 +146,15 @@ Position VisiblePosition::canonicalPosition(const Position& position)
     if (node->hasTagName(htmlTag) && !node->isContentEditable())
         return next.isNotNull() ? next : prev;
 
-    Node* editingRoot = node->rootEditableElement();
+    Node* editingRoot = editableRootForPosition(position);
         
     // If the html element is editable, descending into its body will look like a descent 
     // from non-editable to editable content since rootEditableElement() always stops at the body.
     if (editingRoot && editingRoot->hasTagName(htmlTag))
         return next.isNotNull() ? next : prev;
         
-    bool prevIsInSameEditableElement = prevNode && prevNode->rootEditableElement() == editingRoot;
-    bool nextIsInSameEditableElement = nextNode && nextNode->rootEditableElement() == editingRoot;
+    bool prevIsInSameEditableElement = prevNode && editableRootForPosition(prev) == editingRoot;
+    bool nextIsInSameEditableElement = nextNode && editableRootForPosition(next) == editingRoot;
     if (prevIsInSameEditableElement && !nextIsInSameEditableElement)
         return prev;
         
