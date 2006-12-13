@@ -347,8 +347,8 @@ sub isQt()
 
 sub isQtWithQMake()
 {
-    our @qmakeBuild;
-    return (isQt() and (@qmakeBuild eq 1))
+    our @cmakeBuild;
+    return (isQt() and (@cmakeBuild eq 0))
 }
 
 sub isCygwin()

@@ -38,11 +38,11 @@ use POSIX;
 my $svgSupport = 1;
 my $colorSupport = 1; # Default: colorize make output
 
-our @qmakeBuild;
+our @cmakeBuild;
 
 GetOptions('svg!' => \$svgSupport,
            'color!' => \$colorSupport,
-           'qmake!' => \@qmakeBuild);
+           'cmake!' => \@cmakeBuild);
 
 checkRequiredSystemConfig();
 setConfiguration();

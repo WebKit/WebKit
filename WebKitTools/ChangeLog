@@ -1,3 +1,13 @@
+2006-12-13  Zack Rusin  <zack@kde.org>
+
+        Reviewed by rwlbuis
+
+        Use the qmake build by default with Qt - it's the one that works
+        currently.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2006-12-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
