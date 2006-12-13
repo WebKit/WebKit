@@ -40,6 +40,9 @@
 #include "ResourceHandleManagerQt.h"
 #include "ResourceHandleInternal.h"
 
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
+           __FILE__, __LINE__, __FUNCTION__); } while(0)
+
 namespace WebCore {
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -51,15 +54,12 @@ ResourceHandle::~ResourceHandle()
     cancel();
 }
 
-bool ResourceHandle::start(DocLoader* docLoader)
+bool ResourceHandle::start(Frame* frame)
 {
-    FrameQt* frame = 0;
-    if (docLoader) {
-        frame = QtFrame(docLoader->frame());
-        ASSERT(frame);
-    }
+    ASSERT(frame);
+    FrameQt* f = QtFrame(frame);
 
-    ResourceHandleManager::self()->add(this, frame ? frame->client() : 0);
+    ResourceHandleManager::self()->add(this, f ? f->client() : 0);
     return true;
 }
 
@@ -67,5 +67,11 @@ void ResourceHandle::cancel()
 {
     ResourceHandleManager::self()->cancel(this);
 }
+
+bool ResourceHandle::loadsBlocked()
+{
+    notImplemented();
+}
+
 
 } // namespace WebCore

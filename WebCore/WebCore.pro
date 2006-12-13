@@ -449,6 +449,7 @@ SOURCES += \
     html/HTMLFormCollection.cpp \
     html/HTMLBaseElement.cpp \
     page/FrameTree.cpp \
+    page/FocusController.cpp \
     page/DOMWindow.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Frame.cpp \

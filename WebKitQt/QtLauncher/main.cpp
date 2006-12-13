@@ -86,7 +86,8 @@ int main(int argc, char **argv)
     QBoxLayout *l = new QVBoxLayout(&topLevel);
  
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
+    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(),
+                          new EditorClientQt());
     Frame* frame = new FrameQt(page, 0, new FrameQtClient(), new FrameLoaderClientQt());
 
     FrameView* frameView = new FrameView(frame);

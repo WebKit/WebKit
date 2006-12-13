@@ -1,3 +1,18 @@
+2006-12-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej, Zack.
+
+        Make the Qt cbuild compile again.
+
+        * WebCore.pro:
+        * loader/qt/ResourceLoaderQt.cpp:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadsBlocked):
+        * platform/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClient::openURL):
+        (WebCore::FrameQtClient::submitForm):
+
 2006-12-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

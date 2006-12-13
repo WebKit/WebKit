@@ -45,11 +45,4 @@ void ResourceLoader::cancel()
     notImplemented();
 }
 
-// FIXME: We should move this to ResourceHandle, once it implements all the connection callbacks
-bool ResourceLoader::loadsBlocked()
-{
-    notImplemented();
-    return false;
-}
-
 }
