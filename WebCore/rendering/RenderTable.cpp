@@ -406,6 +406,7 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
         paintPhase = PaintPhaseChildBlockBackground;
     PaintInfo info(paintInfo);
     info.phase = paintPhase;
+    info.paintingRoot = paintingRootForChildren(paintInfo);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (!child->layer() && (child->isTableSection() || child == tCaption))

@@ -289,8 +289,10 @@ void RenderBox::paint(PaintInfo& paintInfo, int tx, int ty)
     ty += m_y;
 
     // default implementation. Just pass paint through to the children
+    PaintInfo childInfo(paintInfo);
+    childInfo.paintingRoot = paintingRootForChildren(paintInfo);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->paint(paintInfo, tx, ty);
+        child->paint(childInfo, tx, ty);
 }
 
 void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)

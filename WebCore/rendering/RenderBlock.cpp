@@ -1299,6 +1299,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     PaintInfo info(paintInfo);
     info.phase = newPhase;
+    info.paintingRoot = paintingRootForChildren(paintInfo);
     bool isPrinting = document()->printing();
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {        

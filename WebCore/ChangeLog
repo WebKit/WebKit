@@ -1,3 +1,20 @@
+2006-12-13  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 11825, dragging elements via -khtml-user-drag is broken (affects Dashboard).  Make sure
+        to clear the paintingRoot properly when recurring into children.  It would be nice to find a design
+        that prevented this mistake from being made and didn't require explicit clearing of the root.
+
+        Reviewed by olliej
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+
 2006-12-13  Anders Carlsson  <acarlsson@apple.com>
 
         * loader/FrameLoader.h:
