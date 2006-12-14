@@ -63,10 +63,6 @@ namespace WebCore {
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(NSError *);
-        
-        // FIXME: This function is here because we want ResourceHandleClient to be privately inherited, but 
-        // ResourceHandle needs to be passed a ResourceHandleClient.
-        ResourceHandleClient* loaderAsResourceHandleClient() { return this; }
 #else
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
         

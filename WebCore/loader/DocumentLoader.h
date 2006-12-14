@@ -32,6 +32,7 @@
 #include "Shared.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -57,9 +58,7 @@ namespace WebCore {
     class FrameLoader;
     class KURL;
 
-#if PLATFORM(MAC)
-    typedef Vector<RetainPtr<NSURLResponse> > ResponseVector;
-#endif
+    typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public Shared<DocumentLoader> {
     public:
@@ -112,10 +111,10 @@ namespace WebCore {
         void setPrimaryLoadComplete(bool);
         void setTitle(const String&);
         String overrideEncoding() const;
-#if PLATFORM(MAC)
-        void addResponse(NSURLResponse *);
+
+        void addResponse(const ResourceResponse&);
         const ResponseVector& responses() const;
-#endif
+
         const NavigationAction& triggeringAction() const;
         void setTriggeringAction(const NavigationAction&);
         void setOverrideEncoding(const String&);
@@ -191,13 +190,11 @@ namespace WebCore {
         // so we can avoid asking again needlessly.
         ResourceRequest m_lastCheckedRequest;
 
-#if PLATFORM(MAC)
         // We retain all the received responses so we can play back the
         // WebResourceLoadDelegate messages if the item is loaded from the
         // page cache.
         ResponseVector m_responses;
         bool m_stopRecordingResponses;
-#endif
     };
 
 }

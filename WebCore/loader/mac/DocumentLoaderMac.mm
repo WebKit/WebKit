@@ -473,7 +473,7 @@ bool DocumentLoader::isLoadingInAPISense() const
     return frameLoader()->subframeIsLoading();
 }
 
-void DocumentLoader::addResponse(NSURLResponse *r)
+void DocumentLoader::addResponse(const ResourceResponse& r)
 {
     if (!m_stopRecordingResponses)
         m_responses.append(r);

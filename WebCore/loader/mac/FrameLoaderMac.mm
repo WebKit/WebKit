@@ -488,7 +488,7 @@ void FrameLoader::opened()
         const ResponseVector& responses = m_documentLoader->responses();
         size_t count = responses.size();
         for (size_t i = 0; i < count; i++) {
-            NSURLResponse *response = responses[i].get();
+            NSURLResponse *response = responses[i].nsURLResponse();
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             NSError *error;
             id identifier;

@@ -1,5 +1,20 @@
 2006-12-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by John.
+        
+        General loader cleanup, convert NSURLResponse to ResourceResponse in some places.
+        
+        * loader/DocumentLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::addResponse):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::opened):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::create):
+
+2006-12-14  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Add loadResourceSynchronously to ResourceHandle and have FrameLoader use it instead of
