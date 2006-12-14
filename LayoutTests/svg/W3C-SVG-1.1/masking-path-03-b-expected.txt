@@ -27,25 +27,25 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (0,-43) size 217x53
                 text run at (0,-43) width 217: "Outer Clip"
         KCanvasItem {rect} at (112.50,97.50) size 255x165 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [data="M115.00,100.00L365.00,100.00L365.00,260.00L115.00,260.00"]
-        KCanvasContainer {svg} at (-51,-18) size 352x194
-          KCanvasContainer {g} at (-51,-18) size 352x194
-            KCanvasContainer {g} at (49,-18) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,-15.00)}]
-              KCanvasItem {rect} at (49,-16) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
+        KCanvasContainer {svg} at (64,82) size 352x194
+          KCanvasContainer {g} at (64,82) size 352x194
+            KCanvasContainer {g} at (164,82) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,-15.00)}]
+              KCanvasItem {rect} at (164,84) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
               RenderSVGText {text} at (6,26) size 480x36
                 RenderSVGInlineText {#text} at (0,-29) size 138x36
                   text run at (0,-29) width 138: "Inner Clip"
-            KCanvasContainer {g} at (-51,59.50) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,62.50)}]
-              KCanvasItem {rect} at (-51,61.50) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
+            KCanvasContainer {g} at (64,159.50) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,62.50)}]
+              KCanvasItem {rect} at (64,161.50) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
               RenderSVGText {text} at (6,26) size 480x36
                 RenderSVGInlineText {#text} at (0,-29) size 138x36
                   text run at (0,-29) width 138: "Inner Clip"
-            KCanvasContainer {g} at (149,59.50) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,62.50)}]
-              KCanvasItem {rect} at (149,61.50) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
+            KCanvasContainer {g} at (264,159.50) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,62.50)}]
+              KCanvasItem {rect} at (264,161.50) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
               RenderSVGText {text} at (6,26) size 480x36
                 RenderSVGInlineText {#text} at (0,-29) size 138x36
                   text run at (0,-29) width 138: "Inner Clip"
-            KCanvasContainer {g} at (49,137) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,140.00)}]
-              KCanvasItem {rect} at (49,139) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
+            KCanvasContainer {g} at (164,237) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,140.00)}]
+              KCanvasItem {rect} at (164,239) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [data="M0.00,0.00L150.00,0.00L150.00,35.00L0.00,35.00"]
               RenderSVGText {text} at (6,26) size 480x36
                 RenderSVGInlineText {#text} at (0,-29) size 138x36
                   text run at (0,-29) width 138: "Inner Clip"

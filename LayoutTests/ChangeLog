@@ -1,3 +1,25 @@
+2006-12-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11726
+        SVG Image do not take into account clip/overflow when hit testing
+
+        Also updated testcases with changed (improved!) results due to this
+        patch.
+
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-group-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * svg/custom/baseval-animval-equality-expected.txt:
+        * svg/custom/image-clipped-hit-expected.checksum: Added.
+        * svg/custom/image-clipped-hit-expected.png: Added.
+        * svg/custom/image-clipped-hit-expected.txt: Added.
+        * svg/custom/image-clipped-hit.svg: Added.
+        * svg/custom/svg-overflow-types-expected.txt:
+
 2006-12-13  Geoffrey Garen  <ggaren@apple.com>
 
         Updated results to match Justin Garcia's addition of rangeCount to

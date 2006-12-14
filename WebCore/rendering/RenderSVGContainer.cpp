@@ -247,7 +247,7 @@ AffineTransform RenderSVGContainer::viewportTransform() const
             viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
         return getAspectRatio(viewBox(), viewportRect);
     }
-    return AffineTransform();
+    return AffineTransform().translate(viewport().x(), viewport().y());
 }
 
 IntRect RenderSVGContainer::getAbsoluteRepaintRect()
@@ -368,6 +368,26 @@ AffineTransform RenderSVGContainer::getAspectRatio(const FloatRect& logical, con
     }
 
     return temp;
+}
+
+bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+{
+    SVGElement* svgelem = static_cast<SVGElement*>(element());
+    if (svgelem->hasTagName(SVGNames::svgTag)) {
+        int tx = _tx + m_x;
+        int ty = _ty + m_y;
+
+        // Check if we need to do anything at all.
+        IntRect overflowBox = overflowRect(false);
+        overflowBox.move(tx, ty);
+        AffineTransform totalTransform = absoluteTransform();
+        double localX, localY;
+        totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
+        if (!overflowBox.contains((int)localX, (int)localY))
+            return false;
+    }
+
+    return RenderContainer::nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction);
 }
 
 }

@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    KCanvasContainer {svg} at (-75,0) size 282.85x249.90
+      KCanvasContainer {g} at (-75,0) size 282.85x249.90 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(0.00,0.00)}]
+        KCanvasContainer {svg} at (141.51,125) size 282.85x249.90
+          RenderImage {image} at (0,0) size 240x150
+      RenderSVGText {text} at (90,130) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 43x18
+          text run at (0,-14) width 43: "Passed"

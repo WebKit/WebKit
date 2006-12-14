@@ -1,3 +1,17 @@
+2006-12-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11726
+        SVG Image do not take into account clip/overflow when hit testing
+
+        Take into account the overflowRect when hit-testing <svg> container.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+        * rendering/RenderSVGContainer.h:
+
 2006-12-13  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 11825, dragging elements via -khtml-user-drag is broken (affects Dashboard).  Make sure

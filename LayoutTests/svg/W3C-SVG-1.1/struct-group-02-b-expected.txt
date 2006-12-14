@@ -2,12 +2,12 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 479.50x359.50
       KCanvasContainer {g} at (0,0) size 240x180
-        KCanvasContainer {svg} at (0,0) size 240x180
-          KCanvasItem {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L240.00,0.00L240.00,180.00L0.00,180.00"]
+        KCanvasContainer {svg} at (240,180) size 240x180
+          KCanvasItem {rect} at (240,180) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L240.00,0.00L240.00,180.00L0.00,180.00"]
         KCanvasContainer {svg} at (0,0) size 240x180
           KCanvasItem {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L240.00,0.00L240.00,180.00L0.00,180.00"]
-          KCanvasContainer {svg} at (0,0) size 120x90
-            KCanvasItem {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L120.00,0.00L120.00,90.00L0.00,90.00"]
+          KCanvasContainer {svg} at (60,45) size 120x90
+            KCanvasItem {rect} at (60,45) size 120x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L120.00,0.00L120.00,90.00L0.00,90.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
