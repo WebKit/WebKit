@@ -671,21 +671,13 @@ SOURCES += \
 contains(DEFINES, XPATH_SUPPORT=1) {
     FEATURE_DEFINES_JAVASCRIPT += XPATH_SUPPORT
 
-    # TODO: convert to generator
-    !exists(xml/XPathGrammar.cpp) {
-        message("generating xpath grammar")
-        !system( bison -d -p xpathyy xml/XPathGrammar.y -o XPathGrammar.tab.c ): error("error executing bison")
-        !system( mv XPathGrammar.tab.c xml/XPathGrammar.cpp ): error("error renaming XPathGrammar.cpp")
-        !system( mv XPathGrammar.tab.h xml/XPathGrammar.h ): error("error renaming XPathGrammar.h")
-    }
+    XPATHBISON = $$PWD/xml/XPathGrammar.y
 
     IDL_BINDINGS += \
         xml/XPathNSResolver.idl \
         xml/XPathExpression.idl \
         xml/XPathResult.idl \
         xml/XPathEvaluator.idl
-
-    SOURCES += xml/XPathGrammar.cpp
 }
 
 contains(DEFINES, XSLT_SUPPORT=1) {
@@ -1153,3 +1145,15 @@ manual_moc.commands = $$QMAKE_MOC ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
 manual_moc.input = MANUALMOC
 manual_moc.CONFIG += target_predeps no_link
 QMAKE_EXTRA_COMPILERS += manual_moc
+
+# GENERATOR 10: XPATH grammar
+xpathbison.output = tmp/${QMAKE_FILE_BASE}.cpp
+xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && mv ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
+xpathbison.depend = ${QMAKE_FILE_NAME}
+xpathbison.input = XPATHBISON
+xpathbison.CONFIG = target_predeps
+xpathbison.dependency_type = TYPE_C
+xpathbison.variable_out = GENERATED_SOURCES
+QMAKE_EXTRA_COMPILERS += xpathbison
+
+
