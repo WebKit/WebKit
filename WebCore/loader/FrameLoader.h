@@ -487,7 +487,9 @@ namespace WebCore {
 
         // Also not cool.
         void startLoading();
+#if PLATFORM(MAC)
         bool startLoadingMainResource(ResourceRequest&, id identifier);
+#endif
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
