@@ -128,10 +128,10 @@ Position VisiblePosition::canonicalPosition(const Position& position)
     node->document()->updateLayoutIgnorePendingStylesheets();
 
     Position candidate = position.upstream();
-    if (candidate.inRenderedContent())
+    if (candidate.isCandidate())
         return candidate;
     candidate = position.downstream();
-    if (candidate.inRenderedContent())
+    if (candidate.isCandidate())
         return candidate;
 
     // When neither upstream or downstream gets us to a candidate (upstream/downstream won't leave 

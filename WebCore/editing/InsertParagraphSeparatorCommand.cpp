@@ -109,7 +109,7 @@ void InsertParagraphSeparatorCommand::doApply()
     
     // Use the leftmost candidate.
     pos = pos.upstream();
-    if (!pos.inRenderedContent())
+    if (!pos.isCandidate())
         pos = pos.downstream();
 
     // Adjust the insertion position after the delete

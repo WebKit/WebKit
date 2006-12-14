@@ -1139,10 +1139,10 @@ void Document::updateSelection()
         // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
         // and will fill the gap before 'bar'.
         Position startPos = selection.visibleStart().deepEquivalent();
-        if (startPos.downstream().inRenderedContent())
+        if (startPos.downstream().isCandidate())
             startPos = startPos.downstream();
         Position endPos = selection.visibleEnd().deepEquivalent();
-        if (endPos.upstream().inRenderedContent())
+        if (endPos.upstream().isCandidate())
             endPos = endPos.upstream();
         
         // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted

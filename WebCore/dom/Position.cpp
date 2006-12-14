@@ -214,7 +214,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
     Node *fromRootEditableElement = node()->rootEditableElement();
 
     bool atStartOfLine = isStartOfLine(VisiblePosition(*this, affinity));
-    bool rendered = inRenderedContent();
+    bool rendered = isCandidate();
     
     Position currentPos = *this;
     while (!currentPos.atStart()) {
@@ -224,7 +224,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
             return *this;
 
         if (atStartOfLine || !rendered) {
-            if (currentPos.inRenderedContent())
+            if (currentPos.isCandidate())
                 return currentPos;
         } else if (rendersInDifferentPosition(currentPos))
             return currentPos;
@@ -242,7 +242,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
     Node *fromRootEditableElement = node()->rootEditableElement();
 
     bool atEndOfLine = isEndOfLine(VisiblePosition(*this, affinity));
-    bool rendered = inRenderedContent();
+    bool rendered = isCandidate();
     
     Position currentPos = *this;
     while (!currentPos.atEnd()) {
@@ -252,7 +252,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
             return *this;
 
         if (atEndOfLine || !rendered) {
-            if (currentPos.inRenderedContent())
+            if (currentPos.isCandidate())
                 return currentPos;
         } else if (rendersInDifferentPosition(currentPos))
             return currentPos;
@@ -439,7 +439,12 @@ static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject *renderer)
     return false;
 }
 
-bool Position::inRenderedContent() const
+static bool nodeIsUserSelectNone(Node* node)
+{
+    return node && node->renderer() && node->renderer()->style()->userSelect() == SELECT_NONE;
+}
+
+bool Position::isCandidate() const
 {
     if (isNull())
         return false;
@@ -452,17 +457,17 @@ bool Position::inRenderedContent() const
         return false;
 
     if (renderer->isBR())
-        return offset() == 0;
+        return offset() == 0 && !nodeIsUserSelectNone(node()->parent());
 
     if (renderer->isText())
-        return inRenderedText();
+        return inRenderedText() && !nodeIsUserSelectNone(node());
 
     if (isTableElement(node()) || editingIgnoresContent(node()))
-        return offset() == 0 || offset() == maxDeepOffset(node());
+        return (offset() == 0 || offset() == maxDeepOffset(node())) && !nodeIsUserSelectNone(node()->parent());
 
     if (!node()->hasTagName(htmlTag) && renderer->isBlockFlow() && !hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
        (renderer->height() || node()->hasTagName(bodyTag)))
-        return offset() == 0;
+        return offset() == 0 && !nodeIsUserSelectNone(node());
     
     return false;
 }
@@ -546,10 +551,10 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         }
     }
     
-    if (node()->hasTagName(brTag) && pos.inRenderedContent())
+    if (node()->hasTagName(brTag) && pos.isCandidate())
         return true;
                 
-    if (pos.node()->hasTagName(brTag) && inRenderedContent())
+    if (pos.node()->hasTagName(brTag) && isCandidate())
         return true;
                 
     if (node()->enclosingBlockFlowElement() != pos.node()->enclosingBlockFlowElement())

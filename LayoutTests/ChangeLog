@@ -1,3 +1,19 @@
+2006-12-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4866671>
+        CrashTracer: 1 crashes in Mail after deleting a list item at WebCore::DeleteSelectionCommand::doApply()
+
+        * editing/deleting/4866671-expected.checksum: Added.
+        * editing/deleting/4866671-expected.png: Added.
+        * editing/deleting/4866671-expected.txt: Added.
+        * editing/deleting/4866671.html: Added.
+        * editing/pasteboard/4866671-expected.checksum: Added.
+        * editing/pasteboard/4866671-expected.png: Added.
+        * editing/pasteboard/4866671-expected.txt: Added.
+        * editing/pasteboard/4866671.html: Added.
+
 2006-12-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

@@ -1194,7 +1194,7 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
         return 0;
     
     Position pos = selectionController()->selection().visibleStart().deepEquivalent();
-    if (!pos.inRenderedContent())
+    if (!pos.isCandidate())
         return 0;
     Node *node = pos.node();
     if (!node)

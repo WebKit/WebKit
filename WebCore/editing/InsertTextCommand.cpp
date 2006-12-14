@@ -106,7 +106,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     // Insert the character at the leftmost candidate.
     Position startPosition = endingSelection().start().upstream();
     deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
-    if (!startPosition.inRenderedContent())
+    if (!startPosition.isCandidate())
         startPosition = startPosition.downstream();
     
     // FIXME: This typing around anchor behavior doesn't exactly match TextEdit.  In TextEdit,

@@ -1,3 +1,40 @@
+2006-12-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4866671>
+        CrashTracer: 1 crashes in Mail after deleting a list item at WebCore::DeleteSelectionCommand::doApply()
+        
+        Don't allow VisiblePositions inside -webkit-user-select:none regions.
+        Renamed inRenderedContent to isCandidate.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        * dom/Position.cpp:
+        (WebCore::Position::previousCharacterPosition):
+        (WebCore::Position::nextCharacterPosition):
+        (WebCore::nodeIsUserSelectNone):
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::rendersInDifferentPosition):
+        * dom/Position.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+        * editing/htmlediting.cpp:
+        (WebCore::nextCandidate):
+        (WebCore::nextVisuallyDistinctCandidate):
+        (WebCore::previousCandidate):
+        (WebCore::previousVisuallyDistinctCandidate):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfParagraph):
+        * page/Frame.cpp:
+        (WebCore::Frame::styleForSelectionStart):
+
 2006-12-14  David Hyatt  <hyatt@apple.com>
 
         Get rid of the containsStart check and just rely on the selectionState
