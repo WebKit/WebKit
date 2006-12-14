@@ -48,6 +48,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
             , m_dataIsUpToDate(true)
 #endif
+            , m_isNull(true)
         {
         }
 
@@ -59,6 +60,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
             , m_dataIsUpToDate(true)
 #endif
+            , m_isNull(false)
         {
         }
 
@@ -66,6 +68,7 @@ namespace WebCore {
         ResourceError(NSError* error)
             : m_dataIsUpToDate(false)
             , m_platformError(error)
+            , m_isNull(!error)
         {
         }
 #endif
@@ -77,7 +80,9 @@ namespace WebCore {
         static const String MachDomain;
         static const String WebKitDomain;
 #endif
-        
+
+        bool isNull() const { return m_isNull; }
+
         const String& domain() { unpackPlatformErrorIfNeeded(); return m_domain; }
         int errorCode() { unpackPlatformErrorIfNeeded(); return m_errorCode; }
         const String& failingURL() { unpackPlatformErrorIfNeeded(); return m_failingURL; }
@@ -109,7 +114,7 @@ namespace WebCore {
         bool m_dataIsUpToDate;
         mutable RetainPtr<NSError> m_platformError;
 #endif
-
+        bool m_isNull;
 };
 
 } // namespace WebCore

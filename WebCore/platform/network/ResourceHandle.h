@@ -66,12 +66,13 @@ namespace WebCore {
 class FormData;
 class Frame;
 class KURL;
+class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
+class ResourceRequest;
+class ResourceResponse;
 class SubresourceLoader;
 class SubresourceLoaderClient;
-
-struct ResourceRequest;
 
 template <typename T> class Timer;
 
@@ -82,6 +83,8 @@ private:
 public:
     // FIXME: should not need the Frame
     static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool mightDownloadFromHandle = false);
+
+    static void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 
     ~ResourceHandle();
 

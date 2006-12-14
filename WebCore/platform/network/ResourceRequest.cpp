@@ -207,7 +207,6 @@ void ResourceRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
         addHTTPHeaderField(it->first, it->second);
 }
 
-
 bool operator==(const ResourceRequest& a, const ResourceRequest& b)
 {
     if (a.url() != b.url())
@@ -235,6 +234,15 @@ bool operator==(const ResourceRequest& a, const ResourceRequest& b)
         return false;
 
      return true;
+}
+
+bool ResourceRequest::isConditional() const
+{
+    return (m_httpHeaderFields.contains("If-Match") ||
+            m_httpHeaderFields.contains("If-Modified-Since") ||
+            m_httpHeaderFields.contains("If-None-Match") ||
+            m_httpHeaderFields.contains("If-Range") ||
+            m_httpHeaderFields.contains("If-Unmodified-Since"));
 }
 
 }

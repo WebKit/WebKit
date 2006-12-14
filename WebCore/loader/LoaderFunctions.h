@@ -51,8 +51,6 @@ class Request;
 class ResourceRequest;
 class ResourceResponse;
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, const ResourceRequest&, ResourceResponse&);
-
 void CheckCacheObjectStatus(DocLoader*, CachedResource*);
 bool CheckIfReloading(DocLoader*);
 

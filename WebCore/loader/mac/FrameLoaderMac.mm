@@ -56,6 +56,8 @@
 #import "Page.h"
 #import "PageState.h"
 #import "Plugin.h"
+#import "ResourceError.h"
+#import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import "SubresourceLoader.h"
@@ -268,13 +270,13 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
         callContinueLoadAfterNavigationPolicy, this);
 }
 
-bool FrameLoader::canLoad(NSURL *URL, const String& referrer, bool& hideReferrer)
+bool FrameLoader::canLoad(const KURL& url, const String& referrer, bool& hideReferrer)
 {
     bool referrerIsWebURL = referrer.startsWith("http:", false) || referrer.startsWith("https:", false);
     bool referrerIsLocalURL = referrer.startsWith("file:", false) || referrer.startsWith("applewebdata:");
-    bool URLIsFileURL = [URL scheme] && [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    bool URLIsFileURL = url.protocol().startsWith("file", false);
     bool referrerIsSecureURL = referrer.startsWith("https:", false);
-    bool URLIsSecureURL = [URL scheme] && [[URL scheme] compare:@"https" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    bool URLIsSecureURL = url.protocol().startsWith("https", false);
     
     hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
     return !URLIsFileURL || referrerIsLocalURL;
@@ -1202,69 +1204,46 @@ void FrameLoader::loadEmptyDocumentSynchronously()
     load(request);
 }
 
-void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r)
+void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ResourceResponse& response, Vector<char>& data)
 {
-    NSURL *URL = request.url().getNSURL();
-
     // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoad method.
     String referrer = m_outgoingReferrer;
     bool hideReferrer;
-    canLoad(URL, referrer, hideReferrer);
+    canLoad(request.url(), referrer, hideReferrer);
     if (hideReferrer)
         referrer = String();
     
-    NSMutableURLRequest *initialRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [initialRequest setTimeoutInterval:10];
+    ResourceRequest initialRequest = request;
+    initialRequest.setTimeoutInterval(10);
     
-    [initialRequest setHTTPMethod:request.httpMethod()];
-    
-    RefPtr<FormData> formData = request.httpBody();
-    if (formData && !formData->isEmpty())        
-        setHTTPBody(initialRequest, formData);
-    
-    HTTPHeaderMap::const_iterator end = request.httpHeaderFields().end();
-    for (HTTPHeaderMap::const_iterator it = request.httpHeaderFields().begin(); it != end; ++it)
-        [initialRequest addValue:it->second forHTTPHeaderField:it->first];
-    
-    if (isConditionalRequest(initialRequest))
-        [initialRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    if (initialRequest.isConditional())
+        initialRequest.setCachePolicy(ReloadIgnoringCacheData);
     else
-        [initialRequest setCachePolicy:(NSURLRequestCachePolicy)documentLoader()->request().cachePolicy()];
+        initialRequest.setCachePolicy(documentLoader()->request().cachePolicy());
     
     if (!referrer.isEmpty())
-        setHTTPReferrer(initialRequest, referrer);
+        initialRequest.setHTTPReferrer(referrer);
     
-    [initialRequest setMainDocumentURL:m_frame->page()->mainFrame()->loader()->documentLoader()->request().url().getNSURL()];
-    applyUserAgent(initialRequest);
+    initialRequest.setMainDocumentURL(m_frame->page()->mainFrame()->loader()->documentLoader()->request().url());
+    initialRequest.setHTTPUserAgent(client()->userAgent());
     
-    NSError *error = nil;
+    NSError *nsError = nil;
     id identifier = nil;    
-    NSURLRequest *newRequest = requestFromDelegate(initialRequest, identifier, error);
-    
-    NSURLResponse *response = nil;
-    NSData *result = nil;
-    if (error == nil) {
-        ASSERT(newRequest != nil);
-        result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
-    }
-    
-    [initialRequest release];
+    NSURLRequest *newRequest = requestFromDelegate(initialRequest.nsURLRequest(), identifier, nsError);
 
-    if (error == nil)
-        r = response;
-    else {
-        r = ResourceResponse(URL, String(), 0, String(), String());
-        if ([error domain] == NSURLErrorDomain)
-            r.setHTTPStatusCode([error code]);
-        else
-            r.setHTTPStatusCode(404);
+    if (nsError == nil) {
+        ASSERT(newRequest != nil);
+        ResourceError error;
+        
+        didTellBridgeAboutLoad(KURL([newRequest URL]).url());
+
+        ResourceHandle::loadResourceSynchronously(newRequest, error, response, data);
+        
+        nsError = error;
     }
     
-    sendRemainingDelegateMessages(identifier, response, [result length], error);
-    
-    data.resize([result length]);
-    memcpy(data.data(), [result bytes], [result length]);
+    sendRemainingDelegateMessages(identifier, response.nsURLResponse(), data.size(), nsError);
 }
 
 Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)

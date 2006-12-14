@@ -182,6 +182,37 @@ bool ResourceHandle::loadsBlocked()
     return inNSURLConnectionCallback != 0;
 }
 
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+    NSError *nsError = nil;
+    
+    NSURLResponse *nsURLResponse = nil;
+    NSData *result = nil;
+
+    ASSERT(!request.isEmpty());
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    result = [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (nsError == nil)
+        response = nsURLResponse;
+    else {
+        response = ResourceResponse(request.url(), String(), 0, String(), String());
+        if ([nsError domain] == NSURLErrorDomain)
+            response.setHTTPStatusCode([nsError code]);
+        else
+            response.setHTTPStatusCode(404);       
+    }
+    
+    data.resize([result length]);
+    memcpy(data.data(), [result bytes], [result length]);
+    
+    error = nsError;
+}
+
 } // namespace WebCore
 
 @implementation WebCoreResourceHandleAsDelegate

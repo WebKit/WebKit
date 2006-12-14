@@ -465,8 +465,11 @@ static void* openFunc(const char* uri)
         return &globalDescriptor;
 
     ResourceResponse response;
-    Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, KURL(uri), response);
+    Vector<char> data;
     
+    if (globalDocLoader->frame()) 
+        globalDocLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), response, data);
+
     return new OffsetBuffer(data);
 }
 

@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "LoaderFunctions.h"
 #include "PlatformString.h"
@@ -390,7 +391,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
             KJS::JSLock::DropAllLocks dropLocks;
-            data = ServeSynchronousRequest(cache()->loader(), m_doc->docLoader(), request, response);
+            if (m_doc->frame()) 
+                m_doc->frame()->loader()->loadResourceSynchronously(request, response, data);
         }
 
         m_loader = 0;

@@ -1,3 +1,39 @@
+2006-12-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add loadResourceSynchronously to ResourceHandle and have FrameLoader use it instead of
+        calling NSURLConnection directly.
+
+        Add an isNull flag to ResourceError so we can convert correctly between nil NSErrors and ResourceErrors.
+
+        Get rid of ServeSynchronousRequest and use the loader instead.
+        
+        * WebCore.exp:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * loader/FrameLoader.h:
+        * loader/LoaderFunctions.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::canLoad):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/LoaderFunctionsMac.mm:
+        * platform/network/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::isNull):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::isConditional):
+        * platform/network/ResourceRequest.h:
+        * platform/network/mac/ResourceErrorMac.mm:
+        (-[NSError WebCore]):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2006-12-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

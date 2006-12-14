@@ -91,9 +91,12 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             ResourceResponse response;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;
-            
-            Vector<char> data = ServeSynchronousRequest(cache()->loader(), globalDocLoader, url, response);
-        
+
+            Vector<char> data;
+                
+            if (globalDocLoader->frame()) 
+                globalDocLoader->frame()->loader()->loadResourceSynchronously(url, response, data);
+
             xmlSetGenericErrorFunc(0, parseErrorFunc);
             // We don't specify an encoding here. Neither Gecko nor WinIE respects
             // the encoding specified in the HTTP headers.

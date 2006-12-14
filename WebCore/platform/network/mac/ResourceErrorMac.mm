@@ -51,6 +51,11 @@ void ResourceError::unpackPlatformError()
 
 ResourceError::operator NSError*() const
 {
+    if (m_isNull) {
+        ASSERT(!m_platformError);
+        return nil;
+    }
+    
     if (!m_platformError) {
         RetainPtr<NSMutableDictionary> userInfo(Adopt, [[NSMutableDictionary alloc] init]);
 

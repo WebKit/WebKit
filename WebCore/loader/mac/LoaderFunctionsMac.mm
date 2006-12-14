@@ -86,27 +86,6 @@ NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, const ResourceRequest& request, ResourceResponse& response)
-{
-    FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
-    
-    if (!frame)
-        return Vector<char>();
-    
-    frame->loader()->didTellBridgeAboutLoad(request.url().url());
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    Vector<char> result;
-    frame->loader()->loadResourceSynchronously(request, result, response);
-
-    return result;
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return Vector<char>();
-}
-
 bool CheckIfReloading(DocLoader *loader)
 {
     if (Frame* frame = loader->frame())

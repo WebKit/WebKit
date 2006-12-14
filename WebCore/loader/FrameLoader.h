@@ -175,13 +175,11 @@ namespace WebCore {
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
 
-#if PLATFORM(MAC)
-        bool canLoad(NSURL *, const String& referrer, bool& hideReferrer);
-#endif
+        bool canLoad(const KURL&, const String& referrer, bool& hideReferrer);
 
         Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
 
-        void loadResourceSynchronously(const ResourceRequest& request, Vector<char>& data, ResourceResponse& r);
+        void loadResourceSynchronously(const ResourceRequest& request, ResourceResponse& r, Vector<char>& data);
         
         bool canHandleRequest(const ResourceRequest&);
 
