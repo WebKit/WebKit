@@ -1,3 +1,15 @@
+2006-12-14  David Hyatt  <hyatt@apple.com>
+
+        Get rid of the containsStart check and just rely on the selectionState
+        bits.  This allows selection gap filling to behave properly in the presence
+        of inline blocks and inline tables on lines when the selection originates
+        inside the inline block.
+
+        Reviewed by ggaren
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+
 2006-12-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.
