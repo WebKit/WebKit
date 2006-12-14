@@ -318,7 +318,7 @@ void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
     m_argument = argument;
 }
 
-void PolicyCheck::call()
+void PolicyCheck::call(bool shouldContinue)
 {
     notImplemented();
 }
