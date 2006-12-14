@@ -1,5 +1,17 @@
 2006-12-14  Zack Rusin  <zack@kde.org>
 
+        Make it link with temporary stubs.
+
+        * loader/qt/DocumentLoaderQt.cpp:
+        (WebCore::DocumentLoader::originalRequest):
+        (WebCore::DocumentLoader::originalRequestCopy):
+        (WebCore::DocumentLoader::request):
+        (WebCore::DocumentLoader::initialRequest):
+        (WebCore::DocumentLoader::actualRequest):
+        (WebCore::DocumentLoader::URL):
+
+2006-12-14  Zack Rusin  <zack@kde.org>
+
         Compilation fixes for the Qt port after last nights
         changes.
 
