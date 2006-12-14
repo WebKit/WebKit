@@ -32,8 +32,8 @@ namespace WebCore {
 
 JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
 {
-    AffineTransform& imp(impl());
-    KJS::JSValue* result = toJS(exec, imp.inverse());
+    const AffineTransform& imp(*impl());
+    KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapper<AffineTransform>(imp.inverse()));
 
     if (!imp.isInvertible())
         setDOMException(exec, SVG_MATRIX_NOT_INVERTABLE);
@@ -43,12 +43,12 @@ JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
 
 JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
 {
-    AffineTransform& imp(impl());
+    AffineTransform& imp(*impl());
  
     float x = args[0]->toNumber(exec);
     float y = args[1]->toNumber(exec);
 
-    KJS::JSValue* result = toJS(exec, imp.rotateFromVector(x, y));
+    KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapper<AffineTransform>(imp.rotateFromVector(x, y)));
 
     if (x == 0.0 || y == 0.0)
         setDOMException(exec, SVG_INVALID_VALUE_ERR);

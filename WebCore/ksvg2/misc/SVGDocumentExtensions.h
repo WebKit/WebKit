@@ -96,6 +96,16 @@ public:
     }
 
     template<typename ValueType>
+    void removeBaseValue(const SVGElement* element, const AtomicString& propertyName)
+    {
+        HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>().get(element);
+        if (!propertyMap)
+            return;
+
+        propertyMap->remove(propertyName.impl());
+    }
+
+    template<typename ValueType>
     bool hasBaseValue(const SVGElement* element, const AtomicString& propertyName) const
     {
         HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>().get(element);

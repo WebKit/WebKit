@@ -1,3 +1,52 @@
+2006-12-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11830
+
+        Fix fundamental problems with JS SVG POD types.
+        (currently: FloatPoint/FloatRect/AffineTransform)
+
+        This doesn't affect any testcase, but when I wrote my SVGLength* -> SVGLength
+        the problem got visible (aka. baseVal-animVal-equality.svg broke and more)
+        With that patch applied first, none breaks - so SVG POD JS wrappers do work now.
+
+        In detail:
+        - Fix setBaseValue() confusion. ONLY use the hash map in SVGDocumentExtension
+          when we're animating a property. Add "start##Property" / "stop##Property" methods
+          which take care, of moving "animVal" -> "baseVal" hash, and back after animation stopped.
+
+          These new methods are not yet used anywhere, but finally the "animated property" system is complete.
+
+        - Offer a new JSSVGPODTypeWrapper class, wrapping around non-pointer POD types like FloatPoint etc.
+          to be used in the generated JS bindings. Currently if you modified ie the "x" property of a SVGPoint
+          from JS, you only actually modified the "m_x" object stored in the JSSVGPoint wrapper.
+
+          If you take SVGLength as example (more frequently used in the JS SVG bindings, that's why I'm using it)
+          "document.rootElement.width.baseVal.value = 100;" only modified the "SVGLength m_impl" object stored in
+          JSSVGLength, but the "SVGSVGElement" didn't notice it width got changed. The new commitChanges() logic
+          fixes these problems.
+
+        It's quite hard too describe the actual changes, if one is not familiar with the code. This is the result
+        of endless discussions with Eric Seidel, and we hope this is a decent solution adressing all issues.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPODTypeWrapper.h: Added.
+        (WebCore::JSSVGPODTypeWrapper::JSSVGPODTypeWrapper):
+        (WebCore::JSSVGPODTypeWrapper::~JSSVGPODTypeWrapper):
+        (WebCore::JSSVGPODTypeWrapper::operator PODType&):
+        (WebCore::JSSVGPODTypeWrapper::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreator::JSSVGPODTypeWrapperCreator):
+        (WebCore::JSSVGPODTypeWrapperCreator::~JSSVGPODTypeWrapperCreator):
+        (WebCore::JSSVGPODTypeWrapperCreator::commitChange):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::removeBaseValue):
+        * ksvg2/svg/SVGElement.h:
+
 2006-12-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

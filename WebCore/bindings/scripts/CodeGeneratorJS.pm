@@ -263,9 +263,10 @@ sub GenerateHeader
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $passType = $podType ? "const $podType&" : "$implClassName*";
+    my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
 
     push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "double";
+    push(@headerContent, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -405,10 +406,9 @@ sub GenerateHeader
 
     if (!$hasParent) {
         if ($podType) {
-            push(@headerContent, "    $podType& impl() { return m_impl; }\n");
-            push(@headerContent, "    const $podType& impl() const { return m_impl; }\n");
+            push(@headerContent, "    JSSVGPODTypeWrapper<$podType>* impl() const { return m_impl.get(); }\n");
             push(@headerContent, "private:\n");
-            push(@headerContent, "    $podType m_impl;\n");
+            push(@headerContent, "    RefPtr<JSSVGPODTypeWrapper<$podType> > m_impl;\n");
         } else {
             push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
             push(@headerContent, "private:\n");
@@ -433,7 +433,11 @@ sub GenerateHeader
     push(@headerContent, "};\n\n");
 
     if (!$hasParent) {
-        push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType);\n");
+        if ($podType) {
+            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, JSSVGPODTypeWrapper<$podType>*);\n");
+        } else {
+            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType);\n");
+        }
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         if ($podType) {
@@ -675,7 +679,7 @@ sub GenerateImplementation
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $passType = $podType ? "const $podType&" : "$implClassName*";
+    my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
 
     # Constructor
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
@@ -699,11 +703,7 @@ sub GenerateImplementation
     # Destructor
     if (!$hasParent) {
         push(@implContent, "${className}::~$className()\n");
-        if ($podType) {
-            push(@implContent, "{\n}\n\n");
-        } else {
-            push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
-        }
+        push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
     }
 
     # Document needs a special destructor because it's a special case for caching. It needs
@@ -772,7 +772,7 @@ sub GenerateImplementation
         push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n{\n");
 
         if ($podType) {
-            push(@implContent, "    const $podType& imp(impl());\n\n");
+            push(@implContent, "    $podType& imp(*impl());\n\n");
         } else {
             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
         }
@@ -781,6 +781,11 @@ sub GenerateImplementation
 
         foreach my $attribute (@{$dataNode->attributes}) {
             my $name = $attribute->signature->name;
+
+            my $implClassNameForValueConversion = "";
+            if (!$podType and ($codeGenerator->IsSVGAnimatedType($implClassName) or $attribute->type !~ /^readonly/)) {
+                $implClassNameForValueConversion = $implClassName;
+            }
 
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
@@ -796,21 +801,21 @@ sub GenerateImplementation
 
                 if ($podType) {
                     if ($podType eq "double") { # Special case for JSSVGNumber
-                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp") . ";\n");
+                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp") . ";\n");
                     } else {
-                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp.$name()") . ";\n");
+                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp.$name()") . ";\n");
                     }
                 } else {
-                    push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp->$name()") . ";\n");
+                    push(@implContent, "        return " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name()") . ";\n");
                 }
             } else {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
                 push(@implContent, "        ExceptionCode ec = 0;\n");
 
                 if ($podType) {
-                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "imp.$name(ec)") . ";\n");
+                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "", "imp.$name(ec)") . ";\n");
                 } else {
-                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "imp->$name(ec)") . ";\n");
+                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . ";\n");
                 }
 
                 push(@implContent, "        setDOMException(exec, ec);\n");
@@ -841,7 +846,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
 
             if ($podType) {
-                push(@implContent, "    $podType& imp(impl());\n\n");
+                push(@implContent, "    $podType& imp(*impl());\n\n");
             } else {
                 push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
             }
@@ -874,13 +879,14 @@ sub GenerateImplementation
                             } else {
                                 push(@implContent, "        imp.set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value") . ");\n");
                             }
+                            push(@implContent, "        m_impl->commitChange();\n");
                         } else {
                             push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
                             push(@implContent, "        imp->set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
                             push(@implContent, ", ec") if @{$attribute->setterExceptions};
                             push(@implContent, ");\n");
                             push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
-                       }
+                        }
                     }
                     push(@implContent, "        break;\n");
                     push(@implContent, "    }\n");
@@ -909,7 +915,7 @@ sub GenerateImplementation
         push(@implContent, "      return throwError(exec, TypeError);\n\n");
 
         if ($podType) {
-            push(@implContent, "    $podType& imp(static_cast<$className*>(thisObj)->impl());\n\n");
+            push(@implContent, "    $podType& imp(*static_cast<$className*>(thisObj)->impl());\n\n");
         } else {
             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObj)->impl());\n\n");
         }
@@ -949,7 +955,7 @@ sub GenerateImplementation
 
                 my $name = $parameter->name;
                 push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
-                push(@implContent, "        " . GetNativeType($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
+                push(@implContent, "        " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
                 if (TypeCanFailConversion($parameter)) {
                     push(@implContent, "        if (!${name}Ok) {\n");
                     push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
@@ -990,10 +996,21 @@ sub GenerateImplementation
     }
 
     if (!$hasParent) {
-        push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $passType obj)\n");
+        if ($podType) {
+            push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj)\n");
+        } else {
+            push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $passType obj)\n");
+        }
+
         push(@implContent, "{\n");
         if ($podType) {
-            push(@implContent, "    return new $className(exec, obj);\n");
+            # This cache facility is not really working for POD types, we'd need to pass around pointers instead of POD
+            # types to be able to reuse the JSSVGFooBar classes. What's happening right now, is that we just create a new
+            # JSSVGPODTypeWrapper, once toJS is called. A follow up call, doing the same, would also create a new JSSVGPODTypeWrapper.
+            # So if we'd use pointers for POD types like SVGPoint, SVGRect, we could easily reuse the JSSVGPoint/JSSVGRect classes.
+            # Though we do NOT want to pass primitive pointer around in SVG, that's why we have to create these "smart wrappers"
+            # around POD types in the bindings. This approach is still way better than using pointers all over SVG codebase.
+            push(@implContent, "    return KJS::cacheDOMObject<JSSVGPODTypeWrapper<$podType>, $className>(exec, obj);\n");
          } else {
             push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);\n");
         }
@@ -1009,7 +1026,7 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
 
-        push(@implContent, "    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : ");
+        push(@implContent, "    return val->isObject(&${className}::info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(val)->impl() : ");
         if ($podType and $podType ne "double") {
             push(@implContent, "$podType();\n}\n");
         } else {
@@ -1047,24 +1064,30 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
-        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString) . ";\n");
+        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, "", $functionString) . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "return result;\n");
     }
 }
 
-sub GetNativeType
+sub GetNativeTypeFromSignature
 {
     my $signature = shift;
-
     my $type = $codeGenerator->StripModule($signature->type);
 
-    if ($type eq "unsigned long") {
+    if ($type eq "unsigned long" and $signature->extendedAttributes->{"IsIndex"}) {
         # Special-case index arguments because we need to check that they aren't < 0.
-        return "int" if $signature->extendedAttributes->{"IsIndex"};
-        return "unsigned";
+        return "int";
     }
 
+    return GetNativeType($type);
+}
+
+sub GetNativeType
+{
+    my $type = shift;
+
+    return "unsigned" if $type eq "unsigned long";
     return $type if $type eq "unsigned short" or $type eq "float" or $type eq "AtomicString";
     return "bool" if $type eq "boolean";
     return "int" if $type eq "long";
@@ -1199,6 +1222,7 @@ sub JSValueToNative
 sub NativeToJSValue
 {
     my $signature = shift;
+    my $implClassName = shift;
     my $value = shift;
 
     my $type = $codeGenerator->StripModule($signature->type);
@@ -1223,9 +1247,22 @@ sub NativeToJSValue
         return "getDOMRGBColor(exec, $value)";
     }
 
-    if ($type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix") {
+    if ($codeGenerator->IsPodType($type)) {
         $implIncludes{"JS$type.h"} = 1;
-        return "toJS(exec, $value)";
+
+        my $nativeType = GetNativeType($type);
+
+        my $getter = $value;
+        $getter =~ s/imp->//;
+        $getter =~ s/\(\)//;
+
+        my $setter = "set" . WK_ucfirst($getter);
+
+        if ($implClassName eq "") {
+            return "toJS(exec, new JSSVGPODTypeWrapper<$nativeType>($value))";
+        } else {
+            return "toJS(exec, new JSSVGPODTypeWrapperCreator<$nativeType, $implClassName>(imp, &${implClassName}::$getter, &${implClassName}::$setter))";
+        }
     }
 
     if ($type eq "HTMLCollection") {
