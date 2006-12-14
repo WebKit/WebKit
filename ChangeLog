@@ -1,3 +1,9 @@
+2006-12-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        * Makefile.shared: use $PIPESTATUS[0] and a sub-shell to exit with xcodebuild's exit status
+
 2006-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady and Anders.
