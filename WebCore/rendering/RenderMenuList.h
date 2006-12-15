@@ -26,11 +26,17 @@
 #include "RenderFlexibleBox.h"
 #include "PopupMenu.h"
 
+#if PLATFORM(MAC)
+#define POPUP_MENU_PULLS_DOWN 0
+#else
+#define POPUP_MENU_PULLS_DOWN 1
+#endif
+
 namespace WebCore {
 
 class HTMLSelectElement;
 
-class RenderMenuList : public RenderFlexibleBox {
+class RenderMenuList : public RenderFlexibleBox, public PopupMenuClient {
 public:
     RenderMenuList(HTMLSelectElement*);
     ~RenderMenuList();
@@ -61,6 +67,26 @@ public:
 
     String text();
     void setTextFromOption(int optionIndex);
+    
+    // PopupClient methods
+    String itemText(unsigned listIndex) const;
+    bool itemIsEnabled(unsigned listIndex) const;
+    RenderStyle* itemStyle(unsigned listIndex) const;
+    RenderStyle* clientStyle() const;
+    Document* clientDocument() const;
+    int clientPaddingLeft() const;
+    int clientPaddingRight() const;
+    int listSize() const;
+    int selectedIndex() const;
+    bool itemIsSeparator(unsigned listIndex) const;
+    bool itemIsLabel(unsigned listIndex) const;
+    bool itemIsSelected(unsigned listIndex) const;
+    void setTextFromItem(unsigned listIndex);
+#if POPUP_MENU_PULLS_DOWN
+    bool shouldPopOver() const { return false; }
+#else
+    bool shouldPopOver() const { return true; }
+#endif
 
 protected:
     virtual bool hasLineIfEmpty() const { return true; }

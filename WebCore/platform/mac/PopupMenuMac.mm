@@ -28,15 +28,14 @@
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
 #import "HTMLSelectElement.h"
-#import "RenderMenuList.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-PopupMenu::PopupMenu(RenderMenuList* menuList)
-    : m_menuList(menuList)
+PopupMenu::PopupMenu(PopupMenuClient* client)
+    : m_popupClient(client)
 {
 }
 
@@ -57,61 +56,85 @@ void PopupMenu::populate()
     if (m_popup)
         clear();
     else {
-        m_popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
+        m_popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:!client()->shouldPopOver()];
         [m_popup.get() release]; // release here since the RetainPtr has retained the object already
         [m_popup.get() setUsesItemFromMenu:NO];
         [m_popup.get() setAutoenablesItems:NO];
     }
+
     BOOL messagesEnabled = [[m_popup.get() menu] menuChangedMessagesEnabled];
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:NO];
     
-    ASSERT(menuList());
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(menuList()->node());
-    if (!select)
-        return;
-    const Vector<HTMLElement*>& items = select->listItems();
-    size_t size = items.size();
-    for (size_t i = 0; i < size; ++i) {
-        HTMLElement* element = items[i];
-        if (element->hasTagName(optionTag))
-            addOption(static_cast<HTMLOptionElement*>(element));
-        else if (element->hasTagName(optgroupTag))
-            addGroupLabel(static_cast<HTMLOptGroupElement*>(element));
-        else if (element->hasTagName(hrTag))
-            addSeparator();
-        else
-            ASSERT_NOT_REACHED();
+    // For pullDown menus the first item is hidden.
+    if (!client()->shouldPopOver())
+        [m_popup.get() addItemWithTitle:@""];
+
+    ASSERT(client());
+    int size = client()->listSize();
+
+    for (int i = 0; i < size; i++) {
+        if (client()->itemIsSeparator(i))
+            [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
+        else {
+            RenderStyle* style = client()->itemStyle(i);
+            NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
+            if (style->font() != Font())
+                [attributes setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
+            // FIXME: Add support for styling the foreground and background colors.
+            // FIXME: Find a way to customize text color when an item is highlighted.
+            NSAttributedString* string = [[NSAttributedString alloc] initWithString:client()->itemText(i) attributes:attributes];
+            [attributes release];
+
+            [m_popup.get() addItemWithTitle:@""];
+            NSMenuItem* menuItem = [m_popup.get() lastItem];
+            [menuItem setAttributedTitle:string];
+            [menuItem setEnabled:client()->itemIsEnabled(i)];
+            [string release];
+        }
     }
-    
+
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate();
-    if ([m_popup.get() numberOfItems] <= 0)
+    int numItems = [m_popup.get() numberOfItems];
+    if (numItems <= 0)
         return;
-    ASSERT([m_popup.get() numberOfItems] > index);
+    ASSERT(numItems > index);
+
+    // Workaround for crazy bug where a selected index of -1 for a menu with only 1 item will cause a blank menu.
+    if (index == -1 && numItems == 2 && !client()->shouldPopOver() && ![[m_popup.get() itemAtIndex:1] isEnabled])
+        index = 0;
 
     NSView* view = v->getDocumentView();
 
     [m_popup.get() attachPopUpWithFrame:r inView:view];
     [m_popup.get() selectItemAtIndex:index];
-    
-    NSFont* font = menuList()->style()->font().primaryFont()->getNSFont();
-
-    NSRect titleFrame = [m_popup.get() titleRectForBounds:r];
-    if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
-        titleFrame = r;
-    float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
-    // Adjust for fonts other than the system font.
-    NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
-    vertOffset += [font descender] - [defaultFont descender];
-    vertOffset = fmin(NSHeight(r), vertOffset);
 
     NSMenu* menu = [m_popup.get() menu];
-    // FIXME: Need to document where this magic number 10 comes from.
-    NSPoint location = NSMakePoint(NSMinX(r) - 10, NSMaxY(r) - vertOffset);
+    
+    NSPoint location;
+    NSFont* font = client()->clientStyle()->font().primaryFont()->getNSFont();
+    
+    // These values were borrowed from AppKit to match their placement of the menu.
+    const int popOverHorizontalAdjust = -10;
+    const int popUnderHorizontalAdjust = 6;
+    const int popUnderVerticalAdjust = 6;
+    if (client()->shouldPopOver()) {
+        NSRect titleFrame = [m_popup.get() titleRectForBounds:r];
+        if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
+            titleFrame = r;
+        float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
+        // Adjust for fonts other than the system font.
+        NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
+        vertOffset += [font descender] - [defaultFont descender];
+        vertOffset = fmin(NSHeight(r), vertOffset);
+    
+        location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
+    } else
+        location = NSMakePoint(NSMinX(r) + popUnderHorizontalAdjust, NSMaxY(r) + popUnderVerticalAdjust);    
 
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
@@ -123,12 +146,16 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     frame->willPopupMenu(menu);
     wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
 
-    if (menuList()) {
+    if (client()) {
         int newIndex = [m_popup.get() indexOfSelectedItem];
-        menuList()->hidePopup();
+        client()->hidePopup();
+
+        // Adjust newIndex for hidden first item.
+        if (!client()->shouldPopOver())
+            newIndex--;
 
         if (index != newIndex && newIndex >= 0)
-            menuList()->valueChanged(newIndex);
+            client()->valueChanged(newIndex);
 
         // Give the frame a chance to fix up its event state, since the popup eats all the
         // events during tracking.
@@ -141,62 +168,6 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 void PopupMenu::hide()
 {
     [m_popup.get() dismissPopUp];
-}
-
-void PopupMenu::addSeparator()
-{
-    [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
-}
-
-void PopupMenu::addGroupLabel(HTMLOptGroupElement* element)
-{
-    String text = element->groupLabelText();
-
-    RenderStyle* s = element->renderStyle();
-    if (!s)
-        s = menuList()->style();
-
-    NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
-    if (s->font() != Font())
-        [attributes setObject:s->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
-    // FIXME: Add support for styling the foreground and background colors.
-    NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
-    [attributes release];
-
-    [m_popup.get() addItemWithTitle:@""];
-    NSMenuItem* menuItem = [m_popup.get() lastItem];
-    [menuItem setAttributedTitle:string];
-    [menuItem setEnabled:NO];
-
-    [string release];
-}
-
-void PopupMenu::addOption(HTMLOptionElement* element)
-{
-    String text = element->optionText();
-    
-    bool groupEnabled = true;
-    if (element->parentNode() && element->parentNode()->hasTagName(optgroupTag))
-        groupEnabled = element->parentNode()->isEnabled();
-
-    RenderStyle* s = element->renderStyle();
-    if (!s)
-        s = menuList()->style();
-        
-    NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
-    if (s->font() != Font())
-        [attributes setObject:s->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
-    // FIXME: Add support for styling the foreground and background colors.
-    // FIXME: Find a way to customize text color when an item is highlighted.
-    NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
-    [attributes release];
-
-    [m_popup.get() addItemWithTitle:@""];
-    NSMenuItem* menuItem = [m_popup.get() lastItem];
-    [menuItem setAttributedTitle:string];
-    [menuItem setEnabled:groupEnabled && element->isEnabled()];
-
-    [string release];
 }
     
 void PopupMenu::updateFromElement()

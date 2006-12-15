@@ -41,24 +41,46 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
+class Document;
 class FrameView;
-class HTMLOptionElement;
-class HTMLOptGroupElement;
-class RenderMenuList;
+class String;
+class RenderStyle;
+
+class PopupMenuClient {
+public:
+    virtual ~PopupMenuClient() {}
+    virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
+
+    virtual String itemText(unsigned listIndex) const = 0;
+    virtual bool itemIsEnabled(unsigned listIndex) const = 0;
+    virtual RenderStyle* itemStyle(unsigned listIndex) const = 0;
+    virtual RenderStyle* clientStyle() const = 0;
+    virtual Document* clientDocument() const = 0;
+    virtual int clientPaddingLeft() const = 0;
+    virtual int clientPaddingRight() const = 0;
+    virtual int listSize() const = 0;
+    virtual int selectedIndex() const = 0;
+    virtual void hidePopup() = 0;
+    virtual bool itemIsSeparator(unsigned listIndex) const = 0;
+    virtual bool itemIsLabel(unsigned listIndex) const = 0;
+    virtual bool itemIsSelected(unsigned listIndex) const = 0;
+    virtual bool shouldPopOver() const = 0;
+    virtual void setTextFromItem(unsigned listIndex) = 0;
+};
 
 class PopupMenu : public Shared<PopupMenu> {
 public:
-    static PassRefPtr<PopupMenu> create(RenderMenuList* menuList) { return new PopupMenu(menuList); }
+    static PassRefPtr<PopupMenu> create(PopupMenuClient* client) { return new PopupMenu(client); }
     ~PopupMenu();
     
-    void disconnectMenuList() { m_menuList = 0; }
+    void disconnectClient() { m_popupClient = 0; }
 
     void show(const IntRect&, FrameView*, int index);
     void hide();
 
     void updateFromElement();
     
-    RenderMenuList* menuList() const { return m_menuList; }
+    PopupMenuClient* client() const { return m_popupClient; }
 
 #if PLATFORM(WIN)
     bool up(unsigned lines = 1);
@@ -93,15 +115,15 @@ public:
     int wheelDelta() const { return m_wheelDelta; }
 #endif
 
+protected:
+    PopupMenu(PopupMenuClient* client);
+    
 private:
-    RenderMenuList* m_menuList;
+    PopupMenuClient* m_popupClient;
     
 #if PLATFORM(MAC)
     void clear();
     void populate();
-    void addSeparator();
-    void addGroupLabel(HTMLOptGroupElement*);
-    void addOption(HTMLOptionElement*);
 
     RetainPtr<NSPopUpButtonCell> m_popup;
 #elif PLATFORM(WIN)
@@ -118,7 +140,6 @@ private:
     int m_wheelDelta;
 #endif
 
-    PopupMenu(RenderMenuList* menuList);
 };
 
 }

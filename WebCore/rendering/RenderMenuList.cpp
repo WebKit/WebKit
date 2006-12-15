@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "PopupMenu.h"
 #include "RenderText.h"
@@ -55,7 +56,7 @@ RenderMenuList::RenderMenuList(HTMLSelectElement* element)
 RenderMenuList::~RenderMenuList()
 {
     if (m_popup)
-        m_popup->disconnectMenuList();
+        m_popup->disconnectClient();
     m_popup = 0;
 }
 
@@ -190,9 +191,6 @@ void RenderMenuList::paintObject(PaintInfo& paintInfo, int x, int y)
 
 void RenderMenuList::calcMinMaxWidth()
 {
-    if (m_optionsChanged)
-        updateFromElement();
-
     m_minWidth = 0;
     m_maxWidth = 0;
 
@@ -249,6 +247,96 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     select->setSelectedIndex(select->listToOptionIndex(listIndex), true, fireOnChange);
+}
+
+String RenderMenuList::itemText(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    if (element->hasTagName(optgroupTag))
+        return static_cast<HTMLOptGroupElement*>(element)->groupLabelText();
+    else if (element->hasTagName(optionTag))
+        return static_cast<HTMLOptionElement*>(element)->optionText();
+    return String();
+}
+
+bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    if (!element->hasTagName(optionTag))
+        return false;
+    bool groupEnabled = true;
+    if (element->parentNode() && element->parentNode()->hasTagName(optgroupTag))
+        groupEnabled = element->parentNode()->isEnabled();
+    return element->isEnabled() && groupEnabled;
+}
+
+RenderStyle* RenderMenuList::itemStyle(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    
+    return element->renderStyle() ? element->renderStyle() : style();
+}
+
+RenderStyle* RenderMenuList::clientStyle() const
+{
+    return style();
+}
+
+Document* RenderMenuList::clientDocument() const
+{
+    return document();
+}
+
+int RenderMenuList::clientPaddingLeft() const
+{
+    return paddingLeft();
+}
+
+int RenderMenuList::clientPaddingRight() const
+{
+    return paddingRight();
+}
+
+int RenderMenuList::listSize() const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    return select->listItems().size();
+}
+
+int RenderMenuList::selectedIndex() const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    return select->optionToListIndex(select->selectedIndex());
+}
+
+bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    return element->hasTagName(hrTag);
+}
+
+bool RenderMenuList::itemIsLabel(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    return element->hasTagName(optgroupTag);
+}
+
+bool RenderMenuList::itemIsSelected(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+    return element->hasTagName(optionTag)&& static_cast<HTMLOptionElement*>(element)->selected();
+}
+
+void RenderMenuList::setTextFromItem(unsigned listIndex)
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    setTextFromOption(select->listToOptionIndex(listIndex));
 }
 
 }

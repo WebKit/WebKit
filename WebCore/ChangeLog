@@ -1,3 +1,40 @@
+2006-12-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam. 
+
+        Added PopupMenuClient class so the PopupMenu class no longer needs to know
+        about the RenderMenuList or the DOM.
+
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenuClient::~PopupMenuClient):
+        (WebCore::PopupMenu::create): Made this protected so PopupMenu can be subclassed.
+        (WebCore::PopupMenu::disconnectClient): Renamed from disconnectMenuList.
+        (WebCore::PopupMenu::client): Added.
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::PopupMenu): Created using PopupMenuClient instead of RenderMenuList.
+        (WebCore::PopupMenu::populate): Asks the client for info about the list items instead of looking at the DOM or the renderer. 
+        (WebCore::PopupMenu::show): ditto.
+        (WebCore::PopupMenu::hide): ditto.
+        * rendering/RenderMenuList.h: Now also inherits from PopupMenuClient.
+        (WebCore::RenderMenuList::shouldPopOver): Added.  Tells the popup whether the menu should pop over the client, or under.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::~RenderMenuList): Calls disconnectClient().
+        (WebCore::RenderMenuList::calcMinMaxWidth): Removed unnecessary (and harmful) call to updateFromElement. updateFromElmeent
+         can add children, and you don't want to do that in the middle of calculating width.
+        (WebCore::RenderMenuList::itemText): Added PopupClient method to provide information about the items in the menu list.
+        (WebCore::RenderMenuList::itemIsEnabled): ditto.
+        (WebCore::RenderMenuList::itemStyle): ditto.
+        (WebCore::RenderMenuList::clientStyle): ditto.
+        (WebCore::RenderMenuList::clientDocument): ditto.
+        (WebCore::RenderMenuList::clientPaddingLeft): ditto.
+        (WebCore::RenderMenuList::clientPaddingRight): ditto.
+        (WebCore::RenderMenuList::listSize): ditto.
+        (WebCore::RenderMenuList::selectedIndex): ditto.
+        (WebCore::RenderMenuList::itemIsSeparator): ditto.
+        (WebCore::RenderMenuList::itemIsLabel): ditto.
+        (WebCore::RenderMenuList::itemIsSelected): ditto.
+        (WebCore::RenderMenuList::setTextFromItem): ditto.
+
 2006-12-14  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed <rdar://problem/4882713> GMAIL (REGRESSION): Can't apply font style, 
