@@ -322,7 +322,7 @@ void ResourceLoader::didFinishLoadingOnePart()
     frameLoader()->didFinishLoad(this);
 }
 
-void ResourceLoader::didFail(NSError *error)
+void ResourceLoader::didFail(const ResourceError& error)
 {
     if (m_cancelled)
         return;
@@ -348,7 +348,7 @@ NSCachedURLResponse *ResourceLoader::willCacheResponse(NSCachedURLResponse *cach
     return cachedResponse;
 }
 
-void ResourceLoader::didCancel(NSError *error)
+void ResourceLoader::didCancel(const ResourceError& error)
 {
     ASSERT(!m_cancelled);
     ASSERT(!m_reachedTerminalState);

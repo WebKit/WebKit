@@ -79,6 +79,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
@@ -530,7 +531,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, id i
         implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, identifier, dataSource(loader));
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, id identifier, NSError *error)
+void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, id identifier, const WebCore::ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource(loader)];
@@ -617,7 +618,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:m_webFrame.get()];
 }
 
-void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(NSError *error)
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
@@ -625,7 +626,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(NSError *error)
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoad(NSError *error)
+void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailLoadWithError:error forFrame:m_webFrame.get()];
@@ -703,7 +704,7 @@ void WebFrameLoaderClient::cancelPolicyCheck()
     m_policyFunction = 0;
 }
 
-void WebFrameLoaderClient::dispatchUnableToImplementPolicy(NSError *error)
+void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
@@ -755,7 +756,7 @@ void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
     [dataSource(loader) _revertToProvisionalState];
 }
 
-void WebFrameLoaderClient::setMainDocumentError(DocumentLoader* loader, NSError *error)
+void WebFrameLoaderClient::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
 {
     [dataSource(loader) _setMainDocumentError:error];
 }
@@ -828,37 +829,37 @@ void WebFrameLoaderClient::finalSetupForReplace(DocumentLoader* loader)
     [dataSource(loader) _clearUnarchivingState];
 }
 
-NSError *WebFrameLoaderClient::cancelledError(NSURLRequest *request)
+ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest &request)
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:request.url().getNSURL()];
 }
 
-NSError *WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
+ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:request.url().getNSURL()];
 }
 
-NSError *WebFrameLoaderClient::interruptForPolicyChangeError(NSURLRequest *request)
+ResourceError WebFrameLoaderClient::interruptForPolicyChangeError(const ResourceRequest& request)
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:request.url().getNSURL()];
 }
 
-NSError *WebFrameLoaderClient::cannotShowMIMETypeError(NSURLResponse *response)
+ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:WebKitErrorCannotShowMIMEType URL:[response URL]];    
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:WebKitErrorCannotShowMIMEType URL:response.url().getNSURL()];
 }
 
-NSError *WebFrameLoaderClient::fileDoesNotExistError(NSURLResponse *response)
+ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response)
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:[response URL]];    
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:response.url().getNSURL()];    
 }
 
-bool WebFrameLoaderClient::shouldFallBack(NSError *error)
+bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
     // FIXME: Needs to check domain.
     // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent
     // loading plugin content twice.  See <rdar://problem/4258008>
-    return [error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad;
+    return error.errorCode() != NSURLErrorCancelled && error.errorCode() != WebKitErrorPlugInWillHandleLoad;
 }
 
 void WebFrameLoaderClient::setDefersLoading(bool defers)

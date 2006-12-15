@@ -1,3 +1,23 @@
+2006-12-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John.
+
+        Update for WebKit changes.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::cancelledError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::interruptForPolicyChangeError):
+        (WebFrameLoaderClient::cannotShowMIMETypeError):
+        (WebFrameLoaderClient::fileDoesNotExistError):
+        (WebFrameLoaderClient::shouldFallBack):
+
 2006-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

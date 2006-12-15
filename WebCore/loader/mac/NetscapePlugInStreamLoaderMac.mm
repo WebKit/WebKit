@@ -30,6 +30,7 @@
 #import "NetscapePlugInStreamLoader.h"
 
 #import "FrameLoader.h"
+#import "ResourceError.h"
 #import <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -103,7 +104,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
     ResourceLoader::didFinishLoading();
 }
 
-void NetscapePlugInStreamLoader::didFail(NSError *error)
+void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
 {
     // Protect self in this delegate method since the additional processing can do
     // anything including possibly getting rid of the last reference to this object.
@@ -115,7 +116,7 @@ void NetscapePlugInStreamLoader::didFail(NSError *error)
     ResourceLoader::didFail(error);
 }
 
-void NetscapePlugInStreamLoader::didCancel(NSError *error)
+void NetscapePlugInStreamLoader::didCancel(const ResourceError& error)
 {
     // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
     RefPtr<NetscapePlugInStreamLoader> protect(this);

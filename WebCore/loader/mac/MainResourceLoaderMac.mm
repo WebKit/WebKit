@@ -33,6 +33,7 @@
 #import "FrameLoaderClient.h"
 #import "KURL.h"
 #import "PlatformString.h"
+#import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "WebCoreSystemInterface.h"
@@ -69,7 +70,7 @@ PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
     return new MainResourceLoader(frame);
 }
 
-void MainResourceLoader::receivedError(NSError *error)
+void MainResourceLoader::receivedError(const ResourceError& error)
 {
     // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
@@ -87,7 +88,7 @@ void MainResourceLoader::receivedError(NSError *error)
     ASSERT(reachedTerminalState());
 }
 
-void MainResourceLoader::didCancel(NSError *error)
+void MainResourceLoader::didCancel(const ResourceError& error)
 {
     // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
@@ -102,7 +103,7 @@ void MainResourceLoader::didCancel(NSError *error)
     ResourceLoader::didCancel(error);
 }
 
-NSError *MainResourceLoader::interruptionForPolicyChangeError() const
+ResourceError MainResourceLoader::interruptionForPolicyChangeError() const
 {
     return frameLoader()->interruptionForPolicyChangeError(request());
 }
@@ -322,7 +323,7 @@ void MainResourceLoader::didFinishLoading()
     ResourceLoader::didFinishLoading();
 }
 
-void MainResourceLoader::didFail(NSError *error)
+void MainResourceLoader::didFail(const ResourceError& error)
 {
     ASSERT(!defersLoading());
 

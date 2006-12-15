@@ -93,6 +93,7 @@ namespace WebCore {
     class Node;
     class PageState;
     class RenderPart;
+    class ResourceError;
     class ResourceLoader;
     class ResourceRequest;
     class ResourceResponse;
@@ -228,15 +229,13 @@ namespace WebCore {
         void didReceiveData(ResourceLoader*, NSData *, int lengthReceived);
 #endif
         void didFinishLoad(ResourceLoader*);
-#if PLATFORM(MAC)
-        void didFailToLoad(ResourceLoader*, NSError *);
-#endif
+        void didFailToLoad(ResourceLoader*, const ResourceError&);
         bool privateBrowsingEnabled() const;
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& initialRequest() const;
         void setRequest(const ResourceRequest&);
+        void receivedMainResourceError(const ResourceError&, bool isComplete);
 #if PLATFORM(MAC)
-        void receivedMainResourceError(NSError *, bool isComplete);
         void receivedData(NSData *);
 #endif
         void handleFallbackContent();
@@ -256,7 +255,7 @@ namespace WebCore {
         bool isArchiveLoadPending(ResourceLoader*) const;
 #if PLATFORM(MAC)
         void cannotShowMIMEType(NSURLResponse *);
-        NSError *interruptionForPolicyChangeError(NSURLRequest *);
+        ResourceError interruptionForPolicyChangeError(NSURLRequest *);
 #endif
 
         bool isHostedByObjectElement() const;

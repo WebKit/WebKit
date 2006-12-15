@@ -62,7 +62,7 @@ namespace WebCore {
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
-        virtual void didFail(NSError *);
+        virtual void didFail(const ResourceError&);
 #else
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
         
@@ -75,9 +75,7 @@ namespace WebCore {
     private:
         SubresourceLoader(Frame*, SubresourceLoaderClient*);
 
-#if PLATFORM(MAC)
-        virtual void didCancel(NSError *);
-#endif
+        virtual void didCancel(const ResourceError&);
         SubresourceLoaderClient* m_client;
         bool m_loadingMultipartContent;
     };

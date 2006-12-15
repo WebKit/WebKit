@@ -204,7 +204,7 @@ void SubresourceLoader::didFinishLoading()
     ResourceLoader::didFinishLoading();
 }
 
-void SubresourceLoader::didFail(NSError *error)
+void SubresourceLoader::didFail(const ResourceError& error)
 {
     if (cancelled())
         return;
@@ -224,7 +224,7 @@ void SubresourceLoader::didFail(NSError *error)
     ResourceLoader::didFail(error);
 }
 
-void SubresourceLoader::didCancel(NSError *error)
+void SubresourceLoader::didCancel(const ResourceError& error)
 {
     ASSERT(!reachedTerminalState());
 

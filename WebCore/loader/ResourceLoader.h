@@ -102,7 +102,7 @@ namespace WebCore {
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         void willStopBufferingData(NSData *data);
         virtual void didFinishLoading();
-        virtual void didFail(NSError *);
+        virtual void didFail(const ResourceError&);
         NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
 
         void receivedCredential(NSURLAuthenticationChallenge *, NSURLCredential *);
@@ -138,7 +138,7 @@ namespace WebCore {
         ResourceLoader(Frame*);
 
 #if PLATFORM(MAC)
-        virtual void didCancel(NSError *);
+        virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart();
 
         NSURLRequest *request() const { return m_request.get(); }

@@ -52,20 +52,20 @@ namespace WebCore {
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
-        virtual void didFail(NSError *);
+        virtual void didFail(const ResourceError&);
 #endif
 
     private:
         MainResourceLoader(Frame*);
 
-#if PLATFORM(MAC)
-        virtual void didCancel(NSError *);
+        virtual void didCancel(const ResourceError&);
 
         NSURLRequest *loadNow(NSURLRequest *);
 
-        void receivedError(NSError *);
-        NSError *interruptionForPolicyChangeError() const;
+        void receivedError(const ResourceError&);
+        ResourceError interruptionForPolicyChangeError() const;
         void stopLoadingForPolicyChange();
+#if PLATFORM(MAC)
         bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 
         static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);

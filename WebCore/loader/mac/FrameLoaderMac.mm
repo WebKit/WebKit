@@ -381,7 +381,7 @@ void FrameLoader::didReceiveData(ResourceLoader* loader, NSData *data, int lengt
     m_client->dispatchDidReceiveContentLength(activeDocumentLoader(), loader->identifier(), lengthReceived);
 }
 
-void FrameLoader::didFailToLoad(ResourceLoader* loader, NSError *error)
+void FrameLoader::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
 {
     m_client->completeProgress(loader->identifier());
     if (error)
@@ -393,7 +393,7 @@ const ResourceRequest& FrameLoader::originalRequest() const
     return activeDocumentLoader()->originalRequestCopy();
 }
 
-void FrameLoader::receivedMainResourceError(NSError *error, bool isComplete)
+void FrameLoader::receivedMainResourceError(const ResourceError& error, bool isComplete)
 {
     // Retain because the stop may release the last reference to it.
     RefPtr<Frame> protect(m_frame);
@@ -608,7 +608,7 @@ void FrameLoader::cannotShowMIMEType(NSURLResponse *response)
     handleUnimplementablePolicy(m_client->cannotShowMIMETypeError(response));
 }
 
-NSError *FrameLoader::interruptionForPolicyChangeError(NSURLRequest *request)
+ResourceError FrameLoader::interruptionForPolicyChangeError(NSURLRequest *request)
 {
     return m_client->interruptForPolicyChangeError(request);
 }

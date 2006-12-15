@@ -53,7 +53,7 @@ namespace WebCore {
         virtual void didReceiveResponse(NSURLResponse *);
         virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
-        virtual void didFail(NSError *);
+        virtual void didFail(const ResourceError&);
 
         virtual void releaseResources();
 #endif
@@ -62,7 +62,7 @@ namespace WebCore {
         NetscapePlugInStreamLoader(Frame*, PlugInStreamLoaderDelegate);
 
 #if PLATFORM(MAC)
-        virtual void didCancel(NSError *);
+        virtual void didCancel(const ResourceError& error);
 
         RetainPtr<PlugInStreamLoaderDelegate > m_stream;
 #endif

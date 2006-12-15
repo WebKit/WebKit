@@ -83,21 +83,21 @@ namespace WebCore {
 
         bool isNull() const { return m_isNull; }
 
-        const String& domain() { unpackPlatformErrorIfNeeded(); return m_domain; }
-        int errorCode() { unpackPlatformErrorIfNeeded(); return m_errorCode; }
-        const String& failingURL() { unpackPlatformErrorIfNeeded(); return m_failingURL; }
-        const String& localizedDescription() { unpackPlatformErrorIfNeeded(); return m_localizedDescription; }
+        const String& domain() const { unpackPlatformErrorIfNeeded(); return m_domain; }
+        int errorCode() const { unpackPlatformErrorIfNeeded(); return m_errorCode; }
+        const String& failingURL() const { unpackPlatformErrorIfNeeded(); return m_failingURL; }
+        const String& localizedDescription() const { unpackPlatformErrorIfNeeded(); return m_localizedDescription; }
 
 #if PLATFORM(MAC)
         operator NSError*() const;
 #endif
 
     private:
-        void unpackPlatformErrorIfNeeded()
+        void unpackPlatformErrorIfNeeded() const
         {
 #if PLATFORM(MAC)
             if (!m_dataIsUpToDate)
-                unpackPlatformError();
+                const_cast<ResourceError*>(this)->unpackPlatformError();
 #endif
         }
 

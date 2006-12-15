@@ -304,7 +304,7 @@
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
 		650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6565814409D13043000E61D7 /* CSSGrammar.cpp */; };
 		651888880AFF3BF700164720 /* ResourceError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651888860AFF3BF700164720 /* ResourceError.cpp */; };
-		651888890AFF3BF700164720 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 651888870AFF3BF700164720 /* ResourceError.h */; };
+		651888890AFF3BF700164720 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 651888870AFF3BF700164720 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6518888B0AFF3C1400164720 /* ResourceErrorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6518888A0AFF3C1400164720 /* ResourceErrorMac.mm */; };
 		651B4D8509AC83370029F1EF /* DeprecatedStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */; };
 		651B4D8609AC83370029F1EF /* DeprecatedStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = 651B4D8409AC83370029F1EF /* DeprecatedStringList.h */; };
