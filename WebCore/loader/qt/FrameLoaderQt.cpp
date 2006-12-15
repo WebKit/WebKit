@@ -297,6 +297,11 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
     notImplemented();
 }
 
+void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ResourceResponse& r, Vector<char>& data) {
+    notImplemented();
+}
+
+
 PolicyCheck::PolicyCheck()
     : m_contentFunction(0)
 {
