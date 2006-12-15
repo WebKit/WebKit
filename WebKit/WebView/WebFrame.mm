@@ -939,7 +939,6 @@ WebView *getWebView(WebFrame *webFrame)
 }
 
 #if !ASSERT_DISABLED
-
 - (BOOL)_atMostOneFrameHasSelection
 {
     // FIXME: 4186050 is one known case that makes this debug check fail.
@@ -1109,6 +1108,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
     }
+}
+
+- (NSRange)_selectedNSRange
+{
+    return [_private->bridge selectedNSRange];
+}
+
+- (void)_selectNSRange:(NSRange)range
+{
+    [_private->bridge selectNSRange:range];
 }
 
 @end

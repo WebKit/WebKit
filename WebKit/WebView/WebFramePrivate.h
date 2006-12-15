@@ -55,4 +55,10 @@ typedef enum {
 - (BOOL)_firstLayoutDone;
 - (WebFrameLoadType)_loadType;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
+
+// These methods take and return NSRanges based on the root editable element as the positional base.
+// This fits with AppKit's idea of an input context. These methods are slow compared to their DOMRange equivalents.
+// You should use WebView's selectedDOMRange and setSelectedDOMRange whenever possible.
+- (NSRange)_selectedNSRange;
+- (void)_selectNSRange:(NSRange)range;
 @end

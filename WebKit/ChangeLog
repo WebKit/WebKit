@@ -1,3 +1,14 @@
+2006-12-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4827549> need NSRange-based selection support exposed.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _selectedNSRange]):
+        (-[WebFrame _selectNSRange:]):
+        * WebView/WebFramePrivate.h:
+
 2006-12-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.
