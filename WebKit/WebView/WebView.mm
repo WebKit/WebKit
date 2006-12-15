@@ -1183,7 +1183,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
     [item release];
 }
 
-- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)data
+- (void)_incrementProgressForIdentifier:(id)identifier length:(int)length
 {
     if (!identifier)
         return;
@@ -1195,7 +1195,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
     [self _willChangeValueForKey: @"estimatedProgress"];
 
-    unsigned bytesReceived = [data length];
+    unsigned bytesReceived = length;
     double increment, percentOfRemainingBytes;
     long long remainingBytes, estimatedBytesForPendingRequests;
 

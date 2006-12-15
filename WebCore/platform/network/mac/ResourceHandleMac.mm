@@ -283,7 +283,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
-    m_handle->client()->willStopBufferingData(m_handle, data);
+    m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], [data length]);
     --inNSURLConnectionCallback;
 }
 

@@ -93,9 +93,7 @@ namespace WebCore {
         bool isLoading() const;
         void setLoading(bool);
         void updateLoading();
-#if PLATFORM(MAC)
-        void receivedData(NSData *);
-#endif
+        void receivedData(const char*, int);
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
 #if PLATFORM(MAC)
@@ -135,7 +133,7 @@ namespace WebCore {
         double loadingStartedTime() const;
 #if PLATFORM(MAC)
         void setMainDocumentError(NSError *);
-        void commitLoad(NSData *);
+        void commitLoad(const char*, int);
 #endif
         bool doesProgressiveLoad(const String& MIMEType) const;
 

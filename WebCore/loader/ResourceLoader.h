@@ -91,7 +91,7 @@ namespace WebCore {
         virtual void releaseResources();
         NSURLResponse *response() const;
 
-        virtual void addData(NSData *, bool allAtOnce);
+        virtual void addData(const char*, int, bool allAtOnce);
         virtual NSData *resourceData();
         void clearResourceData();
 
@@ -99,8 +99,8 @@ namespace WebCore {
         void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
         void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
         virtual void didReceiveResponse(NSURLResponse *);
-        virtual void didReceiveData(NSData *, long long lengthReceived, bool allAtOnce);
-        void willStopBufferingData(NSData *data);
+        virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
+        void willStopBufferingData(const char*, int);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
         NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
@@ -123,7 +123,7 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didReceiveAuthenticationChallenge(challenge); } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didCancelAuthenticationChallenge(challenge); } 
         
-        virtual void willStopBufferingData(ResourceHandle*, NSData *data) { willStopBufferingData(data); } 
+        virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
         
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
         

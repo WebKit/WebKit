@@ -140,10 +140,10 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSU
     return false;
 }
 
-void MainResourceLoader::addData(NSData *data, bool allAtOnce)
+void MainResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
-    ResourceLoader::addData(data, allAtOnce);
-    frameLoader()->receivedData(data);
+    ResourceLoader::addData(data, length, allAtOnce);
+    frameLoader()->receivedData(data, length);
 }
 
 NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
@@ -298,17 +298,17 @@ void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
     frameLoader()->checkContentPolicy([m_response.get() MIMEType], callContinueAfterContentPolicy, this);
 }
 
-void MainResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+void MainResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
 {
     ASSERT(data);
-    ASSERT([data length] != 0);
+    ASSERT(length != 0);
     ASSERT(!defersLoading());
  
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
 void MainResourceLoader::didFinishLoading()

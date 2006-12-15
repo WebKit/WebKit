@@ -330,7 +330,7 @@ bool DocumentLoader::isLoading() const
     return m_loading;
 }
 
-void DocumentLoader::commitLoad(NSData *data)
+void DocumentLoader::commitLoad(const char* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
@@ -338,7 +338,7 @@ void DocumentLoader::commitLoad(NSData *data)
 
     commitIfReady();
     if (FrameLoader* frameLoader = DocumentLoader::frameLoader())
-        frameLoader->committedLoad(this, data);
+        frameLoader->committedLoad(this, data, length);
 }
 
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
@@ -346,11 +346,11 @@ bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
     return !frameLoader()->isReplacing() || MIMEType == "text/html";
 }
 
-void DocumentLoader::receivedData(NSData *data)
+void DocumentLoader::receivedData(const char* data, int length)
 {    
     m_gotFirstByte = true;
     if (doesProgressiveLoad([m_response.get() MIMEType]))
-        commitLoad(data);
+        commitLoad(data, length);
 }
 
 void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
@@ -363,7 +363,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     if (!doesProgressiveLoad(oldMIMEType)) {
         frameLoader()->revertToProvisional(this);
         setupForReplace();
-        commitLoad(mainResourceData());
+        commitLoad((const char*)[mainResourceData() bytes], [mainResourceData() length]);
     }
     
     frameLoader()->finishedLoadingDocument(this);

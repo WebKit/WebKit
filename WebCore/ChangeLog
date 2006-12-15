@@ -1,3 +1,41 @@
+2006-12-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Use char* pointer + length instead of NSData in a bunch of places.
+
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::willStopBufferingData):
+        * loader/SubresourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::commitLoad):
+        (WebCore::DocumentLoader::receivedData):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::receivedData):
+        (WebCore::FrameLoader::committedLoad):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::addData):
+        (WebCore::MainResourceLoader::didReceiveData):
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveData):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::didReceiveData):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willStopBufferingData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+
 2006-12-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam. 

@@ -105,7 +105,7 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *) { } 
         
-        virtual void willStopBufferingData(ResourceHandle*, NSData *data) { } 
+        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { } 
         
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return cachedResponse; }
 

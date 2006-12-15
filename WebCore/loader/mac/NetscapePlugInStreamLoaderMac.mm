@@ -83,15 +83,18 @@ void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
     }
 }
 
-void NetscapePlugInStreamLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
 {
     // Protect self in this delegate method since the additional processing can do
     // anything including possibly getting rid of the last reference to this object.
     // One example of this is Radar 3266216.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    [m_stream.get() receivedData:data];
-    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
+    [m_stream.get() receivedData:nsData];
+    [nsData release];
+    
+    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
 void NetscapePlugInStreamLoader::didFinishLoading()

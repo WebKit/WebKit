@@ -168,7 +168,7 @@ void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
     }
 }
 
-void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+void SubresourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
 {
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
@@ -177,9 +177,9 @@ void SubresourceLoader::didReceiveData(NSData *data, long long lengthReceived, b
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent && m_client)
-        m_client->didReceiveData(this, (const char*)[data bytes], [data length]);
+        m_client->didReceiveData(this, data, length);
 
-    ResourceLoader::didReceiveData(data, lengthReceived, allAtOnce);
+    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
 void SubresourceLoader::didFinishLoading()

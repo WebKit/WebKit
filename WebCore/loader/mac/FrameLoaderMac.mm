@@ -375,9 +375,9 @@ void FrameLoader::didReceiveResponse(ResourceLoader* loader, NSURLResponse *r)
     m_client->dispatchDidReceiveResponse(activeDocumentLoader(), loader->identifier(), r);
 }
 
-void FrameLoader::didReceiveData(ResourceLoader* loader, NSData *data, int lengthReceived)
+void FrameLoader::didReceiveData(ResourceLoader* loader, const char* data, int length, int lengthReceived)
 {
-    m_client->incrementProgress(loader->identifier(), data);
+    m_client->incrementProgress(loader->identifier(), data, length);
     m_client->dispatchDidReceiveContentLength(activeDocumentLoader(), loader->identifier(), lengthReceived);
 }
 
@@ -561,9 +561,9 @@ const ResourceRequest& FrameLoader::initialRequest() const
     return activeDocumentLoader()->initialRequest();
 }
 
-void FrameLoader::receivedData(NSData *data)
+void FrameLoader::receivedData(const char* data, int length)
 {
-    activeDocumentLoader()->receivedData(data);
+    activeDocumentLoader()->receivedData(data, length);
 }
 
 void FrameLoader::setRequest(const ResourceRequest& request)
@@ -708,9 +708,9 @@ void FrameLoader::reload()
     load(loader.get(), FrameLoadTypeReload, 0);
 }
 
-void FrameLoader::committedLoad(DocumentLoader* loader, NSData *data)
+void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    m_client->committedLoad(loader, data);
+    m_client->committedLoad(loader, data, length);
 }
 
 void FrameLoader::setMainDocumentError(DocumentLoader* loader, NSError *error)

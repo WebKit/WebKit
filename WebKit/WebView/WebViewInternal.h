@@ -82,7 +82,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
 - (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
-- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)dataSource;
+- (void)_incrementProgressForIdentifier:(id)identifier length:(int)length;
 - (void)_completeProgressForIdentifier:(id)identifer;
 - (void)_progressStarted:(WebFrame *)frame;
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;

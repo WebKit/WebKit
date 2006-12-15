@@ -781,9 +781,9 @@ void WebFrameLoaderClient::incrementProgress(id identifier, NSURLResponse *respo
     [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier response:response];
 }
 
-void WebFrameLoaderClient::incrementProgress(id identifier, NSData *data)
+void WebFrameLoaderClient::incrementProgress(id identifier, const char*, int length)
 {
-    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier data:data];
+    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier length:length];
 }
 
 void WebFrameLoaderClient::completeProgress(id identifier)
@@ -814,9 +814,11 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader* loader)
     [getWebView(m_webFrame.get()) _didChangeValueForKey:_WebMainFrameTitleKey];
 }
 
-void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, NSData *data)
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    [dataSource(loader) _receivedData:data];
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
+    [dataSource(loader) _receivedData:nsData];
+    [nsData release];
 }
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
@@ -1122,7 +1124,7 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
         WebResource *resource = it->second.get();
         NSData *data = [[resource data] retain];
         loader->didReceiveResponse([resource _response]);
-        loader->didReceiveData(data, [data length], true);
+        loader->didReceiveData((const char*)[data bytes], [data length], [data length], true);
         [data release];
         loader->didFinishLoading();
     }

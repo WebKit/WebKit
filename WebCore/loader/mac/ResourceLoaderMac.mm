@@ -125,26 +125,22 @@ FrameLoader* ResourceLoader::frameLoader() const
     return m_frame->loader();
 }
 
-void ResourceLoader::addData(NSData *data, bool allAtOnce)
+void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
     if (allAtOnce) {
-        NSMutableData *dataCopy = [data mutableCopy];
-        m_resourceData = dataCopy;
-        [dataCopy release];
+        m_resourceData.adopt([[NSMutableData alloc] initWithBytes:data length:length]);
         return;
     }
         
     if (ResourceHandle::supportsBufferedData()) {
         // Buffer data only if the connection has handed us the data because is has stopped buffering it.
         if (m_resourceData)
-            [m_resourceData.get() appendData:data];
+            [m_resourceData.get() appendBytes:data length:length];
     } else {
-        if (!m_resourceData) {
-            NSMutableData *newData = [[NSMutableData alloc] init];
-            m_resourceData = newData;
-            [newData release];
-        }
-        [m_resourceData.get() appendData:data];
+        if (!m_resourceData) 
+            m_resourceData.adopt([[NSMutableData alloc] init]);
+
+        [m_resourceData.get() appendBytes:data length:length];
     }
 }
 
@@ -273,7 +269,7 @@ void ResourceLoader::didReceiveResponse(NSURLResponse *r)
     frameLoader()->didReceiveResponse(this, r);
 }
 
-void ResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool allAtOnce)
+void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
@@ -285,17 +281,15 @@ void ResourceLoader::didReceiveData(NSData *data, long long lengthReceived, bool
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    addData(data, allAtOnce);
+    addData(data, length, allAtOnce);
     if (m_frame)
-        frameLoader()->didReceiveData(this, data, lengthReceived);
+        frameLoader()->didReceiveData(this, data, length, lengthReceived);
 }
 
-void ResourceLoader::willStopBufferingData(NSData *data)
+void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
     ASSERT(!m_resourceData);
-    NSMutableData *copy = [data mutableCopy];
-    m_resourceData = copy;
-    [copy release];
+    m_resourceData.adopt([[NSMutableData alloc] initWithBytes:data length:length]);
 }
 
 void ResourceLoader::didFinishLoading()
@@ -446,9 +440,7 @@ void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
-    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
-    didReceiveData(nsData, lengthReceived, false);
-    [nsData release];
+    didReceiveData(data, length, lengthReceived, false);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*)

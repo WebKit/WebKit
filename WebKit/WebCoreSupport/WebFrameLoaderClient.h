@@ -151,7 +151,7 @@ private:
     virtual void progressCompleted();
 
     virtual void incrementProgress(id identifier, NSURLResponse *);
-    virtual void incrementProgress(id identifier, NSData *);
+    virtual void incrementProgress(id identifier, const char*, int);
     virtual void completeProgress(id identifier);
 
     virtual void setMainFrameDocumentReady(bool);
@@ -161,7 +161,7 @@ private:
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
 
-    virtual void committedLoad(WebCore::DocumentLoader*, NSData *);
+    virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
     virtual void finishedLoading(WebCore::DocumentLoader*);
     virtual void finalSetupForReplace(WebCore::DocumentLoader*);
 

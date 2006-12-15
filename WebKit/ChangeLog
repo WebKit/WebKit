@@ -1,3 +1,18 @@
+2006-12-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Update for WebCore changes.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::incrementProgress):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::deliverArchivedResources):
+        * WebView/WebView.mm:
+        (-[WebView _incrementProgressForIdentifier:length:]):
+        * WebView/WebViewInternal.h:
+
 2006-12-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
@@ -13,7 +28,7 @@
 
         Reviewed by John.
 
-        Update for WebKit changes.
+        Update for WebCore changes.
         
         * WebCoreSupport/WebFrameLoaderClient.h:
         * WebCoreSupport/WebFrameLoaderClient.mm:
