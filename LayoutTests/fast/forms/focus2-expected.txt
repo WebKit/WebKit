@@ -44,7 +44,6 @@ keypress event: [to] DIV
 focus event: [to] IFRAME
 
 IFRAME DOCUMENT:
-blur event: [to] IFRAME
 focus event: [to] BUTTON
 keypress event: [to] BUTTON
 blur event: [to] BUTTON

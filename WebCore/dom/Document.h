@@ -404,11 +404,9 @@ public:
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
-    // Convenience functions for accessing the page's focused node.
     bool setFocusedNode(PassRefPtr<Node>);
-    Node* focusedNode() const;
+    Node* focusedNode() const { return m_focusedNode.get(); }
 
-    // Hover and active are still per-document, not per-page.
     void setHoverNode(PassRefPtr<Node>);
     Node* hoverNode() const { return m_hoverNode.get(); }
 
@@ -655,6 +653,7 @@ protected:
 
     Color m_textColor;
 
+    RefPtr<Node> m_focusedNode;
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
     mutable RefPtr<Element> m_documentElement;

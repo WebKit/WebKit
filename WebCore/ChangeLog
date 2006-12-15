@@ -1,3 +1,33 @@
+2006-12-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed <rdar://problem/4882713> GMAIL (REGRESSION): Can't apply font style, 
+        foreground or background to selected text
+        
+        Also <rdar://problem/4883751> REGRESSION: Caret fails to insert itself 
+        automatically in a new note window
+        
+        I'm rolling out my change to move focus to the page level because it caused
+        too many unexpected and bizarre regressions. Our code relies on focus
+        being per-document so that it can make focus changes that are effectively
+        no-ops, and so that it can conflate focus and selection in some cases (a bad 
+        idea, since they're not the same).
+        
+        Hopefully we can revisit this, along with hover and active, in the future.
+
+        * dom/Document.cpp:
+        (WebCore::widgetForNode):
+        (WebCore::relinquishesEditingFocus):
+        (WebCore::acceptsEditingFocus):
+        (WebCore::clearSelectionIfNeeded):
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::detach):
+        (WebCore::Document::focusedNodeDetached):
+        (WebCore::Document::setFocusedNode):
+        * dom/Document.h:
+        (WebCore::Document::focusedNode):
+        * page/FocusController.cpp:
+        * page/FocusController.h:
+
 2006-12-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

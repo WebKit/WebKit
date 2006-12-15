@@ -40,17 +40,12 @@ namespace WebCore {
     public:
         FocusController(Page*);
 
-        bool setFocusedNode(PassRefPtr<Node>);
-        Node* focusedNode() const { return m_focusedNode.get(); }
-        void focusedNodeDetached(Node*);
-
         void setFocusedFrame(PassRefPtr<Frame>);
         Frame* focusedFrame() const { return m_focusedFrame.get(); }
         Frame* focusedOrMainFrame();
 
     private:
         Page* m_page;
-        RefPtr<Node> m_focusedNode;
         RefPtr<Frame> m_focusedFrame;
     };
 
