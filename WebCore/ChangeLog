@@ -1,3 +1,9 @@
+2006-12-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * loader/MainResourceLoader.h:
+
 2006-12-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.
