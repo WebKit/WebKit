@@ -1,3 +1,17 @@
+2006-12-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=11824
+        CSSStyleSheet.title property is always null
+
+        * fast/css/sheet-title-expected.txt: Added.
+        * fast/css/sheet-title.html: Added.
+        * svg/custom/sheet-title-expected.png: Added.
+        * svg/custom/sheet-title-expected.txt: Added.
+        * svg/custom/sheet-title.svg: Added.
+
 2006-12-14  Geoffrey Garen  <ggaren@apple.com>
 
         Updated these results now that I've rolled out my change to move focus

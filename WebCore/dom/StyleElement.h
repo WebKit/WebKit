@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+class Element;
+
 class StyleElement {
 public:
     StyleElement();
@@ -40,7 +42,7 @@ public:
 
     void insertedIntoDocument(Document*);
     void removedFromDocument(Document*);
-    void childrenChanged(Node*);
+    void childrenChanged(Element*);
 
 protected:
     RefPtr<CSSStyleSheet> m_sheet;

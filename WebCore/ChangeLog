@@ -1,3 +1,33 @@
+2006-12-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11824
+        CSSStyleSheet.title property is always null
+
+        Set title on the stylesheet just after creating it, for the HTML
+        elements <link> and <style>.
+
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::setTitle):
+        * dom/Element.cpp:
+        (WebCore::Element::title):
+        * dom/Element.h:
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::childrenChanged):
+        * dom/StyleElement.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::setTitle):
+        (WebCore::SVGStyleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyleElement.h:
+
 2006-12-15  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Zack

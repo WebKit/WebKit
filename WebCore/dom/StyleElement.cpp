@@ -22,6 +22,7 @@
 #include "StyleElement.h"
 
 #include "Document.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
 #include "MediaList.h"
@@ -53,7 +54,7 @@ void StyleElement::removedFromDocument(Document* document)
         document->updateStyleSelector();
 }
 
-void StyleElement::childrenChanged(Node* e)
+void StyleElement::childrenChanged(Element* e)
 {
     if (!e)
         return;
@@ -82,6 +83,7 @@ void StyleElement::childrenChanged(Node* e)
             m_sheet = new CSSStyleSheet(e, String(), document->inputEncoding());
             m_sheet->parseString(text, !document->inCompatMode());
             m_sheet->setMedia(mediaList.get());
+            m_sheet->setTitle(e->title());
             m_loading = false;
         }
     }

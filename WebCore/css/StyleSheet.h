@@ -50,6 +50,7 @@ public:
     StyleSheet *parentStyleSheet() const;
     String href() const { return m_strHref; }
     String title() const { return m_strTitle; }
+    void setTitle(const String& s) { m_strTitle = s; }
     MediaList* media() const { return m_media.get(); }
     void setMedia(MediaList*);
 

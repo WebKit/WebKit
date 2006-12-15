@@ -54,7 +54,6 @@ public:
     
     String id() const;
     void setId(const String&);
-    String title() const;
     void setTitle(const String&);
     String lang() const;
     void setLang(const String&);

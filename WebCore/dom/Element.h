@@ -173,6 +173,8 @@ public:
     String innerText() const;
     String outerText() const;
  
+    String title() const;
+
 protected:
     virtual void createAttributeMap() const;
     String openTagStartToString() const;

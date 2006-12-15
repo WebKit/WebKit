@@ -34,6 +34,7 @@ namespace WebCore {
         SVGStyleElement(const QualifiedName&, Document*);
 
         // Derived from: 'Element'
+        virtual void parseMappedAttribute(MappedAttribute*);
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
         virtual void childrenChanged();
@@ -48,7 +49,6 @@ namespace WebCore {
         const AtomicString& media() const;
         void setMedia(const AtomicString&, ExceptionCode&);
 
-        const AtomicString& title() const;
         void setTitle(const AtomicString&, ExceptionCode&);
     };
 

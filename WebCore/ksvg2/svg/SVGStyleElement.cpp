@@ -74,14 +74,17 @@ void SVGStyleElement::setMedia(const AtomicString&, ExceptionCode& ec)
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-const AtomicString& SVGStyleElement::title() const
-{
-    return getAttribute(titleAttr);
-}
-
 void SVGStyleElement::setTitle(const AtomicString&, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
+}
+
+void SVGStyleElement::parseMappedAttribute(MappedAttribute *attr)
+{
+    if (attr->name() == titleAttr && m_sheet)
+        m_sheet->setTitle(attr->value());
+    else
+        SVGElement::parseMappedAttribute(attr);
 }
 
 void SVGStyleElement::insertedIntoDocument()

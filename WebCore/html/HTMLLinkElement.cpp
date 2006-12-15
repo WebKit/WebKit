@@ -118,8 +118,11 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         process();
     } else if (attr->name() == disabledAttr) {
         setDisabledState(!attr->isNull());
-    } else
+    } else {
+        if (attr->name() == titleAttr && m_sheet)
+            m_sheet->setTitle(attr->value());
         HTMLElement::parseMappedAttribute(attr);
+    }
 }
 
 void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
@@ -215,6 +218,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
 {
     m_sheet = new CSSStyleSheet(this, url, charset);
     m_sheet->parseString(sheetStr, !document()->inCompatMode());
+    m_sheet->setTitle(title());
 
     RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
     m_sheet->setMedia(media.get());

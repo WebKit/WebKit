@@ -611,11 +611,6 @@ void HTMLElement::setId(const String &value)
     setAttribute(idAttr, value);
 }
 
-String HTMLElement::title() const
-{
-    return getAttribute(titleAttr);
-}
-
 void HTMLElement::setTitle(const String &value)
 {
     setAttribute(titleAttr, value);
