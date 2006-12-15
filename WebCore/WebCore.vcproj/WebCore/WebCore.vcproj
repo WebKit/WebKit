@@ -4047,6 +4047,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\EventTarget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\EventTarget.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\EventTargetNode.cpp"
 				>
 			</File>
