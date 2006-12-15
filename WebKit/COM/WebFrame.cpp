@@ -72,6 +72,9 @@ public:
 
 WebFrame::WebFrame()
 : m_refCount(0)
+#pragma warning(push, 0) // allow initializers with 'this'
+, m_frameLoaderClient(this)
+#pragma warning(pop)
 , d(new WebFrame::WebFramePrivate)
 , m_dataSource(0)
 , m_provisionalDataSource(0)
@@ -141,7 +144,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
         return hr;
 
     Page* page = new Page(new ChromeClientWin(), new ContextMenuClientWin(), new EditorClientWin());
-    Frame* frame = new FrameWin(page, 0, this);
+    Frame* frame = new FrameWin(page, 0, this, &m_frameLoaderClient);
 
     // FIXME: This is one-time initialization, but it gets the value of the setting from the
     // current WebView. That's a mismatch and not good!

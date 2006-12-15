@@ -1,3 +1,160 @@
+2006-12-15  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin and Alexey.
+
+        Fix the Windows build, move various Client implementations out of
+        WebCore and into WebKit.
+
+        * COM/ChromeClientWin.cpp: Added.
+        (ChromeClientWin::~ChromeClientWin):
+        (ChromeClientWin::chromeDestroyed):
+        (ChromeClientWin::setWindowRect):
+        (ChromeClientWin::windowRect):
+        (ChromeClientWin::pageRect):
+        (ChromeClientWin::scaleFactor):
+        (ChromeClientWin::focus):
+        (ChromeClientWin::unfocus):
+        (ChromeClientWin::createWindow):
+        (ChromeClientWin::createModalDialog):
+        (ChromeClientWin::show):
+        (ChromeClientWin::canRunModal):
+        (ChromeClientWin::runModal):
+        (ChromeClientWin::setToolbarsVisible):
+        (ChromeClientWin::toolbarsVisible):
+        (ChromeClientWin::setStatusbarVisible):
+        (ChromeClientWin::statusbarVisible):
+        (ChromeClientWin::setScrollbarsVisible):
+        (ChromeClientWin::scrollbarsVisible):
+        (ChromeClientWin::setMenubarVisible):
+        (ChromeClientWin::menubarVisible):
+        (ChromeClientWin::setResizable):
+        (ChromeClientWin::addMessageToConsole):
+        * COM/ChromeClientWin.h: Added.
+        * COM/ContextMenuClientWin.cpp: Added.
+        (ContextMenuClientWin::~ContextMenuClientWin):
+        (ContextMenuClientWin::contextMenuDestroyed):
+        (ContextMenuClientWin::addCustomContextMenuItems):
+        (ContextMenuClientWin::contextMenuItemSelected):
+        (ContextMenuClientWin::copyLinkToClipboard):
+        (ContextMenuClientWin::downloadURL):
+        (ContextMenuClientWin::copyImageToClipboard):
+        (ContextMenuClientWin::lookUpInDictionary):
+        (ContextMenuClientWin::speak):
+        (ContextMenuClientWin::stopSpeaking):
+        * COM/ContextMenuClientWin.h: Added.
+        * COM/EditorClientWin.cpp: Added.
+        (EditorClientWin::~EditorClientWin):
+        (EditorClientWin::pageDestroyed):
+        (EditorClientWin::shouldDeleteRange):
+        (EditorClientWin::shouldShowDeleteInterface):
+        (EditorClientWin::smartInsertDeleteEnabled):
+        (EditorClientWin::isContinuousSpellCheckingEnabled):
+        (EditorClientWin::toggleContinuousSpellChecking):
+        (EditorClientWin::isGrammarCheckingEnabled):
+        (EditorClientWin::toggleGrammarChecking):
+        (EditorClientWin::spellCheckerDocumentTag):
+        (EditorClientWin::selectWordBeforeMenuEvent):
+        (EditorClientWin::isEditable):
+        (EditorClientWin::shouldBeginEditing):
+        (EditorClientWin::shouldEndEditing):
+        (EditorClientWin::shouldInsertNode):
+        (EditorClientWin::shouldInsertText):
+        (EditorClientWin::shouldApplyStyle):
+        (EditorClientWin::didBeginEditing):
+        (EditorClientWin::respondToChangedContents):
+        (EditorClientWin::didEndEditing):
+        (EditorClientWin::registerCommandForUndo):
+        (EditorClientWin::registerCommandForRedo):
+        (EditorClientWin::clearUndoRedoOperations):
+        (EditorClientWin::canUndo):
+        (EditorClientWin::canRedo):
+        (EditorClientWin::undo):
+        (EditorClientWin::redo):
+        * COM/EditorClientWin.h: Added.
+        * COM/WebFrame.cpp:
+        (WebFrame::WebFrame):
+        (WebFrame::initWithName):
+        * COM/WebFrame.h:
+        * COM/WebFrameLoaderClient.cpp: Added.
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::~WebFrameLoaderClient):
+        (WebFrameLoaderClient::frameLoaderDestroyed):
+        (WebFrameLoaderClient::hasWebView):
+        (WebFrameLoaderClient::hasFrameView):
+        (WebFrameLoaderClient::hasBackForwardList):
+        (WebFrameLoaderClient::resetBackForwardList):
+        (WebFrameLoaderClient::provisionalItemIsTarget):
+        (WebFrameLoaderClient::loadProvisionalItemFromPageCache):
+        (WebFrameLoaderClient::invalidateCurrentItemPageCache):
+        (WebFrameLoaderClient::privateBrowsingEnabled):
+        (WebFrameLoaderClient::makeDocumentView):
+        (WebFrameLoaderClient::makeRepresentation):
+        (WebFrameLoaderClient::forceLayout):
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::updateHistoryForCommit):
+        (WebFrameLoaderClient::updateHistoryForBackForwardNavigation):
+        (WebFrameLoaderClient::updateHistoryForReload):
+        (WebFrameLoaderClient::updateHistoryForStandardLoad):
+        (WebFrameLoaderClient::updateHistoryForInternalLoad):
+        (WebFrameLoaderClient::updateHistoryAfterClientRedirect):
+        (WebFrameLoaderClient::setCopiesOnScroll):
+        (WebFrameLoaderClient::tokenForLoadErrorReset):
+        (WebFrameLoaderClient::resetAfterLoadError):
+        (WebFrameLoaderClient::doNotResetAfterLoadError):
+        (WebFrameLoaderClient::willCloseDocument):
+        (WebFrameLoaderClient::detachedFromParent1):
+        (WebFrameLoaderClient::detachedFromParent2):
+        (WebFrameLoaderClient::detachedFromParent3):
+        (WebFrameLoaderClient::detachedFromParent4):
+        (WebFrameLoaderClient::loadedFromPageCache):
+        (WebFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebFrameLoaderClient::dispatchWillClose):
+        (WebFrameLoaderClient::dispatchDidReceiveIcon):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebFrameLoaderClient::dispatchShow):
+        (WebFrameLoaderClient::cancelPolicyCheck):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::dispatchDidLoadMainResource):
+        (WebFrameLoaderClient::clearLoadingFromPageCache):
+        (WebFrameLoaderClient::isLoadingFromPageCache):
+        (WebFrameLoaderClient::revertToProvisionalState):
+        (WebFrameLoaderClient::clearUnarchivingState):
+        (WebFrameLoaderClient::progressStarted):
+        (WebFrameLoaderClient::progressCompleted):
+        (WebFrameLoaderClient::setMainFrameDocumentReady):
+        (WebFrameLoaderClient::willChangeTitle):
+        (WebFrameLoaderClient::didChangeTitle):
+        (WebFrameLoaderClient::finishedLoading):
+        (WebFrameLoaderClient::finalSetupForReplace):
+        (WebFrameLoaderClient::setDefersLoading):
+        (WebFrameLoaderClient::isArchiveLoadPending):
+        (WebFrameLoaderClient::cancelPendingArchiveLoad):
+        (WebFrameLoaderClient::clearArchivedResources):
+        (WebFrameLoaderClient::canHandleRequest):
+        (WebFrameLoaderClient::canShowMIMEType):
+        (WebFrameLoaderClient::representationExistsForURLScheme):
+        (WebFrameLoaderClient::generatedMIMETypeForURLScheme):
+        (WebFrameLoaderClient::frameLoadCompleted):
+        (WebFrameLoaderClient::restoreScrollPositionAndViewState):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        (WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent):
+        (WebFrameLoaderClient::addHistoryItemForFragmentScroll):
+        (WebFrameLoaderClient::didFinishLoad):
+        (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::userAgent):
+        * COM/WebFrameLoaderClient.h: Added.
+        * COM/WebKitDLL.h:
+        * WebKit.vcproj/WebKit.vcproj:
+
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

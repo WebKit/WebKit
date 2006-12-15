@@ -218,6 +218,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\COM\ChromeClientWin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\ContextMenuClientWin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\EditorClientWin.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -262,6 +274,18 @@
 			Name="Classes"
 			>
 			<File
+				RelativePath="..\COM\ChromeClientWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\ContextMenuClientWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\EditorClientWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\COM\WebBackForwardList.cpp"
 				>
 			</File>
@@ -271,6 +295,14 @@
 			</File>
 			<File
 				RelativePath="..\COM\WebFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\WebFrameLoaderClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\COM\WebFrameLoaderClient.h"
 				>
 			</File>
 			<File

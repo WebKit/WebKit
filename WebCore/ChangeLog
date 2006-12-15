@@ -1,3 +1,35 @@
+2006-12-15  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin and Alexey.
+
+        Fix the Windows build, move various Client implementations out of
+        WebCore and into WebKit.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/ChromeClientWin.h: Removed.
+        * bridge/win/ContextMenuClientWin.h: Removed.
+        * bridge/win/EditorClientWin.h: Removed.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * bridge/win/FrameWin.h:
+        * loader/win/FrameLoaderClientWin.cpp: Removed.
+        * loader/win/FrameLoaderClientWin.h: Removed.
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::DocumentLoader::URL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::createFrame):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::~Pasteboard):
+        (WebCore::PolicyCheck::call):
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::ResourceLoader::cancel):
+
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

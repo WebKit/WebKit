@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
+ * Copyright (C) 2006 Marvin Decker <marv.decker@gmail.com>
  *
  * All rights reserved.
  *
@@ -25,52 +25,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientWin_H
-#define ChromeClientWin_H
+#include "config.h"
+#include "ContextMenuClientWin.h"
 
-#include "ChromeClient.h"
+#define notImplemented() {}
 
-namespace WebCore {
-
-    class ChromeClientWin : public ChromeClient {
-    public:
-        virtual ~ChromeClientWin() { }
-        virtual void chromeDestroyed();
-
-        virtual void setWindowRect(const FloatRect&);
-        virtual FloatRect windowRect();
-
-        virtual FloatRect pageRect();
-
-        virtual float scaleFactor();
-
-        virtual void focus();
-        virtual void unfocus();
-
-        virtual Page* createWindow(const FrameLoadRequest&);
-        virtual Page* createModalDialog(const FrameLoadRequest&);
-        virtual void show();
-
-        virtual bool canRunModal();
-        virtual void runModal();
-
-        virtual void setToolbarsVisible(bool);
-        virtual bool toolbarsVisible();
-
-        virtual void setStatusbarVisible(bool);
-        virtual bool statusbarVisible();
-
-        virtual void setScrollbarsVisible(bool);
-        virtual bool scrollbarsVisible();
-
-        virtual void setMenubarVisible(bool);
-        virtual bool menubarVisible();
-
-        virtual void setResizable(bool);
-
-        virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
-    };
-
+ContextMenuClientWin::~ContextMenuClientWin()
+{
 }
 
-#endif // ChromeClientWin_H
+void ContextMenuClientWin::contextMenuDestroyed()
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::addCustomContextMenuItems(WebCore::ContextMenu*)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::contextMenuItemSelected(
+    const WebCore::ContextMenuItem*)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::copyLinkToClipboard(const WebCore::HitTestResult&)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::downloadURL(const WebCore::KURL&)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::copyImageToClipboard(const WebCore::HitTestResult&)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::lookUpInDictionary(WebCore::Frame*)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::speak(const WebCore::String&)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::stopSpeaking()
+{
+    notImplemented();
+}

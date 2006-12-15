@@ -991,6 +991,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\FocusController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\FocusController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\Frame.cpp"
 				>
 			</File>
@@ -1286,14 +1294,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\loader\win\FrameLoaderClientWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\loader\win\FrameLoaderClientWin.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\loader\win\FrameLoaderWin.cpp"
 					>
 				</File>
@@ -1328,6 +1328,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\AtomicStringImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Base64.h"
 				>
 			</File>
 			<File
@@ -1628,6 +1636,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\TextBoundaries.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextBreakIteratorICU.cpp"
 				>
 			</File>
 			<File
@@ -4224,6 +4236,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\StyledElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\StyleElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\StyleElement.h"
 				>
 			</File>
 			<File

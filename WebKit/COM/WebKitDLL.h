@@ -35,6 +35,8 @@
 #endif
 
 #include <windows.h>
+#undef min
+#undef max
 
 #ifdef WEBKIT_EXPORTS
 #define WEBKIT_API __declspec(dllexport)

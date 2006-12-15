@@ -30,22 +30,20 @@
 
 #include "ContextMenuClient.h"
 
-namespace WebCore {
+class ContextMenuClientWin : public WebCore::ContextMenuClient {
+public:
+    virtual ~ContextMenuClientWin();
+    virtual void contextMenuDestroyed();
 
-    class ContextMenuClientWin : public ContextMenuClient {
-    public:
-        virtual ~ContextMenuClientWin() { }
-        virtual void contextMenuDestroyed();
+    virtual void addCustomContextMenuItems(WebCore::ContextMenu*);
+    virtual void contextMenuItemSelected(const WebCore::ContextMenuItem*);
 
-        virtual void addCustomContextMenuItems(ContextMenu*);
-        virtual void contextMenuItemSelected(const ContextMenuItem*);
-
-        virtual void copyLinkToClipboard(const HitTestResult&);
-        virtual void downloadURL(const KURL&);
-        virtual void copyImageToClipboard(const HitTestResult&);
-        virtual void lookUpInDictionary(Frame*);
-    };
-
-} // namespace WebCore
+    virtual void copyLinkToClipboard(const WebCore::HitTestResult&);
+    virtual void downloadURL(const WebCore::KURL&);
+    virtual void copyImageToClipboard(const WebCore::HitTestResult&);
+    virtual void lookUpInDictionary(WebCore::Frame*);
+    virtual void speak(const WebCore::String&);
+    virtual void stopSpeaking();
+};
 
 #endif // ContextMenuClientWin_h
