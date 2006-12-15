@@ -1,3 +1,13 @@
+2006-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix failing drag & drop layout tests
+
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::getNSURL): Turn empty KURL into empty NSURL, but null KURL into
+        nil.
+
 2006-12-14  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
