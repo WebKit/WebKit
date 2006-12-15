@@ -1,3 +1,13 @@
+2006-12-15  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix compilation.
+
+        * loader/SubresourceLoader.h:
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+
 2006-12-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
