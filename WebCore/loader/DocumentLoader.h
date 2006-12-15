@@ -31,6 +31,7 @@
 #include "NavigationAction.h"
 #include "Shared.h"
 #include "PlatformString.h"
+#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/Vector.h>
@@ -98,8 +99,8 @@ namespace WebCore {
         void finishedLoading();
 #if PLATFORM(MAC)
         NSURLResponse *response() const;
-        NSError *mainDocumentError() const;
-        void mainReceivedError(NSError *, bool isComplete);
+        const ResourceError& mainDocumentError() const;
+        void mainReceivedError(const ResourceError&, bool isComplete);
         void setResponse(NSURLResponse *);
 #endif
         void prepareForLoadStart();
@@ -132,7 +133,7 @@ namespace WebCore {
         void clearErrors();
         double loadingStartedTime() const;
 #if PLATFORM(MAC)
-        void setMainDocumentError(NSError *);
+        void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
 #endif
         bool doesProgressiveLoad(const String& MIMEType) const;
@@ -163,7 +164,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         RetainPtr<NSURLResponse> m_response;
     
-        RetainPtr<NSError> m_mainDocumentError;    
+        ResourceError m_mainDocumentError;    
 #endif
 
         // The time when the data source was told to start loading.

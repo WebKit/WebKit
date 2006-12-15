@@ -223,23 +223,23 @@ bool DocumentLoader::isStopping() const
     return m_stopping;
 }
 
-void DocumentLoader::setMainDocumentError(NSError *error)
+void DocumentLoader::setMainDocumentError(const ResourceError& error)
 {
     m_mainDocumentError = error;    
     frameLoader()->setMainDocumentError(this, error);
  }
 
-NSError *DocumentLoader::mainDocumentError() const
+const ResourceError& DocumentLoader::mainDocumentError() const
 {
-    return m_mainDocumentError.get();
+    return m_mainDocumentError;
 }
 
 void DocumentLoader::clearErrors()
 {
-    m_mainDocumentError = nil;
+    m_mainDocumentError = ResourceError();
 }
 
-void DocumentLoader::mainReceivedError(NSError *error, bool isComplete)
+void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComplete)
 {
     if (!frameLoader())
         return;

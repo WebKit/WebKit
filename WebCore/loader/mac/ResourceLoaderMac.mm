@@ -194,14 +194,11 @@ NSURLRequest *ResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLRes
         // applewebdata request.
         if (![updatedRequest isEqual:clientRequest]) {
             newRequest = updatedRequest;
-        
-            // The respondsToSelector: check is only necessary for people building/running prior to Tier 8A416.
-            if ([NSURLProtocol respondsToSelector:@selector(_removePropertyForKey:inRequest:)] &&
-                [newRequest isKindOfClass:[NSMutableURLRequest class]]) {
+
+            if ([newRequest isKindOfClass:[NSMutableURLRequest class]]) {
                 NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest;
                 [NSURLProtocol _removePropertyForKey:[NSURLRequest _webDataRequestPropertyKey] inRequest:mr];
             }
-
         }
     }
 
@@ -358,9 +355,10 @@ void ResourceLoader::didCancel(const ResourceError& error)
     m_currentWebChallenge = nil;
 
     frameLoader()->cancelPendingArchiveLoad(this);
-    if (m_handle)
+    if (m_handle) {
         m_handle->cancel();
-
+        m_handle = 0;
+    }
     frameLoader()->didFailToLoad(this, error);
 
     releaseResources();
@@ -368,14 +366,14 @@ void ResourceLoader::didCancel(const ResourceError& error)
 
 void ResourceLoader::cancel()
 {
-    cancel(nil);
+    cancel(ResourceError());
 }
 
-void ResourceLoader::cancel(NSError *error)
+void ResourceLoader::cancel(const ResourceError& error)
 {
     if (m_reachedTerminalState)
         return;
-    if (error)
+    if (!error.isNull())
         didCancel(error);
     else
         didCancel(cancelledError());
@@ -391,7 +389,7 @@ NSURLResponse *ResourceLoader::response() const
     return m_response.get();
 }
 
-NSError *ResourceLoader::cancelledError()
+ResourceError ResourceLoader::cancelledError()
 {
     return frameLoader()->cancelledError(m_request.get());
 }

@@ -78,8 +78,8 @@ namespace WebCore {
 
         FrameLoader *frameLoader() const;
 
-        virtual void cancel(NSError *);
-        NSError *cancelledError();
+        virtual void cancel(const ResourceError&);
+        ResourceError cancelledError();
 #endif
 
         virtual void setDefersLoading(bool);

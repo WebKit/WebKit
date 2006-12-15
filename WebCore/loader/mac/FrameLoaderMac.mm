@@ -319,7 +319,7 @@ void FrameLoader::startLoading()
         m_provisionalDocumentLoader->updateLoading();
 }
 
-void FrameLoader::cancelMainResourceLoad(NSError *error)
+void FrameLoader::cancelMainResourceLoad(const ResourceError& error)
 {
     m_mainResourceLoader->cancel(error);
 }
@@ -490,7 +490,7 @@ void FrameLoader::opened()
         for (size_t i = 0; i < count; i++) {
             NSURLResponse *response = responses[i].nsURLResponse();
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
-            NSError *error;
+            ResourceError error;
             id identifier;
             NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
             requestFromDelegate(request, identifier, error);
@@ -576,17 +576,17 @@ void FrameLoader::setResponse(NSURLResponse *response)
     activeDocumentLoader()->setResponse(response);
 }
 
-void FrameLoader::mainReceivedError(NSError *error, bool isComplete)
+void FrameLoader::mainReceivedError(const ResourceError& error, bool isComplete)
 {
     activeDocumentLoader()->mainReceivedError(error, isComplete);
 }
 
-NSError *FrameLoader::cancelledError(NSURLRequest *request) const
+ResourceError FrameLoader::cancelledError(NSURLRequest *request) const
 {
     return m_client->cancelledError(request);
 }
 
-NSError *FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
+ResourceError FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
 {
     return m_client->fileDoesNotExistError(response);    
 }
@@ -596,7 +596,7 @@ bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, 
     return m_client->willUseArchive(loader, request, originalURL);
 }
 
-void FrameLoader::handleUnimplementablePolicy(NSError *error)
+void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
 {
     m_delegateIsHandlingUnimplementablePolicy = true;
     m_client->dispatchUnableToImplementPolicy(error);
@@ -713,12 +713,12 @@ void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int le
     m_client->committedLoad(loader, data, length);
 }
 
-void FrameLoader::setMainDocumentError(DocumentLoader* loader, NSError *error)
+void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
 {
     m_client->setMainDocumentError(loader, error);
 }
 
-void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, NSError *error)
+void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const ResourceError& error)
 {
     loader->setPrimaryLoadComplete(true);
     m_client->dispatchDidLoadMainResource(activeDocumentLoader());
@@ -1077,7 +1077,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
-void FrameLoader::sendRemainingDelegateMessages(id identifier, NSURLResponse *response, unsigned length, NSError *error)
+void FrameLoader::sendRemainingDelegateMessages(id identifier, NSURLResponse *response, unsigned length, const ResourceError& error)
 {    
     if (response)
         m_client->dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);
@@ -1091,7 +1091,7 @@ void FrameLoader::sendRemainingDelegateMessages(id identifier, NSURLResponse *re
         m_client->dispatchDidFailLoading(m_documentLoader.get(), identifier, error);
 }
 
-NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identifier, NSError *& error)
+NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identifier, ResourceError& error)
 {
     ASSERT(request != nil);
 
@@ -1101,7 +1101,7 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
     if (newRequest == nil)
         error = m_client->cancelledError(request);
     else
-        error = nil;
+        error = ResourceError();
 
     return newRequest;
 }
@@ -1112,7 +1112,7 @@ void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResp
         return;
 
     id identifier;
-    NSError *error;
+    ResourceError error;
     requestFromDelegate(request, identifier, error);
     sendRemainingDelegateMessages(identifier, response, length, error);
 }
@@ -1228,22 +1228,20 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     initialRequest.setMainDocumentURL(m_frame->page()->mainFrame()->loader()->documentLoader()->request().url());
     initialRequest.setHTTPUserAgent(client()->userAgent());
     
-    NSError *nsError = nil;
+    ResourceError error;
     id identifier = nil;    
-    NSURLRequest *newRequest = requestFromDelegate(initialRequest.nsURLRequest(), identifier, nsError);
+    NSURLRequest *newRequest = requestFromDelegate(initialRequest.nsURLRequest(), identifier, error);
 
-    if (nsError == nil) {
+    if (error.isNull()) {
         ASSERT(newRequest != nil);
         ResourceError error;
         
         didTellBridgeAboutLoad(KURL([newRequest URL]).url());
 
         ResourceHandle::loadResourceSynchronously(newRequest, error, response, data);
-        
-        nsError = error;
     }
     
-    sendRemainingDelegateMessages(identifier, response.nsURLResponse(), data.size(), nsError);
+    sendRemainingDelegateMessages(identifier, response.nsURLResponse(), data.size(), error);
 }
 
 Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)

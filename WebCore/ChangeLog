@@ -1,3 +1,41 @@
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Replace more instances of NSError with ResourceError.
+        
+        Also remove a check for a selector that was added pre-Tiger.
+        
+        * WebCore.exp:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::mainDocumentError):
+        (WebCore::DocumentLoader::clearErrors):
+        (WebCore::DocumentLoader::mainReceivedError):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::mainReceivedError):
+        (WebCore::FrameLoader::cancelledError):
+        (WebCore::FrameLoader::fileDoesNotExistError):
+        (WebCore::FrameLoader::handleUnimplementablePolicy):
+        (WebCore::FrameLoader::setMainDocumentError):
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::cancelledError):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::didCancel):
+
 2006-12-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

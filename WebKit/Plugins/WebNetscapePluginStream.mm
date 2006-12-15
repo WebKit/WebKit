@@ -41,6 +41,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebViewInternal.h>
+#import <WebCore/ResourceError.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;

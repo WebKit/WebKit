@@ -234,10 +234,6 @@ void SubresourceLoader::didCancel(const ResourceError& error)
     if (m_client)
         m_client->didFail(this, error);
     
-    // FIXME: Once ResourceLoader uses ResourceHandle, this should be done in ResourceLoader::didCancel.
-    m_handle->cancel();
-    m_handle = 0;
-
     if (cancelled())
         return;
     frameLoader()->removeSubresourceLoader(this);
