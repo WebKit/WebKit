@@ -18,24 +18,24 @@ XMLHttpRequest should be an EventTarget.</p>
 
 
     function onLoad() {
-        log("onload");
+        log("onload: this = " + this);
         req.removeEventListener("load", eventListener4, false);
     }
 
-    function eventListener() { log("eventListener"); }
+    function eventListener() { log("eventListener: this = " + this); }
 
     function eventListener2() {
-        log("eventListener2");
+        log("eventListener2: this = " + this);
         // It is too late to remove this listener, so it will still fire.
         req.removeEventListener("load", eventListener3, false);
     }
 
-    function eventListener3() { log("eventListener3"); }
+    function eventListener3() { log("eventListener3: this = " + this); }
     
     // This one is removed just in time to be really removed.
-    function eventListener4() { log("eventListener4"); }
+    function eventListener4() { log("eventListener4: this = " + this); }
 
-    function fooListener() { log("fooListener"); }
+    function fooListener() { log("fooListener: this = " + this); }
 
 
     req = new XMLHttpRequest;

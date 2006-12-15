@@ -191,8 +191,10 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
         if (e && e->button() == 1)
             target = "_blank";
 
-        if (evt->target()->hasTagName(imgTag)) {
-            HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target());
+        ASSERT(evt->target());
+        ASSERT(evt->target()->toNode());
+        if (evt->target()->toNode()->hasTagName(imgTag)) {
+            HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target()->toNode());
             if (img && img->isServerMap()) {
                 RenderImage* r = static_cast<RenderImage*>(img->renderer());
                 if(r && e) {

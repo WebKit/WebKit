@@ -25,7 +25,6 @@
 #include "Event.h"
 
 #include "AtomicString.h"
-#include "Node.h"
 #include "SystemTime.h"
 
 namespace WebCore {
@@ -133,7 +132,7 @@ void Event::storeResult(const String&)
 {
 }
 
-void Event::setTarget(PassRefPtr<Node> target)
+void Event::setTarget(PassRefPtr<EventTarget> target)
 {
     m_target = target;
     if (m_target)

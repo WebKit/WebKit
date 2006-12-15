@@ -27,7 +27,7 @@
 #define Event_h
 
 #include "AtomicString.h"
-#include "Node.h"
+#include "EventTarget.h"
 #include "Shared.h"
 
 namespace WebCore {
@@ -75,11 +75,11 @@ namespace WebCore {
 
         const AtomicString& type() const { return m_type; }
 
-        Node* target() const { return m_target.get(); }
-        void setTarget(PassRefPtr<Node>);
+        EventTarget* target() const { return m_target.get(); }
+        void setTarget(PassRefPtr<EventTarget>);
 
-        Node* currentTarget() const { return m_currentTarget; }
-        void setCurrentTarget(Node* currentTarget) { m_currentTarget = currentTarget; }
+        EventTarget* currentTarget() const { return m_currentTarget; }
+        void setCurrentTarget(EventTarget* currentTarget) { m_currentTarget = currentTarget; }
 
         unsigned short eventPhase() const { return m_eventPhase; }
         void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
@@ -134,9 +134,9 @@ namespace WebCore {
         bool m_defaultHandled;
         bool m_cancelBubble;
 
-        Node* m_currentTarget;
+        EventTarget* m_currentTarget;
         unsigned short m_eventPhase;
-        RefPtr<Node> m_target;
+        RefPtr<EventTarget> m_target;
         DOMTimeStamp m_createTime;
 
         RefPtr<Event> m_underlyingEvent;

@@ -22,14 +22,16 @@
 #ifndef XMLHTTPREQUEST_H_
 #define XMLHTTPREQUEST_H_
 
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-#include "KURL.h"
-#include "ResourceResponse.h"
-#include "PlatformString.h"
+#include "EventTarget.h"
 #include "HTTPHeaderMap.h"
+#include "KURL.h"
+#include "PlatformString.h"
+#include "ResourceResponse.h"
 #include "StringHash.h"
 #include "SubresourceLoaderClient.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -54,10 +56,12 @@ enum XMLHttpRequestState {
     Loaded = 4          // The data transfer has been completed.
 };
 
-class XMLHttpRequest : public Shared<XMLHttpRequest>, private SubresourceLoaderClient {
+class XMLHttpRequest : public Shared<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
 public:
     XMLHttpRequest(Document*);
     ~XMLHttpRequest();
+
+    virtual XMLHttpRequest* toXMLHttpRequest() { return this; }
 
     static void detachRequests(Document*);
     static void cancelRequests(Document*);
@@ -84,12 +88,18 @@ public:
     typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
 
     // useCapture is not used, even for add/remove pairing (for Firefox compatibility).
-    void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+    virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+    virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
     EventListenersMap& eventListeners() { return m_eventListeners; }
 
+    using Shared<XMLHttpRequest>::ref;
+    using Shared<XMLHttpRequest>::deref;
+
 private:
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+
     bool urlMatchesDocumentDomain(const KURL&) const;
 
     virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);

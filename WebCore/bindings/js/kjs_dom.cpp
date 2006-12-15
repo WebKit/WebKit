@@ -30,7 +30,7 @@
 #include "Element.h"
 #include "Entity.h"
 #include "Event.h"
-#include "EventListener.h"
+#include "EventTarget.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -57,6 +57,7 @@
 #include "ProcessingInstruction.h"
 #include "Range.h"
 #include "RenderView.h"
+#include "xmlhttprequest.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"
@@ -1029,6 +1030,27 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
 JSValue* toJS(ExecState* exec, NamedNodeMap* m)
 {
     return cacheDOMObject<NamedNodeMap, DOMNamedNodeMap>(exec, m);
+}
+
+JSValue* toJS(ExecState* exec, EventTarget* target)
+{
+    if (!target)
+        return jsNull();
+    
+    Node* node = target->toNode();
+    if (node)
+        return toJS(exec, node);
+
+    XMLHttpRequest* xhr = target->toXMLHttpRequest();
+    if (xhr) {
+        // XMLHttpRequest is always created via JS, so we don't need to use cacheDOMObject() here.
+        ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
+        return interp->getDOMObject(xhr);
+    }
+    
+    // There are two kinds of EventTargets: EventTargetNode and XMLHttpRequest.
+    ASSERT(0);
+    return jsNull();
 }
 
 JSValue* getRuntimeObject(ExecState* exec, Node* n)

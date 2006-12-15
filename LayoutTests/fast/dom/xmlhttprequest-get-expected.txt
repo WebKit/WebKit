@@ -46,7 +46,7 @@ bubbles : 'true'
 cancelBubble : 'false'
 cancelable : 'true'
 clipboardData : 'undefined'
-currentTarget : 'null'
+currentTarget : '[object JSXMLHttpRequest]'
 dataTransfer : 'undefined'
 eventPhase : '0'
 initEvent : '
@@ -60,12 +60,12 @@ function preventDefault() {
 }
 '
 returnValue : 'true'
-srcElement : 'null'
+srcElement : '[object JSXMLHttpRequest]'
 stopPropagation : '
 function stopPropagation() {
     [native code]
 }
 '
-target : 'null'
+target : '[object JSXMLHttpRequest]'
 type : 'load'
 

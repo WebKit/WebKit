@@ -1,11 +1,11 @@
 Tests for bug 11053 - XMLHttpRequest should be an EventTarget.
 
-fooListener
-onload
-eventListener
-eventListener2
-eventListener3
-onload
-eventListener
-eventListener2
+fooListener: this = [object JSXMLHttpRequest]
+onload: this = [object JSXMLHttpRequest]
+eventListener: this = [object JSXMLHttpRequest]
+eventListener2: this = [object JSXMLHttpRequest]
+eventListener3: this = [object JSXMLHttpRequest]
+onload: this = [object JSXMLHttpRequest]
+eventListener: this = [object JSXMLHttpRequest]
+eventListener2: this = [object JSXMLHttpRequest]
 

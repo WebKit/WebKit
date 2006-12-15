@@ -26,21 +26,24 @@
 #ifndef DOM_EventTargetNodeImpl_h
 #define DOM_EventTargetNodeImpl_h
 
+#include "EventTarget.h"
 #include "Node.h"
 
 namespace WebCore {
 
 template <typename T> class DeprecatedValueList;
 
-class EventTargetNode : public Node {
+class EventTargetNode : public Node, public EventTarget {
 public:
     EventTargetNode(Document*);
     virtual ~EventTargetNode();
 
     virtual bool isEventTargetNode() const { return true; }
+    virtual Node* toNode() { return this; }
 
-    void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+    virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
     void removeAllEventListeners();
 
     void setHTMLEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
@@ -49,7 +52,6 @@ public:
     EventListener *getHTMLEventListener(const AtomicString& eventType);
 
     bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
-    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchUIEvent(const AtomicString& eventType, int detail = 0, PassRefPtr<Event> underlyingEvent = 0);
@@ -92,9 +94,16 @@ public:
     virtual void dump(TextStream*, DeprecatedString indent = "") const;
 #endif
 
+    using Node::ref;
+    using Node::deref;
+
 protected:
     typedef DeprecatedValueList<RefPtr<RegisteredEventListener> > RegisteredEventListenerList;
     RegisteredEventListenerList* m_regdListeners;
+
+private:
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
 };
 
 inline EventTargetNode* EventTargetNodeCast(Node* n) 

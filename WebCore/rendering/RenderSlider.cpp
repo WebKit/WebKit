@@ -238,7 +238,7 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     if (!m_thumb || !m_thumb->renderer())
         return false;
  
-    ASSERT(evt->target() == node());
+    ASSERT(evt->target()->toNode() == node());
     
     IntRect thumbBounds = m_thumb->renderer()->absoluteBoundingBoxRect();
     thumbBounds.setX(m_thumb->renderer()->style()->left().value());

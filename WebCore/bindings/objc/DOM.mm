@@ -40,6 +40,7 @@
 #import "EntityReference.h"
 #import "Event.h"
 #import "EventListener.h"
+#import "EventTarget.h"
 #import "ExceptionHandlers.h"
 #import "FontData.h"
 #import "FoundationExtras.h"
@@ -355,6 +356,15 @@ static NSArray *kit(const Vector<IntRect>& rects)
             return nil;
     }
     return [[[wrapperClass alloc] _initWithNode:impl] autorelease];
+}
+
++ (id <DOMEventTarget>)_eventTargetWith:(WebCore::EventTarget *)eventTarget
+{
+    if (!eventTarget)
+        return nil;
+    
+    // We don't have an ObjC binding for XMLHttpRequest
+    return [DOMNode _nodeWith:eventTarget->toNode()];
 }
 
 - (WebCore::Node *)_node

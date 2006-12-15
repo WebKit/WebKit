@@ -2796,6 +2796,8 @@
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		E11D51930B2E7A5F0056C188 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51910B2E7A5F0056C188 /* Base64.h */; };
 		E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11D51920B2E7A5F0056C188 /* Base64.cpp */; };
+		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E14842DE0A674934007E4D39 /* TextCodecICU.h in Headers */ = {isa = PBXBuildFile; fileRef = E14842DD0A674934007E4D39 /* TextCodecICU.h */; };
 		E14842FF0A674A31007E4D39 /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */; };
 		E148432F0A674FC2007E4D39 /* TextCodecMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E148432E0A674FC2007E4D39 /* TextCodecMac.h */; };
@@ -5897,6 +5899,8 @@
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		E11D51910B2E7A5F0056C188 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		E11D51920B2E7A5F0056C188 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
+		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
+		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E14842DD0A674934007E4D39 /* TextCodecICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecICU.h; sourceTree = "<group>"; };
 		E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecICU.cpp; sourceTree = "<group>"; };
 		E148432E0A674FC2007E4D39 /* TextCodecMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TextCodecMac.h; path = mac/TextCodecMac.h; sourceTree = "<group>"; };
@@ -9324,6 +9328,8 @@
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
+				E12EDB7A0B308A78002704B6 /* EventTarget.h */,
+				E12EDBE90B308E0B002704B6 /* EventTarget.cpp */,
 				14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */,
 				14EC267D09CA07E000E1EEEC /* EventTargetNode.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
@@ -10851,6 +10857,7 @@
 				E11D51930B2E7A5F0056C188 /* Base64.h in Headers */,
 				B21127A60B3186770009BE53 /* JSSVGPODTypeWrapper.h in Headers */,
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,
+				E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12172,6 +12179,7 @@
 				B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */,
 				E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */,
 				14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */,
+				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

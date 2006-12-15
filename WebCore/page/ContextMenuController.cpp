@@ -74,7 +74,7 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     HitTestResult result(IntPoint(mouseEvent->pageX(), mouseEvent->pageY()));
 
-    if (RenderObject* renderer = event->target()->renderer())
+    if (RenderObject* renderer = event->target()->toNode()->renderer())
         if (RenderLayer* layer = renderer->enclosingLayer())
             layer->hitTest(HitTestRequest(false, true), result);
 

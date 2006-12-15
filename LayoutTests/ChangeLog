@@ -1,3 +1,14 @@
+2006-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11610
+        XMLHttpRequest.onreadystatechange doesn't provide access to the request object
+
+        * fast/dom/xmlhttprequest-get-expected.txt:
+        * http/tests/xmlhttprequest/event-target-expected.txt:
+        * http/tests/xmlhttprequest/event-target.html:
+
 2006-12-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

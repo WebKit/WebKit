@@ -101,13 +101,19 @@ int MouseEvent::which() const
 Node* MouseEvent::toElement() const
 {
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    return (type() == mouseoutEvent) ? relatedTarget() : target();
+    if (type() == mouseoutEvent) 
+        return relatedTarget();
+    
+    return target() ? target()->toNode() : 0;
 }
 
 Node* MouseEvent::fromElement() const
 {
     // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
-    return (type() == mouseoutEvent) ? target() : relatedTarget();
+    if (type() != mouseoutEvent)
+        return relatedTarget();
+    
+    return target() ? target()->toNode() : 0;
 }
 
 } // namespace WebCore

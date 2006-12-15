@@ -1,3 +1,79 @@
+2006-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11610
+        XMLHttpRequest.onreadystatechange doesn't provide access to the request object
+
+        Created a separate EventTarget class, now that EventTargetNode isn't the only kind.
+
+        Test: http/tests/xmlhttprequest/event-target.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added EventTarget.{h,cpp}
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS): Added an EventTarget variant.
+        * bindings/js/kjs_dom.h: Added toJS() for EventTarget; some minor style fixes.
+
+        * bindings/objc/DOM.mm:
+        (+[DOMNode _eventTargetWith:WebCore::]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        Added an EventTarget->DOMEventTarget converter in DOMNode (WebCoreInternal). 
+        It only works for nodes, since we don't have an ObjC binding for XMLHttpRequest.
+        Corrected spelling of internalHeaderContent.
+
+        * dom/Event.cpp:
+        (WebCore::Event::setTarget):
+        * dom/Event.h:
+        (WebCore::Event::target):
+        (WebCore::Event::currentTarget):
+        (WebCore::Event::setCurrentTarget):
+        These methods now work with EventTargets instead of Nodes.
+
+        * dom/EventTarget.cpp: Added.
+        (WebCore::EventTarget::~EventTarget):
+        (WebCore::EventTarget::toNode):
+        (WebCore::EventTarget::toXMLHttpRequest):
+        * dom/EventTarget.h: Added.
+        (WebCore::EventTarget::ref):
+        (WebCore::EventTarget::deref):
+        Originally, my intention was to share much of the implementation between 
+        EventTargetNode and XHR, but now I don't see anything substantial worth sharing.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): Cast Node to EventTargetNode.
+
+        * dom/EventTargetNode.h: Made EventTarget methods virtual.
+        (WebCore::EventTargetNode::toNode): Added poor man's RTTI to upcast from EventTarget.
+        (WebCore::EventTargetNode::refEventTarget):
+        (WebCore::EventTargetNode::derefEventTarget):
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::toElement):
+        (WebCore::MouseEvent::fromElement):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::mouseEventIsInThumb):
+        Cast from EventTarget to Node as appropriate.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        Set target and currentTarget before dispatching.
+
+        * xml/xmlhttprequest.h: Made EventTarget methods virtual, added a bool tempEvent parameter
+        to match EventTargetNode.
+        (WebCore::XMLHttpRequest::toXMLHttpRequest): Added poor man's RTTI to upcast from EventTarget.
+        (WebCore::XMLHttpRequest::refEventTarget):
+        (WebCore::XMLHttpRequest::derefEventTarget):
+
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

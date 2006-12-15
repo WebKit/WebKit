@@ -44,7 +44,7 @@ my @privateHeaderContent = ();
 my %privateHeaderForwardDeclarations = ();
 my %privateHeaderForwardDeclarationsForProtocols = ();
 
-my @intenalHeaderContent = ();
+my @internalHeaderContent = ();
 
 my @implContentHeader = ();
 my @implContent = ();
@@ -400,8 +400,6 @@ sub GetObjCTypeMaker
         $typeMaker = "xpath" . $1;
     } elsif ($type eq "DOMWindow") {
         $typeMaker = "abstractView";
-    } elsif ($type eq "EventTarget") {
-        $typeMaker = "node";
     } else {
         $typeMaker = lcfirst($type);
     }
@@ -1307,22 +1305,30 @@ sub GenerateImplementation
     $typeMakerSig = "+ ($className *)$typeMakerName:($podTypeWithNamespace)impl" . $typeMakerSigAddition if $podType;
 
     # Generate interface definitions. 
-    @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
-    push(@intenalHeaderContent, "\n#import <WebCore/$className.h>\n");
+    @internalHeaderContent = split("\r", $implementationLicenceTemplate);
+    push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n");
+    if ($interfaceName eq "Node") {
+        push(@internalHeaderContent, "\n\@protocol DOMEventTarget;\n");
+    }
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-        push(@intenalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
+        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
     } else {
         if ($podType and $podType ne "double") {
-            push(@intenalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
+            push(@internalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
+        } elsif ($interfaceName eq "Node") {
+            push(@internalHeaderContent, "\nnamespace WebCore { class Node; class EventTarget; }\n\n");
         } else { 
-            push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
+            push(@internalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
         }
     }
 
-    push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
-    push(@intenalHeaderContent, $typeGetterSig . ";\n");
-    push(@intenalHeaderContent, $typeMakerSig . ";\n");
-    push(@intenalHeaderContent, "\@end\n");
+    push(@internalHeaderContent, "\@interface $className (WebCoreInternal)\n");
+    push(@internalHeaderContent, $typeGetterSig . ";\n");
+    push(@internalHeaderContent, $typeMakerSig . ";\n");
+    if ($interfaceName eq "Node") {
+        push(@internalHeaderContent, "+ (id <DOMEventTarget>)_eventTargetWith:(WebCore::EventTarget *)eventTarget;\n");
+    }
+    push(@internalHeaderContent, "\@end\n");
 
     unless ($dataNode->extendedAttributes->{ObjCCustomInternalImpl}) {
         # - BEGIN WebCoreInternal category @implementation
@@ -1475,14 +1481,14 @@ sub WriteData
         %implIncludes = ();
     }
     
-    if (@intenalHeaderContent > 0) {
+    if (@internalHeaderContent > 0) {
        open(INTERNAL_HEADER, ">$internalHeaderFileName") or die "Couldn't open file $internalHeaderFileName";
 
-       print INTERNAL_HEADER @intenalHeaderContent;
+       print INTERNAL_HEADER @internalHeaderContent;
 
        close(INTERNAL_HEADER);
 
-       @intenalHeaderContent = ();
+       @internalHeaderContent = ();
     }
 }
 
