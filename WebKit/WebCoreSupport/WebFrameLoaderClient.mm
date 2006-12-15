@@ -870,13 +870,13 @@ void WebFrameLoaderClient::setDefersLoading(bool defers)
         deliverArchivedResourcesAfterDelay();
 }
 
-bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
+bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, NSURLRequest *request, const KURL& originalURL) const
 {
-    if (![[request URL] isEqual:originalURL])
+    if (![[request URL] isEqual:originalURL.getNSURL()])
         return false;
     if (!canUseArchivedResource(request))
         return false;
-    WebResource *resource = [dataSource(core(m_webFrame.get())->loader()->activeDocumentLoader()) _archivedSubresourceForURL:originalURL];
+    WebResource *resource = [dataSource(core(m_webFrame.get())->loader()->activeDocumentLoader()) _archivedSubresourceForURL:originalURL.getNSURL()];
     if (!resource)
         return false;
     if (!canUseArchivedResource([resource _response]))

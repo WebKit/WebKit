@@ -178,7 +178,7 @@ private:
 
     virtual WebCore::String userAgent();
 
-    virtual bool willUseArchive(WebCore::ResourceLoader*, NSURLRequest *, NSURL *originalURL) const;
+    virtual bool willUseArchive(WebCore::ResourceLoader*, NSURLRequest *, const WebCore::KURL& originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
     virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
     virtual void clearArchivedResources();

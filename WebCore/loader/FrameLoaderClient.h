@@ -206,7 +206,7 @@ namespace WebCore {
         virtual void setDefersLoading(bool) = 0;
 
 #if PLATFORM(MAC)
-        virtual bool willUseArchive(ResourceLoader*, NSURLRequest *, NSURL *originalURL) const = 0;
+        virtual bool willUseArchive(ResourceLoader*, NSURLRequest *, const KURL& originalURL) const = 0;
 #endif
         virtual bool isArchiveLoadPending(ResourceLoader*) const = 0;
         virtual void cancelPendingArchiveLoad(ResourceLoader*) = 0;

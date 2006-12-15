@@ -1,3 +1,15 @@
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Update for WebCore changes.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::willUseArchive):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _URLForHistory]):
+
 2006-12-15  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Darin and Alexey.

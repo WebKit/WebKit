@@ -29,9 +29,11 @@
 #ifndef ResourceLoader_h
 #define ResourceLoader_h
 
-#include "Shared.h"
-#include <wtf/RefPtr.h>
 #include "ResourceHandleClient.h"
+#include "Shared.h"
+#include "KURL.h"
+
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
 
@@ -40,7 +42,6 @@
 
 #ifdef __OBJC__
 @class NSCachedURLResponse;
-@class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLRequest;
@@ -48,10 +49,7 @@
 #else
 class NSCachedURLResponse;
 class NSData;
-class NSError;
 class NSMutableData;
-class NSObject;
-class NSURL;
 class NSURLAuthenticationChallenge;
 class NSURLConnection;
 class NSURLCredential;
@@ -166,7 +164,7 @@ protected:
         RetainPtr<NSURLResponse> m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
-        RetainPtr<NSURL> m_originalURL;
+        KURL m_originalURL;
         RetainPtr<NSMutableData> m_resourceData;
 #endif
         bool m_defersLoading;

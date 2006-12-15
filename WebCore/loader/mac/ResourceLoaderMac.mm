@@ -103,7 +103,7 @@ bool ResourceLoader::load(NSURLRequest *r)
     }
     r = clientRequest;
     
-    if (frameLoader()->willUseArchive(this, r, m_originalURL.get()))
+    if (frameLoader()->willUseArchive(this, r, m_originalURL))
         return true;
     
     m_handle = ResourceHandle::create(r, this, m_frame.get(), m_defersLoading);

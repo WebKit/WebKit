@@ -591,7 +591,7 @@ ResourceError FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
     return m_client->fileDoesNotExistError(response);    
 }
 
-bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, NSURL *originalURL) const
+bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, const KURL& originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
 }

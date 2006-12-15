@@ -105,7 +105,6 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req)
     , m_originalRequest(req)
     , m_originalRequestCopy(req)
     , m_request(req)
-    , m_loadingStartedTime(0)
     , m_committed(false)
     , m_stopping(false)
     , m_loading(false)
@@ -421,17 +420,9 @@ void DocumentLoader::prepareForLoadStart()
     ASSERT(frameLoader());
     clearErrors();
     
-    // Mark the start loading time.
-    m_loadingStartedTime = CFAbsoluteTimeGetCurrent();
-    
     setLoading(true);
     
     frameLoader()->prepareForLoadStart();
-}
-
-double DocumentLoader::loadingStartedTime() const
-{
-    return m_loadingStartedTime;
 }
 
 void DocumentLoader::setIsClientRedirect(bool flag)

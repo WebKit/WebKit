@@ -340,8 +340,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)_URLForHistory
 {
-    KURL URL = _private->loader->URLForHistory().getNSURL();
-    return URL.isEmpty() ? nil : [URL.getNSURL() _webkit_canonicalize];
+    KURL url = _private->loader->URLForHistory();
+    return url.isEmpty() ? nil : [url.getNSURL() _webkit_canonicalize];
 }
 
 - (void)_addToUnarchiveState:(WebArchive *)archive

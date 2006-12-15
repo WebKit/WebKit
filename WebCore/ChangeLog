@@ -1,3 +1,21 @@
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        More loader cleanup, use KURL instead of NSURL in a couple of places.
+
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::willUseArchive):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::load):
+
 2006-12-15  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Darin and Alexey.

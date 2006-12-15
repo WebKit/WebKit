@@ -131,7 +131,6 @@ namespace WebCore {
         void setupForReplace();
         void commitIfReady();
         void clearErrors();
-        double loadingStartedTime() const;
 #if PLATFORM(MAC)
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
@@ -166,9 +165,6 @@ namespace WebCore {
     
         ResourceError m_mainDocumentError;    
 #endif
-
-        // The time when the data source was told to start loading.
-        double m_loadingStartedTime;
 
         bool m_committed;
         bool m_stopping;
