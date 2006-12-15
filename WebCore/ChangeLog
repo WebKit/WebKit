@@ -1,3 +1,18 @@
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin and Brady (in no particular order).
+        
+        More loader cleanup.
+        
+        * loader/FrameLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::cancelledError):
+        (WebCore::FrameLoader::fileDoesNotExistError):
+        (WebCore::FrameLoader::cannotShowMIMEType):
+        (WebCore::FrameLoader::interruptionForPolicyChangeError):
+        * loader/mac/MainResourceLoaderMac.mm:
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+
 2006-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Try to fix Windows buid.

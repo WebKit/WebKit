@@ -581,12 +581,12 @@ void FrameLoader::mainReceivedError(const ResourceError& error, bool isComplete)
     activeDocumentLoader()->mainReceivedError(error, isComplete);
 }
 
-ResourceError FrameLoader::cancelledError(NSURLRequest *request) const
+ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
 {
     return m_client->cancelledError(request);
 }
 
-ResourceError FrameLoader::fileDoesNotExistError(NSURLResponse *response) const
+ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& response) const
 {
     return m_client->fileDoesNotExistError(response);    
 }
@@ -603,12 +603,12 @@ void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
     m_delegateIsHandlingUnimplementablePolicy = false;
 }
 
-void FrameLoader::cannotShowMIMEType(NSURLResponse *response)
+void FrameLoader::cannotShowMIMEType(const ResourceResponse& response)
 {
     handleUnimplementablePolicy(m_client->cannotShowMIMETypeError(response));
 }
 
-ResourceError FrameLoader::interruptionForPolicyChangeError(NSURLRequest *request)
+ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request)
 {
     return m_client->interruptForPolicyChangeError(request);
 }

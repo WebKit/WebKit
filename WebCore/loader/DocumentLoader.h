@@ -98,10 +98,10 @@ namespace WebCore {
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
 #if PLATFORM(MAC)
-        NSURLResponse *response() const;
+        const ResourceResponse& response() const;
         const ResourceError& mainDocumentError() const;
         void mainReceivedError(const ResourceError&, bool isComplete);
-        void setResponse(NSURLResponse *);
+        void setResponse(const ResourceResponse);
 #endif
         void prepareForLoadStart();
         bool isClientRedirect() const;

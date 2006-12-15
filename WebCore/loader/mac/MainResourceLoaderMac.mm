@@ -36,6 +36,7 @@
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
+#import "ResourceResponse.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSHTTPCookie.h>

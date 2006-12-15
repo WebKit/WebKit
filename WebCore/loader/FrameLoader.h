@@ -245,14 +245,14 @@ namespace WebCore {
         KURL URL() const;
 
 #if PLATFORM(MAC)
-        ResourceError cancelledError(NSURLRequest *) const;
-        ResourceError fileDoesNotExistError(NSURLResponse *) const;
+        ResourceError cancelledError(const ResourceRequest&) const;
+        ResourceError fileDoesNotExistError(const ResourceResponse&) const;
         bool willUseArchive(ResourceLoader*, NSURLRequest *, const KURL&) const;
 #endif
         bool isArchiveLoadPending(ResourceLoader*) const;
 #if PLATFORM(MAC)
-        void cannotShowMIMEType(NSURLResponse *);
-        ResourceError interruptionForPolicyChangeError(NSURLRequest *);
+        void cannotShowMIMEType(const ResourceResponse&);
+        ResourceError interruptionForPolicyChangeError(const ResourceRequest&);
 #endif
 
         bool isHostedByObjectElement() const;

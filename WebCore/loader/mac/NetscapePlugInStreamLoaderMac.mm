@@ -31,6 +31,7 @@
 
 #import "FrameLoader.h"
 #import "ResourceError.h"
+#import "ResourceResponse.h"
 #import <wtf/PassRefPtr.h>
 
 namespace WebCore {
