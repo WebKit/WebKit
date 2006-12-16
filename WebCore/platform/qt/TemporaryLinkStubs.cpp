@@ -40,7 +40,6 @@
 #include "IntPoint.h"
 #include "Widget.h"
 #include "GraphicsContext.h"
-#include "TextField.h"
 #include "Cursor.h"
 #include "loader.h"
 #include "FrameView.h"
@@ -78,36 +77,6 @@ Color WebCore::focusRingColor() { notImplemented(); return 0xFF0000FF; }
 void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { notImplemented(); }
 
 namespace WebCore {    
-
-void TextField::selectAll() { notImplemented(); }
-void TextField::addSearchResult() { notImplemented(); }
-int TextField::selectionStart() const { notImplemented(); return 0; }
-bool TextField::hasSelectedText() const { notImplemented(); return 0; }
-String TextField::selectedText() const { notImplemented(); return String(); }
-void TextField::setAutoSaveName(String const&) { notImplemented(); }
-bool TextField::checksDescendantsForFocus() const { notImplemented(); return false; }
-void TextField::setSelection(int,int) { notImplemented(); }
-void TextField::setMaxResults(int) { notImplemented(); }
-bool TextField::edited() const { notImplemented(); return 0; }
-Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
-TextField::TextField() { notImplemented(); }
-TextField::~TextField() { notImplemented(); }
-void TextField::setFont(WebCore::Font const&) { notImplemented(); }
-void TextField::setAlignment(HorizontalAlignment) { notImplemented(); }
-void TextField::setWritingDirection(TextDirection) { notImplemented(); }
-int TextField::maxLength() const { notImplemented(); return 0; }
-void TextField::setMaxLength(int) { notImplemented(); }
-String TextField::text() const { notImplemented(); return String(); }
-void TextField::setText(String const&) { notImplemented(); }
-int TextField::cursorPosition() const { notImplemented(); return 0; }
-void TextField::setCursorPosition(int) { notImplemented(); }
-void TextField::setEdited(bool) { notImplemented();  }
-void TextField::setReadOnly(bool) { notImplemented(); }
-void TextField::setPlaceholderString(String const&) { notImplemented();  }
-void TextField::setColors(Color const&,Color const&) { notImplemented();  }
-IntSize TextField::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
-int TextField::baselinePosition(int) const { notImplemented(); return 0; }
-void TextField::setLiveSearch(bool) { notImplemented(); }
 
 Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { notImplemented(); }
 void Scrollbar::setSteps(int, int) { notImplemented(); }

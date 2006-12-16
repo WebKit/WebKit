@@ -126,6 +126,8 @@ IDL_BINDINGS += \
     css/Counter.idl \
     css/MediaList.idl \
     dom/Event.idl \
+#    dom/EventListener.idl \
+#    dom/EventTarget.idl \
     dom/Range.idl \
     dom/Text.idl \
     dom/DOMImplementation.idl \
@@ -259,6 +261,7 @@ SOURCES += \
     css/CSSFontFaceRule.cpp \
     css/ShadowValue.cpp \
     dom/Event.cpp \
+    dom/EventTarget.cpp \
     dom/Range.cpp \
     dom/Text.cpp \
     dom/DOMImplementation.cpp \
@@ -566,6 +569,8 @@ SOURCES += \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/ContextMenu.cpp \
+#    platform/SearchPopupMenu.cpp \ 
+    platform/qt/SearchPopupMenuQt.cpp \ 
     platform/network/FormData.cpp \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequest.cpp \
@@ -636,7 +641,6 @@ SOURCES += \
     rendering/InlineBox.cpp \
     rendering/RenderText.cpp \
     rendering/RenderFrame.cpp \
-    rendering/RenderLineEdit.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/RenderTableCol.cpp \
     rendering/RenderObject.cpp \

@@ -40,11 +40,11 @@ namespace WebCore {
         virtual void deref();
 
         virtual void contextMenuDestroyed();
-        virtual void contextMenuItemSelected(const ContextMenuItem*);
-
+        
         virtual void addCustomContextMenuItems(ContextMenu*);
-        virtual void copyLinkToClipboard(const HitTestResult&);
-        virtual void downloadURL(const KURL&);
+        virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
+
+        virtual void downloadURL(const KURL& url);
         virtual void copyImageToClipboard(const HitTestResult&);
         virtual void lookUpInDictionary(Frame*);
         virtual void speak(const String&);

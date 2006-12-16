@@ -1,3 +1,28 @@
+2006-12-16  Zack Rusin  <zack@kde.org>
+
+        Make it compile after last nights changes.
+
+        * WebCore.pro:
+        * loader/qt/DocumentLoaderQt.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::insertItem):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2006-12-16  Adele Peterson  <adele@apple.com>
 
         One more...
