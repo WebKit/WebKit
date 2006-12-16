@@ -1,5 +1,33 @@
 2006-12-16  Adele Peterson  <adele@apple.com>
 
+        RS by Adam.
+
+        Removed RenderLineEdit, TextField, WebCoreTextField classes, and use of isNonWidgetTextField,
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable):
+        (WebCore::HTMLInputElement::isMouseFocusable):
+        (WebCore::HTMLInputElement::focus):
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+        (WebCore::HTMLInputElement::aboutToUnload):
+        (WebCore::HTMLInputElement::dispatchFocusEvent):
+        (WebCore::HTMLInputElement::dispatchBlurEvent):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isTextField):
+        * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLTextFieldInnerTextElement::defaultEventHandler):
+        * platform/TextField.h: Removed.
+        * platform/mac/TextFieldMac.mm: Removed.
+        * platform/mac/WebCoreTextField.h: Removed.
+        * platform/mac/WebCoreTextField.mm: Removed.
+        * rendering/RenderLineEdit.cpp: Removed.
+        * rendering/RenderLineEdit.h: Removed.
+
+2006-12-16  Adele Peterson  <adele@apple.com>
+
         Two more files I forgot to svn add for search fields.
 
         * platform/SearchPopupMenu.h: Added.

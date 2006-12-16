@@ -51,8 +51,7 @@ void HTMLTextFieldInnerTextElement::defaultEventHandler(Event* evt)
     // FIXME: In the future, we should add a way to have default event listeners.  Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     Node* shadowAncestor = shadowAncestorNode();
     if (shadowAncestor && shadowAncestor->renderer()) {
-        ASSERT((shadowAncestor->renderer()->isTextField() && static_cast<HTMLInputElement*>(shadowAncestor)->isNonWidgetTextField()) || 
-                shadowAncestor->renderer()->isTextArea());
+        ASSERT(shadowAncestor->renderer()->isTextField() || shadowAncestor->renderer()->isTextArea());
         if (evt->isBeforeTextInsertedEvent())
             if (shadowAncestor->renderer()->isTextField())
                 static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
