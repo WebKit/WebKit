@@ -2,6 +2,13 @@
 
         Reviewed by Adam.
 
+        * platform/PopupMenuClient.h: Added. Broken out of PopupMenu class.
+        (WebCore::PopupMenuClient::~PopupMenuClient):
+
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
         WebCore part of fix for:
         <rdar://problem/4463829> Switch to use new search field implementation for <input type="search">
 
