@@ -126,7 +126,7 @@ namespace WTF {
     {
       UErrorCode status = U_ZERO_ERROR;
       int32_t realLength = u_strFoldCase(result, resultLength, src, srcLength, U_FOLD_CASE_DEFAULT, &status);
-      *error = !(U_SUCCESS(status) && realLength < resultLength);
+      *error = !U_SUCCESS(status);
       return realLength;
     }
 
