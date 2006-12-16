@@ -1,5 +1,17 @@
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Geoff.
+
+        Update for WebCore changes.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchIdentifierForInitialRequest):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource response]):
+
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         Update for WebCore changes.

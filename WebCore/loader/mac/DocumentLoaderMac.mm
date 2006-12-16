@@ -106,7 +106,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req)
     , m_originalRequestCopy(req)
     , m_request(req)
     , m_committed(false)
-    , m_stopping(false)
+    , m_isStopping(false)
     , m_loading(false)
     , m_gotFirstByte(false)
     , m_primaryLoadComplete(false)
@@ -212,26 +212,11 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
         frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
 }
 
-void DocumentLoader::setResponse(NSURLResponse *resp)
-{
-    m_response = resp;
-}
-
-bool DocumentLoader::isStopping() const
-{
-    return m_stopping;
-}
-
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
 {
     m_mainDocumentError = error;    
     frameLoader()->setMainDocumentError(this, error);
  }
-
-const ResourceError& DocumentLoader::mainDocumentError() const
-{
-    return m_mainDocumentError;
-}
 
 void DocumentLoader::clearErrors()
 {
@@ -264,7 +249,7 @@ void DocumentLoader::stopLoading()
     RefPtr<Frame> protectFrame(m_frame);
     RefPtr<DocumentLoader> protectLoader(this);
 
-    m_stopping = true;
+    m_isStopping = true;
 
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
@@ -275,16 +260,16 @@ void DocumentLoader::stopLoading()
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
 
-        setMainDocumentError(frameLoader->cancelledError(m_request.nsURLRequest()));
+        setMainDocumentError(frameLoader->cancelledError(m_request));
     else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        mainReceivedError(frameLoader->cancelledError(m_request.nsURLRequest()), true);
+        mainReceivedError(frameLoader->cancelledError(m_request), true);
     
     frameLoader->stopLoadingSubresources();
     frameLoader->stopLoadingPlugIns();
     
-    m_stopping = false;
+    m_isStopping = false;
 }
 
 void DocumentLoader::setupForReplace()
@@ -348,7 +333,7 @@ bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
 void DocumentLoader::receivedData(const char* data, int length)
 {    
     m_gotFirstByte = true;
-    if (doesProgressiveLoad([m_response.get() MIMEType]))
+    if (doesProgressiveLoad(m_response.mimeType()))
         commitLoad(data, length);
 }
 
@@ -357,7 +342,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     if (!m_gotFirstByte)
         return;
     
-    String oldMIMEType = [m_response.get() MIMEType];
+    String oldMIMEType = m_response.mimeType();
     
     if (!doesProgressiveLoad(oldMIMEType)) {
         frameLoader()->revertToProvisional(this);
@@ -388,11 +373,6 @@ void DocumentLoader::updateLoading()
     setLoading(frameLoader()->isLoading());
 }
 
-NSURLResponse *DocumentLoader::response() const
-{
-    return m_response.get();
-}
-
 void DocumentLoader::setFrame(Frame* frame)
 {
     if (m_frame == frame)
@@ -415,7 +395,7 @@ void DocumentLoader::detachFromFrame()
 
 void DocumentLoader::prepareForLoadStart()
 {
-    ASSERT(!m_stopping);
+    ASSERT(!m_isStopping);
     setPrimaryLoadComplete(false);
     ASSERT(frameLoader());
     clearErrors();

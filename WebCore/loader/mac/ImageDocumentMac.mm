@@ -44,11 +44,11 @@ void finishImageLoad(Document* document, CachedImage* image, const void* imageDa
     [nsData release];
 
     Frame* frame = document->frame();
-    NSURLResponse *response = frame->loader()->documentLoader()->response();
+    const ResourceResponse& response = frame->loader()->documentLoader()->response();
 
     IntSize size = image->imageSize();
     if (size.width())
-        document->setTitle([Mac(frame)->bridge() imageTitleForFilename:[response suggestedFilename] size:size]);
+        document->setTitle([Mac(frame)->bridge() imageTitleForFilename:response.suggestedFilename() size:size]);
 }
     
 }

@@ -430,7 +430,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURLResponse *)response
 {
-    return _private->loader->response();
+    return _private->loader->response().nsURLResponse();
 }
 
 - (NSString *)textEncodingName

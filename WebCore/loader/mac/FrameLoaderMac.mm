@@ -531,7 +531,7 @@ void FrameLoader::commitProvisionalLoad(NSDictionary *pageCache)
         open(*frameState);
         frameState->clear();
     } else {
-        NSURLResponse *response = pdl->response();
+        NSURLResponse *response = pdl->response().nsURLResponse();
     
         KURL URL;
 #if PLATFORM(MAC)
@@ -571,7 +571,7 @@ void FrameLoader::setRequest(const ResourceRequest& request)
     activeDocumentLoader()->setRequest(request);
 }
 
-void FrameLoader::setResponse(NSURLResponse *response)
+void FrameLoader::setResponse(const ResourceResponse& response)
 {
     activeDocumentLoader()->setResponse(response);
 }

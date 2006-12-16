@@ -113,7 +113,6 @@ namespace WebCore {
         virtual void download(ResourceHandle*, NSURLRequest *, NSURLResponse *) = 0;
 
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
-        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, NSURLRequest *) = 0;
         virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) = 0;
         virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
         virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;

@@ -99,7 +99,6 @@ private:
 
     virtual void download(WebCore::ResourceHandle*, NSURLRequest *, NSURLResponse *);
 
-    virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, NSURLRequest *);
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
     virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse);
     virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);

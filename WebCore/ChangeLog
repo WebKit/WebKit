@@ -1,5 +1,30 @@
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Geoff.
+
+        More loader cleanup.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::isStopping):
+        (WebCore::DocumentLoader::response):
+        (WebCore::DocumentLoader::mainDocumentError):
+        (WebCore::DocumentLoader::setResponse):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::receivedData):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::setResponse):
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+
+2006-12-15  Anders Carlsson  <acarlsson@apple.com>
+
         * loader/DocumentLoader.h:
         Whoops, didn't mean to commit this.
         

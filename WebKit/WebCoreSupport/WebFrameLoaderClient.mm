@@ -442,17 +442,12 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
 
 id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loader, const ResourceRequest& request)
 {
-    return dispatchIdentifierForInitialRequest(loader, request.nsURLRequest());
-}
-
-id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loader, NSURLRequest *request)
-{
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
     if (implementations.delegateImplementsIdentifierForRequest)
-        return implementations.identifierForRequestFunc(resourceLoadDelegate, @selector(webView:identifierForInitialRequest:fromDataSource:), webView, request, dataSource(loader));
+        return implementations.identifierForRequestFunc(resourceLoadDelegate, @selector(webView:identifierForInitialRequest:fromDataSource:), webView, request.nsURLRequest(), dataSource(loader));
 
     return [[[NSObject alloc] init] autorelease];
 }
