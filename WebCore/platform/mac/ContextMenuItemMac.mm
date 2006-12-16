@@ -81,7 +81,7 @@ NSMenuItem* ContextMenuItem::releasePlatformDescription()
     return m_platformDescription.releaseRef();
 }
 
-ContextMenuItemType ContextMenuItem::type()
+ContextMenuItemType ContextMenuItem::type() const
 {
     if ([m_platformDescription.get() isSeparatorItem])
         return SeparatorType;
@@ -116,7 +116,7 @@ void ContextMenuItem::setAction(ContextMenuAction action)
     [m_platformDescription.get() setTag:action]; 
 }
 
-void ContextMenuItem::setTitle(const String& title) const
+void ContextMenuItem::setTitle(const String& title)
 {
     [m_platformDescription.get() setTitle:title];
 }
@@ -132,7 +132,7 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
     [subMenu release];
 }
 
-void ContextMenuItem::setChecked(bool checked) const
+void ContextMenuItem::setChecked(bool checked)
 {
     if (checked)
         [m_platformDescription.get() setState:NSOnState];
@@ -140,7 +140,7 @@ void ContextMenuItem::setChecked(bool checked) const
         [m_platformDescription.get() setState:NSOffState];
 }
 
-void ContextMenuItem::setEnabled(bool enable) const
+void ContextMenuItem::setEnabled(bool enable)
 {
     [m_platformDescription.get() setEnabled:enable];
 }

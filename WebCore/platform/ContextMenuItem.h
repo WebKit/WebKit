@@ -131,20 +131,20 @@ namespace WebCore {
 
         PlatformMenuItemDescription releasePlatformDescription();
 
-        ContextMenuItemType type();
+        ContextMenuItemType type() const;
         void setType(ContextMenuItemType);
 
         ContextMenuAction action() const;
         void setAction(ContextMenuAction);
 
         String title() const;
-        void setTitle(const String&) const;
+        void setTitle(const String&);
 
         PlatformMenuDescription platformSubMenu() const;
         void setSubMenu(ContextMenu*);
 
-        void setChecked(bool) const;
-        void setEnabled(bool) const;
+        void setChecked(bool = true);
+        void setEnabled(bool = true);
 
         // FIXME: Do we need a keyboard accelerator here?
 
