@@ -1,5 +1,17 @@
 2006-12-16  Adele Peterson  <adele@apple.com>
 
+        Two more files I forgot to svn add for search fields.
+
+        * platform/SearchPopupMenu.h: Added.
+        (WebCore::SearchPopupMenu::create):
+        * platform/mac/SearchPopupMenuMac.mm: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::autosaveKey):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+
+2006-12-16  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam.
 
         * platform/PopupMenuClient.h: Added. Broken out of PopupMenu class.

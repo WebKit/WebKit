@@ -1,0 +1,69 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#import "config.h"
+#import "SearchPopupMenu.h"
+
+#import "AtomicString.h"
+
+namespace WebCore {
+
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
+{
+}
+
+static NSString* autosaveKey(const String& name)
+{
+    return [@"com.apple.WebKit.searchField:" stringByAppendingString:name];
+}
+
+void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+{
+    if (name.isEmpty())
+        return;
+
+    size_t size = searchItems.size();
+    if (size == 0)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:autosaveKey(name)];
+    else {
+        NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:size];
+        for (size_t i = 0; i < size; ++i)
+            [items addObject:searchItems[i]];
+        [[NSUserDefaults standardUserDefaults] setObject:items forKey:autosaveKey(name)];
+        [items release];
+    }
+}
+
+void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+{
+    if (name.isEmpty())
+        return;
+
+    searchItems.clear();
+    NSArray* items = [[NSUserDefaults standardUserDefaults] arrayForKey:autosaveKey(name)];
+    size_t size = [items count];
+    for (size_t i = 0; i < size; ++i) {
+        NSString* item = [items objectAtIndex:i];
+        if ([item isKindOfClass:[NSString class]])
+            searchItems.append(item);
+    }
+}
+
+}
