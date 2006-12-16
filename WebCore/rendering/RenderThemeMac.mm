@@ -29,6 +29,7 @@
 #import "FoundationExtras.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
+#import "HTMLInputElement.h"
 #import "Image.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderSlider.h"
@@ -65,6 +66,10 @@ RenderThemeMac::RenderThemeMac()
     : checkbox(nil)
     , radio(nil)
     , button(nil)
+    , popupButton(nil)
+    , search(nil)
+    , searchButton(nil)
+    , searchMenu(nil)
     , sliderThumbHorizontalCell(nil)
     , sliderThumbVerticalCell(nil)
     , sliderHorizontalCellIsPressed(false)
@@ -321,6 +326,11 @@ IntSize RenderThemeMac::sizeForFont(RenderStyle* style, const IntSize* sizes) co
     return sizes[controlSizeForFont(style)];
 }
 
+IntSize RenderThemeMac::sizeForSystemFont(RenderStyle* style, const IntSize* sizes) const
+{
+    return sizes[controlSizeForSystemFont(style)];
+}
+
 void RenderThemeMac::setSizeFromFont(RenderStyle* style, const IntSize* sizes) const
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
@@ -346,6 +356,16 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
         style->font().update();
 }
 
+NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle* style) const
+{
+    int fontSize = style->fontSize();
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSRegularControlSize])
+        return NSRegularControlSize;
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSSmallControlSize])
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
+
 bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
@@ -355,7 +375,7 @@ bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     IntRect inflatedRect = inflateRect(r, checkboxSizes()[[checkbox controlSize]], checkboxMargins());
     [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
-    [checkbox setControlView: nil];
+    [checkbox setControlView:nil];
     
     return false;
 }
@@ -415,7 +435,7 @@ bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo&,
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     IntRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
     [radio drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
-    [radio setControlView: nil];
+    [radio setControlView:nil];
     
     return false;
 }
@@ -917,14 +937,15 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     updateFocusedState(popupButton, o);
 }
 
+const IntSize* RenderThemeMac::menuListSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(9, 0), IntSize(5, 0), IntSize(0, 0) };
+    return sizes;
+}
+
 int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
 {
-    int fontSize = style->fontSize();
-    if (fontSize >= 13)
-        return 9;
-    if (fontSize >= 11)
-        return 5;
-    return 0;
+    return sizeForSystemFont(style, menuListSizes()).width();
 }
 
 const int trackWidth = 5;
@@ -1039,6 +1060,147 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
+}
+
+bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    
+    setSearchCellState(o, r);
+    
+    // Set the search button to nil before drawing.  Then reset it so we can draw it later.
+    [search setSearchButtonCell:nil];
+    
+    [search drawWithFrame:NSRect(r) inView:o->view()->frameView()->getDocumentView()];
+    if ([search showsFirstResponder])
+        wkDrawTextFieldCellFocusRing(search, NSRect(r));
+     
+    [search setControlView:nil];
+    [search resetSearchButtonCell];
+    
+    return false;
+}
+
+void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect& r)
+{
+    if (!search) {
+        search = HardRetainWithNSRelease([[NSSearchFieldCell alloc] initTextCell:@""]);
+        [search setBezelStyle:NSTextFieldRoundedBezel];
+        [search setBezeled:YES];
+        [search setEditable:YES];
+        
+        searchMenu = HardRetainWithNSRelease([[NSMenu alloc] initWithTitle:@""]);
+    }
+    
+    [search setControlSize:controlSizeForFont(o->style())];
+
+    // Update the various states we respond to.
+    updateEnabledState(search, o);
+    updateFocusedState(search, o);
+}
+
+void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    NSControlSize controlSize = controlSizeForFont(style);
+    setFontFromControlSize(selector, style, controlSize);
+    
+    // Override padding size to match AppKit text positioning.
+    const int padding = 1;
+    style->setPaddingLeft(Length(padding, Fixed));
+    style->setPaddingRight(Length(padding, Fixed));
+    style->setPaddingTop(Length(padding, Fixed));
+    style->setPaddingBottom(Length(padding, Fixed));
+}
+
+bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* input = o->node()->shadowAncestorNode();
+    setSearchCellState(input->renderer(), r);
+
+    updatePressedState([search cancelButtonCell], o);
+
+    NSRect bounds = [search cancelButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
+    [[search cancelButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search cancelButtonCell] setControlView:nil];
+ 
+    return false;
+}
+
+const IntSize* RenderThemeMac::cancelButtonSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(16, 13), IntSize(13, 11), IntSize(13, 9) };
+    return sizes;
+}
+
+void RenderThemeMac::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    IntSize size = sizeForSystemFont(style, cancelButtonSizes());
+    style->setWidth(Length(size.width(), Fixed));
+    style->setHeight(Length(size.height(), Fixed));
+}
+
+const IntSize* RenderThemeMac::resultsButtonSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(19, 13), IntSize(17, 11), IntSize(17, 9) };
+    return sizes;
+}
+
+const int emptyResultsOffset = 9;
+void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    IntSize size = sizeForSystemFont(style, resultsButtonSizes());
+    style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
+    style->setHeight(Length(size.height(), Fixed));
+}
+    
+bool RenderThemeMac::paintSearchFieldDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return false;
+}
+    
+void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    IntSize size = sizeForSystemFont(style, resultsButtonSizes());
+    style->setWidth(Length(size.width(), Fixed));
+    style->setHeight(Length(size.height(), Fixed));
+}
+
+bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* input = o->node()->shadowAncestorNode();
+    setSearchCellState(input->renderer(), r);
+    
+    [search setMaximumRecents:0];
+    if ([search searchMenuTemplate] != nil)
+        [search setSearchMenuTemplate:nil];
+
+    NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
+    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search searchButtonCell] setControlView:nil];
+    return false;
+}
+
+const int resultsArrowWidth = 5;
+void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    IntSize size = sizeForSystemFont(style, resultsButtonSizes());
+    style->setWidth(Length(size.width() + resultsArrowWidth, Fixed));
+    style->setHeight(Length(size.height(), Fixed));
+}
+
+bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* input = o->node()->shadowAncestorNode();
+    setSearchCellState(input->renderer(), r);
+
+    [search setMaximumRecents:1];
+    if ([search searchMenuTemplate] == nil)
+            [search setSearchMenuTemplate:searchMenu];
+
+    NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
+    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search searchButtonCell] setControlView:nil];
+    return false;
 }
 
 }

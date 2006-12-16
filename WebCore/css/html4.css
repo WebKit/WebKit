@@ -315,13 +315,33 @@ input[type="hidden"] {
     display: none
 }
 
-input, input[type="password"], isindex {
+input, input[type="password"], input[type="search"], isindex {
     -webkit-appearance: textfield;
     padding: 1px;
     background-color: white;
     border: 2px inset;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
+}
+
+input[type="search"] {
+    -webkit-appearance: searchfield;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+}
+
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: searchfield-decoration;
+}
+
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: searchfield-results-decoration;
+}
+
+input[type="search"]::-webkit-search-results-button {
+    -webkit-appearance: searchfield-results-button;
 }
 
 textarea {
@@ -338,7 +358,7 @@ input[type="password"] {
     -webkit-text-security: disc !important;
 }
 
-input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
+input[type="hidden"], input[type="image"], input[type="file"] {
     -webkit-appearance: initial;
     padding: initial;
     background-color: initial;

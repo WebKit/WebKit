@@ -24,6 +24,7 @@
 #define RenderMenuList_H
 
 #include "RenderFlexibleBox.h"
+#include "PopupMenuClient.h"
 #include "PopupMenu.h"
 
 #if PLATFORM(MAC)
@@ -35,6 +36,7 @@
 namespace WebCore {
 
 class HTMLSelectElement;
+class PopupMenu;
 
 class RenderMenuList : public RenderFlexibleBox, public PopupMenuClient {
 public:
@@ -76,12 +78,13 @@ public:
     Document* clientDocument() const;
     int clientPaddingLeft() const;
     int clientPaddingRight() const;
-    int listSize() const;
+    unsigned listSize() const;
     int selectedIndex() const;
     bool itemIsSeparator(unsigned listIndex) const;
     bool itemIsLabel(unsigned listIndex) const;
     bool itemIsSelected(unsigned listIndex) const;
     void setTextFromItem(unsigned listIndex);
+    bool valueShouldChangeOnHotTrack() const { return true; }
 #if POPUP_MENU_PULLS_DOWN
     bool shouldPopOver() const { return false; }
 #else

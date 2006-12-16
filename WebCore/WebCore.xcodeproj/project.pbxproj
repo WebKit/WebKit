@@ -2216,8 +2216,11 @@
 		AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AB4261D70A2F6C9700BDD17D /* missingImage.tiff */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; };
+		AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AB7170880B3118080017123E /* SearchPopupMenu.h */; };
+		AB7170A00B31193B0017123E /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */; };
 		ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */; };
 		ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB5419D0ACDDFE4002820EB /* RenderListBox.h */; };
+		ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */; };
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
@@ -5183,8 +5186,11 @@
 		AB4261D70A2F6C9700BDD17D /* missingImage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = missingImage.tiff; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControl.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextControl.h; sourceTree = "<group>"; };
+		AB7170880B3118080017123E /* SearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenu.h; sourceTree = "<group>"; };
+		AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchPopupMenuMac.mm; sourceTree = "<group>"; };
 		ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderListBox.cpp; sourceTree = "<group>"; };
 		ABB5419D0ACDDFE4002820EB /* RenderListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderListBox.h; sourceTree = "<group>"; };
+		ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenuClient.h; sourceTree = "<group>"; };
 		ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMenuList.cpp; sourceTree = "<group>"; };
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
@@ -6658,6 +6664,7 @@
 				1402692C0AFE72D8005919E2 /* ScreenMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
+				AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
@@ -8874,12 +8881,14 @@
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				A82398A509B3ACDB00B60641 /* PlugInInfoStore.h */,
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
+				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				F587852B02DE375901EA4122 /* RegularExpression.cpp */,
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
 				148CF65D0B00561400A997FC /* Screen.h */,
 				BC7B2AF80450824100A8000F /* ScrollBar.h */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
+				AB7170880B3118080017123E /* SearchPopupMenu.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
@@ -10857,7 +10866,9 @@
 				E11D51930B2E7A5F0056C188 /* Base64.h in Headers */,
 				B21127A60B3186770009BE53 /* JSSVGPODTypeWrapper.h in Headers */,
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,
+				AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */,
 				E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */,
+				ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12179,6 +12190,7 @@
 				B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */,
 				E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */,
 				14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */,
+				AB7170A00B31193B0017123E /* SearchPopupMenuMac.mm in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

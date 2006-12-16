@@ -1,3 +1,14 @@
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit part of fix for:
+        <rdar://problem/4463829> Switch to use new search field implementation for <input type="search">
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface): Initialize WKDrawTextFieldCellFocusRing.
+        * WebInspector/webInspector/inspector.css: Set -webkit-user-select:text and text-shadow:none on the search field.
+          These are both properties that we didn't honor in the old control, and the inherited values didn't work or look right.
+
 2006-12-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

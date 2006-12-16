@@ -32,6 +32,7 @@ OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned num
 NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
 NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
+void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
 BOOL (*wkFontSmoothingModeIsLCD)(int mode);

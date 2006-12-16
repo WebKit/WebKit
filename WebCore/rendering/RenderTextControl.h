@@ -21,13 +21,18 @@
 #ifndef RenderTextField_H
 #define RenderTextField_H
 
+#include "PopupMenuClient.h"
 #include "RenderBlock.h"
 
 namespace WebCore {
 
 class HTMLTextFieldInnerElement;
+class HTMLTextFieldInnerTextElement;
+class HTMLSearchFieldCancelButtonElement;
+class HTMLSearchFieldResultsButtonElement;
+class SearchPopupMenu;
 
-class RenderTextControl : public RenderBlock {
+class RenderTextControl : public RenderBlock, public PopupMenuClient {
 public:
     RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
@@ -43,8 +48,6 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void layout();
     virtual bool avoidsFloats() const { return true; }
-
-    RenderStyle* createDivStyle(RenderStyle* startStyle);
 
     bool isEdited() const { return m_dirty; };
     void setEdited(bool isEdited) { m_dirty = isEdited; };
@@ -74,13 +77,57 @@ public:
 
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
- 
+
+    void addSearchResult();
+    void onSearch() const;
+        
+    bool popupIsVisible() const { return m_searchPopupIsVisible; }
+    void showPopup();
+    void hidePopup();
+    
+    // PopupMenuClient methods
+    void valueChanged(unsigned listIndex, bool fireOnSearch = true);
+    String itemText(unsigned listIndex) const;
+    bool itemIsEnabled(unsigned listIndex) const;
+    RenderStyle* itemStyle(unsigned listIndex) const;
+    RenderStyle* clientStyle() const;
+    Document* clientDocument() const;
+    int clientPaddingLeft() const;
+    int clientPaddingRight() const;
+    unsigned listSize() const;
+    int selectedIndex() const;
+    bool itemIsSeparator(unsigned listIndex) const;
+    bool itemIsLabel(unsigned listIndex) const;
+    bool itemIsSelected(unsigned listIndex) const;
+    void setTextFromItem(unsigned listIndex);
+    bool shouldPopOver() const { return false; }
+    bool valueShouldChangeOnHotTrack() const { return false; }
+    
     private:
    
-    RefPtr<HTMLTextFieldInnerElement> m_div;
+    RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
+    RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
+    RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
+    RenderStyle* createResultsButtonStyle(RenderStyle* startStyle);
+
+    void showPlaceholderIfNeeded();
+    void hidePlaceholderIfNeeded();
+    void createSubtreeIfNeeded();
+    void updateCancelButtonVisibility(RenderStyle*);
+    const AtomicString& autosaveName() const;
+    
+    RefPtr<HTMLTextFieldInnerElement> m_innerBlock;
+    RefPtr<HTMLTextFieldInnerTextElement> m_innerText;
+    RefPtr<HTMLSearchFieldResultsButtonElement> m_resultsButton;
+    RefPtr<HTMLSearchFieldCancelButtonElement> m_cancelButton;
+
     bool m_dirty;
     bool m_multiLine;
-
+    bool m_placeholderVisible;
+    
+    RefPtr<SearchPopupMenu> m_searchPopup;
+    bool m_searchPopupIsVisible;
+    mutable Vector<String> m_recentSearches;
 };
 
 }

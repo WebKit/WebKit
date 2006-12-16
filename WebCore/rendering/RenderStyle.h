@@ -723,8 +723,9 @@ enum EAppearance {
     ScrollbarThumbHorizontalAppearance, ScrollbarThumbVerticalAppearance,
     ScrollbarGripperHorizontalAppearance, ScrollbarGripperVerticalAppearance,
     SliderHorizontalAppearance, SliderVerticalAppearance, SliderThumbHorizontalAppearance,
-    SliderThumbVerticalAppearance, CaretAppearance, SearchFieldAppearance, SearchFieldResultsAppearance,
-    SearchFieldCloseAppearance, TextFieldAppearance, TextAreaAppearance
+    SliderThumbVerticalAppearance, CaretAppearance, SearchFieldAppearance, SearchFieldDecorationAppearance,
+    SearchFieldResultsDecorationAppearance, SearchFieldResultsButtonAppearance,
+    SearchFieldCancelButtonAppearance, TextFieldAppearance, TextAreaAppearance
 };
 
 // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
@@ -964,7 +965,8 @@ class RenderStyle
 
 public:
     // static pseudo styles. Dynamic ones are produced on the fly.
-    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED, FILE_UPLOAD_BUTTON, SLIDER_THUMB };
+    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED, FILE_UPLOAD_BUTTON, SLIDER_THUMB, 
+                    SEARCH_CANCEL_BUTTON, SEARCH_DECORATION, SEARCH_RESULTS_DECORATION, SEARCH_RESULTS_BUTTON };
 
     void ref() { m_ref++;  }
     void deref(RenderArena* arena) { 
@@ -1080,7 +1082,7 @@ protected:
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
-        unsigned _pseudoBits : 8;
+        unsigned _pseudoBits : 12;
         unsigned _unicodeBidi : 2; // EUnicodeBidi
     } noninherited_flags;
 

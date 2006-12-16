@@ -92,6 +92,8 @@ button {
     top: 1px;
     right: 10px;
     width: 90px;
+    -webkit-user-select: text;
+    text-shadow: none;
 }
 
 #searchCount {

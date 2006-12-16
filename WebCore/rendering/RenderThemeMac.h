@@ -89,17 +89,34 @@ protected:
     
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    
+    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
+    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    
+    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    
+    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    
+    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+        
 private:
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle*) const;
+    NSControlSize controlSizeForSystemFont(RenderStyle*) const;
     void setControlSize(NSCell*, const IntSize* sizes, const IntSize& minSize);
     void setSizeFromFont(RenderStyle*, const IntSize* sizes) const;
     IntSize sizeForFont(RenderStyle*, const IntSize* sizes) const;
+    IntSize sizeForSystemFont(RenderStyle*, const IntSize* sizes) const;
     void setFontFromControlSize(CSSStyleSelector*, RenderStyle*, NSControlSize) const;
-    
+
     void updateCheckedState(NSCell*, const RenderObject*);
     void updateEnabledState(NSCell*, const RenderObject*);
     void updateFocusedState(NSCell*, const RenderObject*);
@@ -125,16 +142,27 @@ private:
     const int* popupButtonMargins() const;
     const int* popupButtonPadding(NSControlSize) const;
     void paintMenuListButtonGradients(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    const IntSize* menuListSizes() const;
 
+    const IntSize* cancelButtonSizes() const;
+    const IntSize* resultsButtonSizes() const;
+    void setSearchCellState(RenderObject*, const IntRect&);
+    
 private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;
     NSButtonCell* button;
+    NSPopUpButtonCell* popupButton;
+
+    NSSearchFieldCell* search;
+    NSButtonCell* searchButton;
+    NSMenu* searchMenu;
+    
     NSSliderCell* sliderThumbHorizontalCell;
     NSSliderCell* sliderThumbVerticalCell;
     bool sliderHorizontalCellIsPressed;
     bool sliderVerticalCellIsPressed;
-    NSPopUpButtonCell* popupButton;
+    
     Image* resizeCornerImage;
 };
 

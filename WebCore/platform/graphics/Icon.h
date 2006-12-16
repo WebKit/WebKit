@@ -49,7 +49,11 @@ public:
     static PassRefPtr<Icon> newIconForFile(const String& filename);
 
     void paint(GraphicsContext*, const IntRect&);
-    
+
+#if PLATFORM(WIN)
+    Icon(HICON);
+#endif
+
 private:
 #if PLATFORM(MAC)
     NSImage* m_nsImage;

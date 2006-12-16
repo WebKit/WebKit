@@ -1642,7 +1642,19 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 return true;
             case CSSSelector::PseudoSliderThumb:
                 dynamicPseudo = RenderStyle::SLIDER_THUMB;
-                return true;                
+                return true; 
+            case CSSSelector::PseudoSearchCancelButton:
+                dynamicPseudo = RenderStyle::SEARCH_CANCEL_BUTTON;
+                return true; 
+            case CSSSelector::PseudoSearchDecoration:
+                dynamicPseudo = RenderStyle::SEARCH_DECORATION;
+                return true;
+            case CSSSelector::PseudoSearchResultsDecoration:
+                dynamicPseudo = RenderStyle::SEARCH_RESULTS_DECORATION;
+                return true;
+            case CSSSelector::PseudoSearchResultsButton:
+                dynamicPseudo = RenderStyle::SEARCH_RESULTS_BUTTON;
+                return true;
             case CSSSelector::PseudoNotParsed:
                 assert(false);
                 break;

@@ -40,7 +40,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "csshelper.h"
-#include "RenderLineEdit.h"
+#include "RenderTextControl.h"
 
 namespace WebCore {
 
@@ -358,8 +358,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
             HTMLInputElement* input = static_cast<HTMLInputElement*>(current);
             if (input->isTextField()) {
                 frame->loader()->recordFormValue(input->name(), input->value(), this);
-                if (input->renderer() && input->inputType() == HTMLInputElement::SEARCH)
-                    static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
+                if (input->isSearchField())
+                    input->addSearchResult();
             }
         }
         if (needButtonActivation) {

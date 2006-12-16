@@ -506,8 +506,10 @@ sliderthumb-horizontal
 sliderthumb-vertical
 caret
 searchfield
-searchfield-results
-searchfield-close
+searchfield-decoration
+searchfield-results-decoration
+searchfield-results-button
+searchfield-cancel-button
 textfield
 textarea
 

@@ -448,6 +448,7 @@ _wkCreateURLNPasteboardFlavorTypeName
 _wkCreateURLPasteboardFlavorTypeName
 _wkDrawBezeledTextArea
 _wkDrawBezeledTextFieldCell
+_wkDrawTextFieldCellFocusRing
 _wkDrawFocusRing
 _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup

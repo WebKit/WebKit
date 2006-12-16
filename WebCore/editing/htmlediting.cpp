@@ -240,14 +240,16 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
     
     Position p = nextVisuallyDistinctCandidate(position);
     Node* root = editableRootForPosition(position);
-    if (p.isNull() && root && root->isShadowNode())
-        p = Position(root->shadowParentNode(), maxDeepOffset(root->shadowParentNode()));
+    Node* shadowAncestor = root ? root->shadowAncestorNode() : 0;
+    if (p.isNull() && root && (shadowAncestor != root))
+        p = Position(shadowAncestor, maxDeepOffset(shadowAncestor));
     while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot)) {
         p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
         
-        Node* root = editableRootForPosition(position);
-        if (p.isNull() && root && root->isShadowNode())
-            p = Position(root->shadowParentNode(), maxDeepOffset(root->shadowParentNode()));
+        root = editableRootForPosition(position);
+        shadowAncestor = root ? root->shadowAncestorNode() : 0;
+        if (p.isNull() && root && (shadowAncestor != root))
+            p = Position(shadowAncestor, maxDeepOffset(shadowAncestor));
     }
 
     return VisiblePosition(p);
@@ -260,14 +262,16 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
     
     Position p = previousVisuallyDistinctCandidate(position);
     Node* root = editableRootForPosition(position);
-    if (p.isNull() && root && root->isShadowNode())
-        p = Position(root->shadowParentNode(), 0);
+    Node* shadowAncestor = root ? root->shadowAncestorNode() : 0;
+    if (p.isNull() && root && (shadowAncestor != root))
+        p = Position(shadowAncestor, 0);
     while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot)) {
         p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
         
-        Node* root = editableRootForPosition(position);
-        if (p.isNull() && root && root->isShadowNode())
-            p = Position(root->shadowParentNode(), 0);
+        root = editableRootForPosition(position);
+        shadowAncestor = root ? root->shadowAncestorNode() : 0;
+        if (p.isNull() && root && (shadowAncestor != root))
+            p = Position(shadowAncestor, 0);
     }
 
     return VisiblePosition(p);

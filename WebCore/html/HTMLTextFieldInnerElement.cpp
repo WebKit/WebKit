@@ -41,21 +41,74 @@ HTMLTextFieldInnerElement::HTMLTextFieldInnerElement(Document* doc, Node* shadow
 {
 }
 
-void HTMLTextFieldInnerElement::defaultEventHandler(Event* evt)
+HTMLTextFieldInnerTextElement::HTMLTextFieldInnerTextElement(Document* doc, Node* shadowParent)
+    : HTMLTextFieldInnerElement(doc, shadowParent)
+{
+}
+
+void HTMLTextFieldInnerTextElement::defaultEventHandler(Event* evt)
 {
     // FIXME: In the future, we should add a way to have default event listeners.  Then we would add one to the text field's inner div, and we wouldn't need this subclass.
-    if (shadowParentNode() && shadowParentNode()->renderer()) {
-        ASSERT((shadowParentNode()->renderer()->isTextField() && static_cast<HTMLInputElement*>(shadowParentNode())->isNonWidgetTextField()) || 
-                shadowParentNode()->renderer()->isTextArea());
+    Node* shadowAncestor = shadowAncestorNode();
+    if (shadowAncestor && shadowAncestor->renderer()) {
+        ASSERT((shadowAncestor->renderer()->isTextField() && static_cast<HTMLInputElement*>(shadowAncestor)->isNonWidgetTextField()) || 
+                shadowAncestor->renderer()->isTextArea());
         if (evt->isBeforeTextInsertedEvent())
-            if (shadowParentNode()->renderer()->isTextField())
-                static_cast<HTMLInputElement*>(shadowParentNode())->defaultEventHandler(evt);
+            if (shadowAncestor->renderer()->isTextField())
+                static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
             else
-                static_cast<HTMLTextAreaElement*>(shadowParentNode())->defaultEventHandler(evt);
+                static_cast<HTMLTextAreaElement*>(shadowAncestor)->defaultEventHandler(evt);
         if (evt->type() == khtmlEditableContentChangedEvent)
-            static_cast<RenderTextControl*>(shadowParentNode()->renderer())->subtreeHasChanged();
+            static_cast<RenderTextControl*>(shadowAncestor->renderer())->subtreeHasChanged();
     }
-    HTMLDivElement::defaultEventHandler(evt);
+    if (!evt->defaultHandled())
+        HTMLDivElement::defaultEventHandler(evt);
+}
+
+HTMLSearchFieldResultsButtonElement::HTMLSearchFieldResultsButtonElement(Document* doc)
+    : HTMLTextFieldInnerElement(doc)
+{
+}
+
+void HTMLSearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
+{
+    // On mousedown, bring up a menu, if needed
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    if (evt->type() == mousedownEvent) {
+        input->focus();
+        input->select();
+        if (input && input->renderer() && static_cast<RenderTextControl*>(input->renderer())->popupIsVisible())
+            static_cast<RenderTextControl*>(input->renderer())->hidePopup();
+        else if (input->maxResults() > 0)
+            static_cast<RenderTextControl*>(input->renderer())->showPopup();
+        evt->setDefaultHandled();
+    }
+    if (!evt->defaultHandled())
+        HTMLDivElement::defaultEventHandler(evt);
+}
+
+HTMLSearchFieldCancelButtonElement::HTMLSearchFieldCancelButtonElement(Document* doc)
+    : HTMLTextFieldInnerElement(doc)
+{
+}
+
+void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
+{
+    // If the element is visible, on mouseup, clear the value, and set selection
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    if (evt->type() == mousedownEvent) {
+        input->focus();
+        input->select();
+        evt->setDefaultHandled();
+    } else if (evt->type() == mouseupEvent) {
+        if (renderer() && renderer()->style()->visibility() == VISIBLE) {
+            input->setValue(String(""));
+            static_cast<RenderTextControl*>(input->renderer())->onSearch();
+            evt->setDefaultHandled();
+        }
+    }
+    if (!evt->defaultHandled())
+        HTMLDivElement::defaultEventHandler(evt);
 }
 
 }

@@ -1,3 +1,189 @@
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        WebCore part of fix for:
+        <rdar://problem/4463829> Switch to use new search field implementation for <input type="search">
+
+        * WebCore.xcodeproj/project.pbxproj: Added SearchPopupMenu.h, SearchPopupMenuMac.mm, and PopupMenuClient.h.
+
+        Added pseudo classes and corresponding values for -webkit appearance for the cancel button and for the three types of "decoration" that 
+        correspond to the different functions of the magnifier glass in the search field.  One for the button that will show and hide the
+        recent searches menu.  One for decoration when the results attribute is set, but no results are saved.  And one for decoration
+        when no results attribute is set.  We added these different pseudo elements so that RenderTextControl can decide which pseudo class
+        is appropriate, and each theme can decide for itself which kind of image is appropriate for each function.
+        
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Added to PseudoType enum.
+        * css/CSSValueKeywords.in: Added searchfield-decoration, searchfield-results-decoration, searchfield-results-button, searchfield-cancel-button values.
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::checkOneSelector): Added cases for -webkit-search-cancel-button, 
+          -webkit-search-decoration, -webkit-search-results-decoration, -webkit-search-results-button
+        * rendering/RenderStyle.cpp: Addes new pseudoBits for matching pseudoIds.
+        (WebCore::):
+        (WebCore::pseudoBit):
+        * rendering/RenderStyle.h: Added new appearance values and pseudoIds.
+        (WebCore::):
+        (WebCore::RenderStyle::):
+        * css/html4.css: Added style for input[type=search], and the new pseudo elements.
+
+        The structure of the shadow DOM for new search field adds an intermediate block that contains 3 inline-blocks for the magnifier, text element, and cancel button.
+        Since the tree has become deeper, some editing and event code that used to check for a shadowParent, really needs to check the shadowAncestorNode.
+
+        * editing/Editor.cpp: (WebCore::Editor::dispatchCPPEvent): Check shadowAncestorNode instead of shadowParentNode.
+        * editing/Selection.cpp: (WebCore::Selection::adjustForEditableContent): ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot): ditto.
+        (WebCore::lastEditablePositionBeforePositionInRoot): ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): ditto.
+        (WebCore::ReplaceSelectionCommand::shouldMerge): Nil check enclosingBlock call.  I ran into this while testing search fields in mixed editability.
+        (WebCore::ReplaceSelectionCommand::doApply): ditto.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::submit): Remove use of RenderLineEdit.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectionStart): ditto.
+        (WebCore::HTMLInputElement::selectionEnd): ditto.
+        (WebCore::HTMLInputElement::setSelectionStart): ditto.
+        (WebCore::HTMLInputElement::setSelectionEnd): ditto.
+        (WebCore::HTMLInputElement::select): ditto.
+        (WebCore::HTMLInputElement::setSelectionRange): ditto.
+        (WebCore::HTMLInputElement::parseMappedAttribute): ditto.
+        (WebCore::HTMLInputElement::createRenderer): ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): ditto.
+        (WebCore::HTMLInputElement::addSearchResult): Added. Calls addSearchResult on the renderer.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isNonWidgetTextField): Added case for search field.
+        (WebCore::HTMLInputElement::isSearchField): Added.
+
+        * platform/PopupMenu.h: Broke PopupMenuClient out into a separate file.
+        * platform/PopupMenuClient.h: Added.
+        (WebCore::PopupMenuClient::~PopupMenuClient):
+        * platform/graphics/Icon.h:
+
+        * platform/SearchPopupMenu.h: Added. Saves and loads recent search vector.
+        (WebCore::SearchPopupMenu::create):
+        * platform/mac/SearchPopupMenuMac.mm: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::autosaveKey):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+
+        * html/HTMLTextFieldInnerElement.h: Reorganized this class.
+          Added subclasses HTMLTextFieldInnerTextElement, HTMLSearchFieldResultsButtonElement, HTMLSearchFieldCancelButtonElement
+        (WebCore::HTMLTextFieldInnerElement::isMouseFocusable): Added.  Returns false so setFocusNodeIfNeeded 
+         will try to focus the input element instead of nodes in the shadow tree.
+        (WebCore::HTMLTextFieldInnerElement::isShadowNode): Now returns whether or not a shadowParent has been specified.
+         * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLTextFieldInnerTextElement::HTMLTextFieldInnerTextElement):
+        (WebCore::HTMLTextFieldInnerTextElement::defaultEventHandler): Moved this from the old HTMLTextFieldInnerElement class.
+        (WebCore::HTMLSearchFieldResultsButtonElement::HTMLSearchFieldResultsButtonElement):
+        (WebCore::HTMLSearchFieldResultsButtonElement::defaultEventHandler): Shows and hides recent searches menu.
+        (WebCore::HTMLSearchFieldCancelButtonElement::HTMLSearchFieldCancelButtonElement):
+        (WebCore::HTMLSearchFieldCancelButtonElement::defaultEventHandler): On mouse up, clears the value from the text field.
+
+       * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::listSize): Changed return type to unsigned.
+        * rendering/RenderMenuList.h: (WebCore::RenderMenuList::valueShouldChangeOnHotTrack): Added.
+        
+        * WebCore.exp: Export _wkDrawTextFieldCellFocusRing.
+        * platform/mac/WebCoreSystemInterface.h: Added wkDrawTextFieldCellFocusRing
+        * platform/mac/WebCoreSystemInterface.mm: ditto.
+
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::popupIsVisible): Added so HTMLSearchFieldResultsButtonElement knows whether or not the menu is already up.
+        (WebCore::RenderTextControl::shouldPopOver): Added as a PopupClient method so the results menu shows up under the control instead of over.
+        (WebCore::RenderTextControl::valueShouldChangeOnHotTrack):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl): Initialize m_placeholderIsVisible, m_searchPopup, and m_searchPopupIsVisible.
+        (WebCore::RenderTextControl::~RenderTextControl): Detach the node at the top of the shadow tree (m_innerBlock for search fields, and m_innerText for other text controls).
+        (WebCore::RenderTextControl::setStyle): Sets style on new elements.
+        (WebCore::disabledTextColor): Added so this can be used in setPlaceholder.
+        (WebCore::RenderTextControl::createInnerBlockStyle): Added.
+        (WebCore::RenderTextControl::createInnerTextStyle): Added.
+        (WebCore::RenderTextControl::createResultsButtonStyle): Added.
+        (WebCore::RenderTextControl::createCancelButtonStyle): Added.
+        (WebCore::RenderTextControl::showPlaceholderIfNeeded): Added. Shows the placeholder if there's no value and the field doesn't have focus.
+        (WebCore::RenderTextControl::hidePlaceholderIfNeeded): Added. Clears the placeholder if there's a value or the field has focus. 
+        (WebCore::RenderTextControl::createSubtreeIfNeeded): Added. Creates all of the shadow tree elements.
+        (WebCore::RenderTextControl::updateFromElement): Calls showPlaceholderIfNeeded.
+        (WebCore::RenderTextControl::visiblePositionForIndex): Renaming (m_div to m_innerText).
+        (WebCore::RenderTextControl::indexForVisiblePosition): ditto.
+        (WebCore::RenderTextControl::updateCancelButtonVisibility): Shows and hides cancel button based on the value of the control.
+        (WebCore::RenderTextControl::subtreeHasChanged): Fires onSearch if the incremental attribute is set.
+        (WebCore::RenderTextControl::text): Renaming.
+        (WebCore::RenderTextControl::textWithHardLineBreaks): ditto.
+        (WebCore::RenderTextControl::calcHeight): Take the size of the results button and cancel button into account when calculating height.
+        (WebCore::RenderTextControl::nodeAtPoint): Act as if we've hit the shadow tree elements based on the x coordinate of the mouse event.
+        (WebCore::RenderTextControl::layout): Set the height and width of the text block taking the other shadow tree elements into account.
+        (WebCore::RenderTextControl::calcMinMaxWidth): Take new shadow tree elements into account when calculating width.
+        (WebCore::RenderTextControl::forwardEvent): Forward events to appropriate shadow nodes.
+        (WebCore::RenderTextControl::scrollWidth): Renaming.
+        (WebCore::RenderTextControl::scrollHeight): ditto.
+        (WebCore::RenderTextControl::scrollLeft): ditto.
+        (WebCore::RenderTextControl::scrollTop): ditto.
+        (WebCore::RenderTextControl::setScrollLeft): ditto.
+        (WebCore::RenderTextControl::setScrollTop): ditto.
+        (WebCore::RenderTextControl::autosaveName): ditto.
+        (WebCore::RenderTextControl::addSearchResult): Added. Saves value to search result list.
+        (WebCore::RenderTextControl::onSearch): Added. Dispatches search event.
+        (WebCore::RenderTextControl::showPopup): Added. Loads searches, and displays menu.
+        (WebCore::RenderTextControl::hidePopup): Added PopupClient method.
+        (WebCore::RenderTextControl::valueChanged): Added PopupClient method. Interprets the selected menu item index, and either sets the value and 
+         fires onSearch, or clears all recent searches for this autosave name.
+        (WebCore::RenderTextControl::itemText): Added PopupClient method.
+        (WebCore::RenderTextControl::itemIsEnabled): Added PopupClient method.
+        (WebCore::RenderTextControl::itemStyle): ditto.
+        (WebCore::RenderTextControl::clientStyle): ditto.
+        (WebCore::RenderTextControl::clientDocument): ditto.
+        (WebCore::RenderTextControl::clientPaddingLeft): ditto.
+        (WebCore::RenderTextControl::clientPaddingRight): ditto.
+        (WebCore::RenderTextControl::listSize): ditto.
+        (WebCore::RenderTextControl::selectedIndex): ditto.
+        (WebCore::RenderTextControl::itemIsSeparator): ditto.
+        (WebCore::RenderTextControl::itemIsLabel): ditto.
+        (WebCore::RenderTextControl::itemIsSelected): ditto.
+        (WebCore::RenderTextControl::setTextFromItem): ditto.
+
+        * rendering/RenderTheme.cpp: Added search field theme.
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::isControlStyled): Returns false for search fields, until we've worked out the kinks.
+        (WebCore::RenderTheme::adjustSearchFieldStyle):
+        (WebCore::RenderTheme::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsButtonStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintSearchField):
+        (WebCore::RenderTheme::paintSearchFieldCancelButton):
+        (WebCore::RenderTheme::paintSearchFieldDecoration):
+        (WebCore::RenderTheme::paintSearchFieldResultsDecoration):
+        (WebCore::RenderTheme::paintSearchFieldResultsButton):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::sizeForSystemFont): Added.  Compares style's font to systemFontSizeForControlSize to determine
+         what controlSize to use after a style's font has already been initially adjusted.
+        (WebCore::RenderThemeMac::controlSizeForSystemFont): Added. ditto.
+        (WebCore::RenderThemeMac::paintCheckbox):
+        (WebCore::RenderThemeMac::paintRadio):
+        (WebCore::RenderThemeMac::menuListSizes): 
+        (WebCore::RenderThemeMac::minimumMenuListSize): Uses sizeForSystemFont instead of hardcoded adjusted font sizes.
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::cancelButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::resultsButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldDecoration):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2006-12-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam (and partially Geoff).

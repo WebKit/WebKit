@@ -300,7 +300,7 @@ int RenderMenuList::clientPaddingRight() const
     return paddingRight();
 }
 
-int RenderMenuList::listSize() const
+unsigned RenderMenuList::listSize() const
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     return select->listItems().size();

@@ -24,6 +24,7 @@
 #include "Shared.h"
 
 #include "IntRect.h"
+#include "PopupMenuClient.h"
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
@@ -41,32 +42,7 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
-class Document;
 class FrameView;
-class String;
-class RenderStyle;
-
-class PopupMenuClient {
-public:
-    virtual ~PopupMenuClient() {}
-    virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
-
-    virtual String itemText(unsigned listIndex) const = 0;
-    virtual bool itemIsEnabled(unsigned listIndex) const = 0;
-    virtual RenderStyle* itemStyle(unsigned listIndex) const = 0;
-    virtual RenderStyle* clientStyle() const = 0;
-    virtual Document* clientDocument() const = 0;
-    virtual int clientPaddingLeft() const = 0;
-    virtual int clientPaddingRight() const = 0;
-    virtual int listSize() const = 0;
-    virtual int selectedIndex() const = 0;
-    virtual void hidePopup() = 0;
-    virtual bool itemIsSeparator(unsigned listIndex) const = 0;
-    virtual bool itemIsLabel(unsigned listIndex) const = 0;
-    virtual bool itemIsSelected(unsigned listIndex) const = 0;
-    virtual bool shouldPopOver() const = 0;
-    virtual void setTextFromItem(unsigned listIndex) = 0;
-};
 
 class PopupMenu : public Shared<PopupMenu> {
 public:
@@ -92,7 +68,7 @@ public:
 
     int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
 
-    bool setFocusedIndex(int index, bool setControlText = true, bool fireOnChange = false);
+    bool setFocusedIndex(int index, bool hotTracking = false, bool fireOnChange = false);
     int focusedIndex() const;
     void focusFirst();
     void focusLast();

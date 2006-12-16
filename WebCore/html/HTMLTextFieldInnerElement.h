@@ -37,14 +37,31 @@ class HTMLTextFieldInnerElement : public HTMLDivElement
 public:
     HTMLTextFieldInnerElement(Document*, Node* shadowParent = 0);
     
-    virtual void defaultEventHandler(Event*);
-    virtual bool isShadowNode() const { return true; }
-
+    virtual bool isMouseFocusable() const { return false; } 
+    virtual bool isShadowNode() const { return m_shadowParent; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
     void setShadowParentNode(Node* node) { m_shadowParent = node; }
     
 private:
     Node* m_shadowParent;
+};
+
+class HTMLTextFieldInnerTextElement : public HTMLTextFieldInnerElement {
+public:
+    HTMLTextFieldInnerTextElement(Document*, Node* shadowParent);        
+    virtual void defaultEventHandler(Event*);
+};
+
+class HTMLSearchFieldResultsButtonElement : public HTMLTextFieldInnerElement {
+public:
+    HTMLSearchFieldResultsButtonElement(Document*);
+    virtual void defaultEventHandler(Event*);
+};
+
+class HTMLSearchFieldCancelButtonElement : public HTMLTextFieldInnerElement {
+public:
+    HTMLSearchFieldCancelButtonElement(Document*);
+    virtual void defaultEventHandler(Event*);
 };
 
 } //namespace

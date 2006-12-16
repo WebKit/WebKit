@@ -155,6 +155,21 @@ protected:
 
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+    
+    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+
+    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+    
+    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+    
+    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+    
+    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

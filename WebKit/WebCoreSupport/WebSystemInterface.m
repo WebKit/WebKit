@@ -48,6 +48,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateURLNPasteboardFlavorTypeName);
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
+    INIT(DrawTextFieldCellFocusRing);
     INIT(DrawFocusRing);
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
