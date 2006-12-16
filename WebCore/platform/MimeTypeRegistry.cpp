@@ -74,33 +74,46 @@ static void initialiseSupportedImageMIMETypes()
     supportedImageMIMETypes->remove("application/postscript");
 
 #else
-    //assume that all implementations at least support
-    supportedImageMIMETypes->add("image/jpeg");
-    supportedImageMIMETypes->add("image/png");
-    supportedImageMIMETypes->add("image/gif");
-    supportedImageMIMETypes->add("image/bmp");
+    // assume that all implementations at least support the following standard
+    // image types:
+    static const char* types[] = {
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/bmp",
+      "image/x-icon",    // ico
+      "image/x-xbitmap"  // xbm
+    };
+    for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i) {
+      supportedImageMIMETypes->add(types[i]);
+      supportedImageResourceMIMETypes->add(types[i]);
+    }
 #endif
 }
 
 static void initialiseSupportedNonImageMimeTypes()
 {
-    supportedNonImageMIMETypes->add("text/html");
-    supportedNonImageMIMETypes->add("text/xml");
-    supportedNonImageMIMETypes->add("text/xsl");
-    supportedNonImageMIMETypes->add("text/plain");
-    supportedNonImageMIMETypes->add("text/");
-    supportedNonImageMIMETypes->add("application/x-javascript");
-    supportedNonImageMIMETypes->add("application/xml");
-    supportedNonImageMIMETypes->add("application/xhtml+xml");
-    supportedNonImageMIMETypes->add("application/rss+xml");
-    supportedNonImageMIMETypes->add("application/atom+xml");
+    static const char* types[] = {
+      "text/html",
+      "text/xml",
+      "text/xsl",
+      "text/plain",
+      "text/",
+      "application/x-javascript",
+      "application/xml",
+      "application/xhtml+xml",
+      "application/rss+xml",
+      "application/atom+xml",
 #if PLATFORM(MAC)
-    supportedNonImageMIMETypes->add("application/x-webarchive");
+      "application/x-webarchive",
 #endif
-    supportedNonImageMIMETypes->add("multipart/x-mixed-replace");
+      "multipart/x-mixed-replace",
 #ifdef SVG_SUPPORT
-    supportedNonImageMIMETypes->add("image/svg+xml");
+      "image/svg+xml"
 #endif
+    };
+    for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i)
+      supportedNonImageMIMETypes->add(types[i]);
 }
 
 static void initialiseMimeTypeRegistry()

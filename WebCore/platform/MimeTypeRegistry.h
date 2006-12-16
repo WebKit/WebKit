@@ -36,9 +36,19 @@ namespace WebCore
 class MimeTypeRegistry {
 public:
     static String getMIMETypeForExtension(const String &ext);
+    
+    // Check to see if a mime type is suitable for being loaded inline as an
+    // image (e.g., <img> tags).
     static bool  isSupportedImageMIMEType(const String &mimeType);   
+
+    // Check to see if a mime type is suitable for being loaded as an image
+    // document in a frame.
     static bool  isSupportedImageResourceMIMEType(const String &mimeType);    
+
+    // Check to see if a non-image mime type is suitable for being loaded as a
+    // document in a frame.
     static bool  isSupportedNonImageMIMEType(const String &mimeType);
+
     static const HashSet<String> &getSupportedImageMIMETypes();
     static const HashSet<String> &getSupportedImageResourceMIMETypes();
     static const HashSet<String> &getSupportedNonImageMIMETypes();
