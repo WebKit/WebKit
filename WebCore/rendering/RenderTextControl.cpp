@@ -951,4 +951,12 @@ void RenderTextControl::setTextFromItem(unsigned listIndex)
     static_cast<HTMLInputElement*>(node())->setValue(itemText(listIndex));
 }
 
+bool RenderTextControl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+{
+    RenderLayer *l = m_innerText->renderer()->layer();
+    if (l && l->scroll(direction, granularity, multiplier))
+        return true;
+    return RenderObject::scroll(direction, granularity, multiplier);
+}
+
 }

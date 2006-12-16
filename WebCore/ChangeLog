@@ -1,3 +1,14 @@
+2006-12-16  Hunter L. Williams <hlwebkit@gmail.com>
+
+        Reviewed by Adele.
+
+        Fix mouse wheel scrolling in <textarea> controls.
+
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        Override |scroll| on RenderTextControl to forward the call to the RenderObject of the 
+        inner m_innerText, which has a layer that can be scrolled.
+
 2006-12-16  Adele Peterson  <adele@apple.com>
 
         RS by Adam.
