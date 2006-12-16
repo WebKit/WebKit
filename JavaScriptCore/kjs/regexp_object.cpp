@@ -397,12 +397,12 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
       reflags |= RegExp::IgnoreCase;
   if (multiline)
       reflags |= RegExp::Multiline;
-  RegExp* re = new RegExp(p, reflags);
-  if (!re->isValid()) {
-    delete re;
-    return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(re->errorMessage()));
-  }
-  dat->setRegExp(re);
+
+  OwnPtr<RegExp> re(new RegExp(p, reflags));
+  if (!re->isValid())
+      return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(re->errorMessage()));
+
+  dat->setRegExp(re.release());
 
   return dat;
 }

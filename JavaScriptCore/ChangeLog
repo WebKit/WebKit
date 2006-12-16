@@ -1,3 +1,12 @@
+2006-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Rob.
+
+        A deleted object was accessed to prepare RegExp construction error messages.
+
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::construct): Wrap the RegExp into an OwnPtr.
+
 2006-12-16  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Alexey.
