@@ -343,6 +343,10 @@ public:
     virtual int previousOffset(int current) const;
     virtual int nextOffset(int current) const;
     
+    // FIXME: We should try to find a better location for these methods.
+    virtual bool canSelectAll() const { return false; }
+    virtual void selectAll() { }
+
 #ifndef NDEBUG
     virtual void dump(TextStream*, DeprecatedString indent = "") const;
 #endif

@@ -355,6 +355,21 @@ bool HTMLSelectElement::isMouseFocusable() const
     return HTMLGenericFormElement::isMouseFocusable();
 }
 
+void HTMLSelectElement::selectAll()
+{
+    ASSERT(!usesMenuList());
+    if (!multiple())
+        return;
+    
+    m_activeSelectionState = true;
+    setActiveSelectionAnchorIndex(nextSelectableListIndex(-1));
+    setActiveSelectionEndIndex(previousSelectableListIndex(-1));
+    
+    updateListBoxSelection(false);
+    renderer()->repaint();
+    listBoxOnChange();
+}
+
 RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     if (usesMenuList())

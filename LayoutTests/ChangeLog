@@ -1,3 +1,13 @@
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11189
+        <rdar://problem/4770249> REGRESSION (NativeListBox): When a list box has focus, pressing command- A (select all) doesn't selected all items in list
+
+        * fast/forms/listbox-select-all-expected.txt: Added.
+        * fast/forms/listbox-select-all.html: Added.
+
 2006-12-16  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Oliver.

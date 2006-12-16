@@ -1,3 +1,21 @@
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11189
+        <rdar://problem/4770249> REGRESSION (NativeListBox): When a list box has focus, pressing command- A (select all) doesn't selected all items in list
+
+        Test: fast/forms/listbox-select-all.html
+
+        * dom/Node.h: We should try to find a more appropriate place to put these methods.
+        (WebCore::Node::canSelectAll): Added.
+        (WebCore::Node::selectAll): Added.
+        * editing/SelectionController.cpp: (WebCore::SelectionController::selectAll): Before selecting editable content, give the focused node
+          a chance to select its content.
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::selectAll): Selects all items in a multi-select list box.  Single-select
+          list boxes will just do nothing, but we still want the select to handle this case when it has focus, rather than selecting other content.
+        * html/HTMLSelectElement.h: (WebCore::HTMLSelectElement::canSelectAll): Returns true for list boxes.
+
 2006-12-16  Zack Rusin  <zack@kde.org>
 
         Add a stub for SearchPopupMenu for Qt code.
