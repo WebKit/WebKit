@@ -39,7 +39,7 @@ public:
     virtual void contextMenuDestroyed();
     
     virtual void addCustomContextMenuItems(WebCore::ContextMenu*);
-    virtual void contextMenuItemSelected(const WebCore::ContextMenuItem*);
+    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
     virtual void copyLinkToClipboard(const WebCore::HitTestResult&);
     virtual void downloadURL(const WebCore::KURL&);

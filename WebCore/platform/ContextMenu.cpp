@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ContextMenu.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSProperty.h"
+#include "CSSPropertyNames.h"
 #include "ContextMenuController.h"
 #include "Document.h"
 #include "Editor.h"
@@ -36,6 +39,7 @@
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+
 
 namespace WebCore {
 
@@ -48,13 +52,14 @@ ContextMenuController* ContextMenu::controller() const
     return 0;
 }
 
-static const ContextMenuItem* separatorItem()
+static ContextMenuItem* separatorItem()
 {
     return new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String());
 }
 
-static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& fontMenuItem)
+static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuItem& fontMenuItem)
 {
+    ContextMenu* fontMenu = new ContextMenu(result);
 #if PLATFORM(MAC)
     ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, "Show Fonts");
 #endif
@@ -67,7 +72,6 @@ static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& font
     ContextMenuItem showColors(ActionType, ContextMenuItemTagShowColors, "Show Colors");
 #endif
 
-    ContextMenu* fontMenu = new ContextMenu(result);
 #if PLATFORM(MAC)
     fontMenu->appendItem(showFonts);
 #endif
@@ -85,14 +89,14 @@ static void createFontSubMenu(const HitTestResult& result, ContextMenuItem& font
 }
 
 #ifndef BUILDING_ON_TIGER
-static void createSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
+static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
+    ContextMenu* spellingAndGrammarMenu = new ContextMenu(result);
     ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, "Show Spelling and Grammar");
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, "Check Document Now");
     ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling While Typing");
     ContextMenuItem grammarWithSpelling(ActionType, ContextMenuItemTagCheckGrammarWithSpelling, "Check Grammar With Spelling");
 
-    ContextMenu* spellingAndGrammarMenu = new ContextMenu(result);
     spellingAndGrammarMenu->appendItem(showSpellingPanel);
     spellingAndGrammarMenu->appendItem(checkSpelling);
     spellingAndGrammarMenu->appendItem(checkAsYouType);
@@ -100,43 +104,41 @@ static void createSpellingAndGrammarSubMenu(const HitTestResult& result, Context
 
     spellingAndGrammarMenuItem.setSubMenu(spellingAndGrammarMenu);
 }
-#else
-static void createSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
+#endif
+
+static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
 {
+    ContextMenu* spellingMenu = new ContextMenu(result);
     ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, "Spelling...");
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, "Check Spelling");
     ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, "Check Spelling as You Type");
 
-    ContextMenu* spellingMenu = new ContextMenu(result);
     spellingMenu->appendItem(showSpellingPanel);
     spellingMenu->appendItem(checkSpelling);
     spellingMenu->appendItem(checkAsYouType);
 
     spellingMenuItem.setSubMenu(spellingMenu);
 }
-#endif
 
-#if PLATFORM(MAC)
-static void createSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
+static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
+    ContextMenu* speechMenu = new ContextMenu(result);
     ContextMenuItem start(ActionType, ContextMenuItemTagStartSpeaking, "Start Speaking");
     ContextMenuItem stop(ActionType, ContextMenuItemTagStartSpeaking, "Stop Speaking");
 
-    ContextMenu* speechMenu = new ContextMenu(result);
     speechMenu->appendItem(start);
     speechMenu->appendItem(stop);
 
     speechMenuItem.setSubMenu(speechMenu);
 }
-#endif
 
-static void createWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
+static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
 {
+    ContextMenu* writingDirectionMenu = new ContextMenu(result);
     ContextMenuItem defaultItem(ActionType, ContextMenuItemTagDefaultDirection, "Default");
     ContextMenuItem ltr(ActionType, ContextMenuItemTagLeftToRight, "Left to Right");
     ContextMenuItem rtl(ActionType, ContextMenuItemTagRightToLeft, "Right to Left");
 
-    ContextMenu* writingDirectionMenu = new ContextMenu(result);
     writingDirectionMenu->appendItem(defaultItem);
     writingDirectionMenu->appendItem(ltr);
     writingDirectionMenu->appendItem(rtl);
@@ -289,26 +291,135 @@ void ContextMenu::populate()
             appendItem(*separatorItem());
 #ifndef BUILDING_ON_TIGER
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, "Spelling and Grammar");
-            createSpellingAndGrammarSubMenu(m_hitTestResult, SpellingAndGrammarMenuItem);
+            createAndAppendSpellingAndGrammarSubMenu(m_hitTestResult, SpellingAndGrammarMenuItem);
             appendItem(SpellingAndGrammarMenuItem);
 #else
             ContextMenuItem SpellingMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, "Spelling");
-            createSpellingSubMenu(m_hitTestResult, SpellingMenuItem);
+            createAndAppendSpellingSubMenu(m_hitTestResult, SpellingMenuItem);
             appendItem(SpellingMenuItem);
 #endif
             ContextMenuItem  FontMenuItem(SubmenuType, ContextMenuItemTagFontMenu, "Font");
-            createFontSubMenu(m_hitTestResult, FontMenuItem);
+            createAndAppendFontSubMenu(m_hitTestResult, FontMenuItem);
             appendItem(FontMenuItem);
 #if PLATFORM(MAC)
             ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, "Speech");
-            createSpeechSubMenu(m_hitTestResult, SpeechMenuItem);
+            createAndAppendSpeechSubMenu(m_hitTestResult, SpeechMenuItem);
             appendItem(SpeechMenuItem);
 #endif
             ContextMenuItem WritingDirectionMenuItem(SubmenuType, ContextMenuItemTagWritingDirectionMenu, "Writing Direction");
-            createWritingDirectionSubMenu(m_hitTestResult, WritingDirectionMenuItem);
+            createAndAppendWritingDirectionSubMenu(m_hitTestResult, WritingDirectionMenuItem);
             appendItem(WritingDirectionMenuItem);
         }
     }
+}
+
+static bool triStateToBool(Frame::TriState state)
+{
+    return state == Frame::trueTriState;
+}
+
+void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
+{
+    if (item.type() == SeparatorType)
+        return;
+    
+    Document* document = m_hitTestResult.innerNonSharedNode()->document();
+    if (!document)
+        return;
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+
+    bool shouldEnable = true;
+    bool shouldCheck = false; 
+
+    switch (item.action()) {
+        case ContextMenuItemTagCheckSpelling:
+            shouldEnable = frame->editor()->canEdit();
+            break;
+        case ContextMenuItemTagDefaultDirection:
+            shouldCheck = false;
+            shouldEnable = false;
+            break;
+        case ContextMenuItemTagLeftToRight:
+        case ContextMenuItemTagRightToLeft: {
+            ExceptionCode ec = 0;
+            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
+            String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr" : "rtl";
+            style->setProperty(CSS_PROP_DIRECTION, direction, false, ec);
+            shouldCheck = triStateToBool(frame->selectionHasStyle(style.get()));
+            shouldEnable = true;
+            break;
+        }
+        case ContextMenuItemTagCopy:
+            shouldEnable = frame->editor()->canDHTMLCopy() || frame->editor()->canCopy();
+            break;
+        case ContextMenuItemTagCut:
+            shouldEnable = frame->editor()->canDHTMLCut() || frame->editor()->canCut();
+            break;
+        case ContextMenuItemTagIgnoreSpelling:
+        case ContextMenuItemTagLearnSpelling:
+            shouldEnable = frame->selectionController()->isRange();
+            break;
+        case ContextMenuItemTagPaste:
+            shouldEnable = frame->editor()->canDHTMLPaste() || (frame->editor()->canPaste() && 
+                frame->selectionController()->isContentRichlyEditable());
+            break;
+        case ContextMenuItemTagUnderline: {
+            ExceptionCode ec = 0;
+            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
+            style->setProperty(CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "underline", false, ec);
+            shouldCheck = triStateToBool(frame->selectionHasStyle(style.get()));
+            shouldEnable = frame->editor()->canEditRichly();
+            break;
+        }
+        case ContextMenuItemTagLookUpInDictionary:
+            shouldEnable = frame->selectionController()->isRange();
+            break;
+#ifndef BUILDING_ON_TIGER
+        case ContextMenuItemTagCheckGrammarWithSpelling:
+            if (frame->editor()->isGrammarCheckingEnabled())
+                shouldCheck = true;
+            shouldEnable = true;
+            break;
+#endif
+        case ContextMenuItemTagItalic: {
+            ExceptionCode ec = 0;
+            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
+            style->setProperty(CSS_PROP_FONT_STYLE, "italic", false, ec);
+            shouldCheck = triStateToBool(frame->selectionHasStyle(style.get()));
+            shouldEnable = frame->editor()->canEditRichly();
+            break;
+        }
+        case ContextMenuItemTagBold: {
+            ExceptionCode ec = 0;
+            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
+            style->setProperty(CSS_PROP_FONT_WEIGHT, "bold", false, ec);
+            shouldCheck = triStateToBool(frame->selectionHasStyle(style.get()));
+            shouldEnable = frame->editor()->canEditRichly();
+            break;
+        }
+        case ContextMenuItemTagOutline:
+            shouldEnable = false;
+            break;
+#if PLATFORM(MAC)
+        case ContextMenuItemTagShowSpellingPanel:
+#ifndef BUILDING_ON_TIGER
+            if (frame->editor()->spellingPanelIsShowing())
+                setTitle(String("Hide Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
+            else
+                setTitle(String("Show Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
+#endif
+            shouldEnable = frame->editor()->canEdit();
+            break;
+#endif
+        default:
+            break;
+    }
+
+    item.setChecked(shouldCheck);
+    item.setEnabled(shouldEnable);
 }
 
 }

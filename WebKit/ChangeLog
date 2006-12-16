@@ -1,3 +1,20 @@
+2006-12-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit side of making WebCore context menus support state and
+        enabled/disabled.
+
+        * WebCoreSupport/WebContextMenuClient.h: contextMenuItemSelected
+        takes a pointer to the parentMenu now since menu items no longer
+        hold onto it.
+        * WebCoreSupport/WebContextMenuClient.mm: Same.
+        (WebContextMenuClient::contextMenuItemSelected): Same.
+        * WebView/WebHTMLView.m: Must call setAutoenablesItems:NO on our
+        menu.
+        (-[NSArray menuForEvent:]):
+        * WebView/WebUIDelegatePrivate.h: No need for if-def.
+
 2006-12-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

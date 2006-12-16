@@ -39,6 +39,7 @@ namespace WebCore {
 class Clipboard;
 class DeleteButtonController;
 class DocumentFragment;
+class FontData;
 class Frame;
 class HTMLElement;
 class Pasteboard;
@@ -87,6 +88,8 @@ public:
     void respondToChangedSelection(const Selection& oldSelection);
     void respondToChangedContents(const Selection& endingSelection);
     
+    const FontData* fontForSelection(bool&) const;
+    
     Frame::TriState selectionUnorderedListState() const;
     Frame::TriState selectionOrderedListState() const;
     
@@ -129,10 +132,11 @@ public:
     bool isSelectionMisspelled();
     Vector<String> guessesForMisspelledSelection();
     Vector<String> guessesForUngrammaticalSelection();
-    void showGuessPanel();
     void markMisspellingsInAdjacentWords(const VisiblePosition&);
     void markMisspellings(const Selection&);
     void advanceToNextMisspelling(bool startBeforeSelection = false);
+    void showSpellingGuessPanel();
+    bool spellingPanelIsShowing();
 
     bool shouldBeginEditing(Range* range);
     bool shouldEndEditing(Range* range);

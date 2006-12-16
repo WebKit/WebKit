@@ -111,11 +111,10 @@ static void openNewWindow(const KURL& urlToLoad, const Frame* frame)
 
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
-    ASSERT(item->parentMenu() == contextMenu());
     ASSERT(item->type() == ActionType);
 
     if (item->action() >= ContextMenuItemBaseApplicationTag) {
-        m_client->contextMenuItemSelected(item);
+        m_client->contextMenuItemSelected(item, m_contextMenu.get());
         return;
     }
 
@@ -253,7 +252,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->searchWithSpotlight();
             break;
         case ContextMenuItemTagShowSpellingPanel:
-            frame->editor()->showGuessPanel();
+            frame->editor()->showSpellingGuessPanel();
             break;
         case ContextMenuItemTagCheckSpelling:
             frame->editor()->advanceToNextMisspelling();

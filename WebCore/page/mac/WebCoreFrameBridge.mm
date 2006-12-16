@@ -38,9 +38,11 @@
 #import "DocLoader.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
+#import "Editor.h"
 #import "EditorClient.h"
 #import "EventHandler.h"
 #import "FloatRect.h"
+#import "FontData.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "FrameMac.h"
@@ -1423,7 +1425,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     bool multipleFonts = false;
     NSFont *font = nil;
     if (m_frame)
-        font = m_frame->fontForSelection(hasMultipleFonts ? &multipleFonts : 0);
+        font = m_frame->editor()->fontForSelection(multipleFonts)->getNSFont();
     if (hasMultipleFonts)
         *hasMultipleFonts = multipleFonts;
     return font;

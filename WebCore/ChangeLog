@@ -1,3 +1,73 @@
+2006-12-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam (and partially Geoff).
+
+        Primarily, this patch gives WebCore context menus the ability to
+        enable/disable and set state. It does a few other things along the
+        way, though. Some of the more noticeable things:
+               -Re-architects the ContextMenuItem class a bit so that the
+                ownership model is a bit less confusing. ContextMenuItem is
+                now *purely* a wrapper for the platformDescription. There
+                are no other member variables. If you ever need the
+                platformDescription outside of the MenuItem class, you have
+                to call releasePlatformDescription(), which transfers
+                ownership of the platformDescription to the caller.
+               -Moves fontForSelection() from FrameMac into Editor.cpp.
+                Turns out I don't need to use this function for my patch
+                after all, but it doesn't seem like a terrible idea to move
+                it anyway since we seem to be moving things from FrameMac
+                into Editor these days anyway.
+
+        * WebCore.exp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection): Moved in from FrameMac.
+        * editing/Editor.h: Same, and name change.
+        * editing/mac/EditorMac.mm: Name change.
+        * page/ContextMenuClient.h: contextMenuItemSelected() has to take a
+        pointer to the parent context menu since ContextMenuItem no longer
+        holds on to it.
+        * page/ContextMenuController.cpp: Same.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Same.
+        * page/mac/FrameMac.h: Move fontForSelection to Editor
+        * page/mac/FrameMac.mm: Same.
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge fontForSelection:]): Account for above.
+        * platform/ContextMenu.cpp:
+        (WebCore::separatorItem): Can't be const because appendItem now
+        expects a non-const menu item.
+        (WebCore::createAndAppendFontSubMenu): Change name for clarity.
+        (WebCore::createAndAppendSpellingAndGrammarSubMenu): Same.
+        (WebCore::createAndAppendSpellingSubMenu): Same.
+        (WebCore::createAndAppendSpeechSubMenu): Same.
+        (WebCore::createAndAppendWritingDirectionSubMenu): Same.
+        (WebCore::ContextMenu::populate): Account for above.
+        (WebCore::triStateToBool): New helper.
+        (WebCore::ContextMenu::checkOrEnableIfNeeded): Transfers
+        logic from WebHTMLView into WebCore to determine if menu items are
+        enabled or disabled and to determine if they require a check.
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h: Re-factored stuff so that our only
+        member variable is the platform description.
+        (WebCore::): Get rid of if-def.
+        * platform/cf/RetainPtr.h: Add releaseRef like in PassRefPtr.
+        (WebCore::RetainPtr::releaseRef):
+        * platform/mac/ContextMenuItemMac.mm: Same as .h
+        (WebCore::ContextMenuItem::ContextMenuItem): Same.
+        (WebCore::ContextMenuItem::releasePlatformDescription): Same.
+        (WebCore::ContextMenuItem::type): Same.
+        (WebCore::ContextMenuItem::platformSubMenu): Same.
+        (WebCore::ContextMenuItem::setType): Same.
+        (WebCore::ContextMenuItem::setTitle): Same.
+        (WebCore::ContextMenuItem::setSubMenu): Same.
+        (WebCore::ContextMenuItem::setChecked): Same.
+        (WebCore::ContextMenuItem::setEnabled): Same.
+        * platform/mac/ContextMenuMac.mm:
+        (-[WebCoreMenuTarget forwardContextMenuAction:]): Don't set the
+        parent menu.
+        (WebCore::setMenuItemTarget):
+        (WebCore::ContextMenu::appendItem): Call releasePlatformDescription
+        (WebCore::ContextMenu::insertItem): Same.
+
 2006-12-15  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Oliver.

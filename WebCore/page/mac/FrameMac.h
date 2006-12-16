@@ -152,7 +152,6 @@ public:
 
 public:
 
-    NSFont* fontForSelection(bool* hasMultipleFonts) const;
     NSDictionary* fontAttributesForSelectionStart() const;
     
     NSWritingDirection baseWritingDirectionForSelectionStart() const;

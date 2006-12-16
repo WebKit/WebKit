@@ -508,7 +508,7 @@ Vector<String> Editor::guessesForMisspelledSelection()
     return core([[NSSpellChecker sharedSpellChecker] guessesForWord:selectedString]);
 }
 
-void Editor::showGuessPanel()
+void Editor::showSpellingGuessPanel()
 {
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
@@ -528,6 +528,11 @@ void Editor::showGuessPanel()
     
     advanceToNextMisspelling(true);
     [spellingPanel orderFront:nil];
+}
+
+bool Editor::spellingPanelIsShowing()
+{
+    return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
 }
 
 void Editor::markMisspellingsInAdjacentWords(const VisiblePosition &p)

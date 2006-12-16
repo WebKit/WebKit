@@ -97,9 +97,7 @@ namespace WebCore {
         ContextMenuItemTagShowSpellingPanel,
         ContextMenuItemTagCheckSpelling,
         ContextMenuItemTagCheckSpellingWhileTyping,
-#ifndef BUILDING_ON_TIGER
         ContextMenuItemTagCheckGrammarWithSpelling,
-#endif
         ContextMenuItemTagFontMenu, // Font sub-menu
         ContextMenuItemTagShowFonts,
         ContextMenuItemTagBold,
@@ -126,38 +124,36 @@ namespace WebCore {
 
     class ContextMenuItem {
     public:
-        ContextMenuItem(PlatformMenuItemDescription, ContextMenu*);
-        ContextMenuItem(ContextMenu* parentMenu = 0, ContextMenu* subMenu = 0);
-        ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* parentMenu = 0, 
-            ContextMenu* subMenu = 0);
+        ContextMenuItem(PlatformMenuItemDescription);
+        ContextMenuItem(ContextMenu* subMenu = 0);
+        ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu = 0);
         ~ContextMenuItem();
 
-        ContextMenu* parentMenu() const { return m_parentMenu; }
-        PlatformMenuItemDescription platformDescription() const;
+        PlatformMenuItemDescription releasePlatformDescription();
 
-        ContextMenuItemType type() const { return m_type; }
-        void setType(ContextMenuItemType type) { m_type = type; }
+        ContextMenuItemType type();
+        void setType(ContextMenuItemType);
 
         ContextMenuAction action() const;
-        void setAction(ContextMenuAction action);
+        void setAction(ContextMenuAction);
 
         String title() const;
-        void setTitle(String title);
+        void setTitle(const String&) const;
 
         PlatformMenuDescription platformSubMenu() const;
-        void setSubMenu(ContextMenu* subMenu);
+        void setSubMenu(ContextMenu*);
+
+        void setChecked(bool) const;
+        void setEnabled(bool) const;
 
         // FIXME: Do we need a keyboard accelerator here?
 
     private:
-        ContextMenu* m_parentMenu;
 #if PLATFORM(MAC)
         RetainPtr<NSMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif
-        OwnPtr<ContextMenu> m_subMenu;
-        ContextMenuItemType m_type;
     };
 
 }

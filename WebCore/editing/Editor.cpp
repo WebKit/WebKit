@@ -43,6 +43,7 @@
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FontData.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -298,6 +299,56 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
     if (client())
         client()->respondToChangedContents();  
     m_deleteButtonController->respondToChangedContents();
+}
+
+const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
+{
+    if (hasMultipleFonts)
+        hasMultipleFonts = false;
+
+    if (!m_frame->selectionController()->isRange()) {
+        Node* nodeToRemove;
+        RenderStyle* style = m_frame->styleForSelectionStart(nodeToRemove); // sets nodeToRemove
+
+        const FontData* result = 0;
+        if (style)
+            result = style->font().primaryFont();
+        
+        if (nodeToRemove) {
+            ExceptionCode ec;
+            nodeToRemove->remove(ec);
+            ASSERT(ec == 0);
+        }
+
+        return result;
+    }
+
+    const FontData* font = 0;
+
+    RefPtr<Range> range = m_frame->selectionController()->toRange();
+    Node* startNode = range->editingStartPosition().node();
+    if (startNode) {
+        Node* pastEnd = range->pastEndNode();
+        // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
+        // unreproducible case where this didn't happen, so check for nil also.
+        for (Node* n = startNode; n && n != pastEnd; n = n->traverseNextNode()) {
+            RenderObject *renderer = n->renderer();
+            if (!renderer)
+                continue;
+            // FIXME: Are there any node types that have renderers, but that we should be skipping?
+            const FontData* f = renderer->style()->font().primaryFont();
+            if (!font) {
+                font = f;
+                if (!hasMultipleFonts)
+                    break;
+            } else if (font != f) {
+                hasMultipleFonts = true;
+                break;
+            }
+        }
+    }
+
+    return font;
 }
 
 Frame::TriState Editor::selectionUnorderedListState() const

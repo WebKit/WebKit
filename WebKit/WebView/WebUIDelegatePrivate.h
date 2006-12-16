@@ -36,9 +36,7 @@ enum {
     WebMenuItemTagShowSpellingPanel,
     WebMenuItemTagCheckSpelling,
     WebMenuItemTagCheckSpellingWhileTyping,
-#ifndef BUILDING_ON_TIGER
     WebMenuItemTagCheckGrammarWithSpelling,
-#endif
     WebMenuItemTagFontMenu,
     WebMenuItemTagShowFonts,
     WebMenuItemTagBold,

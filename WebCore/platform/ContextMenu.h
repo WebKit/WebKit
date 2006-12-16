@@ -51,14 +51,15 @@ namespace WebCore {
         ~ContextMenu();
 
         void populate();
+        void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
         void show();
         void hide();
 
-        void insertItem(unsigned position, const ContextMenuItem&);
-        void appendItem(const ContextMenuItem&);
+        void insertItem(unsigned position, ContextMenuItem&);
+        void appendItem(ContextMenuItem&);
         
-        ContextMenuItem at(unsigned index);
+        ContextMenuItem* itemWithAction(unsigned);
 
         unsigned itemCount() const;
 
@@ -70,7 +71,7 @@ namespace WebCore {
 
     private:
         HitTestResult m_hitTestResult;
-        
+
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;

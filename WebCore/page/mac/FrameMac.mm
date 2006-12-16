@@ -619,56 +619,6 @@ NSImage *FrameMac::snapshotDragImage(Node *node, NSRect *imageRect, NSRect *elem
     return result;
 }
 
-NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
-{
-    if (hasMultipleFonts)
-        *hasMultipleFonts = false;
-
-    if (!selectionController()->isRange()) {
-        Node *nodeToRemove;
-        RenderStyle *style = styleForSelectionStart(nodeToRemove); // sets nodeToRemove
-
-        NSFont *result = 0;
-        if (style)
-            result = style->font().primaryFont()->getNSFont();
-        
-        if (nodeToRemove) {
-            ExceptionCode ec;
-            nodeToRemove->remove(ec);
-            ASSERT(ec == 0);
-        }
-
-        return result;
-    }
-
-    NSFont *font = nil;
-
-    RefPtr<Range> range = selectionController()->toRange();
-    Node *startNode = range->editingStartPosition().node();
-    if (startNode != nil) {
-        Node *pastEnd = range->pastEndNode();
-        // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
-        // unreproducible case where this didn't happen, so check for nil also.
-        for (Node *n = startNode; n && n != pastEnd; n = n->traverseNextNode()) {
-            RenderObject *renderer = n->renderer();
-            if (!renderer)
-                continue;
-            // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            NSFont *f = renderer->style()->font().primaryFont()->getNSFont();
-            if (!font) {
-                font = f;
-                if (!hasMultipleFonts)
-                    break;
-            } else if (font != f) {
-                *hasMultipleFonts = true;
-                break;
-            }
-        }
-    }
-
-    return font;
-}
-
 NSDictionary *FrameMac::fontAttributesForSelectionStart() const
 {
     Node *nodeToRemove;

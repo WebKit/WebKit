@@ -40,30 +40,13 @@ static NSMutableArray* menuToArray(NSMenu* menu)
     return itemsArray;
 }
 
-ContextMenuItem::ContextMenuItem(NSMenuItem* item, ContextMenu* parentMenu)
-    : m_parentMenu(parentMenu)
-    , m_platformDescription(item)
-    , m_subMenu(0)
+ContextMenuItem::ContextMenuItem(NSMenuItem* item)
 {
-    if ([item isSeparatorItem])
-        m_type = SeparatorType;
-    else if ([item hasSubmenu]) {
-        m_type = SubmenuType;
-        m_subMenu.set(new ContextMenu(m_parentMenu->hitTestResult(), menuToArray([item submenu])));
-    } else
-        m_type = ActionType;
+    m_platformDescription = item;
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
-    : m_parentMenu(parentMenu)
-    , m_subMenu(subMenu)
-    , m_type(SeparatorType)
+ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
 {
-    if (m_type == SeparatorType) {
-        m_platformDescription = [NSMenuItem separatorItem];
-        return;
-    }
-
     NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
     m_platformDescription = item;
     [item release];
@@ -73,13 +56,9 @@ ContextMenuItem::ContextMenuItem(ContextMenu* parentMenu, ContextMenu* subMenu)
         setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* parentMenu, 
-    ContextMenu* subMenu)
-    : m_parentMenu(parentMenu)
-    , m_subMenu(subMenu)
-    , m_type(type)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
 {
-    if (m_type == SeparatorType) {
+    if (type == SeparatorType) {
         m_platformDescription = [NSMenuItem separatorItem];
         return;
     }
@@ -97,9 +76,18 @@ ContextMenuItem::~ContextMenuItem()
 {
 }
 
-PlatformMenuItemDescription ContextMenuItem::platformDescription() const
+NSMenuItem* ContextMenuItem::releasePlatformDescription()
 {
-    return m_platformDescription.get();
+    return m_platformDescription.releaseRef();
+}
+
+ContextMenuItemType ContextMenuItem::type()
+{
+    if ([m_platformDescription.get() isSeparatorItem])
+        return SeparatorType;
+    if ([m_platformDescription.get() hasSubmenu])
+        return SubmenuType;
+    return ActionType;
 }
 
 ContextMenuAction ContextMenuItem::action() const
@@ -114,9 +102,13 @@ String ContextMenuItem::title() const
 
 NSMutableArray* ContextMenuItem::platformSubMenu() const
 {
-    if (!m_subMenu)
-        return nil;
-    return m_subMenu->platformDescription();
+    return menuToArray([m_platformDescription.get() submenu]);
+}
+
+void ContextMenuItem::setType(ContextMenuItemType type)
+{
+    if (type == SeparatorType)
+        m_platformDescription = [NSMenuItem separatorItem];
 }
 
 void ContextMenuItem::setAction(ContextMenuAction action)
@@ -124,21 +116,33 @@ void ContextMenuItem::setAction(ContextMenuAction action)
     [m_platformDescription.get() setTag:action]; 
 }
 
-void ContextMenuItem::setTitle(String title)
+void ContextMenuItem::setTitle(const String& title) const
 {
     [m_platformDescription.get() setTitle:title];
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-    m_subMenu.set(menu);
-
     NSArray* subMenuArray = menu->platformDescription();
     NSMenu* subMenu = [[NSMenu alloc] init];
+    [subMenu setAutoenablesItems:NO];
     for (unsigned i = 0; i < [subMenuArray count]; i++)
         [subMenu insertItem:[subMenuArray objectAtIndex:i] atIndex:i];
     [m_platformDescription.get() setSubmenu:subMenu];
     [subMenu release];
+}
+
+void ContextMenuItem::setChecked(bool checked) const
+{
+    if (checked)
+        [m_platformDescription.get() setState:NSOnState];
+    else
+        [m_platformDescription.get() setState:NSOffState];
+}
+
+void ContextMenuItem::setEnabled(bool enable) const
+{
+    [m_platformDescription.get() setEnabled:enable];
 }
 
 }

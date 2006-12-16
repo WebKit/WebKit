@@ -60,7 +60,7 @@ static WebCoreMenuTarget* target;
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], _menuController->contextMenu());
+    WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
     _menuController->contextMenuItemSelected(&item);
 }
 
@@ -89,29 +89,34 @@ ContextMenu::~ContextMenu()
 {
 }
  
-static void setMenuItemTarget(const ContextMenuItem& item)
+static void setMenuItemTarget(NSMenuItem* menuItem)
 {
-    NSMenuItem* menuItem = item.platformDescription();
-    if (item.type() == ActionType) {
-        [menuItem setTarget:[WebCoreMenuTarget sharedMenuTarget]];
-        [menuItem setAction:@selector(forwardContextMenuAction:)];
-    }
+    [menuItem setTarget:[WebCoreMenuTarget sharedMenuTarget]];
+    [menuItem setAction:@selector(forwardContextMenuAction:)];
 }
 
-void ContextMenu::appendItem(const ContextMenuItem& item)
+void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    if (!item.platformDescription())
-        return;
-    setMenuItemTarget(item);
-    [m_platformDescription.get() addObject:item.platformDescription()];
+    checkOrEnableIfNeeded(item);
+
+    ContextMenuItemType type = item.type();
+    NSMenuItem* platformItem = item.releasePlatformDescription();
+    if (type == ActionType)
+        setMenuItemTarget(platformItem);
+
+    [m_platformDescription.get() addObject:platformItem];
 }
 
-void ContextMenu::insertItem(unsigned position, const ContextMenuItem& item)
+void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    if (!item.platformDescription())
-        return;
-    setMenuItemTarget(item);
-    [m_platformDescription.get() insertObject:item.platformDescription() atIndex:position];
+    checkOrEnableIfNeeded(item);
+
+    ContextMenuItemType type = item.type();
+    NSMenuItem* platformItem = item.releasePlatformDescription();
+    if (type == ActionType)
+        setMenuItemTarget(platformItem);
+
+    [m_platformDescription.get() insertObject:platformItem atIndex:position];
 }
 
 unsigned ContextMenu::itemCount() const

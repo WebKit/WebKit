@@ -67,14 +67,13 @@ void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
     }
 }
 
-void WebContextMenuClient::contextMenuItemSelected(const ContextMenuItem* item)
+void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
-    ASSERT(item->parentMenu());
-    
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:contextMenuItemSelected:forElement:)]) {
-        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:item->parentMenu()->hitTestResult()] autorelease];
-        [delegate webView:m_webView contextMenuItemSelected:item->platformDescription() forElement:element];
+        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:parentMenu->hitTestResult()];
+        [delegate webView:m_webView contextMenuItemSelected:item->releasePlatformDescription() forElement:element];
+        [element release];
     }
 }
 
