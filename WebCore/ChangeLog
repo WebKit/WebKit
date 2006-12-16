@@ -1,5 +1,14 @@
 2006-12-16  Zack Rusin  <zack@kde.org>
 
+        Add a stub for SearchPopupMenu for Qt code.
+
+        * platform/qt/SearchPopupMenuQt.cpp: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+
+2006-12-16  Zack Rusin  <zack@kde.org>
+
         Make it compile after last nights changes.
 
         * WebCore.pro:
