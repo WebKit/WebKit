@@ -1,3 +1,10 @@
+2006-12-16  Adele Peterson  <adele@apple.com>
+
+        Missed one instance of isNonWidgetTextField.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+
 2006-12-16  Hunter L. Williams <hlwebkit@gmail.com>
 
         Reviewed by Adele.
