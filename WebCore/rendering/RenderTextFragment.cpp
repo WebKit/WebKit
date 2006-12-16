@@ -25,32 +25,28 @@
 #include "config.h"
 #include "RenderTextFragment.h"
 
-using namespace WebCore;
-
 namespace WebCore {
 
 RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str, int startOffset, int length, RenderObject* firstLetter)
-    : RenderText(node, str ? str->substring(startOffset, length) : 0), m_start(startOffset), m_end(length), m_firstLetter(firstLetter)
+    : RenderText(node, str ? str->substring(startOffset, length) : 0)
+    , m_start(startOffset)
+    , m_end(length)
+    , m_firstLetter(firstLetter)
 {
 }
 
 RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str)
-    : RenderText(node, str), m_start(0), m_end(str ? str->length() : 0), m_generatedContentStr(str), m_firstLetter(0)
+    : RenderText(node, str)
+    , m_start(0)
+    , m_end(str ? str->length() : 0)
+    , m_generatedContentStr(str)
+    , m_firstLetter(0)
 {
-}
-
-bool RenderTextFragment::isTextFragment() const
-{
-    return true;
 }
 
 PassRefPtr<StringImpl> RenderTextFragment::originalString() const
 {
-    StringImpl* result = 0;
-    if (element())
-        result = element()->string();
-    else
-        result = contentString();
+    StringImpl* result = (element() ? element()->string() : contentString());
     if (result && (start() > 0 || start() < result->length()))
         result = result->substring(start(), end());
     return result;
@@ -62,4 +58,5 @@ void RenderTextFragment::destroy()
         firstLetter()->destroy();
     RenderText::destroy();
 }
-}
+
+} // namespace WebCore

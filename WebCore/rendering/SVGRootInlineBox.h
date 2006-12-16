@@ -21,15 +21,15 @@
  *
  */
 
-#ifndef SVGRootInlineBox_H
-#define SVGRootInlineBox_H
+#ifndef SVGRootInlineBox_h
+#define SVGRootInlineBox_h
 
 #ifdef SVG_SUPPORT
 
 #include "RootInlineBox.h"
 
 namespace WebCore {
-    
+
 class SVGRootInlineBox : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderObject* obj)
@@ -46,4 +46,4 @@ public:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGRootInlineBox_H
+#endif // SVGRootInlineBox_h

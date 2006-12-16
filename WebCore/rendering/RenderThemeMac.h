@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RENDER_THEME_MAC_H
-#define RENDER_THEME_MAC_H
+#ifndef RenderThemeMac_h
+#define RenderThemeMac_h
 
 #import "RenderTheme.h"
 
@@ -47,34 +47,34 @@ public:
 
     virtual void adjustRepaintRect(const RenderObject*, IntRect&);
 
-    virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
-                                 const BackgroundLayer& background, const Color& backgroundColor) const;
-                                
+    virtual bool isControlStyled(const RenderStyle*, const BorderData&,
+                                 const BackgroundLayer&, const Color& backgroundColor) const;
+
     virtual void paintResizeControl(GraphicsContext*, const IntRect&);
 
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
     virtual Color activeListBoxSelectionBackgroundColor() const;
-    
+
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;
-    
+
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
 protected:
     // Methods for each appearance value.
     virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void setCheckboxSize(RenderStyle*) const;
-    
+
     virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void setRadioSize(RenderStyle*) const;
-    
+
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void setButtonSize(RenderStyle*) const;
-    
+
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
@@ -86,25 +86,25 @@ protected:
 
     virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    
+
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    
+
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
     virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    
+
     virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    
+
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    
+
     virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-        
+
 private:
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
@@ -135,7 +135,7 @@ private:
     const IntSize* buttonSizes() const;
     const int* buttonMargins() const;
     void setButtonCellState(const RenderObject*, const IntRect&);
-    
+
     void setPopupPaddingFromControlSize(RenderStyle*, NSControlSize) const;
     void setPopupButtonCellState(const RenderObject*, const IntRect&);
     const IntSize* popupButtonSizes() const;
@@ -147,7 +147,7 @@ private:
     const IntSize* cancelButtonSizes() const;
     const IntSize* resultsButtonSizes() const;
     void setSearchCellState(RenderObject*, const IntRect&);
-    
+
 private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;
@@ -157,15 +157,15 @@ private:
     NSSearchFieldCell* search;
     NSButtonCell* searchButton;
     NSMenu* searchMenu;
-    
+
     NSSliderCell* sliderThumbHorizontalCell;
     NSSliderCell* sliderThumbVerticalCell;
     bool sliderHorizontalCellIsPressed;
     bool sliderVerticalCellIsPressed;
-    
+
     Image* resizeCornerImage;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderThemeMac_h

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SVGInlineFlowBox_H
-#define SVGInlineFlowBox_H
+#ifndef SVGInlineFlowBox_h
+#define SVGInlineFlowBox_h
 
 #ifdef SVG_SUPPORT
 
@@ -50,4 +50,4 @@ public:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGInlineFlowBox_H
+#endif // SVGInlineFlowBox_h

@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int parentX, int parentY) 
+void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int parentX, int parentY)
 {
     paintSVGInlineFlow(this, object(), paintInfo, parentX, parentY);
 }
 
 int SVGRootInlineBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing)
 {
-    //remove any offsets caused by RTL text layout
+    // Remove any offsets caused by RTL text layout
     x = 0;
     leftPosition = 0;
     rightPosition = 0;

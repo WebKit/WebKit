@@ -20,8 +20,13 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#ifndef SVGRenderTreeAsText_h
+#define SVGRenderTreeAsText_h
+
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedString.h"
 #include "TextStream.h"
@@ -35,8 +40,6 @@ namespace WebCore {
     class FloatSize;
     class IntPoint;
     class IntRect;
-    class KCClipData;
-    class KCPathData;
     class Node;
     class RenderPath;
     class RenderSVGContainer;
@@ -46,7 +49,7 @@ void write(TextStream&, const RenderSVGContainer&, int indent = 0);
 void write(TextStream&, const RenderPath&, int indent = 0);
 void writeRenderResources(TextStream&, Node* parent);
 
-// helper operators defined used in various classes to dump the render tree. 
+// helper operators defined used in various classes to dump the render tree.
 TextStream& operator<<(TextStream&, const AffineTransform&);
 TextStream& operator<<(TextStream&, const IntRect&);
 TextStream& operator<<(TextStream&, const Color&);
@@ -57,19 +60,19 @@ TextStream& operator<<(TextStream&, const FloatPoint&);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
-    
+
 template<typename Item>
 TextStream& operator<<(TextStream& ts, const Vector<Item*>& v)
 {
     ts << "[";
-    
+
     for (unsigned i = 0; i < v.size(); i++) {
         ts << *v[i];
         if (i < v.size() - 1)
             ts << ", ";
     }
-    
-    ts << "]";   
+
+    ts << "]";
     return ts;
 }
 
@@ -77,15 +80,19 @@ template<typename Item>
 TextStream& operator<<(TextStream& ts, const Vector<Item>& v)
 {
     ts << "[";
-    
+
     for (unsigned i = 0; i < v.size(); i++) {
         ts << v[i];
         if (i < v.size() - 1)
             ts << ", ";
     }
-    
+
     ts << "]";
     return ts;
 }
 
-}
+} // namespace WebCore
+
+#endif // SVG_SUPPORT
+
+#endif // SVGRenderTreeAsText_h

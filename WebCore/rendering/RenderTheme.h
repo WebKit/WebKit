@@ -31,7 +31,14 @@ class Element;
 class PopupMenu;
 class RenderMenuList;
 
-enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState, ReadOnlyState };
+enum ControlState {
+    HoverState,
+    PressedState,
+    FocusState,
+    EnabledState,
+    CheckedState,
+    ReadOnlyState
+};
 
 class RenderTheme {
 public:
@@ -43,7 +50,7 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(CSSStyleSelector*, RenderStyle*, Element*,  bool UAHasAppearance, 
+    void adjustStyle(CSSStyleSelector*, RenderStyle*, Element*,  bool UAHasAppearance,
                      const BorderData&, const BackgroundLayer&, const Color& backgroundColor);
 
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
@@ -129,11 +136,11 @@ protected:
     virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setCheckboxSize(RenderStyle*) const { }
-    
+
     virtual void adjustRadioStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setRadioSize(RenderStyle*) const { }
-    
+
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setButtonSize(RenderStyle*) const { }
@@ -155,19 +162,19 @@ protected:
 
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
-    
+
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
-    
+
     virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
-    
+
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
-    
+
     virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
 };

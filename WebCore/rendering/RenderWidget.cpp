@@ -21,10 +21,11 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "RenderWidget.h"
 
-#include "AXObjectCache.h" 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
@@ -64,8 +65,8 @@ void RenderWidget::destroy()
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
 
-    if (RenderView *c = view())
-        c->removeWidget(this);
+    if (RenderView* v = view())
+        v->removeWidget(this);
 
     document()->axObjectCache()->remove(this);
 
@@ -79,13 +80,13 @@ void RenderWidget::destroy()
 
     RenderLayer* layer = m_layer;
     RenderArena* arena = renderArena();
-    
+
     if (layer)
         layer->clearClipRect();
-    
+
     setNode(0);
     deref(arena);
-    
+
     if (layer)
         layer->destroy(arena);
 }
@@ -99,7 +100,7 @@ RenderWidget::~RenderWidget()
 void RenderWidget::resizeWidget(Widget* widget, int w, int h)
 {
     if (element() && (widget->width() != w || widget->height() != h)) {
-        RenderArena *arena = ref();
+        RenderArena* arena = ref();
         element()->ref();
         widget->resize(w, h);
         element()->deref();
@@ -150,9 +151,9 @@ void RenderWidget::sendConsumedMouseUp(Widget*)
     deref(arena);
 }
 
-void RenderWidget::setStyle(RenderStyle *_style)
+void RenderWidget::setStyle(RenderStyle* newStyle)
 {
-    RenderReplaced::setStyle(_style);
+    RenderReplaced::setStyle(newStyle);
     if (m_widget) {
         m_widget->setFont(style()->font());
         if (style()->visibility() != VISIBLE)
@@ -170,7 +171,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
     tx += m_x;
     ty += m_y;
 
-    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline) 
+    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline)
         paintBoxDecorations(paintInfo, tx, ty);
 
     if (!m_view || paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
@@ -242,26 +243,29 @@ void RenderWidget::updateWidgetPosition()
 {
     if (!m_widget)
         return;
-    
-    int x, y, width, height;
+
+    int x;
+    int y;
     absolutePosition(x, y);
     x += borderLeft() + paddingLeft();
     y += borderTop() + paddingTop();
-    width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    IntRect newBounds(x,y,width,height);
+
+    int width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
+    int height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
+
+    IntRect newBounds(x, y, width, height);
     IntRect oldBounds(m_widget->frameGeometry());
     if (newBounds != oldBounds) {
         // The widget changed positions.  Update the frame geometry.
         if (checkForRepaintDuringLayout()) {
-            RenderView* c = view();
-            if (!c->printingMode()) {
-                c->repaintViewRectangle(oldBounds);
-                c->repaintViewRectangle(newBounds);
+            RenderView* v = view();
+            if (!v->printingMode()) {
+                v->repaintViewRectangle(oldBounds);
+                v->repaintViewRectangle(newBounds);
             }
         }
 
-        RenderArena *arena = ref();
+        RenderArena* arena = ref();
         element()->ref();
         m_widget->setFrameGeometry(newBounds);
         element()->deref();
@@ -269,11 +273,11 @@ void RenderWidget::updateWidgetPosition()
     }
 }
 
-void RenderWidget::setSelectionState(SelectionState s) 
+void RenderWidget::setSelectionState(SelectionState state)
 {
-    if (selectionState() != s) {
-        RenderReplaced::setSelectionState(s);
-        m_selectionState = s;
+    if (selectionState() != state) {
+        RenderReplaced::setSelectionState(state);
+        m_selectionState = state;
         if (m_widget)
             m_widget->setIsSelected(isSelected());
     }
@@ -283,4 +287,5 @@ void RenderWidget::deleteWidget()
 {
     delete m_widget;
 }
-}
+
+} // namespace WebCore

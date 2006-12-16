@@ -22,22 +22,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
 #include "SVGRenderTreeAsText.h"
 
-#include "SVGResourceClipper.h"
 #include "GraphicsTypes.h"
 #include "HTMLNames.h"
-#include "RenderTreeAsText.h"
+#include "KCanvasRenderingStyle.h"
 #include "RenderSVGContainer.h"
+#include "RenderTreeAsText.h"
 #include "SVGPaintServerGradient.h"
 #include "SVGPaintServerPattern.h"
 #include "SVGPaintServerSolid.h"
-#include "KCanvasRenderingStyle.h"
+#include "SVGResourceClipper.h"
 #include "SVGStyledElement.h"
 #include <math.h>
 
@@ -45,36 +47,39 @@ namespace WebCore {
 
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
  * Can be used in cases where you don't know which item in the list is the first
- * one to be printed, but still want to avoid strings like ", b, c", works like 
+ * one to be printed, but still want to avoid strings like ", b, c", works like
  * DeprecatedStringList::join for streams
  */
-class TextStreamSeparator
-{
+class TextStreamSeparator {
 public:
-    TextStreamSeparator(const DeprecatedString &s) : m_separator(s), m_needToSeparate(false) {}
+    TextStreamSeparator(const DeprecatedString& s)
+        : m_separator(s)
+        , m_needToSeparate(false)
+    {
+    }
+
 private:
-    friend TextStream& operator<<(TextStream& ts, TextStreamSeparator &sep);
-    
-private:
+    friend TextStream& operator<<(TextStream&, TextStreamSeparator&);
+
     DeprecatedString m_separator;
     bool m_needToSeparate;
 };
 
-TextStream& operator<<(TextStream& ts, TextStreamSeparator &sep)
+TextStream& operator<<(TextStream& ts, TextStreamSeparator& sep)
 {
     if (sep.m_needToSeparate)
         ts << sep.m_separator;
-    else 
+    else
         sep.m_needToSeparate = true;
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const IntPoint &p)
+TextStream& operator<<(TextStream& ts, const IntPoint& p)
 {
     return ts << "(" << p.x() << "," << p.y() << ")";
 }
 
-TextStream& operator<<(TextStream& ts, const IntRect &r)
+TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
@@ -82,9 +87,9 @@ TextStream& operator<<(TextStream& ts, const IntRect &r)
 bool hasFractions(double val)
 {
     double epsilon = 0.0001;
-    int ival = int(val);
-    double dval = double(ival);    
-    return (fabs(val-dval) > epsilon);
+    int ival = static_cast<int>(val);
+    double dval = static_cast<double>(ival);
+    return fabs(val - dval) > epsilon;
 }
 
 TextStream& operator<<(TextStream& ts, const FloatRect &r)
@@ -112,7 +117,7 @@ TextStream& operator<<(TextStream& ts, const FloatRect &r)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const FloatPoint &p)
+TextStream& operator<<(TextStream& ts, const FloatPoint& p)
 {
     ts << "(";    
     if (hasFractions(p.x()))
@@ -127,8 +132,8 @@ TextStream& operator<<(TextStream& ts, const FloatPoint &p)
     return ts << ")";
 }
 
-TextStream& operator<<(TextStream& ts, const FloatSize &s)
-{   
+TextStream& operator<<(TextStream& ts, const FloatSize& s)
+{
     ts << "width=";
     if (hasFractions(s.width()))
         ts << s.width();
@@ -139,36 +144,38 @@ TextStream& operator<<(TextStream& ts, const FloatSize &s)
         ts << s.height();
     else
         ts << int(s.height());
-     return ts;
+    return ts;
 }
 
-
-TextStream& operator<<(TextStream& ts, const AffineTransform &m)
+TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
 {
-    if (m.isIdentity())
+    if (transform.isIdentity())
         ts << "identity";
-    else {
-        ts << "{m=((" << m.a() << "," << m.b() << ")(" << m.c() << "," << m.d() << "))";
-        ts << " t=(" << m.e() << "," << m.f() << ")}";
-    }
+    else
+        ts << "{m=(("
+           << transform.a() << "," << transform.b()
+           << ")("
+           << transform.c() << "," << transform.d()
+           << ")) t=("
+           << transform.e() << "," << transform.f()
+           << ")}";
 
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const Color &c)
+TextStream& operator<<(TextStream& ts, const Color& c)
 {
     return ts << c.name();
 }
 
 static void writeIndent(TextStream& ts, int indent)
 {
-    for (int i = 0; i != indent; ++i) {
+    for (int i = 0; i != indent; ++i)
         ts << "  ";
-    }
 }
 
-//FIXME: This should be in KRenderingStyle.cpp
-static TextStream& operator<<(TextStream& ts, const KCDashArray &a)
+// FIXME: Maybe this should be in KCanvasRenderingStyle.cpp
+static TextStream& operator<<(TextStream& ts, const KCDashArray& a)
 {
     ts << "{";
     KCDashArray::const_iterator end = a.end();
@@ -181,44 +188,45 @@ static TextStream& operator<<(TextStream& ts, const KCDashArray &a)
     return ts;
 }
 
-//FIXME: This should be in KRenderingStyle.cpp
+// FIXME: Maybe this should be in GraphicsTypes.cpp
 static TextStream& operator<<(TextStream& ts, LineCap style)
 {
     switch (style) {
-    case ButtCap:
-        ts << "BUTT"; break;
-    case RoundCap:
-        ts << "ROUND"; break;
-    case SquareCap:
-        ts << "SQUARE"; break;
+        case ButtCap:
+            ts << "BUTT";
+            break;
+        case RoundCap:
+            ts << "ROUND";
+            break;
+        case SquareCap:
+            ts << "SQUARE";
+            break;
     }
     return ts;
 }
 
-//FIXME: This should be in KRenderingStyle.cpp
+// FIXME: Maybe this should be in GraphicsTypes.cpp
 static TextStream& operator<<(TextStream& ts, LineJoin style)
 {
     switch (style) {
-    case MiterJoin:
-        ts << "MITER"; break;
-    case RoundJoin:
-        ts << "ROUND"; break;
-    case BevelJoin:
-        ts << "BEVEL"; break;
+        case MiterJoin:
+            ts << "MITER";
+            break;
+        case RoundJoin:
+            ts << "ROUND";
+            break;
+        case BevelJoin:
+            ts << "BEVEL";
+            break;
     }
     return ts;
 }
 
-#define DIFFERS_FROM_PARENT(path) (!parentStyle || (parentStyle->path != childStyle->path))
-// avoids testing path if pred is false. This is used with tests that have side-effects
-// for the parent object
-#define DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(pred, path) (!parentStyle || ((!parentStyle->pred) || (parentStyle->path != childStyle->path)))
-
-static void writeStyle(TextStream& ts, const RenderObject &object)
+static void writeStyle(TextStream& ts, const RenderObject& object)
 {
     const RenderStyle* style = object.style();
     const SVGRenderStyle* svgStyle = style->svgStyle();
-    
+
     if (!object.localTransform().isIdentity())
         ts << " [transform=" << object.localTransform() << "]";
     if (svgStyle->imageRendering() != SVGRenderStyle::initialImageRendering())
@@ -227,7 +235,7 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
         const RenderPath& path = static_cast<const RenderPath&>(object);
-        SVGPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
+        SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
         if (strokePaintServer) {
             TextStreamSeparator s(" ");
             ts << " [stroke={";
@@ -237,7 +245,7 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
             double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0);
             const KCDashArray& dashArray = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
             double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeWidth(), 1.0);
-            
+
             if (svgStyle->strokeOpacity() != 1.0f)
                 ts << s << "[opacity=" << svgStyle->strokeOpacity() << "]";
             if (strokeWidth != 1.0f)
@@ -251,10 +259,10 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
             if (dashOffset != 0.0f)
                 ts << s << "[dash offset=" << dashOffset << "]";
             if (!dashArray.isEmpty())
-                ts << s << "[dash array=" << dashArray << "]";        
+                ts << s << "[dash array=" << dashArray << "]";
             ts << "}]";
         }
-        SVGPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
+        SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
         if (fillPaintServer) {
             TextStreamSeparator s(" ");
             ts << " [fill={";
@@ -279,84 +287,82 @@ static void writeStyle(TextStream& ts, const RenderObject &object)
     if (!svgStyle->filter().isEmpty())
         ts << " [filter=" << svgStyle->filter() << "]";
 }
-#undef DIFFERS_FROM_PARENT
-#undef DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE
 
-static TextStream& operator<<(TextStream& ts, const RenderPath &o)
+static TextStream& operator<<(TextStream& ts, const RenderPath& path)
 {
-    ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
-    
-    writeStyle(ts, o);
-    
-    ts << " [data=\"" << o.path().debugString() << "\"]";
-    
+    ts << " " << path.absoluteTransform().mapRect(path.relativeBBox());
+
+    writeStyle(ts, path);
+
+    ts << " [data=\"" << path.path().debugString() << "\"]";
+
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderSVGContainer &o)
+static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& container)
 {
-    ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
-    
-    writeStyle(ts, o);
-    
+    ts << " " << container.absoluteTransform().mapRect(container.relativeBBox());
+
+    writeStyle(ts, container);
+
     return ts;
 }
 
-static DeprecatedString getTagName(void *node)
+static DeprecatedString getTagName(void* node)
 {
-    SVGStyledElement *elem = static_cast<SVGStyledElement*>(node);
+    SVGStyledElement* elem = static_cast<SVGStyledElement*>(node);
     if (elem)
         return String(elem->nodeName()).deprecatedString();
     return DeprecatedString();
 }
 
-void write(TextStream& ts, const RenderSVGContainer &container, int indent)
+void write(TextStream& ts, const RenderSVGContainer& container, int indent)
 {
     writeIndent(ts, indent);
     ts << container.renderName();
-    
+
     if (container.element()) {
         DeprecatedString tagName = getTagName(container.element());
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }
-    
+
     ts << container << endl;
-    
-    for (RenderObject *child = container.firstChild(); child != NULL; child = child->nextSibling())
+
+    for (RenderObject* child = container.firstChild(); child; child = child->nextSibling())
         write(ts, *child, indent + 1);
 }
 
-void write(TextStream& ts, const RenderPath &path, int indent)
+void write(TextStream& ts, const RenderPath& path, int indent)
 {
     writeIndent(ts, indent);
     ts << path.renderName();
-    
+
     if (path.element()) {
         DeprecatedString tagName = getTagName(path.element());
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }
-    
+
     ts << path << endl;
 }
 
-void writeRenderResources(TextStream& ts, Node *parent)
+void writeRenderResources(TextStream& ts, Node* parent)
 {
     ASSERT(parent);
-    Node *node = parent;
+    Node* node = parent;
     do {
         if (!node->isSVGElement())
             continue;
-        SVGElement *svgElement = static_cast<SVGElement*>(node);
+        SVGElement* svgElement = static_cast<SVGElement*>(node);
         if (!svgElement->isStyled())
             continue;
 
-        SVGStyledElement *styled = static_cast<SVGStyledElement*>(svgElement);
+        SVGStyledElement* styled = static_cast<SVGStyledElement*>(svgElement);
         RefPtr<SVGResource> resource(styled->canvasResource());
         if (!resource)
             continue;
-        
+
         DeprecatedString elementId = svgElement->getAttribute(HTMLNames::idAttr).deprecatedString();
         if (resource->isPaintServer()) {
             RefPtr<SVGPaintServer> paintServer = WTF::static_pointer_cast<SVGPaintServer>(resource);
@@ -366,6 +372,6 @@ void writeRenderResources(TextStream& ts, Node *parent)
     } while ((node = node->traverseNextNode(parent)));
 }
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT

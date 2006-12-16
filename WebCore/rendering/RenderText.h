@@ -42,14 +42,14 @@ class StringImpl;
 
 class RenderText : public RenderObject {
     friend class InlineTextBox;
-
 public:
     RenderText(Node*, StringImpl*);
 
-    virtual bool isTextFragment() const;
-    virtual PassRefPtr<StringImpl> originalString() const;
-    
     virtual const char* renderName() const { return "RenderText"; }
+
+    virtual bool isTextFragment() const { return false; }
+
+    virtual PassRefPtr<StringImpl> originalString() const;
 
     virtual void setStyle(RenderStyle*);
 
@@ -58,30 +58,30 @@ public:
     void removeTextBox(InlineTextBox*);
     void deleteTextBoxes();
     virtual void destroy();
-    
-    String data() const { return str.get(); }
-    StringImpl* string() const { return str.get(); }
+
+    String data() const { return m_str.get(); }
+    StringImpl* string() const { return m_str.get(); }
 
     virtual InlineBox* createInlineBox(bool,bool, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
-    
-    virtual void paint(PaintInfo&, int tx, int ty) { assert(false); }
-    virtual void layout() { assert(false); }
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { assert(false); return false; }
+    virtual void paint(PaintInfo&, int tx, int ty) { ASSERT_NOT_REACHED(); }
+    virtual void layout() { ASSERT_NOT_REACHED(); }
+
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { ASSERT_NOT_REACHED(); return false; }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    virtual unsigned length() const { return str->length(); }
-    const UChar* text() const { return str->characters(); }
-    unsigned stringLength() const { return str->length(); } // non virtual implementation of length()
+    virtual unsigned length() const { return m_str->length(); }
+    const UChar* text() const { return m_str->characters(); }
+    unsigned stringLength() const { return m_str->length(); } // non virtual implementation of length()
     virtual void position(InlineBox*);
 
-    virtual unsigned width(unsigned from, unsigned len, const Font*, int xpos) const;
-    virtual unsigned width(unsigned from, unsigned len, int xpos, bool firstLine = false) const;
+    virtual unsigned width(unsigned from, unsigned len, const Font*, int xPos) const;
+    virtual unsigned width(unsigned from, unsigned len, int xPos, bool firstLine = false) const;
     virtual int width() const;
     virtual int height() const;
 
@@ -95,12 +95,12 @@ public:
     // widths
     void calcMinMaxWidth(int leadWidth);
     virtual void trimmedMinMaxWidth(int leadWidth,
-                                    int& beginMinW, bool& beginWS, 
+                                    int& beginMinW, bool& beginWS,
                                     int& endMinW, bool& endWS,
                                     bool& hasBreakableChar, bool& hasBreak,
                                     int& beginMaxW, int& endMaxW,
                                     int& minW, int& maxW, bool& stripFrontSpaces);
-    
+
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
 
     // returns the minimum x position of all runs relative to the parent.
@@ -137,7 +137,7 @@ public:
 
     virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
 
-    int widthFromCache(const Font*, int start, int len, int tabWidth, int xpos) const;
+    int widthFromCache(const Font*, int start, int len, int tabWidth, int xPos) const;
     bool shouldUseMonospaceCache(const Font*) const;
     void cacheWidths();
     bool allAscii() const;
@@ -148,14 +148,14 @@ public:
 
     virtual int previousOffset(int current) const;
     virtual int nextOffset(int current) const;
-    
+
     bool containsReversedText() const { return m_containsReversedText; }
-    
+
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
 protected:
     // members
-    RefPtr<StringImpl> str;
+    RefPtr<StringImpl> m_str;
 
     InlineTextBox* m_firstTextBox;
     InlineTextBox* m_lastTextBox;

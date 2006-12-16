@@ -239,7 +239,7 @@ void RenderCounter::calcMinMaxWidth()
         }
     }
 
-    str = new StringImpl(m_item.characters(), m_item.length());
+    m_str = new StringImpl(m_item.characters(), m_item.length());
 
     RenderText::calcMinMaxWidth();
 }

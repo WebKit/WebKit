@@ -34,19 +34,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e, 
+void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e,
                               bool UAHasAppearance, const BorderData& border, const BackgroundLayer& background, const Color& backgroundColor)
 {
-
     // Force inline and table display styles to be inline-block (except for table- which is block)
-    if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP || 
+    if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP ||
         style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_FOOTER_GROUP ||
-        style->display() == TABLE_ROW || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_COLUMN || 
+        style->display() == TABLE_ROW || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_COLUMN ||
         style->display() == TABLE_CELL || style->display() == TABLE_CAPTION)
         style->setDisplay(INLINE_BLOCK);
     else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM || style->display() == TABLE)
         style->setDisplay(BLOCK);
-    
+
     if (UAHasAppearance && theme()->isControlStyled(style, border, background, backgroundColor)) {
         if (style->appearance() == MenulistAppearance)
             style->setAppearance(MenulistButtonAppearance);
@@ -85,7 +84,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         case SearchFieldDecorationAppearance:
             return adjustSearchFieldDecorationStyle(selector, style, e);
         case SearchFieldResultsDecorationAppearance:
-            return adjustSearchFieldResultsDecorationStyle(selector, style, e);        
+            return adjustSearchFieldResultsDecorationStyle(selector, style, e);
         case SearchFieldResultsButtonAppearance:
             return adjustSearchFieldResultsButtonStyle(selector, style, e);
         default:
@@ -237,18 +236,18 @@ Color RenderTheme::platformActiveSelectionBackgroundColor() const
     // Use a blue color by default if the platform theme doesn't define anything.
     return Color(0, 0, 255);
 }
-    
+
 Color RenderTheme::platformInactiveSelectionBackgroundColor() const
 {
     // Use a grey color by default if the platform theme doesn't define anything.
     return Color(128, 128, 128);
 }
-   
+
 Color RenderTheme::platformActiveSelectionForegroundColor() const
 {
     return Color();
 }
-    
+
 Color RenderTheme::platformInactiveSelectionForegroundColor() const
 {
     return Color();
@@ -298,18 +297,17 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
         case ListboxAppearance:
         case MenulistAppearance:
         // FIXME: Uncomment this when making search fields style-able.
-        // case SearchFieldAppearance: 
+        // case SearchFieldAppearance:
         case TextFieldAppearance:
-        case TextAreaAppearance: {
+        case TextAreaAppearance:
             // Test the style to see if the UA border and background match.
             return (style->border() != border ||
                     *style->backgroundLayers() != background ||
                     style->backgroundColor() != backgroundColor);
-        }
         default:
             return false;
     }
-    
+
     return false;
 }
 
@@ -323,11 +321,11 @@ bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
     // Default implementation assumes the controls dont respond to changes in :hover state
     if (state == HoverState && !supportsHover(o->style()))
         return false;
-        
+
     // Assume pressed state is only responded to if the control is enabled.
     if (state == PressedState && !isEnabled(o))
         return false;
-    
+
     // Repaint the control.
     o->repaint();
     return true;
@@ -388,10 +386,10 @@ void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* s
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
     // font-size - not honored (control has no text), but we use it to decide which control size to use.
     setCheckboxSize(style);
-    
+
     // padding - not honored by WinIE, needs to be removed.
     style->resetPadding();
-    
+
     // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
     // for now, we will not honor it.
     style->resetBorder();
@@ -403,10 +401,10 @@ void RenderTheme::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* styl
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
     // font-size - not honored (control has no text), but we use it to decide which control size to use.
     setRadioSize(style);
-    
+
     // padding - not honored by WinIE, needs to be removed.
     style->resetPadding();
-    
+
     // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
     // for now, we will not honor it.
     style->resetBorder();
@@ -467,4 +465,4 @@ void RenderTheme::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector
 {
 }
 
-}
+} // namespace WebCore

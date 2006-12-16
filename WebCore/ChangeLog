@@ -1,3 +1,228 @@
+2006-12-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11844
+        Code Cleanup for more of the rendering code
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::calcMinMaxWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::setStyle):
+        (WebCore::RenderText::destroy):
+        (WebCore::RenderText::attachTextBox):
+        (WebCore::RenderText::findNextInlineTextBox):
+        (WebCore::RenderText::positionForCoordinates):
+        (WebCore::firstRendererOnNextLine):
+        (WebCore::lastRendererOnPrevLine):
+        (WebCore::RenderText::caretRect):
+        (WebCore::RenderText::posOfChar):
+        (WebCore::RenderText::allAscii):
+        (WebCore::RenderText::shouldUseMonospaceCache):
+        (WebCore::RenderText::cacheWidths):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::isSpaceAccordingToStyle):
+        (WebCore::RenderText::containsOnlyWhitespace):
+        (WebCore::RenderText::minXPos):
+        (WebCore::RenderText::setSelectionState):
+        (WebCore::RenderText::setTextWithOffset):
+        (WebCore::RenderText::setText):
+        (WebCore::RenderText::position):
+        (WebCore::RenderText::width):
+        (WebCore::RenderText::getAbsoluteRepaintRect):
+        (WebCore::RenderText::selectionRect):
+        (WebCore::RenderText::verticalPositionHint):
+        (WebCore::RenderText::font):
+        (WebCore::RenderText::caretMinOffset):
+        (WebCore::RenderText::caretMaxOffset):
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::nextOffset):
+        (WebCore::RenderText::inlineBox):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::isTextFragment):
+        (WebCore::RenderText::data):
+        (WebCore::RenderText::string):
+        (WebCore::RenderText::paint):
+        (WebCore::RenderText::layout):
+        (WebCore::RenderText::nodeAtPoint):
+        (WebCore::RenderText::length):
+        (WebCore::RenderText::text):
+        (WebCore::RenderText::stringLength):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setStyle):
+        (WebCore::disabledTextColor):
+        (WebCore::RenderTextControl::createInnerBlockStyle):
+        (WebCore::RenderTextControl::createInnerTextStyle):
+        (WebCore::RenderTextControl::createResultsButtonStyle):
+        (WebCore::RenderTextControl::createCancelButtonStyle):
+        (WebCore::RenderTextControl::showPlaceholderIfNeeded):
+        (WebCore::RenderTextControl::hidePlaceholderIfNeeded):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::selectionStart):
+        (WebCore::RenderTextControl::setSelectionRange):
+        (WebCore::RenderTextControl::visiblePositionForIndex):
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        (WebCore::RenderTextControl::textWithHardLineBreaks):
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::nodeAtPoint):
+        (WebCore::RenderTextControl::layout):
+        (WebCore::RenderTextControl::calcMinMaxWidth):
+        (WebCore::RenderTextControl::addSearchResult):
+        (WebCore::RenderTextControl::showPopup):
+        (WebCore::RenderTextControl::itemText):
+        (WebCore::RenderTextControl::itemIsEnabled):
+        (WebCore::RenderTextControl::listSize):
+        (WebCore::RenderTextControl::scroll):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::renderName):
+        (WebCore::RenderTextControl::removeLeftoverAnonymousBoxes):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::RenderTextFragment):
+        (WebCore::RenderTextFragment::originalString):
+        * rendering/RenderTextFragment.h:
+        (WebCore::RenderTextFragment::isTextFragment):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::stateChanged):
+        (WebCore::RenderTheme::adjustCheckboxStyle):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::RenderThemeMac::isControlStyled):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::updateCheckedState):
+        (WebCore::RenderThemeMac::controlSupportsTints):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        (WebCore::RenderThemeMac::paintCheckbox):
+        (WebCore::RenderThemeMac::checkboxMargins):
+        (WebCore::RenderThemeMac::setCheckboxCellState):
+        (WebCore::RenderThemeMac::setCheckboxSize):
+        (WebCore::RenderThemeMac::paintRadio):
+        (WebCore::RenderThemeMac::radioMargins):
+        (WebCore::RenderThemeMac::setRadioCellState):
+        (WebCore::RenderThemeMac::setRadioSize):
+        (WebCore::RenderThemeMac::adjustButtonStyle):
+        (WebCore::RenderThemeMac::buttonMargins):
+        (WebCore::RenderThemeMac::setButtonSize):
+        (WebCore::RenderThemeMac::setButtonCellState):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::popupButtonMargins):
+        (WebCore::RenderThemeMac::popupButtonPadding):
+        (WebCore::TopGradientInterpolate):
+        (WebCore::BottomGradientInterpolate):
+        (WebCore::MainGradientInterpolate):
+        (WebCore::TrackGradientInterpolate):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeIndent):
+        (WebCore::printBorderStyle):
+        (WebCore::getTagName):
+        (WebCore::isEmptyOrUnstyledAppleStyleSpan):
+        (WebCore::writeTextRun):
+        (WebCore::write):
+        (WebCore::writeLayers):
+        (WebCore::nodePosition):
+        (WebCore::writeSelection):
+        * rendering/RenderTreeAsText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::calcMinMaxWidth):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::absolutePosition):
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::rendererAfterPosition):
+        (WebCore::RenderView::selectionRect):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::selectionStartEnd):
+        (WebCore::RenderView::updateWidgetPositions):
+        (WebCore::RenderView::addWidget):
+        (WebCore::RenderView::removeWidget):
+        (WebCore::RenderView::viewRect):
+        (WebCore::RenderView::docHeight):
+        (WebCore::RenderView::docWidth):
+        (WebCore::RenderView::setBestTruncatedAt):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::renderName):
+        (WebCore::RenderView::selectionStart):
+        (WebCore::RenderView::selectionEnd):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+        (WebCore::RenderWidget::resizeWidget):
+        (WebCore::RenderWidget::setStyle):
+        (WebCore::RenderWidget::paint):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        (WebCore::RenderWidget::setSelectionState):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::fillLineSelectionGap):
+        (WebCore::RootInlineBox::selectionState):
+        (WebCore::RootInlineBox::firstSelectedBox):
+        (WebCore::RootInlineBox::lastSelectedBox):
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::closestLeafChildForXPos):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::isRootInlineBox):
+        (WebCore::RootInlineBox::setVerticalOverflowPositions):
+        (WebCore::RootInlineBox::setHorizontalOverflowPositions):
+        (WebCore::RootInlineBox::setVerticalSelectionPositions):
+        (WebCore::RootInlineBox::lineBreakObj):
+        (WebCore::RootInlineBox::lineBreakPos):
+        (WebCore::RootInlineBox::setLineBreakPos):
+        (WebCore::RootInlineBox::blockHeight):
+        (WebCore::RootInlineBox::setBlockHeight):
+        (WebCore::RootInlineBox::endsWithBreak):
+        (WebCore::RootInlineBox::setEndsWithBreak):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        (WebCore::paintSVGInlineFlow):
+        (WebCore::translateBox):
+        (WebCore::placePositionedBoxesHorizontally):
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+        (WebCore::placeSVGFlowVertically):
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::TextStreamSeparator::TextStreamSeparator):
+        (WebCore::operator<<):
+        (WebCore::hasFractions):
+        (WebCore::writeIndent):
+        (WebCore::writeStyle):
+        (WebCore::getTagName):
+        (WebCore::write):
+        (WebCore::writeRenderResources):
+        * rendering/SVGRenderTreeAsText.h:
+        (WebCore::operator<<):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::placeBoxesHorizontally):
+        * rendering/SVGRootInlineBox.h:
+        * rendering/TableLayout.h:
+
 2006-12-16  Adam Roben  <aroben@apple.com>
 
         Build fixes.

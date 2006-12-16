@@ -30,43 +30,35 @@
 
 namespace WebCore {
 
-//#define BOX_DEBUG
-
-RenderView::RenderView(Node* node, FrameView *view)
+RenderView::RenderView(Node* node, FrameView* view)
     : RenderBlock(node)
+    , m_frameView(view)
+    , m_selectionStart(0)
+    , m_selectionEnd(0)
+    , m_selectionStartPos(-1)
+    , m_selectionEndPos(-1)
+    , m_printingMode(false)
+    , m_printImages(true)
+    , m_maximalOutlineSize(0)
+    , m_flexBoxInFirstLayout(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes
     // any renderer with document as the node is anonymous.
     setIsAnonymous(false);
-        
+
     // init RenderObject attributes
     setInline(false);
 
-    m_frameView = view;
     // try to contrain the width to the views width
-
-    m_minWidth = 0;
+    m_width = 0;
     m_height = 0;
-
-    m_width = m_minWidth;
-    m_maxWidth = m_minWidth;
+    m_minWidth = 0;
+    m_maxWidth = 0;
 
     setPositioned(true); // to 0,0 :)
 
-    m_printingMode = false;
-    m_printImages = true;
-
-    m_maximalOutlineSize = 0;
-    
-    m_selectionStart = 0;
-    m_selectionEnd = 0;
-    m_selectionStartPos = -1;
-    m_selectionEndPos = -1;
-
     // Create a new root layer for our layer hierarchy.
     m_layer = new (node->document()->renderArena()) RenderLayer(this);
-    
-    m_flexBoxInFirstLayout = 0;
 }
 
 RenderView::~RenderView()
@@ -89,7 +81,7 @@ void RenderView::calcWidth()
 
 void RenderView::calcMinMaxWidth()
 {
-    ASSERT( !minMaxKnown() );
+    ASSERT(!minMaxKnown());
 
     RenderBlock::calcMinMaxWidth();
 
@@ -103,13 +95,13 @@ void RenderView::layout()
     if (m_printingMode)
         m_minWidth = m_width;
 
-    // FIXME: This is all just a terrible workaround for bugs in layout when the view height changes.  
+    // FIXME: This is all just a terrible workaround for bugs in layout when the view height changes.
     // Find a better way to detect view height changes.  We're guessing that if we don't need layout that the reason
     // we were called is because of a FrameView bounds change.
     if (!needsLayout()) {
         setChildNeedsLayout(true, false);
         setMinMaxKnown(false);
-        for (RenderObject *c = firstChild(); c; c = c->nextSibling())
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling())
             c->setChildNeedsLayout(true, false);
     }
 
@@ -126,18 +118,18 @@ void RenderView::layout()
         setHeight(m_frameView->visibleHeight());
     }
 
-    // ### we could maybe do the call below better and only pass true if the docsize changed.
-    layoutPositionedObjects( true );
+    // FIXME: we could maybe do the call below better and only pass true if the docsize changed.
+    layoutPositionedObjects(true);
 
     layer()->setHeight(max(doch, m_height));
     layer()->setWidth(max(docw, m_width));
-    
+
     setNeedsLayout(false);
 }
 
-bool RenderView::absolutePosition(int &xPos, int &yPos, bool f)
+bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed)
 {
-    if ( f && m_frameView) {
+    if (fixed && m_frameView) {
         xPos = m_frameView->contentsX();
         yPos = m_frameView->contentsY();
     } else
@@ -150,7 +142,7 @@ void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
     // Cache the print rect because the dirty rect could get changed during painting.
     if (m_printingMode)
         setPrintRect(paintInfo.rect);
-    
+
     paintObject(paintInfo, tx, ty);
 }
 
@@ -189,7 +181,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
     if (m_printingMode || ur.width() == 0 || ur.height() == 0)
         return;
-    
+
     IntRect vr = viewRect();
     if (m_frameView && ur.intersects(vr)) {
         // We always just invalidate the root view, since we could be an iframe that is clipped out
@@ -207,7 +199,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
             int yFrameOffset = m_frameView->hasBorder() ? 2 : 0;
             int xFrameOffset = m_frameView->hasBorder() ? 1 : 0;
             r.move(obj->borderLeft() + obj->paddingLeft() + xFrameOffset,
-                obj->borderTop() + obj->paddingTop() + yFrameOffset);
+                   obj->borderTop() + obj->paddingTop() + yFrameOffset);
             obj->repaintRectangle(r, immediate);
         }
     }
@@ -222,6 +214,7 @@ RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)
 {
     if (!object)
         return 0;
+
     RenderObject* child = object->childAt(offset);
     return child ? child : object->nextInPreOrderAfterChildren();
 }
@@ -234,7 +227,6 @@ IntRect RenderView::selectionRect() const
     RenderObject* os = m_selectionStart;
     RenderObject* stop = rendererAfterPosition(m_selectionEnd, m_selectionEndPos);
     while (os && os != stop) {
-        
         if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
 //          assert(!selectedObjects.get(os));
@@ -248,7 +240,7 @@ IntRect RenderView::selectionRect() const
                 cb = cb->containingBlock();
             }
         }
-        
+
         os = os->nextInPreOrder();
     }
 
@@ -263,16 +255,16 @@ IntRect RenderView::selectionRect() const
     return selRect;
 }
 
-void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
+void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos)
 {
-    // Make sure both our start and end objects are defined. 
+    // Make sure both our start and end objects are defined.
     // Check www.msnbc.com and try clicking around to find the case where this happened.
-    if ((s && !e) || (e && !s))
+    if ((start && !end) || (end && !start))
         return;
 
     // Just return if the selection hasn't changed.
-    if (m_selectionStart == s && m_selectionStartPos == sp &&
-        m_selectionEnd == e && m_selectionEndPos == ep)
+    if (m_selectionStart == start && m_selectionStartPos == startPos &&
+        m_selectionEnd == end && m_selectionEndPos == endPos)
         return;
 
     // Record the old selected objects.  These will be used later
@@ -307,7 +299,7 @@ void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
                 cb = cb->containingBlock();
             }
         }
-        
+
         os = os->nextInPreOrder();
     }
 
@@ -317,36 +309,35 @@ void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
         i->first->setSelectionState(SelectionNone);
 
     // set selection start and end
-    m_selectionStart = s;
-    m_selectionStartPos = sp;
-    m_selectionEnd = e;
-    m_selectionEndPos = ep;
+    m_selectionStart = start;
+    m_selectionStartPos = startPos;
+    m_selectionEnd = end;
+    m_selectionEndPos = endPos;
 
     // Update the selection status of all objects between m_selectionStart and m_selectionEnd
-    if (s && s == e)
-        s->setSelectionState(SelectionBoth);
+    if (start && start == end)
+        start->setSelectionState(SelectionBoth);
     else {
-        if (s)
-            s->setSelectionState(SelectionStart);
-        if (e)
-            e->setSelectionState(SelectionEnd);
+        if (start)
+            start->setSelectionState(SelectionStart);
+        if (end)
+            end->setSelectionState(SelectionEnd);
     }
 
-    RenderObject* o = s;
-    stop = rendererAfterPosition(e, ep);
-    
+    RenderObject* o = start;
+    stop = rendererAfterPosition(end, endPos);
+
     while (o && o != stop) {
-        if (o != s && o != e && o->canBeSelectionLeaf())
+        if (o != start && o != end && o->canBeSelectionLeaf())
             o->setSelectionState(SelectionInside);
         o = o->nextInPreOrder();
     }
 
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
-    o = s;
+    o = start;
     while (o && o != stop) {
-        
-        if ((o->canBeSelectionLeaf() || o == s || o == e) && o->selectionState() != SelectionNone) {
+        if ((o->canBeSelectionLeaf() || o == start || o == end) && o->selectionState() != SelectionNone) {
             newSelectedObjects.set(o, new SelectionInfo(o));
             RenderBlock* cb = o->containingBlock();
             while (cb && !cb->isRenderView()) {
@@ -388,7 +379,7 @@ void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
         }
         delete oldInfo;
     }
-    
+
     // Any new objects that remain were not found in the old objects dict, and so they need to be updated.
     SelectedObjectMap::iterator newObjectsEnd = newSelectedObjects.end();
     for (SelectedObjectMap::iterator i = newSelectedObjects.begin(); i != newObjectsEnd; ++i) {
@@ -413,7 +404,7 @@ void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
         }
         delete oldInfo;
     }
-    
+
     // Any new blocks that remain were not found in the old blocks dict, and so they need to be updated.
     SelectedBlockMap::iterator newBlocksEnd = newSelectedBlocks.end();
     for (SelectedBlockMap::iterator i = newSelectedBlocks.begin(); i != newBlocksEnd; ++i) {
@@ -428,26 +419,25 @@ void RenderView::clearSelection()
     setSelection(0, -1, 0, -1);
 }
 
-void RenderView::selectionStartEnd(int& spos, int& epos)
+void RenderView::selectionStartEnd(int& startPos, int& endPos)
 {
-    spos = m_selectionStartPos;
-    epos = m_selectionEndPos;
+    startPos = m_selectionStartPos;
+    endPos = m_selectionEndPos;
 }
 
 void RenderView::updateWidgetPositions()
 {
     RenderObjectSet::iterator end = m_widgets.end();
-    for (RenderObjectSet::iterator it = m_widgets.begin(); it != end; ++it) {
+    for (RenderObjectSet::iterator it = m_widgets.begin(); it != end; ++it)
         (*it)->updateWidgetPosition();
-    }
 }
 
-void RenderView::addWidget(RenderObject *o)
+void RenderView::addWidget(RenderObject* o)
 {
     m_widgets.add(o);
 }
 
-void RenderView::removeWidget(RenderObject *o)
+void RenderView::removeWidget(RenderObject* o)
 {
     m_widgets.remove(o);
 }
@@ -458,9 +448,9 @@ IntRect RenderView::viewRect() const
         return IntRect(0, 0, m_width, m_height);
     if (m_frameView)
         return IntRect(m_frameView->contentsX(),
-            m_frameView->contentsY(),
-            m_frameView->visibleWidth(),
-            m_frameView->visibleHeight());
+                       m_frameView->contentsY(),
+                       m_frameView->visibleWidth(),
+                       m_frameView->visibleHeight());
     return IntRect();
 }
 
@@ -473,17 +463,17 @@ int RenderView::docHeight() const
         h = m_frameView->visibleHeight();
 
     int lowestPos = lowestPosition();
-    if( lowestPos > h )
+    if (lowestPos > h)
         h = lowestPos;
 
     // FIXME: This doesn't do any margin collapsing.
     // Instead of this dh computation we should keep the result
     // when we call RenderBlock::layout.
     int dh = 0;
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+    for (RenderObject* c = firstChild(); c; c = c->nextSibling())
         dh += c->height() + c->marginTop() + c->marginBottom();
-    }
-    if( dh > h )
+
+    if (dh > h)
         h = dh;
 
     return h;
@@ -498,31 +488,33 @@ int RenderView::docWidth() const
         w = m_frameView->visibleWidth();
 
     int rightmostPos = rightmostPosition();
-    if( rightmostPos > w )
+    if (rightmostPos > w)
         w = rightmostPos;
 
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
         int dw = c->width() + c->marginLeft() + c->marginRight();
-        if( dw > w )
+        if (dw > w)
             w = dw;
     }
+
     return w;
 }
 
 // The idea here is to take into account what object is moving the pagination point, and
 // thus choose the best place to chop it.
-void RenderView::setBestTruncatedAt(int y, RenderObject *forRenderer, bool forcedBreak)
+void RenderView::setBestTruncatedAt(int y, RenderObject* forRenderer, bool forcedBreak)
 {
     // Nobody else can set a page break once we have a forced break.
-    if (m_forcedPageBreak) return;
-    
+    if (m_forcedPageBreak)
+        return;
+
     // Forced breaks always win over unforced breaks.
     if (forcedBreak) {
         m_forcedPageBreak = true;
         m_bestTruncatedAt = y;
         return;
     }
-    
+
     // prefer the widest object who tries to move the pagination point
     int width = forRenderer->width();
     if (width > m_truncatorWidth) {
@@ -531,4 +523,4 @@ void RenderView::setBestTruncatedAt(int y, RenderObject *forRenderer, bool force
     }
 }
 
-}
+} // namespace WebCore

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RootInlineBox_H
-#define RootInlineBox_H
+#ifndef RootInlineBox_h
+#define RootInlineBox_h
 
 #include "bidi.h"
 #include "InlineFlowBox.h"
@@ -30,7 +30,6 @@ namespace WebCore {
 
 class EllipsisBox;
 class HitTestResult;
-
 struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {
@@ -50,47 +49,52 @@ public:
         , m_ellipsisBox(0)
     {
     }
-        
-    virtual void destroy(RenderArena* renderArena);
-    void detachEllipsisBox(RenderArena* renderArena);
+
+    virtual bool isRootInlineBox() { return true; }
+
+    virtual void destroy(RenderArena*);
+    void detachEllipsisBox(RenderArena*);
 
     RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }
     RootInlineBox* prevRootBox() { return static_cast<RootInlineBox*>(m_prevLine); }
 
     virtual void adjustPosition(int dx, int dy);
-    
-    virtual bool isRootInlineBox() { return true; }
+
     virtual int topOverflow() { return m_topOverflow; }
     virtual int bottomOverflow() { return m_bottomOverflow; }
     virtual int leftOverflow() { return m_leftOverflow; }
     virtual int rightOverflow() { return m_rightOverflow; }
-    virtual void setVerticalOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
-    virtual void setVerticalSelectionPositions(int top, int bottom) { m_selectionTop = top; m_selectionBottom = bottom; }
-    void setHorizontalOverflowPositions(int left, int right) { m_leftOverflow = left; m_rightOverflow = right; }
-    void setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiStatus* status, BidiContext* context);
-    void setLineBreakPos(int p) { m_lineBreakPos = p; }
 
-    void setBlockHeight(int h) { m_blockHeight = h; }
-    void setEndsWithBreak(bool b) { m_endsWithBreak = b; }
-    
-    int blockHeight() const { return m_blockHeight; }
-    bool endsWithBreak() const { return m_endsWithBreak; }
+    virtual void setVerticalOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
+    void setHorizontalOverflowPositions(int left, int right) { m_leftOverflow = left; m_rightOverflow = right; }
+
+    virtual void setVerticalSelectionPositions(int top, int bottom) { m_selectionTop = top; m_selectionBottom = bottom; }
+
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
-    unsigned lineBreakPos() const { return m_lineBreakPos; }
     BidiStatus lineBreakBidiStatus() const { return m_lineBreakBidiStatus; }
     BidiContext* lineBreakBidiContext() const { return m_lineBreakContext.get(); }
+    void setLineBreakInfo(RenderObject*, unsigned breakPos, BidiStatus*, BidiContext*);
+
+    unsigned lineBreakPos() const { return m_lineBreakPos; }
+    void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
+
+    int blockHeight() const { return m_blockHeight; }
+    void setBlockHeight(int h) { m_blockHeight = h; }
+
+    bool endsWithBreak() const { return m_endsWithBreak; }
+    void setEndsWithBreak(bool b) { m_endsWithBreak = b; }
 
     void childRemoved(InlineBox* box);
 
     bool canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
     void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, int blockEdge, int ellipsisWidth, InlineBox* markupBox = 0);
-    virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
+    virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox);
 
     EllipsisBox* ellipsisBox() const { return m_ellipsisBox; }
 
     void paintEllipsisBox(RenderObject::PaintInfo&, int tx, int ty) const;
     bool hitTestEllipsisBox(HitTestResult&, int x, int y, int tx, int ty, HitTestAction, bool);
-    
+
     virtual void clearTruncation();
 
 #if PLATFORM(MAC)
@@ -102,13 +106,13 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildren; }
-    void setHasSelectedChildren(bool b);
+    void setHasSelectedChildren(bool);
 
     virtual RenderObject::SelectionState selectionState();
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
-    GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, 
+    GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY,
                                   int tx, int ty, const RenderObject::PaintInfo*);
 
     RenderBlock* block() const;
@@ -116,7 +120,7 @@ public:
     int selectionTop();
     int selectionBottom() { return m_selectionBottom; }
     int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
- 
+
     InlineBox* closestLeafChildForXPos(int x, int tx);
 
 protected:
@@ -135,16 +139,16 @@ protected:
     // we can create a BidiIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     unsigned m_lineBreakPos;
-    
+
     BidiStatus m_lineBreakBidiStatus;
     RefPtr<BidiContext> m_lineBreakContext;
-    
+
     // The height of the block at the end of this line.  This is where the next line starts.
     int m_blockHeight;
-    
+
     // Whether the line ends with a <br>.
     bool m_endsWithBreak : 1;
-    
+
     // Whether we have any children selected (this bit will also be set if the <br> that terminates our
     // line is selected).
     bool m_hasSelectedChildren : 1;
@@ -155,4 +159,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // RootInlineBox_H
+#endif // RootInlineBox_h

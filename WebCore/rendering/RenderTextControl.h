@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef RenderTextField_H
-#define RenderTextField_H
+#ifndef RenderTextControl_h
+#define RenderTextControl_h
 
 #include "PopupMenuClient.h"
 #include "RenderBlock.h"
@@ -37,14 +37,15 @@ public:
     RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
 
+    virtual const char* renderName() const { return "RenderTextField"; }
+
     virtual void calcHeight();
     virtual void calcMinMaxWidth();
-    virtual const char* renderName() const { return "RenderTextField"; }
-    virtual void removeLeftoverAnonymousBoxes() {}
+    virtual void removeLeftoverAnonymousBoxes() { }
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }
-    virtual short baselinePosition( bool, bool ) const;
+    virtual short baselinePosition(bool firstLine, bool isRootLineBox) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void layout();
     virtual bool avoidsFloats() const { return true; }
@@ -53,13 +54,13 @@ public:
     void setEdited(bool isEdited) { m_dirty = isEdited; };
     bool isTextField() const { return !m_multiLine; }
     bool isTextArea() const { return m_multiLine; }
-    
+
     int selectionStart();
     int selectionEnd();
     void setSelectionStart(int);
-    void setSelectionEnd(int);    
+    void setSelectionEnd(int);
     void select();
-    void setSelectionRange(int, int);
+    void setSelectionRange(int start, int end);
 
     void subtreeHasChanged();
     String text();
@@ -74,18 +75,18 @@ public:
     virtual int scrollHeight() const;
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
-    virtual bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier = 1.0);
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
 
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
 
     void addSearchResult();
     void onSearch() const;
-        
+
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
-    
+
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireOnSearch = true);
     String itemText(unsigned listIndex) const;
@@ -103,9 +104,8 @@ public:
     void setTextFromItem(unsigned listIndex);
     bool shouldPopOver() const { return false; }
     bool valueShouldChangeOnHotTrack() const { return false; }
-    
-    private:
-   
+
+private:
     RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
     RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
@@ -116,7 +116,7 @@ public:
     void createSubtreeIfNeeded();
     void updateCancelButtonVisibility(RenderStyle*);
     const AtomicString& autosaveName() const;
-    
+
     RefPtr<HTMLTextFieldInnerElement> m_innerBlock;
     RefPtr<HTMLTextFieldInnerTextElement> m_innerText;
     RefPtr<HTMLSearchFieldResultsButtonElement> m_resultsButton;
@@ -125,12 +125,12 @@ public:
     bool m_dirty;
     bool m_multiLine;
     bool m_placeholderVisible;
-    
+
     RefPtr<SearchPopupMenu> m_searchPopup;
     bool m_searchPopupIsVisible;
     mutable Vector<String> m_recentSearches;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderTextControl_h

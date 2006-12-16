@@ -44,11 +44,12 @@
 #include "visible_units.h"
 #include <math.h>
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-using namespace std;
 
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     : RenderBlock(node)
@@ -85,9 +86,10 @@ void RenderTextControl::setStyle(RenderStyle* style)
         RenderBlock* textBlockRenderer = static_cast<RenderBlock*>(m_innerText->renderer());
         RenderStyle* textBlockStyle = createInnerTextStyle(style);
         textBlockRenderer->setStyle(textBlockStyle);
-        for (Node *n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get()))
+        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
             if (n->renderer())
                 n->renderer()->setStyle(textBlockStyle);
+        }
     }
     if (m_resultsButton)
         m_resultsButton->renderer()->setStyle(createResultsButtonStyle(style));
@@ -103,14 +105,13 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
 {
     if (differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
         return textColor.light();
-    else
-        return textColor.dark();
+    return textColor.dark();
 }
 
 RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
 {
     RenderStyle* innerBlockStyle = new (renderArena()) RenderStyle();
-    
+
     innerBlockStyle->inheritFrom(startStyle);
     innerBlockStyle->setDisplay(BLOCK);
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
@@ -123,14 +124,14 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
 {
     RenderStyle* textBlockStyle = new (renderArena()) RenderStyle();
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
-    
+
     textBlockStyle->inheritFrom(startStyle);
     textBlockStyle->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
     if (m_innerBlock)
         textBlockStyle->setDisplay(INLINE_BLOCK);
     else
         textBlockStyle->setDisplay(BLOCK);
-    
+
     if (m_multiLine) {
         // Forward overflow properties.
         textBlockStyle->setOverflowX(startStyle->overflowX() == OVISIBLE ? OAUTO : startStyle->overflowX());
@@ -144,7 +145,6 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
             textBlockStyle->setWhiteSpace(PRE_WRAP);
             textBlockStyle->setWordWrap(BREAK_WORD);
         }
-
     } else {
         textBlockStyle->setWhiteSpace(PRE);
         textBlockStyle->setOverflowX(OHIDDEN);
@@ -173,7 +173,7 @@ RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle
     RenderStyle* resultsBlockStyle;
     if (input->maxResults() < 0)
         resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_DECORATION);
-    else if (input->maxResults() == 0)
+    else if (!input->maxResults())
         resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_RESULTS_DECORATION);
     else
         resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_RESULTS_BUTTON);
@@ -183,9 +183,9 @@ RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle
 
     if (startStyle)
         resultsBlockStyle->inheritFrom(startStyle);
-    
+
     resultsBlockStyle->setDisplay(INLINE_BLOCK);
-    
+
     return resultsBlockStyle;
 }
 
@@ -197,7 +197,7 @@ RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
 
     if (startStyle)
         cancelBlockStyle->inheritFrom(startStyle);
-        
+
     cancelBlockStyle->setDisplay(INLINE_BLOCK);
 
     updateCancelButtonVisibility(cancelBlockStyle);
@@ -209,32 +209,31 @@ void RenderTextControl::showPlaceholderIfNeeded()
 {
     if (m_multiLine)
         return;
-    
+
     String value = static_cast<HTMLInputElement*>(node())->value().copy();
     String placeholder = static_cast<HTMLInputElement*>(node())->getAttribute(placeholderAttr);
 
     if (!value.isEmpty() || placeholder.isEmpty())
         return;
-    
+
     if (document()->focusedNode() == node())
         return;
-    
+
     m_placeholderVisible = true;
     ExceptionCode ec = 0;
     m_innerText->setInnerText(placeholder, ec);
     Color placeholderColor(128, 128, 128);
     m_innerText->renderer()->style()->setColor(placeholderColor);
     m_innerText->renderer()->repaint();
-    
 }
 
 void RenderTextControl::hidePlaceholderIfNeeded()
 {
     if (!m_placeholderVisible)
         return;
-    
+
     m_placeholderVisible = false;
-    m_innerText->removeChildren();    
+    m_innerText->removeChildren();
     if (node()->isEnabled())
         m_innerText->renderer()->style()->setColor(style()->color());
     else
@@ -257,7 +256,7 @@ void RenderTextControl::createSubtreeIfNeeded()
         m_innerBlock->setAttached();
         m_innerBlock->setInDocument(true);
         innerBlockRenderer->setStyle(createInnerBlockStyle(style()));
-        
+
         // Add inner block renderer to Render tree
         RenderBlock::addChild(innerBlockRenderer);
     }
@@ -268,10 +267,10 @@ void RenderTextControl::createSubtreeIfNeeded()
         m_resultsButton->setRenderer(resultsBlockRenderer);
         m_resultsButton->setAttached();
         m_resultsButton->setInDocument(true);
-        
+
         RenderStyle* resultsBlockStyle = createResultsButtonStyle(m_innerBlock->renderer()->style());
-        resultsBlockRenderer->setStyle(resultsBlockStyle); 
-        
+        resultsBlockRenderer->setStyle(resultsBlockStyle);
+
         // Add results renderer to DOM & Render tree
         m_innerBlock->renderer()->addChild(resultsBlockRenderer);
         ExceptionCode ec = 0;
@@ -280,26 +279,26 @@ void RenderTextControl::createSubtreeIfNeeded()
     if (!m_innerText) {
         // Create the text block element and give it a parent, renderer, and style
         // For non-search fields, there is no intermediate m_innerBlock as the shadow node.
-        // m_innerText will be the shadow node in that case. 
+        // m_innerText will be the shadow node in that case.
         m_innerText = new HTMLTextFieldInnerTextElement(document(), m_innerBlock ? 0 : node());
         RenderBlock* textBlockRenderer = new (renderArena()) RenderBlock(m_innerText.get());
         m_innerText->setRenderer(textBlockRenderer);
         m_innerText->setAttached();
         m_innerText->setInDocument(true);
-        
+
         RenderStyle* parentStyle = style();
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
         RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
-        textBlockRenderer->setStyle(textBlockStyle); 
-        
+        textBlockRenderer->setStyle(textBlockStyle);
+
         // Add text block renderer to Render tree
         if (m_innerBlock) {
             m_innerBlock->renderer()->addChild(textBlockRenderer);
             ExceptionCode ec = 0;
             // Add text block to the DOM
             m_innerBlock->appendChild(m_innerText, ec);
-        } else 
+        } else
             RenderBlock::addChild(textBlockRenderer);
     }
     if (isSearchField && !m_cancelButton) {
@@ -309,10 +308,10 @@ void RenderTextControl::createSubtreeIfNeeded()
         m_cancelButton->setRenderer(closeBlockRenderer);
         m_cancelButton->setAttached();
         m_cancelButton->setInDocument(true);
-        
+
         RenderStyle* closeBlockStyle = createCancelButtonStyle(m_innerBlock->renderer()->style());
-        closeBlockRenderer->setStyle(closeBlockStyle); 
-        
+        closeBlockRenderer->setStyle(closeBlockStyle);
+
         // Add close block renderer to DOM & Render tree
         m_innerBlock->renderer()->addChild(closeBlockRenderer);
         ExceptionCode ec = 0;
@@ -323,15 +322,15 @@ void RenderTextControl::createSubtreeIfNeeded()
 void RenderTextControl::updateFromElement()
 {
     createSubtreeIfNeeded();
-    
+
     if (m_cancelButton)
         updateCancelButtonVisibility(m_cancelButton->renderer()->style());
-        
+
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
     m_innerText->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
     String value;
     if (m_multiLine)
-        value = static_cast<HTMLTextAreaElement*>(element)->value().copy();    
+        value = static_cast<HTMLTextAreaElement*>(element)->value().copy();
     else
         value = static_cast<HTMLInputElement*>(element)->value().copy();
 
@@ -350,17 +349,17 @@ void RenderTextControl::updateFromElement()
             setEdited(false);
         }
         element->setValueMatchesRenderer();
-        
+
         showPlaceholderIfNeeded();
     }
-    
+
     if (m_searchPopupIsVisible)
         m_searchPopup->updateFromElement();
 }
 
 int RenderTextControl::selectionStart()
 {
-    return indexForVisiblePosition(document()->frame()->selectionController()->start());        
+    return indexForVisiblePosition(document()->frame()->selectionController()->start());
 }
 
 int RenderTextControl::selectionEnd()
@@ -372,12 +371,12 @@ void RenderTextControl::setSelectionStart(int start)
 {
     setSelectionRange(start, max(start, selectionEnd()));
 }
- 
+
 void RenderTextControl::setSelectionEnd(int end)
 {
     setSelectionRange(min(end, selectionStart()), end);
 }
-    
+
 void RenderTextControl::select()
 {
     setSelectionRange(0, text().length());
@@ -387,7 +386,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
 {
     end = max(end, 0);
     start = min(max(start, 0), end);
-    
+
     document()->updateLayout();
 
     if (style()->visibility() == HIDDEN) {
@@ -403,7 +402,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
         endPosition = startPosition;
     else
         endPosition = visiblePositionForIndex(end);
-    
+
     ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
     ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
 
@@ -415,7 +414,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
-{    
+{
     if (index <= 0)
         return VisiblePosition(m_innerText.get(), 0, DOWNSTREAM);
     ExceptionCode ec = 0;
@@ -462,11 +461,11 @@ void RenderTextControl::subtreeHasChanged()
             input->setValueFromRenderer(text());
             if (m_cancelButton)
                 updateCancelButtonVisibility(m_cancelButton->renderer()->style());
-            
+
             // If the incremental attribute is set, then dispatch the search event
             if (!input->getAttribute(incrementalAttr).isNull())
                 onSearch();
-                
+
             if (!wasPreviouslyEdited)
                 document()->frame()->textFieldDidBeginEditing(input);
             document()->frame()->textDidChangeInTextField(input);
@@ -484,7 +483,7 @@ String RenderTextControl::text()
 String RenderTextControl::textWithHardLineBreaks()
 {
     String s("");
-    
+
     if (!m_innerText || !m_innerText->firstChild())
         return s;
 
@@ -517,7 +516,7 @@ String RenderTextControl::textWithHardLineBreaks()
         }
     }
     s.append(range->toString(true, ec));
-    ASSERT(ec == 0);
+    ASSERT(!ec);
 
     return s.replace('\\', backslashAsCurrencySymbol());
 }
@@ -527,17 +526,17 @@ void RenderTextControl::calcHeight()
     int rows = 1;
     if (m_multiLine)
         rows = static_cast<HTMLTextAreaElement*>(node())->rows();
-    
+
     int line = m_innerText->renderer()->lineHeight(true, true);
     int toAdd = paddingTop() + paddingBottom() + borderTop() + borderBottom();
-    
+
     int innerToAdd = m_innerText->renderer()->borderTop() + m_innerText->renderer()->borderBottom() +
                      m_innerText->renderer()->paddingTop() + m_innerText->renderer()->paddingBottom() +
                      m_innerText->renderer()->marginTop() + m_innerText->renderer()->marginBottom();
-    
+
     if (m_resultsButton) {
         static_cast<RenderBlock*>(m_resultsButton->renderer())->calcHeight();
-        innerToAdd = max(innerToAdd, 
+        innerToAdd = max(innerToAdd,
                          m_resultsButton->renderer()->borderTop() + m_resultsButton->renderer()->borderBottom() +
                          m_resultsButton->renderer()->paddingTop() + m_resultsButton->renderer()->paddingBottom() +
                          m_resultsButton->renderer()->marginTop() + m_resultsButton->renderer()->marginBottom());
@@ -545,14 +544,14 @@ void RenderTextControl::calcHeight()
     }
     if (m_cancelButton) {
         static_cast<RenderBlock*>(m_cancelButton->renderer())->calcHeight();
-        innerToAdd = max(innerToAdd, 
+        innerToAdd = max(innerToAdd,
                          m_cancelButton->renderer()->borderTop() + m_cancelButton->renderer()->borderBottom() +
                          m_cancelButton->renderer()->paddingTop() + m_cancelButton->renderer()->paddingBottom() +
                          m_cancelButton->renderer()->marginTop() + m_cancelButton->renderer()->marginBottom());
         line = max(line, m_cancelButton->renderer()->height());
     }
     toAdd += innerToAdd;
-    
+
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
     int scrollbarSize = 0;
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
@@ -560,7 +559,7 @@ void RenderTextControl::calcHeight()
         scrollbarSize = 15;
 
     m_height = line * rows + toAdd + scrollbarSize;
-    
+
     RenderBlock::calcHeight();
 }
 
@@ -573,9 +572,9 @@ short RenderTextControl::baselinePosition(bool b, bool isRootLineBox) const
 
 bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    // If we're within the text control, we want to act as if we've hit the inner text block element, incase the point 
+    // If we're within the text control, we want to act as if we've hit the inner text block element, in case the point
     // was on the control but not on the inner element (see Radar 4617841).
-    
+
     // In a search field, we want to act as if we've hit the results block if we're to the left of the inner text block,
     // and act as if we've hit the close block if we're to the right of the inner text block.
 
@@ -587,31 +586,31 @@ bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult
             rightNode = m_cancelButton.get();
         } else {
             leftNode = m_cancelButton.get();
-            rightNode = m_resultsButton.get();        
+            rightNode = m_resultsButton.get();
         }
         if (leftNode && x < m_innerText->renderer()->absoluteBoundingBoxRect().x())
             result.setInnerNode(leftNode);
         else if (rightNode && x > m_innerText->renderer()->absoluteBoundingBoxRect().right())
             result.setInnerNode(rightNode);
-        else 
+        else
             result.setInnerNode(m_innerText.get());
         return true;
-    }  
+    }
     return false;
 }
 
 void RenderTextControl::layout()
-{    
+{
     int oldHeight = m_height;
     calcHeight();
     bool relayoutChildren = oldHeight != m_height;
-    
+
     // Set the text block's height
     int textBlockHeight = m_height - paddingTop() - paddingBottom() - borderTop() - borderBottom();
     m_innerText->renderer()->style()->setHeight(Length(textBlockHeight, Fixed));
     if (m_innerBlock)
         m_innerBlock->renderer()->style()->setHeight(Length(textBlockHeight, Fixed));
-                
+
     int oldWidth = m_width;
     calcWidth();
     if (oldWidth != m_width)
@@ -628,7 +627,7 @@ void RenderTextControl::layout()
     }
 
     // Set the text block's width
-    int textBlockWidth = m_width - paddingLeft() - paddingRight() - borderLeft() - borderRight() - 
+    int textBlockWidth = m_width - paddingLeft() - paddingRight() - borderLeft() - borderRight() -
                          m_innerText->renderer()->paddingLeft() - m_innerText->renderer()->paddingRight() - searchExtrasWidth;
     m_innerText->renderer()->style()->setWidth(Length(textBlockWidth, Fixed));
     if (m_innerBlock)
@@ -656,15 +655,14 @@ void RenderTextControl::calcMinMaxWidth()
             // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
             if (m_innerText->renderer()->style()->overflowY() != OHIDDEN)
                 scrollbarSize = 15;
-        }
-        else {
+        } else {
             factor = static_cast<HTMLInputElement*>(node())->size();
             if (factor <= 0)
                 factor = 20;
         }
-        m_maxWidth = (int)ceilf(charWidth * factor) + scrollbarSize;
+        m_maxWidth = static_cast<int>(ceilf(charWidth * factor)) + scrollbarSize;
     }
-    
+
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
         m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
@@ -672,22 +670,22 @@ void RenderTextControl::calcMinMaxWidth()
         m_minWidth = 0;
     else
         m_minWidth = m_maxWidth;
-    
+
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
         m_maxWidth = min(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
         m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() + 
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() +
                 m_innerText->renderer()->paddingLeft() + m_innerText->renderer()->paddingRight();
-    
+
     if (m_resultsButton)
         toAdd += m_resultsButton->renderer()->borderLeft() + m_resultsButton->renderer()->borderRight() +
                  m_resultsButton->renderer()->paddingLeft() + m_resultsButton->renderer()->paddingRight();
     if (m_cancelButton)
         toAdd += m_cancelButton->renderer()->borderLeft() + m_cancelButton->renderer()->borderRight() +
                  m_cancelButton->renderer()->paddingLeft() + m_cancelButton->renderer()->paddingRight();
-                         
+
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
 
@@ -787,17 +785,18 @@ void RenderTextControl::addSearchResult()
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     if (input->maxResults() <= 0)
         return;
+
     String v = input->value();
     if (v.isEmpty() || !document() || !document()->frame() || document()->frame()->settings()->privateBrowsingEnabled())
         return;
 
-    int size = (int)m_recentSearches.size();
+    int size = static_cast<int>(m_recentSearches.size());
     for (int i = size - 1; i >= 0; --i)
         if (m_recentSearches[i] == v)
             m_recentSearches.remove(i);
 
     m_recentSearches.insert(0, v);
-    while ((int)m_recentSearches.size() > input->maxResults())
+    while (static_cast<int>(m_recentSearches.size()) > input->maxResults())
         m_recentSearches.removeLast();
 
     const AtomicString& name = autosaveName();
@@ -825,10 +824,10 @@ void RenderTextControl::showPopup()
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    if ((int)m_recentSearches.size() > input->maxResults()) {
+    if (static_cast<int>(m_recentSearches.size()) > input->maxResults()) {
         do
             m_recentSearches.removeLast();
-        while ((int)m_recentSearches.size() > input->maxResults());
+        while (static_cast<int>(m_recentSearches.size()) > input->maxResults());
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
@@ -868,10 +867,10 @@ String RenderTextControl::itemText(unsigned listIndex) const
 {
     unsigned size = listSize();
     if (size == 1) {
-        ASSERT(listIndex == 0);
+        ASSERT(!listIndex);
         return String("No recent searches");
     }
-    if (listIndex == 0)
+    if (!listIndex)
         return String("Recent Searches");
     if (itemIsSeparator(listIndex))
         return String();
@@ -882,7 +881,7 @@ String RenderTextControl::itemText(unsigned listIndex) const
 
 bool RenderTextControl::itemIsEnabled(unsigned listIndex) const
 {
-     if (listIndex == 0 || itemIsSeparator(listIndex))
+     if (!listIndex || itemIsSeparator(listIndex))
         return false;
     return true;
 }
@@ -919,7 +918,7 @@ int RenderTextControl::clientPaddingRight() const
 unsigned RenderTextControl::listSize() const
 {
     // If there are no recent searches, then our menu will have 1 "No recent searches" item.
-    if (m_recentSearches.size() == 0)
+    if (!m_recentSearches.size())
         return 1;
     // Otherwise, leave room in the menu for a header, a separator, and the "Clear recent searches" item.
     return m_recentSearches.size() + 3;
@@ -953,10 +952,10 @@ void RenderTextControl::setTextFromItem(unsigned listIndex)
 
 bool RenderTextControl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    RenderLayer *l = m_innerText->renderer()->layer();
-    if (l && l->scroll(direction, granularity, multiplier))
+    RenderLayer* layer = m_innerText->renderer()->layer();
+    if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
     return RenderObject::scroll(direction, granularity, multiplier);
 }
 
-}
+} // namespace WebCore

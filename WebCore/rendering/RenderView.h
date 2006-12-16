@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef render_canvas_h
-#define render_canvas_h
+#ifndef RenderView_h
+#define RenderView_h
 
 #include "RenderBlock.h"
 
@@ -35,7 +35,7 @@ public:
     RenderView(Node*, FrameView*);
     virtual ~RenderView();
 
-    virtual const char *renderName() const { return "RenderView"; }
+    virtual const char* renderName() const { return "RenderView"; }
 
     virtual bool isRenderView() const { return true; }
 
@@ -43,24 +43,24 @@ public:
     virtual void calcWidth();
     virtual void calcHeight();
     virtual void calcMinMaxWidth();
-    virtual bool absolutePosition(int &xPos, int& yPos, bool f = false);
-    
+    virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false);
+
     int docHeight() const;
     int docWidth() const;
 
     FrameView* frameView() const { return m_frameView; }
 
     virtual bool hasOverhangingFloats() { return false; }
-    
-    virtual void repaintViewRectangle(const IntRect& r, bool immediate = false);
-    
+
+    virtual void repaintViewRectangle(const IntRect&, bool immediate = false);
+
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    
-    void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
+
+    void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos);
     void clearSelection();
-    virtual RenderObject *selectionStart() const { return m_selectionStart; }
-    virtual RenderObject *selectionEnd() const { return m_selectionEnd; }
+    virtual RenderObject* selectionStart() const { return m_selectionStart; }
+    virtual RenderObject* selectionEnd() const { return m_selectionEnd; }
 
     void setPrintingMode(bool print) { m_printingMode = print; }
     bool printingMode() const { return m_printingMode; }
@@ -69,36 +69,31 @@ public:
     void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; m_forcedPageBreak = false; }
     void setBestTruncatedAt(int y, RenderObject *forRenderer, bool forcedBreak = false);
     int bestTruncatedAt() const { return m_bestTruncatedAt; }
-private:
-    int m_bestTruncatedAt;
-    int m_truncatorWidth;
-    bool m_forcedPageBreak;
-public:
+
     int truncatedAt() const { return m_truncatedAt; }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
-    
+
     IntRect selectionRect() const;
-    
+
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
     virtual IntRect viewRect() const;
 
-    virtual void selectionStartEnd(int& spos, int& epos);
+    virtual void selectionStartEnd(int& startPos, int& endPos);
 
     IntRect printRect() const { return m_printRect; }
     void setPrintRect(const IntRect& r) { m_printRect = r; }
 
     void updateWidgetPositions();
-    void addWidget(RenderObject *);
-    void removeWidget(RenderObject *);
-    
+    void addWidget(RenderObject*);
+    void removeWidget(RenderObject*);
+
     void setFlexBoxInFirstLayout(RenderObject* r) { m_flexBoxInFirstLayout = r; }
     RenderObject* flexBoxInFirstLayout() { return m_flexBoxInFirstLayout; }
 
 protected:
-
     FrameView* m_frameView;
 
     RenderObject* m_selectionStart;
@@ -110,17 +105,22 @@ protected:
     bool m_printingMode;
     bool m_printImages;
     int m_truncatedAt;
-    
+
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
     IntRect m_printRect; // Used when printing.
 
-    typedef HashSet<RenderObject *> RenderObjectSet;
+    typedef HashSet<RenderObject*> RenderObjectSet;
 
     RenderObjectSet m_widgets;
-    
+
     RenderObject* m_flexBoxInFirstLayout;
+
+private:
+    int m_bestTruncatedAt;
+    int m_truncatorWidth;
+    bool m_forcedPageBreak;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderView_h
