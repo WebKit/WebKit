@@ -87,7 +87,7 @@ namespace WebCore {
         const KURL& URL() const;
         const KURL unreachableURL() const;
         void replaceRequestURLForAnchorScroll(const KURL&);
-        bool isStopping() const { return m_isStopping; }
+        bool isStopping() const;
         void stopLoading();
         void setCommitted(bool);
         bool isCommitted() const;
@@ -97,12 +97,12 @@ namespace WebCore {
         void receivedData(const char*, int);
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
-        const ResourceResponse& response() const { return m_response; }
-        const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
+        const ResourceResponse& response() const;
+        const ResourceError& mainDocumentError() const;
 #if PLATFORM(MAC)
         void mainReceivedError(const ResourceError&, bool isComplete);
 #endif
-        void setResponse(const ResourceResponse& response) { m_response = response; }
+        void setResponse(const ResourceResponse& response);
         void prepareForLoadStart();
         bool isClientRedirect() const;
         void setIsClientRedirect(bool);
