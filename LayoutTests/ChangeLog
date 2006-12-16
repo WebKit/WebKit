@@ -1,3 +1,16 @@
+2006-12-16  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Oliver.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11831
+          REGRESSION: pixel test failing for editing/selection/select-all-005.html
+
+        * editing/selection/select-all-005-expected.txt: Reverted to the original
+          expected result for this test.
+        * editing/selection/select-all-005.html: Eliminated a script element that was
+          added outside the body, so that the selection will encompass the entire html
+          element as originally intended.
+
 2006-12-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
