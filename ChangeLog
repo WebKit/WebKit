@@ -1,3 +1,9 @@
+2006-12-17  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Rob Buis.
+
+        * WebKit.pro: Build testkjs.
+
 2006-12-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.
