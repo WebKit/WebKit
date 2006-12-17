@@ -1,20 +1,20 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0) size 479.50x360
-      KCanvasContainer {g} at (20,0) size 460x360
-        KCanvasItem {rect} at (20,20) size 200x200 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M20.00,20.00L220.00,20.00L220.00,220.00L20.00,220.00"]
-        KCanvasContainer {g} at (320,0) size 160x360
-          KCanvasContainer {a} at (320,0) size 160x180
-            KCanvasItem {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [data="M320.00,0.00L480.00,0.00L480.00,180.00L320.00,180.00"]
+    RenderSVGContainer {svg} at (0.50,0) size 479.50x360
+      RenderSVGContainer {g} at (20,0) size 460x360
+        RenderPath {rect} at (20,20) size 200x200 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M20.00,20.00L220.00,20.00L220.00,220.00L20.00,220.00"]
+        RenderSVGContainer {g} at (320,0) size 160x360
+          RenderSVGContainer {a} at (320,0) size 160x180
+            RenderPath {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [data="M320.00,0.00L480.00,0.00L480.00,180.00L320.00,180.00"]
             RenderSVGText {text} at (330,90) size 480x36
               RenderSVGInlineText {#text} at (0,-28) size 96x36
                 text run at (0,-28) width 96: "Fade in"
-          KCanvasContainer {a} at (320,180) size 160x180
-            KCanvasItem {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [data="M320.00,180.00L480.00,180.00L480.00,360.00L320.00,360.00"]
+          RenderSVGContainer {a} at (320,180) size 160x180
+            RenderPath {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [data="M320.00,180.00L480.00,180.00L480.00,360.00L320.00,360.00"]
             RenderSVGText {text} at (330,280) size 480x36
               RenderSVGInlineText {#text} at (0,-28) size 113x36
                 text run at (0,-28) width 113: "Fade out"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (1,28) size 471x262
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (1,28) size 471x262
         RenderSVGText {text} at (19,61) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 76x39
             text run at (0,-32) width 76: "Plain"
@@ -20,9 +20,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (1,200) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 471x39
             text run at (0,-32) width 471: "Bold, italic and underlined"
-        KCanvasContainer {g} at (49,223) size 382x67
-          KCanvasItem {rect} at (49,224) size 382x66 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M50.00,225.00L430.00,225.00L430.00,289.00L50.00,289.00"]
-          KCanvasContainer {g} at (55,223) size 347x67
+        RenderSVGContainer {g} at (49,223) size 382x67
+          RenderPath {rect} at (49,224) size 382x66 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M50.00,225.00L430.00,225.00L430.00,289.00L50.00,289.00"]
+          RenderSVGContainer {g} at (55,223) size 347x67
             RenderSVGText {text} at (55,245) size 480x27
               RenderSVGInlineText {#text} at (0,-22) size 343x27
                 text run at (0,-22) width 343: "Each line of text which flows in a"
@@ -35,4 +35,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

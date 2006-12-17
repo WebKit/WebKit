@@ -1,9 +1,9 @@
 KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [bounding box mode=0] [start=(10,10)] [end=(440,10)]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasContainer {g} at (20,13.50) size 420x247.50 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (20,13.50) size 420x247.50 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
         RenderSVGText {text} at (20,70) size 480x78
           RenderSVGInlineText {#text} at (0,-61) size 420x78
             text run at (0,-61) width 420: "Gradient on fill"
@@ -19,4 +19,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x59
         RenderSVGInlineText {#text} at (0,-46) size 330x59
           text run at (0,-46) width 330: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

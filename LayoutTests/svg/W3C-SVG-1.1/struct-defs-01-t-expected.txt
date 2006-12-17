@@ -1,13 +1,13 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 480x360
-      KCanvasContainer {g} at (0,0) size 480x360
-        KCanvasContainer {defs} at (0,0) size 480x360
-          KCanvasItem {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
-        KCanvasItem {rect} at (140,80) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M140.00,80.00L340.00,80.00L340.00,280.00L140.00,280.00"]
-        KCanvasContainer {defs} at (160,100) size 160x160
-          KCanvasItem {rect} at (160,100) size 160x160 [fill={[type=SOLID] [color=#008000]}] [data="M160.00,100.00L320.00,100.00L320.00,260.00L160.00,260.00"]
+    RenderSVGContainer {svg} at (0,0) size 480x360
+      RenderSVGContainer {g} at (0,0) size 480x360
+        RenderSVGContainer {defs} at (0,0) size 480x360
+          RenderPath {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
+        RenderPath {rect} at (140,80) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M140.00,80.00L340.00,80.00L340.00,280.00L140.00,280.00"]
+        RenderSVGContainer {defs} at (160,100) size 160x160
+          RenderPath {rect} at (160,100) size 160x160 [fill={[type=SOLID] [color=#008000]}] [data="M160.00,100.00L320.00,100.00L320.00,260.00L160.00,260.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (84,18) width 4: "."
       RenderBlock {HR} at (0,52) size 800x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,62) size 800x23
-        RenderTextField {INPUT} at (2,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (152,2) size 64x18
           text run at (152,2) width 64: " dragging "
         RenderInline {SPAN} at (0,0) size 49x18

@@ -2,9 +2,9 @@ KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFF
 KCanvasResource {id="Mask" [type=MASKER]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,143.90) size 780.49x292.68
-      KCanvasContainer {defs} at (0,143.90) size 0x0
-      KCanvasContainer {mask} at (0,143.90) size 780.49x292.68
-        KCanvasItem {rect} at (0,143.90) size 780.49x292.68 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}] [data="M0.00,0.00L800.00,0.00L800.00,300.00L0.00,300.00"]
-      KCanvasItem {rect} at (0,143.90) size 780.49x292.68 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00L800.00,0.00L800.00,300.00L0.00,300.00"]
-      KCanvasItem {rect} at (0,241.46) size 780.49x97.56 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00L800.00,100.00L800.00,200.00L0.00,200.00"]
+    RenderSVGContainer {svg} at (0,143.90) size 780.49x292.68
+      RenderSVGContainer {defs} at (0,143.90) size 0x0
+      RenderSVGContainer {mask} at (0,143.90) size 780.49x292.68
+        RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}] [data="M0.00,0.00L800.00,0.00L800.00,300.00L0.00,300.00"]
+      RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00L800.00,0.00L800.00,300.00L0.00,300.00"]
+      RenderPath {rect} at (0,241.46) size 780.49x97.56 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00L800.00,100.00L800.00,200.00L0.00,200.00"]

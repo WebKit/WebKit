@@ -37,7 +37,7 @@ public:
     RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
 
-    virtual const char* renderName() const { return "RenderTextField"; }
+    virtual const char* renderName() const { return "RenderTextControl"; }
 
     virtual void calcHeight();
     virtual void calcMinMaxWidth();

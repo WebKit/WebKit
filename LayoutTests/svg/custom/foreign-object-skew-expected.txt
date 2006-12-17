@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (9.50,9.50) size 581x381
+    RenderSVGContainer {svg} at (9.50,9.50) size 581x381
       RenderForeignObject {foreignObject} at (0,0) size 580x380
         RenderBlock {xhtml:div} at (0,0) size 580x18
           RenderText {#text} at (0,0) size 78x18
@@ -15,4 +15,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 35x13
                 text run at (0,0) width 35: "Button"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-      KCanvasItem {rect} at (9.50,9.50) size 581x381 [stroke={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L590.00,10.00L590.00,390.00L10.00,390.00"]
+      RenderPath {rect} at (9.50,9.50) size 581x381 [stroke={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L590.00,10.00L590.00,390.00L10.00,390.00"]

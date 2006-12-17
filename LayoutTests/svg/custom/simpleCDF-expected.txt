@@ -7,8 +7,8 @@ layer at (0,0) size 800x304
         RenderText {#text} at (0,0) size 135x18
           text run at (0,0) width 135: "This is a test of CDF:"
       RenderBlock (anonymous) at (0,34) size 784x204
-        KCanvasContainer {svg} at (8,50) size 200x200
-          KCanvasItem {rect} at (8,50) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+        RenderSVGContainer {svg} at (8,50) size 200x200
+          RenderPath {rect} at (8,50) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,254) size 784x18
         RenderText {#text} at (0,0) size 269x18

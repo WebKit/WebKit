@@ -1,15 +1,15 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (5,14) size 463x271
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (5,14) size 463x271
         RenderSVGText {text} at (5,50) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 403x44
             text run at (0,-36) width 403: "Test 'altGlyph' facilities"
         RenderSVGText {text} at (5,90) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 463x33
             text run at (0,-27) width 463: "and many-to-many chars to glyphs"
-        KCanvasContainer {defs} at (0,0) size 0x0
-        KCanvasContainer {g} at (50,216) size 415x69
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (50,216) size 415x69
           RenderSVGText {text} at (140,190) size 480x0
           RenderSVGText {text} at (50,270) size 480x69
             RenderSVGInlineText {#text} at (0,-54) size 43x69
@@ -20,4 +20,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

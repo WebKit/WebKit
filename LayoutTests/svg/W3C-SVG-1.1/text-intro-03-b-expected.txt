@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,-3) size 659.50x362.50
-      KCanvasContainer {g} at (70,-3) size 590x92
-        KCanvasContainer {g} at (70,-3) size 590x92
+    RenderSVGContainer {svg} at (0.50,-3) size 659.50x362.50
+      RenderSVGContainer {g} at (70,-3) size 590x92
+        RenderSVGContainer {g} at (70,-3) size 590x92
           RenderSVGText {text} at (70,10) size 480x17
             RenderSVGInlineText {#text} at (0,-13) size 273x17
               text run at (0,-13) width 273: "Text \"\x{6211}\x{80FD}\x{541E}\x{4E0B}\x{73BB}\x{7483}\x{800C}\x{4E0D}\x{4F24}\x{8EAB}\x{4F53}\x{3002}\" in Chinese"
@@ -24,4 +24,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

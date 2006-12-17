@@ -1,12 +1,12 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasContainer {g} at (0.50,0.50) size 479x359
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0.50,0.50) size 479x359
         RenderSVGText {text} at (180,40) size 480x36
           RenderSVGInlineText {#text} at (0,-28) size 135x36
             text run at (0,-28) width 135: "Text stroke"
-        KCanvasContainer {g} at (60,10) size 400x345
+        RenderSVGContainer {g} at (60,10) size 400x345
           RenderSVGText {text} at (60,280) size 480x345
             RenderSVGInlineText {#text} at (0,-270) size 217x345
               text run at (0,-270) width 217: "A"
@@ -16,4 +16,4 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,340) size 480x46
           RenderSVGInlineText {#text} at (0,-36) size 264x46
             text run at (0,-36) width 264: "$Revision: 1.1 $"
-        KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+        RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

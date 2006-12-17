@@ -1,34 +1,34 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (66,16) size 349x259.39
-        KCanvasContainer {g} at (66,16) size 349x17
-          KCanvasContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (66,16) size 349x259.39
+        RenderSVGContainer {g} at (66,16) size 349x17
+          RenderSVGContainer {defs} at (0,0) size 0x0
           RenderSVGText {text} at (240,30) size 480x17
             RenderSVGInlineText {#text} at (-174,-14) size 349x17
               text run at (-174,-14) width 349: "Pie chart built from data in a different namespace."
-        KCanvasContainer {g} at (126.05,61.42) size 242.55x213.97
-          KCanvasItem {path} at (263.86,76.89) size 104.74x81.61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(27.00,-13.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M240.00,170.00L340.00,170.00C340.10,139.74,326.50,111.06,303.00,92.00"]
+        RenderSVGContainer {g} at (126.05,61.42) size 242.55x213.97
+          RenderPath {path} at (263.86,76.89) size 104.74x81.61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(27.00,-13.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M240.00,170.00L340.00,170.00C340.10,139.74,326.50,111.06,303.00,92.00"]
           RenderSVGText {text} at (299,142) size 480x16
             RenderSVGInlineText {#text} at (-14,-13) size 28x16
               text run at (-14,-13) width 28: "East"
-          KCanvasItem {path} at (190.64,61.42) size 113.76x110.37 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#6D6D6D]}] [data="M240.00,170.00L303.00,92.00C271.46,66.45,227.60,62.50,192.00,82.00"]
+          RenderPath {path} at (190.64,61.42) size 113.76x110.37 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#6D6D6D]}] [data="M240.00,170.00L303.00,92.00C271.46,66.45,227.60,62.50,192.00,82.00"]
           RenderSVGText {text} at (246,105) size 480x16
             RenderSVGInlineText {#text} at (-17,-13) size 35x16
               text run at (-17,-13) width 35: "North"
-          KCanvasItem {path} at (126.05,80.65) size 115.35x130.67 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M240.00,170.00L192.00,82.00C146.30,106.75,127.18,162.38,148.00,210.00"]
+          RenderPath {path} at (126.05,80.65) size 115.35x130.67 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M240.00,170.00L192.00,82.00C146.30,106.75,127.18,162.38,148.00,210.00"]
           RenderSVGText {text} at (178,149) size 480x16
             RenderSVGInlineText {#text} at (-16,-13) size 32x16
               text run at (-16,-13) width 32: "West"
-          KCanvasItem {path} at (146.68,168.31) size 94.70x100.88 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M240.00,170.00L148.00,210.00C160.89,239.68,187.34,261.29,219.00,268.00"]
+          RenderPath {path} at (146.68,168.31) size 94.70x100.88 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M240.00,170.00L148.00,210.00C160.89,239.68,187.34,261.29,219.00,268.00"]
           RenderSVGText {text} at (199,220) size 480x16
             RenderSVGInlineText {#text} at (-23,-13) size 46x16
               text run at (-23,-13) width 46: "Central"
-          KCanvasItem {path} at (217.81,169) size 123.26x106.39 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#DBDBDB]}] [data="M240.00,170.00L219.00,268.00C248.57,274.35,279.43,266.98,302.94,247.94C326.44,228.90,340.07,200.25,340.00,170.00"]
+          RenderPath {path} at (217.81,169) size 123.26x106.39 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#DBDBDB]}] [data="M240.00,170.00L219.00,268.00C248.57,274.35,279.43,266.98,302.94,247.94C326.44,228.90,340.07,200.25,340.00,170.00"]
           RenderSVGText {text} at (281,220) size 480x16
             RenderSVGInlineText {#text} at (-18,-13) size 37x16
               text run at (-18,-13) width 37: "South"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0.50) size 479.50x359
-      KCanvasContainer {g} at (0,0.50) size 479.50x359
+    RenderSVGContainer {svg} at (0,0.50) size 479.50x359
+      RenderSVGContainer {g} at (0,0.50) size 479.50x359
         RenderSVGText {text} at (10,20) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 304x17
             text run at (0,-14) width 304: "Test single line and multiline text selection."
-        KCanvasContainer {g} at (0,51) size 363x217
+        RenderSVGContainer {g} at (0,51) size 363x217
           RenderSVGText {text} at (25,65) size 480x17
             RenderSVGInlineText {#text} at (0,-14) size 252x17
               text run at (0,-14) width 252: "Here is a stand-alone 'text' element."
@@ -41,4 +41,4 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,340) size 480x46
           RenderSVGInlineText {#text} at (0,-36) size 264x46
             text run at (0,-36) width 264: "$Revision: 1.1 $"
-        KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+        RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

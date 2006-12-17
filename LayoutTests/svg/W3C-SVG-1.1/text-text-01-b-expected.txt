@@ -1,29 +1,29 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (1.50,1.50) size 526.50x357
-      KCanvasContainer {g} at (4.50,3) size 523.50x333
+    RenderSVGContainer {svg} at (1.50,1.50) size 526.50x357
+      RenderSVGContainer {g} at (4.50,3) size 523.50x333
         RenderSVGText {text} at (14,10) size 480x11
           RenderSVGInlineText {#text} at (0,-9) size 114x11
             text run at (0,-9) width 114: "Basic test of 'textLength'"
         RenderSVGText {text} at (10,20) size 480x11
           RenderSVGInlineText {#text} at (0,-9) size 132x11
             text run at (0,-9) width 132: "and 'lengthAdjust' attributes."
-        KCanvasContainer {g} at (4.50,66) size 517.50x72
-          KCanvasContainer {g} at (9,66) size 513x30
+        RenderSVGContainer {g} at (4.50,66) size 517.50x72
+          RenderSVGContainer {g} at (9,66) size 513x30
             RenderSVGText {text} at (3,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
             RenderSVGText {text} at (75,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
-          KCanvasContainer {g} at (4.50,94.50) size 471x13.50
-            KCanvasItem {line} at (6,94.50) size 162x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L56.00,32.00"]
-            KCanvasItem {line} at (4.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-            KCanvasItem {line} at (166.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M56.00,32.00L56.00,36.00"]
-            KCanvasItem {line} at (222,94.50) size 252x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L158.00,32.00"]
-            KCanvasItem {line} at (220.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-            KCanvasItem {line} at (472.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M158.00,32.00L158.00,36.00"]
-          KCanvasContainer {g} at (18,90) size 465x48
+          RenderSVGContainer {g} at (4.50,94.50) size 471x13.50
+            RenderPath {line} at (6,94.50) size 162x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L56.00,32.00"]
+            RenderPath {line} at (4.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
+            RenderPath {line} at (166.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M56.00,32.00L56.00,36.00"]
+            RenderPath {line} at (222,94.50) size 252x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L158.00,32.00"]
+            RenderPath {line} at (220.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
+            RenderPath {line} at (472.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M158.00,32.00L158.00,36.00"]
+          RenderSVGContainer {g} at (18,90) size 465x48
             RenderSVGText {text} at (6,38) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 78x10
                 text run at (0,-8) width 78: "textLength: default"
@@ -36,22 +36,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (76,44) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 85x10
                 text run at (0,-8) width 85: "lengthAdjust: default"
-        KCanvasContainer {g} at (4.50,132) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
-          KCanvasContainer {g} at (9,132) size 513x30
+        RenderSVGContainer {g} at (4.50,132) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
+          RenderSVGContainer {g} at (9,132) size 513x30
             RenderSVGText {text} at (3,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
             RenderSVGText {text} at (75,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
-          KCanvasContainer {g} at (4.50,160.50) size 420x13.50
-            KCanvasItem {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-            KCanvasItem {line} at (4.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-            KCanvasItem {line} at (205.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-            KCanvasItem {line} at (222,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-            KCanvasItem {line} at (220.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-            KCanvasItem {line} at (421.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
-          KCanvasContainer {g} at (18,156) size 510x48
+          RenderSVGContainer {g} at (4.50,160.50) size 420x13.50
+            RenderPath {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
+            RenderPath {line} at (4.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
+            RenderPath {line} at (205.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
+            RenderPath {line} at (222,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
+            RenderPath {line} at (220.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
+            RenderPath {line} at (421.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderSVGContainer {g} at (18,156) size 510x48
             RenderSVGText {text} at (6,38) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 96x10
                 text run at (0,-8) width 96: "textLength: 25% longer"
@@ -64,22 +64,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (76,44) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 85x10
                 text run at (0,-8) width 85: "lengthAdjust: default"
-        KCanvasContainer {g} at (4.50,198) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
-          KCanvasContainer {g} at (9,198) size 513x30
+        RenderSVGContainer {g} at (4.50,198) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
+          RenderSVGContainer {g} at (9,198) size 513x30
             RenderSVGText {text} at (3,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
             RenderSVGText {text} at (75,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
-          KCanvasContainer {g} at (4.50,226.50) size 420x13.50
-            KCanvasItem {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-            KCanvasItem {line} at (4.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-            KCanvasItem {line} at (205.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-            KCanvasItem {line} at (222,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-            KCanvasItem {line} at (220.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-            KCanvasItem {line} at (421.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
-          KCanvasContainer {g} at (9,222) size 519x48
+          RenderSVGContainer {g} at (4.50,226.50) size 420x13.50
+            RenderPath {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
+            RenderPath {line} at (4.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
+            RenderPath {line} at (205.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
+            RenderPath {line} at (222,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
+            RenderPath {line} at (220.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
+            RenderPath {line} at (421.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderSVGContainer {g} at (9,222) size 519x48
             RenderSVGText {text} at (3,38) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 96x10
                 text run at (0,-8) width 96: "textLength: 25% longer"
@@ -92,22 +92,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (76,44) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 89x10
                 text run at (0,-8) width 89: "lengthAdjust: spacing"
-        KCanvasContainer {g} at (4.50,264) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,66.00)}]
-          KCanvasContainer {g} at (9,264) size 513x30
+        RenderSVGContainer {g} at (4.50,264) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,66.00)}]
+          RenderSVGContainer {g} at (9,264) size 513x30
             RenderSVGText {text} at (3,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
             RenderSVGText {text} at (75,30) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
-          KCanvasContainer {g} at (4.50,292.50) size 420x13.50
-            KCanvasItem {line} at (6,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-            KCanvasItem {line} at (4.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-            KCanvasItem {line} at (205.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-            KCanvasItem {line} at (222,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-            KCanvasItem {line} at (220.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-            KCanvasItem {line} at (421.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
-          KCanvasContainer {g} at (18,288) size 510x48
+          RenderSVGContainer {g} at (4.50,292.50) size 420x13.50
+            RenderPath {line} at (6,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
+            RenderPath {line} at (4.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
+            RenderPath {line} at (205.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
+            RenderPath {line} at (222,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
+            RenderPath {line} at (220.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
+            RenderPath {line} at (421.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderSVGContainer {g} at (18,288) size 510x48
             RenderSVGText {text} at (6,38) size 480x10
               RenderSVGInlineText {#text} at (0,-8) size 96x10
                 text run at (0,-8) width 96: "textLength: 25% longer"
@@ -123,4 +123,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (5,117) size 480x10
         RenderSVGInlineText {#text} at (0,-8) size 64x10
           text run at (0,-8) width 64: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L159.00,1.00L159.00,119.00L1.00,119.00"]
+      RenderPath {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L159.00,1.00L159.00,119.00L1.00,119.00"]

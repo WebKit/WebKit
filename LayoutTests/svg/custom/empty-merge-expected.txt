@@ -1,8 +1,8 @@
 KCanvasResource {id="MyFilter" [type=FILTER]  [bounding box=at (0,0) size 100x100] [bounding box mode=0] [effects=[[type=MERGE]  [subregion="at (0,0) size 800x600"][merge inputs=[]]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (-0.50,-0.50) size 102x102
-      KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasItem {rect} at (0.50,0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [data="M1.00,1.00L101.00,1.00L101.00,101.00L1.00,101.00"]
-      KCanvasContainer {g} at (-0.50,-0.50) size 101x101 [filter=#MyFilter]
-        KCanvasItem {rect} at (-0.50,-0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+    RenderSVGContainer {svg} at (-0.50,-0.50) size 102x102
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (0.50,0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [data="M1.00,1.00L101.00,1.00L101.00,101.00L1.00,101.00"]
+      RenderSVGContainer {g} at (-0.50,-0.50) size 101x101 [filter=#MyFilter]
+        RenderPath {rect} at (-0.50,-0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

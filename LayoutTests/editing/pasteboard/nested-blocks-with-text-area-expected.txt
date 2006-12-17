@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (359,18) width 65: "assertions."
       RenderBlock {DIV} at (0,54) size 784x54
         RenderBlock {DIV} at (0,0) size 784x36
-          RenderTextField {TEXTAREA} at (304,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderTextControl {TEXTAREA} at (304,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderText {#text} at (469,18) size 4x18
             text run at (469,18) width 4: " "
           RenderInline {SPAN} at (0,0) size 8x18

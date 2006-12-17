@@ -2,23 +2,23 @@ KRenderingPaintServer {id="Pat3a" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="Pat3b" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479.50x359.50
-      KCanvasContainer {g} at (0,0) size 460x266
-        KCanvasContainer {pattern} at (0,0) size 20x20
-          KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
-          KCanvasItem {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,10.00L10.00,10.00"]
-          KCanvasItem {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]
-          KCanvasItem {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
-        KCanvasContainer {pattern} at (0,0) size 0x0
-        KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
+    RenderSVGContainer {svg} at (0,0) size 479.50x359.50
+      RenderSVGContainer {g} at (0,0) size 460x266
+        RenderSVGContainer {pattern} at (0,0) size 20x20
+          RenderPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
+          RenderPath {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,10.00L10.00,10.00"]
+          RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]
+          RenderPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderPath {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (20,130) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 142x33
             text run at (0,-27) width 142: "Pattern fill."
-        KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
+        RenderPath {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
         RenderSVGText {text} at (20,260) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 399x33
             text run at (0,-27) width 399: "Referencing pattern fill below."
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

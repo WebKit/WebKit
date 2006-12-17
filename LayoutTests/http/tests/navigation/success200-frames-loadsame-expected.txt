@@ -34,11 +34,11 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (235,37) size 0x0
                 RenderText {#text} at (0,44) size 376x37
                   text run at (0,44) width 376: "Here are some form elements"
-                RenderTextField {INPUT} at (378,59) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (378,59) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderBR {BR} at (528,73) size 0x0
                 RenderText {#text} at (0,81) size 334x37
                   text run at (0,81) width 334: "that we can use for testing"
-                RenderTextField {INPUT} at (336,96) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (336,96) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderBR {BR} at (486,110) size 0x0
                 RenderBlock {INPUT} at (3,136) size 12x13
                 RenderText {#text} at (18,118) size 73x37
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                     RenderText at (0,0) size 63x13
                       text run at (0,0) width 63: "Initial Value"
                 RenderBR {BR} at (259,281) size 0x0
-                RenderTextField {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {HR} at (0,749) size 767x2 [border: (1px inset #000000)]
               RenderBlock {P} at (0,783) size 767x37

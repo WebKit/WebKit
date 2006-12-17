@@ -56,7 +56,7 @@ public:
     bool drawsContents() const;
 
     virtual bool isKCanvasContainer() const { return true; }
-    virtual const char* renderName() const { return "KCanvasContainer"; }
+    virtual const char* renderName() const { return "RenderSVGContainer"; }
     
     virtual bool canHaveChildren() const;
     

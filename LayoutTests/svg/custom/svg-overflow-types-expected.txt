@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,0) size 400x400
-      KCanvasItem {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
-      KCanvasContainer {svg} at (0,0) size 200x200
-        KCanvasItem {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
-        KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+    RenderSVGContainer {svg} at (0,0) size 400x400
+      RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+      RenderSVGContainer {svg} at (0,0) size 200x200
+        RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+        RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
       RenderSVGText {text} at (50,100) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 108x18
           text run at (0,-14) width 108: "overflow: hidden"
-      KCanvasItem {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M200.00,0.00L400.00,0.00L400.00,200.00L200.00,200.00"]
-      KCanvasContainer {svg} at (200,0) size 200x200
-        KCanvasItem {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
-        KCanvasItem {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M200.00,0.00L400.00,0.00L400.00,200.00L200.00,200.00"]
+      RenderSVGContainer {svg} at (200,0) size 200x200
+        RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+        RenderPath {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
       RenderSVGText {text} at (250,100) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 99x18
           text run at (0,-14) width 99: "overflow: scroll"
-      KCanvasItem {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,200.00L200.00,200.00L200.00,400.00L0.00,400.00"]
-      KCanvasContainer {svg} at (0,200) size 200x200
-        KCanvasItem {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+      RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,200.00L200.00,200.00L200.00,400.00L0.00,400.00"]
+      RenderSVGContainer {svg} at (0,200) size 200x200
+        RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
       RenderSVGText {text} at (50,300) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 92x18
           text run at (0,-14) width 92: "overflow: auto"
-      KCanvasItem {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M200.00,200.00L400.00,200.00L400.00,400.00L200.00,400.00"]
-      KCanvasContainer {svg} at (200,200) size 200x200
-        KCanvasItem {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+      RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M200.00,200.00L400.00,200.00L400.00,400.00L200.00,400.00"]
+      RenderSVGContainer {svg} at (200,200) size 200x200
+        RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
       RenderSVGText {text} at (250,300) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 106x18
           text run at (0,-14) width 106: "overflow: visible"

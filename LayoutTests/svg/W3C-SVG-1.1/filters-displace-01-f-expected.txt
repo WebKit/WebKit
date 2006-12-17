@@ -5,17 +5,17 @@ KCanvasResource {id="RotateMapTest" [type=FILTER]  [effects=[[type=IMAGE]  [resu
 KCanvasResource {id="SphereMapTest" [type=FILTER]  [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 480x360"], [type=DISPLACEMENT-MAP] [in="Texture"] [subregion="at (0,0) size 480x360"] [in2=Map] [scale=64.00] [x channel selector=RED] [y channel selector=GREEN]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (-24,0.50) size 503.50x359
-      KCanvasContainer {g} at (-24,15) size 453x333
-        KCanvasContainer {defs} at (0,0) size 0x0
-        KCanvasContainer {g} at (-24,15) size 453x333
-          KCanvasItem {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#DispMapChecker] [data="M15.00,15.00L143.00,15.00L143.00,143.00L15.00,143.00"]
-          KCanvasItem {rect} at (20,115) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M20.00,115.00L138.00,115.00L138.00,135.00L20.00,135.00"]
+    RenderSVGContainer {svg} at (-24,0.50) size 503.50x359
+      RenderSVGContainer {g} at (-24,15) size 453x333
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (-24,15) size 453x333
+          RenderPath {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#DispMapChecker] [data="M15.00,15.00L143.00,15.00L143.00,143.00L15.00,143.00"]
+          RenderPath {rect} at (20,115) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M20.00,115.00L138.00,115.00L138.00,135.00L20.00,135.00"]
           RenderSVGText {text} at (79,130) size 480x14
             RenderSVGInlineText {#text} at (-57,-11) size 115x14
               text run at (-57,-11) width 115: "Checkerboard Image"
-          KCanvasItem {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#RotateMap] [data="M158.00,15.00L286.00,15.00L286.00,143.00L158.00,143.00"]
-          KCanvasItem {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,112.00L281.00,112.00L281.00,142.00L163.00,142.00"]
+          RenderPath {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#RotateMap] [data="M158.00,15.00L286.00,15.00L286.00,143.00L158.00,143.00"]
+          RenderPath {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,112.00L281.00,112.00L281.00,142.00L163.00,142.00"]
           RenderSVGText {text} at (0,0) size 480x27
             RenderSVGTSpan {tspan} at (0,0) size 102x14
               RenderSVGInlineText {#text} at (171,114) size 102x14
@@ -25,8 +25,8 @@ layer at (0,0) size 480x360
             RenderSVGTSpan {tspan} at (0,0) size 93x14
               RenderSVGInlineText {#text} at (176,127) size 93x14
                 text run at (176,127) width 93: "(20 deg. rotation)"
-          KCanvasItem {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#RotateMapTest] [data="M301.00,15.00L429.00,15.00L429.00,143.00L301.00,143.00"]
-          KCanvasItem {rect} at (323.99,37.99) size 82.03x82.03 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M-1.00,-1.00L1.00,-1.00L1.00,1.00L-1.00,1.00"]
+          RenderPath {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#RotateMapTest] [data="M301.00,15.00L429.00,15.00L429.00,143.00L301.00,143.00"]
+          RenderPath {rect} at (323.99,37.99) size 82.03x82.03 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M-1.00,-1.00L1.00,-1.00L1.00,1.00L-1.00,1.00"]
           RenderSVGText {text} at (0,0) size 480x38
             RenderSVGTSpan {tspan} at (0,0) size 35x14
               RenderSVGInlineText {#text} at (348,149) size 35x14
@@ -41,13 +41,13 @@ layer at (0,0) size 480x360
             RenderSVGTSpan {tspan} at (0,0) size 123x14
               RenderSVGInlineText {#text} at (304,173) size 123x14
                 text run at (304,173) width 123: "rotated blue rectangle)"
-          KCanvasItem {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#DispMapChecker] [data="M15.00,158.00L143.00,158.00L143.00,286.00L15.00,286.00"]
-          KCanvasItem {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M20.00,258.00L138.00,258.00L138.00,278.00L20.00,278.00"]
+          RenderPath {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#DispMapChecker] [data="M15.00,158.00L143.00,158.00L143.00,286.00L15.00,286.00"]
+          RenderPath {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M20.00,258.00L138.00,258.00L138.00,278.00L20.00,278.00"]
           RenderSVGText {text} at (79,273) size 480x14
             RenderSVGInlineText {#text} at (-57,-11) size 115x14
               text run at (-57,-11) width 115: "Checkerboard Image"
-          KCanvasItem {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#SphereMap] [data="M158.00,158.00L286.00,158.00L286.00,286.00L158.00,286.00"]
-          KCanvasItem {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,255.00L281.00,255.00L281.00,285.00L163.00,285.00"]
+          RenderPath {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#SphereMap] [data="M158.00,158.00L286.00,158.00L286.00,286.00L158.00,286.00"]
+          RenderPath {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,255.00L281.00,255.00L281.00,285.00L163.00,285.00"]
           RenderSVGText {text} at (0,0) size 480x29
             RenderSVGTSpan {tspan} at (0,0) size 102x14
               RenderSVGInlineText {#text} at (171,257) size 102x14
@@ -57,11 +57,11 @@ layer at (0,0) size 480x360
             RenderSVGTSpan {tspan} at (0,0) size 111x14
               RenderSVGInlineText {#text} at (167,272) size 111x14
                 text run at (167,272) width 111: "(spherical distortion)"
-          KCanvasItem {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#SphereMapTest] [data="M301.00,200.00L429.00,200.00L429.00,328.00L301.00,328.00"]
+          RenderPath {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=#SphereMapTest] [data="M301.00,200.00L429.00,200.00L429.00,328.00L301.00,328.00"]
           RenderSVGText {text} at (365,345) size 480x14
             RenderSVGInlineText {#text} at (-17,-11) size 35x14
               text run at (-17,-11) width 35: "Result"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.3 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

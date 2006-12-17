@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (37.75,37.75) size 75.50x75.50
-      KCanvasItem {path} at (37.75,37.75) size 75.50x75.50 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00L300.00,100.00L200.00,300.00"]
-      KCanvasItem {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+    RenderSVGContainer {svg} at (37.75,37.75) size 75.50x75.50
+      RenderPath {path} at (37.75,37.75) size 75.50x75.50 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00L300.00,100.00L200.00,300.00"]
+      RenderPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]

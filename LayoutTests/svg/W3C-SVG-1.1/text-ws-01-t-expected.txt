@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (15,3) size 427x300
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (15,3) size 427x300
         RenderSVGText {text} at (15,35) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 427x39
             text run at (0,-32) width 427: "Basic: xml:space attribute"
@@ -14,7 +14,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (15,140) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 414x44
             text run at (0,-36) width 414: "WS with indented lines."
-        KCanvasItem {rect} at (24.50,144.50) size 351x37 [stroke={[type=SOLID] [color=#000000]}] [data="M25.00,145.00L375.00,145.00L375.00,181.00L25.00,181.00"]
+        RenderPath {rect} at (24.50,144.50) size 351x37 [stroke={[type=SOLID] [color=#000000]}] [data="M25.00,145.00L375.00,145.00L375.00,181.00L25.00,181.00"]
         RenderSVGText {text} at (28,175) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 337x44
             text run at (0,-36) width 337: "xml:space='default'"
@@ -25,11 +25,11 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (15,260) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 411x44
             text run at (0,-36) width 411: "WS non-indented lines."
-        KCanvasItem {rect} at (24.50,264.50) size 351x37 [stroke={[type=SOLID] [color=#000000]}] [data="M25.00,265.00L375.00,265.00L375.00,301.00L25.00,301.00"]
+        RenderPath {rect} at (24.50,264.50) size 351x37 [stroke={[type=SOLID] [color=#000000]}] [data="M25.00,265.00L375.00,265.00L375.00,301.00L25.00,301.00"]
         RenderSVGText {text} at (28,295) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 337x44
             text run at (0,-36) width 337: "xml:space='default'"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,9 +1,9 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasContainer {g} at (15.16,8.57) size 321.96x337.63
-        KCanvasContainer {g} at (70,92) size 149x133
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (15.16,8.57) size 321.96x337.63
+        RenderSVGContainer {g} at (70,92) size 149x133
           RenderSVGText {text} at (70,110) size 480x23
             RenderSVGInlineText {#text} at (0,-18) size 149x23
               text run at (0,-18) width 149: "Text from 0s to 3s"
@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (100,220) size 480x23
             RenderSVGInlineText {#text} at (0,-18) size 80x23
               text run at (0,-18) width 80: "Text at 9s"
-        KCanvasContainer {g} at (100,61.51) size 237.12x284.69
+        RenderSVGContainer {g} at (100,61.51) size 237.12x284.69
           RenderSVGText {text} at (0,0) size 480x23
             RenderSVGInlineText {#text} at (0,-18) size 77x23
               text run at (0,-18) width 77: "It's alive!"
@@ -23,7 +23,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (100,270) size 480x69
             RenderSVGInlineText {#text} at (0,-54) size 224x69
               text run at (0,-54) width 224: "It's alive!"
-        KCanvasContainer {g} at (15.16,8.57) size 96.92x89.68 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
+        RenderSVGContainer {g} at (15.16,8.57) size 96.92x89.68 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
           RenderSVGText {text} at (0,0) size 480x23
             RenderSVGInlineText {#text} at (0,-18) size 77x23
               text run at (0,-18) width 77: "It's alive!"
@@ -33,4 +33,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

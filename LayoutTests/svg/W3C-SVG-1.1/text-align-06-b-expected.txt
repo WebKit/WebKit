@@ -1,12 +1,12 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0.50) size 481x359
-      KCanvasContainer {g} at (0,4) size 481x62
+    RenderSVGContainer {svg} at (0,0.50) size 481x359
+      RenderSVGContainer {g} at (0,4) size 481x62
         RenderSVGText {text} at (0,40) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 481x44
             text run at (0,-36) width 481: "Test 'baseline-shift' (vertic.)"
-        KCanvasContainer {g} at (90,33) size 384x33
-          KCanvasContainer {g} at (90,33) size 384x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
+        RenderSVGContainer {g} at (90,33) size 384x33
+          RenderSVGContainer {g} at (90,33) size 384x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
             RenderSVGText {text} at (0,0) size 480x33
               RenderSVGInlineText {#text} at (0,-27) size 25x33
                 text run at (0,-27) width 25: "te"
@@ -48,4 +48,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

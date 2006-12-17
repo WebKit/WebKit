@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (5,0) size 0x0
+    RenderSVGContainer {svg} at (5,0) size 0x0
       RenderForeignObject {foreignObject} at (0,0) size 800x198
         RenderBlock {html} at (0,0) size 800x198
           RenderBlock {div} at (0,0) size 800x198

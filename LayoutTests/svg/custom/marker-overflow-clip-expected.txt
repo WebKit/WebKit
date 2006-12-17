@@ -1,12 +1,12 @@
 KCanvasResource {id="marker" [type=MARKER] [angle=auto] [ref x=50.00 y=50.00]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (-50,-50) size 378x200
-      KCanvasContainer {marker} at (-25,-25) size 100x100
-        KCanvasItem {rect} at (-25,-25) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M-50.00,-50.00L150.00,-50.00L150.00,150.00L-50.00,150.00"]
-        KCanvasItem {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      KCanvasItem {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L25.00,0.00L25.00,25.00L0.00,25.00"]
-      KCanvasItem {path} at (100,100) size 0x0 [start marker=#marker] [data="M100.00,100.00L100.00,100.00"]
+    RenderSVGContainer {svg} at (-50,-50) size 378x200
+      RenderSVGContainer {marker} at (-25,-25) size 100x100
+        RenderPath {rect} at (-25,-25) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M-50.00,-50.00L150.00,-50.00L150.00,150.00L-50.00,150.00"]
+        RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L25.00,0.00L25.00,25.00L0.00,25.00"]
+      RenderPath {path} at (100,100) size 0x0 [start marker=#marker] [data="M100.00,100.00L100.00,100.00"]
       RenderSVGText {text} at (30,20) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 298x18
           text run at (0,-14) width 298: "There should be a 150x150 green rect at 25x25"

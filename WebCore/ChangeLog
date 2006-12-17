@@ -1,5 +1,19 @@
 2006-12-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11856
+        Update renderName() methods to return current class names.
+
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::renderName): Returns "RenderPath" instead of "KCanvasItem".
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::renderName): Returns "RenderSVGContainer" instead of "KCanvasContainer".
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::renderName): Returns "RenderTextControl" instead of "RenderTextField".
+
+2006-12-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=11844

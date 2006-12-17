@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 87x18
           text run at (0,0) width 87: "TEXTAREA"
         RenderBR {BR} at (87,14) size 0x0
-        RenderTextField {TEXTAREA} at (0,18) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+        RenderTextControl {TEXTAREA} at (0,18) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
         RenderText {#text} at (400,204) size 4x18
           text run at (400,204) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

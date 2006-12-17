@@ -2,8 +2,8 @@ KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path
 KCanvasResource {id="myfilter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effects=[[type=GAUSSIAN-BLUR]  [subregion="at (0,0) size 800x600"] [std dev. x=10.00 y=10.00]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,0) size 542x410
-      KCanvasContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {svg} at (0,0) size 542x410
+      RenderSVGContainer {defs} at (0,0) size 0x0
       RenderImage {image} at (0,0) size 503x410
       RenderSVGText {text} at (0,125) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 542x18

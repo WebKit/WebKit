@@ -1,9 +1,9 @@
 KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,200.00L300.00,200.00L300.00,400.00L200.00,400.00]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    KCanvasContainer {svg} at (0,76) size 648x63
-      KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasContainer {g} at (0,76) size 648x63
+    RenderSVGContainer {svg} at (0,76) size 648x63
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,76) size 648x63
         RenderSVGText {text} at (0,125) size 800x63
           RenderSVGInlineText {#text} at (0,-49) size 133x63
             text run at (0,-49) width 133: "PASS"

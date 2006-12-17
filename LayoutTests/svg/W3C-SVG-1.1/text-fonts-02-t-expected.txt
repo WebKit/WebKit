@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (60,22) size 362x315
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (60,22) size 362x315
         RenderSVGText {text} at (360,50) size 480x35
           RenderSVGInlineText {#text} at (0,-28) size 49x35
             text run at (0,-28) width 49: "100"
@@ -35,15 +35,15 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (60,130) size 480x35
           RenderSVGInlineText {#text} at (0,-28) size 190x35
             text run at (0,-28) width 190: "This is normal"
-        KCanvasContainer {g} at (60,152) size 213x35
+        RenderSVGContainer {g} at (60,152) size 213x35
           RenderSVGText {text} at (60,180) size 480x35
             RenderSVGInlineText {#text} at (0,-28) size 213x35
               text run at (0,-28) width 213: "Blue is bolder"
-        KCanvasContainer {g} at (60,202) size 184x35
+        RenderSVGContainer {g} at (60,202) size 184x35
           RenderSVGText {text} at (60,230) size 480x35
             RenderSVGInlineText {#text} at (0,-28) size 184x35
               text run at (0,-28) width 184: "Blue is lighter"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
-      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
