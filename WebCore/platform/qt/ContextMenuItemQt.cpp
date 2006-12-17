@@ -48,7 +48,7 @@ PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
     return PlatformMenuItemDescription();
 }
 
-ContextMenuItemType ContextMenuItem::type()
+ContextMenuItemType ContextMenuItem::type() const
 {
     return ActionType;
 }
@@ -71,7 +71,7 @@ String ContextMenuItem::title() const
     return String();
 }
 
-void ContextMenuItem::setTitle(const String& title) const
+void ContextMenuItem::setTitle(const String& title)
 {
 }
 
@@ -85,11 +85,11 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
 }
 
-void ContextMenuItem::setChecked(bool) const
+void ContextMenuItem::setChecked(bool)
 {
 }
 
-void ContextMenuItem::setEnabled(bool) const
+void ContextMenuItem::setEnabled(bool)
 {
 }
 

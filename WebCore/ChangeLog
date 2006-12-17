@@ -1,3 +1,13 @@
+2006-12-17  Zack Rusin  <zack@kde.org>
+
+        Fix compilation after the const changes.
+
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+
 2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
