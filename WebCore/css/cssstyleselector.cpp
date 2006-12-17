@@ -2463,13 +2463,27 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                         CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
                         style->addCursor(image->image(element->document()->docLoader()), image->hotspot());
                     }
-                } else if (type == CSSPrimitiveValue::CSS_IDENT)
-                    style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
+                } else if (type == CSSPrimitiveValue::CSS_IDENT) {
+                    int ident = primitiveValue->getIdent();
+                    if (ident == CSS_VAL_COPY)
+                        style->setCursor(CURSOR_COPY);
+                    else if (ident == CSS_VAL_NONE)
+                        style->setCursor(CURSOR_NONE);
+                    else
+                        style->setCursor((ECursor)(ident - CSS_VAL_AUTO));
+                }
             }
         } else if (primitiveValue) {
             int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_IDENT)
-                style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
+            if (type == CSSPrimitiveValue::CSS_IDENT) {
+                int ident = primitiveValue->getIdent();
+                if (ident == CSS_VAL_COPY)
+                    style->setCursor(CURSOR_COPY);
+                else if (ident == CSS_VAL_NONE)
+                    style->setCursor(CURSOR_NONE);
+                else
+                    style->setCursor((ECursor)(ident - CSS_VAL_AUTO));
+            }
         }
         break;
 // colors || inherit

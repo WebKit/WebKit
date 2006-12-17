@@ -1,3 +1,31 @@
+2006-12-17  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed, tweaked and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11798
+        [CSS 3] missing cursor support for 'none'
+
+        * Resources/noneCursor.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp: Also fixed previously broken -webkit-background-composite: copy.
+        * manual-tests/cursor.html:
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::noneCursor):
+        * platform/mac/CursorMac.mm:
+        (WebCore::noneCursor):
+        * platform/qt/CursorQt.cpp:
+        (WebCore::noneCursor):
+        * platform/win/CursorWin.cpp:
+        (WebCore::noneCursor):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+
 2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, not reviewed.

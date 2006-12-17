@@ -157,6 +157,12 @@ const Cursor& copyCursor()
     return c;
 }
 
+const Cursor& noneCursor()
+{
+    static Cursor c = leakNamedCursor("noneCursor", 7, 7);
+    return c;
+}
+
 const Cursor& progressCursor()
 {
     static Cursor c = leakNamedCursor("progressCursor", 1, 1);

@@ -269,4 +269,10 @@ const Cursor& rowResizeCursor()
     return c;
 }
 
+const Cursor& noneCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_ARROW);
+    return c;
+}
+
 }

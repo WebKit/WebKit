@@ -746,7 +746,7 @@ bool CSSParser::parseValue(int propId, bool important)
                 }
             } else if (!strict && value->id == CSS_VAL_HAND) // MSIE 5 compatibility :/
                 list->append(new CSSPrimitiveValue(CSS_VAL_POINTER));
-            else if (value && value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL)
+            else if (value && ((value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL) || value->id == CSS_VAL_COPY || value->id == CSS_VAL_NONE))
                 list->append(new CSSPrimitiveValue(value->id));
             valueList->next();
             parsedValue = list;
@@ -756,7 +756,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (!strict && value->id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
             id = CSS_VAL_POINTER;
             valid_primitive = true;
-        } else if (value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL)
+        } else if ((value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL) || value->id == CSS_VAL_COPY || value->id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
     }
