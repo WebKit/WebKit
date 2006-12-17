@@ -1,3 +1,11 @@
+2006-12-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Add missing checksum file, thnx to Wildfox for noticing.
+
+        * svg/custom/sheet-title-expected.checksum: Added.
+
 2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
