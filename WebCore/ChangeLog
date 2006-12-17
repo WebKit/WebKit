@@ -1,3 +1,19 @@
+2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10956
+
+        Long standing regression. The old code in FontMac.mm, used set the fill/stroke
+        color "[nsColor(graphicsContext->pen().color()) set];", and current code only
+        sets the fill color. Reverting to old behaviour fixes gradient-on-stroke-of-text.
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawGlyphs):
+
 2006-12-17  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
 
         Reviewed, tweaked and landed by Alexey.

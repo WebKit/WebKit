@@ -485,10 +485,13 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     CGFloat colors[4];
     graphicsContext->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
     static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     CGContextSetFillColorSpace(context, rgbColorSpace);
-    CGContextSetFillColor(context, colors); // WebCore expects text to respect the pen color, CG expects text to use fill
-    
+    CGContextSetFillColor(context, colors);
+
+    CGContextSetStrokeColorSpace(context, rgbColorSpace);
+    CGContextSetStrokeColor(context, colors);
+
     CGContextTranslateCTM(context, point.x(), point.y());
     status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
@@ -600,9 +603,12 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     CGFloat colors[4];
     context->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
     static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     CGContextSetFillColorSpace(cgContext, rgbColorSpace);
-    CGContextSetFillColor(cgContext, colors); // WebCore expects text to respect the pen color, CG expects text to use fill
+    CGContextSetFillColor(cgContext, colors);
+
+    CGContextSetStrokeColorSpace(cgContext, rgbColorSpace);
+    CGContextSetStrokeColor(cgContext, colors);
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
