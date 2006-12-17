@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGZoomAndPan.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 

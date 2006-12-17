@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEColorMatrixElement.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
 #include "SVGResourceFilter.h"

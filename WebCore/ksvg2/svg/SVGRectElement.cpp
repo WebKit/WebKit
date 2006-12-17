@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGRectElement.h"
 
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 

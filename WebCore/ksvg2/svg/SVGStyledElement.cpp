@@ -32,7 +32,6 @@
 #include "RenderView.h"
 #include "RenderPath.h"
 #include "SVGElement.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"

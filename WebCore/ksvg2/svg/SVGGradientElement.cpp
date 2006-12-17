@@ -28,7 +28,6 @@
 #include "cssstyleselector.h"
 #include "RenderPath.h"
 #include "RenderView.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"

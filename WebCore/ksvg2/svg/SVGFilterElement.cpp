@@ -29,7 +29,6 @@
 #include "Attr.h"
 #include "SVGResourceFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"

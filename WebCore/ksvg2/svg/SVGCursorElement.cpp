@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "DocLoader.h"
 #include "SVGNames.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 
 namespace WebCore {

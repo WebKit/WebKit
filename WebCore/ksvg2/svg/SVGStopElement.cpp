@@ -25,7 +25,6 @@
 #include "SVGStopElement.h"
 
 #include "Document.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #include "SVGLinearGradientElement.h"
 
 #include "SVGPaintServerLinearGradient.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGTransform.h"

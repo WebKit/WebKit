@@ -25,7 +25,6 @@
 #include "SVGFESpecularLightingElement.h"
 
 #include "SVGColor.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGFELightElement.h"
 #include "SVGResourceFilter.h"

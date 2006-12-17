@@ -31,7 +31,6 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGImage.h"
 #include "SVGDocument.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

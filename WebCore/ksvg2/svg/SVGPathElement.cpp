@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGPathElement.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegClosePath.h"
@@ -366,7 +365,10 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
 
 SVGPathSegList* SVGPathElement::pathSegList() const
 {
-    return lazy_create<SVGPathSegList>(m_pathSegList);
+    if (!m_pathSegList)
+        m_pathSegList = new SVGPathSegList();
+
+    return m_pathSegList.get();
 }
 
 SVGPathSegList* SVGPathElement::normalizedPathSegList() const

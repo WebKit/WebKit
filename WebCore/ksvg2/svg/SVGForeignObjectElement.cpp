@@ -26,7 +26,6 @@
 #include "SVGForeignObjectElement.h"
 
 #include "SVGNames.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "RenderForeignObject.h"
 

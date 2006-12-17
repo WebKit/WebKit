@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEBlendElement.h"
 
-#include "SVGHelper.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

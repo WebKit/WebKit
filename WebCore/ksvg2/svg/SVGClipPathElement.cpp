@@ -26,7 +26,6 @@
 
 #include "Document.h"
 #include "RenderView.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
 #include "cssstyleselector.h"

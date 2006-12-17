@@ -29,7 +29,6 @@
 #include "FrameView.h"
 #include "RenderObject.h"
 #include "RenderView.h"
-#include "SVGHelper.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "svgpathparser.h"

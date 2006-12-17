@@ -2,6 +2,74 @@
 
         Reviewed by Rob.
 
+        Remove SVGHelper class. Move the last static function "parseSeparatedList"
+        to the only place using it: SVGAnimationElement. Update all build files.
+
+        Remove any lazy_create macro usage, by what it does - cleaner.
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::parseSeparatedList):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGHelper.cpp: Removed.
+        * ksvg2/svg/SVGHelper.h: Removed.
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLength.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPathElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        * ksvg2/svg/SVGRectElement.cpp:
+        * ksvg2/svg/SVGStopElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGSymbolElement.cpp:
+        * ksvg2/svg/SVGTests.cpp:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGURIReference.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * ksvg2/svg/SVGViewElement.cpp:
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+
+2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11813
 
         Pass SVGLength around by value, remove any SVGLength* usage.

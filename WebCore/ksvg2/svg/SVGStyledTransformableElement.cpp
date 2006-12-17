@@ -30,7 +30,6 @@
 #include "RegularExpression.h"
 #include "RenderPath.h"
 #include "SVGDocument.h"
-#include "SVGHelper.h"
 #include "AffineTransform.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"

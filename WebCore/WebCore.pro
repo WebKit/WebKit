@@ -828,7 +828,6 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
-        ksvg2/svg/SVGHelper.cpp \
         ksvg2/svg/SVGFEFuncBElement.cpp \
         ksvg2/svg/SVGPathSeg.cpp \
         ksvg2/svg/SVGColor.cpp \

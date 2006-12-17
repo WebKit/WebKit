@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "RenderSVGContainer.h"
 #include "SVGGElement.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

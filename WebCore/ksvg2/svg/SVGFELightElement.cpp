@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFELightElement.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 
 namespace WebCore {

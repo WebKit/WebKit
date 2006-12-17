@@ -25,7 +25,6 @@
 #include "SVGPolyElement.h"
 
 #include "Document.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGPointList.h"
 
@@ -47,7 +46,10 @@ SVGPolyElement::~SVGPolyElement()
 
 SVGPointList* SVGPolyElement::points() const
 {
-    return lazy_create<SVGPointList>(m_points);
+    if (!m_points)
+        m_points = new SVGPointList();
+
+    return m_points.get();
 }
 
 SVGPointList* SVGPolyElement::animatedPoints() const

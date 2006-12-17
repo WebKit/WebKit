@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFECompositeElement.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGResourceFilter.h"
 

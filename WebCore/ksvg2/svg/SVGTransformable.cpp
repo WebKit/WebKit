@@ -25,7 +25,6 @@
 #include "SVGTransformable.h"
 
 #include "RegularExpression.h"
-#include "SVGHelper.h"
 #include "AffineTransform.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"

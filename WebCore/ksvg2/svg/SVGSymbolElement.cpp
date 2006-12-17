@@ -26,7 +26,6 @@
 
 #include "PlatformString.h"
 #include "SVGFitToViewBox.h"
-#include "SVGHelper.h"
 
 namespace WebCore {
 

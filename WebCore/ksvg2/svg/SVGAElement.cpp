@@ -34,7 +34,6 @@
 #include "MouseEvent.h"
 #include "RenderSVGContainer.h"
 #include "ResourceRequest.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "csshelper.h"
 

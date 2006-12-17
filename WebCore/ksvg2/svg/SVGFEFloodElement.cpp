@@ -27,7 +27,6 @@
 
 #include "Attr.h"
 #include "RenderView.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGResourceFilter.h"

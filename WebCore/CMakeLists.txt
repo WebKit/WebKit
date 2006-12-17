@@ -597,7 +597,6 @@ set (SVG_SOURCES
     ksvg2/svg/SVGForeignObjectElement.cpp
     ksvg2/svg/SVGGElement.cpp
     ksvg2/svg/SVGGradientElement.cpp
-    ksvg2/svg/SVGHelper.cpp
     ksvg2/svg/SVGImageElement.cpp
     ksvg2/svg/SVGLangSpace.cpp
     ksvg2/svg/SVGLength.cpp

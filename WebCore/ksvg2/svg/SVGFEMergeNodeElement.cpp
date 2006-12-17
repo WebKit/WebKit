@@ -25,8 +25,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEMergeNodeElement.h"
 
-#include "SVGHelper.h"
-
 namespace WebCore {
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)

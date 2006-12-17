@@ -26,7 +26,6 @@
 #include "SVGCircleElement.h"
 
 #include "FloatPoint.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 
 namespace WebCore {

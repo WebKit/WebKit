@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGURIReference.h"
 
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "XLinkNames.h"

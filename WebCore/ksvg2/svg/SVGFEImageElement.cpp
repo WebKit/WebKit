@@ -30,7 +30,6 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "SVGResourceImage.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

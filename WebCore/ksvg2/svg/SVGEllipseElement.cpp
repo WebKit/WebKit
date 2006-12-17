@@ -26,7 +26,6 @@
 #include "SVGEllipseElement.h"
 
 #include "FloatPoint.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 

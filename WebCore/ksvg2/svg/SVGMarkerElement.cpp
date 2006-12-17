@@ -29,7 +29,6 @@
 #include "RenderSVGContainer.h"
 #include "SVGAngle.h"
 #include "SVGFitToViewBox.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

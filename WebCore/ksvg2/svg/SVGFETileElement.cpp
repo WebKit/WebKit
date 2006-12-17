@@ -26,7 +26,6 @@
 #include "SVGFETileElement.h"
 
 #include "Attr.h"
-#include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGResourceFilter.h"
 

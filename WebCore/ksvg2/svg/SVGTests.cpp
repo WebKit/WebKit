@@ -27,7 +27,6 @@
 #include "DOMImplementation.h"
 #include "Language.h"
 #include "SVGElement.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
 
@@ -43,17 +42,26 @@ SVGTests::~SVGTests()
 
 SVGStringList* SVGTests::requiredFeatures() const
 {
-    return lazy_create<SVGStringList>(m_features);
+    if (!m_features)
+        m_features = new SVGStringList();
+
+    return m_features.get();
 }
 
 SVGStringList* SVGTests::requiredExtensions() const
 {
-    return lazy_create<SVGStringList>(m_extensions);
+    if (!m_extensions)
+        m_extensions = new SVGStringList();
+
+    return m_extensions.get();
 }
 
 SVGStringList* SVGTests::systemLanguage() const
 {
-    return lazy_create<SVGStringList>(m_systemLanguage);
+    if (!m_systemLanguage)
+        m_systemLanguage = new SVGStringList();
+
+    return m_systemLanguage.get();
 }
 
 bool SVGTests::hasExtension(const String&) const

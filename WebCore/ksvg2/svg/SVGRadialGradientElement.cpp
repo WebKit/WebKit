@@ -26,7 +26,6 @@
 #include "SVGRadialGradientElement.h"
 
 #include "SVGPaintServerRadialGradient.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"

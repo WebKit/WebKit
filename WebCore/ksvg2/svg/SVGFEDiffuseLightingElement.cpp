@@ -25,7 +25,6 @@
 #include "Attr.h"
 #include "SVGColor.h"
 #include "SVGFELightElement.h"
-#include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEDiffuseLighting.h"

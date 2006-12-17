@@ -31,7 +31,6 @@
 #include "SVGPaintServerSolid.h"
 #include "RenderObject.h"
 #include "RenderPath.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"

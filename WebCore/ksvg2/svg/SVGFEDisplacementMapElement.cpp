@@ -23,7 +23,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFEDisplacementMapElement.h"
 
-#include "SVGHelper.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {

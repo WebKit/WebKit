@@ -26,7 +26,6 @@
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 

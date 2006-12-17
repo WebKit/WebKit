@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGTextPositioningElement.h"
 
-#include "SVGHelper.h"
 #include "SVGLengthList.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"

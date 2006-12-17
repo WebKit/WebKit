@@ -29,7 +29,6 @@
 #include "GraphicsContext.h"
 #include "SVGResourceImage.h"
 #include "RenderSVGContainer.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "cssstyleselector.h"

@@ -1937,8 +1937,6 @@
 		A88AD48C095248F0001DD196 /* SVGGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F86E089701F300BA5114 /* SVGGElement.h */; };
 		A88AD48D095248F0001DD196 /* SVGGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F86F089701F300BA5114 /* SVGGradientElement.cpp */; };
 		A88AD48E095248F0001DD196 /* SVGGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F870089701F300BA5114 /* SVGGradientElement.h */; };
-		A88AD48F095248F0001DD196 /* SVGHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F871089701F300BA5114 /* SVGHelper.cpp */; };
-		A88AD490095248F0001DD196 /* SVGHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F872089701F300BA5114 /* SVGHelper.h */; };
 		A88AD491095248F0001DD196 /* SVGImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F873089701F300BA5114 /* SVGImageElement.cpp */; };
 		A88AD492095248F0001DD196 /* SVGImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F874089701F300BA5114 /* SVGImageElement.h */; };
 		A88AD493095248F0001DD196 /* SVGLangSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F875089701F300BA5114 /* SVGLangSpace.cpp */; };
@@ -4894,8 +4892,6 @@
 		A8C0F86E089701F300BA5114 /* SVGGElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGGElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F86F089701F300BA5114 /* SVGGradientElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGradientElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F870089701F300BA5114 /* SVGGradientElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGGradientElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F871089701F300BA5114 /* SVGHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGHelper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F872089701F300BA5114 /* SVGHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGHelper.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F873089701F300BA5114 /* SVGImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F874089701F300BA5114 /* SVGImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F875089701F300BA5114 /* SVGLangSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLangSpace.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8234,8 +8230,6 @@
 				A8C0F86E089701F300BA5114 /* SVGGElement.h */,
 				A8C0F86F089701F300BA5114 /* SVGGradientElement.cpp */,
 				A8C0F870089701F300BA5114 /* SVGGradientElement.h */,
-				A8C0F871089701F300BA5114 /* SVGHelper.cpp */,
-				A8C0F872089701F300BA5114 /* SVGHelper.h */,
 				A8C0F873089701F300BA5114 /* SVGImageElement.cpp */,
 				A8C0F874089701F300BA5114 /* SVGImageElement.h */,
 				A8C0F875089701F300BA5114 /* SVGLangSpace.cpp */,
@@ -9514,7 +9508,6 @@
 				A88AD48A095248F0001DD196 /* SVGFitToViewBox.h in Headers */,
 				A88AD48C095248F0001DD196 /* SVGGElement.h in Headers */,
 				A88AD48E095248F0001DD196 /* SVGGradientElement.h in Headers */,
-				A88AD490095248F0001DD196 /* SVGHelper.h in Headers */,
 				A88AD492095248F0001DD196 /* SVGImageElement.h in Headers */,
 				A88AD494095248F0001DD196 /* SVGLangSpace.h in Headers */,
 				A88AD496095248F0001DD196 /* SVGLength.h in Headers */,
@@ -11097,7 +11090,6 @@
 				A88AD489095248F0001DD196 /* SVGFitToViewBox.cpp in Sources */,
 				A88AD48B095248F0001DD196 /* SVGGElement.cpp in Sources */,
 				A88AD48D095248F0001DD196 /* SVGGradientElement.cpp in Sources */,
-				A88AD48F095248F0001DD196 /* SVGHelper.cpp in Sources */,
 				A88AD491095248F0001DD196 /* SVGImageElement.cpp in Sources */,
 				A88AD493095248F0001DD196 /* SVGLangSpace.cpp in Sources */,
 				A88AD495095248F0001DD196 /* SVGLength.cpp in Sources */,

@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "KSVGTimeScheduler.h"
 #include "PlatformString.h"
-#include "SVGHelper.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
@@ -42,6 +41,20 @@
 using namespace std;
 
 namespace WebCore {
+
+// Helper function
+static void parseSeparatedList(SVGStringList* list, const String& data, UChar delimiter)
+{
+    // TODO : more error checking/reporting
+    ExceptionCode ec = 0;
+    list->clear(ec);
+
+    Vector<String> substrings = String(data).split(delimiter);
+    
+    Vector<String>::const_iterator end = substrings.end();
+    for (Vector<String>::const_iterator it = substrings.begin(); it != end; ++it)
+        list->appendItem(*it, ec);
+}
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
@@ -134,7 +147,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
         RefPtr<SVGStringList> temp = new SVGStringList();
 
         // Feed data into list
-        SVGHelper::parseSeparatedList(temp.get(), value, ';');
+        parseSeparatedList(temp.get(), value, ';');
 
         ExceptionCode ec = 0;
 
@@ -248,17 +261,17 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::valuesAttr)
     {
         m_values = new SVGStringList();
-        SVGHelper::parseSeparatedList(m_values.get(), value, ';');
+        parseSeparatedList(m_values.get(), value, ';');
     }
     else if (attr->name() == SVGNames::keyTimesAttr)
     {
         m_keyTimes = new SVGStringList();
-        SVGHelper::parseSeparatedList(m_keyTimes.get(), value, ';');
+        parseSeparatedList(m_keyTimes.get(), value, ';');
     }
     else if (attr->name() == SVGNames::keySplinesAttr)
     {
         m_keySplines = new SVGStringList();
-        SVGHelper::parseSeparatedList(m_keySplines.get(), value, ';');
+        parseSeparatedList(m_keySplines.get(), value, ';');
     }
     else if (attr->name() == SVGNames::fromAttr)
         m_from = value;

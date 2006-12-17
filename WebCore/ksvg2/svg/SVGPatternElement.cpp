@@ -30,7 +30,6 @@
 #include "SVGResourceImage.h"
 #include "SVGPaintServerPattern.h"
 #include "RenderSVGContainer.h"
-#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "AffineTransform.h"
 #include "SVGNames.h"
