@@ -1,3 +1,167 @@
+2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11813
+
+        Pass SVGLength around by value, remove any SVGLength* usage.
+        Bindings work fine, as the SVG POD JS Wrapper stuff is already in svn.
+
+        No new regressions, none fixed. But the code itself is much cleaner.
+        And some problems with width-full-percentage.svg have been fixed, viewport
+        clipping works in any case now, also for percentual width/height values set on <svg>.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::cssPrimitiveToLength):
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        (WebCore::SVGCircleElement::toPathData):
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        (WebCore::SVGEllipseElement::toPathData):
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        (WebCore::SVGFilterElement::parseMappedAttribute):
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseMappedAttribute):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        (WebCore::SVGForeignObjectElement::createRenderer):
+        (WebCore::SVGForeignObjectElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGHelper.cpp:
+        (WebCore::SVGHelper::parseSeparatedList):
+        * ksvg2/svg/SVGHelper.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::storeUnit):
+        (WebCore::extractMode):
+        (WebCore::extractType):
+        (WebCore::lengthTypeToString):
+        (WebCore::stringToLengthType):
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::unitType):
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::setValue):
+        (WebCore::SVGLength::setValueInSpecifiedUnits):
+        (WebCore::SVGLength::setValueAsString):
+        (WebCore::SVGLength::valueAsString):
+        (WebCore::SVGLength::newValueSpecifiedUnits):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+        (WebCore::SVGLength::isFraction):
+        (WebCore::SVGLength::dpi):
+        (WebCore::SVGLength::PercentageOfViewport):
+        * ksvg2/svg/SVGLength.h:
+        (WebCore::):
+        (WebCore::SVGLength::):
+        * ksvg2/svg/SVGLength.idl:
+        * ksvg2/svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::SVGLengthList):
+        (WebCore::SVGLengthList::parse):
+        * ksvg2/svg/SVGLengthList.h:
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        (WebCore::SVGLineElement::toPathData):
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::attributeChanged):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::getCTM):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        (WebCore::SVGRectElement::toPathData):
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::createSVGLength):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::parseMappedAttribute):
+        (WebCore::SVGUseElement::closeRenderer):
+        * ksvg2/svg/SVGUseElement.h:
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        * rendering/RenderPath.cpp:
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::calcViewport):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::relativeBBox):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGImage::translationForAttributes):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::translateBox):
+        (WebCore::placePositionedBoxesHorizontally):
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+
 2006-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

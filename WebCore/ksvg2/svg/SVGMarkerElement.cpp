@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -42,10 +42,10 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
-    , m_refX(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_refY(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_markerWidth(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_markerHeight(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_refX(this, LengthModeWidth)
+    , m_refY(this, LengthModeHeight)
+    , m_markerWidth(this, LengthModeWidth)
+    , m_markerHeight(this, LengthModeHeight) 
     , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
     , m_orientType(0)
     , m_orientAngle(new SVGAngle(this))
@@ -56,6 +56,14 @@ SVGMarkerElement::~SVGMarkerElement()
 {
 }
 
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefX, refX, SVGNames::refXAttr.localName(), m_refX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefY, refY, SVGNames::refYAttr.localName(), m_refY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr.localName(), m_markerUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerWidth, markerWidth, SVGNames::markerWidthAttr.localName(), m_markerWidth)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerHeight, markerHeight, SVGNames::markerHeightAttr.localName(), m_markerHeight)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, OrientType, orientType, "orientType", m_orientType)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGAngle*, Angle, angle, OrientAngle, orientAngle, "orientAngle", m_orientAngle.get())
+
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
@@ -63,13 +71,13 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
         if (value == "userSpaceOnUse")
             setMarkerUnitsBaseValue(SVG_MARKERUNITS_USERSPACEONUSE);
     } else if (attr->name() == SVGNames::refXAttr)
-        refXBaseValue()->setValueAsString(value);
+        setRefXBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::refYAttr)
-        refYBaseValue()->setValueAsString(value);
+        setRefYBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::markerWidthAttr)
-        markerWidthBaseValue()->setValueAsString(value);
+        setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::markerHeightAttr)
-        markerHeightBaseValue()->setValueAsString(value);
+        setMarkerHeightBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::orientAttr) {
         if (value == "auto")
             setOrientToAuto();
@@ -89,14 +97,6 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
         SVGStyledElement::parseMappedAttribute(attr);
     }
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength*, Length, length, RefX, refX, SVGNames::refXAttr.localName(), m_refX.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength*, Length, length, RefY, refY, SVGNames::refYAttr.localName(), m_refY.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr.localName(), m_markerUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength*, Length, length, MarkerWidth, markerWidth, SVGNames::markerWidthAttr.localName(), m_markerWidth.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength*, Length, length, MarkerHeight, markerHeight, SVGNames::markerHeightAttr.localName(), m_markerHeight.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, OrientType, orientType, "orientType", m_orientType)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGAngle*, Angle, angle, OrientAngle, orientAngle, "orientAngle", m_orientAngle.get())
 
 void SVGMarkerElement::setOrientToAuto()
 {
@@ -126,7 +126,7 @@ SVGResource* SVGMarkerElement::canvasResource()
     else
         m_marker->setAutoAngle();
 
-    m_marker->setRef(refX()->value(), refY()->value());
+    m_marker->setRef(refX().value(), refY().value());
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
     
     return m_marker.get();
@@ -144,6 +144,6 @@ RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* 
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

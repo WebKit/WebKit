@@ -74,7 +74,7 @@ void SVGFitToViewBox::parseViewBox(const String& str)
     
     if (p < end) // nothing should come after the last, fourth number
         goto bail_out;
-
+    
     setViewBoxBaseValue(FloatRect(x, y, w, h));
     return;
 

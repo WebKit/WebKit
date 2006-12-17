@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,12 +21,12 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGCircleElement.h"
 
 #include "FloatPoint.h"
 #include "SVGHelper.h"
-#include "SVGLength.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -36,9 +36,9 @@ SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_r(new SVGLength(this, LM_OTHER, viewportElement()))
+    , m_cx(SVGLength(this, LengthModeWidth))
+    , m_cy(SVGLength(this, LengthModeHeight))
+    , m_r(SVGLength(this, LengthModeOther))
 {
 }
 
@@ -46,19 +46,19 @@ SVGCircleElement::~SVGCircleElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, R, r, SVGNames::rAttr.localName(), m_r)
 
 void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cxBaseValue()->setValueAsString(value);
+        setCxBaseValue(SVGLength(this, LengthModeWidth, value));       
     else if (attr->name() == SVGNames::cyAttr)
-        cyBaseValue()->setValueAsString(value);
+        setCyBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::rAttr)
-        rBaseValue()->setValueAsString(value);
+        setRBaseValue(SVGLength(this, LengthModeOther, value));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
@@ -72,37 +72,21 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 
 Path SVGCircleElement::toPathData() const
 {
-    float _cx = cx()->value(), _cy = cy()->value();
-    float _r = r()->value();
-
-    return Path::createCircle(FloatPoint(_cx, _cy), _r);
-}
-
-const SVGStyledElement* SVGCircleElement::pushAttributeContext(const SVGStyledElement* context)
-{
-    // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement* restore = cx()->context();
-
-    cx()->setContext(context);
-    cy()->setContext(context);
-    r()->setContext(context);
-    
-    SVGStyledElement::pushAttributeContext(context);
-    return restore;
+    return Path::createCircle(FloatPoint(cx().value(), cy().value()), r().value());
 }
 
 bool SVGCircleElement::hasPercentageValues() const
 {
-    if (cx()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        cy()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        r()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+    if (cx().unitType() == LengthTypePercentage ||
+        cy().unitType() == LengthTypePercentage ||
+        r().unitType() == LengthTypePercentage)
         return true;
 
     return false;
 }
-
+  
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

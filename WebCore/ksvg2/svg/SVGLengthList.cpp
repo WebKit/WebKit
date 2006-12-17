@@ -29,7 +29,7 @@
 namespace WebCore {
 
 SVGLengthList::SVGLengthList()
-    : SVGList<RefPtr<SVGLength> >()
+    : SVGList<SVGLength>()
 {
 }
 
@@ -37,17 +37,14 @@ SVGLengthList::~SVGLengthList()
 {
 }
 
-void SVGLengthList::parse(const String& value, const SVGStyledElement* context, LengthMode mode)
+void SVGLengthList::parse(const String& value, const SVGStyledElement* context, SVGLengthMode mode)
 {
     ExceptionCode ec = 0;
 
     Vector<String> lengths = value.split(' ');
     Vector<String>::const_iterator end = lengths.end();
-    for (Vector<String>::const_iterator it = lengths.begin(); it != end; ++it) {
-        SVGLength* length = new SVGLength(context, mode);
-        length->setValueAsString(*it);
-        appendItem(length, ec);
-    }
+    for (Vector<String>::const_iterator it = lengths.begin(); it != end; ++it)
+        appendItem(SVGLength(context, mode, *it), ec);
 }
 
 }

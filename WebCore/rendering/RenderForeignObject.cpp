@@ -40,7 +40,7 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 AffineTransform RenderForeignObject::translationForAttributes()
 {
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(element());
-    return AffineTransform().translate(foreign->x()->value(), foreign->y()->value());
+    return AffineTransform().translate(foreign->x().value(), foreign->y().value());
 }
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)

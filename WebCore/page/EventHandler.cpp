@@ -564,8 +564,8 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             if (!cimage) {
                 Element* e = node->document()->getElementById((*cursors)[i].cursorFragmentId);
                 if (e && e->hasTagName(cursorTag)) {
-                    hotSpot.setX(int(static_cast<SVGCursorElement*>(e)->x()->value()));
-                    hotSpot.setY(int(static_cast<SVGCursorElement*>(e)->y()->value()));
+                    hotSpot.setX(int(static_cast<SVGCursorElement*>(e)->x().value()));
+                    hotSpot.setY(int(static_cast<SVGCursorElement*>(e)->y().value()));
                     cimage = static_cast<SVGCursorElement*>(e)->cachedImage();
                 }
             }

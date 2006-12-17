@@ -24,6 +24,7 @@
 #define KSVG_SVGHelper_H
 #ifdef SVG_SUPPORT
 
+#include "SVGLength.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -32,18 +33,9 @@ namespace WebCore {
     class SVGStringList;
 
     // KSVG extension
-    enum LengthMode {
-        LM_UNKNOWN = 0,
-        LM_WIDTH,
-        LM_HEIGHT,
-        LM_OTHER
-    };
-
     class SVGHelper {
     public:
-        static float PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode);
-
-        static void parseSeparatedList(SVGStringList *list, const String &data, UChar delimiter = ',');
+        static void parseSeparatedList(SVGStringList* list, const String& data, UChar delimiter = ',');
     };
 
     // Lazy creation, template-based

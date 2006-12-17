@@ -27,6 +27,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGText.h"
+#include "SVGHelper.h"
 #include "SVGLengthList.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"

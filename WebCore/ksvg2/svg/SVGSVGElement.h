@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,6 +22,7 @@
 
 #ifndef SVGSVGElement_H
 #define SVGSVGElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGExternalResourcesRequired.h"
@@ -104,7 +105,7 @@ namespace WebCore
         void deselectAll();
 
         static double createSVGNumber();
-        static SVGLength* createSVGLength();
+        static SVGLength createSVGLength();
         static SVGAngle* createSVGAngle();
         static FloatPoint createSVGPoint();
         static AffineTransform createSVGMatrix();
@@ -132,6 +133,9 @@ namespace WebCore
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
+        friend class RenderSVGContainer;
+        virtual bool hasPercentageValues() const;
+
     private:
         void addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr);   
 
@@ -139,10 +143,10 @@ namespace WebCore
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Height, height)
 
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;

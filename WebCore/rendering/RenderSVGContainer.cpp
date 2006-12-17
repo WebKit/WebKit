@@ -101,8 +101,7 @@ void RenderSVGContainer::layout()
     ASSERT(needsLayout());
     ASSERT(minMaxKnown());
 
-    if (selfNeedsLayout())
-        calcViewport();
+    calcViewport();
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -115,7 +114,9 @@ void RenderSVGContainer::layout()
             child->setNeedsLayout(true);
         child = child->nextSibling();
     }
+
     RenderContainer::layout();
+
     calcWidth();
     calcHeight();
 
@@ -154,7 +155,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
         parentX = parentY = 0;
     }
-    
+
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
             paintInfo.context->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
@@ -206,15 +207,22 @@ void RenderSVGContainer::calcViewport()
     SVGElement* svgelem = static_cast<SVGElement*>(element());
     if (svgelem->hasTagName(SVGNames::svgTag)) {
         SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-        double x = svg->x()->value();
-        double y = svg->y()->value();
-        double w = svg->width()->value();
-        double h = svg->height()->value();
+
+        if (!selfNeedsLayout() && !svg->hasPercentageValues())
+            return;
+
+        double x = svg->x().value();
+        double y = svg->y().value();
+        double w = svg->width().value();
+        double h = svg->height().value();
         m_viewport = FloatRect(x, y, w, h);
     } else if (svgelem->hasTagName(SVGNames::markerTag)) {
+        if (!selfNeedsLayout())
+            return;
+
         SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(element());
-            double w = svg->markerWidth()->value();
-        double h = svg->markerHeight()->value();
+        double w = svg->markerWidth().value();
+        double h = svg->markerHeight().value();
         m_viewport = FloatRect(0, 0, w, h);
     }
 }

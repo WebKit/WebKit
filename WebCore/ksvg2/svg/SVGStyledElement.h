@@ -26,6 +26,7 @@
 
 #include "AffineTransform.h"
 #include "SVGElement.h"
+#include "SVGLength.h"
 #include "SVGStylable.h"
 #include "SVGResource.h"
 #include "Path.h"
@@ -56,16 +57,11 @@ namespace WebCore {
         virtual void notifyAttributeChange() const;
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
-        // Imagine we're a <rect> inside of a <pattern> section with patternContentUnits="objectBoundingBox"
-        // and our 'width' attribute is set to 50%. When the pattern gets referenced it knows the "bbox"
-        // of it's user and has to push the "active client's bbox" as new attribute context to all attributes
-        // of the 'rect'. This function also returns the old attribute context, to be able to restore it...
-        virtual const SVGStyledElement* pushAttributeContext(const SVGStyledElement* context);
-
-        virtual bool hasPercentageValues() const { return false; }
-
     protected:
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
+
+        friend class RenderPath;
+        virtual bool hasPercentageValues() const { return false; }
 
     private:
         mutable RefPtr<CSSStyleDeclaration> m_pa;

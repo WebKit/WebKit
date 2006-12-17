@@ -66,8 +66,8 @@ void RenderSVGText::layout()
         oldBounds = m_absoluteBounds;
     SVGTextElement* text = static_cast<SVGTextElement*>(element());
     //FIXME:  need to allow floating point positions
-    int xOffset = (int)(text->x()->getFirst() ? text->x()->getFirst()->value() : 0);
-    int yOffset = (int)(text->y()->getFirst() ? text->y()->getFirst()->value() : 0);
+    int xOffset = (int)(text->x()->getFirst().value());
+    int yOffset = (int)(text->y()->getFirst().value());
     setPos(xOffset, yOffset);
     RenderBlock::layout();
     

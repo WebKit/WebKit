@@ -133,14 +133,6 @@ void SVGStyledElement::updateCanvasItem()
     m_updateVectorial = false;
 }
 
-const SVGStyledElement* SVGStyledElement::pushAttributeContext(const SVGStyledElement*)
-{
-    if (view())
-        static_cast<RenderPath*>(renderer())->setPath(toPathData());
-
-    return 0;
-}
-
 }
 
 // vim:ts=4:noet

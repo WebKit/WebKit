@@ -55,7 +55,7 @@ namespace WebCore {
     typedef SVGAnimatedTemplate<bool> SVGAnimatedBoolean;
     typedef SVGAnimatedTemplate<int> SVGAnimatedEnumeration;
     typedef SVGAnimatedTemplate<long> SVGAnimatedInteger;
-    typedef SVGAnimatedTemplate<SVGLength*> SVGAnimatedLength;
+    typedef SVGAnimatedTemplate<SVGLength> SVGAnimatedLength;
     typedef SVGAnimatedTemplate<SVGLengthList*> SVGAnimatedLengthList;
     typedef SVGAnimatedTemplate<double> SVGAnimatedNumber;
     typedef SVGAnimatedTemplate<SVGNumberList*> SVGAnimatedNumberList; 

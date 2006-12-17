@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGRadialGradientElement.h"
 
@@ -37,41 +38,41 @@ namespace WebCore {
 
 SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_r(new SVGLength(this, LM_OTHER, viewportElement()))
-    , m_fx(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_fy(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_cx(this, LengthModeWidth)
+    , m_cy(this, LengthModeHeight)
+    , m_r(this, LengthModeOther)
+    , m_fx(this, LengthModeWidth)
+    , m_fy(this, LengthModeHeight)
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    m_cx->setValueAsString("50%");
-    m_cy->setValueAsString("50%");
-    m_r->setValueAsString("50%");
+    setCxBaseValue(SVGLength(this, LengthModeWidth, "50%"));
+    setCyBaseValue(SVGLength(this, LengthModeHeight, "50%"));
+    setRBaseValue(SVGLength(this, LengthModeOther, "50%"));
 }
 
 SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Fx, fx, SVGNames::fxAttr.localName(), m_fx.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Fy, fy, SVGNames::fyAttr.localName(), m_fy.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fx, fx, SVGNames::fxAttr.localName(), m_fx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fy, fy, SVGNames::fyAttr.localName(), m_fy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, R, r, SVGNames::rAttr.localName(), m_r)
 
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cxBaseValue()->setValueAsString(value);
+        setCxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::cyAttr)
-        cyBaseValue()->setValueAsString(value);
+        setCyBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::rAttr)
-        rBaseValue()->setValueAsString(value);
+        setRBaseValue(SVGLength(this, LengthModeOther, value));
     else if (attr->name() == SVGNames::fxAttr)
-        fxBaseValue()->setValueAsString(value);
+        setFxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::fyAttr)
-        fyBaseValue()->setValueAsString(value);
+        setFyBaseValue(SVGLength(this, LengthModeHeight, value));
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }
@@ -83,15 +84,42 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     bool bbox = (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     bool fxSet = hasAttribute(SVGNames::fxAttr);
     bool fySet = hasAttribute(SVGNames::fyAttr);
-    cx()->setBboxRelative(bbox);
-    cy()->setBboxRelative(bbox);
-    r()->setBboxRelative(bbox);
-    fx()->setBboxRelative(bbox);
-    fy()->setBboxRelative(bbox);
-    float _cx = cx()->value(), _cy = cy()->value();
-    float _r = r()->value();
-    float _fx = fxSet ? fx()->value() : _cx;
-    float _fy = fySet ? fy()->value() : _cy;
+ 
+    float _cx, _cy, _r, _fx, _fy;
+
+    if (bbox) {
+        _cx = cx().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(cx()))
+            _cx *= 100.0;
+
+        _cy = cy().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(cy()))
+            _cy *= 100.0;
+
+        _r = r().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(r()))
+            _r *= 100.0;
+
+        if (fxSet) {
+            _fx = fx().valueInSpecifiedUnits();
+            if (SVGLength::isFraction(fx()))
+                _fx *= 100.0;
+        } else
+            _fx = _cx;
+        
+        if (fySet) {
+            _fy = fy().valueInSpecifiedUnits();
+            if (SVGLength::isFraction(fy()))
+                _fy *= 100.0;
+        } else
+            _fy = _cy;
+    } else {
+        _cx = cx().value();
+        _cy = cy().value();
+        _r = r().value();
+        _fx = fxSet ? fx().value() : _cx;
+        _fy = fySet ? fy().value() : _cy;
+    }
 
     RefPtr<SVGPaintServerRadialGradient> grad = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(_grad);
     AffineTransform mat;
@@ -112,32 +140,18 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
             RefPtr<SVGPaintServerRadialGradient> radial = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(pserver);
             if (!hasAttribute(SVGNames::cxAttr))
                 _cx = radial->gradientCenter().x();
-            else if (bbox)
-                _cx *= 100.;
+
             if (!hasAttribute(SVGNames::cyAttr))
                 _cy = radial->gradientCenter().y();
-            else if (bbox)
-                _cy *= 100.;
 
             if (!fxSet)
                 _fx = radial->gradientFocal().x();
-            else if (bbox)
-                _fx *= 100.;
+
             if (!fySet)
                 _fy = radial->gradientFocal().y();
-            else if (bbox)
-                _fy *= 100.;
 
             if (!hasAttribute(SVGNames::rAttr))
                 _r = radial->gradientRadius();
-            else if (bbox)
-                _r *= 100.;
-        } else if (bbox) {
-            _cx *= 100.0;
-            _cy *= 100.0;
-            _fx *= 100.0;
-            _fy *= 100.0;
-            _r *= 100.0;
         }
 
         if (!hasAttribute(SVGNames::gradientTransformAttr))
@@ -156,14 +170,6 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
             grad->setGradientSpreadMethod(SPREADMETHOD_REPEAT);
         else
             grad->setGradientSpreadMethod(SPREADMETHOD_PAD);
-
-        if (bbox) {
-            _cx *= 100.0;
-            _cy *= 100.0;
-            _fx *= 100.0;
-            _fy *= 100.0;
-            _r *= 100.0;
-        }
     }
 
     grad->setGradientTransform(mat);
@@ -175,6 +181,6 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

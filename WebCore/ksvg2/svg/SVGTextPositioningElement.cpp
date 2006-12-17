@@ -56,13 +56,13 @@ void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->parse(value.deprecatedString(), this, LM_WIDTH);
+        xBaseValue()->parse(value.deprecatedString(), this, LengthModeWidth);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->parse(value.deprecatedString(), this, LM_HEIGHT);
+        yBaseValue()->parse(value.deprecatedString(), this, LengthModeHeight);
     else if (attr->name() == SVGNames::dxAttr)
-        dxBaseValue()->parse(value.deprecatedString(), this, LM_WIDTH);
+        dxBaseValue()->parse(value.deprecatedString(), this, LengthModeWidth);
     else if (attr->name() == SVGNames::dyAttr)
-        dyBaseValue()->parse(value.deprecatedString(), this, LM_HEIGHT);
+        dyBaseValue()->parse(value.deprecatedString(), this, LengthModeHeight);
     else if (attr->name() == SVGNames::rotateAttr)
         rotateBaseValue()->parse(value.deprecatedString());
     else

@@ -1,3 +1,12 @@
+2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11813
+
+        Update baseline after the SVGLength patch.
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+
 2006-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

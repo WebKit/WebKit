@@ -31,6 +31,7 @@
 #include "SVGPaintServerSolid.h"
 #include "RenderObject.h"
 #include "RenderPath.h"
+#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
@@ -108,11 +109,11 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
         return defaultValue;
 
     if (cssType == CSSPrimitiveValue::CSS_PERCENTAGE) {
-        SVGElement* element = static_cast<SVGElement*>(item->element());
+        SVGStyledElement* element = static_cast<SVGStyledElement*>(item->element());
         SVGElement* viewportElement = (element ? element->viewportElement() : 0);
         if (viewportElement) {
             double result = primitive->getFloatValue() / 100.0;
-            return SVGHelper::PercentageOfViewport(result, viewportElement, LM_OTHER);
+            return SVGLength::PercentageOfViewport(result, element, LengthModeOther);
         }
     }
 

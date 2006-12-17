@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGCursorElement.h"
 
@@ -40,8 +41,8 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document *doc)
     , SVGExternalResourcesRequired()
     , SVGURIReference()
     , CachedResourceClient()
-    , m_x(new SVGLength(0, LM_WIDTH, viewportElement()))
-    , m_y(new SVGLength(0, LM_HEIGHT, viewportElement()))
+    , m_x(0, LengthModeWidth)
+    , m_y(0, LengthModeHeight)
 {
     m_cachedImage = 0;
 }
@@ -52,16 +53,16 @@ SVGCursorElement::~SVGCursorElement()
         m_cachedImage->deref(this);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 {
-     const AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value);
+        setXBaseValue(SVGLength(0, LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value);
+        setYBaseValue(SVGLength(0, LengthModeHeight, value));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
@@ -82,6 +83,6 @@ void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

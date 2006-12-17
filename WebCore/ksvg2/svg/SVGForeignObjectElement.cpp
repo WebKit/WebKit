@@ -20,6 +20,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 
 #include "SVGForeignObjectElement.h"
@@ -40,10 +41,10 @@ SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, D
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_x(this, LengthModeWidth)
+    , m_y(this, LengthModeHeight)
+    , m_width(this, LengthModeWidth)
+    , m_height(this, LengthModeHeight)
 {
 }
 
@@ -51,23 +52,23 @@ SVGForeignObjectElement::~SVGForeignObjectElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
 
 void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value);
+        setXBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value);
+        setYBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::widthAttr) {
-        widthBaseValue()->setValueAsString(value);
+        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        heightBaseValue()->setValueAsString(value);
+        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -80,12 +81,12 @@ void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-RenderObject *SVGForeignObjectElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderForeignObject(this);
 }
 
-bool SVGForeignObjectElement::childShouldCreateRenderer(Node *child) const
+bool SVGForeignObjectElement::childShouldCreateRenderer(Node* child) const
 {
     // Skip over SVG rules which disallow non-SVG kids
     return StyledElement::childShouldCreateRenderer(child);
@@ -93,6 +94,6 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(Node *child) const
 
 } // namespace WebCore
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

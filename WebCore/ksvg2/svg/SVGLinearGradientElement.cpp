@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -37,35 +37,35 @@ namespace WebCore {
 
 SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_x1(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_y1(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_x2(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_y2(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_x1(this, LengthModeWidth)
+    , m_y1(this, LengthModeHeight)
+    , m_x2(this, LengthModeWidth)
+    , m_y2(this, LengthModeHeight)
 {
-    // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    m_x2->setValueAsString("100%");
+    // Spec: If the attribute is not specified, the effect is as if a value of "100%" were specified.
+    setX2BaseValue(SVGLength(this, LengthModeWidth, "100%"));
 }
 
 SVGLinearGradientElement::~SVGLinearGradientElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, X1, x1, SVGNames::x1Attr.localName(), m_x1.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, Y1, y1, SVGNames::y1Attr.localName(), m_y1.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength*, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Length, length, X1, x1, SVGNames::x1Attr.localName(), m_x1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Length, length, Y1, y1, SVGNames::y1Attr.localName(), m_y1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2)
 
 void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
-        x1BaseValue()->setValueAsString(value);
+        setX1BaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::y1Attr)
-        y1BaseValue()->setValueAsString(value);
+        setY1BaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::x2Attr)
-        x2BaseValue()->setValueAsString(value);
+        setX2BaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::y2Attr)
-        y2BaseValue()->setValueAsString(value);
+        setY2BaseValue(SVGLength(this, LengthModeHeight, value));
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }
@@ -75,15 +75,32 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
     bool bbox = (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    
-    x1()->setBboxRelative(bbox);
-    y1()->setBboxRelative(bbox);
-    x2()->setBboxRelative(bbox);
-    y2()->setBboxRelative(bbox);
-    
-    float _x1 = x1()->value(), _y1 = y1()->value();
-    float _x2 = x2()->value(), _y2 = y2()->value();
 
+    float _x1, _y1, _x2, _y2;
+
+    if (bbox) {
+        _x1 = x1().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(x1()))
+            _x1 *= 100.0;
+
+        _y1 = y1().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(y1()))
+            _y1 *= 100.0;
+
+        _x2 = x2().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(x2()))
+            _x2 *= 100.0;
+
+        _y2 = y2().valueInSpecifiedUnits();
+        if (SVGLength::isFraction(y2()))
+            _y2 *= 100.0;
+    } else {
+        _x1 = x1().value();
+        _y1 = y1().value();
+        _x2 = x2().value();
+        _y2 = y2().value();
+    } 
+ 
     RefPtr<SVGPaintServerLinearGradient> grad = WTF::static_pointer_cast<SVGPaintServerLinearGradient>(_grad);
     AffineTransform mat;
     if (gradientTransform()->numberOfItems() > 0)
@@ -91,40 +108,27 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
 
     DeprecatedString ref = href().deprecatedString();
     RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
-    
+
     if (pserver && (pserver->type() == RadialGradientPaintServer || pserver->type() == LinearGradientPaintServer)) {
         bool isLinear = pserver->type() == LinearGradientPaintServer;
         SVGPaintServerGradient* gradient = static_cast<SVGPaintServerGradient*>(pserver.get());
 
         if (!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
-            
+
         if (isLinear) {
             SVGPaintServerLinearGradient* linear = static_cast<SVGPaintServerLinearGradient*>(pserver.get());
             if (!hasAttribute(SVGNames::x1Attr))
                 _x1 = linear->gradientStart().x();
-            else if (bbox)
-                _x1 *= 100.;
 
             if (!hasAttribute(SVGNames::y1Attr))
                 _y1 = linear->gradientStart().y();
-            else if (bbox)
-                _y1 *= 100.;
 
             if (!hasAttribute(SVGNames::x2Attr))
                 _x2 = linear->gradientEnd().x();
-            else if (bbox)
-                _x2 *= 100.;
 
             if (!hasAttribute(SVGNames::y2Attr))
                 _y2 = linear->gradientEnd().y();
-            else if (bbox)
-                _y2 *= 100.;
-        } else if (bbox) {
-            _x1 *= 100.0;
-            _y1 *= 100.0;
-            _x2 *= 100.0;
-            _y2 *= 100.0;
         }
 
         if (!hasAttribute(SVGNames::gradientTransformAttr))
@@ -143,13 +147,6 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
             grad->setGradientSpreadMethod(SPREADMETHOD_REPEAT);
         else
             grad->setGradientSpreadMethod(SPREADMETHOD_PAD);
-
-        if (bbox) {
-            _x1 *= 100.0;
-            _y1 *= 100.0;
-            _x2 *= 100.0;
-            _y2 *= 100.0;
-        }
     }
 
     grad->setGradientTransform(mat);
@@ -160,6 +157,6 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

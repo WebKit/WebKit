@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -35,12 +35,12 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_rx(new SVGLength(this, LM_WIDTH, viewportElement()))
-    , m_ry(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_x(this, LengthModeWidth)
+    , m_y(this, LengthModeHeight)
+    , m_width(this, LengthModeWidth)
+    , m_height(this, LengthModeHeight)
+    , m_rx(this, LengthModeWidth)
+    , m_ry(this, LengthModeHeight)
 {
 }
 
@@ -48,28 +48,28 @@ SVGRectElement::~SVGRectElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry)
 
 void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value);
+        setXBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value);
+        setYBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::rxAttr)
-        rxBaseValue()->setValueAsString(value);
+         setRxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::ryAttr)
-        ryBaseValue()->setValueAsString(value);
+         setRyBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value);
+        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value);
+        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
@@ -83,41 +83,25 @@ void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 
 Path SVGRectElement::toPathData() const
 {
-    FloatRect rect(x()->value(), y()->value(), width()->value(), height()->value());
+    FloatRect rect(x().value(), y().value(), width().value(), height().value());
 
-    bool hasRx = hasAttribute("rx");
-    bool hasRy = hasAttribute("ry");
+    bool hasRx = hasAttribute(SVGNames::rxAttr);
+    bool hasRy = hasAttribute(SVGNames::ryAttr);
     if (hasRx || hasRy) {
-        float _rx = hasRx ? rx()->value() : ry()->value();
-        float _ry = hasRy ? ry()->value() : rx()->value();
+        float _rx = hasRx ? rx().value() : ry().value();
+        float _ry = hasRy ? ry().value() : rx().value();
         return Path::createRoundedRectangle(rect, FloatSize(_rx, _ry));
     }
 
     return Path::createRectangle(rect);
 }
 
-const SVGStyledElement* SVGRectElement::pushAttributeContext(const SVGStyledElement* context)
-{
-    // All attribute's contexts are equal (so just take the one from 'x').
-    const SVGStyledElement* restore = x()->context();
-
-    x()->setContext(context);
-    y()->setContext(context);
-    width()->setContext(context);
-    height()->setContext(context);
-    
-    SVGStyledElement::pushAttributeContext(context);
-    return restore;
-}
-
 bool SVGRectElement::hasPercentageValues() const
 {
-    if (x()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        y()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        width()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        height()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        rx()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        ry()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+    if (x().unitType() == LengthTypePercentage ||
+        y().unitType() == LengthTypePercentage ||
+        width().unitType() == LengthTypePercentage ||
+        height().unitType() == LengthTypePercentage)
         return true;
 
     return false;
@@ -125,6 +109,6 @@ bool SVGRectElement::hasPercentageValues() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

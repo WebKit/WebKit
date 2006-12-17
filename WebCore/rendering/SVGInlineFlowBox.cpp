@@ -126,10 +126,9 @@ static bool translateBox(InlineBox* box, int x, int y, bool topLevel = true)
     } else {
         InlineFlowBox* flow = static_cast<InlineFlowBox*>(box);
         SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(box->object()->element());
-
-        if (topLevel || !(text->x()->getFirst() || text->y()->getFirst() ||
-                          (text->dx()->getFirst() && text->dx()->getFirst()->value()) ||
-                          (text->dy()->getFirst() && text->dy()->getFirst()->value()))) {
+        
+        if (topLevel || !(text->x()->getFirst().value() || text->y()->getFirst().value() ||
+                          text->dx()->getFirst().value() || text->dy()->getFirst().value())) {
             box->setXPos(box->xPos() + x);
             box->setYPos(box->yPos() + y);
             for (InlineBox* curr = flow->firstChild(); curr; curr = curr->nextOnLine()) {
@@ -169,12 +168,13 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
             assert(curr->object()->isInlineFlow());
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
             SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(flow->object()->element());
-            x += text->dx()->getFirst() ? static_cast<int>(text->dx()->getFirst()->value()) : 0;
-            if (text->x()->getFirst())
-                x = static_cast<int>(text->x()->getFirst()->value() - xPos);
-            if (text->x()->getFirst() || text->y()->getFirst() ||
-                (text->dx()->getFirst() && text->dx()->getFirst()->value()) ||
-                (text->dy()->getFirst() && text->dy()->getFirst()->value())) {
+            x += (int)(text->dx()->getFirst().value());
+            if (text->x()->numberOfItems() > 0)
+                x = (int)(text->x()->getFirst().value() - xPos);
+            if (text->x()->numberOfItems() > 0 ||
+                text->y()->numberOfItems() > 0 ||
+                text->dx()->numberOfItems() > 0 ||
+                text->dy()->numberOfItems() > 0) {
                 seenPositionedElement = true;
                 needsWordSpacing = false;
                 int ignoreX, ignoreY;
@@ -239,9 +239,11 @@ static void placeBoxesVerticallyWithAbsBaseline(InlineFlowBox* flow, int& height
     for (InlineBox* curr = flow->firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->isInlineFlowBox()) {
             SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(curr->object()->element());
-            baseline += text->dy()->getFirst() ? static_cast<int>(text->dy()->getFirst()->value()) : 0;
-            if (text->y()->getFirst())
-                baseline = static_cast<int>(text->y()->getFirst()->value() - yPos);
+            baseline += (int)(text->dy()->getFirst().value());
+
+            if (text->y()->numberOfItems() > 0)
+                baseline = (int)(text->y()->getFirst().value() - yPos);
+
             placeBoxesVerticallyWithAbsBaseline(static_cast<InlineFlowBox*>(curr), heightOfBlock, minY, maxY, baseline, yPos);
         }
         const Font& font = curr->object()->font(true);

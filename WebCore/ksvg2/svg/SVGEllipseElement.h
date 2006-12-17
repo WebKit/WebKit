@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGEllipseElementImpl_H
-#define KSVG_SVGEllipseElementImpl_H
+#ifndef SVGEllipseElement_H
+#define SVGEllipseElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGExternalResourcesRequired.h"
@@ -31,7 +32,6 @@
 
 namespace WebCore
 {
-    class SVGLength;
     class SVGEllipseElement : public SVGStyledTransformableElement,
                               public SVGTests,
                               public SVGLangSpace,
@@ -49,20 +49,17 @@ namespace WebCore
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
-        virtual const SVGStyledElement* pushAttributeContext(const SVGStyledElement* context);
-
     protected:
         virtual const SVGElement* contextElement() const { return this; }
-
         virtual bool hasPercentageValues() const;
 
     private:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Cx, cx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Cy, cy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Rx, rx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Ry, ry)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cx, cx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cy, cy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Rx, rx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Ry, ry)
     };
 
 } // namespace WebCore
