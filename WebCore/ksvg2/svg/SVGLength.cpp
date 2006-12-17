@@ -33,6 +33,7 @@
 #include "SVGStyledElement.h"
 #include "svgpathparser.h"
 
+#include <math.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {

@@ -1,5 +1,13 @@
 2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix, not reviewed.
+
+        This should hopefully fix Qt build.
+
+        * ksvg2/svg/SVGLength.cpp: Include math.h for Qt/Linux build.
+
+2006-12-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Rob.
 
         Remove SVGHelper class. Move the last static function "parseSeparatedList"
