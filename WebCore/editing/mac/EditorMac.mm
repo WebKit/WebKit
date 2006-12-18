@@ -30,9 +30,13 @@
 #import "Clipboard.h"
 #import "ClipboardMac.h"
 #import "Document.h"
+#import "EditorClient.h"
 #import "Element.h"
+#import "ExceptionHandlers.h"
+#import "PlatformString.h"
 #import "Selection.h"
 #import "SelectionController.h"
+#import "TypingCommand.h"
 #import "TextIterator.h"
 #import "htmlediting.h"
 #import "visible_units.h"
@@ -45,6 +49,15 @@
 
 namespace WebCore {
 
+extern "C" {
+
+// Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
+
+void _NSAppendToKillRing(NSString *);
+void _NSPrependToKillRing(NSString *);
+void _NSNewKillRingSequence(void);
+}
+
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
     return new ClipboardMac(false, [NSPasteboard generalPasteboard], policy);
@@ -55,6 +68,25 @@ NSString* Editor::userVisibleString(NSURL* nsURL)
     if (client())
         return client()->userVisibleString(nsURL);
     return nil;
+}
+
+void Editor::propogateDOMException(ExceptionCode ec)
+{
+    if (ec) raiseDOMException(ec);
+}
+
+void Editor::addToKillRing(Range* range, bool prepend)
+{
+    if (m_startNewKillRingSequence)
+        _NSNewKillRingSequence();
+
+    String text = plainText(range);
+    text.replace('\\', m_frame->backslashAsCurrencySymbol());
+    if (prepend)
+        _NSPrependToKillRing((NSString*)text);
+    else
+        _NSAppendToKillRing((NSString*)text);
+    m_startNewKillRingSequence = false;
 }
 
 void Editor::ignoreSpelling()

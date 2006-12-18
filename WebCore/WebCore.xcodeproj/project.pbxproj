@@ -279,6 +279,7 @@
 		4B678F880AFFF668008159FE /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B678F860AFFF668008159FE /* WebNSAttributedStringExtras.h */; };
 		4B678F890AFFF668008159FE /* WebNSAttributedStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B678F870AFFF668008159FE /* WebNSAttributedStringExtras.mm */; };
 		4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BBDBF7D0ACC9290005F6E97 /* CommandByName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */; };
 		4BBDBF7E0ACC9290005F6E97 /* CommandByName.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */; };
 		4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */; };
@@ -3286,6 +3287,7 @@
 		4B678F860AFFF668008159FE /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; };
 		4B678F870AFFF668008159FE /* WebNSAttributedStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSAttributedStringExtras.mm; sourceTree = "<group>"; };
 		4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ClipboardAccessPolicy.h; sourceTree = "<group>"; };
+		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
 		4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommandByName.cpp; sourceTree = "<group>"; };
 		4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommandByName.h; sourceTree = "<group>"; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
@@ -7630,6 +7632,7 @@
 				93309D95099E64910056E581 /* EditCommand.h */,
 				4B3043CA0AE0373B00A82647 /* Editor.cpp */,
 				4B3043CB0AE0373B00A82647 /* Editor.h */,
+				4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */,
 				93FDAFC90B11307400E2746F /* EditorInsertAction.h */,
 				D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */,
 				D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */,
@@ -10838,6 +10841,7 @@
 				BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
 				93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */,
+				4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */,
 				E11D51930B2E7A5F0056C188 /* Base64.h in Headers */,
 				B21127A60B3186770009BE53 /* JSSVGPODTypeWrapper.h in Headers */,
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,

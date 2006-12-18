@@ -81,7 +81,6 @@
     BOOL descendantBecomingFirstResponder;
     BOOL resigningFirstResponder;
     BOOL ignoreMarkedTextSelectionChange;
-    BOOL startNewKillRingSequence;
     BOOL nextResponderDisabledOnce;
     BOOL willBecomeFirstResponderForNodeFocus;
     

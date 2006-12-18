@@ -72,6 +72,7 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
+#import <WebCore/EditorDeleteAction.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
@@ -181,12 +182,6 @@ void _NSResetKillRingOperationFlag(void);
 #define MIN_BOLD_WEIGHT 9
 #define STANDARD_BOLD_WEIGHT 10
 
-typedef enum {
-    deleteSelectionAction,
-    deleteKeyAction,
-    forwardDeleteKeyAction
-} WebDeletionAction;
-
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
 static BOOL forceNSViewHitTest = NO;
 
@@ -213,13 +208,6 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 - (void)_updateTextSizeMultiplier;
 - (DOMRange *)_selectedRange;
 - (BOOL)_shouldDeleteRange:(DOMRange *)range;
-- (void)_deleteRange:(DOMRange *)range 
-            killRing:(BOOL)killRing 
-             prepend:(BOOL)prepend 
-       smartDeleteOK:(BOOL)smartDeleteOK
-      deletionAction:(WebDeletionAction)deletionAction
-         granularity:(TextGranularity)granularity;
-- (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
@@ -628,64 +616,6 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     if (!coreFrame)
         return nil;
     return coreFrame->editor()->shouldDeleteRange(core(range));
-}
-
-- (void)_deleteRange:(DOMRange *)range 
-            killRing:(BOOL)killRing 
-             prepend:(BOOL)prepend 
-       smartDeleteOK:(BOOL)smartDeleteOK 
-      deletionAction:(WebDeletionAction)deletionAction
-         granularity:(TextGranularity)granularity
-{
-    WebFrameBridge *bridge = [self _bridge];
-    Frame* coreFrame = core([self _frame]);
-    BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
-
-    BOOL startNewKillRingSequence = _private->startNewKillRingSequence;
-
-    if (killRing) {
-        if (startNewKillRingSequence) {
-            _NSNewKillRingSequence();
-        }
-        NSString *string = [bridge stringForRange:range];
-        if (prepend) {
-            _NSPrependToKillRing(string);
-        } else {
-            _NSAppendToKillRing(string);
-        }
-        startNewKillRingSequence = NO;
-    }
-
-    if (coreFrame) {
-        SelectionController* selectionController = coreFrame->selectionController();
-        Editor* editor = coreFrame->editor();
-        switch (deletionAction) {
-            case deleteSelectionAction:
-                selectRange(selectionController, core(range), DOWNSTREAM, true);
-                editor->deleteSelectionWithSmartDelete(smartDelete);
-                break;
-            case deleteKeyAction:
-                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != CharacterGranularity));
-                [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
-                break;
-            case forwardDeleteKeyAction:
-                selectRange(coreFrame->selectionController(), core(range), DOWNSTREAM, (granularity != CharacterGranularity));
-                [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
-                break;
-        }
-    }
-
-    _private->startNewKillRingSequence = startNewKillRingSequence;
-}
-
-- (void)_deleteSelection
-{
-    [self _deleteRange:[self _selectedRange]
-              killRing:YES 
-               prepend:NO
-         smartDeleteOK:YES
-        deletionAction:deleteSelectionAction
-           granularity:CharacterGranularity];
 }
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
@@ -3166,7 +3096,9 @@ done:
         [[self window] makeFirstResponder:view];
     [self _updateActiveState];
     [self _updateFontPanel];
-    _private->startNewKillRingSequence = YES;
+    if (core([self _frame]))
+        core([self _frame])->editor()->setStartNewKillRingSequence(true);
+
     return YES;
 }
 
@@ -4456,54 +4388,22 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
-- (BOOL)_deleteWithDirection:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity killRing:(BOOL)killRing isTypingAction:(BOOL)isTypingAction
-{
-    // Delete the selection, if there is one.
-    // If not, make a selection using the passed-in direction and granularity.
-
-    if (![self _canEdit])
-        return NO;
-
-    DOMRange *range = [self _selectedRange];
-    WebDeletionAction deletionAction = deleteSelectionAction;
-
-    BOOL smartDeleteOK = NO;
-    
-    if ([self _hasSelection]) {
-        smartDeleteOK = YES;
-        if (isTypingAction)
-            deletionAction = deleteKeyAction;
-    } else {
-        switch (direction) {
-            case SelectionController::FORWARD:
-            case SelectionController::RIGHT:
-                deletionAction = forwardDeleteKeyAction;
-                break;
-            case SelectionController::BACKWARD:
-            case SelectionController::LEFT:
-                deletionAction = deleteKeyAction;
-                break;
-        }
-    }
-
-    if (range == nil)
-        return NO;
-    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:smartDeleteOK deletionAction:deletionAction granularity:granularity];
-    return YES;
-}
-
 - (void)deleteForward:(id)sender
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:NO isTypingAction:YES];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
 }
 
 - (void)deleteBackward:(id)sender
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:SelectionController::BACKWARD granularity:CharacterGranularity killRing:NO isTypingAction:YES];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
@@ -4514,38 +4414,53 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteWordForward:(id)sender
 {
-    [self _deleteWithDirection:SelectionController::FORWARD granularity:WordGranularity killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, WordGranularity, true, false);
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    [self _deleteWithDirection:SelectionController::BACKWARD granularity:WordGranularity killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, WordGranularity, true, false);
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    [self _deleteWithDirection:SelectionController::BACKWARD granularity:LineBoundary killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, LineBoundary, true, false);
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
     // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
-    if (![self _deleteWithDirection:SelectionController::FORWARD granularity:LineBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame) {
+        if (!coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, LineBoundary, true, false))
+            coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, true, false);
+    }
+    
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    [self _deleteWithDirection:SelectionController::BACKWARD granularity:ParagraphBoundary killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, ParagraphBoundary, true, false);
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
     // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
     // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
-    if (![self _deleteWithDirection:SelectionController::FORWARD granularity:ParagraphBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:SelectionController::FORWARD granularity:CharacterGranularity killRing:YES isTypingAction:NO];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame) {
+        if (!coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, ParagraphBoundary, true, false))
+            coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, true, false);
+    }
 }
 
 - (void)complete:(id)sender
@@ -4756,7 +4671,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         NS_HANDLER
             r = selection;
         NS_ENDHANDLER
-        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction granularity:CharacterGranularity];
+        Frame* coreFrame = core([self _frame]);
+        if (coreFrame)
+            coreFrame->editor()->deleteRange([r _range], true, true, false, deleteSelectionAction, CharacterGranularity);
+
     }
     [self setMark:sender];
 }
@@ -5035,7 +4953,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
-    _private->startNewKillRingSequence = YES;
+    if (core([self _frame]))
+        core([self _frame])->editor()->setStartNewKillRingSequence(true);
 }
 
 - (void)_formControlIsBecomingFirstResponder:(NSView *)formControl

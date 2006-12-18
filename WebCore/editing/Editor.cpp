@@ -55,6 +55,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Sound.h"
+#include "TextIterator.h"
 #include "TypingCommand.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -154,9 +155,76 @@ bool Editor::canSmartCopyOrDelete()
     return false;
 }
 
-void Editor::deleteSelection()
+void Editor::deleteRange(Range *range, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction deletionAction, TextGranularity granularity)
 {
-    ASSERT_WITH_MESSAGE(0, "Not Implemented");
+    if (killRing)
+        addToKillRing(range, prepend);
+
+    SelectionController* selectionController = m_frame->selectionController();
+    bool smartDelete = smartDeleteOK ? canSmartCopyOrDelete() : false;
+    ExceptionCode ec = 0;
+    switch (deletionAction) {
+        case deleteSelectionAction:             
+            selectionController->setSelectedRange(range, DOWNSTREAM, true, ec);
+            propogateDOMException(ec);
+            deleteSelectionWithSmartDelete(smartDelete);
+            break;
+        case deleteKeyAction:
+            selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
+            propogateDOMException(ec);
+            if (m_frame->document()) {
+                TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
+                m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+            }
+            break;
+        case forwardDeleteKeyAction:
+            selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
+            propogateDOMException(ec);
+            if (m_frame->document()) {
+                TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
+                m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+            }
+            break;
+    }
+}
+
+bool Editor::deleteWithDirection(SelectionController::EDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
+{
+    // Delete the selection, if there is one.
+    // If not, make a selection using the passed-in direction and granularity.
+
+    if (!canEdit())
+        return false;
+
+    EditorDeleteAction deletionAction = deleteSelectionAction;
+
+    bool smartDeleteOK = false;
+    
+    if (m_frame->selectionController()->isRange()) {
+        smartDeleteOK = true;
+        if (isTypingAction)
+            deletionAction = deleteKeyAction;
+    } else {
+        switch (direction) {
+            case SelectionController::FORWARD:
+            case SelectionController::RIGHT:
+                deletionAction = forwardDeleteKeyAction;
+                break;
+            case SelectionController::BACKWARD:
+            case SelectionController::LEFT:
+                deletionAction = deleteKeyAction;
+                break;
+        }
+    }
+
+    deleteRange(selectedRange().get(), killRing, false, smartDeleteOK, deletionAction, granularity);
+
+    return true;
+}
+
+void Editor::deleteSelectionWithSmartDelete()
+{
+    deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
 }
 
 void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
@@ -626,27 +694,33 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
 
 // Execute command functions
 
-bool execCopy(Frame* frame)
+static bool execCopy(Frame* frame)
 {
-    frame->copyToPasteboard();
+    frame->editor()->copy();
     return true;
 }
 
-bool execCut(Frame* frame)
+static bool execCut(Frame* frame)
 {
-    frame->cutToPasteboard();
+    frame->editor()->cut();
     return true;
 }
 
 static bool execDelete(Frame* frame)
 {
-    TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
+    frame->editor()->performDelete();
+    return true;
+}
+
+static bool execBackwardDelete(Frame* frame)
+{
+    frame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
     return true;
 }
 
 static bool execForwardDelete(Frame* frame)
 {
-    TypingCommand::forwardDeleteKeyPressed(frame->document());
+    frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
     return true;
 }
 
@@ -880,7 +954,7 @@ static bool execMoveWordRightAndModifySelection(Frame* frame)
 
 static bool execPaste(Frame* frame)
 {
-    frame->pasteFromPasteboard();
+    frame->editor()->paste();
     return true;
 }
 
@@ -980,6 +1054,7 @@ static CommandMap* createCommandMap()
     struct CommandEntry { const char* name; Command command; };
     
     static const CommandEntry commands[] = {
+        { "BackwardDelete", { hasEditableSelection, execBackwardDelete } },
         { "Copy", { hasRangeSelection, execCopy } },
         { "Cut", { hasEditableRangeSelection, execCut } },
         { "Delete", { hasEditableSelection, execDelete } },
@@ -1084,7 +1159,7 @@ void Editor::cut()
     RefPtr<Range> selection = selectedRange();
     if (shouldDeleteRange(selection.get())) {
         Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
-        deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
+        deleteSelectionWithSmartDelete();
     }
 }
 
@@ -1117,7 +1192,7 @@ void Editor::performDelete()
         systemBeep();
         return;
     }
-    deleteSelection();
+    deleteRange(selectedRange().get(), true, false, true, deleteSelectionAction, CharacterGranularity);
 }
 
 void Editor::copyURL(const KURL& url, const String& title)

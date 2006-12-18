@@ -27,23 +27,32 @@
 #define Editor_h
 
 #include "ClipboardAccessPolicy.h"
-#include "EditorClient.h"
+#include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "Frame.h"
+#include "SelectionController.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+
+#if PLATFORM(MAC)
+class NSString;
+class NSURL;
+#endif
 
 namespace WebCore {
 
 class Clipboard;
 class DeleteButtonController;
 class DocumentFragment;
+class EditCommand;
+class EditorClient;
 class FontData;
 class Frame;
 class HTMLElement;
 class Pasteboard;
 class Range;
+class SelectionController;
 class Selection;
 
 class Editor {
@@ -99,7 +108,10 @@ public:
     // the lastEditCommand on its own, and we should remove this function.
     void setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand);
 
+    bool deleteWithDirection(SelectionController::EDirection, TextGranularity, bool killRing, bool isTypingAction);
+    void deleteRange(Range*, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction, TextGranularity);
     void deleteSelectionWithSmartDelete(bool smartDelete);
+    void deleteSelectionWithSmartDelete();
     bool dispatchCPPEvent(const AtomicString &, ClipboardAccessPolicy);
     
     Node* removedAnchor() const { return m_removedAnchor.get(); }
@@ -158,7 +170,8 @@ public:
     void setBaseWritingDirection(String);
 
 #if PLATFORM(MAC)
-    NSString* userVisibleString(NSURL* nsURL);
+    NSString* userVisibleString(NSURL*);
+    void setStartNewKillRingSequence(bool flag) { m_startNewKillRingSequence = flag; }
 #endif
 
 private:
@@ -172,7 +185,6 @@ private:
     bool canSmartReplaceWithPasteboard(Pasteboard* pasteboard);
     PassRefPtr<Clipboard> newGeneralClipboard(ClipboardAccessPolicy policy);
     PassRefPtr<Range> selectedRange();
-    void deleteSelection();
     void pasteAsPlainTextWithPasteboard(Pasteboard*);
     Vector<String> pasteboardTypesForSelection();
     void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
@@ -180,6 +192,18 @@ private:
     void replaceSelectionWithText(String text, bool selectReplacement, bool smartReplace);
     bool shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction);
     void writeSelectionToPasteboard(Pasteboard*);
+
+#if PLATFORM(MAC)
+    // propogate DOM exception as an ObjC exception
+    void propogateDOMException(ExceptionCode);
+
+    void addToKillRing(Range*, bool prepend);
+    bool m_startNewKillRingSequence;
+#else
+    void propogateDOMException(ExceptionCode){}
+    void addToKillRing(Range*, bool){}
+#endif
+
 };
 
 } // namespace WebCore

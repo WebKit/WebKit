@@ -29,6 +29,7 @@
 #import "DOMRangeInternal.h"
 #import "DocumentFragment.h"
 #import "Editor.h"
+#import "EditorClient.h"
 #import "KURL.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebCoreSystemInterface.h"
