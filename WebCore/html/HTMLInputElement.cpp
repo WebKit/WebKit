@@ -1070,7 +1070,9 @@ void HTMLInputElement::setValue(const String& value)
         m_value = constrainValue(value);
         if (renderer())
             renderer()->updateFromElement();
-        setChanged();
+        // Changes to hidden values don't require re-rendering.
+        if (m_type != HIDDEN)
+            setChanged();
     } else
         setAttribute(valueAttr, constrainValue(value));
     
@@ -1107,13 +1109,13 @@ bool HTMLInputElement::storesValueSeparateFromAttribute() const
         case BUTTON:
         case CHECKBOX:
         case FILE:
-        case HIDDEN:
         case IMAGE:
         case RADIO:
         case RANGE:
         case RESET:
         case SUBMIT:
             return false;
+        case HIDDEN:
         case ISINDEX:
         case PASSWORD:
         case SEARCH:
