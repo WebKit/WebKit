@@ -1,3 +1,10 @@
+2006-12-18  Alice Liu  <alice.liu@apple.com>
+
+        Leopard build fix.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+
 2006-12-17  Zack Rusin  <zack@kde.org>
 
         Fix compilation after the const changes.

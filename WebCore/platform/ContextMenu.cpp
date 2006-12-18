@@ -104,7 +104,7 @@ static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result
 
     spellingAndGrammarMenuItem.setSubMenu(spellingAndGrammarMenu);
 }
-#endif
+#else
 
 static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
 {
@@ -119,6 +119,7 @@ static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextM
 
     spellingMenuItem.setSubMenu(spellingMenu);
 }
+#endif
 
 static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
@@ -407,9 +408,9 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagShowSpellingPanel:
 #ifndef BUILDING_ON_TIGER
             if (frame->editor()->spellingPanelIsShowing())
-                setTitle(String("Hide Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
+                item.setTitle(String("Hide Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
             else
-                setTitle(String("Show Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
+                item.setTitle(String("Show Spelling and Grammar")); // With UI_STRING this also sends "menu item title" as a parameter
 #endif
             shouldEnable = frame->editor()->canEdit();
             break;
