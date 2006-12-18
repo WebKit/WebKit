@@ -1,3 +1,16 @@
+2006-12-18  Dex Deacon  <occupant4@gmail.com>
+
+        Reviewed by Maciej.
+
+        Bug 11760: Animated GIFs with offsets crash WebKit
+        http://bugs.webkit.org/show_bug.cgi?id=11760
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        ensure we don't write past the end of the image buffer when the offset
+        is nonzero.  also fix the way we composite frames when animating.
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+
 2006-12-18  Kirby White  <KWhiteRight@gmail.com>
 
         Reviewed by Darin.

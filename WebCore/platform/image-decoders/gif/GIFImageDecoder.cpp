@@ -201,6 +201,13 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
     // Initialize the frame rect in our buffer.
     IntRect frameRect(m_reader->frameXOffset(), m_reader->frameYOffset(),
                       m_reader->frameWidth(), m_reader->frameHeight());
+
+    // Make sure the frameRect doesn't extend past the bottom-right of the buffer.
+    if (frameRect.right() > m_size.width())
+        frameRect.setWidth(m_size.width() - m_reader->frameXOffset());
+    if (frameRect.bottom() > m_size.height())
+        frameRect.setHeight(m_size.height() - m_reader->frameYOffset());
+
     buffer.setRect(frameRect);
 
     bool isSubRect = (frameRect.x() > 0 || frameRect.y() > 0 ||
@@ -245,20 +252,29 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
             // the area occupied by the previous frame that does not overlap with
             // the new frame.
             if (previousBuffer->rect() != frameRect) {
-                // We have to clear out the entire previous subframe.
+                // We have to restore the entire previous subframe with the first frame's contents.
+                RGBA32Buffer* firstBuffer = &m_frameBufferCache[0];
                 bool sawAlpha = buffer.hasAlpha();
                 IntRect prevRect = previousBuffer->rect();
                 unsigned end = prevRect.y() + prevRect.height();
                 unsigned* src;
+
+                // Given that we allocate buffers to be the same size as previous buffers,
+                // I think this assert should be valid.
+                ASSERT(IntRect(IntPoint(0,0), m_size).contains(firstBuffer->rect()));
+
                 for (unsigned i = prevRect.y(); i < end; i++) {
                     unsigned* curr = buffer.bytes().data() + (i * m_size.width() + prevRect.x());
+                    unsigned* orig = firstBuffer->bytes().data() + (i * m_size.width() + prevRect.x());
                     unsigned* end = curr + prevRect.width();
-                    while (curr != end) {
+                    unsigned* origEnd = orig + firstBuffer->rect().width();
+
+                    while (curr != end && orig != origEnd) {
                         if (!sawAlpha) {
                             sawAlpha = true;
                             buffer.setHasAlpha(true);
                         }
-                        RGBA32Buffer::setRGBA(*curr++, 0, 0, 0, 0);
+                        *curr++ = *orig++;
                     }
                 }
             }
@@ -301,12 +317,13 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     // y, and each row goes from x to x+w.
     unsigned dstPos = (m_reader->frameYOffset() + rowNumber) * m_size.width() + m_reader->frameXOffset();
     unsigned* dst = buffer.bytes().data() + dstPos;
+    unsigned* dstEnd = dst + m_size.width() - m_reader->frameXOffset();
     unsigned* currDst = dst;
     unsigned char* currentRowByte = rowBuffer;
     
     bool hasAlpha = m_reader->isTransparent(); 
     bool sawAlpha = false;
-    while (currentRowByte != rowEnd) {
+    while (currentRowByte != rowEnd && currDst < dstEnd) {
         if ((!hasAlpha || *currentRowByte != m_reader->transparentPixel()) && *currentRowByte < colorMapSize) {
             unsigned colorIndex = *currentRowByte * 3;
             unsigned red = colorMap[colorIndex];
