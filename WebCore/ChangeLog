@@ -1,5 +1,12 @@
 2006-12-18  Alice Liu  <alice.liu@apple.com>
 
+        Oops forgot a file. 
+
+        * editing/EditorDeleteAction.h: Added.
+        (WebCore::):
+
+2006-12-18  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Adam.
 
         Have the Editor handle deletion instead of WebHTMLView
