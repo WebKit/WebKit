@@ -30,7 +30,9 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
-#include <ApplicationServices/ApplicationServices.h>
+typedef struct CGImageSource* CGImageSourceRef;
+typedef struct CGImage* CGImageRef;
+typedef const struct __CFData* CFDataRef;
 #elif PLATFORM(QT)
 class QImage;
 #elif PLATFORM(CAIRO)
