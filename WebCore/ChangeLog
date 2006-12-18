@@ -1,3 +1,15 @@
+2006-12-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        - fixed <rdar://problem/4887764> GMAIL: Crash occurs at WebCore::Range::cloneRange() 
+          when I ctrl-click in a empty list item
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::isRangeUngrammatical):
+        bail out immediately for nil range (which selectionController()->toRange().get()
+        can return). Also save some work by bailing out immediately for collapsed ranges.
+
 2006-12-18  Alice Liu  <alice.liu@apple.com>
 
         Leopard build fix.

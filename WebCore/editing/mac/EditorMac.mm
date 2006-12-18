@@ -418,6 +418,10 @@ bool Editor::isSelectionMisspelled()
 #ifndef BUILDING_ON_TIGER
 static bool isRangeUngrammatical(int tag, Range *range, Vector<String>& guessesVector)
 {
+    ExceptionCode ec;
+    if (!range || range->collapsed(ec))
+        return NO;
+    
     // Returns true only if the passed range exactly corresponds to a bad grammar detail range. This is analogous
     // to isSelectionMisspelled. It's not good enough for there to be some bad grammar somewhere in the range,
     // or overlapping the range; the ranges must exactly match.
