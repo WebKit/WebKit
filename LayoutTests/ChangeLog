@@ -1,3 +1,15 @@
+2006-12-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=7170
+        `window.parent.[frameName].location=' fails if the target frame has not yet loaded a document
+
+        * fast/frames/resources/set-unloaded-frame-location-1.html: Added.
+        * fast/frames/resources/set-unloaded-frame-location-2.html: Added.
+        * fast/frames/set-unloaded-frame-location-expected.txt: Added.
+        * fast/frames/set-unloaded-frame-location.html: Added.
+
 2006-12-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
