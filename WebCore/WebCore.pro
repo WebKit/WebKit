@@ -32,9 +32,9 @@ INCLUDEPATH += $$PWD/../JavaScriptCore
 LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 macx {
-	INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
-	INCLUDEPATH += /usr/include/libxml2
-	LIBS += -L/opt/local/lib -lxml2 -lxslt
+    INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
+    INCLUDEPATH += /usr/include/libxml2
+    LIBS += -L/opt/local/lib -lxml2 -lxslt
 }
 
 INCLUDEPATH +=  $$PWD \
@@ -539,6 +539,7 @@ SOURCES += \
     platform/TextEncodingRegistry.cpp \
     platform/Logging.cpp \
     platform/graphics/Color.cpp \
+    platform/graphics/ImageBuffer.cpp \
     platform/DeprecatedPtrListImpl.cpp \
     platform/KURL.cpp \
     platform/StringImpl.cpp \
@@ -550,6 +551,7 @@ SOURCES += \
     platform/qt/LoaderFunctionsQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/graphics/qt/IconQt.cpp \
+    platform/graphics/qt/ImageBufferQt.cpp \
     platform/graphics/qt/AffineTransformQt.cpp \
     platform/qt/StringQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
@@ -823,7 +825,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
         bindings/js/JSSVGElementWrapperFactory.cpp \
-	bindings/js/JSSVGMatrixCustom.cpp \
+        bindings/js/JSSVGMatrixCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
@@ -981,7 +983,6 @@ contains(DEFINES, SVG_SUPPORT=1) {
         platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp \
         platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp \
         platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
-        platform/graphics/svg/qt/SVGResourceImageQt.cpp \
         platform/graphics/svg/qt/SVGResourceMaskerQt.cpp \
         platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
         rendering/RenderForeignObject.cpp \

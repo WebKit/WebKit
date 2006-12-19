@@ -29,7 +29,6 @@
 #include "SVGResourceMasker.h"
 
 #include "TextStream.h"
-#include "SVGResourceImage.h"
 
 namespace WebCore {
 
@@ -42,12 +41,12 @@ SVGResourceMasker::~SVGResourceMasker()
 {
 }
 
-void SVGResourceMasker::setMask(const PassRefPtr<SVGResourceImage>& mask)
+void SVGResourceMasker::setMask(ImageBuffer* mask)
 {
-    m_mask = mask;
+    m_mask.set(mask);
 }
 
-SVGResourceImage* SVGResourceMasker::mask() const
+ImageBuffer* SVGResourceMasker::mask() const
 {
     return m_mask.get();
 }

@@ -29,7 +29,6 @@
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "SVGResourceImage.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"

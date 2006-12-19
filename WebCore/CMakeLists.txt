@@ -1025,6 +1025,7 @@ set(WebCore_SRCS
     platform/graphics/GraphicsContext.cpp
     platform/graphics/GraphicsTypes.cpp
     platform/graphics/Image.cpp
+    platform/graphics/ImageBuffer.cpp
     platform/graphics/IntRect.cpp
     platform/graphics/Path.cpp
     platform/graphics/Pen.cpp
@@ -1036,6 +1037,7 @@ set(WebCore_SRCS
     platform/graphics/qt/GraphicsContextQt.cpp
     platform/graphics/qt/IconQt.cpp
     platform/graphics/qt/ImageQt.cpp
+    platform/graphics/qt/ImageBufferQt.cpp 
     platform/graphics/qt/ImageSourceQt.cpp
     platform/graphics/qt/ImageDecoderQt.cpp
     platform/graphics/qt/IntPointQt.cpp
@@ -1081,7 +1083,6 @@ set(WebCore_SRCS
     platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp
     platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp
     platform/graphics/svg/qt/SVGResourceClipperQt.cpp
-    platform/graphics/svg/qt/SVGResourceImageQt.cpp
     platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
     platform/graphics/svg/qt/SVGResourceFilterQt.cpp
 

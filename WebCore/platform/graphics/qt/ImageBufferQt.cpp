@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,51 +24,26 @@
  */
 
 #include "config.h"
-
-#ifdef SVG_SUPPORT
-#include <ApplicationServices/ApplicationServices.h>
-#include "SVGResourceImage.h"
+#include "ImageBuffer.h"
 
 namespace WebCore {
 
-SVGResourceImage::SVGResourceImage()
-    : m_cgLayer(0)
+ImageBuffer::ImageBuffer(const IntSize&, GraphicsContext*)
 {
 }
 
-SVGResourceImage::~SVGResourceImage()
+ImageBuffer::~ImageBuffer()
 {
-    CGLayerRelease(m_cgLayer);
 }
 
-void SVGResourceImage::init(const Image&)
+IntSize ImageBuffer::size() const
 {
-    // no-op
+    return IntSize();
 }
 
-void SVGResourceImage::init(IntSize size)
+GraphicsContext* ImageBuffer::context() const
 {
-    m_size = size;    
+    return 0;
 }
 
-IntSize SVGResourceImage::size() const
-{
-    return m_size;
 }
-
-CGLayerRef SVGResourceImage::cgLayer()
-{
-    return m_cgLayer;
-}
-
-void SVGResourceImage::setCGLayer(CGLayerRef layer)
-{
-    if (m_cgLayer != layer) {
-        CGLayerRelease(m_cgLayer);
-        m_cgLayer = CGLayerRetain(layer);
-    }
-}
-
-} // namespace WebCore
-
-#endif // SVG_SUPPORT

@@ -32,12 +32,12 @@
 #include "Color.h"
 #include "SVGPaintServer.h"
 
-#if PLATFORM(CG)
-#include "SVGResourceImage.h"
-#endif
-
 #if PLATFORM(QT)
 class QGradient;
+#endif
+
+#if PLATFORM(CG)
+#include "ImageBuffer.h"
 #endif
 
 namespace WebCore {
@@ -114,9 +114,8 @@ namespace WebCore {
         int m_stopsCount;
 
         CGShadingRef m_shadingCache;
-        mutable RefPtr<SVGResourceImage> m_maskImage;
-
         mutable GraphicsContext* m_savedContext;
+        mutable ImageBuffer* m_imageBuffer;
 #endif
     };
 

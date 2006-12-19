@@ -28,6 +28,7 @@
 
 #include "FloatRect.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "Path.h"
 #include "TextDirection.h"
@@ -198,6 +199,8 @@ namespace WebCore {
         PlatformPath* currentPath();
 #endif
 
+        static ImageBuffer* createImageBuffer(const IntSize&, bool grayScale);
+
     private:
         void savePlatformState();
         void restorePlatformState();
@@ -218,11 +221,6 @@ namespace WebCore {
         GraphicsContextPrivate* m_common;
         GraphicsContextPlatformPrivate* m_data;
     };
-
-#ifdef SVG_SUPPORT
-    class SVGResourceImage;
-    GraphicsContext* contextForImage(SVGResourceImage*);
-#endif
 
 } // namespace WebCore
 

@@ -1,3 +1,16 @@
+2006-12-18  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam. Previous attempts reviewed by Oliver & Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11867
+
+        Bring back masks into a working shape.
+
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * svg/custom/grayscale-gradient-mask-expected.png:
+        * svg/custom/mask-inside-defs-expected.png:
+
 2006-12-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

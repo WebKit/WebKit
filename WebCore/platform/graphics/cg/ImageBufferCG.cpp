@@ -23,42 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceMasker_H
-#define SVGResourceMasker_H
-
-#ifdef SVG_SUPPORT
+#include "config.h"
+#include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
-#include "SVGResource.h"
 
-#include <wtf/OwnPtr.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-    class FloatRect;
+ImageBuffer::ImageBuffer(const IntSize& size, GraphicsContext* context)
+    : m_context(context)
+    , m_size(size)
+    , m_cgImage(0)
+{
+}
 
-    class SVGResourceMasker : public SVGResource {
-    public:
-        SVGResourceMasker();
-        virtual ~SVGResourceMasker();
+ImageBuffer::~ImageBuffer()
+{
+    if (m_cgImage)
+        CGImageRelease(m_cgImage);
+}
 
-        void setMask(ImageBuffer* mask);
-        ImageBuffer* mask() const;
+IntSize ImageBuffer::size() const
+{
+    return m_size;
+}
 
-        virtual bool isMasker() const { return true; }
-        virtual TextStream& externalRepresentation(TextStream&) const;
+GraphicsContext* ImageBuffer::context() const
+{
+    return m_context.get();
+}
 
-        // To be implemented by the specific rendering devices
-        void applyMask(GraphicsContext*, const FloatRect& boundingBox) const;
+CGImageRef ImageBuffer::cgImage() const
+{
+    // It's assumed that if cgImage() is called, the actual rendering to the
+    // contained GraphicsContext must be done, as we create the CGImageRef here.
+    if (!m_cgImage) {
+        ASSERT(context());
+        m_cgImage = CGBitmapContextCreateImage(context()->platformContext());
+    }
 
-    private:
-        OwnPtr<ImageBuffer> m_mask;
-    };
+    return m_cgImage;
+}
 
-    SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
-
-} // namespace WebCore
-
-#endif
-
-#endif // SVGResourceMasker_H
+}

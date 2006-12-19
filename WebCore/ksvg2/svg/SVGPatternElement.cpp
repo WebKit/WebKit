@@ -27,7 +27,6 @@
 
 #include "Document.h"
 #include "GraphicsContext.h"
-#include "SVGResourceImage.h"
 #include "SVGPaintServerPattern.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
@@ -181,66 +180,28 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         h = height().value();
     }
 
-    m_tile = new SVGResourceImage();
-    m_tile->init(newSize);
+    ImageBuffer* patternImage(GraphicsContext::createImageBuffer(IntSize(w, h), false));
+    if (!patternImage)
+        return;
 
-    OwnPtr<GraphicsContext> patternContext(contextForImage(m_tile.get()));
-
-    FloatRect rect(_x, _y, w, h);
-    m_paintServer->setBbox(rect);
-    m_paintServer->setPatternTransform(patternTransformMatrix);
-    m_paintServer->setTile(m_tile.get());
-
+    // Render subtree into ImageBuffer
     for (Node* n = target->firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = svg_dynamic_cast(n);
         if (!elem || !elem->isStyled())
             continue;
+
         SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
         RenderObject* item = e->renderer();
         if (!item)
             continue;
-#if 0
-        // FIXME: None of this code seems to be necessary
-        // to pass the w3c tests (and infact breaks them)
-        // However, I'm leaving it #if 0'd for now until
-        // I can quiz WildFox on the subject -- ecs 11/24/05
-        // It's possible that W3C-SVG-1.1/coords-units-01-b
-        // is failing due to lack of this code.
-        KCanvasMatrix savedMatrix = item->localTransform();
 
-        const SVGStyledElement* savedContext = 0;
-        if (patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        {
-            if (activeElement)
-                savedContext = e->pushAttributeContext(activeElement);
-        }
-
-        // Take into account viewportElement's viewBox, if existant...
-        if (viewportElement() && viewportElement()->hasTagName(SVGNames::svgTag))
-        {
-            SVGSVGElement* svgElement = static_cast<SVGSVGElement*>(viewportElement());
-
-            RefPtr<SVGMatrix> svgCTM = svgElement->getCTM();
-            RefPtr<SVGMatrix> ctm = getCTM();
-
-            KCanvasMatrix newMatrix(svgCTM->matrix());
-            newMatrix.multiply(savedMatrix);
-            newMatrix.scale(1.0 / ctm->a(), 1.0 / ctm->d());
-
-            item->setLocalTransform(newMatrix.matrix());
-        }
-#endif
- 
-        RenderObject::PaintInfo info(patternContext.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
-        item->paint(info, 0, 0);
-
-#if 0
-        if (savedContext)
-            e->pushAttributeContext(savedContext);
-
-        item->setLocalTransform(savedMatrix.matrix());
-#endif
+        ImageBuffer::renderSubtreeToImage(patternImage, item);
     }
+
+    FloatRect rect(_x, _y, w, h);
+    m_paintServer->setBbox(rect);
+    m_paintServer->setPatternTransform(patternTransformMatrix);
+    m_paintServer->setTile(patternImage);
 }
 
 void SVGPatternElement::notifyClientsToRepaint() const
@@ -267,7 +228,7 @@ void SVGPatternElement::notifyAttributeChange() const
         return;
 
     IntSize newSize = IntSize(lroundf(width().value()), lroundf(height().value()));
-    if (m_tile && (m_tile->size() == newSize) || newSize.width() < 1 || newSize.height() < 1)
+    if (m_paintServer->tile() && (m_paintServer->tile()->size() == newSize) || newSize.width() < 1 || newSize.height() < 1)
         return;
 
     m_ignoreAttributeChanges = true;
@@ -293,7 +254,6 @@ void SVGPatternElement::notifyAttributeChange() const
     AffineTransform patternTransformMatrix;
     if (patternTransform()->numberOfItems() > 0)
         patternTransformMatrix = patternTransform()->consolidate()->matrix();
-
 
     SVGPatternElement* nonConstThis = const_cast<SVGPatternElement*>(this);
 

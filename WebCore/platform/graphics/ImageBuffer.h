@@ -23,50 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceImage_H
-#define SVGResourceImage_H
-
-#ifdef SVG_SUPPORT
+#ifndef ImageBuffer_H
+#define ImageBuffer_H
 
 #include "IntSize.h"
-#include "SVGResource.h"
+#include <wtf/OwnPtr.h>
 
 #if PLATFORM(CG)
-typedef struct CGContext *CGContextRef;
-typedef struct CGLayer *CGLayerRef;
+typedef struct CGImage* CGImageRef;
 #endif
 
 namespace WebCore {
 
-    class Image;
-    class IntSize;
+    class GraphicsContext;
+    class RenderObject;
 
-    class SVGResourceImage : public SVGResource {
+    class ImageBuffer {
     public:
-        SVGResourceImage();
-
-#if PLATFORM(CG)
-        virtual ~SVGResourceImage();
-#endif
-
-        // To be implemented by the specific rendering devices 
-        void init(const Image&);
-        void init(IntSize);
+        ImageBuffer(const IntSize&, GraphicsContext*);
+        ~ImageBuffer();
 
         IntSize size() const;
+        GraphicsContext* context() const;
+
+        // This offers a way to render parts of a WebKit rendering tree into this ImageBuffer class.
+        static void renderSubtreeToImage(ImageBuffer*, RenderObject* item);
 
 #if PLATFORM(CG)
-        CGLayerRef cgLayer();
-        void setCGLayer(CGLayerRef layer);
-    
+        CGImageRef cgImage() const;
+#endif
+
     private:
+        OwnPtr<GraphicsContext> m_context;
+
+#if PLATFORM(CG) 
         IntSize m_size;
-        CGLayerRef m_cgLayer;
+        mutable CGImageRef m_cgImage;
 #endif
     };
-
-} // namespace WebCore
+}
 
 #endif
-
-#endif // SVGResourceImage_H

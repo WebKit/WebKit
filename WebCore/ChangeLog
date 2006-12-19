@@ -1,3 +1,84 @@
+2006-12-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam. Previous attempts reviewed by Oliver & Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11867
+
+        Bring back masking, by adding off-screen rendering functionality in GraphicsContext.
+        Add new "static GraphicsContext* createImageContext(const IntSize& size, bool grayScale)"
+        function, and implement it with CGBitmapContext in the GraphicsContextCG (stubs for Qt.)
+
+        Mask image sizes are dynamically calculated using the passed bounding box in applyMask,
+        as it was orignally planned. Gradient stroke mask image sizes aren't hardcoded to 2048x2048
+        anymore, but are as well dynamically calculated using getAbsoluteRepaintRect().
+
+        Add new ImageBuffer class encapsulating the size of the image, a platform-specific
+        handle (ie. CGImageRef for CG platform) plus the GraphicsContext pointer, obtained
+        via GraphicsContext::createImageBuffer. Offer a generic logic for rendering subtrees
+        of the rendering tree into a ImageBuffer (see renderSubtreeToImage function)
+        ImageBufferCG is completly implemented, ImageBufferQt is stubbed.
+
+        Also add correct default values for x/y/width/height of <mask>.
+        Fixes masking related LayoutTests, and speeds up gradient-on-stroke a lot.
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::attributeChanged):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        (WebCore::SVGMaskElement::canvasResource):
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.cpp: Added.
+        (WebCore::ImageBuffer::renderSubtreeToImage):
+        * platform/graphics/ImageBuffer.h: Added.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::createImageBuffer):
+        * platform/graphics/cg/ImageBufferCG.cpp: Added.
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::size):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::cgImage):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::createImageBuffer):
+        * platform/graphics/qt/ImageBufferQt.cpp: Added.
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::size):
+        (WebCore::ImageBuffer::context):
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::tile):
+        (WebCore::SVGPaintServerPattern::setTile):
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGResourceImage.h: Removed.
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::setMask):
+        (WebCore::SVGResourceMasker::mask):
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::patternCallback):
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cg/SVGResourceImageCg.cpp: Removed.
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+        * platform/graphics/svg/qt/SVGResourceImageQt.cpp: Removed.
+
 2006-12-19  David Hyatt  <hyatt@apple.com>
 
         Make sure to initialize the CG fill and stroke colors to our initial fill/stroke colors when first

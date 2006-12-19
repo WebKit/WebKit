@@ -30,11 +30,12 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "SVGPaintServer.h"
 
-namespace WebCore {
+#include <wtf/OwnPtr.h>
 
-    class SVGResourceImage;
+namespace WebCore {
 
     class SVGPaintServerPattern : public SVGPaintServer {
     public:
@@ -52,8 +53,8 @@ namespace WebCore {
         bool boundingBoxMode() const;
         void setBoundingBoxMode(bool mode = true);
 
-        SVGResourceImage* tile() const;
-        void setTile(const PassRefPtr<SVGResourceImage>&);
+        ImageBuffer* tile() const;
+        void setTile(ImageBuffer*);
 
         AffineTransform patternTransform() const;
         void setPatternTransform(const AffineTransform&);
@@ -73,7 +74,7 @@ namespace WebCore {
 #endif
 
     private:
-        RefPtr<SVGResourceImage> m_tile;
+        OwnPtr<ImageBuffer> m_tile;
         AffineTransform m_patternTransform;
         FloatRect m_bbox;
         bool m_boundingBoxMode;

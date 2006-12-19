@@ -27,7 +27,6 @@
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
-#include "SVGResourceImage.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -50,6 +49,13 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , m_height(this, LengthModeHeight)
     , m_dirty(true)
 {
+    // Spec: If the attribute is not specified, the effect is as if a value of "-10%" were specified.
+    setXBaseValue(SVGLength(this, LengthModeWidth, "-10%"));
+    setYBaseValue(SVGLength(this, LengthModeHeight, "-10%"));
+  
+    // Spec: If the attribute is not specified, the effect is as if a value of "120%" were specified.
+    setWidthBaseValue(SVGLength(this, LengthModeWidth, "120%"));
+    setHeightBaseValue(SVGLength(this, LengthModeHeight, "120%"));
 }
 
 SVGMaskElement::~SVGMaskElement()
@@ -66,6 +72,7 @@ void SVGMaskElement::attributeChanged(Attribute* attr, bool preserveDecls)
     IntSize newSize = IntSize(lroundf(width().value()), lroundf(height().value()));
     if (!m_masker || !m_masker->mask() || (m_masker->mask()->size() != newSize))
         m_dirty = true;
+
     SVGStyledLocatableElement::attributeChanged(attr, preserveDecls);
 }
 
@@ -98,28 +105,27 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
         SVGStyledElement::parseMappedAttribute(attr);
     }
 }
-SVGResourceImage* SVGMaskElement::drawMaskerContent()
+
+ImageBuffer* SVGMaskElement::drawMaskerContent()
 {
-    // FIXME: Masks are broken! This way it can NOT work!
-    // We need a image->createContext() function - as Eric suggested -
-    // to finally fix the problem in one function, and share it with patterns...
-    return 0;
-    SVGResourceImage* maskImage = new SVGResourceImage();
-
     IntSize size = IntSize(lroundf(width().value()), lroundf(height().value()));
-    maskImage->init(size);
 
-    OwnPtr<GraphicsContext> context(contextForImage(maskImage));
+    ImageBuffer* maskImage(GraphicsContext::createImageBuffer(size, false));
+    if (!maskImage)
+        return 0;
 
-    RenderSVGContainer* maskContainer = static_cast<RenderSVGContainer*>(renderer());
-    RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
-    maskContainer->setDrawsContents(true);
-    maskContainer->paint(info, 0, 0);
-    maskContainer->setDrawsContents(false);
+    GraphicsContext* maskImageContext = maskImage->context();
+    ASSERT(maskImageContext);
 
+    maskImageContext->save();
+    maskImageContext->translate(-x().value(), -y().value());
+
+    ImageBuffer::renderSubtreeToImage(maskImage, renderer());
+
+    maskImageContext->restore();
     return maskImage;
 }
-
+ 
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     RenderSVGContainer* maskContainer = new (arena) RenderSVGContainer(this);
@@ -134,9 +140,8 @@ SVGResource* SVGMaskElement::canvasResource()
         m_dirty = true;
     }
     if (m_dirty) {
-        RefPtr<SVGResourceImage> mask(drawMaskerContent());
-        m_masker->setMask(mask);
-        m_dirty = (mask == 0);
+        m_masker->setMask(drawMaskerContent());
+        m_dirty = !m_masker->mask();
     }
     return m_masker.get();
 }

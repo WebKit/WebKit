@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Alexander Kellett <lypanov@kde.org>
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +29,6 @@
 #ifdef SVG_SUPPORT
 #import "SVGResourceFilter.h"
 #import "SVGResourceMasker.h"
-#import "SVGResourceImage.h"
 #import "SVGRenderStyle.h"
 
 #import "GraphicsContext.h"
@@ -36,7 +36,7 @@
 
 #import <QuartzCore/CoreImage.h>
 #import <QuartzCore/CIFilter.h>
-#
+
 namespace WebCore {
 
 static CIImage* applyLuminanceToAlphaFilter(CIImage* inputImage)
@@ -91,26 +91,27 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
 {
     if (!m_mask)
         return;
-    // Create grayscale bitmap context
-    int width = m_mask->size().width();
-    int height = m_mask->size().height();
-    void* imageBuffer = fastMalloc(width * height);
-    CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
-    CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
-    CGColorSpaceRelease(grayColorSpace);
-    CIContext* ciGrayscaleContext = [CIContext contextWithCGContext:grayscaleContext options:nil];
 
-    SVGResourceImage* maskImage = static_cast<SVGResourceImage*>(m_mask.get());
-    CIImage* grayscaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGLayer:maskImage->cgLayer()]);
-    [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
+    IntSize maskSize = m_mask->size();
 
-    CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
-    CGContextRef cgContext = context->platformContext();
-    CGContextClipToMask(cgContext, CGRectMake(0, 0, width, height), grayscaleImage);
+    // The mask we operate on is has it's top left corner at (0, 0) on the CGImage.
+    // We have to translate to the current relative bbox, to get the clipping right.
+    CGRect maskDestinationRect = CGRectMake(lroundf(boundingBox.x()), lroundf(boundingBox.y()),
+                                            maskSize.width(), maskSize.height());
 
-    CGImageRelease(grayscaleImage);
-    CGContextRelease(grayscaleContext);
-    fastFree(imageBuffer);
+    // Create new graphics context in gray scale mode for image rendering
+    OwnPtr<ImageBuffer> grayScaleImage(GraphicsContext::createImageBuffer(maskSize, true));
+    CGContextRef grayScaleContext = grayScaleImage->context()->platformContext();
+
+    // Wrap CG context in CI context
+    CIContext* ciGrayscaleContext = [CIContext contextWithCGContext:grayScaleContext options:nil];
+
+    // Transform colorized mask to gray scale
+    CIImage* grayScaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGImage:m_mask->cgImage()]);
+    [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, maskSize.width(), maskSize.height())];
+
+    // Do the actual masking!
+    CGContextClipToMask(context->platformContext(), maskDestinationRect, grayScaleImage->cgImage());
 }
 
 } // namespace WebCore

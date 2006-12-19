@@ -23,42 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceMasker_H
-#define SVGResourceMasker_H
-
-#ifdef SVG_SUPPORT
+#include "config.h"
+#include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
-#include "SVGResource.h"
 
-#include <wtf/OwnPtr.h>
+#ifdef SVG_SUPPORT
+#include "RenderSVGContainer.h"
+#endif
 
 namespace WebCore {
 
-    class FloatRect;
+void ImageBuffer::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
+{
+    ASSERT(item && image && image->context());
+    RenderObject::PaintInfo info(image->context(), IntRect(), PaintPhaseForeground, 0, 0, 0);
 
-    class SVGResourceMasker : public SVGResource {
-    public:
-        SVGResourceMasker();
-        virtual ~SVGResourceMasker();
+#ifdef SVG_SUPPORT
+    RenderSVGContainer* svgContainer = 0;
+    if(item && item->isKCanvasContainer())
+         svgContainer = static_cast<RenderSVGContainer*>(item);
 
-        void setMask(ImageBuffer* mask);
-        ImageBuffer* mask() const;
-
-        virtual bool isMasker() const { return true; }
-        virtual TextStream& externalRepresentation(TextStream&) const;
-
-        // To be implemented by the specific rendering devices
-        void applyMask(GraphicsContext*, const FloatRect& boundingBox) const;
-
-    private:
-        OwnPtr<ImageBuffer> m_mask;
-    };
-
-    SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
-
-} // namespace WebCore
-
+    bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;
+    if (svgContainer && !drawsContents)
+        svgContainer->setDrawsContents(true);
 #endif
 
-#endif // SVGResourceMasker_H
+    item->paint(info, 0, 0);
+
+#ifdef SVG_SUPPORT
+    if (svgContainer && !drawsContents)
+        svgContainer->setDrawsContents(false);
+#endif
+}
+
+}
