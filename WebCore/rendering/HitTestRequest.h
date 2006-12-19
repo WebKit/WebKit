@@ -25,18 +25,18 @@
 namespace WebCore {
 
 struct HitTestRequest {
-    HitTestRequest(bool r, bool a, bool m = false, bool c = false)
+    HitTestRequest(bool r, bool a, bool m = false, bool u = false)
         : readonly(r)
         , active(a)
         , mouseMove(m)
-        , capturing(c)
+        , mouseUp(u)
     { 
     }
 
     bool readonly;
     bool active;
     bool mouseMove;
-    bool capturing;
+    bool mouseUp;
 };
 
 } // namespace WebCore

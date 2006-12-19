@@ -1,3 +1,27 @@
+2006-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=11880
+        REGRESSION (r18304): Assertion failure in -[WebHTMLView _canProcessDragWithDraggingInfo:] 
+        when dragging over the window's a scroll bar (innerFrame)
+        
+        RenderLayer needs to check 'active,' when deciding what to do if hit testing 
+        hasn't hit anything, because we want the default hit testing mechanism to return the 
+        document when we hit a scrollbar.
+        
+        This problem shows that the idea of 'capturing' was a little too ambitious
+        in hit testing, at least given the current state of things. So, I've replaced
+        'capturing' with 'mouseUp,' the condition that provided the immediate need
+        for the capturing flag in the first place.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * rendering/HitTestRequest.h: Removed 'capturing' 
+        (WebCore::HitTestRequest::HitTestRequest):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2006-12-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Ada

@@ -809,7 +809,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     // if we are allowed to select.
     // This means that :hover and :active freeze in the state they were in when the mouse
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
-    HitTestRequest request(m_mousePressed && m_mouseDownMayStartSelect, m_mousePressed, true, m_mousePressed);
+    HitTestRequest request(m_mousePressed && m_mouseDownMayStartSelect, m_mousePressed, true);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
 
     if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree()->isDescendantOf(m_frame))

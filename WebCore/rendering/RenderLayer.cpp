@@ -1585,9 +1585,10 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                             HitTestSelf))
         return this;
 
-    // We didn't hit any layer. If we are the root layer and mouse capture is active, return ourselves.
-    // We do this so mouse events continue getting delivered after a drag has exited the WebView.
-    if (request.capturing && renderer()->isRenderView()) {
+    // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
+    // return ourselves. We do this so mouse events continue getting delivered after a drag has 
+    // exited the WebView, and so hit testing over a scrollbar hits the content document.
+    if ((request.active || request.mouseUp) && renderer()->isRenderView()) {
         renderer()->setInnerNode(result);
         return this;
     }
