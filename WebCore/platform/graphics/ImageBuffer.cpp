@@ -27,6 +27,7 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
+#include "RenderObject.h"
 
 #ifdef SVG_SUPPORT
 #include "RenderSVGContainer.h"

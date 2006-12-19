@@ -1,3 +1,9 @@
+2006-12-19  Alice Liu  <alice.liu@apple.com>
+
+        Build fix
+
+        * platform/graphics/ImageBuffer.cpp:
+
 2006-12-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
