@@ -846,11 +846,6 @@ void GraphicsContext::setPlatformFont(const Font& aFont)
     m_data->p().setFont(aFont);
 }
 
-void GraphicsContext::setPlatformPen(const Pen& pen)
-{
-    m_data->p().setPen(penToQPen(pen));
-}
-
 void GraphicsContext::setPlatformStrokeColor(const Color& color)
 {
     m_data->p().setPen(color);
