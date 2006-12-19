@@ -212,6 +212,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     const Color color(style()->color());
     context->setStrokeColor(color);
+    context->setStrokeStyle(SolidStroke);
 
     switch(style()->listStyleType()) {
     case DISC:
