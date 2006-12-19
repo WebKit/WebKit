@@ -1,3 +1,14 @@
+2006-12-19  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Rob.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        * WebCoreSupport/ChromeClientQt.h:
+                Make it compile.
+
 2006-12-16  Zack Rusin  <zack@kde.org>
 
         Adjust the client to the most recent interface.

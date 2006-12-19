@@ -1,3 +1,14 @@
+2006-12-19  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Rob.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::URL):\
+                Fix a crash, because of the incompletely ported loader
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawGlyphs):
+                Adapt to the changes in GraphicsContext
+
 2006-12-19  David Hyatt  <hyatt@apple.com>
 
         Convert stroke thickness to a float.  This allows the thickness argument to strokeArc to be eliminated.

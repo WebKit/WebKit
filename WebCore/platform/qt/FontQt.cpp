@@ -48,7 +48,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
 {
     QPainter& p = *graphicsContext->platformContext();
 
-    Color color = graphicsContext->pen().color();
+    Color color = graphicsContext->fillColor();
     p.setPen(QColor(color));
     p.setFont(font->platformData().font());
 

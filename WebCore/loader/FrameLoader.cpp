@@ -1962,6 +1962,10 @@ void FrameLoader::finishedLoading()
 
 KURL FrameLoader::URL() const
 {
+#if PLATFORM(QT)
+    if (!activeDocumentLoader())
+        return KURL();
+#endif
     return activeDocumentLoader()->URL();
 }
 
