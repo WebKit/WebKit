@@ -263,7 +263,6 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     CGContextClosePath(context);
 
     if (fillColor().alpha()) {
-        setCGFillColor(context, fillColor());
         if (strokeStyle() != NoStroke) {
             // stroke and fill
             float strokeWidth = max(strokeThickness(), 1.0f);
