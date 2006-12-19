@@ -34,9 +34,19 @@ using namespace std;
 namespace WebCore {
 
 struct GraphicsContextState {
-    GraphicsContextState() : fillColor(Color::black), textDrawingMode(cTextFill), paintingDisabled(false) { }
+    GraphicsContextState() 
+    : strokeStyle(SolidStroke)
+    , strokeThickness(0)
+    , strokeColor(Color::black)
+    , fillColor(Color::black)
+    , textDrawingMode(cTextFill)
+    , paintingDisabled(false)
+    {}
+    
     Font font;
-    Pen pen;
+    StrokeStyle strokeStyle;
+    unsigned strokeThickness;
+    Color strokeColor;
     Color fillColor;
     int textDrawingMode;
     bool paintingDisabled;
@@ -107,31 +117,37 @@ void GraphicsContext::setFont(const Font& aFont)
     setPlatformFont(aFont);
 }
 
-const Pen& GraphicsContext::pen() const
+void GraphicsContext::setStrokeThickness(unsigned thickness)
 {
-    return m_common->state.pen;
+    m_common->state.strokeThickness = thickness;
+    setPlatformStrokeThickness(thickness);
 }
 
-void GraphicsContext::setPen(const Pen& pen)
+void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
 {
-    m_common->state.pen = pen;
-    setPlatformPen(pen);
+    m_common->state.strokeStyle = style;
+    setPlatformStrokeStyle(style);
 }
 
-void GraphicsContext::setPen(Pen::PenStyle style)
+void GraphicsContext::setStrokeColor(const Color& color)
 {
-    m_common->state.pen.setStyle(style);
-    m_common->state.pen.setColor(Color::black);
-    m_common->state.pen.setWidth(0);
-    setPlatformPen(m_common->state.pen);
+    m_common->state.strokeColor = color;
+    setPlatformStrokeColor(color);
 }
 
-void GraphicsContext::setPen(RGBA32 rgb)
+unsigned GraphicsContext::strokeThickness() const
 {
-    m_common->state.pen.setStyle(Pen::SolidLine);
-    m_common->state.pen.setColor(rgb);
-    m_common->state.pen.setWidth(0);
-    setPlatformPen(m_common->state.pen);
+    return m_common->state.strokeThickness;
+}
+
+StrokeStyle GraphicsContext::strokeStyle() const
+{
+    return m_common->state.strokeStyle;
+}
+
+Color GraphicsContext::strokeColor() const
+{
+    return m_common->state.strokeColor;
 }
 
 void GraphicsContext::setFillColor(const Color& color)
@@ -324,10 +340,18 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
 void GraphicsContext::setPlatformFillColor(const Color&)
 {
 }
+
+void GraphicsContext::setPlatformStrokeColor(const Color&);
+{
+}
 #endif
 
 #if !PLATFORM(QT)
-void GraphicsContext::setPlatformPen(const Pen&)
+void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
+{
+}
+
+void GraphicsContext::setPlatformStrokeThickness(unsigned)
 {
 }
 

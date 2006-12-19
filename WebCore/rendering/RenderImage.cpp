@@ -220,7 +220,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
 
         if (cWidth > 2 && cHeight > 2) {
             if (!errorOccurred()) {
-                context->setPen(Color::lightGray);
+                context->setStrokeColor(Color::lightGray);
                 context->setFillColor(Color::transparent);
                 context->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
             }
@@ -249,7 +249,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
                 DeprecatedString text = m_altText.deprecatedString();
                 text.replace('\\', backslashAsCurrencySymbol());
                 context->setFont(style()->font());
-                context->setPen(style()->color());
+                context->setStrokeColor(style()->color());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();

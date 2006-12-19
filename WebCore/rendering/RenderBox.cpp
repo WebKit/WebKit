@@ -683,13 +683,6 @@ void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, b
 }
 #endif
 
-void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char* color)
-{
-    p->setPen(Pen(Color(color), 1, Pen::DotLine));
-    p->setFillColor(Color::transparent);
-    p->drawRect(IntRect(_tx, _ty, m_width, m_height));
-}
-
 IntRect RenderBox::getOverflowClipRect(int tx, int ty)
 {
     // XXX When overflow-clip (CSS3) is implemented, we'll obtain the property

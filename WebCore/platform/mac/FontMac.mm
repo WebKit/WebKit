@@ -482,14 +482,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = graphicsContext->platformContext();
 
-    // Stroke comes from the pen, and we just update this from our cross-platform data every time.
-    // FIXME: We should consider pushing pen color updates into CG synchronously at the time they happen.
-    if (graphicsContext->textDrawingMode() & cTextStroke) {             
-        CGColorRef colorRef = cgColor(graphicsContext->pen().color());
-        CGContextSetStrokeColorWithColor(context, colorRef);
-        CGColorRelease(colorRef);
-    }
-
     CGContextTranslateCTM(context, point.x(), point.y());
     status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
@@ -597,14 +589,6 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
 
     wkSetCGFontRenderingMode(cgContext, drawFont);
     CGContextSetFontSize(cgContext, 1.0f);
-
-    // Stroke comes from the pen, and we just update this from our cross-platform data every time.
-    // FIXME: We should consider pushing pen color updates into CG synchronously at the time they happen.
-    if (context->textDrawingMode() & cTextStroke) {             
-        CGColorRef colorRef = cgColor(context->pen().color());
-        CGContextSetStrokeColorWithColor(cgContext, colorRef);
-        CGColorRelease(colorRef);
-    }
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);

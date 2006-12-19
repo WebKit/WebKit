@@ -29,7 +29,6 @@
 
 #include "DeprecatedString.h"
 #include "InlineTextBox.h"
-#include "Pen.h"
 #include "Range.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"

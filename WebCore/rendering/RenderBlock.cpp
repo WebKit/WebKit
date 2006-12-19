@@ -1390,17 +1390,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintCaret(paintInfo, CursorCaret);
         paintCaret(paintInfo, DragCaret);
     }
-
-#ifdef BOX_DEBUG
-    if (style() && style()->visibility() == VISIBLE) {
-        if(isAnonymous())
-            outlineBox(paintInfo.context, tx, ty, "green");
-        if(isFloating())
-            outlineBox(paintInfo.context, tx, ty, "yellow");
-        else
-            outlineBox(paintInfo.context, tx, ty);
-    }
-#endif
 }
 
 void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool paintSelection)

@@ -159,8 +159,6 @@ protected:
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);
 #endif
 
-    void outlineBox(GraphicsContext*, int _tx, int _ty, const char *color = "red");
-
     int containingBlockWidthForPositioned(const RenderObject* containingBlock) const;
     int containingBlockHeightForPositioned(const RenderObject* containingBlock) const;
 

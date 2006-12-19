@@ -529,15 +529,6 @@ int RenderTableCell::borderBottom() const
     return RenderBlock::borderBottom();
 }
 
-#ifdef BOX_DEBUG
-static void outlineBox(GraphicsContext* p, int _tx, int _ty, int w, int h)
-{
-    p->setPen(Pen(Color("yellow"), 3, Qt::DotLine));
-    p->setBrush(Qt::NoBrush);
-    p->drawRect(_tx, _ty, w, h);
-}
-#endif
-
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     tx += m_x;
@@ -558,10 +549,6 @@ void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
         RenderBlock::paintObject(paintInfo, tx, ty + _topExtra);
     }
-
-#ifdef BOX_DEBUG
-    ::outlineBox(paintInfo.context, tx, ty, width(), height() + borderTopExtra() + borderBottomExtra());
-#endif
 }
 
 static EBorderStyle collapsedBorderStyle(EBorderStyle style)

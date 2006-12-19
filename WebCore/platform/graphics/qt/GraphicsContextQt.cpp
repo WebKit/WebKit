@@ -122,29 +122,24 @@ static inline Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
     return Qt::MiterJoin;
 }
 
-static Qt::PenStyle toQPenStyle(Pen::PenStyle style)
+static Qt::PenStyle toQPenStyle(StrokeStyle style)
 {
     switch (style) {
-    case Pen::NoPen:
+    case NoStroke:
         return Qt::NoPen;
         break;
-    case Pen::SolidLine:
+    case SolidStroke:
         return Qt::SolidLine;
         break;
-    case Pen::DotLine:
+    case DottedStroke:
         return Qt::DotLine;
         break;
-    case Pen::DashLine:
+    case DashedStroke:
         return Qt::DashLine;
         break;
     }
     qWarning("couldn't recognize the pen style");
     return Qt::NoPen;
-}
-
-static inline QPen penToQPen(const Pen& pen)
-{
-    return QPen(QColor(pen.color()), pen.width(), toQPenStyle(pen.style()));
 }
 
 struct TransparencyLayer
@@ -854,6 +849,23 @@ void GraphicsContext::setPlatformFont(const Font& aFont)
 void GraphicsContext::setPlatformPen(const Pen& pen)
 {
     m_data->p().setPen(penToQPen(pen));
+}
+
+void GraphicsContext::setPlatformStrokeColor(const Color& color)
+{
+    m_data->p().setPen(color);
+}
+
+void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+{   
+    m_data->p().setPen(toQPenStyle(strokeStyle));
+}
+
+void GraphicsContext::setPlatformStrokeThickness(unsigned thickness)
+{
+    QPen newPen(m_data->p().pen());
+    newPen.setWidth(thickness);
+    m_data->p().setPen(newPen);
 }
 
 void GraphicsContext::setPlatformFillColor(const Color& color)

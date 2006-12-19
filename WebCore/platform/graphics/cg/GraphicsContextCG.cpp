@@ -110,13 +110,14 @@ void GraphicsContext::drawRect(const IntRect& rect)
 
     CGContextRef context = platformContext();
 
-    if (fillColor().alpha()) {
-        setCGFillColor(context, fillColor());
+    if (fillColor().alpha())
         CGContextFillRect(context, rect);
-    }
 
-    if (pen().style() != Pen::NoPen) {
-        setCGFillColor(context, pen().color());
+    if (strokeStyle() != NoStroke && strokeColor().alpha()) {
+        // We do a fill of four rects to simulate the stroke of a border.
+        Color oldFillColor = fillColor();
+        if (oldFillColor != strokeColor())
+            setCGFillColor(context, strokeColor());
         CGRect rects[4] = {
             FloatRect(rect.x(), rect.y(), rect.width(), 1),
             FloatRect(rect.x(), rect.bottom() - 1, rect.width(), 1),
@@ -124,6 +125,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
             FloatRect(rect.right() - 1, rect.y() + 1, 1, rect.height() - 2)
         };
         CGContextFillRects(context, rects, 4);
+        if (oldFillColor != strokeColor())
+            setCGFillColor(context, oldFillColor);
     }
 }
 
@@ -133,12 +136,10 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (paintingDisabled())
         return;
 
-    Pen::PenStyle penStyle = pen().style();
-    if (penStyle == Pen::NoPen)
+    if (strokeStyle() == NoStroke || !strokeColor().alpha())
         return;
-    float width = pen().width();
-    if (width < 1)
-        width = 1;
+
+    float width = max(1.0f, (float)strokeThickness());
 
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
@@ -148,7 +149,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == Pen::DotLine || penStyle == Pen::DashLine) {
+    if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
         if (isVerticalLine) {
             p1.move(0, width);
             p2.move(0, -width);
@@ -171,30 +172,28 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     }
     
     int patWidth = 0;
-    switch (penStyle) {
-        case Pen::NoPen:
-        case Pen::SolidLine:
+    switch (strokeStyle()) {
+        case NoStroke:
+        case SolidStroke:
             break;
-        case Pen::DotLine:
+        case DottedStroke:
             patWidth = (int)width;
             break;
-        case Pen::DashLine:
+        case DashedStroke:
             patWidth = 3 * (int)width;
             break;
     }
 
+    save();
+
     CGContextRef context = platformContext();
-
-    CGContextSaveGState(context);
-
-    setCGStrokeColor(context, pen().color());
 
     CGContextSetShouldAntialias(context, false);
 
     if (patWidth) {
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
-        setCGFillColor(context, pen().color());
+        setCGFillColor(context, strokeColor());  // The save/restore make it safe to mutate the fill color here without setting it back to the old color.
         if (isVerticalLine) {
             CGContextFillRect(context, FloatRect(p1.x() - width / 2, p1.y() - width, width, width));
             CGContextFillRect(context, FloatRect(p2.x() - width / 2, p2.y(), width, width));
@@ -243,7 +242,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 
     CGContextStrokePath(context);
 
-    CGContextRestoreGState(context);
+    restore();
 }
 
 // This method is only used to draw the little circles used in lists.
@@ -265,21 +264,15 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 
     if (fillColor().alpha()) {
         setCGFillColor(context, fillColor());
-        if (pen().style() != Pen::NoPen) {
+        if (strokeStyle() != NoStroke) {
             // stroke and fill
-            setCGStrokeColor(context, pen().color());
-            unsigned penWidth = pen().width();
-            if (penWidth == 0) 
-                penWidth++;
+            unsigned penWidth = max(strokeThickness(), 1U);
             CGContextSetLineWidth(context, penWidth);
             CGContextDrawPath(context, kCGPathFillStroke);
         } else
             CGContextFillPath(context);
-    } else if (pen().style() != Pen::NoPen) {
-        setCGStrokeColor(context, pen().color());
-        unsigned penWidth = pen().width();
-        if (penWidth == 0) 
-            penWidth++;
+    } else if (strokeStyle() != NoStroke) {
+        unsigned penWidth = max(strokeThickness(), 1U);
         CGContextSetLineWidth(context, penWidth);
         CGContextStrokePath(context);
     }
@@ -317,32 +310,27 @@ void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAng
     if (w != h)
         scale(FloatSize(1, reverseScaleFactor));
     
-    if (pen().style() == Pen::NoPen) {
-        setCGStrokeColor(context, fillColor());
+    if (strokeStyle() == NoStroke) {
         CGContextSetLineWidth(context, thickness);
         CGContextStrokePath(context);
     } else {
-        Pen::PenStyle penStyle = pen().style();
-        float width = pen().width();
-        if (width < 1)
-            width = 1;
+        float width = max((float)strokeThickness(),  1.0f);
         int patWidth = 0;
         
-        switch (penStyle) {
-            case Pen::NoPen:
-            case Pen::SolidLine:
+        switch (strokeStyle()) {
+            case NoStroke:
+            case SolidStroke:
                 break;
-            case Pen::DotLine:
+            case DottedStroke:
                 patWidth = (int)(width / 2);
                 break;
-            case Pen::DashLine:
+            case DashedStroke:
                 patWidth = 3 * (int)(width / 2);
                 break;
         }
 
         CGContextSaveGState(context);
-        setCGStrokeColor(context, pen().color());
-
+        
         if (patWidth) {
             // Example: 80 pixels with a width of 30 pixels.
             // Remainder is 20.  The maximum pixels of line we could paint
@@ -409,14 +397,11 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (fillColor().alpha()) {
-        setCGFillColor(context, fillColor());
+    if (fillColor().alpha())
         CGContextEOFillPath(context);
-    }
 
-    if (pen().style() != Pen::NoPen) {
-        setCGStrokeColor(context, pen().color());
-        CGContextSetLineWidth(context, pen().width());
+    if (strokeStyle() != NoStroke) {
+        CGContextSetLineWidth(context, strokeThickness());
         CGContextStrokePath(context);
     }
 
@@ -744,7 +729,7 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
     // FIXME: Is this the right distance for space above the underline? Even for thick underlines on large sized text?
     y += 1;
 
-    float thickness = pen().width();
+    float thickness = strokeThickness();
     if (printing) {
         // When printing, use a minimum thickness of 0.5 in user space.
         // See bugzilla bug 4255 for details of why 0.5 is the right minimum thickness to use while printing.
@@ -767,8 +752,6 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
 
     // FIXME: How about using a rectangle fill instead of drawing a line?
     CGContextSaveGState(platformContext());
-
-    setCGStrokeColor(platformContext(), pen().color());
     
     CGContextSetLineWidth(platformContext(), thickness);
     CGContextSetShouldAntialias(platformContext(), printing);
@@ -843,6 +826,13 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
         default:
             break;
     }
+}
+
+void GraphicsContext::setPlatformStrokeColor(const Color& color)
+{
+    if (paintingDisabled())
+        return;
+    setCGStrokeColor(platformContext(), color);
 }
 
 void GraphicsContext::setPlatformFillColor(const Color& color)

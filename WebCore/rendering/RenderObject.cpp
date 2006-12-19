@@ -874,20 +874,17 @@ void RenderObject::drawBorderArc(GraphicsContext* graphicsContext, int x, int y,
         case BHIDDEN:
             return;
         case DOTTED:
-            graphicsContext->setPen(Pen(c, thickness == 1 ? 0 : static_cast<int>(thickness), Pen::DotLine));
         case DASHED:
-            if (style == DASHED)
-                graphicsContext->setPen(Pen(c, thickness == 1 ? 0 : static_cast<int>(thickness), Pen::DashLine));
-
+            graphicsContext->setStrokeColor(c);
+            graphicsContext->setStrokeThickness(thickness == 1 ? 0 : static_cast<int>(thickness));
+            graphicsContext->setStrokeStyle(style == DOTTED ? DottedStroke : DashedStroke);
             if (thickness > 0)
                 graphicsContext->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
-
             break;
         case DOUBLE: {
             float third = thickness / 3.0f;
             float innerThird = (thickness + 1.0f) / 6.0f;
             int shiftForInner = static_cast<int>(innerThird * 2.5f);
-            graphicsContext->setPen(Pen::NoPen);
 
             int outerY = y;
             int outerHeight = radius.height() * 2;
@@ -900,6 +897,7 @@ void RenderObject::drawBorderArc(GraphicsContext* graphicsContext, int x, int y,
                 innerHeight += 2;
             }
 
+            graphicsContext->setStrokeStyle(NoStroke);
             graphicsContext->drawArc(IntRect(x, outerY, radius.width() * 2, outerHeight), third, angleStart, angleSpan);
             graphicsContext->drawArc(IntRect(innerX, innerY, innerWidth, innerHeight), (innerThird > 2) ? innerThird - 1 : innerThird,
                                      angleStart, angleSpan);
@@ -916,7 +914,7 @@ void RenderObject::drawBorderArc(GraphicsContext* graphicsContext, int x, int y,
                 c = c.dark();
             }
 
-            graphicsContext->setPen(Pen::NoPen);
+            graphicsContext->setStrokeStyle(NoStroke);
             graphicsContext->setFillColor(c);
             graphicsContext->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
 
@@ -935,7 +933,7 @@ void RenderObject::drawBorderArc(GraphicsContext* graphicsContext, int x, int y,
             if (style == OUTSET && (s == BSBottom || s == BSRight))
                 c = c.dark();
         case SOLID:
-            graphicsContext->setPen(Pen::NoPen);
+            graphicsContext->setStrokeStyle(NoStroke);
             graphicsContext->setFillColor(c);
             graphicsContext->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
             break;
@@ -964,7 +962,9 @@ void RenderObject::drawBorder(GraphicsContext* graphicsContext, int x1, int y1, 
             return;
         case DOTTED:
         case DASHED:
-            graphicsContext->setPen(Pen(c, width == 1 ? 0 : width, style == DASHED ? Pen::DashLine : Pen::DotLine));
+            graphicsContext->setStrokeColor(c);
+            graphicsContext->setStrokeThickness(width == 1 ? 0 : width);
+            graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
 
             if (width > 0)
                 switch (s) {
@@ -982,7 +982,7 @@ void RenderObject::drawBorder(GraphicsContext* graphicsContext, int x1, int y1, 
             int third = (width + 1) / 3;
 
             if (adjbw1 == 0 && adjbw2 == 0) {
-                graphicsContext->setPen(Pen::NoPen);
+                graphicsContext->setStrokeStyle(NoStroke);
                 graphicsContext->setFillColor(c);
                 switch (s) {
                     case BSTop:
@@ -1094,9 +1094,8 @@ void RenderObject::drawBorder(GraphicsContext* graphicsContext, int x1, int y1, 
             if (style == OUTSET && (s == BSBottom || s == BSRight))
                 c = c.dark();
             // fall through
-        case SOLID:
-        {
-            graphicsContext->setPen(Pen::NoPen);
+        case SOLID: {
+            graphicsContext->setStrokeStyle(NoStroke);
             graphicsContext->setFillColor(c);
             ASSERT(x2 >= x1);
             ASSERT(y2 >= y1);

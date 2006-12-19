@@ -772,15 +772,15 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& paintInfo, int tx,
 
         bool isPrinting = object()->document()->printing();
         if (deco & UNDERLINE && !paintedChildren) {
-            context->setPen(underline);
+            context->setStrokeColor(underline);
             context->drawLineForText(IntPoint(tx, ty), m_baseline, w, isPrinting);
         }
         if (deco & OVERLINE && !paintedChildren) {
-            context->setPen(overline);
+            context->setStrokeColor(overline);
             context->drawLineForText(IntPoint(tx, ty), 0, w, isPrinting);
         }
         if (deco & LINE_THROUGH && paintedChildren) {
-            context->setPen(linethrough);
+            context->setStrokeColor(linethrough);
             context->drawLineForText(IntPoint(tx, ty), 2 * m_baseline / 3, w, isPrinting);
         }
 
