@@ -266,13 +266,13 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
         setCGFillColor(context, fillColor());
         if (strokeStyle() != NoStroke) {
             // stroke and fill
-            unsigned strokeWidth = max(strokeThickness(), 1.0f);
+            float strokeWidth = max(strokeThickness(), 1.0f);
             CGContextSetLineWidth(context, strokeWidth);
             CGContextDrawPath(context, kCGPathFillStroke);
         } else
             CGContextFillPath(context);
     } else if (strokeStyle() != NoStroke) {
-        unsigned strokeWidth = max(strokeThickness(), 1.0f);
+        float strokeWidth = max(strokeThickness(), 1.0f);
         CGContextSetLineWidth(context, strokeWidth);
         CGContextStrokePath(context);
     }
