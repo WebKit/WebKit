@@ -1,5 +1,25 @@
 2006-12-19  David Hyatt  <hyatt@apple.com>
 
+        Convert stroke thickness to a float.  This allows the thickness argument to strokeArc to be eliminated.
+       
+        Reviewed by olliej
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::strokeThickness):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorderArc):
+
+2006-12-19  David Hyatt  <hyatt@apple.com>
+
         Rename drawArc to strokeArc and remove its strange behavior of trying to "fill" by stroking using the passed in
         thickness.  Now the method is purely about stroking an arc and always uses the passed in thickness.   Fix the
         border-radius code that calls the method so that it makes more sense now.  If stroke thickness is converted
