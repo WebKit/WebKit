@@ -171,9 +171,9 @@ void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
 bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, bool tempEvent)
 {
     RefPtr<Event> evt(e);
-    assert(!eventDispatchForbidden());
-    assert(evt->target());
-    assert(!evt->type().isNull()); // JavaScript code could create an event with an empty name
+    ASSERT(!eventDispatchForbidden());
+    ASSERT(evt->target());
+    ASSERT(!evt->type().isNull()); // JavaScript code could create an event with an empty name
     
     // work out what nodes to send event to
     DeprecatedPtrList<Node> nodeChain;
@@ -284,7 +284,7 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
 bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
 {
     RefPtr<Event> evt(e);
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     if (!evt || evt->type().isEmpty()) { 
         ec = UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
@@ -298,7 +298,7 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool
 
 bool EventTargetNode::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     
     // FIXME: Pull this whole if clause out of this function.
     if (sendChildrenChanged) {
@@ -316,7 +316,7 @@ bool EventTargetNode::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 
 void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     RefPtr<Event> evt = new Event(eventType, canBubbleArg, cancelableArg);
     RefPtr<Document> doc = document();
@@ -339,8 +339,8 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool ca
 
 bool EventTargetNode::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
 {
-    assert(!eventDispatchForbidden());
-    assert(eventType == DOMFocusInEvent || eventType == DOMFocusOutEvent || eventType == DOMActivateEvent);
+    ASSERT(!eventDispatchForbidden());
+    ASSERT(eventType == DOMFocusInEvent || eventType == DOMFocusOutEvent || eventType == DOMActivateEvent);
     
     bool cancelable = eventType == DOMActivateEvent;
     
@@ -352,7 +352,7 @@ bool EventTargetNode::dispatchUIEvent(const AtomicString& eventType, int detail,
 
 bool EventTargetNode::dispatchKeyEvent(const PlatformKeyboardEvent& key)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     RefPtr<KeyboardEvent> keyboardEvent = new KeyboardEvent(key, document()->defaultView());
     bool r = dispatchEvent(keyboardEvent,ec,true);
@@ -369,7 +369,7 @@ bool EventTargetNode::dispatchKeyEvent(const PlatformKeyboardEvent& key)
 bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     
     IntPoint contentsPos;
     if (FrameView* view = document()->view())
@@ -384,7 +384,7 @@ bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& event, const 
 void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
     PassRefPtr<Event> underlyingEvent)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 
     bool ctrlKey = false;
     bool altKey = false;
@@ -422,7 +422,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, 
     bool isSimulated, Node* relatedTargetArg, PassRefPtr<Event> underlyingEvent)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     if (disabled()) // Don't even send DOM events for disabled controls..
         return true;
     
@@ -441,17 +441,19 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     bool swallowEvent = false;
     
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
-    EventTargetNode *relatedTarget = (relatedTargetArg && relatedTargetArg->isEventTargetNode()) ? static_cast<EventTargetNode*>(relatedTargetArg) : 0;
+    RefPtr<EventTargetNode> relatedTarget = (relatedTargetArg && relatedTargetArg->isEventTargetNode())
+        ? static_cast<EventTargetNode*>(relatedTargetArg) : 0;
 
-    RefPtr<Event> me = new MouseEvent(eventType, true, cancelable, document()->defaultView(),
+    RefPtr<Event> mouseEvent = new MouseEvent(eventType,
+        true, cancelable, document()->defaultView(),
         detail, screenX, screenY, pageX, pageY,
         ctrlKey, altKey, shiftKey, metaKey, button,
-        relatedTarget, 0, isSimulated);
-    me->setUnderlyingEvent(underlyingEvent.get());
+        relatedTarget.get(), 0, isSimulated);
+    mouseEvent->setUnderlyingEvent(underlyingEvent.get());
     
-    dispatchEvent(me, ec, true);
-    bool defaultHandled = me->defaultHandled();
-    bool defaultPrevented = me->defaultPrevented();
+    dispatchEvent(mouseEvent, ec, true);
+    bool defaultHandled = mouseEvent->defaultHandled();
+    bool defaultPrevented = mouseEvent->defaultPrevented();
     if (defaultHandled || defaultPrevented)
         swallowEvent = true;
     
@@ -459,28 +461,25 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
-        me = new MouseEvent(dblclickEvent, true, cancelable, document()->defaultView(),
-                                detail, screenX, screenY, pageX, pageY,
-                                ctrlKey, altKey, shiftKey, metaKey, button,
-                                relatedTarget, 0, isSimulated);
-        me->setUnderlyingEvent(underlyingEvent.get());
+        RefPtr<Event> doubleClickEvent = new MouseEvent(dblclickEvent,
+            true, cancelable, document()->defaultView(),
+            detail, screenX, screenY, pageX, pageY,
+            ctrlKey, altKey, shiftKey, metaKey, button,
+            relatedTarget.get(), 0, isSimulated);
+        doubleClickEvent->setUnderlyingEvent(underlyingEvent.get());
         if (defaultHandled)
-            me->setDefaultHandled();
-        dispatchEvent(me, ec, true);
-        if (me->defaultHandled() || me->defaultPrevented())
+            doubleClickEvent->setDefaultHandled();
+        dispatchEvent(doubleClickEvent, ec, true);
+        if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
             swallowEvent = true;
     }
-    
-    // Also send a DOMActivate event, which causes things like form submissions to occur.
-    if (eventType == clickEvent && !defaultPrevented)
-        dispatchUIEvent(DOMActivateEvent, detail, underlyingEvent);
-    
+
     return swallowEvent;
 }
 
 void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     if (e.deltaX() == 0 && e.deltaY() == 0)
         return;
     
@@ -511,7 +510,7 @@ void EventTargetNode::dispatchBlurEvent()
 
 bool EventTargetNode::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     return dispatchEvent(new Event(eventType, canBubbleArg, cancelableArg), ec, true);
 }
@@ -559,16 +558,20 @@ bool EventTargetNode::disabled() const
 
 void EventTargetNode::defaultEventHandler(Event* event)
 {
-    if (event->type() == keypressEvent && event->isKeyboardEvent()) {
+    const AtomicString& eventType = event->type();
+    if (eventType == keypressEvent && event->isKeyboardEvent()) {
         KeyboardEvent* keyEvent = static_cast<KeyboardEvent*>(event);
         if (keyEvent->keyIdentifier() == "U+000009") {
             Frame* frame = document()->frame();
             if (frame && frame->view() && frame->eventHandler()->advanceFocus(keyEvent))
                 event->setDefaultHandled();
         }
+    } else if (eventType == clickEvent) {
+        int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
+        dispatchUIEvent(DOMActivateEvent, detail, event);
     }
 #ifdef WEBCORE_CONTEXT_MENUS
-    else if (event->type() == contextmenuEvent) {
+    else if (eventType == contextmenuEvent) {
         if (Frame* frame = document()->frame())
             if (Page* page = frame->page())
                 page->contextMenuController()->handleContextMenuEvent(event);

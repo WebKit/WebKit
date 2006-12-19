@@ -1,3 +1,66 @@
+2006-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/4889565> REGRESSION (r17597): Command-clicking a submit
+          button does not submit in a new tab/window
+          http://bugs.webkit.org/show_bug.cgi?id=11858
+
+        - change DOMActivate events to be created as a part of default handling of
+          click events instead of having the sender of the click event also send
+          a DOMActivate event
+
+        - fixed some edge cases in the slider thumb element handler; since this is
+          inside a shadow DOM, it's likely none of these can arise in practice
+
+        No easy way to test the command-click part since the behavior is in Safari.
+        To make a test we'd have to provide JavaScript access to the modifiers passed
+        to the policy delegate or have some way to query the underlying event from
+        JavaScript.
+
+        * dom/EventTargetNode.cpp: Change all assert to ASSERT.
+        (WebCore::EventTargetNode::dispatchMouseEvent): Renamed some local variables
+        for clarity. Added a RefPtr for relatedTarget since it might be deallocated
+        by the handlers for the click event and is used in the code that creates the
+        dblclick event. Removed the code to create a DOMActivate event, since that's
+        now done in the default event handler for the click event.
+        (WebCore::EventTargetNode::defaultEventHandler): Added code to check for a
+        click event and dispatch a DOMActivate event using the click event as the
+        underlying event. The part of this that fixes the bug is that we use the
+        click event as the underlying event; the old code used the same underlying
+        event as for the click event, not the click event itself. The underlying event
+        for the click event is usually 0, since we propagate the key state to the click
+        event instead of using an underlying event in the common case.
+
+        * dom/Document.cpp: (WebCore::Document::defaultEventHandler): Added call
+        to the base class's defaultEventHandler function, except in the case where
+        the event is already handled.
+
+        * html/HTMLInputElement.h: Removed clickX() and clickY().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData): Use xPos and yPos directly,
+        so we can remove clickX() and clickY().
+        (WebCore::HTMLInputElement::defaultEventHandler): Removed code that calls
+        setDefaultHandled for click events since we are just recording the x and y
+        coordinates of the events; that's not "handling" an event, and setting
+        the flag prevents us from calling the base class's default event handler,
+        which is now needed to submmit the form.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+        Added some missing isMouseEvent checks in code that casts to a MouseEvent.
+        Added check document()->frame() in code that manipulates the frame so that
+        fake events, which might happen when there's no frame, can't cause a crash.
+        Added an m_inDragMode check so we don't try to handle mouseup events when
+        we are not handling a drag. Remove the setDefaultHandled call from the
+        mousemove case, because mousemove events are observed, and not "handled"
+        in the "nobody else should look at this event" sense. Added a call to the
+        base class's default event handler, and some return statements so that we
+        won't call it when the event has been handled.
+
+        * html/HTMLLabelElement.cpp: (WebCore::HTMLLabelElement::defaultEventHandler):
+        Removed an unneeded "return" for a function that has no return value.
+
 2006-12-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.

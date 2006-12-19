@@ -923,8 +923,8 @@ bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
 
         case IMAGE:
             if (m_activeSubmit) {
-                encoding.appendData(name().isEmpty() ? "x" : (name() + ".x"), clickX());
-                encoding.appendData(name().isEmpty() ? "y" : (name() + ".y"), clickY());
+                encoding.appendData(name().isEmpty() ? "x" : (name() + ".x"), xPos);
+                encoding.appendData(name().isEmpty() ? "y" : (name() + ".y"), yPos);
                 if (!name().isEmpty() && !value().isEmpty())
                     encoding.appendData(name(), value());
                 return true;
@@ -1210,7 +1210,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             xPos = me->pageX() - offsetX;
             yPos = me->pageY() - offsetY;
         }
-        me->setDefaultHandled();
     }
 
     // DOMActivate events cause the input to be "activated" - in the case of image and submit inputs, this means
@@ -1369,7 +1368,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(evt);
         textEvent->setText(constrainValue(textEvent->text(), maxNewLen));
     }
-    
+
     if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent || evt->type() == focusEvent))
         static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
 

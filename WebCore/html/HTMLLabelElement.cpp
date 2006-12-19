@@ -127,7 +127,7 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
         processingClick = false;
     }
     
-    return HTMLElement::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(evt);
 }
 
 void HTMLLabelElement::focus()

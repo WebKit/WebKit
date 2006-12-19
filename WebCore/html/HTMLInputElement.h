@@ -132,10 +132,6 @@ public:
 
     virtual void reset();
 
-    // used in case input type=image was clicked.
-    int clickX() const { return xPos; }
-    int clickY() const { return yPos; }
-
     virtual void* preDispatchEventHandler(Event*);
     virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
     virtual void defaultEventHandler(Event*);
