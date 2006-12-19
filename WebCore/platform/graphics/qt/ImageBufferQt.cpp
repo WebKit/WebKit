@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "GraphicsContext.h"
+
 namespace WebCore {
 
 ImageBuffer::ImageBuffer(const IntSize&, GraphicsContext*)
