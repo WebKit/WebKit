@@ -40,11 +40,30 @@ using namespace std;
 
 namespace WebCore {
 
+static void setCGFillColor(CGContextRef context, const Color& color)
+{
+    CGFloat red, green, blue, alpha;
+    color.getRGBA(red, green, blue, alpha);
+    CGContextSetRGBFillColor(context, red, green, blue, alpha);
+}
+
+static void setCGStrokeColor(CGContextRef context, const Color& color)
+{
+    CGFloat red, green, blue, alpha;
+    color.getRGBA(red, green, blue, alpha);
+    CGContextSetRGBStrokeColor(context, red, green, blue, alpha);
+}
+
 GraphicsContext::GraphicsContext(CGContextRef cgContext)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate(cgContext))
 {
     setPaintingDisabled(!cgContext);
+    if (cgContext) {
+        // Make sure the context starts in sync with our state.
+        setPlatformFillColor(fillColor());
+        setPlatformStrokeColor(strokeColor());
+    }
 }
 
 GraphicsContext::~GraphicsContext()
@@ -70,20 +89,6 @@ CGContextRef GraphicsContext::platformContext() const
     ASSERT(!paintingDisabled());
     ASSERT(m_data->m_cgContext);
     return m_data->m_cgContext;
-}
-
-static void setCGFillColor(CGContextRef context, const Color& color)
-{
-    CGFloat red, green, blue, alpha;
-    color.getRGBA(red, green, blue, alpha);
-    CGContextSetRGBFillColor(context, red, green, blue, alpha);
-}
-
-static void setCGStrokeColor(CGContextRef context, const Color& color)
-{
-    CGFloat red, green, blue, alpha;
-    color.getRGBA(red, green, blue, alpha);
-    CGContextSetRGBStrokeColor(context, red, green, blue, alpha);
 }
 
 void GraphicsContext::savePlatformState()

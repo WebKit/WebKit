@@ -1,3 +1,18 @@
+2006-12-19  David Hyatt  <hyatt@apple.com>
+
+        Make sure to initialize the CG fill and stroke colors to our initial fill/stroke colors when first
+        constructing a GraphicsContextCG.  Because Safari actually draws text in the bookmarks bar using GraphicsContext
+        and sets a fill color, this could only really be seen in another WebKit app.
+
+        Patched GraphicsContextQt as well, since it has the same pattern.
+
+        Reviewed by bdash
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::setCGFillColor):
+        (WebCore::setCGStrokeColor):
+        (WebCore::GraphicsContext::GraphicsContext):
+
 2006-12-19  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Rob.
