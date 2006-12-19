@@ -208,4 +208,37 @@ void WebChromeClient::addMessageToConsole(const String& message, unsigned int li
     }    
 }
 
+bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
+{
+    id wd = [m_webView UIDelegate];
+    return [wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
+}
+
+bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
+{
+    id wd = [m_webView UIDelegate];
+    if ([wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)])
+        return [wd webView:m_webView runBeforeUnloadConfirmPanelWithMessage:message initiatedByFrame:kit(frame)];
+    return true;
+}
+
+void WebChromeClient::closeWindowSoon()
+{
+    // We need to remove the parent WebView from WebViewSets here, before it actually
+    // closes, to make sure that JavaScript code that executes before it closes
+    // can't find it. Otherwise, window.open will select a closed WebView instead of 
+    // opening a new one <rdar://problem/3572585>.
+
+    // We also need to stop the load to prevent further parsing or JavaScript execution
+    // after the window has torn down <rdar://problem/4161660>.
+  
+    // FIXME: This code assumes that the UI delegate will respond to a webViewClose
+    // message by actually closing the WebView. Safari guarantees this behavior, but other apps might not.
+    // This approach is an inherent limitation of not making a close execute immediately
+    // after a call to window.close.
+
+    [m_webView setGroupName:nil];
+    [m_webView stopLoading:nil];
+    [m_webView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
+}
 

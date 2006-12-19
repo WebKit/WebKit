@@ -30,6 +30,8 @@
 #include "FramePrivate.h"
 
 #include "ApplyStyleCommand.h"
+#include "BeforeUnloadEvent.h"
+#include "Chrome.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -1501,6 +1503,44 @@ bool Frame::prohibitsScrolling() const
 void Frame::setProhibitsScrolling(bool prohibit)
 {
     d->m_prohibitsScrolling = prohibit;
+}
+
+bool Frame::shouldClose()
+{
+    Chrome* chrome = page() ? page()->chrome() : 0;
+    if (!chrome || !chrome->canRunBeforeUnloadConfirmPanel())
+        return true;
+
+    RefPtr<Document> doc = document();
+    if (!doc)
+        return true;
+    HTMLElement* body = doc->body();
+    if (!body)
+        return true;
+
+    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = new BeforeUnloadEvent;
+    beforeUnloadEvent->setTarget(doc);
+    doc->handleWindowEvent(beforeUnloadEvent.get(), false);
+
+    if (!beforeUnloadEvent->defaultPrevented() && doc)
+        doc->defaultEventHandler(beforeUnloadEvent.get());
+    if (beforeUnloadEvent->result().isNull())
+        return true;
+
+    String text = beforeUnloadEvent->result();
+    text.replace('\\', backslashAsCurrencySymbol());
+
+    return chrome->runBeforeUnloadConfirmPanel(text, this);
+}
+
+void Frame::scheduleClose()
+{
+    if (!shouldClose())
+        return;
+
+    Chrome* chrome = page() ? page()->chrome() : 0;
+    if (chrome)
+        chrome->closeWindowSoon();
 }
 
 FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)

@@ -60,7 +60,6 @@ public:
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue,
                                      String& result);
     virtual bool shouldInterruptJavaScript();
-    virtual void scheduleClose();
     virtual void focusWindow();
     virtual void unfocusWindow();
     virtual void print();

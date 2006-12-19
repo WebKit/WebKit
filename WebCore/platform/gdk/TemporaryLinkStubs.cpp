@@ -153,7 +153,6 @@ void FrameGdk::issueCopyCommand() { notImplemented(); }
 void FrameGdk::issueUndoCommand() { notImplemented(); }
 String FrameGdk::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameGdk::issuePasteCommand() { notImplemented(); }
-void FrameGdk::scheduleClose() { notImplemented(); }
 void FrameGdk::markMisspellings(WebCore::Selection const&) { notImplemented(); }
 bool FrameGdk::menubarVisible() { notImplemented(); return 0; }
 bool FrameGdk::personalbarVisible() { notImplemented(); return 0; }

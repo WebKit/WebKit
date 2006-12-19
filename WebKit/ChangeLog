@@ -1,3 +1,22 @@
+2006-12-18  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam.
+        
+        Moved canRunBeforeUnloadConfirmPanel, runBeforeUnloadConfirmPanel, and closeWindowSoon
+        from WebCoreFrameBridge to Chrome.
+
+        * COM/ChromeClientWin.cpp:
+        (ChromeClientWin::canRunBeforeUnloadConfirmPanel):
+        (ChromeClientWin::runBeforeUnloadConfirmPanel):
+        (ChromeClientWin::closeWindowSoon):
+        * COM/ChromeClientWin.h:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::canRunBeforeUnloadConfirmPanel):
+        (WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebChromeClient::closeWindowSoon):
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2006-12-18  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

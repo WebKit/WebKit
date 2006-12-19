@@ -154,11 +154,6 @@ String FrameQt::mimeTypeForFileName(const String&) const
     return String();
 }
 
-void FrameQt::scheduleClose()
-{
-    // no-op
-}
-
 void FrameQt::unfocusWindow()
 {
     if (!view())

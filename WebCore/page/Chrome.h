@@ -29,6 +29,7 @@ namespace WebCore {
     class ChromeClient;
     class ContextMenu;
     class FloatRect;
+    class Frame;
     class Page;
     class String;
     struct FrameLoadRequest;
@@ -73,7 +74,12 @@ namespace WebCore {
         void setResizable(bool) const;
 
         void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
-        
+
+        bool canRunBeforeUnloadConfirmPanel();
+        bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
+
+        void closeWindowSoon();
+
     private:
         Page* m_page;
         ChromeClient* m_client;

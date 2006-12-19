@@ -219,7 +219,6 @@ void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
 String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
-void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }

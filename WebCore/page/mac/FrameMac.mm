@@ -367,15 +367,6 @@ void FrameMac::setStatusBarText(const String& status)
     [localPool release];
 }
 
-void FrameMac::scheduleClose()
-{
-    if (!shouldClose())
-        return;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge closeWindowSoon];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void FrameMac::focusWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1063,39 +1054,6 @@ void FrameMac::willPopupMenu(NSMenu * menu)
 bool FrameMac::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
 {
     return [_bridge isCharacterSmartReplaceExempt:c isPreviousCharacter:isPreviousChar];
-}
-
-bool FrameMac::shouldClose()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    if (![_bridge canRunBeforeUnloadConfirmPanel])
-        return true;
-
-    RefPtr<Document> doc = document();
-    if (!doc)
-        return true;
-    HTMLElement* body = doc->body();
-    if (!body)
-        return true;
-
-    RefPtr<BeforeUnloadEvent> event = new BeforeUnloadEvent;
-    event->setTarget(doc);
-    doc->handleWindowEvent(event.get(), false);
-
-    if (!event->defaultPrevented() && doc)
-        doc->defaultEventHandler(event.get());
-    if (event->result().isNull())
-        return true;
-
-    String text = event->result();
-    text.replace('\\', backslashAsCurrencySymbol());
-
-    return [_bridge runBeforeUnloadConfirmPanelWithMessage:text];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return true;
 }
 
 void Frame::setNeedsReapplyStyles()

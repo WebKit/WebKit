@@ -278,28 +278,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [webHTMLView _textViewWasFirstResponderAtMouseDownTime:textView];
 }
 
-- (void)closeWindowSoon
-{
-    WebView *parentWebView = [self webView];
-
-    // We need to remove the parent WebView from WebViewSets here, before it actually
-    // closes, to make sure that JavaScript code that executes before it closes
-    // can't find it. Otherwise, window.open will select a closed WebView instead of 
-    // opening a new one <rdar://problem/3572585>.
-
-    // We also need to stop the load to prevent further parsing or JavaScript execution
-    // after the window has torn down <rdar://problem/4161660>.
-  
-    // FIXME: This code assumes that the UI delegate will respond to a webViewClose
-    // message by actually closing the WebView. Safari guarantees this behavior, but other apps might not.
-    // This approach is an inherent limitation of not making a close execute immediately
-    // after a call to window.close.
-    
-    [parentWebView setGroupName:nil];
-    [parentWebView stopLoading:self];
-    [parentWebView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
-}
-
 - (NSWindow *)window
 {
     ASSERT(_frame != nil);
@@ -340,22 +318,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
         return [wd webViewShouldInterruptJavaScript:wv];
     return NO;
-}
-
-- (BOOL)canRunBeforeUnloadConfirmPanel
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    return [wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
-}
-
-- (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    if ([wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)])
-        return [wd webView:wv runBeforeUnloadConfirmPanelWithMessage:message initiatedByFrame:_frame];
-    return YES;
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result

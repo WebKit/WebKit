@@ -157,3 +157,20 @@ void ChromeClientWin::addMessageToConsole(const WebCore::String&,
 {
     notImplemented();
 }
+
+bool ChromeClientWin::canRunBeforeUnloadConfirmPanel()
+{
+    notImplemented();
+    return false;
+}
+
+bool ChromeClientWin::runBeforeUnloadConfirmPanel(const String&, Frame*)
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClientWin::closeWindowSoon()
+{
+    notImplemented();
+}

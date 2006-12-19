@@ -289,14 +289,10 @@ typedef enum ObjectElementType {
 
 - (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 
-- (void)closeWindowSoon;
-
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 - (BOOL)shouldInterruptJavaScript;
-- (BOOL)canRunBeforeUnloadConfirmPanel;
-- (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;

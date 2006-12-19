@@ -115,7 +115,6 @@ public:
     void willPopupMenu(NSMenu *);
 
     void cleanupPluginObjects();
-    bool shouldClose();
 
     NSImage* selectionImage(bool forceWhiteText = false) const;
     NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
@@ -145,8 +144,6 @@ public:
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
 
     virtual void print();
-
-    virtual void scheduleClose();
 
 // === to be moved into Editor
 

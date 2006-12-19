@@ -180,5 +180,20 @@ void Chrome::addMessageToConsole(const String &message, unsigned lineNumber, con
     m_client->addMessageToConsole(message, lineNumber, sourceURL);
 }
 
+bool Chrome::canRunBeforeUnloadConfirmPanel()
+{
+    return m_client->canRunBeforeUnloadConfirmPanel();
+}
+
+bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
+{
+    return m_client->runBeforeUnloadConfirmPanel(message, frame);
+}
+
+void Chrome::closeWindowSoon()
+{
+    m_client->closeWindowSoon();
+}
+
 } // namespace WebCore
 
