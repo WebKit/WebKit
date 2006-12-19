@@ -2,6 +2,20 @@
 
         Reviewed by Oliver.
 
+        Fix SVGList index validation (off-by-one error).
+
+        Adding new testcase js-font-test.svg, which uses SVGLengthList interface.
+        (This is a very old ksvg1 testcase, adopted for SVG1.1)
+
+        * svg/custom/js-font-test-expected.checksum: Added.
+        * svg/custom/js-font-test-expected.png: Added.
+        * svg/custom/js-font-test-expected.txt: Added.
+        * svg/custom/js-font-test.svg: Added.
+
+2006-12-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11879
 
         Fix patterns on fill/stroke of text.

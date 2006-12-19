@@ -79,7 +79,7 @@ namespace WebCore {
 
         Item getItem(unsigned int index, ExceptionCode& ec)
         {
-            if (m_vector.size() < index) {
+            if (index >= m_vector.size()) {
                 ec = INDEX_SIZE_ERR;
                 return TypeOperations::nullItem();
             }
@@ -89,7 +89,7 @@ namespace WebCore {
 
         const Item getItem(unsigned int index, ExceptionCode& ec) const
         {
-            if (m_vector.size() < index) {
+            if (index >= m_vector.size()) {
                 ec = INDEX_SIZE_ERR;
                 return TypeOperations::nullItem();
             }
@@ -105,7 +105,7 @@ namespace WebCore {
 
         Item replaceItem(Item newItem, unsigned int index, ExceptionCode& ec)
         {
-            if (m_vector.size() < index) {
+            if (index >= m_vector.size()) {
                 ec = INDEX_SIZE_ERR;
                 return TypeOperations::nullItem();
             }
@@ -116,7 +116,7 @@ namespace WebCore {
 
         Item removeItem(unsigned int index, ExceptionCode& ec)
         {
-            if (m_vector.size() < index) {
+            if (index >= m_vector.size()) {
                 ec = INDEX_SIZE_ERR;
                 return TypeOperations::nullItem();
             }
