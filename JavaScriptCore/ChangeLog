@@ -1,3 +1,11 @@
+2006-12-19  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Lou
+        
+        Removed unneccessary "else"
+
+        * wtf/Assertions.cpp:
+
 2006-12-19  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

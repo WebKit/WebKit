@@ -84,7 +84,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
             free(buffer);
             size *= 2;
         } while (size > 1024);
-    } else
+    }
 #endif
         vfprintf_no_warning(stderr, format, args);
 }

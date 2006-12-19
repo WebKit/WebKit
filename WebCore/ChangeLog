@@ -1,3 +1,15 @@
+2006-12-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Ada
+
+        Added a logging channel for network activity for loader work
+
+        * platform/Logging.cpp:
+        (WebCore::):
+        * platform/Logging.h:
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2006-12-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt
