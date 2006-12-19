@@ -1,5 +1,19 @@
 2006-12-18  David Hyatt  <hyatt@apple.com>
 
+        Add save/restore calls around the painting of text areas on Mac, since the methods in question
+        alter the current fill color in CG destructively.
+
+        Reviewed by olliej
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintButton):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
+2006-12-18  David Hyatt  <hyatt@apple.com>
+
         Fix list markers to properly stroke and fill.  I screwed this up when changing how text draws.
 
         Reviewed by olliej

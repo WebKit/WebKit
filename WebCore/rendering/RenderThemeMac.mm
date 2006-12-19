@@ -599,7 +599,7 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 
 bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Determine the width and height needed for the control and prepare the cell for painting.
     setButtonCellState(o, r);
@@ -628,8 +628,12 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
 
 bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    // The fill color gets destructively changed by the AppKit private method we're using here, so we need to
+    // save/restore.
+    paintInfo.context->save();
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
+    paintInfo.context->restore();
     return false;
 }
 
@@ -639,8 +643,12 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 
 bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    // The fill color gets destructively changed by the AppKit private method we're using here, so we need to
+    // save/restore.
+    paintInfo.context->save();
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
+    paintInfo.context->restore();
     return false;
 }
 
@@ -963,7 +971,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
 
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     CGContextRef context = paintInfo.context->platformContext();
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
 
@@ -986,7 +994,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
         radius, radius);
     CGContextDrawShading(context, mainShading);
     paintInfo.context->restore();
-
+    
     return false;
 }
 
@@ -1000,7 +1008,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     else
         sliderThumbCell = sliderThumbHorizontalCell;
 
-    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.context);
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Determine the width and height needed for the control and prepare the cell for painting.
     if (!sliderThumbCell) {
