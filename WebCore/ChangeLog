@@ -1,3 +1,20 @@
+2006-12-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7296
+        JavaScript error not thrown when trying to set a CSS property to an invalid value
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put): When not in Dashboard compatibility mode,
+        raise exception for invalid values. Also removed an unnecessary call to
+        removeProperty(), which prevented the property value from being preserved in 
+        error case.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Moved the handling of
+        empty property values here. Also removed an unnecessary call to removeProperty().
+
 2006-12-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

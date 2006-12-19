@@ -1,13 +1,17 @@
-This test checks to see whether you get exceptions when setting a property with a "bad value". We preserve our historic behavior of never raising an exception when you set a CSS property using JavaScript property syntax. But we do raise exceptions when setting a property with setProperty.
+Test for bug 7296.
 
-The results below should show four successes, followed by two exceptions.
+This test checks to see whether you get exceptions when setting a property with a "bad value". Setting using JavaScript property syntax and with setProperty() should behave the same.
 
-This is the test element.
+The results below should show success in cases 1, 3, 5, and 7.
 
-Successfully set display to "block"; value is now "block".
-Successfully set display to ""; value is now "".
-Successfully set display to null; value is now "".
-Successfully set display to "block" with setProperty; value is now "block".
-Got exception trying to set display to "" with setProperty; value is now "".
-Got exception trying to set display to null with setProperty; value is now "".
+It is OK if the order of properties changes from the expected results - IE 6 and Firefox 2 don't agree on it anyway.
+
+Successfully set display to "block"; cssText is now: "top: 0px; bottom: 1px; display: block; ".
+Got exception trying to set display to "foobar"; cssText is now: "top: 0px; display: none; bottom: 1px; ".
+Successfully set display to ""; cssText is now: "top: 0px; bottom: 1px; ".
+Got exception trying to set display to null; cssText is now: "top: 0px; display: none; bottom: 1px; ".
+Successfully set display to "block" with setProperty; cssText is now: "top: 0px; bottom: 1px; display: block; ".
+Got exception trying to set display to "foobar" with setProperty; cssText is now: "top: 0px; display: none; bottom: 1px; ".
+Successfully set display to "" with setProperty; cssText is now: "top: 0px; bottom: 1px; ".
+Got exception trying to set display to null with setProperty; cssText is now: "top: 0px; display: none; bottom: 1px; ".
 

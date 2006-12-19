@@ -297,8 +297,14 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String &value
 {
     ec = 0;
 
-    removeProperty(propertyID);
+    // Setting the value to an empty string just removes the property in both IE and Gecko.
+    if (value.isEmpty()) {
+        removeProperty(propertyID, notifyChanged, ec);
+        return ec == 0;
+    }
 
+    // When replacing an existing property value, this moves the property to the end of the list.
+    // Firefox preserves the position, and MSIE moves the property to the beginning.
     CSSParser parser(useStrictParsing());
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {

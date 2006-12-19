@@ -34,6 +34,7 @@
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "JSCSSPrimitiveValue.h"
@@ -42,6 +43,7 @@
 #include "JSCSSRuleList.h"
 #include "JSCSSValueList.h"
 #include "MediaList.h"
+#include "Settings.h"
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
 
@@ -211,24 +213,23 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
     if (isCSSPropertyName(propertyName)) {
       bool pixelOrPos;
       String prop = cssPropertyName(propertyName, &pixelOrPos);
-      String propvalue = value->toString(exec);
+      String propValue = value->toString(exec);
       if (pixelOrPos)
-        propvalue += "px";
+        propValue += "px";
 #ifdef KJS_VERBOSE
       kdDebug(6070) << "DOMCSSStyleDeclaration: prop=" << prop << " propvalue=" << propvalue << endl;
 #endif
-      styleDecl.removeProperty(prop, exception);
-      if (!exception && !propvalue.isEmpty()) {
-        // We have to ignore exceptions here, because of the following unfortunate situation:
-        //   1) Older versions ignored exceptions here by accident, because the put function
-        //      that translated exceptions did not translate CSS exceptions.
-        //   2) Gecko does not raise an exception in this case, although WinIE does.
-        //   3) At least some Dashboard widgets are depending on this behavior.
-        // It would be nice to fix this some day, perhaps with some kind of "quirks mode",
-        // but it's likely that the Dashboard widgets are already using a strict mode DOCTYPE.
-        ExceptionCode ec = 0;
-        styleDecl.setProperty(prop, propvalue, ec);
-      }
+      ASSERT(styleDecl.stylesheet()->isCSSStyleSheet());
+      if (Frame* frame = static_cast<CSSStyleSheet*>(styleDecl.stylesheet())->doc()->frame())
+        if (frame->settings()->shouldUseDashboardBackwardCompatibilityMode()) {
+          styleDecl.removeProperty(prop, exception);
+          if (!exception) {
+            ExceptionCode exceptionIgnored = 0;
+            styleDecl.setProperty(prop, propValue, exceptionIgnored);
+            return;
+          }
+        }
+      styleDecl.setProperty(prop, propValue, exception);
     } else {
       DOMObject::put(exec, propertyName, value, attr);
     }

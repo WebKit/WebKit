@@ -7,6 +7,15 @@ function log(message)
     item.appendChild(document.createTextNode(message));
     document.getElementById("console").appendChild(item);
 }
+function setInitialStyleForE()
+{
+    var e = document.getElementById('e');
+
+    e.style.top = "0px";
+    e.style.bottom = "";
+    e.style.display = "none";
+    e.style.bottom = "1px";
+}
 function test()
 {
     if (window.layoutTestController)
@@ -14,61 +23,78 @@ function test()
 
     var e = document.getElementById('e');
 
-    e.style.display = "none";
+    setInitialStyleForE();
     try {
         e.style.display = "block";
-        log("Successfully set display to \"block\"; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to \"block\"; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to \"block\"; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to \"block\"; cssText is now: \"" + e.style.cssText + "\".");
     }
 
-    e.style.display = "none";
+    setInitialStyleForE();
+    try {
+        e.style.display = "foobar";
+        log("Successfully set display to \"foobar\"; cssText is now: \"" + e.style.cssText + "\".");
+    } catch (exception) {
+        log("Got exception trying to set display to \"foobar\"; cssText is now: \"" + e.style.cssText + "\".");
+    }
+
+    setInitialStyleForE();
     try {
         e.style.display = "";
-        log("Successfully set display to \"\"; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to \"\"; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to \"\"; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to \"\"; cssText is now: \"" + e.style.cssText + "\".");
     }
 
-    e.style.display = "none";
+    setInitialStyleForE();
     try {
         e.style.display = null;
-        log("Successfully set display to null; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to null; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to null; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to null; cssText is now: \"" + e.style.cssText + "\".");
     }
 
-    e.style.display = "none";
+    setInitialStyleForE();
     try {
         e.style.setProperty("display", "block", "");
-        log("Successfully set display to \"block\" with setProperty; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to \"block\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to \"block\" with setProperty; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to \"block\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     }
 
-    e.style.display = "none";
+    setInitialStyleForE();
+    try {
+        e.style.setProperty("display", "foobar", "");
+        log("Successfully set display to \"foobar\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
+    } catch (exception) {
+        log("Got exception trying to set display to \"foobar\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
+    }
+
+    setInitialStyleForE();
     try {
         e.style.setProperty("display", "", "");
-        log("Successfully set display to \"\" with setProperty; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to \"\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to \"\" with setProperty; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to \"\" with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     }
 
-    e.style.display = "none";
+    setInitialStyleForE();
     try {
         e.style.setProperty("display", null, "");
-        log("Successfully set display to null with setProperty; value is now \"" + e.style.display + "\".");
+        log("Successfully set display to null with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     } catch (exception) {
-        log("Got exception trying to set display to null with setProperty; value is now \"" + e.style.display + "\".");
+        log("Got exception trying to set display to null with setProperty; cssText is now: \"" + e.style.cssText + "\".");
     }
 }
 </script>
 </head>
 <body onload="test();">
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=7296">bug 7296</a>.</p>
 <p>This test checks to see whether you get exceptions when setting a property with a "bad value".
-We preserve our historic behavior of never raising an exception when you set a CSS property using JavaScript property syntax.
-But we do raise exceptions when setting a property with setProperty.</p>
-<p>The results below should show four successes, followed by two exceptions.</p>
+Setting using JavaScript property syntax and with setProperty() should behave the same.</p>
+<p>The results below should show success in cases 1, 3, 5, and 7.</p>
+<P>It is OK if the order of properties changes from the expected results - IE 6 and Firefox 2 don't agree on it anyway.</p>
 <hr>
 <p id="e">This is the test element.</p>
 <hr>
