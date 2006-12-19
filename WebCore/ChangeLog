@@ -1,3 +1,12 @@
+2006-12-18  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://problem/4766174> REGRESSION(r16081): Aspect eWFM: Unable to log in
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen):
+
 2006-12-18  David Hyatt  <hyatt@apple.com>
 
         Add save/restore calls around the painting of text areas on Mac, since the methods in question

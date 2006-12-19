@@ -655,7 +655,8 @@ void FrameLoader::didExplicitOpen()
     // Cancelling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
     cancelRedirection(); 
-    m_URL = m_frame->document()->URL();
+    if (m_frame->document()->URL() != "about:blank")
+        m_URL = m_frame->document()->URL();
 }
 
 void FrameLoader::replaceContentsWithScriptResult(const KURL& url)
