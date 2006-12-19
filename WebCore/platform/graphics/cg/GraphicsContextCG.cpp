@@ -429,8 +429,12 @@ void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
         return;
     if (color.alpha()) {
         CGContextRef context = platformContext();
-        setCGFillColor(context, color);
+        Color oldFillColor = fillColor();
+        if (oldFillColor != color)
+            setCGFillColor(context, color);
         CGContextFillRect(context, rect);
+        if (oldFillColor != color)
+            setCGFillColor(context, oldFillColor);
     }
 }
 
@@ -440,8 +444,12 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
         return;
     if (color.alpha()) {
         CGContextRef context = platformContext();
-        setCGFillColor(context, color);
+        Color oldFillColor = fillColor();
+        if (oldFillColor != color)
+            setCGFillColor(context, color);
         CGContextFillRect(context, rect);
+        if (oldFillColor != color)
+            setCGFillColor(context, oldFillColor);
     }
 }
 
@@ -798,6 +806,50 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 
         CFRelease(urlRef);
     }
+}
+
+void GraphicsContext::setPlatformTextDrawingMode(int mode)
+{
+    if (paintingDisabled())
+        return;
+
+    // Wow, wish CG had used bits here.
+    CGContextRef context = platformContext();
+    switch (mode) {
+        case cTextInvisible: // Invisible
+            CGContextSetTextDrawingMode(context, kCGTextInvisible);
+            break;
+        case cTextFill: // Fill
+            CGContextSetTextDrawingMode(context, kCGTextFill);
+            break;
+        case cTextStroke: // Stroke
+            CGContextSetTextDrawingMode(context, kCGTextStroke);
+            break;
+        case 3: // Fill | Stroke
+            CGContextSetTextDrawingMode(context, kCGTextFillStroke);
+            break;
+        case cTextClip: // Clip
+            CGContextSetTextDrawingMode(context, kCGTextClip);
+            break;
+        case 5: // Fill | Clip
+            CGContextSetTextDrawingMode(context, kCGTextFillClip);
+            break;
+        case 6: // Stroke | Clip
+            CGContextSetTextDrawingMode(context, kCGTextStrokeClip);
+            break;
+        case 7: // Fill | Stroke | Clip
+            CGContextSetTextDrawingMode(context, kCGTextFillStrokeClip);
+            break;
+        default:
+            break;
+    }
+}
+
+void GraphicsContext::setPlatformFillColor(const Color& color)
+{
+    if (paintingDisabled())
+        return;
+    setCGFillColor(platformContext(), color);
 }
 
 }

@@ -37,8 +37,8 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         context->setFont(style->font());
 
     Color textColor = style->color();
-    if (textColor != context->pen().color())
-        context->setPen(textColor);
+    if (textColor != context->fillColor())
+        context->setFillColor(textColor);
     bool setShadow = false;
     if (style->textShadow()) {
         context->setShadow(IntSize(style->textShadow()->x, style->textShadow()->y),

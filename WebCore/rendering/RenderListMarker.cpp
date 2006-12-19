@@ -211,11 +211,10 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->fillRect(selectionRect(), selectionBackgroundColor());
 
     const Color color(style()->color());
-    context->setPen(color);
+    context->setFillColor(color);
 
     switch(style()->listStyleType()) {
     case DISC:
-        context->setFillColor(color);
         context->drawEllipse(marker);
         return;
     case CIRCLE:
@@ -223,7 +222,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->drawEllipse(marker);
         return;
     case SQUARE:
-        context->setFillColor(color);
         context->drawRect(marker);
         return;
     case LNONE:

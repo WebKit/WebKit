@@ -52,7 +52,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     style.disableRoundingHacks();
     CGFloat red, green, blue, alpha;
     [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
-    graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
+    graphicsContext.setFillColor(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
     renderer.drawText(&graphicsContext, run, style, FloatPoint(point.x, (flipped ? point.y : (-1.0f * point.y))));
     if (!flipped)
         CGContextScaleCTM(cgContext, 1.0, -1.0);

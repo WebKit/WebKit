@@ -48,7 +48,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         CGContextSetFillColor(contextRef, colorComponents);
         if (isPaintingText()) {
             const_cast<RenderObject*>(object)->style()->setColor(color());
-            CGContextSetTextDrawingMode(contextRef, kCGTextFill);
+            context->setTextDrawingMode(cTextFill);
         }
     }
 
@@ -62,7 +62,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         applyStrokeStyleToContext(contextRef, style, object);
         if (isPaintingText()) {
             const_cast<RenderObject*>(object)->style()->setColor(color());
-            CGContextSetTextDrawingMode(contextRef, kCGTextStroke);
+            context->setTextDrawingMode(cTextStroke);
         }
     }
 

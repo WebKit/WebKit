@@ -293,7 +293,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
     }
 
-    paintInfo.context->setPen(textColor);
+    paintInfo.context->setFillColor(textColor);
 
     Font itemFont = style()->font();
     if (element->hasTagName(optgroupTag)) {

@@ -34,10 +34,11 @@ using namespace std;
 namespace WebCore {
 
 struct GraphicsContextState {
-    GraphicsContextState() : fillColor(Color::black), paintingDisabled(false) { }
+    GraphicsContextState() : fillColor(Color::black), textDrawingMode(cTextFill), paintingDisabled(false) { }
     Font font;
     Pen pen;
     Color fillColor;
+    int textDrawingMode;
     bool paintingDisabled;
 };
         
@@ -298,12 +299,35 @@ void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const In
     image->drawTiled(this, dest, srcRect, hRule, vRule, op);
 }
 
-#if !PLATFORM(QT)
-void GraphicsContext::setPlatformPen(const Pen&)
+int GraphicsContext::textDrawingMode()
 {
+    return m_common->state.textDrawingMode;
 }
 
+void GraphicsContext::setTextDrawingMode(int mode)
+{
+    m_common->state.textDrawingMode = mode;
+    if (paintingDisabled())
+        return;
+    setPlatformTextDrawingMode(mode);
+}
+
+#if !PLATFORM(CG)
+// Implement this if you want to go ahead and push the drawing mode into your native context
+// immediately.
+void GraphicsContext::setPlatformTextDrawingMode(int mode)
+{
+}
+#endif
+
+#if !PLATFORM(CG) && !PLATFORM(QT)
 void GraphicsContext::setPlatformFillColor(const Color&)
+{
+}
+#endif
+
+#if !PLATFORM(QT)
+void GraphicsContext::setPlatformPen(const Pen&)
 {
 }
 

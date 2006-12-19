@@ -1,3 +1,66 @@
+2006-12-18  David Hyatt  <hyatt@apple.com>
+
+        Fix performance regression caused by adding setting of stroke colors as well as fill colors to every font drawing
+        call on Mac.  Fix is rather involved:
+
+        (1) Fill color is now updated in CG synchronously.  There is no more delay in the push.  I used the model that
+        Qt added for this, setPlatformFillColor, so we're the same now.
+
+        (2) Text was being drawn using the pen color, which is tantamount to using the stroke color.  Since text in HTML
+        is really a fill and not a stroke, all cross-platform code that draws text has been patched to use fill instead
+        of the pen.
+
+        (3) Added a new API to GraphicsContext to set the text drawing mode to any combination of fill/stroke/clip.
+        Ports should implement setPlatformTextDrawingMode or just query the mode in their drawGlyphs/drawComplexText
+        method on their Font class to get the new functionality.
+
+        (4) InlineTextBox will set the fill and stroke colors appropriately now rather than always assuming fill.
+
+        (5) Fixed a bug in GraphicsContextCG where fillRectWithColor was updating the CG fill color in the state object
+        as a side effect, creating a mismatch between CG's fill color and the stored cross-platform fill color.
+
+        Reviewed by olliej
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContext::textDrawingMode):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode):
+        (WebCore::GraphicsContext::setPlatformPen):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        (WebCore::SVGPaintServerPattern::teardown):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::correctedTextColor):
+        (WebCore::updateTextColor):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+
 2006-12-18  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Maciej.
