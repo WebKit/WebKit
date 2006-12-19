@@ -387,7 +387,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
-static void adjustLineToPixelBounderies(FloatPoint& p1, FloatPoint& p2, float strokeWidth,
+static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth,
                                         const StrokeStyle& penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
@@ -426,7 +426,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
 
-    adjustLineToPixelBounderies(p1, p2, strokeThickness(), strokeStyle());
+    adjustLineToPixelBoundaries(p1, p2, strokeThickness(), strokeStyle());
     m_data->p().drawLine(p1, p2);
 }
 
