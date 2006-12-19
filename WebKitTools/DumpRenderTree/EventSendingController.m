@@ -218,24 +218,27 @@ BOOL replayingSavedEvents;
                                       clickCount:clickCount 
                                         pressure:nil];
 
-    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
-    if (subView) {
-        [subView mouseUp:event];
-        down = NO;
-        lastClick = [event timestamp];
-        if (draggingInfo) {
-            WebView *webView = [frame webView];
-            
-            NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
-            
-            if (dragOperation != NSDragOperationNone)
-                [webView performDragOperation:draggingInfo];
-            else
-                [webView draggingExited:draggingInfo];
-            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
-            [draggingInfo release];
-            draggingInfo = nil;
-        }
+    NSView *targetView = [[frame webView] hitTest:[event locationInWindow]];
+    // FIXME: Silly hack to teach DRT to respect capturing mouse events outside the WebView.
+    // The right solution is just to use NSApplication's built-in event sending methods, 
+    // instead of rolling our own algorithm for selecting an event target.
+    targetView = targetView ? targetView : [[frame frameView] documentView];
+    assert(targetView);
+    [targetView mouseUp:event];
+    down = NO;
+    lastClick = [event timestamp];
+    if (draggingInfo) {
+        WebView *webView = [frame webView];
+        
+        NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
+        
+        if (dragOperation != NSDragOperationNone)
+            [webView performDragOperation:draggingInfo];
+        else
+            [webView draggingExited:draggingInfo];
+        [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
+        [draggingInfo release];
+        draggingInfo = nil;
     }
 }
 

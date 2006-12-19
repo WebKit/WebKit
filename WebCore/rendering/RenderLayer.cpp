@@ -1577,10 +1577,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
         }
     }
 
-    // Next we want to see if the mouse pos is inside this layer but not any of its children.
-    // If this is the root layer and the mouse is down, we want to do this even if it doesn't
-    // contain the point so mouse move events keep getting delivered when dragging outside the
-    // window.
+    // Next we want to see if the mouse is inside this layer but not any of its children.
     if (bgRect.contains(result.point()) &&
         renderer()->hitTest(request, result, result.point().x(), result.point().y(),
                             layerBounds.x() - renderer()->xPos(),
@@ -1588,9 +1585,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                             HitTestSelf))
         return this;
 
-    // We didn't hit any layer.  However if the mouse is down, we must always at least be inside
-    // the render view.
-    if (request.active && renderer()->isRenderView()) {
+    // We didn't hit any layer. If we are the root layer and mouse capture is active, return ourselves.
+    // We do this so mouse events continue getting delivered after a drag has exited the WebView.
+    if (request.capturing && renderer()->isRenderView()) {
         renderer()->setInnerNode(result);
         return this;
     }

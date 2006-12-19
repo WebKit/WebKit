@@ -60,6 +60,7 @@ namespace WebCore {
     class EventListener;
     class Frame;
     class FrameView;
+    class HitTestRequest;
     class HTMLDocument;
     class HTMLElement;
     class HTMLFormElement;
@@ -389,7 +390,7 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const IntPoint& point, const PlatformMouseEvent&);
+    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const IntPoint&, const PlatformMouseEvent&);
 
     virtual bool childTypeAllowed(NodeType);
     virtual PassRefPtr<Node> cloneNode(bool deep);

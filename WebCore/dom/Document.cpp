@@ -1742,18 +1742,17 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
     }
 }
 
-MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool active, bool mouseMove,
-                                                         const IntPoint& point, const PlatformMouseEvent& event)
+MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)
 {
+    ASSERT(!renderer() || renderer()->isRenderView());
+
     if (!renderer())
         return MouseEventWithHitTestResults(event, 0, 0, false);
 
-    assert(renderer()->isRenderView());
-    HitTestRequest request(readonly, active, mouseMove);
-    HitTestResult result(point);
+    HitTestResult result(documentPoint);
     renderer()->layer()->hitTest(request, result);
 
-    if (!readonly)
+    if (!request.readonly)
         updateRendering();
 
     bool isOverLink = result.URLElement() && !result.URLElement()->getAttribute(hrefAttr).isNull();
@@ -2725,7 +2724,7 @@ void Document::addMarker(Node *node, DocumentMarker newMarker)
             
             if (newMarker.endOffset < marker.startOffset+1) {
                 // This is the first marker that is completely after newMarker, and disjoint from it.
-                // We found our insertion point.
+                // We found our insertion point.
                 break;
             } else if (newMarker.startOffset > marker.endOffset) {
                 // maker is before newMarker, and disjoint from it.  Keep scanning.

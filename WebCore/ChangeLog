@@ -1,3 +1,52 @@
+2006-12-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/4549745> REGRESSION: scrolling on Google maps 
+        continues after the mouse is released outside the window (8137)
+        
+        The RenderLayer hit testing code assumed that, when the mouse was outside
+        the WebView, we only needed to capture mouse events while the mouse was
+        down (in other words, mouse move events). We actually need to capture mouse 
+        up events, as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent): To match EventHandler::prepareMouseEvent, 
+        I changed this function to take a HitTestRequest instead of the broken-out values of one.
+        For clarity, I moved an assert to top of function.
+        (WebCore::Document::addMarker): Removed stray character.
+        * dom/Document.h:
+
+        * page/EventHandler.cpp: Changed prepareMouseEvent to take a HitTestRequest,
+        instead of the broken-out values of one. This simplified the code, and made
+        the task of adding an extra, optional parameter to hit testing much easier.
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent): Set the 'capturing' flag
+        if the move occurs while the mouse is down. This replaces RenderLayer's
+        heavy-handed assumption that we should always capture if the mouse is down.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Set the 'capturing'
+        flag, since we assume every mouse up follows a mouse down inside the WebView.
+        (We'd like to ASSERT as much, but DRT's event sending mechanism is crazy, and
+        violates this axiom.)
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::prepareMouseEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::hoverTimerFired):
+        * page/EventHandler.h:
+
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::HitTestRequest): Added 'capturing' data member,
+        which specifies whether the hit test should capture mouse events that occur
+        outside the WebView.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer): Moved misleading comment to where
+        it actually applies. Changed 'active' test to new 'capturing' test, so
+        the hit test requester can decide whether we need to capture mouse events
+        that don't intersect any layer.
+
 2006-12-18  David Hyatt  <hyatt@apple.com>
 
         Make sure a stroke style is set for list bullets.

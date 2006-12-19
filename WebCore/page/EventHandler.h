@@ -51,6 +51,7 @@ class Event;
 class FloatPoint;
 class FloatRect;
 class Frame;
+class HitTestRequest;
 class HitTestResult;
 class HTMLFrameSetElement;
 class KeyboardEvent;
@@ -183,7 +184,7 @@ private:
 
     Node* nodeUnderMouse() const;
 
-    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
+    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest& hitTestRequest, const PlatformMouseEvent& mev);
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target,
         bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
