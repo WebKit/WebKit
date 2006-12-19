@@ -1,3 +1,11 @@
+2006-12-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4891774> Local WebCore/WebBrowser builds fail in 9A328 due to warning about ObjC-2.0 language features
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-12-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
