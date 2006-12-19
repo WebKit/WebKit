@@ -394,7 +394,7 @@ static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float st
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == DottedLine || penStyle == DashedLine) {
+    if (penStyle == DottedStroke || penStyle == DashedStroke) {
         if (p1.x() == p2.x()) {
             p1.setY(p1.y() + strokeWidth);
             p2.setY(p2.y() - strokeWidth);
