@@ -139,7 +139,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
-static void adjustLineToPixelBounderies(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const Pen::PenStyle& penStyle)
+static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const Pen::PenStyle& penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
@@ -190,7 +190,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     FloatPoint p2 = point2;
     bool isVerticalLine = (p1.x() == p2.x());
     
-    adjustLineToPixelBounderies(p1, p2, width, penStyle);
+    adjustLineToPixelBoundaries(p1, p2, width, penStyle);
     cairo_set_line_width(context, width);
 
     int patWidth = 0;
