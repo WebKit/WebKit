@@ -1,3 +1,12 @@
+2006-12-18  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Brady.
+
+        Bug 11870: Bug 11866 caused layout test regression in fast/forms/input-value.html
+        http://bugs.webkit.org/show_bug.cgi?id=11870
+
+        * fast/forms/input-value-expected.txt: Updated results.
+
 2006-12-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.
