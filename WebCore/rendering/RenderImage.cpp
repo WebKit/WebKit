@@ -220,6 +220,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
 
         if (cWidth > 2 && cHeight > 2) {
             if (!errorOccurred()) {
+                context->setStrokeStyle(SolidStroke);
                 context->setStrokeColor(Color::lightGray);
                 context->setFillColor(Color::transparent);
                 context->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
