@@ -51,7 +51,6 @@ class Event;
 class FloatPoint;
 class FloatRect;
 class Frame;
-class HitTestRequest;
 class HitTestResult;
 class HTMLFrameSetElement;
 class KeyboardEvent;
@@ -64,6 +63,8 @@ class RenderObject;
 class RenderWidget;
 class VisiblePosition;
 class Widget;
+
+struct HitTestRequest;
 
 enum SelectionDirection { SelectingNext, SelectingPrevious };
 
