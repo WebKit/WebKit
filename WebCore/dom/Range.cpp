@@ -1340,19 +1340,20 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         return;
     }
 
-    // HIERARCHY_REQUEST_ERR: Raised if the container of the start of the Range is of a type that
-    // does not allow children of the type of newParent or if newParent is an ancestor of the container
-    // or if node would end up with a child node of a type not allowed by the type of node.
-    if (!m_startContainer->childTypeAllowed(newParent->nodeType())) {
+    // Raise a HIERARCHY_REQUEST_ERR if m_startContainer doesn't accept children like newParent.
+    Node* parentOfNewParent = m_startContainer.get();
+    // If m_startContainer is a textNode, it will be split and it will be its parent that will 
+    // need to accept newParent.
+    if (parentOfNewParent->isTextNode())
+        parentOfNewParent = parentOfNewParent->parentNode();
+    if (!parentOfNewParent->childTypeAllowed(newParent->nodeType())) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-
-    for (Node *n = m_startContainer.get(); n; n = n->parentNode()) {
-        if (n == newParent) {
-            ec = HIERARCHY_REQUEST_ERR;
-            return;
-        }
+    
+    if (m_startContainer == newParent || m_startContainer->isDescendantOf(newParent.get())) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
     }
 
     // ### check if node would end up with a child node of a type not allowed by the type of node

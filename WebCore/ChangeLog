@@ -1,3 +1,16 @@
+2006-12-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        <rdar://problem/4888891>
+        Docs & Spreadsheets: Comment fails to insert if text is selected in the document
+        
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents): If startContainer is a text node,
+        it will be split when the range is extracted, and it will be its parent
+        that will have to accept newParent.  Also cleaned up some code with 
+        isDescendantOf.
+
 2006-12-19  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
