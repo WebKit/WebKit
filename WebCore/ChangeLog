@@ -1,3 +1,21 @@
+2006-12-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11879
+
+        Fix pattern on stroke/fill of text.
+
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2006-12-19  Alice Liu  <alice.liu@apple.com>
 
         Build fix

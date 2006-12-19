@@ -198,6 +198,7 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
             context = m_savedContext;
             contextRef = context->platformContext();
             m_savedContext = 0;
+            m_imageBuffer = 0;
         }
 
         CGContextDrawShading(contextRef, shading);
@@ -253,13 +254,15 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
 
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         context->save();      
+
         if (isPaintingText())
             context->setTextDrawingMode(cTextClip);
     }
 
     if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         context->save();
-        applyStrokeStyleToContext(contextRef, style, object); // FIXME: this seems like the wrong place for this.
+        applyStrokeStyleToContext(contextRef, style, object);
+
         if (isPaintingText()) {
             IntRect maskRect = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
             maskRect = object->absoluteTransform().inverse().mapRect(maskRect);

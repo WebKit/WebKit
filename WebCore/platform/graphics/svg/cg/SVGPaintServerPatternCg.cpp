@@ -80,20 +80,18 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         CGContextSetFillColorSpace(contextRef, m_patternSpace);
         CGContextSetFillPattern(contextRef, m_pattern, &alpha);
-        if (isPaintingText()) {
-            const_cast<RenderObject*>(object)->style()->setColor(Color());
+ 
+        if (isPaintingText()) 
             context->setTextDrawingMode(cTextFill);
-        }
     }
 
     if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
         CGContextSetStrokeColorSpace(contextRef, m_patternSpace);
         CGContextSetStrokePattern(contextRef, m_pattern, &alpha);
         applyStrokeStyleToContext(contextRef, style, object);
-        if (isPaintingText()) {
-            const_cast<RenderObject*>(object)->style()->setColor(Color());
+
+        if (isPaintingText()) 
             context->setTextDrawingMode(cTextStroke);
-        }
     }
 
     return true;

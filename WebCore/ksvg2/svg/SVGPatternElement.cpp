@@ -224,7 +224,7 @@ void SVGPatternElement::notifyClientsToRepaint() const
 
 void SVGPatternElement::notifyAttributeChange() const
 {
-    if (!m_paintServer || !m_paintServer->activeClient() || m_ignoreAttributeChanges)
+    if (m_ignoreAttributeChanges || !m_paintServer || !attached() || ownerDocument()->parsing())
         return;
 
     IntSize newSize = IntSize(lroundf(width().value()), lroundf(height().value()));

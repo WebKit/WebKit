@@ -1,3 +1,13 @@
+2006-12-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11879
+
+        Fix patterns on fill/stroke of text.
+
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+
 2006-12-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
