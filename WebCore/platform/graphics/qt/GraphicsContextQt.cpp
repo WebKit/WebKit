@@ -439,10 +439,9 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     m_data->p().drawEllipse(rect);
 }
 
-void GraphicsContext::drawArc(const IntRect& rect, float thickness,
-                              int startAngle, int angleSpan)
+void GraphicsContext::strokeArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || strokeStyle() == NoStroke || thickness <= 0.0f || !strokeColor().alpha())
         return;
 
     const QPen oldPen = m_data->p().pen();

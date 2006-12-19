@@ -100,12 +100,17 @@ namespace WebCore {
         void save();
         void restore();
         
+        // These draw methods will do both stroking and filling.
         void drawRect(const IntRect&);
         void drawLine(const IntPoint&, const IntPoint&);
         void drawEllipse(const IntRect&);
-        void drawArc(const IntRect&, float thickness, int startAngle, int angleSpan);
         void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
+        // Arc drawing (used by border-radius in CSS) just supports stroking at the moment.  It ignores
+        // the stroke thickness, relying instead on a passed-in argument (because of float vs. int issues).
+        // FIXME: Reconcile this method with stroke thickness by converting stroke thickness to a float.
+        void strokeArc(const IntRect&, float thickness, int startAngle, int angleSpan);
+        
         void fillRect(const IntRect&, const Color&);
         void fillRect(const FloatRect&, const Color&);
         void clearRect(const FloatRect&);

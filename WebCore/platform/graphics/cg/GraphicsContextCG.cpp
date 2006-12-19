@@ -279,9 +279,9 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 }
 
 
-void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
+void GraphicsContext::strokeArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
 { 
-    if (paintingDisabled())
+    if (paintingDisabled() || strokeStyle() == NoStroke || thickness <= 0.0f || !strokeColor().alpha())
         return;
     
     CGContextRef context = platformContext();
@@ -310,69 +310,64 @@ void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAng
     if (w != h)
         scale(FloatSize(1, reverseScaleFactor));
     
-    if (strokeStyle() == NoStroke) {
-        CGContextSetLineWidth(context, thickness);
-        CGContextStrokePath(context);
-    } else {
-        float width = max((float)strokeThickness(),  1.0f);
-        int patWidth = 0;
-        
-        switch (strokeStyle()) {
-            case NoStroke:
-            case SolidStroke:
-                break;
-            case DottedStroke:
-                patWidth = (int)(width / 2);
-                break;
-            case DashedStroke:
-                patWidth = 3 * (int)(width / 2);
-                break;
-        }
+    
+    float width = max(thickness,  1.0f);
+    int patWidth = 0;
+    
+    switch (strokeStyle()) {
+        case DottedStroke:
+            patWidth = (int)(width / 2);
+            break;
+        case DashedStroke:
+            patWidth = 3 * (int)(width / 2);
+            break;
+        default:
+            break;
+    }
 
-        CGContextSaveGState(context);
+    CGContextSaveGState(context);
+    
+    if (patWidth) {
+        // Example: 80 pixels with a width of 30 pixels.
+        // Remainder is 20.  The maximum pixels of line we could paint
+        // will be 50 pixels.
+        int distance;
+        if (hRadius == vRadius)
+            distance = (int)(M_PI * hRadius) / 2;
+        else // We are elliptical and will have to estimate the distance
+            distance = (int)(M_PI * sqrt((hRadius * hRadius + vRadius * vRadius) / 2)) / 2;
         
-        if (patWidth) {
-            // Example: 80 pixels with a width of 30 pixels.
-            // Remainder is 20.  The maximum pixels of line we could paint
-            // will be 50 pixels.
-            int distance;
-            if (hRadius == vRadius)
-                distance = (int)(M_PI * hRadius) / 2;
-            else // We are elliptical and will have to estimate the distance
-                distance = (int)(M_PI * sqrt((hRadius * hRadius + vRadius * vRadius) / 2)) / 2;
-            
-            int remainder = distance % patWidth;
-            int coverage = distance - remainder;
-            int numSegments = coverage / patWidth;
+        int remainder = distance % patWidth;
+        int coverage = distance - remainder;
+        int numSegments = coverage / patWidth;
 
-            float patternOffset = 0;
-            // Special case 1px dotted borders for speed.
-            if (patWidth == 1)
-                patternOffset = 1.0;
-            else {
-                bool evenNumberOfSegments = numSegments % 2 == 0;
+        float patternOffset = 0;
+        // Special case 1px dotted borders for speed.
+        if (patWidth == 1)
+            patternOffset = 1.0;
+        else {
+            bool evenNumberOfSegments = numSegments % 2 == 0;
+            if (remainder)
+                evenNumberOfSegments = !evenNumberOfSegments;
+            if (evenNumberOfSegments) {
+                if (remainder) {
+                    patternOffset += patWidth - remainder;
+                    patternOffset += remainder / 2;
+                } else
+                    patternOffset = patWidth / 2;
+            } else {
                 if (remainder)
-                    evenNumberOfSegments = !evenNumberOfSegments;
-                if (evenNumberOfSegments) {
-                    if (remainder) {
-                        patternOffset += patWidth - remainder;
-                        patternOffset += remainder / 2;
-                    } else
-                        patternOffset = patWidth / 2;
-                } else {
-                    if (remainder)
-                        patternOffset = (patWidth - remainder) / 2;
-                }
+                    patternOffset = (patWidth - remainder) / 2;
             }
-        
-            const CGFloat dottedLine[2] = { patWidth, patWidth };
-            CGContextSetLineDash(context, patternOffset, dottedLine, 2);
         }
     
-        CGContextSetLineWidth(context, width);
-        CGContextStrokePath(context);
-        CGContextRestoreGState(context);
+        const CGFloat dottedLine[2] = { patWidth, patWidth };
+        CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
+
+    CGContextSetLineWidth(context, width);
+    CGContextStrokePath(context);
+    CGContextRestoreGState(context);
     
     CGContextRestoreGState(context);
 }

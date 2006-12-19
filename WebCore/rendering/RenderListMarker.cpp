@@ -213,10 +213,10 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     const Color color(style()->color());
     context->setStrokeColor(color);
     context->setStrokeStyle(SolidStroke);
+    context->setFillColor(color);
 
     switch(style()->listStyleType()) {
     case DISC:
-        context->setFillColor(color);
         context->drawEllipse(marker);
         return;
     case CIRCLE:
@@ -230,7 +230,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     default:
         if (!m_item.isEmpty()) {
-            context->setFillColor(color);
             const Font& font = style()->font();
             TextRun textRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
             if (style()->direction() == LTR) {
