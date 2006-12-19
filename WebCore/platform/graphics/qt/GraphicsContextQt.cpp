@@ -388,13 +388,13 @@ void GraphicsContext::drawRect(const IntRect& rect)
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
 static void adjustLineToPixelBounderies(FloatPoint& p1, FloatPoint& p2, float strokeWidth,
-                                        const Pen::PenStyle& penStyle)
+                                        const StrokeStyle& penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == Pen::DotLine || penStyle == Pen::DashLine) {
+    if (penStyle == DottedLine || penStyle == DashedLine) {
         if (p1.x() == p2.x()) {
             p1.setY(p1.y() + strokeWidth);
             p2.setY(p2.y() - strokeWidth);
@@ -426,7 +426,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
 
-    adjustLineToPixelBounderies(p1, p2, pen().width(), pen().style());
+    adjustLineToPixelBounderies(p1, p2, strokeThickness(), strokeStyle());
     m_data->p().drawLine(p1, p2);
 }
 
