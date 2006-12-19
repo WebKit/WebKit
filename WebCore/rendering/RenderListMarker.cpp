@@ -498,15 +498,15 @@ IntRect RenderListMarker::getRelativeMarkerRect()
 void RenderListMarker::setSelectionState(SelectionState state)
 {
     m_selectionState = state;
-    RootInlineBox* root = inlineBoxWrapper()->root();
-    if (root)
-        root->setHasSelectedChildren(state != SelectionNone);
+    if (InlineBox* box = inlineBoxWrapper())
+        if (RootInlineBox* root = box->root())
+            root->setHasSelectedChildren(state != SelectionNone);
     containingBlock()->setSelectionState(state);
 }
 
 IntRect RenderListMarker::selectionRect()
 {
-    if (selectionState() == SelectionNone)
+    if (selectionState() == SelectionNone || !inlineBoxWrapper())
         return IntRect();
 
     int absx, absy;

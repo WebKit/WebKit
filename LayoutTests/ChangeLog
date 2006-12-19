@@ -1,3 +1,15 @@
+2006-12-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Test case for <rdar://problem/4749770> WebCore crashes on a blog 
+        website in WebCore::InlineBox::root() + 6
+
+        * fast/lists/inlineBoxWrapperNullCheck-expected.checksum: Added.
+        * fast/lists/inlineBoxWrapperNullCheck-expected.png: Added.
+        * fast/lists/inlineBoxWrapperNullCheck-expected.txt: Added.
+        * fast/lists/inlineBoxWrapperNullCheck.html: Added.
+
 2006-12-18  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Maciej.

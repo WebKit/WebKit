@@ -1,3 +1,24 @@
+2006-12-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/4749770> WebCore crashes on a blog website 
+        in WebCore::InlineBox::root() + 6
+
+        We null-check inlineBoxWrapper everywhere else in the code except 
+        for these 3 spots. This patch adds them in. Only one of the checks 
+        is required to fix the crash. What we render for the test case now 
+        matches shipping Safari, but still seems wrong because we do not 
+        match Firefox. I will file a follow-up about the rendering problem.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker): This is the required 
+        null-check. 
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::setSelectionState): Null-check for 
+        safety. 
+        (WebCore::RenderListMarker::selectionRect): Same.
+
 2006-12-18  David Hyatt  <hyatt@apple.com>
 
         Fix performance regression caused by adding setting of stroke colors as well as fill colors to every font drawing

@@ -223,7 +223,7 @@ void RenderListItem::layout()
 
 void RenderListItem::positionListMarker()
 {
-    if (m_marker && !m_marker->isInside()) {
+    if (m_marker && !m_marker->isInside() && m_marker->inlineBoxWrapper()) {
         int markerOldX = m_marker->xPos();
         int yOffset = 0;
         int xOffset = 0;
