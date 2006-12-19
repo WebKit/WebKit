@@ -250,7 +250,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
                 DeprecatedString text = m_altText.deprecatedString();
                 text.replace('\\', backslashAsCurrencySymbol());
                 context->setFont(style()->font());
-                context->setStrokeColor(style()->color());
+                context->setFillColor(style()->color());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();
