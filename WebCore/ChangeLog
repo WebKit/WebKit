@@ -1,5 +1,14 @@
 2006-12-18  David Hyatt  <hyatt@apple.com>
 
+        Fix list markers to properly stroke and fill.  I screwed this up when changing how text draws.
+
+        Reviewed by olliej
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+
+2006-12-18  David Hyatt  <hyatt@apple.com>
+
         Eliminate the Pen object in favor of separate stroke variables, since most code just wants to set the
         stroke color.  This also makes it easier for us to push only stroke color through into CG synchronously
         while leaving the others alone.
