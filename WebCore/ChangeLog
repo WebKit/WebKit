@@ -1,3 +1,19 @@
+2006-12-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/4809825>. We need to check isSafeScript when converting
+        a Location to string. 
+        
+        It's really a bug, and poor design, for objects to override toString.
+        Subclasses that want custom toString implementations should add a toString 
+        function to their prototypes instead of overriding the JavaScript ToString 
+        operation. Following this design pattern would have avoided this bug in the
+        first place.
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::Location::toString):
+
 2006-12-20  David Hyatt  <hyatt@apple.com>
 
         Fix SVG stroking.  Make strokeThickness() get pushed into CG immediately

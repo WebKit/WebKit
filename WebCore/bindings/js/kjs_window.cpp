@@ -2208,8 +2208,11 @@ JSValue *Location::toPrimitive(ExecState *exec, JSType) const
   return jsString(toString(exec));
 }
 
-UString Location::toString(ExecState *) const
+UString Location::toString(ExecState* exec) const
 {
+  if (!m_frame || !Window::retrieveWindow(m_frame)->isSafeScript(exec))
+    return UString();
+
   if (!m_frame->loader()->url().hasPath())
     return m_frame->loader()->url().prettyURL()+"/";
   return m_frame->loader()->url().prettyURL();
