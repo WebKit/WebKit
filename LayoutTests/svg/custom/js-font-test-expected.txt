@@ -8,26 +8,26 @@ layer at (0,0) size 800x1000
             text run at (0,-11) width 35: "Arabic"
         RenderSVGText {text} at (100,10) size 800x0
         RenderSVGText {text} at (190,10) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 65x14
-            text run at (0,-11) width 65 RTL: "\x{627}\x{644}\x{633}\x{644}\x{627}\x{645} \x{639}\x{644}\x{64A}\x{643}\x{645}"
+          RenderSVGInlineText {#text} at (0,-11) size 47x14
+            text run at (0,-11) width 47 RTL: "\x{627}\x{644}\x{633}\x{644}\x{627}\x{645} \x{639}\x{644}\x{64A}\x{643}\x{645}"
         RenderPath {line} at (10,29.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,30.00L310.00,30.00"]
         RenderSVGText {text} at (10,26) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 42x14
             text run at (0,-11) width 42: "Bengali"
         RenderSVGText {text} at (100,26) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 84x14
-            text run at (0,-11) width 84: "\x{9AC}\x{9BE}\x{999}\x{9CD}\x{9B2}\x{9BE}"
+          RenderSVGInlineText {#text} at (0,-11) size 83x14
+            text run at (0,-11) width 83: "\x{9AC}\x{9BE}\x{999}\x{9CD}\x{9B2}\x{9BE}"
         RenderSVGText {text} at (190,26) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 84x14
-            text run at (0,-11) width 84: "\x{9B7}\x{9BE}\x{997}\x{9A4}\x{9CB}\x{9AE}"
+          RenderSVGInlineText {#text} at (0,-11) size 83x14
+            text run at (0,-11) width 83: "\x{9B7}\x{9BE}\x{997}\x{9A4}\x{9CB}\x{9AE}"
         RenderPath {line} at (10,45.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,46.00L310.00,46.00"]
         RenderSVGText {text} at (10,42) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 49x14
             text run at (0,-11) width 49: "Burmese"
         RenderSVGText {text} at (100,42) size 800x0
         RenderSVGText {text} at (190,42) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 98x14
-            text run at (0,-11) width 98: "\x{1019}\x{1039}\x{101B}\x{1014}\x{1039}\x{1019}\x{102C}"
+          RenderSVGInlineText {#text} at (0,-11) size 97x14
+            text run at (0,-11) width 97: "\x{1019}\x{1039}\x{101B}\x{1014}\x{1039}\x{1019}\x{102C}"
         RenderPath {line} at (10,61.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,62.00L310.00,62.00"]
         RenderSVGText {text} at (10,58) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 54x14
@@ -43,8 +43,8 @@ layer at (0,0) size 800x1000
           RenderSVGInlineText {#text} at (0,-11) size 35x14
             text run at (0,-11) width 35: "Czech"
         RenderSVGText {text} at (100,74) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 31x14
-            text run at (0,-11) width 31: "\x{10D}esky"
+          RenderSVGInlineText {#text} at (0,-11) size 32x14
+            text run at (0,-11) width 32: "\x{10D}esky"
         RenderSVGText {text} at (190,74) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 57x14
             text run at (0,-11) width 57: "Dobr\x{FD} den"
@@ -145,19 +145,19 @@ layer at (0,0) size 800x1000
           RenderSVGInlineText {#text} at (0,-11) size 33x14
             text run at (0,-11) width 33: "Greek"
         RenderSVGText {text} at (100,250) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 49x14
-            text run at (0,-11) width 49: "\x{395}\x{3BB}\x{3BB}\x{3B7}\x{3BD}\x{3B9}\x{3BA}\x{3AC}"
+          RenderSVGInlineText {#text} at (0,-11) size 54x14
+            text run at (0,-11) width 54: "\x{395}\x{3BB}\x{3BB}\x{3B7}\x{3BD}\x{3B9}\x{3BA}\x{3AC}"
         RenderSVGText {text} at (190,250) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 45x14
-            text run at (0,-11) width 45: "\x{393}\x{3B5}\x{3B9}\x{3AC} \x{3C3}\x{3B1}\x{3C2}"
+          RenderSVGInlineText {#text} at (0,-11) size 52x14
+            text run at (0,-11) width 52: "\x{393}\x{3B5}\x{3B9}\x{3AC} \x{3C3}\x{3B1}\x{3C2}"
         RenderPath {line} at (10,269.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,270.00L310.00,270.00"]
-        RenderSVGText {text} at (10,266) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 45x18
-            text run at (0,-13) width 45: "Hebrew"
+        RenderSVGText {text} at (10,266) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 38x14
+            text run at (0,-11) width 38: "Hebrew"
         RenderSVGText {text} at (100,266) size 800x0
-        RenderSVGText {text} at (190,266) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 28x18
-            text run at (0,-13) width 28 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}"
+        RenderSVGText {text} at (190,266) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 28x14
+            text run at (0,-11) width 28 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}"
         RenderPath {line} at (10,285.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,286.00L310.00,286.00"]
         RenderSVGText {text} at (10,282) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 29x14
@@ -175,21 +175,21 @@ layer at (0,0) size 800x1000
           RenderSVGInlineText {#text} at (0,-11) size 99x14
             text run at (0,-11) width 99: "Ciao, Buon giorno"
         RenderPath {line} at (10,317.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,318.00L310.00,318.00"]
-        RenderSVGText {text} at (10,314) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 32x18
-            text run at (0,-13) width 32: "\x{26A}\x{14B}gl\x{26A}\x{283}"
+        RenderSVGText {text} at (10,314) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 30x14
+            text run at (0,-11) width 30: "\x{26A}\x{14B}gl\x{26A}\x{283}"
         RenderSVGText {text} at (100,314) size 800x0
-        RenderSVGText {text} at (190,314) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 31x18
-            text run at (0,-13) width 31: "h\x{25B}l\x{259}\x{28A}"
+        RenderSVGText {text} at (190,314) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 28x14
+            text run at (0,-11) width 28: "h\x{25B}l\x{259}\x{28A}"
         RenderPath {line} at (10,333.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,334.00L310.00,334.00"]
-        RenderSVGText {text} at (10,330) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 44x18
-            text run at (0,-13) width 44: "Maltese"
+        RenderSVGText {text} at (10,330) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 37x14
+            text run at (0,-11) width 37: "Maltese"
         RenderSVGText {text} at (100,330) size 800x0
-        RenderSVGText {text} at (190,330) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 66x18
-            text run at (0,-13) width 66: "\x{10A}aw, Sa\x{127}\x{127}a"
+        RenderSVGText {text} at (190,330) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 57x14
+            text run at (0,-11) width 57: "\x{10A}aw, Sa\x{127}\x{127}a"
         RenderPath {line} at (10,349.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,350.00L310.00,350.00"]
         RenderSVGText {text} at (10,346) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 64x14
@@ -222,36 +222,36 @@ layer at (0,0) size 800x1000
             text run at (0,-11) width 34: "Polish"
         RenderSVGText {text} at (100,394) size 800x0
         RenderSVGText {text} at (190,394) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 91x14
-            text run at (0,-11) width 91: "Dzie\x{144} dobry, Hej"
+          RenderSVGInlineText {#text} at (0,-11) size 92x14
+            text run at (0,-11) width 92: "Dzie\x{144} dobry, Hej"
         RenderPath {line} at (10,413.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,414.00L310.00,414.00"]
         RenderSVGText {text} at (10,410) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 45x14
             text run at (0,-11) width 45: "Russian"
         RenderSVGText {text} at (100,410) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 45x14
-            text run at (0,-11) width 45: "\x{420}\x{443}\x{441}\x{441}\x{43A}\x{438}\x{439}"
+          RenderSVGInlineText {#text} at (0,-11) size 48x14
+            text run at (0,-11) width 48: "\x{420}\x{443}\x{441}\x{441}\x{43A}\x{438}\x{439}"
         RenderSVGText {text} at (190,410) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 79x14
-            text run at (0,-11) width 79: "\x{417}\x{434}\x{440}\x{430}\x{432}\x{441}\x{442}\x{432}\x{443}\x{439}\x{442}\x{435}!"
+          RenderSVGInlineText {#text} at (0,-11) size 83x14
+            text run at (0,-11) width 83: "\x{417}\x{434}\x{440}\x{430}\x{432}\x{441}\x{442}\x{432}\x{443}\x{439}\x{442}\x{435}!"
         RenderPath {line} at (10,429.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,430.00L310.00,430.00"]
         RenderSVGText {text} at (10,426) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 37x14
             text run at (0,-11) width 37: "Slovak"
         RenderSVGText {text} at (100,426) size 800x0
         RenderSVGText {text} at (190,426) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 57x14
-            text run at (0,-11) width 57: "Dobr\x{FD} de\x{148}"
+          RenderSVGInlineText {#text} at (0,-11) size 58x14
+            text run at (0,-11) width 58: "Dobr\x{FD} de\x{148}"
         RenderPath {line} at (10,445.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,446.00L310.00,446.00"]
-        RenderSVGText {text} at (10,442) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 44x18
-            text run at (0,-13) width 44: "Spanish"
-        RenderSVGText {text} at (100,442) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 45x18
-            text run at (0,-13) width 45: "Espa\x{F1}ol"
-        RenderSVGText {text} at (190,442) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 34x18
-            text run at (0,-13) width 34: "\x{200E}\x{A1}Hola!\x{200E}"
+        RenderSVGText {text} at (10,442) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 38x14
+            text run at (0,-11) width 38: "Spanish"
+        RenderSVGText {text} at (100,442) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 38x14
+            text run at (0,-11) width 38: "Espa\x{F1}ol"
+        RenderSVGText {text} at (190,442) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 31x14
+            text run at (0,-11) width 31: "\x{200E}\x{A1}Hola!\x{200E}"
         RenderPath {line} at (10,461.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,462.00L310.00,462.00"]
         RenderSVGText {text} at (10,458) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 47x14
@@ -267,11 +267,11 @@ layer at (0,0) size 800x1000
           RenderSVGInlineText {#text} at (0,-11) size 24x14
             text run at (0,-11) width 24: "Thai"
         RenderSVGText {text} at (100,474) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 50x14
-            text run at (0,-11) width 50: "\x{E20}\x{E32}\x{E29}\x{E32}\x{E44}\x{E17}\x{E22}"
+          RenderSVGInlineText {#text} at (0,-11) size 41x14
+            text run at (0,-11) width 41: "\x{E20}\x{E32}\x{E29}\x{E32}\x{E44}\x{E17}\x{E22}"
         RenderSVGText {text} at (190,474) size 800x14
-          RenderSVGInlineText {#text} at (0,-11) size 100x14
-            text run at (0,-11) width 100: "\x{E2A}\x{E27}\x{E31}\x{E2A}\x{E14}\x{E35}\x{E04}\x{E23}\x{E31}\x{E1A}, \x{E2A}\x{E27}\x{E31}\x{E2A}\x{E14}\x{E35}\x{E04}\x{E48}\x{E30}"
+          RenderSVGInlineText {#text} at (0,-11) size 85x14
+            text run at (0,-11) width 85: "\x{E2A}\x{E27}\x{E31}\x{E2A}\x{E14}\x{E35}\x{E04}\x{E23}\x{E31}\x{E1A}, \x{E2A}\x{E27}\x{E31}\x{E2A}\x{E14}\x{E35}\x{E04}\x{E48}\x{E30}"
         RenderPath {line} at (10,493.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,494.00L310.00,494.00"]
         RenderSVGText {text} at (10,490) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 40x14
@@ -293,45 +293,45 @@ layer at (0,0) size 800x1000
           RenderSVGInlineText {#text} at (0,-11) size 51x14
             text run at (0,-11) width 51: "Xin Ch\x{E0}o"
         RenderPath {line} at (10,525.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,526.00L310.00,526.00"]
-        RenderSVGText {text} at (10,522) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 42x18
-            text run at (0,-13) width 42: "Yiddish"
-        RenderSVGText {text} at (100,522) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 33x18
-            text run at (0,-13) width 33 RTL: "\x{5F2}\x{5B7}\x{5D3}\x{5D9}\x{5E9}\x{5E2}"
-        RenderSVGText {text} at (190,522) size 800x18
-          RenderSVGInlineText {#text} at (0,-13) size 66x18
-            text run at (0,-13) width 66 RTL: "\x{5D3}\x{5D0}\x{5B8}\x{5E1} \x{5D4}\x{5F2}\x{5B7}\x{5D6}\x{5E2}\x{5DC}\x{5E2}"
+        RenderSVGText {text} at (10,522) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 38x14
+            text run at (0,-11) width 38: "Yiddish"
+        RenderSVGText {text} at (100,522) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 33x14
+            text run at (0,-11) width 33 RTL: "\x{5F2}\x{5B7}\x{5D3}\x{5D9}\x{5E9}\x{5E2}"
+        RenderSVGText {text} at (190,522) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 66x14
+            text run at (0,-11) width 66 RTL: "\x{5D3}\x{5D0}\x{5B8}\x{5E1} \x{5D4}\x{5F2}\x{5B7}\x{5D6}\x{5E2}\x{5DC}\x{5E2}"
         RenderPath {line} at (10,541.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,542.00L310.00,542.00"]
-        RenderSVGText {text} at (10,538) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 48x12
-            text run at (0,-10) width 48: "Japanese"
-        RenderSVGText {text} at (100,538) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 36x12
-            text run at (0,-10) width 36: "\x{65E5}\x{672C}\x{8A9E}"
-        RenderSVGText {text} at (190,538) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 102x12
-            text run at (0,-10) width 102: "\x{3053}\x{3093}\x{306B}\x{3061}\x{306F}, \x{FF7A}\x{FF9D}\x{FF86}\x{FF81}\x{FF8A}"
+        RenderSVGText {text} at (10,538) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 42x14
+            text run at (0,-11) width 42: "Japanese"
+        RenderSVGText {text} at (100,538) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 36x14
+            text run at (0,-11) width 36: "\x{65E5}\x{672C}\x{8A9E}"
+        RenderSVGText {text} at (190,538) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 96x14
+            text run at (0,-11) width 96: "\x{3053}\x{3093}\x{306B}\x{3061}\x{306F}, \x{FF7A}\x{FF9D}\x{FF86}\x{FF81}\x{FF8A}"
         RenderPath {line} at (10,557.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,558.00L310.00,558.00"]
-        RenderSVGText {text} at (10,554) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 42x12
-            text run at (0,-10) width 42: "Chinese"
-        RenderSVGText {text} at (100,554) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 108x12
-            text run at (0,-10) width 108: "\x{4E2D}\x{6587},\x{666E}\x{901A}\x{8BDD},\x{6C49}\x{8BED}\x{FFFD}"
-        RenderSVGText {text} at (190,554) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 24x12
-            text run at (0,-10) width 24: "\x{4F60}\x{597D}"
+        RenderSVGText {text} at (10,554) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 38x14
+            text run at (0,-11) width 38: "Chinese"
+        RenderSVGText {text} at (100,554) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 102x14
+            text run at (0,-11) width 102: "\x{4E2D}\x{6587},\x{666E}\x{901A}\x{8BDD},\x{6C49}\x{8BED}\x{FFFD}"
+        RenderSVGText {text} at (190,554) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 24x14
+            text run at (0,-11) width 24: "\x{4F60}\x{597D}"
         RenderPath {line} at (10,573.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,574.00L310.00,574.00"]
-        RenderSVGText {text} at (10,570) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 54x12
-            text run at (0,-10) width 54: "Cantonese"
-        RenderSVGText {text} at (100,570) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 66x12
-            text run at (0,-10) width 66: "\x{7CB5}\x{8A9E},\x{5EE3}\x{6771}\x{8A71}"
-        RenderSVGText {text} at (190,570) size 800x12
-          RenderSVGInlineText {#text} at (0,-10) size 60x12
-            text run at (0,-10) width 60: "\x{65E9}\x{6668}, \x{4F60}\x{597D}"
+        RenderSVGText {text} at (10,570) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 49x14
+            text run at (0,-11) width 49: "Cantonese"
+        RenderSVGText {text} at (100,570) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 63x14
+            text run at (0,-11) width 63: "\x{7CB5}\x{8A9E},\x{5EE3}\x{6771}\x{8A71}"
+        RenderSVGText {text} at (190,570) size 800x14
+          RenderSVGInlineText {#text} at (0,-11) size 54x14
+            text run at (0,-11) width 54: "\x{65E9}\x{6668}, \x{4F60}\x{597D}"
         RenderPath {line} at (10,589.50) size 300x1 [opacity=0.50] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,590.00L310.00,590.00"]
         RenderSVGText {text} at (10,586) size 800x14
           RenderSVGInlineText {#text} at (0,-11) size 40x14
