@@ -248,7 +248,7 @@ namespace KJS {
     virtual UString toString(ExecState*) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, RangeCount, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
-           SetBaseAndExtent, SetPosition, Modify, GetRangeAt };
+           SetBaseAndExtent, SetPosition, Modify, GetRangeAt, RemoveAllRanges, AddRange };
     WebCore::Frame* frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

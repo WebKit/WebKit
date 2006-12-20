@@ -41,6 +41,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -710,6 +711,44 @@ String SelectionController::toString() const
 PassRefPtr<Range> SelectionController::getRangeAt(int index) const
 {
     return index == 0 ? m_sel.toRange() : 0;
+}
+
+void SelectionController::removeAllRanges()
+{
+    clear();
+}
+
+// Adds r to the currently selected range.
+void SelectionController::addRange(const Range* r)
+{
+    if (isNone()) {
+        setSelection(Selection(r));
+        return;
+    }
+
+    RefPtr<Range> range = m_sel.toRange();
+    ExceptionCode ec = 0;
+    if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), ec) == -1) {
+        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
+        if (r->compareBoundaryPoints(Range::END_TO_START, range.get(), ec) > -1) {
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
+                // The original range and r intersect.
+                setSelection(Selection(r->startPosition(), range->endPosition(), DOWNSTREAM));
+            else
+                // r contains the original range.
+                setSelection(Selection(r));
+        }
+    } else {
+        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
+        if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), ec) < 1) {
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
+                // The original range contains r.
+                setSelection(Selection(range.get()));
+            else
+                // The original range and r intersect.
+                setSelection(Selection(range->startPosition(), r->endPosition(), DOWNSTREAM));
+        }
+    }
 }
 
 void SelectionController::setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset)

@@ -129,12 +129,12 @@ public:
     void extend(Node*, int offset);
     PassRefPtr<Range> getRangeAt(int index) const;
     int rangeCount() const { return !isNone() ? 1 : 0; }
+    void removeAllRanges();
+    void addRange(const Range*);
     //void deleteFromDocument();
     //bool containsNode(Node *node, bool entirelyContained);
-    //void addRange(const Range *);
     //void selectAllChildren(const Node *);
     //void removeRange(const Range *);
-    //void removeAllRanges();
     
     // Microsoft Selection Object API
     void empty();

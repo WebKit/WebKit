@@ -1,3 +1,23 @@
+2006-12-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Added Selection::removeAllRanges() and ::addRange()
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::SelectionFunc::callAsFunction): Added the bindings for
+        the two new functions.
+        * bindings/js/kjs_window.h:
+        (KJS::Selection::):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::removeAllRanges): Equivalent
+        to clear().
+        (WebCore::SelectionController::addRange): Until we support
+        discontiguous selections, the new selected range is the 
+        union of the old selected range and the passed range if
+        the two intersect, and the old range if they don't.
+        * editing/SelectionController.h:
+
 2006-12-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
