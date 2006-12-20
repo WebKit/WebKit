@@ -109,4 +109,13 @@ void Parser::accept(PassRefPtr<ProgramNode> prog)
     *progNode = prog;
 }
 
+UString Parser::prettyPrint(const UString& code)
+{
+    RefPtr<ProgramNode> progNode = parse(UString(), 0, code.data(), code.size());
+    if (!progNode)
+        return 0;
+    
+    return progNode->toString();
+}
+
 }

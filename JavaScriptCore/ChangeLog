@@ -1,3 +1,17 @@
+2006-12-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Add -p option to testkjs which pretty prints the files instead of executing them.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/Parser.cpp:
+        (KJS::Parser::prettyPrint):
+        * kjs/Parser.h:
+        * kjs/testkjs.cpp:
+        (doIt):
+
 2006-12-19  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Lou

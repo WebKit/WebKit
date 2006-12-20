@@ -28,6 +28,7 @@
 #include <wtf/HashTraits.h>
 #include "JSLock.h"
 #include "object.h"
+#include "Parser.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -210,6 +211,7 @@ int main(int argc, char** argv)
 bool doIt(int argc, char** argv)
 {
   bool success = true;
+  bool prettyPrint = false;
   GlobalImp* global = new GlobalImp();
 
   // create interpreter
@@ -232,6 +234,10 @@ bool doIt(int argc, char** argv)
     const char* fileName = argv[i];
     if (strcmp(fileName, "-f") == 0) // mozilla test driver script uses "-f" prefix for files
       continue;
+    if (strcmp(fileName, "-p") == 0) {
+      prettyPrint = true;
+      continue;
+    }
     
     char* script = createStringWithContentsOfFile(fileName);
     if (!script) {
@@ -239,8 +245,20 @@ bool doIt(int argc, char** argv)
       break; // fail early so we can catch missing files
     }
     
-    Completion completion = interp->evaluate(fileName, 0, script);
-    success = success && completion.complType() != Throw;
+    if (prettyPrint) {
+      UString s = Parser::prettyPrint(script);
+      if (s.isNull()) {
+        success = false;
+        break;
+      }
+      
+      printf("%s\n", s.UTF8String().c_str());
+      
+    } else {
+      Completion completion = interp->evaluate(fileName, 0, script);
+      success = success && completion.complType() != Throw;
+    }
+    
     free(script);
   }
 
