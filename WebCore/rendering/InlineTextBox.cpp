@@ -383,7 +383,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
                     selectionTextShadow = pseudoStyle->textShadow();
             }
             
-            short strokeWidth = pseudoStyle->textStrokeWidth();
+            float strokeWidth = pseudoStyle->textStrokeWidth();
             if (strokeWidth != selectionStrokeWidth) {
                 if (!paintSelectedTextOnly)
                     paintSelectedTextSeparately = true;
