@@ -1,3 +1,28 @@
+2006-12-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4860924> outerHTML gives an out-of-date 
+        result when applied to a clone
+
+        We were only copying the m_inlineStyleDecl over to clones, but we 
+        need to copy m_isStyleAttributeValid and 
+        m_synchronizingStyleAttribute as well to know when we have to 
+        update style, etc.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::copyNonAttributeProperties): Copy over all 
+        three member variables.
+        * dom/StyledElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::cloneNode): No longer need to copy the 
+        inline style decl explicitly because copyNonAttributeProperties() 
+        will take care of it.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::copyNonAttributeProperties): Call into 
+        parent class implementation. This is important now that there is 
+        more than one implementation of this function.
+
 2006-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

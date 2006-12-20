@@ -1013,6 +1013,8 @@ void HTMLInputElement::copyNonAttributeProperties(const Element *source)
     m_value = sourceElem->m_value;
     m_checked = sourceElem->m_checked;
     m_indeterminate = sourceElem->m_indeterminate;
+    
+    HTMLGenericFormElement::copyNonAttributeProperties(source);
 }
 
 String HTMLInputElement::value() const

@@ -95,9 +95,6 @@ PassRefPtr<Node> HTMLElement::cloneNode(bool deep)
     if (namedAttrMap)
         *clone->attributes() = *namedAttrMap;
 
-    if (m_inlineStyleDecl)
-        *clone->getInlineStyleDecl() = *m_inlineStyleDecl;
-
     clone->copyNonAttributeProperties(this);
 
     if (deep)
