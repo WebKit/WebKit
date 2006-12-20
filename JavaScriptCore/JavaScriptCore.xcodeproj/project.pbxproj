@@ -284,6 +284,22 @@
 			outputFiles = (
 			);
 		};
+               5DAD97A80B39B78E0014FEFE /* PBXBuildRule */ = {
+                       isa = PBXBuildRule;
+                       compilerSpec = com.apple.compilers.gcc.4_0;
+                       fileType = sourcecode.c;
+                       isEditable = 1;
+                       outputFiles = (
+                       );
+               };
+               5DAD97A80B39B88E0014FEFE /* PBXBuildRule */ = {
+                       isa = PBXBuildRule;
+                       compilerSpec = com.apple.compilers.gcc.4_0;
+                       fileType = sourcecode.cpp;
+                       isEditable = 1;
+                       outputFiles = (
+                       );
+               };
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1240,6 +1256,8 @@
 				935F69F408244FEA003D1A45 /* Frameworks */,
 			);
 			buildRules = (
+                               5DAD97A80B39B78E0014FEFE /* PBXBuildRule */,
+				5DAD97A80B39B88E0014FEFE /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
