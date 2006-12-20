@@ -344,14 +344,14 @@ void GraphicsContext::setPlatformFillColor(const Color&)
 void GraphicsContext::setPlatformStrokeColor(const Color&);
 {
 }
+
+void GraphicsContext::setPlatformStrokeThickness(float)
+{
+}
 #endif
 
 #if !PLATFORM(QT)
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
-{
-}
-
-void GraphicsContext::setPlatformStrokeThickness(float)
 {
 }
 

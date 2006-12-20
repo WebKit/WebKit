@@ -144,7 +144,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (strokeStyle() == NoStroke || !strokeColor().alpha())
         return;
 
-    float width = max(1.0f, (float)strokeThickness());
+    float width = strokeThickness();
 
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
@@ -237,8 +237,6 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         const CGFloat dottedLine[2] = { patWidth, patWidth };
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
-    
-    CGContextSetLineWidth(context, width);
 
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, p1.x(), p1.y());
@@ -267,18 +265,13 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     CGContextClosePath(context);
 
     if (fillColor().alpha()) {
-        if (strokeStyle() != NoStroke) {
+        if (strokeStyle() != NoStroke)
             // stroke and fill
-            float strokeWidth = max(strokeThickness(), 1.0f);
-            CGContextSetLineWidth(context, strokeWidth);
             CGContextDrawPath(context, kCGPathFillStroke);
-        } else
+        else
             CGContextFillPath(context);
-    } else if (strokeStyle() != NoStroke) {
-        float strokeWidth = max(strokeThickness(), 1.0f);
-        CGContextSetLineWidth(context, strokeWidth);
+    } else if (strokeStyle() != NoStroke)
         CGContextStrokePath(context);
-    }
 }
 
 
@@ -314,7 +307,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         scale(FloatSize(1, reverseScaleFactor));
     
     
-    float width = max(strokeThickness(),  1.0f);
+    float width = strokeThickness();
     int patWidth = 0;
     
     switch (strokeStyle()) {
@@ -368,7 +361,6 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
 
-    CGContextSetLineWidth(context, width);
     CGContextStrokePath(context);
     CGContextRestoreGState(context);
     
@@ -398,10 +390,8 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (fillColor().alpha())
         CGContextEOFillPath(context);
 
-    if (strokeStyle() != NoStroke) {
-        CGContextSetLineWidth(context, strokeThickness());
+    if (strokeStyle() != NoStroke)
         CGContextStrokePath(context);
-    }
 
     CGContextRestoreGState(context);
 }
@@ -560,13 +550,6 @@ void GraphicsContext::clearShadow()
     if (paintingDisabled())
         return;
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
-}
-
-void GraphicsContext::setLineWidth(float width)
-{
-    if (paintingDisabled())
-        return;
-    CGContextSetLineWidth(platformContext(), width);
 }
 
 void GraphicsContext::setMiterLimit(float limit)
@@ -850,6 +833,13 @@ void GraphicsContext::setPlatformStrokeColor(const Color& color)
     if (paintingDisabled())
         return;
     setCGStrokeColor(platformContext(), color);
+}
+
+void GraphicsContext::setPlatformStrokeThickness(float thickness)
+{
+    if (paintingDisabled())
+        return;
+    CGContextSetLineWidth(platformContext(), thickness);
 }
 
 void GraphicsContext::setPlatformFillColor(const Color& color)

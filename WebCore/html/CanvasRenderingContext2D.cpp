@@ -144,7 +144,7 @@ void CanvasRenderingContext2D::setLineWidth(float width)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    c->setLineWidth(width);
+    c->setStrokeThickness(width);
 }
 
 String CanvasRenderingContext2D::lineCap() const

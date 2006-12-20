@@ -640,16 +640,6 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     m_data->p().strokePath(path, nPen);
 }
 
-void GraphicsContext::setLineWidth(float width)
-{
-    if (paintingDisabled())
-        return;
-
-    QPen nPen = m_data->p().pen();
-    nPen.setWidthF(width);
-    m_data->p().setPen(nPen);
-}
-
 void GraphicsContext::setLineCap(LineCap lc)
 {
     if (paintingDisabled())
