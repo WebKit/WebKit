@@ -1,5 +1,11 @@
 2006-12-20  Anders Carlsson  <acarlsson@apple.com>
 
+        * kjs/string_object.cpp:
+        (localeCompare):
+        Speculative Win32 fix.
+
+2006-12-20  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/4235733>
