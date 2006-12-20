@@ -5,7 +5,7 @@ TARGET = JavaScriptCore
 DESTDIR = ../lib
 OBJECTS_DIR = tmp
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/bindings/qt $$PWD/wtf
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 DEFINES += BUILDING_QT__
 QT -= gui
@@ -45,6 +45,9 @@ SOURCES += \
     bindings/c/c_instance.cpp \
     bindings/c/c_runtime.cpp \
     bindings/c/c_utility.cpp \
+    bindings/qt/qt_class.cpp \
+    bindings/qt/qt_instance.cpp \
+    bindings/qt/qt_runtime.cpp \
     kjs/DateMath.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/PropertyNameArray.cpp \

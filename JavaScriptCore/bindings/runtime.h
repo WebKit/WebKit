@@ -131,6 +131,9 @@ public:
         JavaLanguage,
         ObjectiveCLanguage,
         CLanguage
+#if PLATFORM(QT)
+        , QtLanguage
+#endif
     } BindingLanguage;
 
     Instance();

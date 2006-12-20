@@ -1,3 +1,65 @@
+2006-12-20  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by David Hyatt
+
+        Added support to bind QObject's to 
+        JavaScript.
+
+        * JavaScriptCore.pro:
+        * bindings/qt/qt_class.cpp: Added.
+        (KJS::Bindings::QtClass::QtClass):
+        (KJS::Bindings::QtClass::~QtClass):
+        (KJS::Bindings::QtClass::classForObject):
+        (KJS::Bindings::QtClass::name):
+        (KJS::Bindings::QtClass::methodsNamed):
+        (KJS::Bindings::QtClass::fieldNamed):
+        * bindings/qt/qt_class.h: Added.
+        (KJS::Bindings::QtClass::constructorAt):
+        (KJS::Bindings::QtClass::numConstructors):
+        * bindings/qt/qt_instance.cpp: Added.
+        (KJS::Bindings::QtInstance::QtInstance):
+        (KJS::Bindings::QtInstance::~QtInstance):
+        (KJS::Bindings::QtInstance::operator=):
+        (KJS::Bindings::QtInstance::getClass):
+        (KJS::Bindings::QtInstance::begin):
+        (KJS::Bindings::QtInstance::end):
+        (KJS::Bindings::QtInstance::implementsCall):
+        (KJS::Bindings::QtInstance::invokeMethod):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        (KJS::Bindings::QtInstance::defaultValue):
+        (KJS::Bindings::QtInstance::stringValue):
+        (KJS::Bindings::QtInstance::numberValue):
+        (KJS::Bindings::QtInstance::booleanValue):
+        (KJS::Bindings::QtInstance::valueOf):
+        * bindings/qt/qt_instance.h: Added.
+        (KJS::Bindings::QtInstance::getObject):
+        * bindings/qt/qt_runtime.cpp: Added.
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtField::name):
+        (KJS::Bindings::QtField::valueFromInstance):
+        (KJS::Bindings::QtField::setValueToInstance):
+        * bindings/qt/qt_runtime.h: Added.
+        (KJS::Bindings::QtField::QtField):
+        (KJS::Bindings::QtField::type):
+        (KJS::Bindings::QtMethod::QtMethod):
+        (KJS::Bindings::QtMethod::name):
+        (KJS::Bindings::QtMethod::numParameters):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::):
+        * bindings/testbindings.pro: Added.
+        * bindings/testqtbindings.cpp: Added.
+        (MyObject::MyObject):
+        (MyObject::setTestString):
+        (MyObject::setTestInt):
+        (MyObject::testString):
+        (MyObject::testInt):
+        (MyObject::foo):
+        (Global::className):
+        (main):
+
 2006-12-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
