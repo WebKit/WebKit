@@ -30,9 +30,7 @@
 
 namespace WebCore {
 
-class HTMLFrameSetElement : public HTMLElement
-{
-    friend class RenderFrameSet;
+class HTMLFrameSetElement : public HTMLElement {
 public:
     HTMLFrameSetElement(Document*);
     ~HTMLFrameSetElement();
@@ -48,8 +46,8 @@ public:
 
     virtual void defaultEventHandler(Event*);
 
-    bool frameBorder() { return frameborder; }
-    bool noResize() { return noresize; }
+    bool frameBorder() const { return frameborder; }
+    bool noResize() const { return noresize; }
 
     int totalRows() const { return m_totalRows; }
     int totalCols() const { return m_totalCols; }
@@ -63,7 +61,10 @@ public:
     String rows() const;
     void setRows(const String&);
 
-protected:
+    const Length* rowLengths() const { return m_rows; }
+    const Length* colLengths() const { return m_cols; }
+
+private:
     Length* m_rows;
     Length* m_cols;
 
@@ -71,9 +72,9 @@ protected:
     int m_totalCols;
     int m_border;
 
-    bool frameborder : 1;
-    bool frameBorderSet : 1;
-    bool noresize : 1;
+    bool frameborder;
+    bool frameBorderSet;
+    bool noresize;
 };
 
 } //namespace

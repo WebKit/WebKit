@@ -25,7 +25,6 @@
 #ifndef RenderFrameSet_h
 #define RenderFrameSet_h
 
-#include "HTMLFrameSetElement.h"
 #include "RenderContainer.h"
 
 namespace WebCore {
@@ -34,7 +33,6 @@ class HTMLFrameSetElement;
 class MouseEvent;
 
 class RenderFrameSet : public RenderContainer {
-    friend class HTMLFrameSetElement;
 public:
     RenderFrameSet(HTMLFrameSetElement*);
     virtual ~RenderFrameSet();
@@ -43,39 +41,54 @@ public:
     virtual bool isFrameSet() const { return true; }
 
     virtual void layout();
-
-    void positionFrames();
-
-    bool resizing() const { return m_resizing; }
-
-    bool userResize(MouseEvent*);
-    bool canResize(int x, int y);
-    void setResizing(bool);
-
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    HTMLFrameSetElement* element() const { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }
+    bool userResize(MouseEvent*);
+
+    bool isResizingRow() const;
+    bool isResizingColumn() const;
+
+    bool canResizeRow(const IntPoint&) const;
+    bool canResizeColumn(const IntPoint&) const;
 
 #ifndef NDEBUG
-    virtual void dump(TextStream* stream, DeprecatedString ind = "") const;
+    virtual void dump(TextStream*, DeprecatedString ind = "") const;
 #endif
 
 private:
-    int m_oldpos;
-    int m_gridLen[2];
-    int* m_gridDelta[2];
-    int* m_gridLayout[2];
+    static const int noSplit = -1;
 
-    bool* m_hSplitVar; // is this split variable?
-    bool* m_vSplitVar;
+    class GridAxis : Noncopyable {
+    public:
+        GridAxis();
+        void resize(int);
+        Vector<int> m_sizes;
+        Vector<int> m_deltas;
+        Vector<bool> m_isSplitResizable;
+        int m_splitBeingResized;
+        int m_splitResizeOffset;
+    };
 
-    int m_hSplit; // the split currently resized
-    int m_vSplit;
-    int m_hSplitPos;
-    int m_vSplitPos;
+    inline HTMLFrameSetElement* frameSet() const;
 
-    bool m_resizing;
-    bool m_clientResizing;
+    bool canResize(const IntPoint&) const;
+    void setIsResizing(bool);
+
+    void layOutAxis(GridAxis&, const Length*, int availableSpace);
+    void findNonResizableSplits();
+    void positionFrames();
+
+    int splitPosition(const GridAxis&, int split) const;
+    int hitTestSplit(const GridAxis&, int position) const;
+
+    void startResizing(GridAxis&, int position);
+    void continueResizing(GridAxis&, int position);
+
+    GridAxis m_rows;
+    GridAxis m_cols;
+
+    bool m_isResizing;
+    bool m_isChildResizing;
 };
 
 } // namespace WebCore

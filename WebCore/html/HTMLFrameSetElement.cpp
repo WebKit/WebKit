@@ -138,11 +138,11 @@ void HTMLFrameSetElement::attach()
 
 void HTMLFrameSetElement::defaultEventHandler(Event* evt)
 {
-    if (evt->isMouseEvent() && evt->type() != contextmenuEvent && !noresize && renderer()) {
-        static_cast<RenderFrameSet*>(renderer())->userResize(static_cast<MouseEvent*>(evt));
-        evt->setDefaultHandled();
-    }
-
+    if (evt->isMouseEvent() && !noresize && renderer())
+        if (static_cast<RenderFrameSet*>(renderer())->userResize(static_cast<MouseEvent*>(evt))) {
+            evt->setDefaultHandled();
+            return;
+        }
     HTMLElement::defaultEventHandler(evt);
 }
 
