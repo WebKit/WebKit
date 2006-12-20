@@ -294,6 +294,7 @@ macro(yankAndSelect) \
     BOOL initiatedDrag;
     BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
+    BOOL becomingFirstResponder;
 
     NSColor *backgroundColor;
 
@@ -2482,6 +2483,13 @@ NS_ENDHANDLER
 
 - (BOOL)becomeFirstResponder
 {
+    if (_private->becomingFirstResponder) {
+        // Fix for unrepro infinite recursion reported in radar 4448181. If we hit this assert on
+        // a debug build, we should figure out what causes the problem and do a better fix.
+        ASSERT_NOT_REACHED();
+        return NO;
+    }
+    
     // This works together with setNextKeyView to splice the WebView into
     // the key loop similar to the way NSScrollView does this. Note that
     // WebFrameView has very similar code.
@@ -2491,7 +2499,9 @@ NS_ENDHANDLER
     if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
         NSView *previousValidKeyView = [self previousValidKeyView];
         if ((previousValidKeyView != self) && (previousValidKeyView != mainFrameView)) {
+            _private->becomingFirstResponder = YES;
             [window makeFirstResponder:previousValidKeyView];
+            _private->becomingFirstResponder = NO;
             return YES;
         } else {
             return NO;
@@ -2499,7 +2509,9 @@ NS_ENDHANDLER
     }
     
     if ([mainFrameView acceptsFirstResponder]) {
+        _private->becomingFirstResponder = YES;
         [window makeFirstResponder:mainFrameView];
+        _private->becomingFirstResponder = NO;
         return YES;
     } 
     

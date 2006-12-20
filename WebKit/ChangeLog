@@ -1,3 +1,17 @@
+2006-12-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        - fix for unrepro infinite recursion bug:
+        <rdar://problem/4448181> CrashTracer: 154 crashes in Safari at com.apple.AppKit: 
+        -[NSView isDescendantOf:] + 24; infinite recursion in makeFirstResponder logic
+
+        * WebView/WebView.mm:
+        added becomingFirstResponder BOOL to private struct
+        (-[WebView becomeFirstResponder]):
+        use _private->becomingFirstResponder to guard against infinite recursion; complain on
+        debug builds if we run into this problem
+
 2006-12-19  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
