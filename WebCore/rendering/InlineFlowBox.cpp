@@ -720,7 +720,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& paintInfo, int tx,
     // Paint text decorations like underlines/overlines. We only do this if we aren't in quirks mode (i.e., in
     // almost-strict mode or strict mode).
     if (object()->style()->htmlHacks() || !object()->shouldPaintWithinRoot(paintInfo) ||
-            object()->style()->visibility() != VISIBLE)
+        object()->style()->visibility() != VISIBLE)
         return;
     
     // We don't want underlines or other decorations when we're trying to draw nothing but the selection as white text.

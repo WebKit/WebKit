@@ -1,3 +1,18 @@
+2006-12-20  David Hyatt  <hyatt@apple.com>
+
+        Make sure text decoration colors prefer stroke over fill (and honor both of the new CSS properties added
+        for these values over color).
+
+        Reviewed by mitz
+
+        Added fast/text/stroking-decorations.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintDecorations):
+        * rendering/RenderObject.cpp:
+        (WebCore::decorationColor):
+        (WebCore::RenderObject::getTextDecorationColors):
+
 2006-12-20  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
