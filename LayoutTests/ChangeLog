@@ -1,3 +1,14 @@
+2006-12-20  Beth Dakin  <bdakin@apple.com>
+
+        Rubber stamped by Darin.
+
+        Updated results for this test after my clone node check-in 
+        yesterday.
+
+        * editing/style/remove-underline-across-paragraph-expected.checksum:
+        * editing/style/remove-underline-across-paragraph-expected.png:
+        * editing/style/remove-underline-across-paragraph-expected.txt:
+
 2006-12-20  David Harrison  <harrison@apple.com>
 
         Updated for Justin's checkin that added properties.
