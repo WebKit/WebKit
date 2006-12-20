@@ -1,3 +1,19 @@
+2006-12-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 11893, white text on form controls.  Just make sure that
+        all form control drawing in RenderTheme is bracketed by save/restore
+        calls.
+
+        Reviewed by adele
+
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintTextArea):
+
 2006-12-20  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Anders.

@@ -628,12 +628,8 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
 
 bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    // The fill color gets destructively changed by the AppKit private method we're using here, so we need to
-    // save/restore.
-    paintInfo.context->save();
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
-    paintInfo.context->restore();
     return false;
 }
 
@@ -643,12 +639,8 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 
 bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    // The fill color gets destructively changed by the AppKit private method we're using here, so we need to
-    // save/restore.
-    paintInfo.context->save();
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
-    paintInfo.context->restore();
     return false;
 }
 

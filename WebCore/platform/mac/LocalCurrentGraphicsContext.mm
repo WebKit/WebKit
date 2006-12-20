@@ -27,6 +27,9 @@ namespace WebCore {
 
 LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext* graphicsContext)
 {
+    m_savedGraphicsContext = graphicsContext;
+    graphicsContext->save();
+    
     if (graphicsContext->platformContext() == [[NSGraphicsContext currentContext] graphicsPort]) {
         m_savedNSGraphicsContext = 0;
         return;
@@ -39,6 +42,8 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext* graphi
 
 LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext()
 {
+    m_savedGraphicsContext->restore();
+
     if (m_savedNSGraphicsContext) {
         [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext];
         [m_savedNSGraphicsContext release];
