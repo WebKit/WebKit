@@ -90,9 +90,12 @@ table-layout: auto;
 text-align: auto;
 text-decoration: none;
 -webkit-text-decorations-in-effect: none;
+-webkit-text-fill-color: rgba(0, 0, 0, 0);
 text-indent: 0px;
 text-shadow: none;
 -webkit-text-security: none;
+-webkit-text-stroke-color: rgba(0, 0, 0, 0);
+-webkit-text-stroke-width: 0;
 text-transform: none;
 top: auto;
 unicode-bidi: normal;
@@ -111,7 +114,7 @@ Other attributes that the computed style class supports:
 background-position: '0 0';
 border-spacing: '0px 0px';
 overflow: visible;
--webkit-match-nearest-mail-blockquote-color: normal;
+-webkit-match-nearest-mail-blockquote-color: match;
 -webkit-text-size-adjust: auto;
 
 
