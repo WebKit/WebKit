@@ -192,7 +192,7 @@ sub ReadPublicInterfaces
             # trim whitspace
             $line =~ s/^\s+//;
             $line =~ s/\s+$//;
-            $publicInterfaces{$line} = 1;
+            $publicInterfaces{$line} = 1 if length($line);
         }
     }
 
