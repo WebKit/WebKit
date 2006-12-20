@@ -1,3 +1,16 @@
+2006-12-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4570218> REGRESSION (?-10.4.7): cntl-K only works the first time
+
+        Test:
+        * editing/deleting/delete-to-end-of-paragraph.html
+        
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        If the selection was a caret at the end of the paragraph, extend selection so it wraps to the start of next paragraph (if any),
+
 2006-12-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, reviewed by Mitz.

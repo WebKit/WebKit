@@ -382,6 +382,11 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity)
                 typingAddedToOpenCommand();
                 return;
             }
+
+            // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
+            if (granularity == ParagraphBoundary && selectionController.selection().isCaret() && isEndOfParagraph(selectionController.selection().visibleEnd()))
+                selectionController.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+
             selectionToDelete = selectionController.selection();
             
             break;
