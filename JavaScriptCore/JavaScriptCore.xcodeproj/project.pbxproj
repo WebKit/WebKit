@@ -284,22 +284,70 @@
 			outputFiles = (
 			);
 		};
-               5DAD97A80B39B78E0014FEFE /* PBXBuildRule */ = {
-                       isa = PBXBuildRule;
-                       compilerSpec = com.apple.compilers.gcc.4_0;
-                       fileType = sourcecode.c;
-                       isEditable = 1;
-                       outputFiles = (
-                       );
-               };
-               5DAD97A80B39B88E0014FEFE /* PBXBuildRule */ = {
-                       isa = PBXBuildRule;
-                       compilerSpec = com.apple.compilers.gcc.4_0;
-                       fileType = sourcecode.cpp;
-                       isEditable = 1;
-                       outputFiles = (
-                       );
-               };
+		5DAD97A80B39B78E0014FEFE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B88E0014FEFE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B88E0014FEFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B88E0014FFFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B88F0014FEFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B88F0014FFFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B89F0014FEFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5DAD97A80B39B89F0014FFFF /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1180,6 +1228,8 @@
 				144005C70A5338C60005F061 /* Headers */,
 			);
 			buildRules = (
+				5DAD97A80B39B88E0014FEFF /* PBXBuildRule */,
+				5DAD97A80B39B88E0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				141211360A48796100480255 /* PBXTargetDependency */,
@@ -1198,6 +1248,8 @@
 				14BD59BD0A3E8F9000BAF59C /* Frameworks */,
 			);
 			buildRules = (
+				5DAD97A80B39B88F0014FEFF /* PBXBuildRule */,
+				5DAD97A80B39B88F0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				14270B080A451DA10080EEEA /* PBXTargetDependency */,
@@ -1238,6 +1290,8 @@
 				932F5BDE0822A1C700736975 /* Frameworks */,
 			);
 			buildRules = (
+				5DAD97A80B39B89F0014FEFF /* PBXBuildRule */,
+				5DAD97A80B39B89F0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				14270B0C0A451DA40080EEEA /* PBXTargetDependency */,
@@ -1256,7 +1310,7 @@
 				935F69F408244FEA003D1A45 /* Frameworks */,
 			);
 			buildRules = (
-                               5DAD97A80B39B78E0014FEFE /* PBXBuildRule */,
+				5DAD97A80B39B78E0014FEFE /* PBXBuildRule */,
 				5DAD97A80B39B88E0014FEFE /* PBXBuildRule */,
 			);
 			dependencies = (
