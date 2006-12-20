@@ -803,7 +803,9 @@ ImageBuffer* GraphicsContext::createImageBuffer(const IntSize& size, bool graySc
                                                  colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
 
     CGColorSpaceRelease(colorSpace);
-    return new ImageBuffer(size, new GraphicsContext(context));
+    GraphicsContext *graphicsContext = new GraphicsContext(context);
+    CGContextRelease(context);
+    return new ImageBuffer(size, graphicsContext);
 }
 
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
