@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (9.50,9.50) size 151x231
+      RenderSVGContainer {g} at (9.50,9.50) size 151x231
+        RenderPath {rect} at (9.50,9.50) size 151x51 [stroke={[type=SOLID] [color=#000080]}] [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L160.00,10.00L160.00,60.00L10.00,60.00"]
+        RenderPath {rect} at (9.50,69.50) size 151x51 [stroke={[type=SOLID] [color=#000080]}] [fill={[type=SOLID] [color=#008000]}] [data="M10.00,70.00L160.00,70.00L160.00,120.00L10.00,120.00"]
+        RenderPath {rect} at (9.50,129.50) size 151x51 [stroke={[type=SOLID] [color=#000080]}] [fill={[type=SOLID] [color=#008000]}] [data="M10.00,130.00L160.00,130.00L160.00,180.00L10.00,180.00"]
+        RenderPath {rect} at (9.50,189.50) size 151x51 [stroke={[type=SOLID] [color=#000080]}] [fill={[type=SOLID] [color=#008000]}] [data="M10.00,190.00L160.00,190.00L160.00,240.00L10.00,240.00"]

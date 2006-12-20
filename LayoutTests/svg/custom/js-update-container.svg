@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="2cm" height="2cm" onunload="byebye(evt)" onload="hello(evt)" xmlns="http://www.w3.org/2000/svg">
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(20, 20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 80); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 140); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 200); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(0, 0);
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function change()
+{
+    document.getElementById("group").setAttribute("stroke", "green");
+    document.getElementById("group").setAttribute("transform", "scale(0.5)");
+}
+</script>
+
+<g id="group" stroke-width="5px">
+    <rect width="2cm" height="2cm" onclick="change()" fill="navy"/>
+</g>
+</svg>

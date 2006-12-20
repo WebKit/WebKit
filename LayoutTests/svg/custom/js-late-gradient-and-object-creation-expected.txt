@@ -1,0 +1,15 @@
+KRenderingPaintServer {id="fillLinearGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(10,10)] [end=(440,0)]}
+KRenderingPaintServer {id="strokeLinearGradient" [type=LINEAR-GRADIENT] [stops=[(1.00,#008000)]] [start=(10,10)] [end=(440,0)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-250,15) size 1008.33x363.33
+      RenderSVGContainer {g} at (-250,15) size 1008.33x363.33
+        RenderSVGText {text} at (-150,70) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 420x78
+            text run at (0,-61) width 420: "Gradient on fill"
+        RenderSVGText {text} at (-150,140) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 506x78
+            text run at (0,-61) width 506: "Gradient on stroke"
+        RenderSVGText {text} at (-150,210) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 605x78
+            text run at (0,-61) width 605: "Gradient on fill/stroke"

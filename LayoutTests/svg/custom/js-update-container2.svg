@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="250" height="265" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<script type="text/ecmascript"><![CDATA[
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(20, 20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 80); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 140); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(20, 200); 
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.mouseMoveTo(0, 0);
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function mouseHandler(evt)
+{
+    evt.target.style.setProperty("fill", "green", "");
+}
+]]></script>
+
+<g style="fill:red; stroke:navy">
+    <rect id="target1" x="10" y="10" width="150" height="50" onmousedown="mouseHandler(evt)"/>
+    <rect id="target2" x="10" y="70" width="150" height="50" onmouseup="mouseHandler(evt)"/>
+    <rect id="target3" x="10" y="130" width="150" height="50" onmousemove="mouseHandler(evt)"/>
+    <rect id="target4" x="10" y="190" width="150" height="50" onmouseout="mouseHandler(evt)"/>
+</g>
+</svg>

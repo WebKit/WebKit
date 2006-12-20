@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="createGradient()">
+<g id="content" transform="scale(1, 1.5)">
+     <text font-size="68" fill="url(#dynGrad)"  x="20" y="70">Gradient on fill</text>
+</g>
+<script>
+	var content = document.getElementById("content");
+
+	function createGradient()
+	{
+		var gradient = document.createElement("linearGradient");
+		gradient.setAttribute("id", "dynGrad");
+		gradient.setAttribute("x1", "10");
+		gradient.setAttribute("y1", "10");
+		gradient.setAttribute("x2", "440");
+		gradient.setAttribute("xy", "10");
+
+		var stop1 = document.createElement("stop");
+		stop1.setAttribute("stop-color", "blue");
+		stop1.setAttribute("offset", "0");
+
+		var stop2 = document.createElement("stop");
+		stop2.setAttribute("stop-color", "red");
+		stop2.setAttribute("offset", "1");
+
+		gradient.appendChild(stop1);
+		gradient.appendChild(stop2);
+
+		content.appendChild(gradient);
+	}
+</script>
+
+</svg>

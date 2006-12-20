@@ -1,0 +1,77 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="800" height="600" onload="startAnimation(evt)" xmlns="http://www.w3.org/2000/svg">
+<script><![CDATA[
+if (window.layoutTestController)
+    window.layoutTestController.waitUntilDone();
+
+    var step = 1, opacityStep = (1/50);
+    var x = 30, y = 30, opacity = 0;
+    var danceTime = 1;
+
+    var count = 0;   
+    var stopAfter = 75;
+
+    var xdir = 0; // 0 = Add, 1 = Sub
+    var ydir = 0; // 0 = Add, 1 = Sub
+    var odir = 0; // 0 = Add, 1 = Sub
+
+    var bounce;
+    function startAnimation(evt) {
+        bounce = evt.target.ownerDocument.getElementById("bounce");
+        danceAround();
+    }
+
+    function danceAround() {
+        count++;
+        if (count == stopAfter) {
+            if (window.layoutTestController)
+                window.layoutTestController.notifyDone();
+            return;
+        }
+
+        if (xdir == 0) {
+            x = x + step;
+        } else {
+            x = x - step;
+        }
+
+        if (ydir == 0) {    
+            y = y + step;
+        } else {
+            y = y - step;
+        }
+
+        if (x > (800 - 65)) {
+            xdir = 1;
+        } else if (x < 10) {
+            xdir = 0;
+        }
+
+        if (y > (600 - 65)) {
+            ydir = 1;
+        } else if (y < 10) {
+            ydir = 0;
+        }
+
+        if (odir == 0) {
+            opacity = opacity + opacityStep;
+        } else {
+            opacity = opacity - opacityStep;
+        }
+
+        if (opacity > 1) {
+            odir = 1;
+        } else if (opacity < 0) {
+            odir = 0;
+        }
+    
+        bounce.setAttribute("transform", "translate(" + x + "," + y + ")");    
+        bounce.setAttribute("opacity", opacity);
+
+        setTimeout("danceAround()", danceTime);
+    }
+    ]]></script>
+    
+    <circle id="bounce" cx="35" cy="35" r="30" style="fill:navy;stroke:red;stroke-width:5px;"/>
+</svg>

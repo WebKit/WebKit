@@ -1,3 +1,53 @@
+2006-12-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Add a new set of SVG JavaScript testcases, mostly using SVG DOM.
+
+        js-late-gradient-and-object-creation.svg:
+        -> Create gradient, and shape referencing it dynamically.
+
+        js-late-gradient-creation.svg:
+        -> Create gradient dynamically. Shape referencing it already exists.
+
+        js-update-bounce.svg:
+        -> Scripted Animation which lets a circle bound around and change opacity over the time.
+           (Should test repainting issues, no problems with primitives like circle, ellipse..)
+
+        js-update-container.svg:
+        -> Updating a group, must update all elements. Works fine.
+
+        js-update-container2.svg:
+        -> Same like js-update-container.svg, but updates using SVG CSS.
+
+        js-update-gradient.svg:
+        -> Dynamic gradient modification. Doesn't work at the moment.
+
+        * svg/custom/js-late-gradient-and-object-creation-expected.checksum: Added.
+        * svg/custom/js-late-gradient-and-object-creation-expected.png: Added.
+        * svg/custom/js-late-gradient-and-object-creation-expected.txt: Added.
+        * svg/custom/js-late-gradient-and-object-creation.svg: Added.
+        * svg/custom/js-late-gradient-creation-expected.checksum: Added.
+        * svg/custom/js-late-gradient-creation-expected.png: Added.
+        * svg/custom/js-late-gradient-creation-expected.txt: Added.
+        * svg/custom/js-late-gradient-creation.svg: Added.
+        * svg/custom/js-update-bounce-expected.checksum: Added.
+        * svg/custom/js-update-bounce-expected.png: Added.
+        * svg/custom/js-update-bounce-expected.txt: Added.
+        * svg/custom/js-update-bounce.svg: Added.
+        * svg/custom/js-update-container-expected.checksum: Added.
+        * svg/custom/js-update-container-expected.png: Added.
+        * svg/custom/js-update-container-expected.txt: Added.
+        * svg/custom/js-update-container.svg: Added.
+        * svg/custom/js-update-container2-expected.checksum: Added.
+        * svg/custom/js-update-container2-expected.png: Added.
+        * svg/custom/js-update-container2-expected.txt: Added.
+        * svg/custom/js-update-container2.svg: Added.
+        * svg/custom/js-update-gradient-expected.checksum: Added.
+        * svg/custom/js-update-gradient-expected.png: Added.
+        * svg/custom/js-update-gradient-expected.txt: Added.
+        * svg/custom/js-update-gradient.svg: Added.
+
 2006-12-20  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Darin.

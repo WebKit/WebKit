@@ -1,0 +1,8 @@
+KRenderingPaintServer {id="dynGrad" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(10,10)] [end=(440,0)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (33.33,22.50) size 700x195
+      RenderSVGContainer {g} at (33.33,22.50) size 700x195 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+        RenderSVGText {text} at (20,70) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 420x78
+            text run at (0,-61) width 420: "Gradient on fill"
