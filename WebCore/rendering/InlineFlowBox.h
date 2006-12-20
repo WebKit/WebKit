@@ -37,7 +37,7 @@ public:
         : InlineRunBox(obj)
         , m_firstChild(0)
         , m_lastChild(0)
-        , m_maxHorizontalShadow(0)
+        , m_maxHorizontalVisualOverflow(0)
         , m_includeLeftEdge(false)
         , m_includeRightEdge(false)
         , m_hasTextChildren(false)
@@ -118,7 +118,7 @@ public:
     
     virtual void setVerticalOverflowPositions(int top, int bottom) { }
     virtual void setVerticalSelectionPositions(int top, int bottom) { }
-    int maxHorizontalShadow() const { return m_maxHorizontalShadow; }
+    int maxHorizontalVisualOverflow() const { return m_maxHorizontalVisualOverflow; }
 
     void removeChild(InlineBox* child);
 
@@ -130,7 +130,7 @@ public:
 protected:
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;
-    int m_maxHorizontalShadow;
+    int m_maxHorizontalVisualOverflow;
     bool m_includeLeftEdge : 1;
     bool m_includeRightEdge : 1;
     bool m_hasTextChildren : 1;

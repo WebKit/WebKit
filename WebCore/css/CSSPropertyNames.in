@@ -126,6 +126,7 @@ size
 table-layout
 text-align
 text-decoration
+-webkit-text-fill-color
 text-indent
 text-line-through
 text-line-through-color
@@ -140,6 +141,9 @@ text-overline-style
 text-overline-width
 -webkit-text-security
 text-shadow
+-webkit-text-stroke
+-webkit-text-stroke-color
+-webkit-text-stroke-width
 text-transform
 text-underline
 text-underline-color

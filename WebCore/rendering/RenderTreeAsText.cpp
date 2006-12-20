@@ -151,10 +151,23 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     if (!o.isText()) {
         if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
             ts << " [color=" << o.style()->color().name() << "]";
+
         if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()) &&
             o.style()->backgroundColor().isValid() && o.style()->backgroundColor().rgb())
             // Do not dump invalid or transparent backgrounds, since that is the default.
             ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
+        
+        if (o.parent() && (o.parent()->style()->textFillColor() != o.style()->textFillColor()) &&
+            o.style()->textFillColor().isValid() && o.style()->textFillColor().rgb())
+            ts << " [textFillColor=" << o.style()->textFillColor().name() << "]";
+
+        if (o.parent() && (o.parent()->style()->textStrokeColor() != o.style()->textStrokeColor()) &&
+            o.style()->textStrokeColor().isValid() && o.style()->textStrokeColor().rgb())
+            ts << " [textStrokeColor=" << o.style()->textStrokeColor().name() << "]";
+
+        if (o.parent() && (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth()) &&
+            o.style()->textStrokeWidth() > 0)
+            ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
 
         if (o.borderTop() || o.borderRight() || o.borderBottom() || o.borderLeft()) {
             ts << " [border:";

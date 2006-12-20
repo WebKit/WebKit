@@ -260,15 +260,19 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
                 needsWordSpacing = !DeprecatedChar(rt->text()[text->end()]).isSpace();
             }
             text->setXPos(x);
-            int shadowLeft = 0;
-            int shadowRight = 0;
+            
+            // FIXME: Setting this as layout overflow is bad.  We need to have a separate concept of
+            // visual overflow.
+            int strokeOverflow = (rt->style()->textStrokeWidth() + 1) / 2;
+            int visualOverflowLeft = -strokeOverflow;
+            int visualOverflowRight = strokeOverflow;
             for (ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next) {
-                shadowLeft = min(shadowLeft, shadow->x - shadow->blur);
-                shadowRight = max(shadowRight, shadow->x + shadow->blur);
+                visualOverflowLeft = min(visualOverflowLeft, shadow->x - shadow->blur - strokeOverflow);
+                visualOverflowRight = max(visualOverflowRight, shadow->x + shadow->blur + strokeOverflow);
             }
-            leftPosition = min(x + shadowLeft, leftPosition);
-            rightPosition = max(x + text->width() + shadowRight, rightPosition);
-            m_maxHorizontalShadow = max(max(shadowRight, -shadowLeft), m_maxHorizontalShadow);
+            leftPosition = min(x + visualOverflowLeft, leftPosition);
+            rightPosition = max(x + text->width() + visualOverflowRight, rightPosition);
+            m_maxHorizontalVisualOverflow = max(max(visualOverflowRight, -visualOverflowLeft), m_maxHorizontalVisualOverflow);
             x += text->width();
         } else {
             if (curr->object()->isPositioned()) {

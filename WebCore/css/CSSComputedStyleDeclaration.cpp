@@ -134,9 +134,12 @@ static const int computedProperties[] = {
     CSS_PROP_TEXT_ALIGN,
     CSS_PROP_TEXT_DECORATION,
     CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP_TEXT_SHADOW,
     CSS_PROP__WEBKIT_TEXT_SECURITY,
+    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
+    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_TOP,
     CSS_PROP_UNICODE_BIDI,
@@ -1174,6 +1177,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(CSS_VAL_NONE);
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
     }
+    case CSS_PROP__WEBKIT_TEXT_FILL_COLOR:
+        return new CSSPrimitiveValue(style->textFillColor().rgb());
     case CSS_PROP_TEXT_INDENT:
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:
@@ -1198,6 +1203,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(CSS_VAL_AUTO);
         else
             return new CSSPrimitiveValue(CSS_VAL_NONE);
+    case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
+        return new CSSPrimitiveValue(style->textStrokeColor().rgb());
+    case CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH:
+        return new CSSPrimitiveValue(style->textStrokeWidth(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_TEXT_TRANSFORM:
         switch (style->textTransform()) {
             case CAPITALIZE:
@@ -1478,8 +1487,11 @@ const int inheritableProperties[] = {
     CSS_PROP_LINE_HEIGHT,
     CSS_PROP_TEXT_ALIGN,
     CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
+    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
+    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_ORPHANS,
     CSS_PROP_WHITE_SPACE,

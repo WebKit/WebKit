@@ -782,6 +782,10 @@ public:
     }
     bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
 
+    Color textStrokeColor;
+    float textStrokeWidth;
+    Color textFillColor;
+
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
     AtomicString highlight; // Apple-specific extension for custom highlight rendering.
     unsigned textSecurity : 2; // ETextSecurity
@@ -1394,6 +1398,9 @@ public:
         return background->m_outline._offset;
     }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
+    Color textStrokeColor() const { return css3InheritedData->textStrokeColor; }
+    float textStrokeWidth() const { return css3InheritedData->textStrokeWidth; }
+    Color textFillColor() const { return css3InheritedData->textFillColor; }
     float opacity() const { return css3NonInheritedData->opacity; }
     EAppearance appearance() const { return static_cast<EAppearance>(css3NonInheritedData->m_appearance); }
     EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(css3NonInheritedData->flexibleBox->align); }
@@ -1618,6 +1625,9 @@ public:
 #endif
     void setOutlineOffset(int v) { SET_VAR(background, m_outline._offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
+    void setTextStrokeColor(const Color& c) { SET_VAR(css3InheritedData, textStrokeColor, c) }
+    void setTextStrokeWidth(float w) { SET_VAR(css3InheritedData, textStrokeWidth, w) }
+    void setTextFillColor(const Color& c) { SET_VAR(css3InheritedData, textFillColor, c) }
     void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }
     void setAppearance(EAppearance a) { SET_VAR(css3NonInheritedData, m_appearance, a); }
     void setBoxAlign(EBoxAlignment a) { SET_VAR(css3NonInheritedData.access()->flexibleBox, align, a); }
@@ -1787,6 +1797,7 @@ public:
     static EResize initialResize() { return RESIZE_NONE; }
     static EAppearance initialAppearance() { return NoAppearance; }
     static bool initialVisuallyOrdered() { return false; }
+    static float initialTextStrokeWidth() { return 0; }
 
     // Keep these at the end.
     static int initialLineClamp() { return -1; }

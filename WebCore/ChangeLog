@@ -1,3 +1,64 @@
+2006-12-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 11889, support stroking and filling of HTML text from CSS.  This patch adds four new CSS properties:
+        text-fill-color, text-stroke-color, text-stroke-width and text-stroke (a shorthand for the other two).  Text
+        is filled and not stroked by default and does so using the text-fill-color.  If this property is not set, then
+        color is used.
+
+        Stroking is accomplished by setting a stroke width.  Stroke color, if omitted, will be picked up from the color
+        property.  You can set either color to be transparent or partially transparent.  A fully transparent fill color is
+        the way to achieve an "outline" effect where only stroking happens.
+
+        Stroking and filling are both customizable inside the ::selection pseudo-element, and so when selecting you can
+        vary colors and widths.
+
+        text-shadow applies to both the stroke and the fill.
+
+        text-decorations do not yet respect the stroke/fill colors.  This will follow in a later patch.
+
+        Reviewed by mitz
+
+        Added fast/text/stroking.html as a layout test.  Enhanced RenderTreeAsText.cpp to dump fill and stroke information.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawGlyphs):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::maxHorizontalVisualOverflow):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::updateGraphicsContext):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionForegroundColor):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCSS3InheritedData::StyleCSS3InheritedData):
+        (WebCore::StyleCSS3InheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::textStrokeColor):
+        (WebCore::RenderStyle::textStrokeWidth):
+        (WebCore::RenderStyle::textFillColor):
+        (WebCore::RenderStyle::setTextStrokeColor):
+        (WebCore::RenderStyle::setTextStrokeWidth):
+        (WebCore::RenderStyle::setTextFillColor):
+        (WebCore::RenderStyle::initialTextStrokeWidth):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+
 2006-12-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.
