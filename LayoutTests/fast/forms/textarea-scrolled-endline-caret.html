@@ -6,6 +6,12 @@ function test()
         layoutTestController.dumpAsText();
     var ta = document.getElementById('ta')
     var res = document.getElementById('res');
+
+    // Send caret to bottom of textarea
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.blur();
+
     ta.focus();
     // click
     if (window.eventSender) {

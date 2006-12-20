@@ -1,3 +1,17 @@
+2006-12-20  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11746
+        REGRESSION(r14931): Outlook Web Access incorrectly positions the insertion point when replying to e-mail
+
+        Set caret at beginning of text on initial focus.
+
+        Test: fast/forms/textarea-initial-caret-position.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+
 2006-12-20  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 11889, support stroking and filling of HTML text from CSS.  This patch adds four new CSS properties:

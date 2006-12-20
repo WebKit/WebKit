@@ -216,10 +216,10 @@ void HTMLTextAreaElement::updateFocusAppearance()
     
     if (cachedSelStart == -1) {
         ASSERT(cachedSelEnd == -1);
-        // If this is the first focus, set a caret at the end of the text.  
-        // This matches other browsers' behavior.
-        int max = static_cast<RenderTextControl*>(renderer())->text().length();
-        setSelectionRange(max, max);
+        // If this is the first focus, set a caret at the beginning of the text.  
+        // This matches some browsers' behavior; see Bugzilla Bug 11746 Comment #15.
+        // http://bugs.webkit.org/show_bug.cgi?id=11746#c15
+        setSelectionRange(0, 0);
     } else
         // Restore the cached selection.  This matches other browsers' behavior.
         setSelectionRange(cachedSelStart, cachedSelEnd); 

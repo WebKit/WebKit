@@ -1,3 +1,20 @@
+2006-12-20  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11746
+        REGRESSION(r14931): Outlook Web Access incorrectly positions the insertion point when replying to e-mail
+
+        * editing/selection/move-begin-end-expected.txt: Updated editing delegate results.
+        * fast/forms/onselect-textarea-expected.txt: Updated selection start/end positions.
+        * fast/forms/textarea-initial-caret-position-expected.txt: Added.
+        * fast/forms/textarea-initial-caret-position.html: Added.
+        * fast/forms/textarea-no-scroll-on-blur.html:
+        Updated to position caret at end of text to match previous initial focus behavior for this test.
+        * fast/forms/textarea-scrollbar.html: Ditto.
+        * fast/forms/textarea-scrolled-endline-caret.html: Ditto.
+        * fast/forms/textarea-scrolled-type.html: Ditto.
+
 2006-12-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

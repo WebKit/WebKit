@@ -4,7 +4,7 @@ This also makes sure that the correct selection is restored when the element reg
 
 
 Calling focus on textarea
-After focus: textarea selection start: 34 end: 34
+After focus: textarea selection start: 0 end: 0
 
 Calling setSelectionRange on textarea
 After setSelectionRange(5, 10): textarea selection start: 5 end: 10

@@ -2,7 +2,10 @@
 <head>
     <script>
     function test() {
-        document.getElementById('ta').focus();
+        var ta = document.getElementById('ta');
+        ta.focus();
+        // Send caret to bottom of textarea
+        ta.setSelectionRange(ta.value.length, ta.value.length);
         document.execCommand("InsertText", false, '5');
         document.execCommand("InsertText", false, '\n');
         document.execCommand("InsertText", false, '6');

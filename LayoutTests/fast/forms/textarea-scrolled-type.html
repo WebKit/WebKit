@@ -6,6 +6,12 @@ function test()
 {
     var res = document.getElementById('res');
     var ta = document.getElementById('ta');
+
+    // Send caret to bottom of textarea
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.blur();
+
     ta.focus();
     ta.setSelectionRange(44, 44);
     typeCharacterCommand(' ');
