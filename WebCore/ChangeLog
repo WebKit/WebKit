@@ -1,3 +1,21 @@
+2006-12-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        - Fix for <rdar://problem/3824247> Select All works even if -khtml-user-select:none; style is set
+
+        Also made user-select:none work on new list boxes, and cleaned up the list box defaultEventHandler.
+
+        Test: editing/selection/select-all-user-select-none.html
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::selectAll): Make sure canSelect is true on the root renderer.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::canSelectAll): Check canSelect here.
+        (WebCore::HTMLSelectElement::selectAll): Added nil check for renderer.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Return early if the event has been handled.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Check canSelect here.
+        * html/HTMLSelectElement.h:
+
 2006-12-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.

@@ -355,10 +355,15 @@ bool HTMLSelectElement::isMouseFocusable() const
     return HTMLGenericFormElement::isMouseFocusable();
 }
 
+bool HTMLSelectElement::canSelectAll() const
+{
+    return !usesMenuList() && renderer() && renderer()->canSelect(); 
+}
+
 void HTMLSelectElement::selectAll()
 {
     ASSERT(!usesMenuList());
-    if (!multiple())
+    if (!renderer() || !multiple())
         return;
     
     m_activeSelectionState = true;
@@ -551,6 +556,9 @@ void HTMLSelectElement::defaultEventHandler(Event* evt)
         menuListDefaultEventHandler(evt);
     else 
         listBoxDefaultEventHandler(evt);
+    
+    if (evt->defaultHandled())
+        return;
 
     if (!evt->defaultHandled() && evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(evt);
@@ -559,6 +567,7 @@ void HTMLSelectElement::defaultEventHandler(Event* evt)
             && isprint(static_cast<KeyboardEvent*>(evt)->charCode())) {
             typeAheadFind(static_cast<KeyboardEvent*>(evt));
             evt->setDefaultHandled();
+            return;
         }
     }
 
@@ -629,7 +638,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
 
 void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 {
-    if (!renderer())
+    if (!renderer() || !renderer()->canSelect())
         return;
 
     if (evt->type() == mousedownEvent) {
@@ -682,6 +691,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             setActiveSelectionEndIndex(listIndex);
             updateListBoxSelection(!multiSelect);
             renderer()->repaint();
+            evt->setDefaultHandled();
         }
     } else if (evt->type() == mouseupEvent && document()->frame()->eventHandler()->autoscrollRenderer() != renderer())
         // This makes sure we fire onChange for a single click.  For drag selection, onChange will fire when the autoscroll timer stops.
@@ -720,11 +730,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             }
 
             static_cast<RenderListBox*>(renderer())->scrollToRevealElementAtListIndex(endIndex);
-            evt->setDefaultHandled();
             updateListBoxSelection(deselectOthers);
-            renderer()->repaint();
-            
+            renderer()->repaint();            
             listBoxOnChange();
+            evt->setDefaultHandled();
         }
     }
 }
