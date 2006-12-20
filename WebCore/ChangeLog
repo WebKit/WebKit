@@ -1,3 +1,15 @@
+2006-12-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4726407> 
+        [9A255] Crash in WebCore::EventTargetNode::dispatchEvent
+        
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::notifyFinished):
+        Ref the script element while running the script since it can be freed
+        when executing the script.
+
 2006-12-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

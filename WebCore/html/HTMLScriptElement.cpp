@@ -145,6 +145,10 @@ void HTMLScriptElement::notifyFinished(CachedResource* o)
 
     assert(cs == m_cachedScript);
 
+    // Evaluating the script could lead to a garbage collection which
+    // can delete the script element so we need to protect it.
+    RefPtr<HTMLScriptElement> protect(this);
+    
     if (cs->errorOccurred())
         dispatchHTMLEvent(errorEvent, true, false);
     else {
