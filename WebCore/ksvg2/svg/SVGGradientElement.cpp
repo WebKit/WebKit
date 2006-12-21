@@ -94,16 +94,21 @@ void SVGGradientElement::notifyAttributeChange() const
 
     // Update clients of this gradient resource...
     buildGradient(m_resource);
-    
+
     m_resource->invalidate();  // should this be added to build gradient?
-    
+
     const RenderPathList &clients = m_resource->clients();
     unsigned size = clients.size();
+
     for (unsigned i = 0 ; i < size; i++) {
         const RenderPath* current = clients[i];
         SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
-        if (styled)
+        if (styled) {
             styled->setChanged(true);
+
+            if (styled->renderer())
+                styled->renderer()->repaint();
+        }
     }
 }
 

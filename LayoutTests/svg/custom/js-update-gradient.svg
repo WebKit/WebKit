@@ -16,7 +16,7 @@ window.setTimeout("clickNow()", 0);
 
 function clickNow() {
     if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 250);
+        eventSender.mouseMoveTo(150, 50);
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
@@ -46,7 +46,7 @@ function mouseHandler(evt)
 }
 </script>
 
-<rect onmouseout="mouseHandler(evt)" onmouseover="mouseHandler(evt)" x="10" y="10" width="430" height="80" fill="url(#Gradient)" />
+<rect onclick="mouseHandler(evt)" x="10" y="10" width="430" height="80" fill="url(#Gradient)" />
 <rect x="10" y="100" width="430" height="80" fill="url(#Gradient)" />
 
 </svg>
