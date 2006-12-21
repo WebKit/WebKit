@@ -1,3 +1,13 @@
+2006-12-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11919
+        Allow setting CSS values to null.
+
+        * fast/dom/css-set-property-exception-expected.txt:
+        * fast/dom/css-set-property-exception.html:
+
 2006-12-21  Rob Buis  <buis@kde.org>
 
         Reviewed by Anders.

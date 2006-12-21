@@ -213,7 +213,7 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
     if (isCSSPropertyName(propertyName)) {
       bool pixelOrPos;
       String prop = cssPropertyName(propertyName, &pixelOrPos);
-      String propValue = value->toString(exec);
+      String propValue = valueToStringWithNullCheck(exec, value);
       if (pixelOrPos)
         propValue += "px";
 #ifdef KJS_VERBOSE
@@ -259,7 +259,7 @@ JSValue* DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState* exec, JSObje
     case DOMCSSStyleDeclaration::IsPropertyImplicit:
       return jsBoolean(styleDecl.isPropertyImplicit(s));
     case DOMCSSStyleDeclaration::SetProperty:
-      styleDecl.setProperty(s, args[1]->toString(exec), args[2]->toString(exec), exception);
+      styleDecl.setProperty(s, valueToStringWithNullCheck(exec, args[1]), args[2]->toString(exec), exception);
       return jsUndefined();
     case DOMCSSStyleDeclaration::Item:
       return jsStringOrNull(styleDecl.item(args[0]->toInt32(exec)));
