@@ -43,7 +43,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FramePrivate.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoaderClientQt.h"
 #include "DocumentLoader.h"
 #include "FrameView.h"
 #include "FormState.h"
@@ -71,6 +71,7 @@
 #include "runtime_root.h"
 
 #include <QScrollArea>
+#include <qdebug.h>
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", __FILE__, __LINE__, __FUNCTION__); } while(0)
 
@@ -174,7 +175,7 @@ String FrameLoader::referrer() const
 void FrameLoader::checkLoadCompleteForThisFrame()
 {
     ASSERT(m_client->hasWebView());
-    notImplemented();
+    //notImplemented();
 
     switch (m_state) {
     case FrameStateProvisional: {
@@ -244,7 +245,8 @@ bool FrameLoader::canGoBackOrForward(int distance) const
 
 void FrameLoader::partClearedInBegin()
 {
-    notImplemented();
+    if (m_frame->javaScriptEnabled())
+        static_cast<FrameLoaderClientQt*>(m_client)->partClearedInBegin();
 }
 
 void FrameLoader::saveDocumentState()
@@ -255,7 +257,7 @@ void FrameLoader::saveDocumentState()
 
 void FrameLoader::restoreDocumentState()
 {
-    notImplemented();
+    //notImplemented();
 }
 
 void FrameLoader::didChangeTitle(DocumentLoader* loader)

@@ -1,3 +1,19 @@
+2006-12-21  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::hasWebView):
+        (WebCore::FrameLoaderClientQt::hasFrameView):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientQt::setTitle):
+        (WebCore::FrameLoaderClientQt::partClearedInBegin):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+                 Remove some runtimw warnings
+                 Add partClearedInBegin forwarding call, so
+                 I can catch this in the layout tests.
+
 2006-12-19  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Rob.

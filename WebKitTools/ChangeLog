@@ -1,3 +1,57 @@
+2006-12-21  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Add support for the layoutTestController JavaScript object
+        to be able to get textOnly dumps.
+        Added a Qt specific hack to always get the same fonts (the ones
+        added in this submit) and the same dpi when running the layout tests.
+        Modified the run-webkit-tests script to also do a comparison to the 
+        Mac generated outputs (by stripping out positioning information).
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::resetJSObjects):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::dump):
+        (WebCore::DumpRenderTree::checkLoaded):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.cpp:
+        (WebCore::DumpRenderTreeClient::DumpRenderTreeClient):
+        (WebCore::DumpRenderTreeClient::partClearedInBegin):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/fontoverload.cpp: Added.
+        (QX11Info::appDpiY):
+        (QX11Info::appDpiX):
+        (qt_x11ft_convert_pattern):
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp: Added.
+        (LayoutTestController::shouldDumpAsText):
+        (LayoutTestController::shouldWaitUntilDone):
+        (LayoutTestController::reset):
+        (LayoutTestController::dumpAsText):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/AHEM____.TTF: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/COPYING: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierBold.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierBoldOblique.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierMedium.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierMediumOblique.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaBold.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaBoldOblique.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaMedium.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaMediumOblique.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/SymbolMedium.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesBold.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesBoldItalic.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesMedium.ttf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesMediumItalic.ttf: Added.
+        * Scripts/run-webkit-tests:
+
 2006-12-21  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Geoff.

@@ -1,3 +1,19 @@
+2006-12-21  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        * loader/FrameLoaderClient.h:
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::partClearedInBegin):
+        (WebCore::FrameLoader::restoreDocumentState):
+                comment out a few notImplemented() warnings
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::bindingRootObject):
+        (WebCore::FrameQt::addPluginRootObject):
+        * platform/qt/FrameQt.h:
+                 implement these
+
 2006-12-20  David Hyatt  <hyatt@apple.com>
 
         Make sure the execrable match-nearest-mail-blockquote-color CSS property is actually initialized (amazingly

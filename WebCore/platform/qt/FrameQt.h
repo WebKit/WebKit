@@ -40,6 +40,13 @@
 class QWidget;
 class QPaintEvent;
 
+namespace KJS {
+    namespace Bindings {
+        class Instance;
+        class RootObject;
+    }
+}
+
 namespace WebCore {
 
 class EditorClient;
@@ -53,6 +60,8 @@ public:
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     virtual KJS::Bindings::RootObject* bindingRootObject();
+
+    void addPluginRootObject(KJS::Bindings::RootObject*);
 
     //should be in Chrome
     virtual void runJavaScriptAlert(const String& message);

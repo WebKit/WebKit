@@ -66,6 +66,8 @@
 #include "runtime_root.h"
 #include <QScrollArea>
 
+using namespace KJS;
+
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
            __FILE__, __LINE__, __FUNCTION__); } while(0)
 
@@ -313,9 +315,22 @@ bool FrameQt::runJavaScriptPrompt(const String& message, const String& defaultVa
 KJS::Bindings::RootObject* FrameQt::bindingRootObject() 
 {
     ASSERT(javaScriptEnabled()); 
-    notImplemented();
-    return 0;
+    if (!m_bindingRoot) {
+        JSLock lock;
+        m_bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
+        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
+        m_bindingRoot->setRootObjectImp(win);
+        m_bindingRoot->setInterpreter(scriptProxy()->interpreter());
+        addPluginRootObject(m_bindingRoot);
+    }
+    return m_bindingRoot;
 }
+
+void FrameQt::addPluginRootObject(KJS::Bindings::RootObject* root)
+{
+    m_rootObjects.append(root);
+}
+    
 
 }
 // vim: ts=4 sw=4 et
