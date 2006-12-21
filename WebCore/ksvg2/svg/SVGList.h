@@ -122,7 +122,7 @@ namespace WebCore {
             }
 
             Item item = m_vector[index];
-            removeItem(index, ec);
+            m_vector.remove(index);
             return item;
         }
 
