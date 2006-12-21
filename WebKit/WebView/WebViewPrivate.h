@@ -118,6 +118,12 @@ typedef enum {
 
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
 
+// setIgnoresMouseMovedEvents: can be called by clients that want to temporarily prevent
+// the webView from processing mouse moved events. Each WebDocumentView class that processes
+// mouse events must honor this setting.
+- (void)setIgnoresMouseMovedEvents:(BOOL)newValue;
+- (BOOL)ignoresMouseMovedEvents;
+
 /*!
 @method setScriptDebugDelegate:
 @abstract Set the WebView's WebScriptDebugDelegate delegate.

@@ -1120,7 +1120,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
-    if (_private->closed)
+    if (_private->closed || [[self _webView] ignoresMouseMovedEvents])
         return;
 
     NSView *contentView = [[event window] contentView];

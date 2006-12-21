@@ -295,6 +295,7 @@ macro(yankAndSelect) \
     BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
+    BOOL ignoresMouseMovedEvents;
 
     NSColor *backgroundColor;
 
@@ -2905,6 +2906,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebPendingPublic)
+
+- (void)setIgnoresMouseMovedEvents:(BOOL)newValue
+{
+    _private->ignoresMouseMovedEvents = newValue;
+}
+
+- (BOOL)ignoresMouseMovedEvents
+{
+    return _private->ignoresMouseMovedEvents;
+}
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
 {
