@@ -1,3 +1,17 @@
+2006-12-20  David Hyatt  <hyatt@apple.com>
+
+        Make sure the execrable match-nearest-mail-blockquote-color CSS property is actually initialized (amazingly
+        it started off with the value "match", since it wasn't even initialized).  Now that it is actually being
+        initialized and properly copied and assigned to, tests have failed.  It seems that we were getting the
+        behavior of "match" by default, when the initial value was supposed to be "normal."
+
+        Because this property really should not exist at all, it's unclear to me what the right solution is here.
+        
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCSS3NonInheritedData::StyleCSS3NonInheritedData):
+        (WebCore::StyleCSS3NonInheritedData::operator==):
+        * rendering/RenderStyle.h:
+
 2006-12-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam's rubberstamp

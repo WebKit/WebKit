@@ -757,7 +757,7 @@ public:
     bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned marginTopCollapse : 2; // EMarginCollapse
     unsigned marginBottomCollapse : 2; // EMarginCollapse
-    unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor
+    unsigned matchNearestMailBlockquoteColor : 1; // FIXME: This property needs to be eliminated.  It should never have been added in the first place.
 
     unsigned m_appearance : 6; // EAppearance
 

@@ -398,6 +398,7 @@ StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
     , textOverflow(RenderStyle::initialTextOverflow())
     , marginTopCollapse(MCOLLAPSE)
     , marginBottomCollapse(MCOLLAPSE)
+    , matchNearestMailBlockquoteColor(RenderStyle::initialMatchNearestMailBlockquoteColor())
     , m_appearance(RenderStyle::initialAppearance())
 #ifdef XBL_SUPPORT
     , bindingURI(0)
@@ -416,6 +417,7 @@ StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInherited
     , textOverflow(o.textOverflow)
     , marginTopCollapse(o.marginTopCollapse)
     , marginBottomCollapse(o.marginBottomCollapse)
+    , matchNearestMailBlockquoteColor(o.matchNearestMailBlockquoteColor)
     , m_appearance(o.m_appearance)
 #ifdef XBL_SUPPORT
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
@@ -447,6 +449,7 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
     return opacity == o.opacity && flexibleBox == o.flexibleBox && marquee == o.marquee &&
            userDrag == o.userDrag && userSelect == o.userSelect && textOverflow == o.textOverflow &&
            marginTopCollapse == o.marginTopCollapse && marginBottomCollapse == o.marginBottomCollapse &&
+           matchNearestMailBlockquoteColor == o.matchNearestMailBlockquoteColor &&
            m_appearance == o.m_appearance
 #ifdef XBL_SUPPORT
            && bindingsEquivalent(o)
