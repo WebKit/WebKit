@@ -259,7 +259,7 @@ function loaded()
     }
     AppleScrollbar.prototype.show = function() {
         this._track.style.display = "block";
-        this.scrollbar.style.display = null;
+        this.scrollbar.style.removeProperty("display");
         if (this.hidden) {
             this.hidden = false;
             this.refresh();
@@ -295,9 +295,9 @@ function performSearch(query)
         searchField.style.width = "150px";
         searchActive = true;
     } else if (!query.length && searchActive) {
-        treePopup.style.display = null;
-        searchCount.style.display = null;
-        searchField.style.width = null;
+        treePopup.style.removeProperty("display");
+        searchCount.style.removeProperty("display");
+        searchField.style.removeProperty("width");
         searchActive = false;
     }
 
@@ -327,7 +327,7 @@ function toggleNoSelection(state)
     if (noSelection) {
         for (var i = 0; i < tabNames.length; i++)
             document.getElementById(tabNames[i] + "Pane").style.display = "none";
-        document.getElementById("noSelection").style.display = null;
+        document.getElementById("noSelection").style.removeProperty("display");
     } else {
         document.getElementById("noSelection").style.display = "none";
         switchPane(currentPane);
@@ -344,7 +344,7 @@ function switchPane(pane)
             button.originalClassName = button.className;
         if (pane == tabNames[i]) {
             if (!noSelection)
-                paneElement.style.display = null;
+                paneElement.style.removeProperty("display");
             button.className = button.originalClassName + " selected";
         } else {
             paneElement.style.display = "none";
@@ -439,17 +439,19 @@ function updateElementAttributes()
 
 function updateNodePane()
 {
+    if (!Inspector)
+        return;
     var focusedNode = Inspector.focusedDOMNode();
 
     if (focusedNode.nodeType == Node.TEXT_NODE || focusedNode.nodeType == Node.COMMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
-        document.getElementById("nodeContents").style.display = null;
+        document.getElementById("nodeContents").style.removeProperty("display");
 
         document.getElementById("nodeContentsScrollview").textContent = focusedNode.nodeValue;
         nodeContentsScrollArea.refresh();
     } else if (focusedNode.nodeType == Node.ELEMENT_NODE) {
-        document.getElementById("elementAttributes").style.display = null;
+        document.getElementById("elementAttributes").style.removeProperty("display");
         document.getElementById("nodeContents").style.display = "none";
 
         updateElementAttributes();
@@ -457,7 +459,7 @@ function updateNodePane()
         if (focusedNode.namespaceURI.length > 0) {
             document.getElementById("nodeNamespace").textContent = focusedNode.namespaceURI;
             document.getElementById("nodeNamespace").title = focusedNode.namespaceURI;
-            document.getElementById("nodeNamespaceRow").style.display = null;
+            document.getElementById("nodeNamespaceRow").style.removeProperty("display");
         } else {
             document.getElementById("nodeNamespaceRow").style.display = "none";
         }
@@ -492,8 +494,8 @@ function updateStylePane()
     styleProperties = [];
 
     if (focusedNode.nodeType == Node.ELEMENT_NODE) {
-        document.getElementById("styleRules").style.display = null;
-        document.getElementById("styleProperties").style.display = null;
+        document.getElementById("styleRules").style.removeProperty("display");
+        document.getElementById("styleProperties").style.removeProperty("display");
         document.getElementById("noStyle").style.display = "none";
 
         var propertyCount = [];
@@ -670,7 +672,7 @@ function updateStylePane()
         noStyle.textContent = "Can't style " + nodeTypeName(focusedNode) + " nodes.";
         document.getElementById("styleRules").style.display = "none";
         document.getElementById("styleProperties").style.display = "none";
-        noStyle.style.display = null;
+        noStyle.style.removeProperty("display");
     }
 
     styleRulesScrollArea.refresh();
@@ -797,7 +799,7 @@ function toggleStyleShorthand(event)
         expandedStyleShorthands[li.shorthand] = false;
     } else {
         li.className += " expanded";
-        li.nextSibling.style.display = null;
+        li.nextSibling.style.removeProperty("display");
         expandedStyleShorthands[li.shorthand] = true;
     }
 
@@ -863,13 +865,13 @@ function updateMetricsPane()
     if (focusedNode.nodeType == Node.ELEMENT_NODE)
         style = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode);
     if (!style || style.length == 0) {
-        document.getElementById("noMetrics").style.display = null;
+        document.getElementById("noMetrics").style.removeProperty("display");
         document.getElementById("marginBoxTable").style.display = "none";
         return;
     }
 
     document.getElementById("noMetrics").style.display = "none";
-    document.getElementById("marginBoxTable").style.display = null;
+    document.getElementById("marginBoxTable").style.removeProperty("display");
 
     setBoxMetrics(style, "margin", "");
     setBoxMetrics(style, "border", "-width");

@@ -158,7 +158,7 @@ function dividerDragEnd(element, dividerDrag, dividerDragEnd, event)
     element.dragging = false;
     document.removeEventListener("mousemove", dividerDrag, true);
     document.removeEventListener("mouseup", dividerDragEnd, true);
-    document.body.style.cursor = null;
+    document.body.style.removeProperty("cursor");
 }
 
 function dividerDrag(event) 
@@ -540,7 +540,7 @@ function breakpointDrag(event)
     if (!draggingBreakpoint) {
         sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
         sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
-        sourcesDocument.body.style.cursor = null;
+        sourcesDocument.body.style.removeProperty("cursor");
         return;
     }
 
@@ -581,7 +581,7 @@ function breakpointDrag(event)
             if (!dragImage) {
                 sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
                 sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
-                sourcesDocument.body.style.cursor = null;
+                sourcesDocument.body.style.removeProperty("cursor");
                 return;
             }
 
@@ -590,7 +590,7 @@ function breakpointDrag(event)
             if (x > 40)
                 dragImage.style.visibility = "hidden";
             else
-                dragImage.style.visibility = null;
+                dragImage.style.removeProperty("visibility");
         }
 
         draggingBreakpoint.dragLastX = x;
@@ -603,7 +603,7 @@ function breakpointDragEnd(event)
     var sourcesDocument = document.getElementById("sources").contentDocument;
     sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
     sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
-    sourcesDocument.body.style.cursor = null;
+    sourcesDocument.body.style.removeProperty("cursor");
 
     var dragImage = sourcesDocument.getElementById("breakpointDrag");
     if (!dragImage)
@@ -1012,7 +1012,7 @@ function loadFile(fileIndex, manageNavLists)
         file.loaded = true;
     }
 
-    file.element.style.display = null;
+    file.element.style.removeProperty("display");
 
     document.getElementById("filesPopupButtonContent").innerText = (file.url ? file.url : "(unknown script)");
     
