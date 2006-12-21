@@ -579,9 +579,6 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
 
 void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node)
 {
-    // To keep things simple, we forbid queueing post-attach callbacks from inside attach.
-    ASSERT(s_attachDepth == 0);
-    
     if (!s_postAttachCallbackQueue)
         s_postAttachCallbackQueue = new NodeCallbackQueue;
     

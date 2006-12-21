@@ -1,3 +1,16 @@
+2006-12-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Fixed <rdar://problem/4897205> ASSERTION FAILURE in ContainerNode::queuePostAttachCallback 
+        when creating an iframe from an iframe onload handler
+
+        I added that assertion to try to "keep things simple," but I've found a 
+        testcase that demonstrates why things need to be complicated.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::queuePostAttachCallback):
+
 2006-12-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

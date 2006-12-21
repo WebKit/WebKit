@@ -1,3 +1,15 @@
+2006-12-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        <rdar://problem/4897205> ASSERTION FAILURE in ContainerNode::queuePostAttachCallback 
+        when creating an iframe from an iframe onload handler
+
+        Test for adding an iframe to the document from another iframe's onload handler.
+
+        * fast/loader/iframe-recursive-synchronous-load-expected.txt: Added.
+        * fast/loader/iframe-recursive-synchronous-load.html: Added.
+
 2006-12-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
