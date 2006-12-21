@@ -1,3 +1,15 @@
+2006-12-21  Rob Buis  <buis@kde.org>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11898
+        CSSMediaRule functions insertRule and deleteRule assert when called from js in debug builds
+
+        Test explicitly for the two media rule functions so it ends up calling callAsFunction.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSRule::getOwnPropertySlot):
+
 2006-12-21  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

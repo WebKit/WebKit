@@ -1,3 +1,14 @@
+2006-12-21  Rob Buis  <buis@kde.org>
+
+        Reviewed by Anders.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11898
+        CSSMediaRule functions insertRule and deleteRule assert when called from js in debug builds
+
+        * fast/css/media-rule-dyn-expected.txt: Added.
+        * fast/css/media-rule-dyn.html: Added.
+
 2006-12-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adam.
