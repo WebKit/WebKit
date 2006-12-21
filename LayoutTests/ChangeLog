@@ -1,5 +1,17 @@
 2006-12-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Adam.
+
+        Adding new test js-update-style.svg, testing
+        dynamic style updates via JS (here: stroke-width change)
+
+        * svg/custom/js-update-style-expected.checksum: Added.
+        * svg/custom/js-update-style-expected.png: Added.
+        * svg/custom/js-update-style-expected.txt: Added.
+        * svg/custom/js-update-style.svg: Added.
+
+2006-12-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Beth.
 
         Adding new test js-update-pattern.svg, testing
