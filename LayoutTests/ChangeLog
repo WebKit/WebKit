@@ -1,5 +1,17 @@
 2006-12-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Beth.
+
+        Adding new test js-update-pattern.svg, testing
+        dynamic pattern updates via JS.
+
+        * svg/custom/js-update-pattern-expected.checksum: Added.
+        * svg/custom/js-update-pattern-expected.png: Added.
+        * svg/custom/js-update-pattern-expected.txt: Added.
+        * svg/custom/js-update-pattern.svg: Added.
+
+2006-12-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Maciej.
 
         Fix dynamic gradient changes, via JS.
