@@ -1424,8 +1424,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     bool multipleFonts = false;
     NSFont *font = nil;
-    if (m_frame)
-        font = m_frame->editor()->fontForSelection(multipleFonts)->getNSFont();
+    if (m_frame) {
+        const FontData* fd = m_frame->editor()->fontForSelection(multipleFonts);
+        if (fd)
+            font = fd->getNSFont();
+    }
+    
     if (hasMultipleFonts)
         *hasMultipleFonts = multipleFonts;
     return font;
