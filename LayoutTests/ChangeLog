@@ -1,3 +1,15 @@
+2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Add new test js-update-path-changes.svg which test
+        SVGPathSeg changes using JS.
+
+        * svg/custom/js-update-path-changes-expected.checksum: Added.
+        * svg/custom/js-update-path-changes-expected.png: Added.
+        * svg/custom/js-update-path-changes-expected.txt: Added.
+        * svg/custom/js-update-path-changes.svg: Added.
+
 2006-12-21  Geoff Garen  <ggaren@apple.com>
 
         Reviewed by Beth. (Geoff wrote the new test.)
@@ -15,7 +27,7 @@
         * fast/dom/clone-node-style-expected.txt: Added.
         * fast/dom/clone-node-style.html: Added.
 
-l2006-12-21  Adele Peterson  <adele@apple.com>
+2006-12-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
 

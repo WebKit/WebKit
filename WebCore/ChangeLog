@@ -1,3 +1,15 @@
+2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fix SVGPathSeg JS object creation. SVGPathSegList has to return
+        the actual SVGPathSegLineToAbs/MoveToRel... object instead of a pure
+        SVGPathSeg JS object.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore/bindings/js/JSSVGPathSegCustom.cpp: Added.
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2006-12-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

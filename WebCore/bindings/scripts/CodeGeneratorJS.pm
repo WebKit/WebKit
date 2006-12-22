@@ -158,6 +158,14 @@ sub AvoidInclusionOfType
     return 0;
 }
 
+sub UsesManualToJSImplementation
+{
+    my $type = shift;
+
+    return 1 if $type eq "SVGPathSeg";
+    return 0;
+}
+
 sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
@@ -995,7 +1003,7 @@ sub GenerateImplementation
         push(@implContent, "}\n");
     }
 
-    if (!$hasParent) {
+    if (!$hasParent and !UsesManualToJSImplementation($implClassName)) {
         if ($podType) {
             push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj)\n");
         } else {
