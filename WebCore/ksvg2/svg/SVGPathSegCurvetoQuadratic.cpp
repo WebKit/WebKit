@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGPathSegCurvetoQuadratic.h"
 
@@ -28,8 +29,8 @@
 
 namespace WebCore {
 
-SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs(const SVGStyledElement* context)
-    : SVGPathSeg(context)
+SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs()
+    : SVGPathSeg()
 {
     m_x = m_y = m_x1 = m_y1 = 0.0;
 }
@@ -41,9 +42,6 @@ SVGPathSegCurvetoQuadraticAbs::~SVGPathSegCurvetoQuadraticAbs()
 void SVGPathSegCurvetoQuadraticAbs::setX(double x)
 {
     m_x = x;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbs::x() const
@@ -54,9 +52,6 @@ double SVGPathSegCurvetoQuadraticAbs::x() const
 void SVGPathSegCurvetoQuadraticAbs::setY(double y)
 {
     m_y = y;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbs::y() const
@@ -67,9 +62,6 @@ double SVGPathSegCurvetoQuadraticAbs::y() const
 void SVGPathSegCurvetoQuadraticAbs::setX1(double x1)
 {
     m_x1 = x1;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbs::x1() const
@@ -80,9 +72,6 @@ double SVGPathSegCurvetoQuadraticAbs::x1() const
 void SVGPathSegCurvetoQuadraticAbs::setY1(double y1)
 {
     m_y1 = y1;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbs::y1() const
@@ -93,8 +82,8 @@ double SVGPathSegCurvetoQuadraticAbs::y1() const
 
 
 
-SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel(const SVGStyledElement* context)
-    : SVGPathSeg(context)
+SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel()
+    : SVGPathSeg()
 {
     m_x = m_y = m_x1 = m_y1 = 0.0;
 }
@@ -106,9 +95,6 @@ SVGPathSegCurvetoQuadraticRel::~SVGPathSegCurvetoQuadraticRel()
 void SVGPathSegCurvetoQuadraticRel::setX(double x)
 {
     m_x = x;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRel::x() const
@@ -119,9 +105,6 @@ double SVGPathSegCurvetoQuadraticRel::x() const
 void SVGPathSegCurvetoQuadraticRel::setY(double y)
 {
     m_y = y;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRel::y() const
@@ -132,9 +115,6 @@ double SVGPathSegCurvetoQuadraticRel::y() const
 void SVGPathSegCurvetoQuadraticRel::setX1(double x1)
 {
     m_x1 = x1;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRel::x1() const
@@ -145,9 +125,6 @@ double SVGPathSegCurvetoQuadraticRel::x1() const
 void SVGPathSegCurvetoQuadraticRel::setY1(double y1)
 {
     m_y1 = y1;
-
-    if (m_context)
-        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRel::y1() const
@@ -157,6 +134,6 @@ double SVGPathSegCurvetoQuadraticRel::y1() const
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

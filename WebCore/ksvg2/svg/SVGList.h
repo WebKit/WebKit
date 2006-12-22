@@ -63,18 +63,14 @@ namespace WebCore {
 
         Item getFirst() const
         {
-            if (m_vector.isEmpty())
-                return TypeOperations::nullItem();
-
-            return m_vector.first();
+            ExceptionCode ec = 0;
+            return getItem(0, ec);
         }
 
         Item getLast() const
         {
-            if (m_vector.isEmpty())
-                return TypeOperations::nullItem();
-
-            return m_vector.last();
+            ExceptionCode ec = 0;
+            return getItem(m_vector.size() - 1, ec);
         }
 
         Item getItem(unsigned int index, ExceptionCode& ec)
@@ -124,11 +120,6 @@ namespace WebCore {
             Item item = m_vector[index];
             m_vector.remove(index);
             return item;
-        }
-
-        void removeItem(const Item item)
-        {
-            m_vector.remove(item);
         }
 
         Item appendItem(Item newItem, ExceptionCode&)

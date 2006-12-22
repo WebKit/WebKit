@@ -33,15 +33,15 @@ module svg {
             raises(DOMException);
         SVGPathSeg initialize(in SVGPathSeg newItem)
             raises(DOMException, SVGException);
-        SVGPathSeg getItem(in unsigned long index)
+        [Custom] SVGPathSeg getItem(in unsigned long index)
             raises(DOMException);
-        SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
+        [Custom] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
+        [Custom] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGPathSeg removeItem(in unsigned long index)
+        [Custom] SVGPathSeg removeItem(in unsigned long index)
             raises(DOMException);
-        SVGPathSeg appendItem(in SVGPathSeg newItem)
+        [Custom] SVGPathSeg appendItem(in SVGPathSeg newItem)
             raises(DOMException, SVGException);
     };
 

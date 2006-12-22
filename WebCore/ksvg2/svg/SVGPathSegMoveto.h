@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPathSegMovetoImpl_H
-#define KSVG_SVGPathSegMovetoImpl_H
+#ifndef SVGPathSegMoveto_H
+#define SVGPathSegMoveto_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGPathSeg.h"
@@ -31,7 +32,7 @@ namespace WebCore
     class SVGPathSegMovetoAbs : public SVGPathSeg
     { 
     public:
-        SVGPathSegMovetoAbs(const SVGStyledElement* context = 0);
+        SVGPathSegMovetoAbs();
         virtual ~SVGPathSegMovetoAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
@@ -52,7 +53,7 @@ namespace WebCore
     class SVGPathSegMovetoRel : public SVGPathSeg
     { 
     public:
-        SVGPathSegMovetoRel(const SVGStyledElement* context = 0);
+        SVGPathSegMovetoRel();
         virtual ~SVGPathSegMovetoRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }

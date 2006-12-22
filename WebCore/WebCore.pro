@@ -826,12 +826,13 @@ contains(DEFINES, SVG_SUPPORT=1) {
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
         bindings/js/JSSVGElementWrapperFactory.cpp \
         bindings/js/JSSVGMatrixCustom.cpp \
+        bindings/js/JSSVGPathSegCustom.cpp \
+        bindings/js/JSSVGPathSegListCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
         ksvg2/svg/SVGFEFuncBElement.cpp \
-        ksvg2/svg/SVGPathSeg.cpp \
         ksvg2/svg/SVGColor.cpp \
         ksvg2/svg/SVGSwitchElement.cpp \
         ksvg2/svg/SVGFETileElement.cpp \

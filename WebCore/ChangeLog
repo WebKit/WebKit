@@ -1,3 +1,175 @@
+2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11934
+
+        Adding/removing SVGPathSeg* items to a SVGPathElement (through SVGPathSegList
+        interface) has live update problems, as the notifyAttributeChange() function
+        isn't called anywhere. The context param is currently stored per SVGPathSeg,
+        which is not needed - as it can be done using SVGPathSegList completely. It
+        wastes memory, that is fixed. In order to get rid of the context param in
+        SVGPathSeg, we need a way to map SVGPathSeg* objects to SVGStyledElement*
+        objects ("context element"). That is done using a new HashMap in the
+        SVGDocumentExtensions class.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGPathSegListCustom.cpp: Added.
+        (WebCore::updatePathSegContextMap):
+        (WebCore::removeFromPathSegContextMap):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::pathSegContextMap):
+        (WebCore::SVGDocumentExtensions::pathSegContext):
+        (WebCore::SVGDocumentExtensions::setPathSegContext):
+        (WebCore::SVGDocumentExtensions::removePathSegContext):
+        (WebCore::SVGDocumentExtensions::hasPathSegContext):
+        * ksvg2/svg/SVGList.h:
+        (WebCore::SVGList::getFirst):
+        (WebCore::SVGList::getLast):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        (WebCore::SVGPathElement::svgMoveTo):
+        (WebCore::SVGPathElement::svgLineTo):
+        (WebCore::SVGPathElement::svgLineToHorizontal):
+        (WebCore::SVGPathElement::svgLineToVertical):
+        (WebCore::SVGPathElement::svgCurveToCubic):
+        (WebCore::SVGPathElement::svgCurveToCubicSmooth):
+        (WebCore::SVGPathElement::svgCurveToQuadratic):
+        (WebCore::SVGPathElement::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathElement::svgArcTo):
+        (WebCore::SVGPathElement::pathSegList):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPathSeg.cpp: Removed.
+        * ksvg2/svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::SVGPathSeg):
+        (WebCore::SVGPathSeg::~SVGPathSeg):
+        (WebCore::SVGPathSeg::toString):
+        * ksvg2/svg/SVGPathSegArc.cpp:
+        (WebCore::SVGPathSegArcAbs::SVGPathSegArcAbs):
+        (WebCore::SVGPathSegArcAbs::setX):
+        (WebCore::SVGPathSegArcAbs::setY):
+        (WebCore::SVGPathSegArcAbs::setR1):
+        (WebCore::SVGPathSegArcAbs::setR2):
+        (WebCore::SVGPathSegArcAbs::setAngle):
+        (WebCore::SVGPathSegArcAbs::setLargeArcFlag):
+        (WebCore::SVGPathSegArcAbs::setSweepFlag):
+        (WebCore::SVGPathSegArcRel::SVGPathSegArcRel):
+        (WebCore::SVGPathSegArcRel::setX):
+        (WebCore::SVGPathSegArcRel::setY):
+        (WebCore::SVGPathSegArcRel::setR1):
+        (WebCore::SVGPathSegArcRel::setR2):
+        (WebCore::SVGPathSegArcRel::setAngle):
+        (WebCore::SVGPathSegArcRel::setLargeArcFlag):
+        (WebCore::SVGPathSegArcRel::setSweepFlag):
+        * ksvg2/svg/SVGPathSegArc.h:
+        * ksvg2/svg/SVGPathSegClosePath.cpp:
+        * ksvg2/svg/SVGPathSegClosePath.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubic.cpp:
+        (WebCore::SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setX):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setY):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setX1):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setY1):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setX2):
+        (WebCore::SVGPathSegCurvetoCubicAbs::setY2):
+        (WebCore::SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathSegCurvetoCubicRel::setX):
+        (WebCore::SVGPathSegCurvetoCubicRel::setY):
+        (WebCore::SVGPathSegCurvetoCubicRel::setX1):
+        (WebCore::SVGPathSegCurvetoCubicRel::setY1):
+        (WebCore::SVGPathSegCurvetoCubicRel::setX2):
+        (WebCore::SVGPathSegCurvetoCubicRel::setY2):
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::setX):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::setY):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::setX2):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::setY2):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::setX):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::setY):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::setX2):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::setY2):
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::setX):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::setY):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::setX1):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::setY1):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::setX):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::setY):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::setX1):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::setY1):
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::setX):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::setY):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::setX):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::setY):
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * ksvg2/svg/SVGPathSegLineto.cpp:
+        (WebCore::SVGPathSegLinetoAbs::SVGPathSegLinetoAbs):
+        (WebCore::SVGPathSegLinetoAbs::setX):
+        (WebCore::SVGPathSegLinetoAbs::setY):
+        (WebCore::SVGPathSegLinetoRel::SVGPathSegLinetoRel):
+        (WebCore::SVGPathSegLinetoRel::setX):
+        (WebCore::SVGPathSegLinetoRel::setY):
+        * ksvg2/svg/SVGPathSegLineto.h:
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.cpp:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathSegLinetoHorizontalAbs::setX):
+        (WebCore::SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathSegLinetoHorizontalRel::setX):
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        * ksvg2/svg/SVGPathSegLinetoVertical.cpp:
+        (WebCore::SVGPathSegLinetoVerticalAbs::SVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathSegLinetoVerticalAbs::setY):
+        (WebCore::SVGPathSegLinetoVerticalRel::SVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathSegLinetoVerticalRel::setY):
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        * ksvg2/svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::SVGPathSegList):
+        (WebCore::SVGPathSegList::context):
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/SVGPathSegList.idl:
+        * ksvg2/svg/SVGPathSegMoveto.cpp:
+        (WebCore::SVGPathSegMovetoAbs::SVGPathSegMovetoAbs):
+        (WebCore::SVGPathSegMovetoAbs::setX):
+        (WebCore::SVGPathSegMovetoAbs::setY):
+        (WebCore::SVGPathSegMovetoRel::SVGPathSegMovetoRel):
+        (WebCore::SVGPathSegMovetoRel::setX):
+        (WebCore::SVGPathSegMovetoRel::setY):
+        * ksvg2/svg/SVGPathSegMoveto.h:
+
 2006-12-22  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.

@@ -42,6 +42,8 @@ class Node;
 class SVGElement;
 class String;
 class TimeScheduler;
+class SVGPathSeg;
+class SVGStyledElement;
 class SVGSVGElement;
 
 class SVGDocumentExtensions {
@@ -72,7 +74,14 @@ private:
         return s_valueType;
     }
 
+    HashMap<const SVGPathSeg*, const SVGStyledElement*> pathSegContextMap() const
+    {
+        static HashMap<const SVGPathSeg*, const SVGStyledElement*> s_valueType;
+        return s_valueType;
+    }
+
 public:
+    // Used by the ANIMATED_PROPERTY_* macros
     template<typename ValueType>
     ValueType baseValue(const SVGElement* element, const AtomicString& propertyName) const
     {
@@ -113,6 +122,27 @@ public:
             return propertyMap->contains(propertyName.impl());
 
         return false;
+    }
+
+    // Used by SVGPathSeg* JS wrappers
+    const SVGStyledElement* pathSegContext(const SVGPathSeg* obj) const
+    {
+        return pathSegContextMap().get(obj);
+    }
+
+    void setPathSegContext(const SVGPathSeg* obj, const SVGStyledElement* context)
+    {
+        pathSegContextMap().set(obj, context);
+    }
+
+    void removePathSegContext(const SVGPathSeg* obj)
+    {
+        pathSegContextMap().remove(obj);
+    }
+
+    bool hasPathSegContext(const SVGPathSeg* obj)
+    {
+        return pathSegContextMap().contains(obj);
     }
 };
 

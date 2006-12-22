@@ -1,3 +1,17 @@
+2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11934
+
+        Fix SVG DOM path bindings. Path modifcations & removal through
+        the SVGPathSegList interface, are fully supported now.
+
+        * svg/custom/js-update-path-removal-expected.checksum: Added.
+        * svg/custom/js-update-path-removal-expected.png: Added.
+        * svg/custom/js-update-path-removal-expected.txt: Added.
+        * svg/custom/js-update-path-removal.svg: Added.
+
 2006-12-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by aroben.

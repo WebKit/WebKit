@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,22 +20,25 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPathSegImpl_H
-#define KSVG_SVGPathSegImpl_H
+#ifndef SVGPathSeg_H
+#define SVGPathSeg_H
+
 #ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
+#include "Shared.h"
 
 namespace WebCore
 {
     class SVGPathElement;
     class SVGStyledElement;
+
     class SVGPathSeg : public Shared<SVGPathSeg>
     {
     public:
-        SVGPathSeg(const SVGStyledElement* context = 0);
-        virtual ~SVGPathSeg();
-        
+        SVGPathSeg() { }
+        virtual ~SVGPathSeg() { }
+
         enum SVGPathSegType {
             PATHSEG_UNKNOWN                         = 0,
             PATHSEG_CLOSEPATH                       = 1,
@@ -62,9 +65,6 @@ namespace WebCore
         virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
         virtual String pathSegTypeAsLetter() const { return ""; }
         virtual String toString() const { return ""; }
-
-    protected:
-        const SVGStyledElement* m_context;
     };
 
 } // namespace WebCore

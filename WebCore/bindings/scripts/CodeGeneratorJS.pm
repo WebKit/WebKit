@@ -512,6 +512,11 @@ sub GenerateImplementation
 
     if ($className =~ /^JSSVGAnimated/) {
         AddIncludesForSVGAnimatedType($interfaceName);
+    } elsif($className =~ /^JSSVGPathSeg/) {
+        push(@implContentHeader, "#include \"Document.h\"\n");
+        push(@implContentHeader, "#include \"Frame.h\"\n");
+        push(@implContentHeader, "#include \"SVGDocumentExtensions.h\"\n");
+        push(@implContentHeader, "#include \"SVGStyledElement.h\"\n");
     }
 
     push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n") if ($className =~ /SVG/);
@@ -905,7 +910,19 @@ sub GenerateImplementation
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
                 push(@implContent, "    (void)imp;\n");
+            } elsif ($interfaceName =~ /^SVGPathSeg/) {
+                push(@implContent, "    ASSERT(exec && exec->dynamicInterpreter());\n");
+                push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
+                push(@implContent, "    if (!activeFrame)\n        return;\n\n");
+                push(@implContent, "    SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);\n");
+                push(@implContent, "    if (extensions && extensions->hasPathSegContext(imp)) {\n");
+                push(@implContent, "        const SVGStyledElement* context = extensions->pathSegContext(imp);\n");
+                push(@implContent, "        ASSERT(context);\n\n");
+                push(@implContent, "        context->notifyAttributeChange();\n");
+                push(@implContent, "    }\n\n");
+                print "IFACE: $interfaceName\n";
             }
+
             push(@implContent, "}\n\n"); # end function
         }
     }
