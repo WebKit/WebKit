@@ -1,3 +1,20 @@
+2006-12-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/4897162> REGRESSION: Attempting to create a 
+        new message in .Mac web mail causes Safari to crash 
+        ( KJS::DOMCSSStyleDeclaration::put() + 368 )
+
+        This was a regression from my clone-node change. This fix is very 
+        simple.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::copyNonAttributeProperties): Must set the 
+        data that getInlineStyleDecl() points to instead of setting 
+        m_inlineStyleDecl directly. I also changed some variable names.
+        * dom/StyledElement.h: Don't need parameter name here.
+
 2006-12-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.

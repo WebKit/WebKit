@@ -75,7 +75,7 @@ public:
     virtual void createAttributeMap() const;
     virtual Attribute* createAttribute(const QualifiedName& name, StringImpl* value);
 
-    virtual void copyNonAttributeProperties(const Element* source);
+    virtual void copyNonAttributeProperties(const Element*);
 
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
