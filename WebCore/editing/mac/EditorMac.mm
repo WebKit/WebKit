@@ -571,10 +571,16 @@ bool Editor::spellingPanelIsShowing()
     return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
 }
 
-void Editor::markMisspellingsInAdjacentWords(const VisiblePosition &p)
+void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 {
     if (!isContinuousSpellCheckingEnabled())
         return;
+    
+    // FIXME 4859132: We currently only check the adjacent words. This is fine for spelling, where each
+    // misspelling is fully contained within a word. But this isn't good enough for grammar checking,
+    // where more context must be taken into account. We'll have to reconsider the grammar in the entire
+    // "conceptual grammar block", which is not well-defined but must be at least a sentence long, and
+    // perhaps a paragraph in some languages.
     markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
 }
 

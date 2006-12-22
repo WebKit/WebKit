@@ -144,7 +144,7 @@ public:
     bool isSelectionMisspelled();
     Vector<String> guessesForMisspelledSelection();
     Vector<String> guessesForUngrammaticalSelection();
-    void markMisspellingsInAdjacentWords(const VisiblePosition&);
+    void markMisspellingsAfterTypingToPosition(const VisiblePosition&);
     void markMisspellings(const Selection&);
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();

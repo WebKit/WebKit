@@ -226,7 +226,7 @@ void TypingCommand::markMisspellingsAfterTyping()
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
-            document()->frame()->editor()->markMisspellingsInAdjacentWords(p1);
+            document()->frame()->editor()->markMisspellingsAfterTypingToPosition(p1);
     }
 }
 

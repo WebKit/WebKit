@@ -1,3 +1,22 @@
+2006-12-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+
+        - renamed markMisspellingsInAdjacentWords to markMisspellingsAfterTypingToPosition
+          in anticipation of fixing it to work more correctly with grammar checking, where
+          only checking adjacent words isn't good enough.
+
+        * editing/Editor.h:
+        renamed markMisspellingsInAdjacentWords to markMisspellingsAfterTypingToPosition 
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        updated for name change
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        renamed from markMisspellingsInAdjacentWords and added FIXME comment
+
 2006-12-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by aroben.
