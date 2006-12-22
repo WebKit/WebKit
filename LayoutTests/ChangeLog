@@ -1,3 +1,26 @@
+2006-12-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by aroben.
+        
+        Add tests to document our visibility override behavior (which seems to differ from Firefox, spec unclear)
+
+        * svg/custom/visibility-override-clip-expected.checksum: Added.
+        * svg/custom/visibility-override-clip-expected.png: Added.
+        * svg/custom/visibility-override-clip-expected.txt: Added.
+        * svg/custom/visibility-override-clip.svg: Added.
+        * svg/custom/visibility-override-expected.checksum: Added.
+        * svg/custom/visibility-override-expected.png: Added.
+        * svg/custom/visibility-override-expected.txt: Added.
+        * svg/custom/visibility-override-filter-expected.checksum: Added.
+        * svg/custom/visibility-override-filter-expected.png: Added.
+        * svg/custom/visibility-override-filter-expected.txt: Added.
+        * svg/custom/visibility-override-filter.svg: Added.
+        * svg/custom/visibility-override-mask-expected.checksum: Added.
+        * svg/custom/visibility-override-mask-expected.png: Added.
+        * svg/custom/visibility-override-mask-expected.txt: Added.
+        * svg/custom/visibility-override-mask.svg: Added.
+        * svg/custom/visibility-override.svg: Added.
+
 2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

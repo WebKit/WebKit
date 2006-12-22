@@ -1,3 +1,13 @@
+2006-12-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by aroben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11912
+        Overriding visibility does not behave as expected.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint): allow children to draw when container is visibility='hidden'
+
 2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.
