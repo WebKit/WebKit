@@ -1,3 +1,29 @@
+2006-12-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen
+
+        - improved concept and implementation of my previous checkin after discussing with Darin
+
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView setHoverFeedbackSuspended:]):
+        renamed from setIgnoresMouseMovedEvents, and now tells the main WebHTMLView (if any) that this state has
+        changed. Telling just the main WebHTMLView is a bit of an implementation hack. Hopefully someday we can
+        rework the document architecture and make this kind of thing less hacky (but this is following existing
+        customs, so I don't feel too bad)
+        (-[WebView isHoverFeedbackSuspended]):
+        renamed from ignoresMouseMovedEvents
+
+        * WebView/WebHTMLViewInternal.h:
+        declare _hoverFeedbackSuspendedChanged
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        test the webView's state of the hit-tested WebHTMLView rather than self 
+        (-[WebHTMLView _hoverFeedbackSuspendedChanged]):
+        generate a fake mouse-moved event, which simulates the mouse moving away from
+        the current element or back over it
+
 2006-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

@@ -295,7 +295,7 @@ macro(yankAndSelect) \
     BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
-    BOOL ignoresMouseMovedEvents;
+    BOOL hoverFeedbackSuspended;
 
     NSColor *backgroundColor;
 
@@ -2907,14 +2907,26 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @implementation WebView (WebPendingPublic)
 
-- (void)setIgnoresMouseMovedEvents:(BOOL)newValue
+- (void)setHoverFeedbackSuspended:(BOOL)newValue
 {
-    _private->ignoresMouseMovedEvents = newValue;
+    if (_private->hoverFeedbackSuspended == newValue)
+        return;
+    
+    _private->hoverFeedbackSuspended = newValue;
+    id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
+    // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
+    // such as by calling a protocol method or using respondsToSelector or sending a notification.
+    // But until there is any need for these more general solutions, we'll just hardwire it to work
+    // with WebHTMLView.
+    // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
+    // on each subframe separately.
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
 }
 
-- (BOOL)ignoresMouseMovedEvents
+- (BOOL)isHoverFeedbackSuspended
 {
-    return _private->ignoresMouseMovedEvents;
+    return _private->hoverFeedbackSuspended;
 }
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
