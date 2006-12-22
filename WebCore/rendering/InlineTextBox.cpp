@@ -566,7 +566,7 @@ void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& typ
 }
 #endif
 
-void InlineTextBox::paintDecoration(GraphicsContext *pt, int _tx, int _ty, int deco)
+void InlineTextBox::paintDecoration(GraphicsContext* context, int _tx, int _ty, int deco)
 {
     _tx += m_x;
     _ty += m_y;
@@ -583,17 +583,18 @@ void InlineTextBox::paintDecoration(GraphicsContext *pt, int _tx, int _ty, int d
     
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = textObject()->document()->printing();
+    context->setStrokeThickness(1.0f); // FIXME: We should improve this rule and not always just assume 1.
     if (deco & UNDERLINE) {
-        pt->setStrokeColor(underline);
-        pt->drawLineForText(IntPoint(_tx, _ty), m_baseline, width, isPrinting);
+        context->setStrokeColor(underline);
+        context->drawLineForText(IntPoint(_tx, _ty), m_baseline, width, isPrinting);
     }
     if (deco & OVERLINE) {
-        pt->setStrokeColor(overline);
-        pt->drawLineForText(IntPoint(_tx, _ty), 0, width, isPrinting);
+        context->setStrokeColor(overline);
+        context->drawLineForText(IntPoint(_tx, _ty), 0, width, isPrinting);
     }
     if (deco & LINE_THROUGH) {
-        pt->setStrokeColor(linethrough);
-        pt->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, width, isPrinting);
+        context->setStrokeColor(linethrough);
+        context->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, width, isPrinting);
     }
 }
 

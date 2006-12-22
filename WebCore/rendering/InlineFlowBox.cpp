@@ -777,6 +777,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& paintInfo, int tx,
             context->setFont(styleToUse->font());
 
         bool isPrinting = object()->document()->printing();
+        context->setStrokeThickness(1.0f); // FIXME: We should improve this rule and not always just assume 1.
         if (deco & UNDERLINE && !paintedChildren) {
             context->setStrokeColor(underline);
             context->drawLineForText(IntPoint(tx, ty), m_baseline, w, isPrinting);
