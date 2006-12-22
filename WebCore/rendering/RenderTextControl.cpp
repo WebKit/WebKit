@@ -807,7 +807,7 @@ void RenderTextControl::addSearchResult()
 
 void RenderTextControl::onSearch() const
 {
-    static_cast<EventTargetNode*>(node())->dispatchHTMLEvent(searchEvent, true, false);
+    static_cast<HTMLInputElement*>(node())->onSearch();
 }
 
 void RenderTextControl::showPopup()

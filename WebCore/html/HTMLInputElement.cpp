@@ -1345,16 +1345,15 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
         } else if (clickDefaultFormButton) {
-            if (isSearchField())
+            if (isSearchField()) {
                 addSearchResult();
+                onSearch();
+            }
             blur();
             // Form may never have been present, or may have been destroyed by the blur event.
-            if (form()) {
+            if (form())
                 form()->submitClick(evt);
-                evt->setDefaultHandled();
-            } else if (inputType() != SEARCH) {
-                evt->setDefaultHandled();
-            }
+            evt->setDefaultHandled();
         }
     }
 
@@ -1519,6 +1518,12 @@ void HTMLInputElement::addSearchResult()
     ASSERT(isSearchField());
     if (renderer())
         static_cast<RenderTextControl*>(renderer())->addSearchResult();
+}
+
+void HTMLInputElement::onSearch()
+{
+    ASSERT(isSearchField());
+    dispatchHTMLEvent(searchEvent, true, false);
 }
     
 } // namespace

@@ -175,6 +175,7 @@ public:
     
     void cacheSelection(int s, int e) { cachedSelStart = s; cachedSelEnd = e; };
     void addSearchResult();
+    void onSearch();
 
 protected:
     AtomicString m_name;
