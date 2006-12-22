@@ -1,3 +1,15 @@
+2006-12-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11903
+          REGRESSION: outline not drawn if line style is dashed.
+
+        This fixes a bunch of existing pixel tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorder):
+
 2006-12-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker
