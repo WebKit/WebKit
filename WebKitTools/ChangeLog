@@ -1,3 +1,14 @@
+2006-12-21  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11922
+        Bug 11922: REGRESSION(r17128): Drosera no longer shows local variables in stack frame
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject webScriptAttributeKeysForScriptObject:]): Use an anonymous function with function.call to
+        ensure that the properties are being retrieved from the correct scope object.
+
 2006-12-21  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
