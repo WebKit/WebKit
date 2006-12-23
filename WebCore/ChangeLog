@@ -1,3 +1,14 @@
+2006-12-23  David Hyatt  <hyatt@apple.com>
+
+        Fix 11942.  The inheritable properties array is duplicated (lame).  Make
+        sure to keep both in sync.
+
+        Reviewed by mitz
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::):
+
 2006-12-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady Eidson.

@@ -416,9 +416,12 @@ void CSSMutableStyleDeclaration::merge(CSSMutableStyleDeclaration *other, bool a
 // This is the list of properties we want to copy in the copyInheritableProperties() function.
 // It is the intersection of the list of inherited CSS properties and the
 // properties for which we have a computed implementation in this file.
+// FIXME: This array is duplicated in CSSComputedStyleDeclaration.cpp!  Both must be patched if
+// you add something here!
 const int inheritableProperties[] = {
     CSS_PROP_BORDER_COLLAPSE,
-    CSS_PROP_BORDER_SPACING,
+    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
     CSS_PROP_COLOR,
     CSS_PROP_FONT_FAMILY,
     CSS_PROP_FONT_SIZE,
@@ -429,8 +432,11 @@ const int inheritableProperties[] = {
     CSS_PROP_LINE_HEIGHT,
     CSS_PROP_TEXT_ALIGN,
     CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
+    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
+    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_ORPHANS,
     CSS_PROP_WHITE_SPACE,
