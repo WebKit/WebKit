@@ -1258,13 +1258,13 @@ Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOw
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    return [[Mac(m_frame)->bridge() createChildFrameNamed:name
-                                                             withURL:url.getNSURL()
-                                                            referrer:referrer 
-                                                          ownerElement:ownerElement
-                                                     allowsScrolling:allowsScrolling
-                                                         marginWidth:marginWidth
-                                                        marginHeight:marginHeight] _frame];
+    return [Mac(m_frame)->bridge() createChildFrameNamed:name
+                                                 withURL:url.getNSURL()
+                                                referrer:referrer 
+                                              ownerElement:ownerElement
+                                         allowsScrolling:allowsScrolling
+                                             marginWidth:marginWidth
+                                            marginHeight:marginHeight];
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;

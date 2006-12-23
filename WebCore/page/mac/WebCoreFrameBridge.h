@@ -278,7 +278,7 @@ typedef enum ObjectElementType {
 
 - (void)setStatusText:(NSString *)status;
 
-- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
+- (WebCore::Frame*)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
     ownerElement:(WebCore::HTMLFrameOwnerElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (NSWindow *)window;

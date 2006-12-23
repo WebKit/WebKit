@@ -1,3 +1,23 @@
+2006-12-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Fixed <rdar://problem/4871518> Leopard9A321: Crash visiting www.audible.com 
+        (WebCore::FrameLoader::loadSubframe)
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:ownerElement:allowsScrolling:marginWidth:marginHeight:]):
+        - The fix: 
+            Changed to re-fetch the child frame we're trying to load before returning it,
+            since its onload handler may have removed it from the document. This
+            allows us to treat a removed frame like a frame that never loaded.
+        
+        - Plus some cleanup:
+            - Changed to return a WebCore::Frame* instead of a WebFrameBridge *,
+            to simplify some code.
+            - Grouped ObjC objects by usage, and moved calls to -release so that they
+            immediately follow the calls that retain.
+
 2006-12-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen

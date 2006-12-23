@@ -379,7 +379,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsResigningFirstResponder:formControl];
 }
 
-- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
+- (Frame*)createChildFrameNamed:(NSString *)frameName 
                                       withURL:(NSURL *)URL
                                      referrer:(const String&)referrer
                                  ownerElement:(HTMLFrameOwnerElement*)ownerElement
@@ -389,27 +389,28 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     bool hideReferrer;
     if (!m_frame->loader()->canLoad(URL, referrer, hideReferrer))
-        return nil;
+        return 0;
 
     ASSERT(_frame);
     
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     [childView setAllowsScrolling:allowsScrolling];
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName frameView:childView];
-    [_frame _addChild:[newBridge webFrame]];
-    [childView release];
-
     [childView _setMarginWidth:width];
     [childView _setMarginHeight:height];
 
-    [newBridge release];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName frameView:childView];
+    [childView release];
 
     if (!newBridge)
-        return nil;
+        return 0;
+
+    [_frame _addChild:[newBridge webFrame]];
+    [newBridge release];
 
     [_frame _loadURL:URL referrer:(hideReferrer ? String() : referrer) intoChild:[newBridge webFrame]];
 
-    return newBridge;
+    // Re-fetch the child frame, since its onload handler may have removed it from the document.
+    return m_frame->tree()->child(frameName);
 }
 
 - (void)saveDocumentState:(NSArray *)documentState

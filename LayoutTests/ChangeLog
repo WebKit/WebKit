@@ -1,3 +1,16 @@
+2006-12-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Test for <rdar://problem/4871518> Leopard9A321: Crash visiting www.audible.com 
+        (WebCore::FrameLoader::loadSubframe)
+        
+        Tests an onload handler for a synchronously loaded iframe removing the iframe 
+        from the document.
+
+        * fast/frames/onload-remove-iframe-crash-expected.txt: Added.
+        * fast/frames/onload-remove-iframe-crash.html: Added.
+
 2006-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

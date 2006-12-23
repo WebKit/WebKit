@@ -1,3 +1,16 @@
+2006-12-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Fixed <rdar://problem/4871518> Leopard9A321: Crash visiting www.audible.com 
+        (WebCore::FrameLoader::loadSubframe)
+
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::createFrame): Updated to reflect the fact that
+        createChildFrameNamed: now returns a WebCore::Frame* instead of a 
+        WebCoreFrameBridge *.
+        * page/mac/WebCoreFrameBridge.h:
+
 2006-12-22  David Hyatt  <hyatt@apple.com>
 
         Make sure to actually set the stroke thickness for text decorations.
