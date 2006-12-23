@@ -530,6 +530,10 @@ sub get_function_line_ranges_for_c($$)
   
                   $_ = $original;
                   s/^[^;{]*//;
+                } elsif (/\@end/) {
+                  $in_method_declaration = 0;
+                  $interface_name = "";
+                  $_ = $original;
                 } else {
                   next;
                 }
@@ -563,6 +567,10 @@ sub get_function_line_ranges_for_c($$)
               $in_method_declaration = 0;
               $_ = $original;
               s/^[^{]*//;
+            } elsif (/\@end/) {
+              $in_method_declaration = 0;
+              $interface_name = "";
+              $_ = $original;
             } else {
               next;
             }

@@ -1,3 +1,12 @@
+2006-12-22  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/4265976>
+        prepare-ChangeLog sometimes lists the wrong Objective-C class name for a changed method
+
+        * Scripts/prepare-ChangeLog: Treat @end as the end of both the interface and the method declaration.
+
 2006-12-21  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Tim Hatcher.
