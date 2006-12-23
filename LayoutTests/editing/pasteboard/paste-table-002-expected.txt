@@ -17,5 +17,5 @@ Problem: copy/pasting some HTML including tables can give rise to a <div> elemen
 abcdef
 foo	bar
 ghijk
-<div id="test" class="editing"> <div>abcdef<span class="Apple-style-span" style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; font-size: 16px; "><div style="font-size: 24px; text-align: center; "><table style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; font-size: 16px; text-align: auto; "><tbody style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><tr style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><td style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; ">foo</td><td style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; ">bar</td></tr></tbody></table>ghijk</div></span> </div> </div>
+<div id="test" class="editing"> <div>abcdef<span class="Apple-style-span" style="font-size: 16px; "><div style="font-size: 24px; text-align: center; "><table style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; font-size: 16px; text-align: auto; "><tbody style=""><tr style=""><td style="">foo</td><td style="">bar</td></tr></tbody></table>ghijk</div></span> </div> </div>
 
