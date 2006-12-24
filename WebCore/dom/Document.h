@@ -685,7 +685,6 @@ protected:
     bool m_bParsing;
     bool m_bAllDataReceived;
     bool m_docChanged;
-    bool m_styleSelectorDirty;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
     bool m_usesDescendantRules;
