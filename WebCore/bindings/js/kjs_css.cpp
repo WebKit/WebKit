@@ -5,6 +5,7 @@
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2004-2006 Apple Computer, Inc.
  *  Copyright (C) 2006 James G. Speth (speth@end.com)
+ *  Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -843,14 +844,23 @@ JSValue* DOMCSSRuleFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
 {
   if (!thisObj->inherits(&KJS::DOMCSSRule::info))
     return throwError(exec, TypeError);
-  CSSRule &cssRule = *static_cast<DOMCSSRule*>(thisObj)->impl();
+  CSSRule& cssRule = *static_cast<DOMCSSRule*>(thisObj)->impl();
 
   if (cssRule.type() == CSSRule::MEDIA_RULE) {
-    CSSMediaRule &rule = static_cast<CSSMediaRule &>(cssRule);
-    if (id == DOMCSSRule::Media_InsertRule)
-      return jsNumber(rule.insertRule(args[0]->toString(exec), args[1]->toInt32(exec)));
-    else if (id == DOMCSSRule::Media_DeleteRule)
-      rule.deleteRule(args[0]->toInt32(exec));
+    CSSMediaRule& rule = static_cast<CSSMediaRule&>(cssRule);
+    switch (id) {
+      case DOMCSSRule::Media_InsertRule: {
+        ExceptionCode ec = 0;
+        JSValue* result = jsNumber(rule.insertRule(args[0]->toString(exec), args[1]->toInt32(exec), ec));
+        setDOMException(exec, ec);
+        return result;
+      }
+      case DOMCSSRule::Media_DeleteRule: {
+        ExceptionCode ec = 0;
+        rule.deleteRule(args[0]->toInt32(exec), ec);
+        setDOMException(exec, ec);
+      }
+    }
   }
 
   return jsUndefined();

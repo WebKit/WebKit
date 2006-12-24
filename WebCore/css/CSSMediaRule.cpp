@@ -4,6 +4,7 @@
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,12 +21,14 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSMediaRule.h"
 
-#include "cssparser.h"
 #include "CSSRuleList.h"
+#include "ExceptionCode.h"
 #include "MediaList.h"
+#include "cssparser.h"
 
 namespace WebCore {
 
@@ -73,18 +76,47 @@ unsigned CSSMediaRule::append(CSSRule* rule)
     return m_lstCSSRules->insertRule(rule, m_lstCSSRules->length());
 }
 
-unsigned CSSMediaRule::insertRule(const String& rule, unsigned index)
+unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
     CSSParser p(useStrictParsing());
     RefPtr<CSSRule> newRule = p.parseRule(parentStyleSheet(), rule);
-    if (!newRule)
+    if (!newRule) {
+        // SYNTAX_ERR: Raised if the specified rule has a syntax error and is unparsable.
+        ec = SYNTAX_ERR;
         return 0;
+    }
+
+    if (newRule->isImportRule()) {
+        // FIXME: an HIERARCHY_REQUEST_ERR should also be thrown for a @charset or a nested
+        // @media rule.  They are currently not getting parsed, resulting in a SYNTAX_ERR
+        // to get raised above.
+
+        // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified 
+        // index, e.g., if an @import rule is inserted after a standard rule set or other
+        // at-rule.
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+
+    if (index > m_lstCSSRules->length()) {
+        // INDEX_SIZE_ERR: Raised if the specified index is not a valid insertion point.
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+
     newRule->setParent(this);
     return m_lstCSSRules->insertRule(newRule.get(), index);
 }
 
-void CSSMediaRule::deleteRule(unsigned index)
+void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 {
+    if (index >= m_lstCSSRules->length()) {
+        // INDEX_SIZE_ERR: Raised if the specified index does not correspond to a 
+        // rule in the media rule list.
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     m_lstCSSRules->deleteRule(index);
 }
 

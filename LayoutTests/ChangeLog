@@ -1,3 +1,13 @@
+2006-12-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=11876
+        CSSMediaRule functions insertRule and deleteRule don't raise exceptions
+
+        * fast/dom/css-mediarule-functions-expected.txt: Added.
+        * fast/dom/css-mediarule-functions.html: Added.
+
 2006-12-23  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Mitz.
