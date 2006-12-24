@@ -1,3 +1,14 @@
+2006-12-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=9801
+        fast/encoding/utf-16-big-endian-diffs.html pixel test fails
+
+        * fast/encoding/utf-16-big-endian-expected.checksum:
+        * fast/encoding/utf-16-big-endian-expected.png:
+        * fast/encoding/utf-16-little-endian-expected.checksum:
+        * fast/encoding/utf-16-little-endian-expected.png:
+        Updated the pixel results, which weren't landed with the fix for bug 3297.
+
 2006-12-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
