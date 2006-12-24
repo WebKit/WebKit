@@ -28,6 +28,7 @@
 #include "CSSRuleList.h"
 #include "ExceptionCode.h"
 #include "MediaList.h"
+#include "StyleSheet.h"
 #include "cssparser.h"
 
 namespace WebCore {
@@ -78,6 +79,12 @@ unsigned CSSMediaRule::append(CSSRule* rule)
 
 unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
+    if (index > m_lstCSSRules->length()) {
+        // INDEX_SIZE_ERR: Raised if the specified index is not a valid insertion point.
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+
     CSSParser p(useStrictParsing());
     RefPtr<CSSRule> newRule = p.parseRule(parentStyleSheet(), rule);
     if (!newRule) {
@@ -98,14 +105,13 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
         return 0;
     }
 
-    if (index > m_lstCSSRules->length()) {
-        // INDEX_SIZE_ERR: Raised if the specified index is not a valid insertion point.
-        ec = INDEX_SIZE_ERR;
-        return 0;
-    }
-
     newRule->setParent(this);
-    return m_lstCSSRules->insertRule(newRule.get(), index);
+    unsigned returnedIndex = m_lstCSSRules->insertRule(newRule.get(), index);
+
+    // stylesheet() can only return 0 for computed style declarations.
+    stylesheet()->styleSheetChanged();
+
+    return returnedIndex;
 }
 
 void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
@@ -118,6 +124,9 @@ void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
     }
 
     m_lstCSSRules->deleteRule(index);
+
+    // stylesheet() can only return 0 for computed style declarations.
+    stylesheet()->styleSheetChanged();
 }
 
 String CSSMediaRule::cssText() const

@@ -1,3 +1,20 @@
+2006-12-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=11952
+        style changes made through CSSMediaRule functions insertRule() 
+        and deleteRule do not show up on the screen 
+
+        * fast/dom/css-mediarule-deleteRule-update-expected.checksum: Added.
+        * fast/dom/css-mediarule-deleteRule-update-expected.png: Added.
+        * fast/dom/css-mediarule-deleteRule-update-expected.txt: Added.
+        * fast/dom/css-mediarule-deleteRule-update.html: Added.
+        * fast/dom/css-mediarule-insertRule-update-expected.checksum: Added.
+        * fast/dom/css-mediarule-insertRule-update-expected.png: Added.
+        * fast/dom/css-mediarule-insertRule-update-expected.txt: Added.
+        * fast/dom/css-mediarule-insertRule-update.html: Added.
+
 2006-12-24  Alexey Proskuryakov  <ap@webkit.org>
 
         http://bugs.webkit.org/show_bug.cgi?id=9801
