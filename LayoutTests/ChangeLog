@@ -1,3 +1,13 @@
+2006-12-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11933
+        REGRESSION: trying to change a property in a computed style declaration results in a crash
+
+        * fast/dom/computed-style-set-property-expected.txt: Added.
+        * fast/dom/computed-style-set-property.html: Added.
+
 2006-12-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

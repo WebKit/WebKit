@@ -1,3 +1,17 @@
+2006-12-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11933
+        REGRESSION: trying to change a property in a computed style declaration results in a crash
+
+        Test: fast/dom/computed-style-set-property.html
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put): Added a check for null m_impl->stylesheet(). Also, fixed
+        incorrect logic in Dashboard branch - it didn't return in time if removeProperty() raised
+        an exception (credit for noticing this bug goes to Geoff).
+
 2006-12-23  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
 
         Reviewed by Geoff.
