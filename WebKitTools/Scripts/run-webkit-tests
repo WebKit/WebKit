@@ -90,6 +90,7 @@ my $singly = 0;
 my $testHTTP = 1;
 my $testOnlySVGs = '';
 my $testResultsDirectory = "/tmp/layout-test-results";
+my $threaded = 0;
 my $verbose = 0;
 
 my $expectedTag = "expected";
@@ -134,6 +135,7 @@ my $usage =
     "  -1|--singly             Isolate each test case run (implies --verbose)\n" .
     "  --slowest               Report the 10 slowest tests\n" .
     "  --svg                   Run only SVG tests (implies --pixel-tests)\n" .
+    "  -t|--threaded           Run a concurrent JavaScript thead with each test\n" .
     "  -v|--verbose            More verbose output (overrides --quiet)\n" .
     "  --debug|--release       Set DumpRenderTree build configuration\n";
 
@@ -157,6 +159,7 @@ my $getOptionsResult = GetOptions(
     'singly|1' => \$singly,
     'slowest' => \$report10Slowest,
     'svg' => \$testOnlySVGs, 
+    'threaded|t' => \$threaded,
     'verbose|v' => \$verbose,
 );
 
@@ -282,6 +285,7 @@ push @toolArgs, "--dump-all-pixels" if $pixelTests && $resetResults;
 push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--repaint" if $repaintTests;
 push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
+push @toolArgs, "--threaded" if $threaded;
 push @toolArgs, "-";
 
 $| = 1;

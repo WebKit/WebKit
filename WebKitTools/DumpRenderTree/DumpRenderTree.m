@@ -38,6 +38,8 @@
 #import "TextInputController.h"
 #import "UIDelegate.h"
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
+#import <CoreFoundation/CoreFoundation.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -57,8 +59,8 @@
 #import <WebKit/WebView.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
-#import <CoreFoundation/CoreFoundation.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
+#import <pthread.h>
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>               // for MD5 functions
@@ -118,6 +120,7 @@ static BOOL dumpBackForwardList;
 static BOOL dumpChildFrameScrollPositions;
 static int dumpPixels = NO;
 static int dumpAllPixels = NO;
+static int threaded = NO;
 static BOOL readFromWindow = NO;
 static int testRepaintDefault = NO;
 static BOOL testRepaint = NO;
@@ -138,6 +141,49 @@ static BOOL workQueueFrozen;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
+
+// Loops forever, running a script
+void* runJavaScriptThread(void* arg)
+{
+    char* script =
+    " \
+    var array = []; \
+    for (var i = 0; i < 1000; i++) { \
+        array.push(String(i)); \
+    } \
+    ";
+
+    while(1) {
+        JSGlobalContextRef ctx = JSGlobalContextCreate(NULL);
+        JSStringRef scriptRef = JSStringCreateWithUTF8CString(script);
+
+        JSValueRef exception = NULL;
+        JSEvaluateScript(ctx, scriptRef, NULL, NULL, 0, &exception);
+        assert(!exception);
+        
+        JSGlobalContextRelease(ctx);
+        JSStringRelease(scriptRef);
+        
+        JSGarbageCollect(ctx);
+
+        pthread_testcancel(); // Allow thread termination
+    }
+}
+
+static pthread_t javaScriptThread;
+
+static void startJavaScriptThread(void)
+{
+    assert(!javaScriptThread);
+    pthread_create(&javaScriptThread, NULL, runJavaScriptThread, NULL);
+}
+
+static void stopJavaScriptThread(void)
+{
+    assert(javaScriptThread);
+    pthread_cancel(javaScriptThread);
+    javaScriptThread = NULL;
+}
 
 BOOL doneLoading(void)
 {
@@ -240,6 +286,7 @@ void dumpRenderTree(int argc, const char *argv[])
         {"pixel-tests", no_argument, &dumpPixels, YES},
         {"repaint", no_argument, &testRepaintDefault, YES},
         {"tree", no_argument, &dumpTree, YES},
+        {"threaded", no_argument, &threaded, YES},
         {NULL, 0, NULL, 0}
     };
 
@@ -347,6 +394,9 @@ void dumpRenderTree(int argc, const char *argv[])
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
     NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
     [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
+
+    if (threaded)
+        startJavaScriptThread();
     
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
@@ -367,6 +417,9 @@ void dumpRenderTree(int argc, const char *argv[])
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }
+
+    if (threaded)
+        stopJavaScriptThread();
     
     [workQueue release];
 

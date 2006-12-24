@@ -1,3 +1,25 @@
+2006-12-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added --threaded support to run-webkit-tests and DumpRenderTree.
+        
+        In "threaded" mode, DRT runs a concurrent JavaScript thread with each test,
+        stressing the thread safety of JavaScriptCore and the JavaScriptCore/WebCore 
+        interface. This is useful for tracking down bugs you might see on a system
+        configured to use a PAC file.
+        
+        Ironically, I can proudly state that very few layout tests pass.
+
+        * DumpRenderTree/DumpRenderTree.m: Added javaScriptThread and helper functions
+        for starting and stopping it.
+        (runJavaScriptThread): helper function
+        (startJavaScriptThread): helper function
+        (stopJavaScriptThread): helper function
+
+        (dumpRenderTree): Added --threaded command line argument.
+        * Scripts/run-webkit-tests: ditto
+
 2006-12-22  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Brady.
