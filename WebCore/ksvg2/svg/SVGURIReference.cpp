@@ -52,7 +52,6 @@ bool SVGURIReference::parseMappedAttribute(MappedAttribute* attr)
 
 String SVGURIReference::getTarget(const String& url)
 {
-    DeprecatedString urlDeprecated = url.deprecatedString(); // FIXME: Needed until findRev exists for String
     if (url.startsWith("url(")) { // URI References, ie. fill:url(#target)
         unsigned int start = url.find('#') + 1;
         unsigned int end = url.reverseFind(')');
