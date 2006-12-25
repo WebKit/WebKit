@@ -49,7 +49,7 @@ typedef union PluginPort {
 
 @interface WebBaseNetscapePluginView : NSView
 {
-    WebNetscapePluginPackage *plugin;
+    WebNetscapePluginPackage *pluginPackage;
     
     int mode;
     
@@ -57,8 +57,7 @@ typedef union PluginPort {
     char **cAttributes;
     char **cValues;
         
-    NPP instance;
-    NPP_t instanceStruct;
+    NPP plugin;
     NPWindow window;
     NPWindow lastSetWindow;
     PluginPort nPort;
@@ -119,10 +118,10 @@ typedef union PluginPort {
 - (WebView *)webView;
 - (NSWindow *)currentWindow;
 
-- (NPP)pluginPointer;
+- (NPP)plugin;
 
-- (WebNetscapePluginPackage *)plugin;
-- (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
+- (WebNetscapePluginPackage *)pluginPackage;
+- (void)setPlugin:(WebNetscapePluginPackage *)thePluginPackage;
 - (void)setMIMEType:(NSString *)theMIMEType;
 - (void)setBaseURL:(NSURL *)theBaseURL;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
@@ -135,7 +134,7 @@ typedef union PluginPort {
 // The return value is expected to be retained.
 - (NPObject *)createPluginScriptableObject;
 
-// -willCallPlugInFunction must be called before calling any of the NPP_* functions for this view's NPP instance.
+// -willCallPlugInFunction must be called before calling any of the NPP_* functions for this view's plugin.
 // This is necessary to ensure that plug-ins are not destroyed while WebKit calls into them.  Some plug-ins (Flash
 // at least) are written with the assumption that nothing they do in their plug-in functions can cause NPP_Destroy()
 // to be called.  Unfortunately, this is not true, especially if the plug-in uses NPN_Invoke() to execute a

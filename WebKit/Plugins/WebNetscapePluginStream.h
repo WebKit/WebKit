@@ -49,7 +49,7 @@ typedef WebCore::NetscapePlugInStreamLoader WebCoreNetscapePlugInStreamLoader;
 }
 
 - (id)initWithRequest:(NSURLRequest *)theRequest
-        pluginPointer:(NPP)thePluginPointer
+               plugin:(NPP)thePlugin
            notifyData:(void *)theNotifyData
      sendNotification:(BOOL)sendNotification;
 - (void)start;

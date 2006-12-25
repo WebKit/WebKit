@@ -140,14 +140,14 @@
     if (![self isStarted])
         return;
     
-    if ([_manualStream instance] == NULL) {
+    if ([_manualStream plugin] == NULL) {
         [_manualStream setRequestURL:[[[self dataSource] request] URL]];
-        [_manualStream setPluginPointer:[self pluginPointer]];
-        ASSERT([_manualStream instance]);
+        [_manualStream setPlugin:[self plugin]];
+        ASSERT([_manualStream plugin]);
         [_manualStream startStreamWithResponse:[[self dataSource] response]];
     }
     
-    if ([_manualStream instance])
+    if ([_manualStream plugin])
         [_manualStream receivedData:data];
 }
 

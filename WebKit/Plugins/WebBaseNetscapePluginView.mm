@@ -70,6 +70,8 @@ using namespace WebCore;
 
 @interface WebBaseNetscapePluginView (Internal)
 - (void)_viewHasMoved;
+- (NPError)_createPlugin;
+- (void)_destroyPlugin;
 - (NSBitmapImageRep *)_printedPluginBitmap;
 - (BOOL)_createAGLContextIfNeeded;
 - (BOOL)_createWindowedAGLContext;
@@ -617,7 +619,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [[self retain] autorelease];
     
     [self willCallPlugInFunction];
-    BOOL acceptedEvent = NPP_HandleEvent(instance, event);
+    BOOL acceptedEvent = NPP_HandleEvent(plugin, event);
     [self didCallPlugInFunction];
     
     currentEventIsUserGesture = NO;
@@ -1072,7 +1074,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
         [self willCallPlugInFunction];
-        npErr = NPP_SetWindow(instance, &window);
+        npErr = NPP_SetWindow(plugin, &window);
         [self didCallPlugInFunction];
         inSetWindow = NO;
 
@@ -1188,24 +1190,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT([self currentWindow]);
     
-    if (isStarted) {
+    if (isStarted)
         return YES;
-    }
 
-    if (![self canStart]) {
+    if (![self canStart])
         return NO;
-    }
     
     ASSERT([self webView]);
     
-    if (![[[self webView] preferences] arePlugInsEnabled]) {
+    if (![[[self webView] preferences] arePlugInsEnabled])
         return NO;
-    }
 
-    ASSERT(NPP_New);
-
-    // Open the plug-in package so it remains loaded while this instance uses it
-    [plugin open];
+    // Open the plug-in package so it remains loaded while our plugin uses it
+    [pluginPackage open];
     
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
     drawingModel = (NPDrawingModel)-1;
@@ -1214,13 +1211,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
     window.type = NPWindowTypeWindow;
     
-    // NPN_New(), which creates the plug-in instance, should never be called while calling a plug-in function for that instance.
-    ASSERT(pluginFunctionCallDepth == 0);
-
-    [[self class] setCurrentPluginView:self];
-    NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
-    [[self class] setCurrentPluginView:nil];
-
+    NPError npErr = [self _createPlugin];
+    if (npErr != NPERR_NO_ERROR) {
+        LOG_ERROR("NPP_New failed with error: %d", npErr);
+        [self _destroyPlugin];
+        [pluginPackage close];
+        return NO;
+    }
+    
     if (drawingModel == (NPDrawingModel)-1) {
 #ifndef NP_NO_QUICKDRAW
         // Default to QuickDraw if the plugin did not specify a drawing model.
@@ -1229,21 +1227,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // QuickDraw is not available, so we can't default to it.  We could default to CoreGraphics instead, but
         // if the plugin did not specify the CoreGraphics drawing model then it must be one of the old QuickDraw
         // plugins.  Thus, the plugin is unsupported and should not be started.  Destroy it here and bail out.
-        LOG(Plugins, "Plugin only supports QuickDraw, but QuickDraw is unavailable: %@", plugin);
-        NPP_Destroy(instance, NULL);
-        instance->pdata = NULL;
-        [plugin close];
+        LOG(Plugins, "Plugin only supports QuickDraw, but QuickDraw is unavailable: %@", pluginPackage);
+        [self _destroyPlugin];
+        [pluginPackage close];
         return NO;
 #endif
     }
-        
-    LOG(Plugins, "NPP_New: %d", npErr);
-    if (npErr != NPERR_NO_ERROR) {
-        LOG_ERROR("NPP_New failed with error: %d", npErr);
-        [plugin close];
-        return NO;
-    }
-    
+
     isStarted = YES;
         
     [self updateAndSetWindow];
@@ -1276,9 +1266,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     [self removeTrackingRect];
 
-    if (!isStarted) {
+    if (!isStarted)
         return;
-    }
     
     isStarted = NO;
     
@@ -1299,14 +1288,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
     
-    NPError npErr;
-    npErr = NPP_Destroy(instance, NULL);
-    LOG(Plugins, "NPP_Destroy: %d", npErr);
-
-    instance->pdata = NULL;
-    
-    // This instance no longer needs the plug-in package
-    [plugin close];
+    [self _destroyPlugin];
+    [pluginPackage close];
     
     // We usually remove the key event handler in resignFirstResponder but it is possible that resignFirstResponder 
     // may never get called so we can't completely rely on it.
@@ -1342,35 +1325,35 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return [self window] ? [self window] : [[self webView] hostWindow];
 }
 
-- (NPP)pluginPointer
-{
-    return instance;
-}
-
-- (WebNetscapePluginPackage *)plugin
+- (NPP)plugin
 {
     return plugin;
 }
 
-- (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
+- (WebNetscapePluginPackage *)pluginPackage
 {
-    [thePlugin retain];
-    [plugin release];
-    plugin = thePlugin;
+    return pluginPackage;
+}
 
-    NPP_New =           [plugin NPP_New];
-    NPP_Destroy =       [plugin NPP_Destroy];
-    NPP_SetWindow =     [plugin NPP_SetWindow];
-    NPP_NewStream =     [plugin NPP_NewStream];
-    NPP_WriteReady =    [plugin NPP_WriteReady];
-    NPP_Write =         [plugin NPP_Write];
-    NPP_StreamAsFile =  [plugin NPP_StreamAsFile];
-    NPP_DestroyStream = [plugin NPP_DestroyStream];
-    NPP_HandleEvent =   [plugin NPP_HandleEvent];
-    NPP_URLNotify =     [plugin NPP_URLNotify];
-    NPP_GetValue =      [plugin NPP_GetValue];
-    NPP_SetValue =      [plugin NPP_SetValue];
-    NPP_Print =         [plugin NPP_Print];
+- (void)setPlugin:(WebNetscapePluginPackage *)thePluginPackage;
+{
+    [thePluginPackage retain];
+    [pluginPackage release];
+    pluginPackage = thePluginPackage;
+
+    NPP_New =           [pluginPackage NPP_New];
+    NPP_Destroy =       [pluginPackage NPP_Destroy];
+    NPP_SetWindow =     [pluginPackage NPP_SetWindow];
+    NPP_NewStream =     [pluginPackage NPP_NewStream];
+    NPP_WriteReady =    [pluginPackage NPP_WriteReady];
+    NPP_Write =         [pluginPackage NPP_Write];
+    NPP_StreamAsFile =  [pluginPackage NPP_StreamAsFile];
+    NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
+    NPP_HandleEvent =   [pluginPackage NPP_HandleEvent];
+    NPP_URLNotify =     [pluginPackage NPP_URLNotify];
+    NPP_GetValue =      [pluginPackage NPP_GetValue];
+    NPP_SetValue =      [pluginPackage NPP_SetValue];
+    NPP_Print =         [pluginPackage NPP_Print];
 }
 
 - (void)setMIMEType:(NSString *)theMIMEType
@@ -1407,7 +1390,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         cValues = (char **)malloc([values count] * sizeof(char *));
     }
 
-    BOOL isWMP = [[[plugin bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
+    BOOL isWMP = [[[pluginPackage bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
     
     unsigned i;
     unsigned count = [keys count];
@@ -1437,12 +1420,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 #pragma mark NSVIEW
 
-- initWithFrame:(NSRect)frame
+- (NSView *)initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
 
-    instance = &instanceStruct;
-    instance->ndata = self;
     streams = [[NSMutableArray alloc] init];
     pendingFrameLoads = [[NSMutableDictionary alloc] init];
 
@@ -1464,13 +1445,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT(!isStarted);
 
-    [plugin release];
+    [pluginPackage release];
     [streams release];
     [MIMEType release];
     [baseURL release];
     [pendingFrameLoads release];
     [element release];
     
+    ASSERT(!plugin);
     ASSERT(!aglWindow);
     ASSERT(!aglContext);
 
@@ -1721,7 +1703,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         
     NPObject *value = NULL;
     [self willCallPlugInFunction];
-    NPError error = NPP_GetValue(instance, NPPVpluginScriptableNPObject, &value);
+    NPError error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
     [self didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
         return NULL;
@@ -1731,6 +1713,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)willCallPlugInFunction
 {
+    ASSERT(plugin);
+
     // Could try to prevent infinite recursion here, but it's probably not worth the effort.
     pluginFunctionCallDepth++;
 }
@@ -1795,14 +1779,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // FIXME: If the result is a string, we probably want to put that string into the frame.
         if ([JSPluginRequest sendNotification]) {
             [self willCallPlugInFunction];
-            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
+            NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
             [self didCallPlugInFunction];
         }
     } else if ([result length] > 0) {
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequestURL:URL
-                                                                                        pluginPointer:instance
+                                                                                               plugin:plugin
                                                                                            notifyData:[JSPluginRequest notifyData]
                                                                                      sendNotification:[JSPluginRequest sendNotification]];
         [stream startStreamResponseURL:URL
@@ -1824,7 +1808,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT([pluginRequest sendNotification]);
         
     [self willCallPlugInFunction];
-    NPP_URLNotify(instance, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
     [self didCallPlugInFunction];
     
     [pendingFrameLoads removeObjectForKey:webFrame];
@@ -1937,7 +1921,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CFRelease(target);
     } else {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request 
-                                                                             pluginPointer:instance 
+                                                                                    plugin:plugin 
                                                                                 notifyData:notifyData 
                                                                           sendNotification:sendNotification];
         if (!stream)
@@ -2274,7 +2258,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 
                 // Unsupported (or unknown) drawing models:
                 default:
-                    LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", plugin, drawingModel);
+                    LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", pluginPackage, drawingModel);
                     return NPERR_GENERIC_ERROR;
             }
         }
@@ -2334,6 +2318,33 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 @end
 
 @implementation WebBaseNetscapePluginView (Internal)
+
+- (NPError)_createPlugin
+{
+    plugin = (NPP)calloc(1, sizeof(NPP_t));
+    plugin->ndata = self;
+
+    ASSERT(NPP_New);
+
+    // NPN_New(), which creates the plug-in instance, should never be called while calling a plug-in function for that instance.
+    ASSERT(pluginFunctionCallDepth == 0);
+
+    [[self class] setCurrentPluginView:self];
+    NPError npErr = NPP_New((char *)[MIMEType cString], plugin, mode, argsCount, cAttributes, cValues, NULL);
+    [[self class] setCurrentPluginView:nil];
+    
+    LOG(Plugins, "NPP_New: %d", npErr);
+    return npErr;
+}
+
+- (void)_destroyPlugin
+{
+    NPError npErr;
+    npErr = NPP_Destroy(plugin, NULL);
+    LOG(Plugins, "NPP_Destroy: %d", npErr);
+    free(plugin);
+    plugin = NULL;
+}
 
 - (void)_viewHasMoved
 {
@@ -2421,7 +2432,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     // Tell the plugin to print into the GWorld
     [self willCallPlugInFunction];
-    NPP_Print(instance, &npPrint);
+    NPP_Print(plugin, &npPrint);
     [self didCallPlugInFunction];
 
     // Don't need the GWorld anymore

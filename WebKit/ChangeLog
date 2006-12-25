@@ -1,3 +1,28 @@
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Some refactoring in preparation for fixing <rdar://problem/4778898> 
+        REGRESSION: crash in getInstanceForView() when quitting from kcbs.com
+        
+        Two renames:
+            - "plugin" => "pluginPackage" (since the type is WebNetscapePluginPackage *)
+            - "instance" and/or "pluginPointer" => plugin (since NPP is an opaque handle to a plug-in)
+        
+        Removed braces around single-line 'if' statements.
+        
+        Made plugin a pointer instead of an inline ivar. This allows us to NULL
+        it out once we call NPP_Destroy on it.
+        
+        Added helper functions for creating and destroying plugin. The destroy function
+        NULLs out plugin, which helps with debugging.
+            
+        (-[WebBaseNetscapePluginView willCallPlugInFunction]): Added an ASSERT
+        to catch attempts to call functions on destroyed plug-ins.
+
+        (-[WebBaseNetscapePluginView _createPlugin]): New helper function.
+        (-[WebBaseNetscapePluginView _destroyPlugin]): New helper function.
+
 2006-12-24  David Kilzer  <ddkilzer@webkit.org>
 
         Removed empty directory.

@@ -60,7 +60,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:responseURL != nil ? responseURL : requestURL
                                         pluginPageURL:nil
-                                           pluginName:[[pluginView plugin] name]
+                                           pluginName:[[pluginView pluginPackage] name]
                                              MIMEType:MIMEType] autorelease];
 }
 
@@ -78,7 +78,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 }
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL
-           pluginPointer:(NPP)thePluginPointer
+                  plugin:(NPP)thePlugin
               notifyData:(void *)theNotifyData
         sendNotification:(BOOL)flag
 {
@@ -87,13 +87,13 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
     isTerminated = YES;
 
-    if (theRequestURL == nil || thePluginPointer == NULL) {
+    if (theRequestURL == nil || thePlugin == NULL) {
         [self release];
         return nil;
     }
     
     [self setRequestURL:theRequestURL];
-    [self setPluginPointer:thePluginPointer];
+    [self setPlugin:thePlugin];
     notifyData = theNotifyData;
     sendNotification = flag;
     
@@ -104,7 +104,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)dealloc
 {
-    ASSERT(!instance);
+    ASSERT(!plugin);
     ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
@@ -142,9 +142,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     return transferMode;
 }
 
-- (NPP)instance
+- (NPP)plugin
 {
-    return instance;
+    return plugin;
 }
 
 - (void)setRequestURL:(NSURL *)theRequestURL
@@ -161,20 +161,20 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     responseURL = theResponseURL;
 }
 
-- (void)setPluginPointer:(NPP)pluginPointer
+- (void)setPlugin:(NPP)thePlugin
 {
-    if (pluginPointer) {
-        instance = pluginPointer;
-        pluginView = [(WebBaseNetscapePluginView *)instance->ndata retain];
-        WebNetscapePluginPackage *plugin = [pluginView plugin];
-        NPP_NewStream = [plugin NPP_NewStream];
-        NPP_WriteReady = [plugin NPP_WriteReady];
-        NPP_Write = [plugin NPP_Write];
-        NPP_StreamAsFile = [plugin NPP_StreamAsFile];
-        NPP_DestroyStream = [plugin NPP_DestroyStream];
-        NPP_URLNotify = [plugin NPP_URLNotify];
+    if (thePlugin) {
+        plugin = thePlugin;
+        pluginView = [(WebBaseNetscapePluginView *)plugin->ndata retain];
+        WebNetscapePluginPackage *pluginPackage = [pluginView pluginPackage];
+        NPP_NewStream = [pluginPackage NPP_NewStream];
+        NPP_WriteReady = [pluginPackage NPP_WriteReady];
+        NPP_Write = [pluginPackage NPP_Write];
+        NPP_StreamAsFile = [pluginPackage NPP_StreamAsFile];
+        NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
+        NPP_URLNotify = [pluginPackage NPP_URLNotify];
     } else {
-        instance = NULL;
+        plugin = NULL;
         [pluginView release];
         pluginView = nil;
         NPP_NewStream = NULL;
@@ -218,7 +218,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     // FIXME: Need a way to check if stream is seekable
 
     [pluginView willCallPlugInFunction];
-    NPError npErr = NPP_NewStream(instance, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
+    NPError npErr = NPP_NewStream(plugin, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
     [pluginView didCallPlugInFunction];
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
 
@@ -270,7 +270,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
             char *carbonPath = CarbonPathFromPOSIXPath(path);
             ASSERT(carbonPath != NULL);
             [pluginView willCallPlugInFunction];
-            NPP_StreamAsFile(instance, &stream, carbonPath);
+            NPP_StreamAsFile(plugin, &stream, carbonPath);
             [pluginView didCallPlugInFunction];
 
             // Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
@@ -286,7 +286,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
         
         NPError npErr;
         [pluginView willCallPlugInFunction];
-        npErr = NPP_DestroyStream(instance, &stream, reason);
+        npErr = NPP_DestroyStream(plugin, &stream, reason);
         [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
         
@@ -296,14 +296,14 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     if (sendNotification) {
         // NPP_URLNotify expects the request URL, not the response URL.
         [pluginView willCallPlugInFunction];
-        NPP_URLNotify(instance, [requestURL _web_URLCString], reason, notifyData);
+        NPP_URLNotify(plugin, [requestURL _web_URLCString], reason, notifyData);
         [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", requestURL, reason);
     }
     
     isTerminated = YES;
 
-    [self setPluginPointer:NULL];
+    [self setPlugin:NULL];
 }
 
 - (void)_destroyStreamWithReason:(NPReason)theReason
@@ -335,7 +335,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     [self cancelLoadWithError:error];
     [self destroyStreamWithError:error];
-    [self setPluginPointer:NULL];
+    [self setPlugin:NULL];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
@@ -385,7 +385,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     
     while (totalBytesDelivered < totalBytes) {
         [pluginView willCallPlugInFunction];
-        int32 deliveryBytes = NPP_WriteReady(instance, &stream);
+        int32 deliveryBytes = NPP_WriteReady(plugin, &stream);
         [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", responseURL, deliveryBytes);
         
@@ -397,7 +397,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
             NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             [pluginView willCallPlugInFunction];
-            deliveryBytes = NPP_Write(instance, &stream, offset, [subdata length], (void *)[subdata bytes]);
+            deliveryBytes = NPP_Write(plugin, &stream, offset, [subdata length], (void *)[subdata bytes]);
             [pluginView didCallPlugInFunction];
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.

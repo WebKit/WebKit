@@ -41,7 +41,7 @@
     NSURL *responseURL;
     NSString *MIMEType;
     
-    NPP instance;
+    NPP plugin;
     uint16 transferMode;
     int32 offset;
     NPStream stream;
@@ -64,16 +64,16 @@
 - (NSError *)errorForReason:(NPReason)theReason;
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL
-           pluginPointer:(NPP)thePluginPointer
+                  plugin:(NPP)thePlugin
               notifyData:(void *)theNotifyData
         sendNotification:(BOOL)flag;
 
 - (void)setRequestURL:(NSURL *)theRequestURL;
 - (void)setResponseURL:(NSURL *)theResponseURL;
-- (void)setPluginPointer:(NPP)pluginPointer;
+- (void)setPlugin:(NPP)thePlugin;
 
 - (uint16)transferMode;
-- (NPP)instance;
+- (NPP)plugin;
 
 - (void)startStreamResponseURL:(NSURL *)theResponseURL
          expectedContentLength:(long long)expectedContentLength

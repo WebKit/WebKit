@@ -49,18 +49,18 @@ using namespace WebCore;
 @implementation WebNetscapePluginStream
 
 - initWithRequest:(NSURLRequest *)theRequest
-    pluginPointer:(NPP)thePluginPointer
+           plugin:(NPP)thePlugin
        notifyData:(void *)theNotifyData 
  sendNotification:(BOOL)flag
 {   
-    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePluginPointer->ndata;
+    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePlugin->ndata;
 
     bool hideReferrer;
     if (!core([view webFrame])->loader()->canLoad([theRequest URL], core([view webFrame])->loader()->outgoingReferrer(), hideReferrer))
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]
-                    pluginPointer:thePluginPointer
+                          plugin:thePlugin
                        notifyData:theNotifyData
                  sendNotification:flag] == nil) {
         return nil;
