@@ -1,3 +1,22 @@
+2006-12-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10313
+        Reproducible crash when doing importStylesheet in javascript with 
+        xsl files that use xsl:import
+
+        This doesn't fully address the bug, but makes a couple of steps
+        in that direction.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::transformToString): Set m_stylesheet even if it's created implicitly,
+        rather than passed from outside. Always reset it in the end (this doesn't affect
+        Document::applyXSLTransform(), which was the only user of setXSLStylesheet()).
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Set the loaded document's URL.
+
 2006-12-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej and Geoff.

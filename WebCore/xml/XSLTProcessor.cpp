@@ -2,6 +2,7 @@
  * This file is part of the XSL implementation.
  *
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -312,6 +313,9 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
     }
     cachedStylesheet->clearDocuments();
     
+    if (!m_stylesheet)
+        m_stylesheet = cachedStylesheet;
+
     xmlChar* origMethod = sheet->method;
     if (!origMethod && mimeType == "text/html")
         sheet->method = (xmlChar*)"html";
@@ -350,6 +354,7 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
     sheet->method = origMethod;
     setXSLTLoadCallBack(0, 0, 0);
     xsltFreeStylesheet(sheet);
+    m_stylesheet = 0;
 
     return success;
 }
