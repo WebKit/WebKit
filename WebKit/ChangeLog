@@ -1,5 +1,15 @@
 2006-12-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Eric Seidel.
+        
+        Fixed crash when opening view source window.
+
+        * WebView/WebView.mm:
+        (-[WebView initWithCoder:]): Don't use the WebView until calling
+        _commonInitialization...
+
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
         
         Removed WebCoreSettings, cleaned up WebCore::Settings.

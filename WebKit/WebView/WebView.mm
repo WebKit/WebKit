@@ -1931,11 +1931,10 @@ NS_DURING
         preferences = nil;
 
     LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
-
+    [result _commonInitializationWithFrameName:frameName groupName:groupName];
+    result->_private->useBackForwardList = useBackForwardList;
     if (preferences)
         [result setPreferences:preferences];
-    result->_private->useBackForwardList = useBackForwardList;
-    [result _commonInitializationWithFrameName:frameName groupName:groupName];
 
 NS_HANDLER
 
