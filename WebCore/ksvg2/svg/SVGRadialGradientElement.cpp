@@ -87,31 +87,11 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     float _cx, _cy, _r, _fx, _fy;
 
     if (bbox) {
-        _cx = cx().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(cx()))
-            _cx *= 100.0;
-
-        _cy = cy().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(cy()))
-            _cy *= 100.0;
-
-        _r = r().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(r()))
-            _r *= 100.0;
-
-        if (fxSet) {
-            _fx = fx().valueInSpecifiedUnits();
-            if (SVGLength::isFraction(fx()))
-                _fx *= 100.0;
-        } else
-            _fx = _cx;
-        
-        if (fySet) {
-            _fy = fy().valueInSpecifiedUnits();
-            if (SVGLength::isFraction(fy()))
-                _fy *= 100.0;
-        } else
-            _fy = _cy;
+        _cx = cx().valueAsPercentage();
+        _cy = cy().valueAsPercentage();
+        _r = r().valueAsPercentage();
+        _fx = fxSet ? (fx().valueAsPercentage()) : _cx;
+        _fy = fySet ? (fy().valueAsPercentage()) : _cy;
     } else {
         _cx = cx().value();
         _cy = cy().value();
@@ -125,8 +105,7 @@ void SVGRadialGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix();
 
-    DeprecatedString ref = href().deprecatedString();
-    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), href().substring(1));
 
     if (pserver && (pserver->type() == RadialGradientPaintServer || pserver->type() == LinearGradientPaintServer)) {
         bool isRadial = pserver->type() == RadialGradientPaintServer;

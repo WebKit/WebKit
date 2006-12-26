@@ -101,6 +101,8 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
 
     // Create new graphics context in gray scale mode for image rendering
     OwnPtr<ImageBuffer> grayScaleImage(GraphicsContext::createImageBuffer(maskSize, true));
+    if (!grayScaleImage)
+        return;
     CGContextRef grayScaleContext = grayScaleImage->context()->platformContext();
 
     // Wrap CG context in CI context

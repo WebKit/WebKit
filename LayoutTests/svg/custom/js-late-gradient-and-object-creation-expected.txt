@@ -1,5 +1,5 @@
-KRenderingPaintServer {id="fillLinearGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(10,10)] [end=(440,0)]}
-KRenderingPaintServer {id="strokeLinearGradient" [type=LINEAR-GRADIENT] [stops=[(1.00,#008000)]] [start=(10,10)] [end=(440,0)]}
+KRenderingPaintServer {id="fillLinearGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="strokeLinearGradient" [type=LINEAR-GRADIENT] [stops=[(1.00,#008000)]] [start=(0,0)] [end=(100,0)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (-250,15) size 1008.33x363.33

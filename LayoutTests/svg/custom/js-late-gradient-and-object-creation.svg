@@ -11,10 +11,8 @@
 		// Setup "fillLinearGradient"
 		var gradient1 = document.createElement("linearGradient");
 		gradient1.setAttribute("id", "fillLinearGradient");
-		gradient1.setAttribute("x1", "10");
-		gradient1.setAttribute("y1", "10");
-		gradient1.setAttribute("x2", "440");
-		gradient1.setAttribute("xy", "10");
+		gradient1.setAttribute("x1", "0");
+		gradient1.setAttribute("x2", "1");
 
 		var stop11 = document.createElement("stop");
 		stop11.setAttribute("stop-color", "blue");
@@ -32,10 +30,8 @@
 		// Setup "strokeLinearGradient"
 		var gradient2 = document.createElement("linearGradient");
 		gradient2.setAttribute("id", "strokeLinearGradient");
-		gradient2.setAttribute("x1", "10");
-		gradient2.setAttribute("y1", "10");
-		gradient2.setAttribute("x2", "440");
-		gradient2.setAttribute("xy", "10");
+		gradient2.setAttribute("x1", "0");
+		gradient2.setAttribute("x2", "1");
 
 		var stop22 = document.createElement("stop");
 		stop22.setAttribute("stop-color", "yellow");

@@ -158,21 +158,10 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
     float _x, _y, w, h;
     if (bbox) {
-        _x = x().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(x()))
-            _x *= 100.0;
-
-        _y = y().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(y()))
-            _y *= 100.0;
-
-        w = width().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(width()))
-            w *= 100.0;
-
-        h = height().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(height()))
-            h *= 100.0;
+        _x = x().valueAsPercentage();
+        _y = y().valueAsPercentage();
+        w = width().valueAsPercentage();
+        h = height().valueAsPercentage();
     } else {
         _x = x().value();
         _y = y().value();
@@ -180,7 +169,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         h = height().value();
     }
 
-    ImageBuffer* patternImage(GraphicsContext::createImageBuffer(IntSize(lroundf(w), lroundf(h)), false));
+    ImageBuffer* patternImage = GraphicsContext::createImageBuffer(IntSize(lroundf(w), lroundf(h)), false);
     if (!patternImage)
         return;
 

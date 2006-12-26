@@ -1,3 +1,24 @@
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+        
+        Updated tests (and test results) after fixing:
+        WebKit does not respect boundingbox percentages larger than 100%
+        http://bugs.webkit.org/show_bug.cgi?id=11973
+
+        * svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * svg/custom/js-late-gradient-and-object-creation.svg:
+        * svg/custom/js-late-gradient-creation-expected.checksum:
+        * svg/custom/js-late-gradient-creation-expected.png:
+        * svg/custom/js-late-gradient-creation-expected.txt:
+        * svg/custom/js-late-gradient-creation.svg:
+        * svg/custom/large-bounding-box-percents-expected.checksum: Added.
+        * svg/custom/large-bounding-box-percents-expected.png: Added.
+        * svg/custom/large-bounding-box-percents-expected.txt: Added.
+        * svg/custom/large-bounding-box-percents.svg: Added.
+
 2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

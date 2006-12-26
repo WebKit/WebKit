@@ -1,3 +1,27 @@
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Replace bogus SVGLength::isFraction() method with valueAsPercentage() to fix:
+        http://bugs.webkit.org/show_bug.cgi?id=11973
+        
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::valueInSpecifiedUnits): remove extra spaces
+        (WebCore::SVGLength::valueAsPercentage): new method
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient): use valueAsPercentage()
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile): return if malloc fails
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient): use valueAsPercentage()
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::createImageBuffer): return 0 if malloc fails
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup): return if malloc fails
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask): add comment about possible crash
+
 2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

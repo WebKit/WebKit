@@ -78,21 +78,10 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     float _x1, _y1, _x2, _y2;
 
     if (bbox) {
-        _x1 = x1().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(x1()))
-            _x1 *= 100.0;
-
-        _y1 = y1().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(y1()))
-            _y1 *= 100.0;
-
-        _x2 = x2().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(x2()))
-            _x2 *= 100.0;
-
-        _y2 = y2().valueInSpecifiedUnits();
-        if (SVGLength::isFraction(y2()))
-            _y2 *= 100.0;
+        _x1 = x1().valueAsPercentage();
+        _y1 = y1().valueAsPercentage();
+        _x2 = x2().valueAsPercentage();
+        _y2 = y2().valueAsPercentage();
     } else {
         _x1 = x1().value();
         _y1 = y1().value();
@@ -105,8 +94,7 @@ void SVGLinearGradientElement::buildGradient(PassRefPtr<SVGPaintServerGradient> 
     if (gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix();
 
-    DeprecatedString ref = href().deprecatedString();
-    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> pserver = getPaintServerById(document(), href().substring(1));
 
     if (pserver && (pserver->type() == RadialGradientPaintServer || pserver->type() == LinearGradientPaintServer)) {
         bool isLinear = pserver->type() == LinearGradientPaintServer;

@@ -779,6 +779,8 @@ ImageBuffer* GraphicsContext::createImageBuffer(const IntSize& size, bool graySc
         bytesPerRow *= 4;
 
     void* imageBuffer = fastMalloc(bytesPerRow * size.height());
+    if (!imageBuffer)
+        return 0;
     memset(imageBuffer, 0, bytesPerRow * size.height());
 
     CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();

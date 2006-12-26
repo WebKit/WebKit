@@ -227,7 +227,15 @@ void SVGLength::setValueInSpecifiedUnits(float value)
 float SVGLength::valueInSpecifiedUnits() const
 {
     return m_valueInSpecifiedUnits;
-}                                                
+}
+
+float SVGLength::valueAsPercentage() const
+{
+    // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
+    if (extractType(m_unit) == LengthTypePercentage)
+        return valueInSpecifiedUnits();
+    return valueInSpecifiedUnits() * 100.f;
+}
 
 void SVGLength::setValueAsString(const String& s)
 {
@@ -263,11 +271,6 @@ void SVGLength::convertToSpecifiedUnits(unsigned short type)
     float valueInUserUnits = value();
     m_unit = storeUnit(extractMode(m_unit), (SVGLengthType) type);
     setValue(valueInUserUnits);
-}
-
-bool SVGLength::isFraction(const SVGLength& length)
-{
-    return (length.unitType() == LengthTypeNumber && length.value() >= 0 && length.value() <= 1);
 }
 
 double SVGLength::dpi() const

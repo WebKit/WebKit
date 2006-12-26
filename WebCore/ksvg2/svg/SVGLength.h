@@ -78,6 +78,8 @@ namespace WebCore {
 
         float valueInSpecifiedUnits() const;
         void setValueInSpecifiedUnits(float);
+        
+        float valueAsPercentage() const;
 
         String valueAsString() const;
         void setValueAsString(const String&);
@@ -86,7 +88,6 @@ namespace WebCore {
         void convertToSpecifiedUnits(unsigned short);
 
         // Helper functions
-        static bool isFraction(const SVGLength&);
         static float PercentageOfViewport(float value, const SVGStyledElement*, SVGLengthMode);
 
     private:

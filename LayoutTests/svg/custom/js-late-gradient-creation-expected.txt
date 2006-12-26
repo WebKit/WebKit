@@ -1,4 +1,4 @@
-KRenderingPaintServer {id="dynGrad" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(10,10)] [end=(440,0)]}
+KRenderingPaintServer {id="dynGrad" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (33.33,22.50) size 700x195
