@@ -78,7 +78,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;
 - (id)_scriptDebugDelegateForwarder;
-- (WebCoreSettings *)_settings;
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
 - (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;

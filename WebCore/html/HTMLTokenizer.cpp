@@ -1150,11 +1150,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 bool foundTypeAttribute = false;
                 scriptSrc = DeprecatedString::null;
                 scriptSrcCharset = String();
-                if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
-                     m_doc->frame() &&
-                     m_doc->frame()->javaScriptEnabled() && /* jscript allowed at all? */
-                     !m_fragment /* are we a regular tokenizer or just for innerHTML ? */
-                    ) {
+                if (currToken.attrs && !m_fragment && m_doc->frame() && m_doc->frame()->settings()->isJavaScriptEnabled()) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                         scriptSrc = m_doc->completeURL(parseURL(a->value()).deprecatedString());
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))

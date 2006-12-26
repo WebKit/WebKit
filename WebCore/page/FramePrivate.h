@@ -52,9 +52,6 @@ namespace WebCore {
         RefPtr<Document> m_doc;
 
         KJSProxy* m_jscript;
-        bool m_bJScriptEnabled : 1;
-        bool m_bJavaEnabled : 1;
-        bool m_bPluginsEnabled : 1;
 
         Settings* m_settings;
 

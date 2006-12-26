@@ -75,6 +75,7 @@
 #import "RenderTheme.h"
 #import "RenderView.h"
 #import "ResourceHandle.h"
+#import "Settings.h"
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
 #import "WebCoreFrameBridge.h"
@@ -420,7 +421,7 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
 
 KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 {
-    if (!javaScriptEnabled())
+    if (!settings()->isJavaScriptEnabled())
         return 0;
 
     return bindingRootObject();
@@ -428,7 +429,7 @@ KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 
 KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 {
-    assert(javaScriptEnabled());
+    assert(settings()->isJavaScriptEnabled());
     if (!_bindingRoot) {
         JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
@@ -442,7 +443,7 @@ KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 
 WebScriptObject *FrameMac::windowScriptObject()
 {
-    if (!javaScriptEnabled())
+    if (!settings()->isJavaScriptEnabled())
         return 0;
 
     if (!_windowScriptObject) {
@@ -457,7 +458,7 @@ WebScriptObject *FrameMac::windowScriptObject()
 NPObject *FrameMac::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
-        if (javaScriptEnabled()) {
+        if (settings()->isJavaScriptEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSObject *win = KJS::Window::retrieveWindow(this);

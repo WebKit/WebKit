@@ -217,6 +217,16 @@ DOMRange *kit(Range* range)
     return [DOMRange _rangeWith:range];
 }
 
+WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
+{
+    return static_cast<WebCore::EditableLinkBehavior>(editableLinkBehavior);
+}
+
+WebKitEditableLinkBehavior kit(WebCore::EditableLinkBehavior editableLinkBehavior)
+{
+    return static_cast<WebKitEditableLinkBehavior>(editableLinkBehavior);
+}
+
 @implementation WebFrame (WebInternal)
 
 

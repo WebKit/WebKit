@@ -2,6 +2,23 @@
 
         Reviewed by Oliver Hunt.
         
+        Removed WebCoreSettings, cleaned up WebCore::Settings.
+
+        * WebView/WebFrame.mm: Added helper functions for converting between
+        WebKitEditableLinkBehavior and WebCore::EditableLinkBehavior. I'm not sure
+        that this is the best place for these functions, but it's where all the
+        other functions like them reside.
+        (core):
+        (kit):
+        * WebView/WebFrameInternal.h:
+
+        * WebView/WebView.mm: Removed uses of WebCoreSettings. Replaced with direct
+        use of underlying page's settings.
+
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         Some refactoring in preparation for fixing <rdar://problem/4778898> 
         REGRESSION: crash in getInstanceForView() when quitting from kcbs.com
         

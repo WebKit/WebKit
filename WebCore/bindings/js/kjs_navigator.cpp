@@ -30,6 +30,7 @@
 #include "FrameLoader.h"
 #include "Language.h"
 #include "PlugInInfoStore.h"
+#include "Settings.h"
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
 #if PLATFORM(MAC) && PLATFORM(PPC)
@@ -496,7 +497,7 @@ JSValue *MimeType::getValueProperty(ExecState *exec, int token) const
     case EnabledPlugin: {
         ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
         Frame *frame = interpreter->frame();
-        if (frame && frame->pluginsEnabled())
+        if (frame && frame->settings()->arePluginsEnabled())
             return new Plugin(exec, m_info->plugin);
         else
             return jsUndefined();
@@ -523,7 +524,7 @@ JSValue *NavigatorFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return throwError(exec, TypeError);
   Navigator *nav = static_cast<Navigator *>(thisObj);
   // javaEnabled()
-  return jsBoolean(nav->frame()->javaEnabled());
+  return jsBoolean(nav->frame()->settings()->isJavaEnabled());
 }
 
 } // namespace

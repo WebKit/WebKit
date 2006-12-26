@@ -60,6 +60,7 @@
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "Settings.h"
 #import "SubresourceLoader.h"
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
@@ -1346,7 +1347,7 @@ Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* elemen
 
 void FrameLoader::partClearedInBegin()
 {
-    if (m_frame->javaScriptEnabled())
+    if (m_frame->settings()->isJavaScriptEnabled())
         [Mac(m_frame)->bridge() windowObjectCleared];
 }
 

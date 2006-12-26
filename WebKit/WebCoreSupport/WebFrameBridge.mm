@@ -86,7 +86,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/SubresourceLoader.h>
-#import <WebCore/WebCoreSettings.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -132,7 +131,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     m_frame = new FrameMac(page, ownerElement, new WebFrameLoaderClient(_frame));
     m_frame->setBridge(self);
     m_frame->tree()->setName(name);
-    m_frame->setSettings([[webView _settings] settings]);
+    m_frame->setSettings(core(webView)->settings());
     
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 

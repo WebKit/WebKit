@@ -38,7 +38,6 @@
 @class NSError;
 @class WebFrame;
 @class WebPreferences;
-@class WebCoreSettings;
 
 @protocol WebFormDelegate;
 

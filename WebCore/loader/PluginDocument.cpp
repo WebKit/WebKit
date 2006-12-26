@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "RenderWidget.h"
 #include "SegmentedString.h"
+#include "Settings.h"
 #include "Text.h"
 #include "HTMLEmbedElement.h"
 #include "XMLTokenizer.h"
@@ -93,7 +94,7 @@ bool PluginTokenizer::writeRawData(const char* data, int len)
     if (!m_embedElement) {
         createDocumentStructure();
 
-        if (m_doc->frame()->pluginsEnabled()) {
+        if (m_doc->frame()->settings()->arePluginsEnabled()) {
             m_doc->frame()->loader()->redirectDataToPlugin(static_cast<RenderWidget*>(m_embedElement->renderer())->widget());
             finish();
         }

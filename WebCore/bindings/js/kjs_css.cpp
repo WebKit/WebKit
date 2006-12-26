@@ -225,7 +225,7 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
       if (stylesheet) {
         ASSERT(stylesheet->isCSSStyleSheet());
         if (Frame* frame = static_cast<CSSStyleSheet*>(stylesheet)->doc()->frame())
-          if (frame->settings()->shouldUseDashboardBackwardCompatibilityMode()) {
+          if (frame->settings()->usesDashboardBackwardCompatibilityMode()) {
             styleDecl.removeProperty(prop, exception);
             if (!exception) {
               ExceptionCode exceptionIgnored = 0;

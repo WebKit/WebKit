@@ -36,8 +36,6 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 
-#import <WebCore/WebCoreSettings.h>
-
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
 #define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))

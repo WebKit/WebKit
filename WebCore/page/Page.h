@@ -72,6 +72,7 @@ namespace WebCore {
         SelectionController* dragCaretController() { return m_dragCaretController.get(); }
         FocusController* focusController() { return m_focusController.get(); }
         ContextMenuController* contextMenuController() { return m_contextMenuController.get(); }
+        Settings* settings() { return m_settings.get(); }
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
@@ -87,6 +88,7 @@ namespace WebCore {
         OwnPtr<SelectionController> m_dragCaretController;
         OwnPtr<FocusController> m_focusController;
         OwnPtr<ContextMenuController> m_contextMenuController;
+        OwnPtr<Settings> m_settings;
 
         EditorClient* m_editorClient;
         RefPtr<Frame> m_mainFrame;

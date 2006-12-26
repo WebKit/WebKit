@@ -76,7 +76,6 @@
 #import "TextEncoding.h"
 #import "TextIterator.h"
 #import "TypingCommand.h"
-#import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"

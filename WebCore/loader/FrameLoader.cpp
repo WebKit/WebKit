@@ -631,10 +631,6 @@ bool FrameLoader::didOpenURL(const KURL& url)
     m_frame->d->m_kjsStatusBarText = String();
     m_frame->d->m_kjsDefaultStatusBarText = String();
 
-    m_frame->d->m_bJScriptEnabled = m_frame->settings()->isJavaScriptEnabled();
-    m_frame->d->m_bJavaEnabled = m_frame->settings()->isJavaEnabled();
-    m_frame->d->m_bPluginsEnabled = m_frame->settings()->isPluginsEnabled();
-
     m_URL = url;
     if (m_URL.protocol().startsWith("http") && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
         m_URL.setPath("/");
@@ -833,7 +829,7 @@ void FrameLoader::begin(const KURL& url)
 
     updatePolicyBaseURL();
 
-    document->docLoader()->setAutoLoadImages(m_frame->settings()->autoLoadImages());
+    document->docLoader()->setAutoLoadImages(m_frame->settings()->loadsImagesAutomatically());
 
     const KURL& userStyleSheet = m_frame->settings()->userStyleSheetLocation();
     if (!userStyleSheet.isEmpty())
@@ -862,7 +858,7 @@ void FrameLoader::write(const char* str, int len)
     }
     
     if (!m_decoder) {
-        m_decoder = new TextResourceDecoder(m_responseMIMEType, m_frame->settings()->encoding());
+        m_decoder = new TextResourceDecoder(m_responseMIMEType, m_frame->settings()->defaultTextEncodingName());
         if (!m_encoding.isNull())
             m_decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
@@ -1216,7 +1212,7 @@ String FrameLoader::encoding() const
         return m_encoding;
     if (m_decoder && m_decoder->encoding().isValid())
         return m_decoder->encoding().name();
-    return m_frame->settings()->encoding();
+    return m_frame->settings()->defaultTextEncodingName();
 }
 
 bool FrameLoader::gotoAnchor(const String& name)
@@ -1271,7 +1267,7 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
-        if (!m_frame->pluginsEnabled())
+        if (!m_frame->settings()->arePluginsEnabled())
             return false;
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
     }
@@ -1902,7 +1898,7 @@ void FrameLoader::open(PageState& state)
     m_wasLoadEventEmitted = true;
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->javaScriptEnabled()) {
+    if (m_frame->settings()->isJavaScriptEnabled()) {
         m_frame->d->m_kjsStatusBarText = String();
         m_frame->d->m_kjsDefaultStatusBarText = String();
     }

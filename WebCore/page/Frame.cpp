@@ -253,30 +253,15 @@ void Frame::setView(FrameView* view)
 #endif
 }
 
-bool Frame::javaScriptEnabled() const
-{
-    return d->m_bJScriptEnabled;
-}
-
 KJSProxy *Frame::scriptProxy()
 {
-    if (!d->m_bJScriptEnabled)
+    if (!settings()->isJavaScriptEnabled())
         return 0;
 
     if (!d->m_jscript)
         d->m_jscript = new KJSProxy(this);
 
     return d->m_jscript;
-}
-
-bool Frame::javaEnabled() const
-{
-    return d->m_settings->isJavaEnabled();
-}
-
-bool Frame::pluginsEnabled() const
-{
-    return d->m_bPluginsEnabled;
 }
 
 Document *Frame::document() const
@@ -316,16 +301,6 @@ void Frame::setUserStyleSheet(const String& styleSheet)
     d->m_userStyleSheetLoader = 0;
     if (d->m_doc)
         d->m_doc->setUserStyleSheet(styleSheet);
-}
-
-void Frame::setStandardFont(const String& name)
-{
-    d->m_settings->setStdFontName(AtomicString(name));
-}
-
-void Frame::setFixedFont(const String& name)
-{
-    d->m_settings->setFixedFontName(AtomicString(name));
 }
 
 String Frame::selectedText() const
@@ -560,12 +535,8 @@ String Frame::jsDefaultStatusBarText() const
 void Frame::reparseConfiguration()
 {
     if (d->m_doc)
-        d->m_doc->docLoader()->setAutoLoadImages(d->m_settings->autoLoadImages());
+        d->m_doc->docLoader()->setAutoLoadImages(d->m_settings->loadsImagesAutomatically());
         
-    d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
-    d->m_bJavaEnabled = d->m_settings->isJavaEnabled();
-    d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled();
-
     const KURL& userStyleSheetLocation = d->m_settings->userStyleSheetLocation();
     if (!userStyleSheetLocation.isEmpty())
         setUserStyleSheetLocation(userStyleSheetLocation);
@@ -1548,9 +1519,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_treeNode(thisFrame, parent)
     , m_ownerElement(ownerElement)
     , m_jscript(0)
-    , m_bJScriptEnabled(true)
-    , m_bJavaEnabled(true)
-    , m_bPluginsEnabled(true)
     , m_settings(0)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
     , m_selectionController(thisFrame)

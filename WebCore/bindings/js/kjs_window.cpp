@@ -383,7 +383,7 @@ Window *Window::retrieveWindow(Frame *f)
 {
     JSObject *o = retrieve(f)->getObject();
 
-    ASSERT(o || !f->javaScriptEnabled());
+    ASSERT(o || !f->settings()->isJavaScriptEnabled());
     return static_cast<Window *>(o);
 }
 

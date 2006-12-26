@@ -1,3 +1,30 @@
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed WebCoreSettings, cleaned up WebCore::Settings.
+
+        * WebCore.exp: Exported Settings for use by WebKit, removed WebCoreSettings class.
+        
+        * WebCore.xcodeproj/project.pbxproj: Removed WebCoreSetttings.h/.mm.
+        Added Settings.cpp.
+
+        * page/Frame.cpp: Removed cruft that duplicated Settings data. Callers now call
+        through to Settings to get Settings data.
+
+        * page/Page.cpp: Added Settings data member, to replace the one that WebView
+        used to hold.
+
+        * page/Settings.cpp: Added.
+        * page/Settings.h:
+            - Renamed all functions to match WebKit API. Renamed all variables to
+            match functions. Favorite old name: "isPluginsEnabled."
+            - Moved EditableLinkBehavior outside of the class. Having it inside
+            just made it harder to type.
+            - Merged in old WebCoreSettings functionality, like guarding against re-setting
+            to the same value, and making sure to update page layout.
+            - Paired setters and getters, putting setters first.            
+
 2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

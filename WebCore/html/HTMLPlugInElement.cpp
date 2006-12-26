@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "Settings.h"
 #include "kjs_dom.h"
 #include "kjs_proxy.h"
 
@@ -166,7 +167,7 @@ NPObject* HTMLPlugInElement::createNPObject()
 
     // Can't create NPObjects when JavaScript is disabled
     Frame* frame = document()->frame();
-    if (!frame->javaScriptEnabled())
+    if (!frame->settings()->isJavaScriptEnabled())
         return _NPN_CreateNoScriptObject();
     
     // Create a JSObject bound to this element

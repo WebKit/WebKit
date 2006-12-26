@@ -98,9 +98,9 @@
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
+#import <WebCore/Settings.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreFrameBridge.h>
-#import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKit/DOM.h>
@@ -261,7 +261,6 @@ macro(yankAndSelect) \
     BOOL userAgentOverridden;
     
     WebPreferences *preferences;
-    WebCoreSettings *settings;
         
     BOOL lastElementWasNonNil;
 
@@ -403,7 +402,6 @@ static BOOL grammarCheckingEnabled;
     textSizeMultiplier = 1;
     progressNotificationInterval = 0.02;
     progressNotificationTimeInterval = 0.1;
-    settings = [[WebCoreSettings alloc] init];
     dashboardBehaviorAllowWheelScrolling = YES;
     tabKeyCyclesThroughElements = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
@@ -428,7 +426,6 @@ static BOOL grammarCheckingEnabled;
     [backgroundColor release];
     
     [preferences release];
-    [settings release];
     [hostWindow release];
     
     [policyDelegateForwarder release];
@@ -867,39 +864,33 @@ static bool debugWidget = true;
     return _private->formDelegate;
 }
 
-- (WebCoreSettings *)_settings
-{
-    return _private->settings;
-}
-
 - (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)preferences
 {
-    [_private->settings setCursiveFontFamily:[preferences cursiveFontFamily]];
-    [_private->settings setDefaultFixedFontSize:[preferences defaultFixedFontSize]];
-    [_private->settings setDefaultFontSize:[preferences defaultFontSize]];
-    [_private->settings setDefaultTextEncoding:[preferences defaultTextEncodingName]];
-    [_private->settings setFantasyFontFamily:[preferences fantasyFontFamily]];
-    [_private->settings setFixedFontFamily:[preferences fixedFontFamily]];
-    [_private->settings setJavaEnabled:[preferences isJavaEnabled]];
-    [_private->settings setJavaScriptEnabled:[preferences isJavaScriptEnabled]];
-    [_private->settings setJavaScriptCanOpenWindowsAutomatically:[preferences javaScriptCanOpenWindowsAutomatically]];
-    [_private->settings setMinimumFontSize:[preferences minimumFontSize]];
-    [_private->settings setMinimumLogicalFontSize:[preferences minimumLogicalFontSize]];
-    [_private->settings setPluginsEnabled:[preferences arePlugInsEnabled]];
-    [_private->settings setPrivateBrowsingEnabled:[preferences privateBrowsingEnabled]];
-    [_private->settings setSansSerifFontFamily:[preferences sansSerifFontFamily]];
-    [_private->settings setSerifFontFamily:[preferences serifFontFamily]];
-    [_private->settings setStandardFontFamily:[preferences standardFontFamily]];
-    [_private->settings setWillLoadImagesAutomatically:[preferences loadsImagesAutomatically]];
-
-    if ([preferences userStyleSheetEnabled]) {
-        [_private->settings setUserStyleSheetLocation:[[preferences userStyleSheetLocation] _web_originalDataAsString]];
-    } else {
-        [_private->settings setUserStyleSheetLocation:@""];
-    }
-    [_private->settings setShouldPrintBackgrounds:[preferences shouldPrintBackgrounds]];
-    [_private->settings setTextAreasAreResizable:[preferences textAreasAreResizable]];
-    [_private->settings setEditableLinkBehavior:[preferences editableLinkBehavior]];
+    Settings* settings = _private->page->settings();
+    
+    settings->setCursiveFontFamily([preferences cursiveFontFamily]);
+    settings->setDefaultFixedFontSize([preferences defaultFixedFontSize]);
+    settings->setDefaultFontSize([preferences defaultFontSize]);
+    settings->setDefaultTextEncodingName([preferences defaultTextEncodingName]);
+    settings->setFantasyFontFamily([preferences fantasyFontFamily]);
+    settings->setFixedFontFamily([preferences fixedFontFamily]);
+    settings->setJavaEnabled([preferences isJavaEnabled]);
+    settings->setJavaScriptEnabled([preferences isJavaScriptEnabled]);
+    settings->setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
+    settings->setMinimumFontSize([preferences minimumFontSize]);
+    settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
+    settings->setPluginsEnabled([preferences arePlugInsEnabled]);
+    settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
+    settings->setSansSerifFontFamily([preferences sansSerifFontFamily]);
+    settings->setSerifFontFamily([preferences serifFontFamily]);
+    settings->setStandardFontFamily([preferences standardFontFamily]);
+    settings->setLoadsImagesAutomatically([preferences loadsImagesAutomatically]);
+    settings->setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
+    settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
+    settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
+    settings->setUserStyleSheetLocation([preferences userStyleSheetEnabled] 
+        ? [NSURL URLWithString:[[preferences userStyleSheetLocation] _web_originalDataAsString]]
+        : [NSURL URLWithString:@""]);
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification
@@ -1450,7 +1441,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
     // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
     // specific support for the backward compatibility mode flag.
     if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO)
-        [_private->settings setShouldUseDashboardBackwardCompatibilityMode:YES];
+        _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(true);
     
     switch (behavior) {
         case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
@@ -1470,7 +1461,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
             break;
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            [_private->settings setShouldUseDashboardBackwardCompatibilityMode:flag];
+            _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(flag);
             break;
         }
     }
@@ -1492,7 +1483,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
             return _private->dashboardBehaviorAllowWheelScrolling;
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            return [_private->settings shouldUseDashboardBackwardCompatibilityMode];
+            return _private->page->settings()->usesDashboardBackwardCompatibilityMode();
         }
     }
     return NO;

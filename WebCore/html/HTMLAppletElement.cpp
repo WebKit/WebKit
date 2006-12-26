@@ -29,6 +29,7 @@
 #include "HTMLNames.h"
 #include "RenderApplet.h"
 #include "RenderInline.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -110,7 +111,7 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
 {
     Frame *frame = document()->frame();
 
-    if (frame && frame->javaEnabled()) {
+    if (frame && frame->settings()->isJavaEnabled()) {
         HashMap<String, String> args;
 
         args.set("code", getAttribute(codeAttr));
@@ -142,7 +143,7 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
 KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
 {
     Frame *frame = document()->frame();
-    if (!frame || !frame->javaEnabled())
+    if (!frame || !frame->settings()->isJavaEnabled())
         return 0;
 
     if (m_instance)

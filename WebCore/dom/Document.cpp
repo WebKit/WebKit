@@ -727,7 +727,7 @@ String Document::inputEncoding() const
 String Document::defaultCharset() const
 {
     if (Frame* f = frame())
-        return f->settings()->encoding();
+        return f->settings()->defaultTextEncodingName();
     return String();
 }
 
@@ -948,7 +948,7 @@ void Document::recalcStyle(StyleChange change)
             const Settings *settings = m_view->frame()->settings();
             if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
-            const AtomicString& stdfont = settings->stdFontName();
+            const AtomicString& stdfont = settings->standardFontFamily();
             if (!stdfont.isEmpty()) {
                 fontDescription.firstFamily().setFamily(stdfont);
                 fontDescription.firstFamily().appendFamily(0);
