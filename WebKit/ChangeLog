@@ -1,5 +1,29 @@
 2006-12-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Adam Roben.
+        
+        Fixed <rdar://problem/4778898> REGRESSION: crash in getInstanceForView() 
+        when quitting from kcbs.com
+
+        No testcase because we can't open and close windows in DRT.
+
+        The crash was caused by deallocating plug-ins that were later referenced
+        in the unload event handler.
+
+        * Plugins/WebBaseNetscapePluginView.mm: Don't call stop on ourselves because
+        we may destroy our plugin before the unload handler fires. Also, we don't
+        need to, since didCloseDocument will do it for us.
+
+        (-[WebBaseNetscapePluginView addWindowObservers]): We don't need to listen
+        for windowWillClose anymore, since we don't want to call -stop on ourselves.
+        (-[WebBaseNetscapePluginView removeWindowObservers]): ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didCloseDocument): Renamed from "willCloseDocument."
+
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
         More "plugin" => "pluginPackage" renaming that I forgot to check in.
         
         * Plugins/WebBaseNetscapePluginView.h:

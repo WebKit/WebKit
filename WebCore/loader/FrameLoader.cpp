@@ -2109,8 +2109,8 @@ bool FrameLoader::isQuickRedirectComing() const
 
 void FrameLoader::closeDocument()
 {
-    m_client->willCloseDocument();
     closeURL();
+    m_client->didCloseDocument();
 }
 
 void FrameLoader::detachChildren()

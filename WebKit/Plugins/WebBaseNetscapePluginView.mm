@@ -1157,8 +1157,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSWindow *theWindow = [self window];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(windowWillClose:)
-                               name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:)
                                name:NSWindowDidBecomeKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:)
@@ -1177,7 +1175,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)removeWindowObservers
 {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter removeObserver:self name:NSWindowWillCloseNotification        object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification     object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidMiniaturizeNotification   object:nil];
@@ -1638,11 +1635,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 #pragma mark NOTIFICATIONS
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-    [self stop];
-}
 
 - (void)windowBecameKey:(NSNotification *)notification
 {

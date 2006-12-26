@@ -378,7 +378,7 @@ void WebFrameLoaderClient::doNotResetAfterLoadError(LoadErrorResetToken* token)
     [item release];
 }
 
-void WebFrameLoaderClient::willCloseDocument()
+void WebFrameLoaderClient::didCloseDocument()
 {
     [m_webFrame->_private->plugInViews makeObjectsPerformSelector:@selector(setWebFrame:) withObject:nil];
     [m_webFrame->_private->plugInViews release];

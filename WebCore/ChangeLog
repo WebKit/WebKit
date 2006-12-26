@@ -1,3 +1,23 @@
+2006-12-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Fixed <rdar://problem/4778898> REGRESSION: crash in getInstanceForView() 
+        when quitting from kcbs.com
+        
+        No testcase because we can't open and close windows in DRT.
+        
+        The crash was caused by deallocating plug-ins that were later referenced
+        in the unload event handler.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeDocument): Call didCloseDocument after closing
+        instead of before, so plugins don't get deallocated until the document
+        has been destroyed and all event handlers have fired.
+        
+        * loader/FrameLoaderClient.h: Renamed "willCloseDocument" to "didCloseDocument",
+        since we call it after closing now.
+
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.
