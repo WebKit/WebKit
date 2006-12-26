@@ -68,12 +68,12 @@
 
 - (NSArray *)pluginsInfo
 {
-    return [[WebPluginDatabase installedPlugins] plugins];
+    return [[WebPluginDatabase sharedDatabase] plugins];
 }
 
 - (void)refreshPlugins:(BOOL)reloadPages
 {
-    [[WebPluginDatabase installedPlugins] refresh];
+    [[WebPluginDatabase sharedDatabase] refresh];
     if (reloadPages) {
         [WebView _makeAllWebViewsPerformSelector:@selector(_reloadForPluginChanges)];
     }
@@ -81,7 +81,7 @@
 
 - (BOOL)pluginSupportsMIMEType:(NSString *)MIMEType
 {
-    return [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType] != nil;
+    return [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType] != nil;
 }
 
 - (WebCoreFrameBridge *)bridgeForView:(NSView *)v

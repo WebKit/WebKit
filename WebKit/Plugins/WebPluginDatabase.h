@@ -37,7 +37,7 @@
     NSArray *plugInPaths;
 }
 
-+ (WebPluginDatabase *)installedPlugins;
++ (WebPluginDatabase *)sharedDatabase;
 
 // Plug-ins are returned in this order: New plug-in (WBPL), Mach-O Netscape, CFM Netscape
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)mimeType;

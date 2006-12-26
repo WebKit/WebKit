@@ -49,26 +49,6 @@ CInstance::~CInstance()
     _NPN_ReleaseObject(_object);
 }
 
-CInstance::CInstance(const CInstance &other) : Instance()
-{
-    _object = _NPN_RetainObject(other._object);
-    _class = 0;
-    setExecutionContext(other.executionContext());
-}
-
-CInstance &CInstance::operator=(const CInstance& other)
-{
-    if (this == &other)
-        return *this;
-
-    NPObject* _oldObject = _object;
-    _object = _NPN_RetainObject(other._object);
-    _NPN_ReleaseObject(_oldObject);
-    _class = 0;
-
-    return *this;
-}
-
 Class *CInstance::getClass() const
 {
     if (!_class)

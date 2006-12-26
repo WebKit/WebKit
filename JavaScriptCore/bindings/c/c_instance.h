@@ -26,8 +26,10 @@
 #ifndef BINDINGS_C_INSTANCE_H_
 #define BINDINGS_C_INSTANCE_H_
 
-#include "npruntime.h"
 #include "runtime.h"
+#include <wtf/Noncopyable.h>
+
+typedef struct NPObject NPObject;
 
 namespace KJS {
 
@@ -35,18 +37,13 @@ namespace Bindings {
 
 class CClass;
 
-class CInstance : public Instance
+class CInstance : public Instance, Noncopyable
 {
 public:
-    CInstance (NPObject *instance);
-        
+    CInstance (NPObject*);
     ~CInstance ();
     
     virtual Class *getClass() const;
-    
-    CInstance (const CInstance &other);
-
-    CInstance &operator=(const CInstance &other);
     
     virtual void begin();
     virtual void end();

@@ -357,7 +357,7 @@ void dumpRenderTree(int argc, const char *argv[])
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
-    [[WebPluginDatabase installedPlugins] refresh];
+    [[WebPluginDatabase sharedDatabase] refresh];
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.

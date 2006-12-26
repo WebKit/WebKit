@@ -29,8 +29,9 @@
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
-#include <wtf/HashMap.h>
 #include "identifier.h"
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
 
 using namespace KJS::Bindings;
 
@@ -56,7 +57,7 @@ static IntIdentifierMap* getIntIdentifierMap()
 
 NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
 {
-    assert(name);
+    ASSERT(name);
     
     if (name) {
         PrivateIdentifier* identifier = 0;
@@ -79,8 +80,8 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
 
 void _NPN_GetStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdentifier* identifiers)
 {
-    assert(names);
-    assert(identifiers);
+    ASSERT(names);
+    ASSERT(identifiers);
     
     if (names && identifiers)
         for (int i = 0; i < nameCount; i++)
@@ -136,7 +137,7 @@ void NPN_InitializeVariantWithStringCopy(NPVariant* variant, const NPString* val
 
 void _NPN_ReleaseVariantValue(NPVariant* variant)
 {
-    assert(variant);
+    ASSERT(variant);
 
     if (variant->type == NPVariantType_Object) {
         _NPN_ReleaseObject(variant->value.objectValue);
@@ -152,7 +153,7 @@ void _NPN_ReleaseVariantValue(NPVariant* variant)
 
 NPObject *_NPN_CreateObject(NPP npp, NPClass* aClass)
 {
-    assert(aClass);
+    ASSERT(aClass);
 
     if (aClass) {
         NPObject* obj;
@@ -172,7 +173,7 @@ NPObject *_NPN_CreateObject(NPP npp, NPClass* aClass)
 
 NPObject* _NPN_RetainObject(NPObject* obj)
 {
-    assert(obj);
+    ASSERT(obj);
 
     if (obj)
         obj->referenceCount++;
@@ -182,8 +183,8 @@ NPObject* _NPN_RetainObject(NPObject* obj)
 
 void _NPN_ReleaseObject(NPObject* obj)
 {
-    assert(obj);
-    assert(obj->referenceCount >= 1);
+    ASSERT(obj);
+    ASSERT(obj->referenceCount >= 1);
 
     if (obj && obj->referenceCount >= 1) {
         if (--obj->referenceCount == 0)
@@ -193,7 +194,7 @@ void _NPN_ReleaseObject(NPObject* obj)
 
 void _NPN_DeallocateObject(NPObject *obj)
 {
-    assert(obj);
+    ASSERT(obj);
 
     if (obj) {
         if (obj->_class->deallocate)

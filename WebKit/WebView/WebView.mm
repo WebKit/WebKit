@@ -538,7 +538,7 @@ static bool debugWidget = true;
 + (NSArray *)_supportedMIMETypes
 {
     // Load the plug-in DB allowing plug-ins to install types.
-    [WebPluginDatabase installedPlugins];
+    [WebPluginDatabase sharedDatabase];
     return [[WebFrameView _viewTypesAllowImageTypeOmission:NO] allKeys];
 }
 
@@ -568,7 +568,7 @@ static bool debugWidget = true;
     if (!viewClass || !repClass || [[WebPDFView supportedMIMETypes] containsObject:MIMEType]) {
         // Our optimization to avoid loading the plug-in DB and image types for the HTML case failed.
         // Load the plug-in DB allowing plug-ins to install types.
-        [WebPluginDatabase installedPlugins];
+        [WebPluginDatabase sharedDatabase];
             
         // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
         viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
@@ -1720,7 +1720,7 @@ NSMutableDictionary *countInvocations;
 
 - (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType
 {
-    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType];
     if (pluginPackage)
         return pluginPackage;
     
@@ -1732,7 +1732,7 @@ NSMutableDictionary *countInvocations;
 
 - (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
 {
-    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
+    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForExtension:extension];
     if (pluginPackage)
         return pluginPackage;
     
@@ -1744,7 +1744,7 @@ NSMutableDictionary *countInvocations;
 
 - (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType
 {
-    if ([[WebPluginDatabase installedPlugins] isMIMETypeRegistered:MIMEType])
+    if ([[WebPluginDatabase sharedDatabase] isMIMETypeRegistered:MIMEType])
         return YES;
         
     if (_private->pluginDatabase && [_private->pluginDatabase isMIMETypeRegistered:MIMEType])

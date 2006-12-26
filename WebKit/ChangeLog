@@ -1,3 +1,35 @@
+2006-12-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Some cleanup in preparation for fixing <rdar://problem/4740328> Safari 
+        crash on quit in _NPN_ReleaseObject from KJS::Bindings::CInstance::~CInstance
+        
+        Renamed "installedPlugins" to "sharedDatabase." This better follows 
+        the Cocoa naming scheme, and calls out the key attribute that produced this 
+        crash -- namely, that the database is shared throughout the process.
+        
+        -installedPlugins is actually a part of SPI, but a global search showed
+        that it had no users.
+
+        * Plugins/WebPluginDatabase.h:
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase sharedDatabase]):
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _plugInPaths]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * WebCoreSupport/WebViewFactory.m:
+        (-[WebViewFactory pluginsInfo]):
+        (-[WebViewFactory refreshPlugins:]):
+        (-[WebViewFactory pluginSupportsMIMEType:]):
+        * WebView/WebView.mm:
+        (+[WebView _supportedMIMETypes]):
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        (-[WebView _close]):
+        (-[WebView _pluginForMIMEType:]):
+        (-[WebView _pluginForExtension:]):
+        (-[WebView _isMIMETypeRegisteredAsPlugin:]):
+
 2006-12-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.
