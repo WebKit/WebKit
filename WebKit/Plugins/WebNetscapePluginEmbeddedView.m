@@ -47,7 +47,7 @@
 @implementation WebNetscapePluginEmbeddedView
 
 - (id)initWithFrame:(NSRect)frame
-             plugin:(WebNetscapePluginPackage *)thePlugin
+      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
                 URL:(NSURL *)theURL
             baseURL:(NSURL *)theBaseURL
            MIMEType:(NSString *)MIME
@@ -59,11 +59,11 @@
     [super initWithFrame:frame];
 
     // load the plug-in if it is not already loaded
-    if (![thePlugin load]) {
+    if (![thePluginPackage load]) {
         [self release];
         return nil;
     }
-    [self setPlugin:thePlugin];    
+    [self setPluginPackage:thePluginPackage];
 
     element = [anElement retain];
     

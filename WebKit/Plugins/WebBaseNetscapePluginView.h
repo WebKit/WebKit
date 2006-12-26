@@ -121,7 +121,7 @@ typedef union PluginPort {
 - (NPP)plugin;
 
 - (WebNetscapePluginPackage *)pluginPackage;
-- (void)setPlugin:(WebNetscapePluginPackage *)thePluginPackage;
+- (void)setPluginPackage:(WebNetscapePluginPackage *)thePluginPackage;
 - (void)setMIMEType:(NSString *)theMIMEType;
 - (void)setBaseURL:(NSURL *)theBaseURL;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;

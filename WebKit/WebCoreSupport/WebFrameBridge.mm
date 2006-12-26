@@ -601,7 +601,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                   loadManually:loadManually];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
-                                                                  plugin:(WebNetscapePluginPackage *)pluginPackage
+                                                           pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:URL
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
@@ -687,7 +687,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             [values release];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
-                                                                  plugin:(WebNetscapePluginPackage *)pluginPackage
+                                                           pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:nil
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType

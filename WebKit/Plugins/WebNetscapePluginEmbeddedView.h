@@ -46,7 +46,7 @@
 }
 
 - (id)initWithFrame:(NSRect)r
-             plugin:(WebNetscapePluginPackage *)plugin
+      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
                 URL:(NSURL *)URL
             baseURL:(NSURL *)baseURL
            MIMEType:(NSString *)MIME

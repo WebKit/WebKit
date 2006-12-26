@@ -1335,7 +1335,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return pluginPackage;
 }
 
-- (void)setPlugin:(WebNetscapePluginPackage *)thePluginPackage;
+- (void)setPluginPackage:(WebNetscapePluginPackage *)thePluginPackage;
 {
     [thePluginPackage retain];
     [pluginPackage release];
