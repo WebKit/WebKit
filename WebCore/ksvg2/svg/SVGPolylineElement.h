@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPolylineElementImpl_H
-#define KSVG_SVGPolylineElementImpl_H
+#ifndef SVGPolylineElement_H
+#define SVGPolylineElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGPolyElement.h"

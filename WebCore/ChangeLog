@@ -2,6 +2,19 @@
 
         Reviewed by Oliver.
 
+        Fix some minor style issues.
+
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        (WebCore::SVGPolygonElement::toPathData):
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        (WebCore::SVGPolylineElement::toPathData):
+        * ksvg2/svg/SVGPolylineElement.h:
+
+2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11963
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11123
 
