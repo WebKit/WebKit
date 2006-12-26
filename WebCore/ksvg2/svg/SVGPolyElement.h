@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPolyElementImpl_H
-#define KSVG_SVGPolyElementImpl_H
+#ifndef SVGPolyElement_H
+#define SVGPolyElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGAnimatedPoints.h"
@@ -60,6 +61,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
+        mutable bool m_ignoreAttributeChanges;
         mutable RefPtr<SVGPointList> m_points;
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)

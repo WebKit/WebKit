@@ -29,7 +29,7 @@
 namespace WebCore {
 
 SVGLengthList::SVGLengthList()
-    : SVGList<SVGLength>()
+    : SVGPODList<SVGLength>()
 {
 }
 
@@ -40,6 +40,7 @@ SVGLengthList::~SVGLengthList()
 void SVGLengthList::parse(const String& value, const SVGStyledElement* context, SVGLengthMode mode)
 {
     ExceptionCode ec = 0;
+    clear(ec);
 
     Vector<String> lengths = value.split(' ');
     Vector<String>::const_iterator end = lengths.end();

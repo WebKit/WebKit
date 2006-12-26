@@ -29,6 +29,7 @@
 
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
+#include "SVGLength.h"
 #include "SVGLengthList.h"
 #include "SVGTextElement.h"
 #include "SVGRootInlineBox.h"

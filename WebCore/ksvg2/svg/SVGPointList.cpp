@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -28,13 +28,19 @@
 
 using namespace WebCore;
 
-SVGPointList::SVGPointList()
-    : SVGList<FloatPoint>()
+SVGPointList::SVGPointList(const SVGStyledElement* context)
+    : SVGPODList<FloatPoint>()
+    , m_context(context)
 {
 }
 
 SVGPointList::~SVGPointList()
 {
+}
+
+const SVGStyledElement* SVGPointList::context() const
+{
+    return m_context;
 }
 
 #endif // SVG_SUPPORT

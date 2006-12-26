@@ -1,0 +1,4 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (265.20,259.34) size 162.25x64.66
+      RenderPath {polygon} at (265.20,259.34) size 162.25x64.66 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [data="M270.00,265.00L300.00,285.00L320.00,265.00L340.00,285.00L280.00,320.00L390.00,320.00L420.00,280.00"]

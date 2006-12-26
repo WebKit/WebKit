@@ -29,9 +29,9 @@ module svg {
     interface [Conditional=SVG] SVGPathSegList {
         readonly attribute unsigned long numberOfItems;
 
-        void clear()
+        [Custom] void clear()
             raises(DOMException);
-        SVGPathSeg initialize(in SVGPathSeg newItem)
+        [Custom] SVGPathSeg initialize(in SVGPathSeg newItem)
             raises(DOMException, SVGException);
         [Custom] SVGPathSeg getItem(in unsigned long index)
             raises(DOMException);

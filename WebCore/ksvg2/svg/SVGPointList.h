@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPointListImpl_H
-#define KSVG_SVGPointListImpl_H
+#ifndef SVGPointList_H
+#define SVGPointList_H
 
 #ifdef SVG_SUPPORT
 
@@ -30,11 +30,18 @@
 
 namespace WebCore
 {
-    class SVGPointList : public SVGList<FloatPoint>
+    class SVGStyledElement;
+
+    class SVGPointList : public SVGPODList<FloatPoint>
     {
     public:
-        SVGPointList();
+        SVGPointList(const SVGStyledElement* context);
         virtual ~SVGPointList();
+
+        const SVGStyledElement* context() const;
+
+    private:
+        const SVGStyledElement* m_context;
     };
 
 } // namespace WebCore

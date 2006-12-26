@@ -42,7 +42,6 @@ class Node;
 class SVGElement;
 class String;
 class TimeScheduler;
-class SVGPathSeg;
 class SVGStyledElement;
 class SVGSVGElement;
 
@@ -70,14 +69,15 @@ private:
     template<typename ValueType>
     HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*> baseValueMap() const
     {
-        static HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*> s_valueType;
-        return s_valueType;
+        static HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*> s_baseValueMap;
+        return s_baseValueMap;
     }
 
-    HashMap<const SVGPathSeg*, const SVGStyledElement*> pathSegContextMap() const
+    template<typename KeyType>
+    HashMap<const KeyType*, const SVGStyledElement*> genericContextMap() const
     {
-        static HashMap<const SVGPathSeg*, const SVGStyledElement*> s_valueType;
-        return s_valueType;
+        static HashMap<const KeyType*, const SVGStyledElement*> s_genericContextMap;
+        return s_genericContextMap;
     }
 
 public:
@@ -124,25 +124,29 @@ public:
         return false;
     }
 
-    // Used by SVGPathSeg* JS wrappers
-    const SVGStyledElement* pathSegContext(const SVGPathSeg* obj) const
+    // Used by several JS wrappers
+    template<typename KeyType>
+    const SVGStyledElement* genericContext(const KeyType* obj) const
     {
-        return pathSegContextMap().get(obj);
+        return genericContextMap<KeyType>().get(obj);
     }
 
-    void setPathSegContext(const SVGPathSeg* obj, const SVGStyledElement* context)
+    template<typename KeyType>
+    void setGenericContext(const KeyType* obj, const SVGStyledElement* context)
     {
-        pathSegContextMap().set(obj, context);
+        genericContextMap<KeyType>().set(obj, context);
     }
 
-    void removePathSegContext(const SVGPathSeg* obj)
+    template<typename KeyType>
+    void removeGenericContext(const KeyType* obj)
     {
-        pathSegContextMap().remove(obj);
+        genericContextMap<KeyType>().remove(obj);
     }
 
-    bool hasPathSegContext(const SVGPathSeg* obj)
+    template<typename KeyType>
+    bool hasGenericContext(const KeyType* obj)
     {
-        return pathSegContextMap().contains(obj);
+        return genericContextMap<KeyType>().contains(obj);
     }
 };
 

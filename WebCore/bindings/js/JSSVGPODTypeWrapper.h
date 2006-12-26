@@ -29,6 +29,8 @@
 #ifdef SVG_SUPPORT
 
 #include "Shared.h"
+#include "SVGStyledElement.h"
+
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -45,7 +47,7 @@ public:
 
     operator PODType&() { return m_podType; }
 
-    // Implemented by JSSVGPODTypeWrapperCreator    
+    // Implemented by JSSVGPODTypeWrapperCreator
     virtual void commitChange() { }
 
 private:
@@ -73,6 +75,38 @@ private:
     // Update callbacks
     PODTypeCreator* m_creator;
     SetterMethod m_setter;
+};
+
+template<typename PODType>
+class SVGPODListItem;
+
+template<typename PODType, typename ListType>
+class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapperCreator<PODType, SVGPODListItem<PODType> >
+{
+public:
+    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator, const ListType* list)
+    : JSSVGPODTypeWrapperCreator<PODType, SVGPODListItem<PODType> >(creator,
+                                                                    &SVGPODListItem<PODType>::value,
+                                                                    &SVGPODListItem<PODType>::setValue)
+    , m_list(list)
+    { }
+
+    virtual ~JSSVGPODTypeWrapperCreatorForList() { }
+
+    virtual void commitChange()
+    {
+        // Update POD item within SVGList
+        JSSVGPODTypeWrapperCreator<PODType, SVGPODListItem<PODType> >::commitChange();
+
+        // Notify owner of the list, that it's content changed
+        const SVGStyledElement* context = m_list->context();
+        ASSERT(context);
+
+        context->notifyAttributeChange();         
+    }
+
+private:
+    const ListType* m_list;
 };
 
 };

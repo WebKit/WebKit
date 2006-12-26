@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGPolyElement.h"
 
@@ -38,6 +39,7 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
     , SVGAnimatedPoints()
     , SVGPolyParser()
 {
+    m_ignoreAttributeChanges = false;
 }
 
 SVGPolyElement::~SVGPolyElement()
@@ -47,13 +49,14 @@ SVGPolyElement::~SVGPolyElement()
 SVGPointList* SVGPolyElement::points() const
 {
     if (!m_points)
-        m_points = new SVGPointList();
+        m_points = new SVGPointList(this);
 
     return m_points.get();
 }
 
 SVGPointList* SVGPolyElement::animatedPoints() const
 {
+    // FIXME!
     return 0;
 }
 
@@ -64,9 +67,12 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
         points()->clear(ec);
         parsePoints(attr->value().deprecatedString());
     } else {
-        if (SVGTests::parseMappedAttribute(attr)) return;
-        if (SVGLangSpace::parseMappedAttribute(attr)) return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
@@ -79,10 +85,10 @@ void SVGPolyElement::svgPolyTo(double x1, double y1, int) const
 
 void SVGPolyElement::notifyAttributeChange() const
 {
-    static bool ignoreNotifications = false;
-    if (ignoreNotifications || ownerDocument()->parsing())
+    if (m_ignoreAttributeChanges || ownerDocument()->parsing())
         return;
 
+    m_ignoreAttributeChanges = true;
     SVGStyledElement::notifyAttributeChange();
 
     ExceptionCode ec = 0;
@@ -101,14 +107,14 @@ void SVGPolyElement::notifyAttributeChange() const
     RefPtr<Attr> attr = const_cast<SVGPolyElement*>(this)->getAttributeNode(p.impl());
     if (attr) {
         ExceptionCode ec = 0;
-        ignoreNotifications = true; // prevent recursion.
         attr->setValue(_points, ec);
-        ignoreNotifications = false;
     }
+
+    m_ignoreAttributeChanges = false;
 }
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

@@ -828,6 +828,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         bindings/js/JSSVGMatrixCustom.cpp \
         bindings/js/JSSVGPathSegCustom.cpp \
         bindings/js/JSSVGPathSegListCustom.cpp \
+        bindings/js/JSSVGPointListCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \

@@ -811,7 +811,7 @@ sub GenerateImplementation
                 push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
             } elsif (!@{$attribute->getterExceptions}) {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
-
+        
                 if ($podType) {
                     if ($podType eq "double") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp") . ";\n");
@@ -824,7 +824,7 @@ sub GenerateImplementation
             } else {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
                 push(@implContent, "        ExceptionCode ec = 0;\n");
-
+        
                 if ($podType) {
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "", "imp.$name(ec)") . ";\n");
                 } else {
@@ -836,7 +836,6 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
         }
-
         push(@implContent, "    }\n    return 0;\n}\n\n");
 
         # Check if we have any writable attributes
@@ -915,12 +914,11 @@ sub GenerateImplementation
                 push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
                 push(@implContent, "    if (!activeFrame)\n        return;\n\n");
                 push(@implContent, "    SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);\n");
-                push(@implContent, "    if (extensions && extensions->hasPathSegContext(imp)) {\n");
-                push(@implContent, "        const SVGStyledElement* context = extensions->pathSegContext(imp);\n");
+                push(@implContent, "    if (extensions && extensions->hasGenericContext<$interfaceName>(imp)) {\n");
+                push(@implContent, "        const SVGStyledElement* context = extensions->genericContext<$interfaceName>(imp);\n");
                 push(@implContent, "        ASSERT(context);\n\n");
                 push(@implContent, "        context->notifyAttributeChange();\n");
                 push(@implContent, "    }\n\n");
-                print "IFACE: $interfaceName\n";
             }
 
             push(@implContent, "}\n\n"); # end function
@@ -946,6 +944,9 @@ sub GenerateImplementation
         }
 
         push(@implContent, "    switch (id) {\n");
+
+        my $hasCustomFunctionsOnly = 1;
+
         foreach my $function (@{$dataNode->functions}) {
             push(@implContent, "    case ${className}::" . WK_ucfirst($function->signature->name) . "FuncNum: {\n");
 
@@ -954,6 +955,7 @@ sub GenerateImplementation
                 next;
             }
 
+            $hasCustomFunctionsOnly = 0;
             AddIncludesForType($function->signature->type);
 
             if (@{$function->raisesExceptions}) {
@@ -1008,6 +1010,7 @@ sub GenerateImplementation
             push(@implContent, "    }\n"); # end case
         }
         push(@implContent, "    }\n"); # end switch
+        push(@implContent, "    (void)imp;\n") if $hasCustomFunctionsOnly;
         push(@implContent, "    return 0;\n");
         push(@implContent, "}\n");
     }

@@ -132,6 +132,112 @@ namespace WebCore {
         Vector<Item> m_vector;
     };
 
+    template<typename Item>
+    class SVGPODListItem : public Shared<SVGPODListItem<Item> >
+    {
+    public:
+        SVGPODListItem() : m_item() { }
+        SVGPODListItem(const Item& item) : m_item(item) { }
+
+        operator Item&() { return m_item; }
+        operator const Item&() const { return m_item; }
+
+        // Updating facilities, used by JSSVGPODTypeWrapperCreatorForList
+        Item value() const { return m_item; }
+        void setValue(Item newItem) { m_item = newItem; }
+
+    private:
+        Item m_item;
+    };
+
+    template<typename Item>
+    class SVGPODList : public SVGList<RefPtr<SVGPODListItem<Item> > >
+    {
+    public:
+        SVGPODList() : SVGList<RefPtr<SVGPODListItem<Item> > >() { }
+
+        Item initialize(Item newItem, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::initialize(new SVGPODListItem<Item>(newItem), ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr); 
+        }
+
+        Item getFirst() const
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::getFirst().get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr);
+        }
+
+        Item getLast() const
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::getLast().get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr); 
+        }
+
+        Item getItem(unsigned int index, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::getItem(index, ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr);
+        }
+
+        const Item getItem(unsigned int index, ExceptionCode& ec) const
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::getItem(index, ec).get());
+             if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr);
+        }
+
+        Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::insertItemBefore(new SVGPODListItem<Item>(newItem), index, ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr); 
+        }
+
+        Item replaceItem(Item newItem, unsigned int index, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::replaceItem(new SVGPODListItem<Item>(newItem), index, ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr);
+        }
+
+        Item removeItem(unsigned int index, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::removeItem(index, ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr); 
+        }
+
+        Item appendItem(Item newItem, ExceptionCode& ec)
+        {
+            SVGPODListItem<Item>* ptr(SVGList<RefPtr<SVGPODListItem<Item> > >::appendItem(new SVGPODListItem<Item>(newItem), ec).get());
+            if (!ptr)
+                return Item();
+
+            return static_cast<const Item&>(*ptr); 
+        }
+    };
+
 } // namespace WebCore
 
 #endif // SVG_SUPPORT

@@ -48,12 +48,10 @@ static void updatePathSegContextMap(ExecState* exec, SVGPathSegList* list, SVGPa
     // Update the SVGPathSeg* hashmap, so that the JSSVGPathSeg* wrappers, can access the context element
     SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);
     if (extensions) {
-        if (extensions->hasPathSegContext(obj)) {
-            ASSERT(extensions->pathSegContext(obj) == context);
-            return;
-        }
-
-        extensions->setPathSegContext(obj, context);
+        if (extensions->hasGenericContext<SVGPathSeg>(obj))
+            ASSERT(extensions->genericContext<SVGPathSeg>(obj) == context);
+        else
+            extensions->setGenericContext<SVGPathSeg>(obj, context);
     }
 
     context->notifyAttributeChange();
@@ -71,11 +69,41 @@ static void removeFromPathSegContextMap(ExecState* exec, SVGPathSegList* list, S
 
     SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);
     if (extensions) {
-        if (extensions->hasPathSegContext(obj))
-            extensions->removePathSegContext(obj);
+        if (extensions->hasGenericContext<SVGPathSeg>(obj))
+            extensions->removeGenericContext<SVGPathSeg>(obj);
     }
 
     context->notifyAttributeChange();
+}
+
+JSValue* JSSVGPathSegList::clear(ExecState* exec, const List& args)
+{
+    ExceptionCode ec = 0;
+
+    SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
+
+    unsigned int nr = imp->numberOfItems();
+    for (unsigned int i = 0; i < nr; i++)
+        removeFromPathSegContextMap(exec, imp, imp->getItem(i, ec).get());
+
+    imp->clear(ec);
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
+
+JSValue* JSSVGPathSegList::initialize(ExecState* exec, const List& args)
+{
+    ExceptionCode ec = 0;
+    SVGPathSeg* newItem = toSVGPathSeg(args[0]);
+
+    SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
+
+    SVGPathSeg* obj = WTF::getPtr(imp->initialize(newItem, ec));
+    updatePathSegContextMap(exec, imp, obj);
+
+    KJS::JSValue* result = toJS(exec, obj);
+    setDOMException(exec, ec);
+    return result;
 }
 
 JSValue* JSSVGPathSegList::getItem(ExecState* exec, const List& args)

@@ -1,3 +1,82 @@
+2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11963
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11123
+
+        Fix SVGList JS wrappers, which operate on POD types (ie. Point).
+        There exists a special JSSVGPODTypeWrapperCreatorForList class now,
+        which operators on specialized SVGPODList's. It makes it possible
+        to support stuff like "myList.getItem(0).value = 200", for POD lists.
+
+        Adding two new testcases demonstrating the usage of SVG DOM & SVGAnimatedPoints.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::~JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::commitChange):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::updatePathSegContextMap):
+        (WebCore::removeFromPathSegContextMap):
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        * bindings/js/JSSVGPointListCustom.cpp: Added.
+        (WebCore::JSSVGPointList::clear):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::baseValueMap):
+        (WebCore::SVGDocumentExtensions::genericContextMap):
+        (WebCore::SVGDocumentExtensions::genericContext):
+        (WebCore::SVGDocumentExtensions::setGenericContext):
+        (WebCore::SVGDocumentExtensions::removeGenericContext):
+        (WebCore::SVGDocumentExtensions::hasGenericContext):
+        * ksvg2/svg/SVGAnimatedPathData.cpp:
+        * ksvg2/svg/SVGAnimatedPathData.h:
+        * ksvg2/svg/SVGAnimatedPoints.cpp:
+        * ksvg2/svg/SVGAnimatedPoints.h:
+        * ksvg2/svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::SVGLengthList):
+        (WebCore::SVGLengthList::parse):
+        * ksvg2/svg/SVGLengthList.h:
+        * ksvg2/svg/SVGList.h:
+        (WebCore::SVGPODListItem::SVGPODListItem):
+        (WebCore::SVGPODListItem::operator Item&):
+        (WebCore::SVGPODListItem::operator const Item&):
+        (WebCore::SVGPODListItem::value):
+        (WebCore::SVGPODListItem::setValue):
+        (WebCore::SVGPODList::SVGPODList):
+        (WebCore::SVGPODList::initialize):
+        (WebCore::SVGPODList::getFirst):
+        (WebCore::SVGPODList::getLast):
+        (WebCore::SVGPODList::getItem):
+        (WebCore::SVGPODList::insertItemBefore):
+        (WebCore::SVGPODList::replaceItem):
+        (WebCore::SVGPODList::removeItem):
+        (WebCore::SVGPODList::appendItem):
+        * ksvg2/svg/SVGPathSegList.idl:
+        * ksvg2/svg/SVGPointList.cpp:
+        (SVGPointList::SVGPointList):
+        (SVGPointList::context):
+        * ksvg2/svg/SVGPointList.h:
+        * ksvg2/svg/SVGPointList.idl:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElement.h:
+        * rendering/RenderSVGText.cpp:
+
 2006-12-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

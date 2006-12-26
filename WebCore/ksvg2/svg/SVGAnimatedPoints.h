@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,13 +20,15 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGAnimatedPointsImpl_H
-#define KSVG_SVGAnimatedPointsImpl_H
+#ifndef SVGAnimatedPoints_H
+#define SVGAnimatedPoints_H
+
 #ifdef SVG_SUPPORT
 
 namespace WebCore
 {
     class SVGPointList;
+
     class SVGAnimatedPoints
     {
     public:
