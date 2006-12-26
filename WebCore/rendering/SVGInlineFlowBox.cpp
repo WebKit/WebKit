@@ -91,22 +91,18 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
 
     SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(object->style(), object);
     if (fillPaintServer) {
-        fillPaintServer->setPaintingText(true);
-        if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType)) {
+        if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType, true)) {
             flow->InlineFlowBox::paint(pi, tx, ty);
-            fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType);
+            fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType, true);
         }
-        fillPaintServer->setPaintingText(false);
     }
 
     SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(object->style(), object);
     if (strokePaintServer) {
-        strokePaintServer->setPaintingText(true);
-        if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType)) {
+        if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType, true)) {
             flow->InlineFlowBox::paint(pi, tx, ty);
-            strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType);
+            strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType, true);
         }
-        strokePaintServer->setPaintingText(false);
     }
 
     if (filter)

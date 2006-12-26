@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     CGContextRef contextRef = context->platformContext();
     RenderStyle* style = object->style();
@@ -46,7 +46,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         colorComponents[3] = style->svgStyle()->fillOpacity(); // SVG/CSS colors are not specified w/o alpha
         CGContextSetFillColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetFillColor(contextRef, colorComponents);
-        if (isPaintingText()) {
+        if (isPaintingText) {
             const_cast<RenderObject*>(object)->style()->setColor(color());
             context->setTextDrawingMode(cTextFill);
         }
@@ -60,7 +60,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         CGContextSetStrokeColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetStrokeColor(contextRef, colorComponents);
         applyStrokeStyleToContext(contextRef, style, object);
-        if (isPaintingText()) {
+        if (isPaintingText) {
             const_cast<RenderObject*>(object)->style()->setColor(color());
             context->setTextDrawingMode(cTextStroke);
         }

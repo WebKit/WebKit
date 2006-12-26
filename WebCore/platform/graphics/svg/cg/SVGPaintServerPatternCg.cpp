@@ -38,7 +38,7 @@ static void patternCallback(void* info, CGContextRef context)
     CGContextDrawImage(context, CGRectMake(0, 0, patternContentSize.width(), patternContentSize.height()), patternImage->cgImage());
 }
 
-bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
@@ -81,7 +81,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         CGContextSetFillColorSpace(contextRef, m_patternSpace);
         CGContextSetFillPattern(contextRef, m_pattern, &alpha);
  
-        if (isPaintingText()) 
+        if (isPaintingText) 
             context->setTextDrawingMode(cTextFill);
     }
 
@@ -90,14 +90,14 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         CGContextSetStrokePattern(contextRef, m_pattern, &alpha);
         applyStrokeStyleToContext(contextRef, style, object);
 
-        if (isPaintingText()) 
+        if (isPaintingText) 
             context->setTextDrawingMode(cTextStroke);
     }
 
     return true;
 }
 
-void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
+void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     CGPatternRelease(m_pattern);
     CGColorSpaceRelease(m_patternSpace);

@@ -66,21 +66,15 @@ namespace WebCore {
 
         virtual bool isPaintServer() const { return true; }
 
-        const RenderPath* activeClient() const;
-        void setActiveClient(const RenderPath*);
-
-        bool isPaintingText() const;
-        void setPaintingText(bool);
-
         virtual SVGPaintServerType type() const = 0;
         virtual TextStream& externalRepresentation(TextStream&) const = 0;
 
         // To be implemented in platform specific code.
         virtual void draw(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
-        virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
+        virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText = false) const;
         virtual void renderPath(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
 
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const = 0;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText = false) const = 0;
 
     protected:
 #if PLATFORM(CG)
@@ -93,10 +87,6 @@ namespace WebCore {
 #if PLATFORM(QT)
         void setPenProperties(const RenderObject*, const RenderStyle*, QPen&) const;
 #endif
-
-    private:
-        const RenderPath* m_activeClient;
-        bool m_paintingText;
     };
 
     TextStream& operator<<(TextStream&, const SVGPaintServer&);
