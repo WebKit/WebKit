@@ -1,5 +1,13 @@
 2006-12-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix, not reviewed.
+
+        Accidently commited an older revision of this file.
+
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+
+2006-12-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Mitz & Eric.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=11904
