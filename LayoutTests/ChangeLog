@@ -1,5 +1,15 @@
 2006-12-27  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mitz.
+        
+        Corrected test results.  (Last minute change before earlier checkin.)
+
+        * svg/custom/invalid-fill-hex-expected.checksum:
+        * svg/custom/invalid-fill-hex-expected.png:
+        * svg/custom/invalid-fill-hex-expected.txt:
+
+2006-12-27  Eric Seidel  <eric@webkit.org>
+
         Reviewed by olliej.
         
         Add tests to document our current PDF-as-image behavior.
