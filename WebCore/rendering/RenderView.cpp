@@ -205,6 +205,15 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     }
 }
 
+void RenderView::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
+{
+    if (m_printingMode)
+        return;
+
+    if (fixed && m_frameView)
+        rect.move(m_frameView->contentsX(), m_frameView->contentsY());
+}
+
 void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     rects.append(IntRect(tx, ty, m_layer->width(), m_layer->height()));

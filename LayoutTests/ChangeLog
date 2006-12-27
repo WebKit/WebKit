@@ -1,5 +1,17 @@
 2006-12-27  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=11452
+          REGRESSION (r16736-r16801): Incorrect repaint of fixed boxes
+
+        * fast/repaint/fixed-expected.checksum: Added.
+        * fast/repaint/fixed-expected.png: Added.
+        * fast/repaint/fixed-expected.txt: Added.
+        * fast/repaint/fixed.html: Added.
+
+2006-12-27  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Geoff.
 
         - pixel test for http://bugs.webkit.org/show_bug.cgi?id=11930

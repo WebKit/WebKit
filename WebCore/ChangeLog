@@ -1,5 +1,18 @@
 2006-12-27  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11452
+          REGRESSION (r16736-r16801): Incorrect repaint of fixed boxes
+
+        Test: fast/repaint/fixed.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeAbsoluteRepaintRect): Re-added.
+        * rendering/RenderView.h:
+
+2006-12-27  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Geoff.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11930

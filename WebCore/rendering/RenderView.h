@@ -52,6 +52,7 @@ public:
 
     virtual bool hasOverhangingFloats() { return false; }
 
+    virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
     virtual void repaintViewRectangle(const IntRect&, bool immediate = false);
 
     virtual void paint(PaintInfo&, int tx, int ty);
