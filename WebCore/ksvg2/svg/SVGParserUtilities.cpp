@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
    Copyright (C) 2002, 2003 The Karbon Developers
                  2006       Alexander Kellett <lypanov@kde.org>
+                 2006       Rob Buis <buis@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -20,47 +21,20 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "svgpathparser.h"
-#include "DeprecatedString.h"
+#include "SVGParserUtilities.h"
+
+#include "String.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-// SVG allows several different whitespace characters:
-// http://www.w3.org/TR/SVG/paths.html#PathDataBNF
-static inline bool isWhitespace(char c) {
-    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-}
-
-// All strings are assumed to be null terminated
-static inline bool skipOptionalSpaces(const char*& ptr) // true means "found space"
-{
-    if (!isWhitespace(*ptr))
-        return false;
-    while (isWhitespace(*ptr))
-        ptr++;
-    return true;
-}
-
-static inline bool skipOptionalSpacesOrComma(const char*& ptr)
-{
-    if (!isWhitespace(*ptr) && *ptr != ',')
-        return false;
-    skipOptionalSpaces(ptr);
-    if (*ptr == ',') {
-        ptr++;
-        skipOptionalSpaces(ptr);
-    }
-    return true;
-}
-
-
-const char* parseCoord(const char* ptr, double &number)
+bool parseNumber(const UChar*& ptr, const UChar* end, double &number, bool skip)
 {
     int integer, exponent;
     double decimal, frac;
     int sign, expsign;
+    const UChar* start = ptr;
 
     exponent = 0;
     integer = 0;
@@ -70,35 +44,35 @@ const char* parseCoord(const char* ptr, double &number)
     expsign = 1;
 
     // read the sign
-    if (*ptr == '+')
+    if (ptr < end && *ptr == '+')
         ptr++;
-    else if (*ptr == '-') {
+    else if (ptr < end && *ptr == '-') {
         ptr++;
         sign = -1;
     }
     // read the integer part
-    while(*ptr != '\0' && *ptr >= '0' && *ptr <= '9')
+    while(ptr < end && *ptr >= '0' && *ptr <= '9')
         integer = (integer * 10) + *(ptr++) - '0';
 
-    if (*ptr == '.') { // read the decimals
+    if (ptr < end && *ptr == '.') { // read the decimals
         ptr++;
-        while(*ptr != '\0' && *ptr >= '0' && *ptr <= '9')
+        while(ptr < end && *ptr >= '0' && *ptr <= '9')
             decimal += (*(ptr++) - '0') * (frac *= 0.1);
     }
 
-    if (*ptr == 'e' || *ptr == 'E') { // read the exponent part
+    if (ptr < end && *ptr == 'e' || *ptr == 'E') { // read the exponent part
         ptr++;
 
         // read the sign of the exponent
-        if (*ptr == '+')
+        if (ptr < end && *ptr == '+')
             ptr++;
-        else if (*ptr == '-') {
+        else if (ptr < end && *ptr == '-') {
             ptr++;
             expsign = -1;
         }
 
         exponent = 0;
-        while(*ptr != '\0' && *ptr >= '0' && *ptr <= '9') {
+        while (ptr < end && *ptr >= '0' && *ptr <= '9') {
             exponent *= 10;
             exponent += *ptr - '0';
             ptr++;
@@ -108,57 +82,73 @@ const char* parseCoord(const char* ptr, double &number)
     number = integer + decimal;
     number *= sign * pow(10.0, expsign * exponent);
 
-    skipOptionalSpacesOrComma(ptr);
+    if (start == ptr)
+        return false;
 
-    return ptr;
+    if (skip)
+        skipOptionalSpacesOrDelimiter(ptr, end);
+
+    return true;
 }
 
-void SVGPolyParser::parsePoints(const DeprecatedString& s) const
+bool parseNumberOptionalNumber(const String& s, double& x, double& y)
+{
+    if (s.isEmpty())
+        return false;
+    const UChar* cur = s.characters();
+    const UChar* end = cur + s.length();
+
+    if (!parseNumber(cur, end, x))
+        return false;
+
+    if (cur == end)
+        y = x;
+    else if (!parseNumber(cur, end, y, false))
+        return false;
+
+    return cur == end;
+}
+
+void SVGPolyParser::parsePoints(const String& s) const
 {
     if (s.isEmpty())
         return;
-    DeprecatedString pointData = s;
-    const char* currSegment = pointData.latin1();
-    const char* eoString = pointData.latin1() + pointData.length();
-    
-    skipOptionalSpaces(currSegment);
-    
+    const UChar* cur = s.characters();
+    const UChar* end = cur + s.length();
+
+    skipOptionalSpaces(cur, end);
+
     int segmentNum = 0;
-    while (currSegment < eoString) {
-        const char* prevSegment = currSegment;
+    while (1) {
         double xPos = 0;
-        currSegment = parseCoord(currSegment, xPos); 
-        if (currSegment == prevSegment)
+        if (!parseNumber(cur, end, xPos))
             break;
 
-        prevSegment = currSegment;
         double yPos = 0;
-        currSegment = parseCoord(currSegment, yPos);
-        if (currSegment == prevSegment)
+        if (!parseNumber(cur, end, yPos))
             break;
-            
+
         svgPolyTo(xPos, yPos, segmentNum++);
     }
 }
 
-void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
+void SVGPathParser::parseSVG(const String& s, bool process)
 {
     if (s.isEmpty())
         return;
 
-    DeprecatedString d = s;
-    const char* ptr = d.latin1();
-    const char* end = d.latin1() + d.length() + 1;
+    const UChar* ptr = s.characters();
+    const UChar* end = ptr + s.length();
 
     double contrlx, contrly, curx, cury, subpathx, subpathy, tox, toy, x1, y1, x2, y2, xc, yc;
     double px1, py1, px2, py2, px3, py3;
     bool closed = true;
-    skipOptionalSpaces(ptr); // skip any leading spaces
+    skipOptionalSpaces(ptr, end); // skip any leading spaces
     char command = *(ptr++), lastCommand = ' ';
 
     subpathx = subpathy = curx = cury = contrlx = contrly = 0.0;
-    while(ptr < end) {
-        skipOptionalSpaces(ptr); // skip spaces between command and first coord
+    while (1) {
+        skipOptionalSpaces(ptr, end); // skip spaces between command and first coord
 
         bool relative = false;
 
@@ -168,8 +158,10 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'M':
             {
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                if (!parseNumber(ptr, end, tox))
+                    break;
+                if (!parseNumber(ptr, end, toy))
+                    break;
 
                 if (process) {
                     subpathx = curx = relative ? curx + tox : tox;
@@ -185,8 +177,8 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'L':
             {
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
 
                 if (process) {
                     curx = relative ? curx + tox : tox;
@@ -200,7 +192,7 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
             }
             case 'h':
             {
-                ptr = parseCoord(ptr, tox);
+                parseNumber(ptr, end, tox);
                 if (process) {
                     curx = curx + tox;
                     svgLineTo(curx, cury);
@@ -211,7 +203,7 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
             }
             case 'H':
             {
-                ptr = parseCoord(ptr, tox);
+                parseNumber(ptr, end, tox);
                 if (process) {
                     curx = tox;
                     svgLineTo(curx, cury);
@@ -222,7 +214,7 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
             }
             case 'v':
             {
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, toy);
                 if (process) {
                     cury = cury + toy;
                     svgLineTo(curx, cury);
@@ -233,7 +225,7 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
             }
             case 'V':
             {
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, toy);
                 if (process) {
                     cury = toy;
                     svgLineTo(curx, cury);
@@ -258,12 +250,12 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'C':
             {
-                ptr = parseCoord(ptr, x1);
-                ptr = parseCoord(ptr, y1);
-                ptr = parseCoord(ptr, x2);
-                ptr = parseCoord(ptr, y2);
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, x1);
+                parseNumber(ptr, end, y1);
+                parseNumber(ptr, end, x2);
+                parseNumber(ptr, end, y2);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
 
                 if (process) {
                     px1 = relative ? curx + x1 : x1;
@@ -289,10 +281,10 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'S':
             {
-                ptr = parseCoord(ptr, x2);
-                ptr = parseCoord(ptr, y2);
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, x2);
+                parseNumber(ptr, end, y2);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
                 if (!(lastCommand == 'c' || lastCommand == 'C' ||
                      lastCommand == 's' || lastCommand == 'S')) {
                     contrlx = curx;
@@ -322,10 +314,10 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'Q':
             {
-                ptr = parseCoord(ptr, x1);
-                ptr = parseCoord(ptr, y1);
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, x1);
+                parseNumber(ptr, end, y1);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
 
                 if (process) {
                     px1 = relative ? (curx + 2 * (x1 + curx)) * (1.0 / 3.0) : (curx + 2 * x1) * (1.0 / 3.0);
@@ -350,8 +342,8 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 relative = true;
             case 'T':
             {
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
                 if (!(lastCommand == 'q' || lastCommand == 'Q' ||
                      lastCommand == 't' || lastCommand == 'T')) {
                     contrlx = curx;
@@ -386,15 +378,15 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
             {
                 bool largeArc, sweep;
                 double angle, rx, ry;
-                ptr = parseCoord(ptr, rx);
-                ptr = parseCoord(ptr, ry);
-                ptr = parseCoord(ptr, angle);
-                ptr = parseCoord(ptr, tox);
+                parseNumber(ptr, end, rx);
+                parseNumber(ptr, end, ry);
+                parseNumber(ptr, end, angle);
+                parseNumber(ptr, end, tox);
                 largeArc = tox == 1;
-                ptr = parseCoord(ptr, tox);
+                parseNumber(ptr, end, tox);
                 sweep = tox == 1;
-                ptr = parseCoord(ptr, tox);
-                ptr = parseCoord(ptr, toy);
+                parseNumber(ptr, end, tox);
+                parseNumber(ptr, end, toy);
 
                 // Spec: radii are nonnegative numbers
                 rx = fabs(rx);
@@ -411,6 +403,9 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
                 return;
         }
         lastCommand = command;
+
+        if (ptr >= end)
+            return;
 
         if (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) {
             // there are still coords in this command
@@ -436,7 +431,7 @@ void DeprecatedSVGPathParser::parseSVG(const DeprecatedString& s, bool process)
 // For each bezier found a svgToCurve call is done.
 // Adapted from Niko's code in kdelibs/kdecore/svgicons.
 // Maybe this can serve in some shared lib? (Rob)
-void DeprecatedSVGPathParser::calculateArc(bool relative, double &curx, double &cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag)
+void SVGPathParser::calculateArc(bool relative, double &curx, double &cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag)
 {
     double sin_th, cos_th;
     double a00, a01, a10, a11;
@@ -569,27 +564,27 @@ void DeprecatedSVGPathParser::calculateArc(bool relative, double &curx, double &
         cury += y;    
 }
 
-void DeprecatedSVGPathParser::svgLineToHorizontal(double, bool)
+void SVGPathParser::svgLineToHorizontal(double, bool)
 {
 }
 
-void DeprecatedSVGPathParser::svgLineToVertical(double, bool)
+void SVGPathParser::svgLineToVertical(double, bool)
 {
 }
 
-void DeprecatedSVGPathParser::svgCurveToCubicSmooth(double, double, double, double, bool)
+void SVGPathParser::svgCurveToCubicSmooth(double, double, double, double, bool)
 {
 }
 
-void DeprecatedSVGPathParser::svgCurveToQuadratic(double, double, double, double, bool)
+void SVGPathParser::svgCurveToQuadratic(double, double, double, double, bool)
 {
 }
 
-void DeprecatedSVGPathParser::svgCurveToQuadraticSmooth(double, double, bool)
+void SVGPathParser::svgCurveToQuadraticSmooth(double, double, bool)
 {
 }
 
-void DeprecatedSVGPathParser::svgArcTo(double, double, double, double, double, bool, bool, bool)
+void SVGPathParser::svgArcTo(double, double, double, double, double, bool, bool, bool)
 {
 } 
 

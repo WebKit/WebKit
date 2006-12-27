@@ -27,6 +27,7 @@
 #include "RegularExpression.h"
 #include "AffineTransform.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
 
@@ -52,80 +53,165 @@ AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
     return localMatrix() * ctm;
 }
 
+int parseTransformParamList(const UChar*& ptr, const UChar* end, double* x, int required, int optional)
+{
+    int optionalParams = 0, requiredParams = 0;
+    skipOptionalSpaces(ptr, end);
+    if (*ptr != '(')
+        return -1;
+    ptr++;
+    skipOptionalSpaces(ptr, end);
+
+    while (requiredParams < required) {
+        if (!parseNumber(ptr, end, x[requiredParams], false))
+            return -1;
+        requiredParams++;
+        if (requiredParams < required)
+            skipOptionalSpacesOrDelimiter(ptr, end);
+    }
+    skipOptionalSpaces(ptr, end);
+    bool delimParsed = skipOptionalSpacesOrDelimiter(ptr, end);
+
+    if (*ptr == ')') { // skip optionals
+        ptr++;
+        if (delimParsed)
+            return -1;
+    } else {
+         while (optionalParams < optional) {
+            if (!parseNumber(ptr, end, x[requiredParams + optionalParams], false))
+                return -1;
+            optionalParams++;
+            if (optionalParams < optional)
+                skipOptionalSpacesOrDelimiter(ptr, end);
+         }
+         skipOptionalSpaces(ptr, end);
+         delimParsed = skipOptionalSpacesOrDelimiter(ptr, end);
+
+        if (*ptr != ')' || delimParsed)
+            return -1;
+        ptr++;
+    }
+
+    return requiredParams + optionalParams;
+}
+
 bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
-    // Split string for handling 1 transform statement at a time
-    Vector<String> subtransforms = transform.domString().simplifyWhiteSpace().split(')');
-    Vector<String>::const_iterator end = subtransforms.end();
-    for (Vector<String>::const_iterator it = subtransforms.begin(); it != end; ++it) {
-        Vector<String> subtransform = (*it).split('(');
+    double x[6] = {0, 0, 0, 0, 0, 0};
+    int nr = 0, required = 0, optional = 0;
+    
+    const UChar* currTransform = transform.characters();
+    const UChar* end = currTransform + transform.length();
 
-        if (subtransform.size() < 2)
-            return false; // invalid transform, ignore.
+    bool delimParsed = false;
+    while (currTransform < end) {
+        delimParsed = false;
+        unsigned short type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
+        skipOptionalSpaces(currTransform, end);
 
-        subtransform[0] = subtransform[0].stripWhiteSpace().lower();
-        subtransform[1] = subtransform[1].simplifyWhiteSpace();
-        RegularExpression reg("([-]?\\d*\\.?\\d+(?:e[-]?\\d+)?)");
+        if (*currTransform == 's') {
+            if (!(end - currTransform) > 5)
+                goto bail_out;
+            if (currTransform[1] == 'k' && currTransform[2] == 'e' &&
+                  currTransform[3] == 'w') {
+                if (currTransform[4] == 'X')
+                    type = SVGTransform::SVG_TRANSFORM_SKEWX;
+                else if (currTransform[4] == 'Y')
+                    type = SVGTransform::SVG_TRANSFORM_SKEWY;
+                else
+                    goto bail_out;
+                required = 1;
+                optional = 0;
+            } else if (currTransform[1] == 'c' && currTransform[2] == 'a' &&
+                  currTransform[3] == 'l' && currTransform[4] == 'e') {
+                required = 1;
+                optional = 1;
+                type = SVGTransform::SVG_TRANSFORM_SCALE;
+            } else
+                goto bail_out;
+            currTransform += 5;
+        } else if (*currTransform == 't') {
+            if (!((end - currTransform) > 9) &&
+                  currTransform[1] == 'r' && currTransform[2] == 'a' &&
+                  currTransform[3] == 'n' && currTransform[4] == 's' &&
+                  currTransform[5] == 'l' && currTransform[6] == 'a' &&
+                  currTransform[7] == 't' && currTransform[8] == 'e')
+                goto bail_out;
+            currTransform += 9;
+            required = 1;
+            optional = 1;
+            type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
+        } else if (*currTransform == 'r') {
+            if (!((end - currTransform) > 6) &&
+                  currTransform[1] == 'o' && currTransform[2] == 't' &&
+                  currTransform[3] == 'a' && currTransform[4] == 't' &&
+                  currTransform[5] == 'e')
+                goto bail_out;
+            currTransform += 6;
+            required = 1;
+            optional = 2;
+            type = SVGTransform::SVG_TRANSFORM_ROTATE;
+        } else if (*currTransform == 'm') {
+            if (!((end - currTransform) > 6) && currTransform[1] == 'a' &&
+                  currTransform[2] == 't' && currTransform[3] == 'r' &&
+                  currTransform[4] == 'i' && currTransform[5] == 'x')
+                goto bail_out;
+            currTransform += 6;
+            required = 6;
+            optional = 0;
+            type = SVGTransform::SVG_TRANSFORM_MATRIX;
+        } else 
+            goto bail_out;
 
-        int pos = 0;
-        Vector<String> params;
-
-        while (pos >= 0) {
-            pos = reg.search(subtransform[1].deprecatedString(), pos);
-            if (pos != -1) {
-                params.append(reg.cap(1));
-                pos += reg.matchedLength();
-            }
-        }
-        int nparams = params.size();
-
-        if (nparams < 1)
-            return false; // invalid transform, ignore.
-
-        if (subtransform[0].startsWith(";") || subtransform[0].startsWith(","))
-            subtransform[0] = subtransform[0].substring(1).stripWhiteSpace();
+        if ((nr = parseTransformParamList(currTransform, end, x, required, optional)) < 0)
+            goto bail_out;
 
         SVGTransform* t = new SVGTransform();
 
-        if (subtransform[0] == "rotate" && (nparams == 1 || nparams == 3)) {
-            if (nparams == 3)
-                t->setRotate(params[0].toDouble(),
-                             params[1].toDouble(),
-                              params[2].toDouble());
-            else
-                t->setRotate(params[0].toDouble(), 0, 0);
-        } else if (subtransform[0] == "translate" && (nparams == 1 || nparams == 2)) {
-            if (nparams == 2)
-                t->setTranslate(params[0].toDouble(), params[1].toDouble());
-            else // Spec: if only one param given, assume 2nd param to be 0
-                t->setTranslate(params[0].toDouble(), 0);
-        } else if (subtransform[0] == "scale" && (nparams == 1 || nparams == 2)) {
-            if (nparams == 2)
-                t->setScale(params[0].toDouble(), params[1].toDouble());
-            else // Spec: if only one param given, assume uniform scaling
-                t->setScale(params[0].toDouble(), params[0].toDouble());
-        } else if (subtransform[0] == "skewx" && nparams == 1)
-            t->setSkewX(params[0].toDouble());
-        else if (subtransform[0] == "skewy" && nparams == 1)
-            t->setSkewY(params[0].toDouble());
-        else if (subtransform[0] == "matrix" && nparams == 6) {
-            AffineTransform ret(params[0].toDouble(),
-                                params[1].toDouble(),
-                                params[2].toDouble(),
-                                params[3].toDouble(),
-                                params[4].toDouble(),
-                                params[5].toDouble());
-            t->setMatrix(ret);
-        } else {
-            delete t;
-            return false; // failed to parse a valid transform, abort.
+        switch (type) {
+            case SVGTransform::SVG_TRANSFORM_SKEWX:
+               t->setSkewX(x[0]);
+                break;
+            case SVGTransform::SVG_TRANSFORM_SKEWY:
+               t->setSkewY(x[0]);
+                break;
+            case SVGTransform::SVG_TRANSFORM_SCALE:
+                  if (nr == 1) // Spec: if only one param given, assume uniform scaling
+                      t->setScale(x[0], x[0]);
+                  else
+                      t->setScale(x[0], x[1]);
+                break;
+            case SVGTransform::SVG_TRANSFORM_TRANSLATE:
+                  if (nr == 1) // Spec: if only one param given, assume 2nd param to be 0
+                      t->setTranslate(x[0], 0);
+                  else
+                      t->setTranslate(x[0], x[1]);
+                break;
+            case SVGTransform::SVG_TRANSFORM_ROTATE:
+                  if (nr == 1)
+                      t->setRotate(x[0], 0, 0);
+                  else
+                      t->setRotate(x[0], x[1], x[2]);
+                break;
+            case SVGTransform::SVG_TRANSFORM_MATRIX:
+                t->setMatrix(AffineTransform(x[0], x[1], x[2], x[3], x[4], x[5]));
+                break;
         }
 
         ExceptionCode ec = 0;
         list->appendItem(t, ec);
+        skipOptionalSpaces(currTransform, end);
+        if (currTransform < end && *currTransform == ',') {
+            delimParsed = true;
+            currTransform++;
+        }
+        skipOptionalSpaces(currTransform, end);
     }
 
-    return true;
+    return !delimParsed;
+
+bail_out: ;
+    return false;
 }
 
 }

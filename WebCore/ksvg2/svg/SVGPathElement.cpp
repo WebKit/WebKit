@@ -46,7 +46,7 @@ SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , SVGPathParser()
+    , DeprecatedSVGPathParser()
     , m_pathLength(0.0)
 {
 }

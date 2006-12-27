@@ -48,10 +48,10 @@ namespace WebCore
      * svg path data commands and parameters. In the second mode, it will convert all
      * relative coordinates to absolute ones, and convert all curves to cubic beziers.
      */
-    class SVGPathParser
+    class DeprecatedSVGPathParser
     {
     public:
-        virtual ~SVGPathParser() { }
+        virtual ~DeprecatedSVGPathParser() { }
         void parseSVG( const DeprecatedString &d, bool process = false );
 
     protected:

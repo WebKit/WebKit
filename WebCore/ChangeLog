@@ -1,3 +1,52 @@
+2006-12-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11108
+        Replace usage of split by proper parsers
+        http://bugs.webkit.org/show_bug.cgi?id=11908
+        WebKit spends 40% of its time displaying "bamboo.svg" executing Regexes
+
+        Get rid of split() when parsing transform attribute.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGParserUtilities.cpp: Added.
+        (WebCore::parseNumber):
+        (WebCore::parseNumberOptionalNumber):
+        (WebCore::SVGPolyParser::parsePoints):
+        (WebCore::SVGPathParser::parseSVG):
+        (WebCore::SVGPathParser::calculateArc):
+        (WebCore::SVGPathParser::svgLineToHorizontal):
+        (WebCore::SVGPathParser::svgLineToVertical):
+        (WebCore::SVGPathParser::svgCurveToCubicSmooth):
+        (WebCore::SVGPathParser::svgCurveToQuadratic):
+        (WebCore::SVGPathParser::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathParser::svgArcTo):
+        * ksvg2/svg/SVGParserUtilities.h: Added.
+        (WebCore::isWhitespace):
+        (WebCore::skipOptionalSpaces):
+        (WebCore::skipOptionalSpacesOrDelimiter):
+        (WebCore::SVGPolyParser::~SVGPolyParser):
+        (WebCore::SVGPathParser::~SVGPathParser):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList):
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * ksvg2/svg/svgpathparser.cpp:
+        (WebCore::DeprecatedSVGPathParser::parseSVG):
+        (WebCore::DeprecatedSVGPathParser::calculateArc):
+        (WebCore::DeprecatedSVGPathParser::svgLineToHorizontal):
+        (WebCore::DeprecatedSVGPathParser::svgLineToVertical):
+        (WebCore::DeprecatedSVGPathParser::svgCurveToCubicSmooth):
+        (WebCore::DeprecatedSVGPathParser::svgCurveToQuadratic):
+        (WebCore::DeprecatedSVGPathParser::svgCurveToQuadraticSmooth):
+        (WebCore::DeprecatedSVGPathParser::svgArcTo):
+        * ksvg2/svg/svgpathparser.h:
+        (WebCore::DeprecatedSVGPathParser::~DeprecatedSVGPathParser):
+
 2006-12-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Geoff.

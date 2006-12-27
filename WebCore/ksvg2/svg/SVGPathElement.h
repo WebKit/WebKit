@@ -59,7 +59,7 @@ namespace WebCore
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired,
                            public SVGAnimatedPathData,
-                           public SVGPathParser
+                           public DeprecatedSVGPathParser
     {
     public:
         SVGPathElement(const QualifiedName&, Document*);
