@@ -96,7 +96,7 @@ BOOL shouldDumpEditingCallbacks;
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 
-static volatile BOOL done;
+volatile BOOL done;
 static NavigationController *navigationController;
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
@@ -183,11 +183,6 @@ static void stopJavaScriptThread(void)
     assert(javaScriptThread);
     pthread_cancel(javaScriptThread);
     javaScriptThread = NULL;
-}
-
-BOOL doneLoading(void)
-{
-    return done;
 }
 
 static CMProfileRef currentColorProfile = 0;
@@ -410,7 +405,6 @@ void dumpRenderTree(int argc, const char *argv[])
                 continue;
                 
             runTest(filenameBuffer);
-            fflush(stdout);
         }
     } else {
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
@@ -651,6 +645,7 @@ static void dump(void)
 
         printf("#EOF\n");
     }
+    fflush(stdout);
 
     done = YES;
 }

@@ -1,3 +1,19 @@
+2006-12-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixed regression in plugins/netscape-dom-access.html. 
+        
+        When I stopped WebKit from meddling in plug-in lifetime, plug-ins started 
+        to live a little longer. In this case, the plug-in from mouse-events.html 
+        started to live long enough to get a blur event when DumpRenderTree navigated 
+        to the next page.
+        
+        * plugins/mouse-events.html: Stop logging events when the test is over,
+        so our results don't bleed into the next test. A better solution might
+        be for the event logger inside DRT to check for whether you're still in
+        the document, but that doesn't seem worth the effort right now.
+
 2006-12-27  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by ggaren.

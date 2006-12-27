@@ -41,7 +41,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    if (!doneLoading())
+    if (!done)
         printf("ALERT: %s\n", [message UTF8String]);
 }
 

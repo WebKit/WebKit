@@ -32,5 +32,4 @@
 extern BOOL windowIsKey;
 extern WebFrame *frame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
-
-BOOL doneLoading(void);
+extern volatile BOOL done;

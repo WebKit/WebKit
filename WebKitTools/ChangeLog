@@ -1,3 +1,37 @@
+2006-12-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel. Prose edited by Mitz Pettel.
+
+        Some cleanup I did while debugging the regression in plugins/netscape-dom-access.html.
+        
+        No behavior change. Layout tests pass.
+
+        * DumpRenderTree/DumpRenderTree.h: Exported the done BOOL in place of the
+        doneLoading() accessor function. This matches the rest of DRT's exports and 
+        makes it easier to search for clients who check (!done).
+
+        * DumpRenderTree/DumpRenderTree.m: Moved fflush() call to runTest() so
+        it would cover both code paths for calling runTest().
+
+        (dumpRenderTree): "doneLoading()" => "done"
+        (dump): ditto
+        * DumpRenderTree/EditingDelegate.m: ditto
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]): ditto
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]): ditto
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]): ditto
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]): ditto
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]): ditto
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]): ditto
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]): ditto
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]): ditto
+        (-[EditingDelegate webViewDidBeginEditing:]): ditto
+        (-[EditingDelegate webViewDidChange:]): ditto
+        (-[EditingDelegate webViewDidEndEditing:]): ditto
+        (-[EditingDelegate webViewDidChangeTypingStyle:]): ditto
+        (-[EditingDelegate webViewDidChangeSelection:]): ditto
+        * DumpRenderTree/UIDelegate.m: ditto
+        (-[UIDelegate webView:runJavaScriptAlertPanelWithMessage:]): ditto
+
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bradee-oh.
