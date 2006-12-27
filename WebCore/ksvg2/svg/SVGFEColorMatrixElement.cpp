@@ -64,7 +64,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::valuesAttr)
-        valuesBaseValue()->parse(value.deprecatedString());
+        valuesBaseValue()->parse(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

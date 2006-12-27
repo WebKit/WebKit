@@ -60,7 +60,7 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value.impl());
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value);
     else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (m_cachedImage)

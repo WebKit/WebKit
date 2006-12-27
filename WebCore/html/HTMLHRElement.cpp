@@ -69,7 +69,7 @@ void HTMLHRElement::parseMappedAttribute(MappedAttribute *attr)
         }
     } else if (attr->name() == widthAttr) {
         bool ok;
-        int v = attr->value().impl()->toInt(&ok);
+        int v = attr->value().toInt(&ok);
         if(ok && !v)
             addCSSLength(attr, CSS_PROP_WIDTH, "1");
         else

@@ -115,8 +115,7 @@ void HTMLScriptElement::insertedIntoDocument()
     
     const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
-        DeprecatedString charset = getAttribute(charsetAttr).deprecatedString();
-        m_cachedScript = document()->docLoader()->requestScript(url, charset);
+        m_cachedScript = document()->docLoader()->requestScript(url, getAttribute(charsetAttr));
         m_cachedScript->ref(this);
         return;
     }

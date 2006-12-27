@@ -71,7 +71,7 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength(this, LengthModeHeight, value));
     else if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value.impl());
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value);
     else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
         addCSSProperty(attr, CSS_PROP_WIDTH, value);

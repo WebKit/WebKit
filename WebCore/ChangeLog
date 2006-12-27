@@ -1,3 +1,77 @@
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ggaren.
+
+        No test cases changed.
+        
+        Remove unnecessary (and inefficient) .impl() and .deprecatedString() calls.
+        http://bugs.webkit.org/show_bug.cgi?id=11989
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        * dom/Document.cpp:
+        (WebCore::Document::createAttributeNS):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttributeNS):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeNS):
+        (WebCore::Element::removeAttributeNS):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::getNamedItemNS):
+        (WebCore::NamedAttrMap::removeNamedItemNS):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::process):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::parseMappedAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::handleTimerEvent):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::closeRenderer):
+        * ksvg2/svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionComputedStyle):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderResources):
+
 2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
@@ -17,7 +91,7 @@
         * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
         (WebCore::SVGPaintServerPattern::setup):
 
-2006-12-26  Eric Seidel  <eric@eseidel.com>
+2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ggaren
 
@@ -24251,7 +24325,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/StreamingTextDecoderICU.cpp:
         (WebCore::TextCodecICU::registerEncodingNames):
 
-2006-10-05  Eric Seidel  <eric@eseidel.com>
+2006-10-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
 
@@ -24271,7 +24345,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/ResourceLoaderInternal.h:
         (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
 
-2006-10-05  Eric Seidel  <eric@eseidel.com>
+2006-10-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
 
@@ -24341,7 +24415,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::XMLHttpRequest::send):
         * xml/xmlhttprequest.h:
 
-2006-10-05  Eric Seidel  <eric@eseidel.com>
+2006-10-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
 
@@ -26029,7 +26103,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (ScrollView::paint):
         (ScrollView::themeChanged):
 
-2006-09-27  Eric Seidel  <eric@eseidel.com>
+2006-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
 
@@ -26077,7 +26151,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::SVGSVGElement::attributeChanged):
         * ksvg2/svg/SVGSVGElement.h:
 
-2006-09-27  Eric Seidel  <eric@eseidel.com>
+2006-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
 
@@ -26210,7 +26284,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGException.h: Added.
         (WebCore::):
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
         
@@ -26224,7 +26298,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::skipOptionalSpaces):
         (WebCore::skipOptionalSpacesOrComma):
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
 
@@ -26237,7 +26311,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::SVGDocument::createElement):
         * ksvg2/svg/SVGDocument.h:
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
         
@@ -26251,7 +26325,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * kcanvas/device/quartz/QuartzSupport.h:
         * kcanvas/device/quartz/QuartzSupport.mm:
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
 
@@ -26518,7 +26592,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * bindings/objc/DOMRange.h:
         * bindings/objc/DOMTraversal.h:
 
-2006-09-25  Eric Seidel  <eric@eseidel.com>
+2006-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         
@@ -26612,7 +26686,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderThemeWin.cpp:
         (WebCore::prepareForDrawing):
 
-2006-09-24  Eric Seidel  <eric@eseidel.com>
+2006-09-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
@@ -27014,7 +27088,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGTransformable.cpp: delete 't' in error case.
         (SVGTransformable::parseTransformAttribute):
 
-2006-09-22  Eric Seidel  <eric@eseidel.com>
+2006-09-22  Eric Seidel  <eric@webkit.org>
 
         No review necessary, just removing a dead file.
 
@@ -27276,7 +27350,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
 
         * platform/FileChooser.h: Remove no-longer-necessary namespace std
 
-2006-09-20  Eric Seidel  <eric@eseidel.com>
+2006-09-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by beth.
 
@@ -27584,7 +27658,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/mac/WheelEventMac.mm:
         (WebCore::PlatformWheelEvent::PlatformWheelEvent):
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
@@ -27690,7 +27764,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderObject.cpp:
         (WebCore::RenderObject::scroll):
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by adele.
 
@@ -27702,7 +27776,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * kcanvas/KCanvasFilters.cpp:
         (WebCore::KCanvasFilter::externalRepresentation):
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by adele.
         
@@ -27823,7 +27897,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         subclass of RenderBlock instead of RenderFlexibleBox, remove
         updateIconAndFilename() method, remove m_fileBox instance variable.
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
@@ -28119,7 +28193,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         For each file generated add a #ifdef <something>_SUPPORT / #endif
         pair if the idl file has a Conditional extended attribute
 
-2006-09-17  Eric Seidel  <eric@eseidel.com>
+2006-09-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
         
@@ -29936,7 +30010,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderTableCell.h:
         (WebCore::RenderTableCell::expandsToEncloseOverhangingFloats):
 
-2006-09-11  Eric Seidel  <eric@eseidel.com>
+2006-09-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
         
@@ -30393,7 +30467,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * manual-tests/target-test.html: Added.
         * manual-tests/targeted.html: Added.
 
-2006-09-10  Eric Seidel  <eric@eseidel.com>
+2006-09-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
         
@@ -30592,7 +30666,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * dom/WheelEvent.idl:
         * html/HTMLEmbedElement.idl: Added.
 
-2006-09-09  Eric Seidel  <eric@eseidel.com>
+2006-09-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
         
@@ -30740,7 +30814,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * bridge/mac/WebCoreFrameBridge.mm:
         (aeDescFromJSValue): Convert integer values to typeSInt32 AE descriptors.
 
-2006-09-08  Eric Seidel  <eric@eseidel.com>
+2006-09-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
 
@@ -30864,7 +30938,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGUseElement.cpp:
         (SVGUseElement::closeRenderer):
 
-2006-09-08  Eric Seidel  <eric@eseidel.com>
+2006-09-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by beth.
 
@@ -31972,7 +32046,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGViewElement.h:
         (WebCore::SVGViewElement::contextElement):
 
-2006-09-05  Eric Seidel  <eric@eseidel.com>
+2006-09-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by aroben.
 
@@ -32468,7 +32542,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/qt/FrameQtClient.h: Added.
         (WebCore::FrameQtClient::~FrameQtClient):
 
-2006-09-04  Eric Seidel  <eric@eseidel.com>
+2006-09-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -33879,7 +33953,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
 
         * CMakeLists.txt:
 
-2006-08-29  Eric Seidel  <eric@eseidel.com>
+2006-08-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by kevin.
 
@@ -34491,7 +34565,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
 
         * CMakeLists.txt:
 
-2006-08-27  Eric Seidel  <eric@eseidel.com>
+2006-08-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -34688,7 +34762,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::Path::isEmpty):
         (WebCore::Path::debugString):
 
-2006-08-26  Eric Seidel  <eric@eseidel.com>
+2006-08-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
@@ -37477,7 +37551,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::IconDatabase::setIconURLForPageURL):  Added the null site-icon check when changing a PageURL's iconURL
         * loader/icon/IconDatabase.h:  Some renames
 
-2006-08-14  Eric Seidel  <eric@eseidel.com>
+2006-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
 
@@ -37495,7 +37569,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::SVGGElement::parseMappedAttribute): adjusted spacing
         (WebCore::SVGDummyElement::SVGDummyElement): adjusted spacing
 
-2006-08-14  Eric Seidel  <eric@eseidel.com>
+2006-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin and mjs.
         
@@ -37713,7 +37787,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * bindings/js/kjs_events.cpp:
         (KJS::JSLazyEventListener::parseCode):
 
-2006-08-12  Eric Seidel  <eric@eseidel.com>
+2006-08-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt and mjs.
 
@@ -37725,7 +37799,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderSVGContainer::requiresLayer): check parent()->element() for null
 
 
-2006-08-11  Eric Seidel  <eric@eseidel.com>
+2006-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -39236,7 +39310,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
 
         * css/tokenizer.flex: Whitespace tweaks to line things up better.
 
-2006-07-30  Eric Seidel  <eric@eseidel.com>
+2006-07-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by gramps!
 
@@ -39742,7 +39816,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGRectElement.h:
         * ksvg2/svg/SVGStyledElement.h:
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
         
@@ -39914,7 +39988,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         into an argument as WidthIterator::advance doesn't update m_currentCharacter while
         looping
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
 
@@ -39947,7 +40021,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGFitToViewBox.cpp:
         (SVGFitToViewBox::parseViewBox):
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
 
@@ -50136,7 +50210,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         border arcs are needed.
         * rendering/RenderObject.h:
 
-2006-05-30  Eric Seidel  <eric@eseidel.com>
+2006-05-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -50747,7 +50821,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
         (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
 
-2006-05-30  Eric Seidel  <eric@eseidel.com>
+2006-05-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -50788,7 +50862,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (SVGMatrix::removeScale):
         * ksvg2/svg/SVGMatrix.h:
 
-2006-05-30  Eric Seidel  <eric@eseidel.com>
+2006-05-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -51125,7 +51199,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * html/HTMLAttributeNames.in: Added.
         * ksvg2/scripts/make_names.pl:
 
-2006-05-25  Eric Seidel  <eric@eseidel.com>
+2006-05-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -51427,7 +51501,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * dom/NamedAttrMap.h:
         New method which returns the attribute based on the nodeName.
 
-2006-05-22  Eric Seidel  <eric@eseidel.com>
+2006-05-22  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by adele.
 

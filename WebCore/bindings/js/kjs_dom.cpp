@@ -763,7 +763,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState* exec, const Identifier& property
   if (ok && idx < m_impl->length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
-  } else if (m_impl->itemWithName(String(propertyName).impl())) {
+  } else if (m_impl->itemWithName(propertyName)) {
     slot.setCustom(this, nameGetter);
     return true;
   }

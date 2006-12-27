@@ -138,7 +138,7 @@ void RenderPartObject::updateWidget()
           if (!attribute.isEmpty())
               o->setAttribute(heightAttr, attribute);
           url = embed->url;
-          serviceType = embed->serviceType;
+          serviceType = embed->m_serviceType;
       } else
           embedOrObject = (HTMLElement *)o;
       
@@ -222,7 +222,7 @@ void RenderPartObject::updateWidget()
   } else if (element()->hasTagName(embedTag)) {
       HTMLEmbedElement *o = static_cast<HTMLEmbedElement*>(element());
       url = o->url;
-      serviceType = o->serviceType;
+      serviceType = o->m_serviceType;
 
       if (url.isEmpty() && serviceType.isEmpty())
           return;

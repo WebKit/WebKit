@@ -753,13 +753,13 @@ CSSComputedStyleDeclaration *Frame::selectionComputedStyle(Node *&nodeToRemove) 
 
     if (d->m_typingStyle) {
         styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", ec);
-        assert(ec == 0);
+        ASSERT(ec == 0);
 
         styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), ec);
-        assert(ec == 0);
+        ASSERT(ec == 0);
         
         styleElement->appendChild(document()->createEditingTextNode(""), ec);
-        assert(ec == 0);
+        ASSERT(ec == 0);
 
         if (elem->renderer() && elem->renderer()->canHaveChildren()) {
             elem->appendChild(styleElement, ec);

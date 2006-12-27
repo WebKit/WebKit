@@ -363,7 +363,7 @@ void writeRenderResources(TextStream& ts, Node* parent)
         if (!resource)
             continue;
 
-        DeprecatedString elementId = svgElement->getAttribute(HTMLNames::idAttr).deprecatedString();
+        String elementId = svgElement->getAttribute(HTMLNames::idAttr);
         if (resource->isPaintServer()) {
             RefPtr<SVGPaintServer> paintServer = WTF::static_pointer_cast<SVGPaintServer>(resource);
             ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *paintServer << "}" << endl;

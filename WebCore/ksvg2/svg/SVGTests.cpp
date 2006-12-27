@@ -96,13 +96,13 @@ bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
-        requiredFeatures()->reset(value.deprecatedString());
+        requiredFeatures()->reset(value);
         return true;
     } else if (attr->name() == SVGNames::requiredExtensionsAttr) {
-        requiredExtensions()->reset(value.deprecatedString());
+        requiredExtensions()->reset(value);
         return true;
     } else if (attr->name() == SVGNames::systemLanguageAttr) {
-        systemLanguage()->reset(value.deprecatedString());
+        systemLanguage()->reset(value);
         return true;
     }
     

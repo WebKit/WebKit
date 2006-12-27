@@ -124,8 +124,7 @@ void SVGPatternElement::resourceNotification() const
 
 void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix)
 {
-    DeprecatedString ref = href().deprecatedString();
-    RefPtr<SVGPaintServer> refServer = getPaintServerById(document(), ref.mid(1));
+    RefPtr<SVGPaintServer> refServer = getPaintServerById(document(), href().substring(1));
 
     if (!refServer || refServer->type() != PatternPaintServer)
         return;
@@ -248,8 +247,7 @@ void SVGPatternElement::notifyAttributeChange() const
     const SVGPatternElement* target = this;
     const Node* test = this;
     while (test && !test->hasChildNodes()) {
-        DeprecatedString ref = target->href().deprecatedString();
-        test = ownerDocument()->getElementById(String(ref.mid(1)).impl());
+        test = ownerDocument()->getElementById(target->href().substring(1));
         if (test && test->hasTagName(SVGNames::patternTag))
             target = static_cast<const SVGPatternElement*>(test);
     }

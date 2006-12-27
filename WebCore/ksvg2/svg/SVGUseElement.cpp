@@ -85,8 +85,7 @@ void SVGUseElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGUseElement::closeRenderer()
 {
-    String targetId = SVGURIReference::getTarget(href().deprecatedString());
-    Element* targetElement = ownerDocument()->getElementById(targetId);
+    Element* targetElement = ownerDocument()->getElementById(SVGURIReference::getTarget(href()));
     SVGElement* target = svg_dynamic_cast(targetElement);
     if (!target) {
         //document()->addForwardReference(this);

@@ -99,7 +99,7 @@ bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
         parseViewBox(attr->value());
         return true;
     } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(attr->value().impl());
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(attr->value());
         return true;
     }
 

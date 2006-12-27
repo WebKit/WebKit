@@ -82,7 +82,7 @@ void HTMLBaseElement::process()
         document()->setBaseURL(KURL(document()->frame()->loader()->url(), m_href.deprecatedString()).url());
 
     if (!m_target.isEmpty())
-        document()->setBaseTarget(m_target.deprecatedString());
+        document()->setBaseTarget(m_target);
 
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }

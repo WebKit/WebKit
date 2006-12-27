@@ -46,7 +46,7 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::offsetAttr) {
         if (value.endsWith("%"))
-            setOffsetBaseValue(value.deprecatedString().left(value.length() - 1).toDouble() / 100.);
+            setOffsetBaseValue(value.left(value.length() - 1).toDouble() / 100.);
         else
             setOffsetBaseValue(value.toDouble());
     } else
