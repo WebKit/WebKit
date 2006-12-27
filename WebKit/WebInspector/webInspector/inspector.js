@@ -927,3 +927,10 @@ function updatePropertiesPane()
 
     jsPropertiesScrollArea.refresh();
 }
+
+// This is a workaround for rdar://4901491 - Dashboard AppleClasses try to set a NaN value and break the scrollbar.
+AppleVerticalScrollbar.prototype._setObjectLength = function(object, length)
+{
+    if (!isNaN(length))
+        object.style.height = length + "px";
+}
