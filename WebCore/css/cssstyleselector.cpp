@@ -3747,6 +3747,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 style->setBorderRadius(size);
                 break;
         }
+        return;
     }
 
     case CSS_PROP_OUTLINE_OFFSET:

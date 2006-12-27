@@ -1,3 +1,15 @@
+2006-12-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11930
+          Specifying border-radius makes the outline shrink
+
+        Test: fast/css/border-radius-outline-offset.html
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Added missing return statement.
+
 2006-12-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
