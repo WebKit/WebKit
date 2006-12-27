@@ -40,15 +40,21 @@ static void patternCallback(void* info, CGContextRef context)
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
-    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
+    if (listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
-
-    RenderStyle* style = object->style();
-
-    CGContextRef contextRef = context->platformContext();
 
     if (!tile())
         return false;
+
+    if (m_pattern && m_tileIsDirty) {
+        m_tileIsDirty = false;
+ 
+        CGPatternRelease(m_pattern);
+        m_pattern = 0;
+    }
+
+    RenderStyle* style = object->style();
+    CGContextRef contextRef = context->platformContext();
 
     context->save();
 
@@ -73,17 +79,19 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     CGSize phase = CGSizeMake(bbox().x(), -bbox().y()); // Pattern space seems to start in the lower-left, so we flip the Y here.
     CGContextSetPatternPhase(contextRef, phase);
 
-    CGPatternCallbacks callbacks = {0, patternCallback, NULL};
-    m_pattern = CGPatternCreate(tile(),
-                                CGRectMake(0, 0, cellSize.width, cellSize.height),
-                                CGContextGetCTM(contextRef),
-                                bbox().width(),
-                                bbox().height(),
-                                kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
-                                true, // has color
-                                &callbacks);
-
     CGContextSetAlpha(contextRef, style->opacity()); // or do I set the alpha above?
+
+    if (!m_pattern) {
+        CGPatternCallbacks callbacks = {0, patternCallback, NULL};
+        m_pattern = CGPatternCreate(tile(),
+                                    CGRectMake(0, 0, cellSize.width, cellSize.height),
+                                    CGContextGetCTM(contextRef),
+                                    bbox().width(),
+                                    bbox().height(),
+                                    kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
+                                    true, // has color
+                                    &callbacks);
+    }
 
     m_patternSpace = CGColorSpaceCreatePattern(0);
 
@@ -107,10 +115,8 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     return true;
 }
 
-void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject*, SVGPaintTargetType, bool) const
 {
-    CGPatternRelease(m_pattern);
-    CGColorSpaceRelease(m_patternSpace);
     context->restore();
 }
 
