@@ -30,15 +30,15 @@
 
 @class NSError;
 @class WebFrame;
+@class DOMElement;
 
 @interface WebNullPluginView : NSImageView
 {
     BOOL didSendError;
     NSError *error;
-    WebFrame *_webFrame;
+    DOMElement *element;
 }
 
-- (id)initWithFrame:(NSRect)frame error:(NSError *)pluginError;
-- (void)setWebFrame:(WebFrame *)webFrame;
+- (id)initWithFrame:(NSRect)frame error:(NSError *)pluginError DOMElement:(DOMElement *)element;
 
 @end

@@ -55,8 +55,6 @@
        loadManually:(BOOL)loadManually
          DOMElement:(DOMElement *)anElement;
 
-- (void)setWebFrame:(WebFrame *)webFrame;
-
 - (void)redeliverStream;
 
 @end

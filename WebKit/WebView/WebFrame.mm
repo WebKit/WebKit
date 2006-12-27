@@ -142,7 +142,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [scriptDebugger release];
     
-    ASSERT(plugInViews == nil);
     [inspectors release];
 
     [super dealloc];
@@ -984,18 +983,6 @@ WebView *getWebView(WebFrame *webFrame)
 
     // While we're in the general area of selection and frames, check that there is only one now.
     ASSERT([[getWebView(self) mainFrame] _atMostOneFrameHasSelection]);
-}
-
-- (void)_addPlugInView:(NSView *)plugInView
-{
-    ASSERT([plugInView respondsToSelector:@selector(setWebFrame:)]);
-    ASSERT(![_private->plugInViews containsObject:plugInView]);
-    
-    if (!_private->plugInViews)
-        _private->plugInViews = [[NSMutableSet alloc] init];
-        
-    [plugInView setWebFrame:self];
-    [_private->plugInViews addObject:plugInView];
 }
 
 - (BOOL)_isMainFrame

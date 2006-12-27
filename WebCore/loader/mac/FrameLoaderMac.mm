@@ -905,7 +905,7 @@ void FrameLoader::transitionToCommitted(NSDictionary *pageCache)
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
     DocumentLoader* pdl = m_provisionalDocumentLoader.get();
-    closeDocument();
+    closeURL();
     if (pdl != m_provisionalDocumentLoader)
         return;
 

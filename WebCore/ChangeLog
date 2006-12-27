@@ -1,3 +1,24 @@
+2006-12-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixed <rdar://problem/4740328> Safari crash on quit in _NPN_ReleaseObject 
+        from KJS::Bindings::CInstance::~CInstance
+        
+        No testcase because we can't open and close windows in DumpRenderTree.
+        
+        * loader/FrameLoader.cpp: Removed closeDocument helper function because
+        its only purpose was to call didCloseDocument, which is gone now.
+        (WebCore::FrameLoader::detachFromParent): closeDocument => closeURL, 
+        since didCloseDocument is gone now.
+
+        * loader/FrameLoaderClient.h: Removed didCloseDocument because it proved
+        unnecessary and harmful.
+        
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::transitionToCommitted): closeDocument => closeURL, 
+        since didCloseDocument is gone now.
+
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

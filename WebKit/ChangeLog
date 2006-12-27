@@ -2,6 +2,59 @@
 
         Reviewed by Eric Seidel.
 
+        Fixed <rdar://problem/4740328> Safari crash on quit in _NPN_ReleaseObject 
+        from KJS::Bindings::CInstance::~CInstance
+        
+        The essence of this change is that WebKit shouldn't meddle in plug-in
+        lifetime, since WebCore already manages it. The rest is details.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView removeTrackingRect]): Autorelease our window
+        instead of releasing it, since we might hold the last reference to our window,
+        and releasing it immediately would crash AppKit.
+        (-[WebBaseNetscapePluginView resetTrackingRect]):
+
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView dataSource]): Use our DOMElement to access
+        our WebFrame, since we don't keep around a direct pointer to our WebFrame
+        anymore.
+
+        * Plugins/WebNullPluginView.h:
+        * Plugins/WebNullPluginView.m:
+        (-[WebNullPluginView initWithFrame:error:DOMElement:]):
+        (-[WebNullPluginView dealloc]):
+        (-[WebNullPluginView viewDidMoveToWindow]): Use our DOMElement to access
+        our WebFrame, as above.
+
+        * WebCoreSupport/WebFrameBridge.mm: Don't call _addPlugInView because it
+        doesn't exist anymore. Do pass a DOMElement to WebNullPluginView's initializer,
+        so it can access its frame like WebNetscapePluginEmbeddedView does.
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        (-[WebFrameBridge viewForJavaAppletWithFrame:attributeNames:attributeValues:baseURL:DOMElement:]):
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm: Removed didCloseDocument. It had
+        two purposes -- one unnecessary, one harmful:
+        (1) NULL out plug-ins' weak references to their frames. Unnecessary. Having 
+        plug-ins access their frames through their DOM elements solves this problem.
+        (2) Unload plug-ins. Harmful. If a plug-in unloads before WebCore is done
+        with it, WebCore will access unmapped memory. Also unnecessary. WebCore
+        Widgets take care of calling -removeFromSuperview on their NSViews, which
+        is sufficient for stopping plug-ins.
+
+        * WebKit.xcodeproj/project.pbxproj: Made WebNullPluginView.m ObjC++.
+
+        * WebView/WebFrame.mm: Removed _addPlugInView, since it was only used to
+        call -setWebFrame, which is gone.
+        (-[WebFramePrivate dealloc]):
+        * WebView/WebFrameInternal.h: Removed plugInViews, since it was only used
+        by _addPlugInView, which is gone.
+
+2006-12-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
         Some cleanup in preparation for fixing <rdar://problem/4740328> Safari 
         crash on quit in _NPN_ReleaseObject from KJS::Bindings::CInstance::~CInstance
         

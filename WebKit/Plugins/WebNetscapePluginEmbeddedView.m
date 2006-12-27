@@ -41,6 +41,8 @@
 #import "WebNetscapePluginStream.h"
 #import "WebView.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Document.h>
+#import <WebCore/Element.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameLoader.h>
 
@@ -106,20 +108,10 @@
     } 
 }
 
-- (void)setWebFrame:(WebFrame *)webFrame
-{
-    if (webFrame == _webFrame)
-        return;
-        
-    _webFrame = webFrame;
-    
-    if (!_webFrame)
-        [self stop];
-}
-
 - (WebDataSource *)dataSource
 {
-    return [_webFrame dataSource];
+    WebFrame *webFrame = kit(core(element)->document()->frame());
+    return [webFrame dataSource];
 }
 
 -(void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response

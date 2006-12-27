@@ -1114,9 +1114,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         [self removeTrackingRect:trackingTag];
         trackingTag = 0;
 
-        // Must release the window to balance the retain in resetTrackingRect.
-        // But must do it after setting trackingTag to 0 so we don't re-enter.
-        [[self window] release];
+        // Do the following after setting trackingTag to 0 so we don't re-enter.
+
+        // Balance the retain in resetTrackingRect. Use autorelease in case we hold 
+        // the last reference to the window during tear-down, to avoid crashing AppKit. 
+        [[self window] autorelease];
     }
 }
 
@@ -1124,7 +1126,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     [self removeTrackingRect];
     if (isStarted) {
-        // Must retain the window so that removeTrackingRect can work after the window is closed.
+        // Retain the window so that removeTrackingRect can work after the window is closed.
         [[self window] retain];
         trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     }

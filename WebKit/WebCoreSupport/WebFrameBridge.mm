@@ -610,7 +610,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                             loadManually:loadManually
                                                               DOMElement:element] autorelease];
             view = embeddedView;
-            [_frame _addPlugInView:embeddedView];
         } else
             ASSERT_NOT_REACHED();
     } else
@@ -627,8 +626,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                      pluginPageURL:pluginPageURL
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
-        WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
-        [_frame _addPlugInView:nullView];
+        WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error DOMElement:element] autorelease];
         view = nullView;
         [error release];
     }
@@ -706,7 +704,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                      pluginPageURL:nil
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
-        view = [[[WebNullPluginView alloc] initWithFrame:theFrame error:error] autorelease];
+        view = [[[WebNullPluginView alloc] initWithFrame:theFrame error:error DOMElement:element] autorelease];
         [error release];
     }
 

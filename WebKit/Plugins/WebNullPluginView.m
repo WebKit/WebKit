@@ -26,12 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/Document.h>
+#import <WebCore/Element.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewInternal.h>
 
@@ -39,7 +42,7 @@ static NSImage *image = nil;
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame error:(NSError *)pluginError;
+- initWithFrame:(NSRect)frame error:(NSError *)pluginError DOMElement:(DOMElement *)anElement
 {    
     self = [super initWithFrame:frame];
     if (self) {
@@ -53,26 +56,24 @@ static NSImage *image = nil;
         [self setImage:image];
 
         error = [pluginError retain];
+        element = [anElement retain];
     }
     return self;
 }
 
 - (void)dealloc
+
 {
     [error release];
+    [element release];
     [super dealloc];
-}
-
-- (void)setWebFrame:(WebFrame *)webFrame
-{
-    _webFrame = webFrame;
 }
 
 - (void)viewDidMoveToWindow
 {
     if(!didSendError && _window && error){
         didSendError = YES;
-        WebFrame *webFrame = _webFrame;
+        WebFrame *webFrame = kit(core(element)->document()->frame());
         WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame dataSource];
         

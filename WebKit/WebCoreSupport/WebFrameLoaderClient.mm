@@ -378,13 +378,6 @@ void WebFrameLoaderClient::doNotResetAfterLoadError(LoadErrorResetToken* token)
     [item release];
 }
 
-void WebFrameLoaderClient::didCloseDocument()
-{
-    [m_webFrame->_private->plugInViews makeObjectsPerformSelector:@selector(setWebFrame:) withObject:nil];
-    [m_webFrame->_private->plugInViews release];
-    m_webFrame->_private->plugInViews = nil;
-}
-
 void WebFrameLoaderClient::detachedFromParent1()
 {
     [m_webFrame.get() _saveScrollPositionAndViewStateToItem:m_webFrame->_private->currentItem];
