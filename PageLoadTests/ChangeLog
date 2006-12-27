@@ -1,5 +1,11 @@
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        * svg/svg.pltsuite: re-enable word-iso.svg after fixing http://bugs.webkit.org/show_bug.cgi?id=11987
+
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by bradee-oh.
         
         Add new PageLoadTests directory (this one)

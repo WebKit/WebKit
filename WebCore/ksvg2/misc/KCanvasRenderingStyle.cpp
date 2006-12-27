@@ -59,11 +59,6 @@ SVGPaintServer* KSVGPainterFactory::fillPaintServer(const RenderStyle* style, co
         fillPaintServer = getPaintServerById(item->document(), AtomicString(fill->uri().substring(1)));
         if (fillPaintServer && item->isRenderPath())
             fillPaintServer->addClient(static_cast<const RenderPath*>(item));
-        if (!fillPaintServer) {
-            // default value (black), see bug 11017
-            fillPaintServer = sharedSolidPaintServer();
-            static_cast<SVGPaintServerSolid*>(fillPaintServer)->setColor(Color::black);
-        }
     } else {
         fillPaintServer = sharedSolidPaintServer();
         SVGPaintServerSolid* fillPaintServerSolid = static_cast<SVGPaintServerSolid*>(fillPaintServer);
@@ -71,6 +66,14 @@ SVGPaintServer* KSVGPainterFactory::fillPaintServer(const RenderStyle* style, co
             fillPaintServerSolid->setColor(style->color());
         else
             fillPaintServerSolid->setColor(fill->color());
+        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
+        if (!fillPaintServerSolid->color().isValid())
+            fillPaintServer = 0;
+    }
+    if (!fillPaintServer) {
+        // default value (black), see bug 11017
+        fillPaintServer = sharedSolidPaintServer();
+        static_cast<SVGPaintServerSolid*>(fillPaintServer)->setColor(Color::black);
     }
     return fillPaintServer;
 }
@@ -94,6 +97,9 @@ SVGPaintServer* KSVGPainterFactory::strokePaintServer(const RenderStyle* style, 
             strokePaintServerSolid->setColor(style->color());
         else
             strokePaintServerSolid->setColor(stroke->color());
+        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
+        if (!strokePaintServerSolid->color().isValid())
+            strokePaintServer = 0;
     }
 
     return strokePaintServer;

@@ -1,5 +1,20 @@
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        ASSERT while loading SVG map
+        http://bugs.webkit.org/show_bug.cgi?id=11987
+
+        * ksvg2/css/SVGCSSParser.cpp: remove a few .impl() calls previously missed.
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp: handle invalid colors
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by ggaren.
 
         No test cases changed.

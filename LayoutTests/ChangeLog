@@ -1,3 +1,15 @@
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+        
+        ASSERT while loading SVG map
+        http://bugs.webkit.org/show_bug.cgi?id=11987
+
+        * svg/custom/invalid-fill-hex-expected.checksum: Added.
+        * svg/custom/invalid-fill-hex-expected.png: Added.
+        * svg/custom/invalid-fill-hex-expected.txt: Added.
+        * svg/custom/invalid-fill-hex.svg: Added.
+
 2006-12-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
@@ -4117,7 +4129,7 @@ text-clip was an incorrect test, rather than an incorrect result
 
         * editing/pasteboard/emacs-cntl-y-001.html:
 
-2006-09-27  Eric Seidel  <eric@eseidel.com>
+2006-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
         
@@ -4146,7 +4158,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/viewport-update2-expected.txt: Added.
         * svg/custom/viewport-update2.svg: Added.
 
-2006-09-27  Eric Seidel  <eric@eseidel.com>
+2006-09-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
         
@@ -4185,7 +4197,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * editing/pasteboard/emacs-cntl-y-001-expected.txt: Added.
         * editing/pasteboard/emacs-cntl-y-001.html: Added.
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
         
@@ -4197,7 +4209,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/hixie/viewbox/003-expected.txt: Added.
         * svg/hixie/viewbox/003.xml: Added.
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
 
@@ -4209,7 +4221,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/createelement-expected.txt: Added.
         * svg/custom/createelement.svg: Added.
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
         
@@ -4228,7 +4240,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * editing/execCommand/indent-empty-root-expected.txt: Added.
         * editing/execCommand/indent-empty-root.html: Added.
 
-2006-09-24  Eric Seidel  <eric@eseidel.com>
+2006-09-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         
@@ -4266,7 +4278,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/viewport-clip-expected.txt: Added.
         * svg/custom/viewport-clip.svg: Added.
 
-2006-09-24  Eric Seidel  <eric@eseidel.com>
+2006-09-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by beth.
 
@@ -4278,7 +4290,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/invalid-fill-expected.txt: Added.
         * svg/custom/invalid-fill.svg: Added.
 
-2006-09-24  Eric Seidel  <eric@eseidel.com>
+2006-09-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
         
@@ -4414,7 +4426,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * fast/forms/file-input-direction-expected.txt: Added.
         * fast/forms/file-input-direction.html: Added.
 
-2006-09-20  Eric Seidel  <eric@eseidel.com>
+2006-09-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
         
@@ -4429,7 +4441,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/W3C-SVG-1.1/painting-marker-02-f-expected.png:
         * svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by adele.
         
@@ -4461,7 +4473,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/non-opaque-filters-expected.txt:
         * svg/custom/text-filter-expected.txt:
 
-2006-09-19  Eric Seidel  <eric@eseidel.com>
+2006-09-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by adele.
 
@@ -4511,13 +4523,13 @@ text-clip was an incorrect test, rather than an incorrect result
         * fast/forms/input-appearance-height-expected.txt:
         * fast/forms/input-value-expected.txt:
 
-2006-09-17  Eric Seidel  <eric@eseidel.com>
+2006-09-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
         * fast/js/window-properties.html: make work in Firefox (hangs IE)
 
-2006-09-17  Eric Seidel  <eric@eseidel.com>
+2006-09-17  Eric Seidel  <eric@webkit.org>
 
         Add a textual dump of the window object property tree.
 
@@ -5542,7 +5554,7 @@ text-clip was an incorrect test, rather than an incorrect result
 
         * svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
 
-2006-08-26  Eric Seidel  <eric@eseidel.com>
+2006-08-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
         
@@ -6182,7 +6194,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * fast/forms/onselect-selectall-expected.txt: Added.
         * fast/forms/onselect-selectall.html: Added.
 
-2006-08-14  Eric Seidel  <eric@eseidel.com>
+2006-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         
@@ -6259,7 +6271,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/text-filter-expected.txt:
         * svg/custom/tref-update-expected.txt:
 
-2006-08-14  Eric Seidel  <eric@eseidel.com>
+2006-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin and mjs.
         
@@ -6327,7 +6339,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * tables/mozilla/bugs/bug24200-expected.txt: Ditto.
         * tables/mozilla/bugs/bug4527-expected.txt: Ditto.
 
-2006-08-11  Eric Seidel  <eric@eseidel.com>
+2006-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
         
@@ -6693,7 +6705,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/W3C-SVG-1.1/struct-dom-06-b-expected.png:
         * svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
         
@@ -6793,7 +6805,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Added.
         * fast/encoding/denormalised-voiced-japanese-chars.html: Added.
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
         
@@ -6831,7 +6843,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * svg/custom/invalid-viewbox2-expected.txt: Added.
         * svg/custom/invalid-viewbox2.svg: Added.
 
-2006-07-27  Eric Seidel  <eric@eseidel.com>
+2006-07-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
         
@@ -10859,7 +10871,7 @@ text-clip was an incorrect test, rather than an incorrect result
         * tables/mozilla_expected_failures/bugs/bug32205-1-expected.txt:
         * tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
 
-2006-05-25  Eric Seidel  <eric@eseidel.com>
+2006-05-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
