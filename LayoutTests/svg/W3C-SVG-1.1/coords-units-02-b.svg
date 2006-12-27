@@ -38,15 +38,15 @@
 <!--======================================================================-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" version="1.1" baseProfile="basic">
    <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision: 1.1 $" testname="coords-units-02-b.svg">
+		<OperatorScript version="$Revision: 1.4 $" testname="coords-units-02-b.svg">
          <Paragraph>
          Verify the conversion processing of CSS units and percentage values for both
          coordinates and length values. Note that the test uses the CSS px unit to be usable
          in all pixel resolutions. Hence, the conversion from other CSS units to CSS px is
-         left out of the test. This can be validated by BE01 in the same test suite.
+         left out of the test.
       </Paragraph>
       <Paragraph>
-         There are six atomic tests in this BE. For each, the approach is to draw two similar 
+         There are six atomic tests in this test. For each, the approach is to draw two similar 
          elements (circles or rects) with coordinates specified in user space for one and in
          CSS units or percentage for the other. Each test is such that these two values (or
          value pairs) should match.
@@ -139,7 +139,7 @@
          <line x1="-3.536" y1="3.536" x2="25" y2="3.536" fill="none" stroke="#cccccc" stroke-width=".5" />
       </g>
    </g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.4 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

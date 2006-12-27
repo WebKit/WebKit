@@ -1,0 +1,52 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGText {text} at (65,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 22x36
+          text run at (0,-28) width 22: "A"
+      RenderSVGText {text} at (165,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 20x36
+          text run at (0,-28) width 20: "B"
+      RenderSVGText {text} at (265,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 20x36
+          text run at (0,-28) width 20: "C"
+      RenderSVGText {text} at (365,50) size 480x36
+        RenderSVGInlineText {#text} at (0,-28) size 22x36
+          text run at (0,-28) width 22: "D"
+      RenderSVGContainer {g} at (29,59) size 392x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
+        RenderSVGContainer {g} at (29,59) size 92x42
+          RenderPath {rect} at (29,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M35.00,15.00L115.00,15.00C117.76,15.00,120.00,17.24,120.00,20.00L120.00,50.00C120.00,52.76,117.76,55.00,115.00,55.00L35.00,55.00C32.24,55.00,30.00,52.76,30.00,50.00L30.00,20.00C30.00,17.24,32.24,15.00,35.00,15.00"]
+          RenderSVGText {text} at (50,40) size 480x23
+            RenderSVGInlineText {#text} at (0,-18) size 59x23
+              text run at (0,-18) width 59: "click A"
+        RenderSVGContainer {g} at (129,59) size 92x42
+          RenderPath {rect} at (129,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M135.00,15.00L215.00,15.00C217.76,15.00,220.00,17.24,220.00,20.00L220.00,50.00C220.00,52.76,217.76,55.00,215.00,55.00L135.00,55.00C132.24,55.00,130.00,52.76,130.00,50.00L130.00,20.00C130.00,17.24,132.24,15.00,135.00,15.00"]
+          RenderSVGText {text} at (135,40) size 480x23
+            RenderSVGInlineText {#text} at (0,-18) size 79x23
+              text run at (0,-18) width 79: "click B+2"
+        RenderSVGContainer {g} at (229,59) size 92x42
+          RenderPath {rect} at (229,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M235.00,15.00L315.00,15.00C317.76,15.00,320.00,17.24,320.00,20.00L320.00,50.00C320.00,52.76,317.76,55.00,315.00,55.00L235.00,55.00C232.24,55.00,230.00,52.76,230.00,50.00L230.00,20.00C230.00,17.24,232.24,15.00,235.00,15.00"]
+          RenderSVGText {text} at (235,40) size 480x23
+            RenderSVGInlineText {#text} at (0,-18) size 79x23
+              text run at (0,-18) width 79: "click C+4"
+        RenderSVGContainer {g} at (329,59) size 92x42
+          RenderPath {rect} at (329,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M335.00,15.00L415.00,15.00C417.76,15.00,420.00,17.24,420.00,20.00L420.00,50.00C420.00,52.76,417.76,55.00,415.00,55.00L335.00,55.00C332.24,55.00,330.00,52.76,330.00,50.00L330.00,20.00C330.00,17.24,332.24,15.00,335.00,15.00"]
+          RenderSVGText {text} at (350,40) size 480x23
+            RenderSVGInlineText {#text} at (0,-18) size 45x23
+              text run at (0,-18) width 45: "never"
+      RenderSVGText {text} at (15,175) size 480x32
+        RenderSVGInlineText {#text} at (0,-25) size 287x32
+          text run at (0,-25) width 287: "Test of Eventbase targets."
+      RenderSVGText {text} at (15,245) size 480x22
+        RenderSVGInlineText {#text} at (0,-17) size 342x22
+          text run at (0,-17) width 342: "Note that clicking rect D should give no result."
+      RenderSVGText {text} at (15,205) size 480x22
+        RenderSVGInlineText {#text} at (0,-17) size 364x22
+          text run at (0,-17) width 364: "Clicking a rectangle should change its color at the"
+      RenderSVGText {text} at (15,225) size 480x22
+        RenderSVGInlineText {#text} at (0,-17) size 369x22
+          text run at (0,-17) width 369: "time for the click + delay as indicated in each rect."
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.8 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,0 +1,26 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (55,22) size 374x275
+        RenderSVGContainer {g} at (55,22) size 374x275 [transform={m=((1.10,0.00)(0.00,1.10)) t=(55.00,22.00)}]
+          RenderPath {rect} at (55,22) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+          RenderPath {rect} at (55,187) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,150.00L100.00,150.00L100.00,250.00L0.00,250.00"]
+          RenderPath {rect} at (187,104.50) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M120.00,75.00L220.00,75.00L220.00,175.00L120.00,175.00"]
+          RenderSVGContainer {g} at (319,22) size 110x110
+            RenderPath {rect} at (319,22) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,0.00L340.00,0.00L340.00,100.00L240.00,100.00"]
+          RenderSVGContainer {g} at (319,187) size 110x110
+            RenderPath {rect} at (319,187) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,150.00L340.00,150.00L340.00,250.00L240.00,250.00"]
+          RenderSVGContainer {g} at (70.40,68.20) size 324.50x101.20
+            RenderSVGText {text} at (50,130) size 480x17
+              RenderSVGInlineText {#text} at (-36,-13) size 72x17
+                text run at (-36,-13) width 72: "currentColor"
+            RenderSVGText {text} at (170,55) size 480x17
+              RenderSVGInlineText {#text} at (-15,-13) size 31x17
+                text run at (-15,-13) width 31: "green"
+            RenderSVGText {text} at (290,130) size 480x17
+              RenderSVGInlineText {#text} at (-18,-13) size 37x17
+                text run at (-18,-13) width 37: "inherit"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.4 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

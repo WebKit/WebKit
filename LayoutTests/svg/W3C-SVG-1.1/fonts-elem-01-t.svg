@@ -17,7 +17,8 @@
 <!-- Revised for 1.1 : Chris Lilley, 15-mar-2002                           -->
 <!--                                                                       -->
 <!--======================================================================-->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="480" height="360" viewBox="0 0 480 360" version="1.1" baseProfile="tiny">
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" version="1.1" baseProfile="tiny">
 <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
 		<OperatorScript>
 			<Paragraph>This is a basic test for embedded SVG fonts. The font &quot;Comic Sans&quot; 
@@ -98,6 +99,6 @@
 			<text>AyÖ@ç</text>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.4 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

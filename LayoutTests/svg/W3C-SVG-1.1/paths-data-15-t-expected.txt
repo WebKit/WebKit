@@ -1,0 +1,14 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (71.10,111.25) size 325.75x76.85
+        RenderSVGContainer {g} at (71.10,111.25) size 325.75x76.85 [transform={m=((1.80,0.00)(0.00,1.80)) t=(36.00,90.00)}]
+          RenderPath {path} at (71.15,111.25) size 325.71x29.49 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M20.00,20.00C40.00,13.33,60.00,13.33,80.00,20.00C100.00,26.67,120.00,26.67,140.00,20.00C160.00,13.33,180.00,13.33,200.00,20.00"]
+          RenderPath {path} at (72,177.30) size 108x5.40 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [data="M20.00,50.00C20.00,50.00,30.00,50.00,50.00,50.00C70.00,50.00,80.00,50.00,80.00,50.00"]
+          RenderPath {rect} at (71.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M20.00,50.00L24.00,50.00L24.00,54.00L20.00,54.00"]
+          RenderPath {rect} at (125.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M50.00,50.00L54.00,50.00L54.00,54.00L50.00,54.00"]
+          RenderPath {rect} at (179.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M80.00,50.00L84.00,50.00L84.00,54.00L80.00,54.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.2 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (-10,-10) size 489.50x369.50
+      RenderSVGContainer {g} at (-10,-10) size 454.85x264.85
+        RenderSVGContainer {defs} at (-10,-10) size 120x120
+          RenderPath {rect} at (-10,-10) size 120x120 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+        RenderSVGText {text} at (120,60) size 480x18
+          RenderSVGInlineText {#text} at (-32,-14) size 64x18
+            text run at (-32,-14) width 64: "Reference"
+        RenderSVGText {text} at (360,60) size 480x18
+          RenderSVGInlineText {#text} at (-19,-14) size 39x18
+            text run at (-19,-14) width 39: "<use>"
+        RenderSVGContainer {g} at (35.15,85.15) size 169.71x169.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(120.00,99.29)}]
+          RenderPath {rect} at (35.15,85.15) size 169.71x169.71 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+        RenderSVGContainer {g} at (275.15,85.15) size 169.71x169.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+          RenderSVGContainer {use} at (275.15,85.15) size 169.71x169.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(155.36,-35.06)}]
+            RenderSVGContainer {g} at (275.15,85.15) size 169.71x169.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,120.00)}]
+              RenderPath {rect} at (275.15,85.15) size 169.71x169.71 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.7 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

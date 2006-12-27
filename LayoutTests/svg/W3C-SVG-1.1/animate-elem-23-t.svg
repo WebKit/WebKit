@@ -28,7 +28,7 @@
 <!--======================================================================-->
 <svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision: 1.1 $" testname="animate-elem-09-t-b.svg">
+		<OperatorScript version="$Revision: 1.7 $" testname="animate-elem-23-t.svg">
 			<Paragraph>
 				Test which verifies that the basic facilities of declarative 
 				animation are working.
@@ -76,12 +76,12 @@
 				* changes color from blue to dark red
 			-->
             <rect x="150" y="50" width="240" height="240" stroke="black" fill="black"/>
-			<circle cx="270" cy="170" r="110"  visibility="hidden" >It's alive!<set attributeName="visibility" attributeType="CSS" to="visible" begin="3s" dur="6s" fill="freeze"/>
+			<circle cx="270" cy="170" r="110"  visibility="hidden" ><set attributeName="visibility" attributeType="CSS" to="visible" begin="3s" dur="6s" fill="freeze"/>
 			 <animateColor attributeName="fill" attributeType="CSS" from="rgb(0,0,255)" to="rgb(128,0,0)" begin="3s" dur="6s" fill="freeze"/>
 			</circle>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.7 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

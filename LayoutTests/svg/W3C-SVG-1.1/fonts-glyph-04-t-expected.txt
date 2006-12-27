@@ -1,0 +1,15 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (100,54) size 48x159
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGText {text} at (100,100) size 480x59
+          RenderSVGInlineText {#text} at (0,-46) size 48x59
+            text run at (0,-46) width 48: "ffl"
+        RenderSVGText {text} at (100,200) size 480x59
+          RenderSVGInlineText {#text} at (0,-46) size 48x59
+            text run at (0,-46) width 48: "ffl"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 284x46
+          text run at (0,-36) width 284: "$Revision: 1.10 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

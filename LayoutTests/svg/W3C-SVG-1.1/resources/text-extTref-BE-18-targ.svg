@@ -46,7 +46,7 @@ Auxiliary ('tref' target) file for test case text-extTref-BE-18.
 	<text style="font-family:Helvetica;font-size:10" x="30" y="401">Scalable Vector Graphics (SVG) Conformance Suite</text>
 	<text style="font-family:Helvetica;font-size:12" x="65" y="428">text-extTref-BE-18-targ</text>
 	<text style="font-family:Helvetica;font-size:12" x="205" y="418">Release 1.0</text>
-	<text style="font-family:Helvetica;font-size:10" x="205" y="435">$Revision$</text>
+	<text style="font-family:Helvetica;font-size:10" x="205" y="435">$Revision: 1.4 $</text>
 
       <!-- Test-framing rectangle, drawn just inside viewport boundary. -->
 	<rect id="test-frame" x="1" y="1" width="448" height="448" style="fill:none; stroke:#000000"/>

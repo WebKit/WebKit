@@ -1,0 +1,17 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (10,29) size 377x280
+        RenderSVGText {text} at (240,60) size 480x40
+          RenderSVGInlineText {#text} at (0,-31) size 147x40
+            text run at (0,-31) width 147: "Multi X Y"
+        RenderSVGText {text} at (10,60) size 480x40
+          RenderSVGInlineText {#text} at (0,-31) size 136x40
+            text run at (0,-31) width 136: "ROTATE"
+        RenderSVGText {text} at (10,300) size 480x40
+          RenderSVGInlineText {#text} at (0,-31) size 207x40
+            text run at (0,-31) width 207: "Both Together"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.8 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

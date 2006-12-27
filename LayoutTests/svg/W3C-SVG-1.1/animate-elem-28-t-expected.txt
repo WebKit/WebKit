@@ -9,5 +9,5 @@ layer at (0,0) size 480x360
         RenderPath {path} at (149.13,225.34) size 187.74x56.44 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M151.00,227.00C197.00,279.00,289.00,279.00,335.00,227.00"]
         RenderSVGText {text} at (10,340) size 480x46
           RenderSVGInlineText {#text} at (0,-36) size 264x46
-            text run at (0,-36) width 264: "$Revision: 1.1 $"
+            text run at (0,-36) width 264: "$Revision: 1.6 $"
         RenderPath {rect} at (-1.50,-1.50) size 483x363 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

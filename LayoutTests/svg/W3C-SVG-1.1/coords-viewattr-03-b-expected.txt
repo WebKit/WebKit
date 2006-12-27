@@ -1,0 +1,61 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGText {text} at (240,28) size 480x23
+        RenderSVGInlineText {#text} at (-104,-18) size 209x23
+          text run at (-104,-18) width 209: "<svg> 'viewBox' attribute"
+      RenderSVGContainer {g} at (16,19.50) size 452x284.50
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (85,155) size 480x17
+          RenderSVGInlineText {#text} at (-69,-13) size 138x17
+            text run at (-69,-13) width 138: "viewBox=\"0 0 200 200\""
+        RenderSVGText {text} at (85,170) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 108x17
+            text run at (-54,-13) width 108: "overflow=\"visible\""
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (85,285) size 480x17
+          RenderSVGInlineText {#text} at (-69,-13) size 138x17
+            text run at (-69,-13) width 138: "viewBox=\"0 0 200 200\""
+        RenderSVGText {text} at (85,300) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 109x17
+            text run at (-54,-13) width 109: "overflow=\"hidden\""
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (240,155) size 480x17
+          RenderSVGInlineText {#text} at (-69,-13) size 138x17
+            text run at (-69,-13) width 138: "viewBox=\"0,0,200,200\""
+        RenderSVGText {text} at (240,170) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 108x17
+            text run at (-54,-13) width 108: "overflow=\"visible\""
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (240,285) size 480x17
+          RenderSVGInlineText {#text} at (-69,-13) size 138x17
+            text run at (-69,-13) width 138: "viewBox=\"0,0,200,200\""
+        RenderSVGText {text} at (240,300) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 109x17
+            text run at (-54,-13) width 109: "overflow=\"hidden\""
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (395,155) size 480x17
+          RenderSVGInlineText {#text} at (-73,-13) size 146x17
+            text run at (-73,-13) width 90: "viewBox=\"0,0, "
+            text run at (17,-13) width 56: "200, 200\""
+        RenderSVGText {text} at (395,170) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 108x17
+            text run at (-54,-13) width 108: "overflow=\"visible\""
+        RenderSVGContainer {svg} at (9.75,9.75) size 80.50x80.50
+          RenderPath {path} at (9.75,9.75) size 80.50x80.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M20.00,20.00C126.67,20.00,180.00,73.33,180.00,180.00C73.33,180.00,20.00,126.67,20.00,20.00M20.00,180.00C20.00,73.33,73.33,20.00,180.00,20.00C180.00,126.67,126.67,180.00,20.00,180.00M100.00,40.00L160.00,100.00L100.00,160.00L40.00,100.00"]
+        RenderSVGText {text} at (395,285) size 480x17
+          RenderSVGInlineText {#text} at (-73,-13) size 146x17
+            text run at (-73,-13) width 90: "viewBox=\"0,0, "
+            text run at (17,-13) width 56: "200, 200\""
+        RenderSVGText {text} at (395,300) size 480x17
+          RenderSVGInlineText {#text} at (-54,-13) size 109x17
+            text run at (-54,-13) width 109: "overflow=\"hidden\""
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.7 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

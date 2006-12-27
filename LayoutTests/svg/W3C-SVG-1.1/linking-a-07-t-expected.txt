@@ -1,0 +1,30 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (44.50,5) size 386.30x276.04
+        RenderSVGText {text} at (90,16) size 480x14
+          RenderSVGInlineText {#text} at (0,-11) size 167x14
+            text run at (0,-11) width 116: "xlink 'show' attribute on "
+            text run at (116,-11) width 51: "'a' element."
+        RenderSVGContainer {g} at (44.50,26.96) size 146.30x254.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-120.00,0.00)}]
+          RenderSVGContainer {a} at (44.50,26.96) size 146.30x74.08
+            RenderPath {path} at (44.50,26.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+          RenderSVGContainer {g} at (44.50,116.96) size 146.30x74.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+            RenderSVGContainer {a} at (44.50,116.96) size 146.30x74.08
+              RenderPath {path} at (44.50,116.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+          RenderSVGContainer {g} at (44.50,206.96) size 146.30x74.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+            RenderSVGContainer {a} at (44.50,206.96) size 146.30x74.08
+              RenderPath {path} at (44.50,206.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+        RenderSVGContainer {g} at (284.50,26.96) size 146.30x254.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
+          RenderSVGContainer {a} at (284.50,26.96) size 146.30x74.08
+            RenderPath {path} at (284.50,26.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+          RenderSVGContainer {g} at (284.50,116.96) size 146.30x74.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+            RenderSVGContainer {a} at (284.50,116.96) size 146.30x74.08
+              RenderPath {path} at (284.50,116.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+          RenderSVGContainer {g} at (284.50,206.96) size 146.30x74.08 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+            RenderSVGContainer {a} at (284.50,206.96) size 146.30x74.08
+              RenderPath {path} at (284.50,206.96) size 146.30x74.08 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M165.00,40.00L265.00,40.00L265.00,28.00L310.00,64.00L265.00,100.00L265.00,88.00L165.00,88.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 284x46
+          text run at (0,-36) width 284: "$Revision: 1.10 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -15,6 +15,6 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (0,-14) size 75x18
                 text run at (0,-14) width 75: "Sample 123"
       RenderSVGText {text} at (10,340) size 480x46
-        RenderSVGInlineText {#text} at (0,-36) size 264x46
-          text run at (0,-36) width 264: "$Revision: 1.1 $"
+        RenderSVGInlineText {#text} at (0,-36) size 284x46
+          text run at (0,-36) width 284: "$Revision: 1.10 $"
       RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

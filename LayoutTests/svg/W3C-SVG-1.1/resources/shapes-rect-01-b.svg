@@ -50,7 +50,7 @@
 		<rect x="3" y="93" width="154" height="12" fill="none" stroke="#000000" />
 		<text x="8" y="103">shapes-rect-01-b</text>
 		<line stroke="#000000" x1="90" y1="93" x2="90" y2="117" />
-		<text font-size="9" x="91" y="103">$Revision$</text>
+		<text font-size="9" x="91" y="103">$Revision: 1.1 $</text>
 		<a xlink:href="copyright-documents-19990405.html">
 			<text x="20" y="115" fill="blue">&#169;2002 W3C</text>
 		</a>

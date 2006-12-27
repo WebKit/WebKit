@@ -1,0 +1,20 @@
+KRenderingPaintServer {id="MyGradient1" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="MyGradient2" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#008000)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="MyGradient3" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="MyGradient4" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (50,50) size 250x250
+        RenderSVGContainer {g} at (50,50) size 100x100
+          RenderPath {rect} at (50,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}] [data="M50.00,50.00L150.00,50.00L150.00,150.00L50.00,150.00"]
+        RenderSVGContainer {g} at (200,50) size 100x100
+          RenderPath {rect} at (200,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#008000)]] [start=(0,0)] [end=(100,0)]}] [data="M200.00,50.00L300.00,50.00L300.00,150.00L200.00,150.00"]
+        RenderSVGContainer {g} at (50,200) size 100x100
+          RenderPath {rect} at (50,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}] [data="M50.00,200.00L150.00,200.00L150.00,300.00L50.00,300.00"]
+        RenderSVGContainer {g} at (200,200) size 100x100
+          RenderPath {rect} at (200,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (1.00,#000000)]] [start=(0,0)] [end=(100,0)]}] [data="M200.00,200.00L300.00,200.00L300.00,300.00L200.00,300.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.6 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

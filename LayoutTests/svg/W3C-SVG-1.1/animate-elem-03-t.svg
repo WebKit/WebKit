@@ -28,7 +28,7 @@
 <!--======================================================================-->
 <svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
   <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-    <OperatorScript version="$Revision: 1.1 $" testname="animate-elem-03-t.svg">
+    <OperatorScript version="$Revision: 1.10 $" testname="animate-elem-03-t.svg">
       <Paragraph>
                 Test inheritance of animated properties.
             </Paragraph>
@@ -40,7 +40,7 @@
       <Paragraph>
                 The first colored 'text' element has the font-size set, so the
   animation of the parent 'g' only affects the fill color. The second
-  has the the fill set and font-size set, so no inherited values are
+  has the fill set and font-size set, so no inherited values are
   used. The font-size and fill color stay constant. The third colored
   'text' element has neither of these properties specified and thus
   inherits both animated values - the fill color changes and the text
@@ -56,7 +56,7 @@
   <defs>
     <font id="MyDecFont" horiz-adv-x="466">
       <font-face font-family="MyDecFont"/>
-      <missing-glyph horiz-adv-x="233" fill="red" d="M 50 0 L50 700 200 700 200 0 z"/>
+      <missing-glyph horiz-adv-x="233" d="M 50 0 L50 700 200 700 200 0 z"/>
       <glyph unicode=" " glyph-name="space" horiz-adv-x="233"/>
       <glyph unicode="1" glyph-name="one" horiz-adv-x="558" d="M458 716L100 534V428L357 552V97H241V380L140 328V0H458V716Z"/>
       <glyph unicode="2" glyph-name="two" horiz-adv-x="585" d="M69 509Q82 523 102 541T147 575T203 603T268 614Q311 614 342 599T392 560T421 505T430 443Q430 420 423 398T405 352L343 201H444L492 309Q508 345 519 379T531 448Q531 504 511 552T454 635T369 691T262 711Q231 711 204 704T152 684T106 655T69 623V509ZM535 97H187L309 422Q316 441 315 457T306 483T287 500T265 506Q261 506 254 505T239 499T224 485T211 461L50 0H535V97Z"/>
@@ -83,6 +83,6 @@
       </g>
     </g>
   </g>
-  <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+  <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.10 $</text>
   <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

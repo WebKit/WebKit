@@ -1,0 +1,37 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (10,116) size 430x124
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (10,116) size 430x124 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+          RenderSVGText {text} at (10,70) size 480x18
+            RenderSVGInlineText {#text} at (0,-14) size 174x18
+              text run at (0,-14) width 174: "StartIndex: 0. NumChars: 9"
+          RenderSVGText {text} at (10,128) size 480x55
+            RenderSVGInlineText {#text} at (0,-43) size 400x55
+              text run at (0,-43) width 78: "abc "
+              text run at (78,-43) width 86 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+              text run at (164,-43) width 72: "123"
+              text run at (236,-43) width 91 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+              text run at (327,-43) width 73: " def"
+          RenderSVGContainer {g} at (10,220) size 430x20
+            RenderPath {rect} at (10,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,160.00L110.00,160.00L110.00,180.00L10.00,180.00"]
+            RenderSVGText {text} at (60,175) size 480x18
+              RenderSVGInlineText {#text} at (-40,-14) size 80x18
+                text run at (-40,-14) width 80: "startIndex++"
+            RenderPath {rect} at (120,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M120.00,160.00L220.00,160.00L220.00,180.00L120.00,180.00"]
+            RenderSVGText {text} at (170,175) size 480x18
+              RenderSVGInlineText {#text} at (-36,-14) size 72x18
+                text run at (-36,-14) width 72: "startIndex--"
+            RenderPath {rect} at (230,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M230.00,160.00L330.00,160.00L330.00,180.00L230.00,180.00"]
+            RenderSVGText {text} at (280,175) size 480x18
+              RenderSVGInlineText {#text} at (-41,-14) size 83x18
+                text run at (-41,-14) width 83: "numChars++"
+            RenderPath {rect} at (340,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M340.00,160.00L440.00,160.00L440.00,180.00L340.00,180.00"]
+            RenderSVGText {text} at (390,175) size 480x18
+              RenderSVGInlineText {#text} at (-37,-14) size 75x18
+                text run at (-37,-14) width 75: "numChars--"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.2 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

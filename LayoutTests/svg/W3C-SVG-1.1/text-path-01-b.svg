@@ -33,7 +33,7 @@
 <svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 
     	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision: 1.1 $" testname="text-path-01-b.svg">
+		<OperatorScript version="$Revision: 1.9 $" testname="text-path-01-b.svg">
         		<Paragraph>
         			Test textPath element
             		</Paragraph>
@@ -45,7 +45,7 @@
 	<!--======================================================================-->
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
-	<g id="test-body-content">
+	<g id="test-body-content"> 
 		<defs>
 			<path id="Path1" fill="none" stroke="blue"  d="M199 89.3 C206.6 66.6 235.8 13.2 270 30.3 286.6 38.6 298.9 59.4 310 73.3 321.7 87.9 338.6      99 356 103.3 387.3 111.1 396.6 90.4 418 74.3"/>
 			<path id="Path2" fill="none" stroke="blue"  d="M33.5 145.8 C41 123 70.3 69.7 104.5 86.8 121 95 133 116 144.5 129.8 156.2 144.4 173 155.5     190.5 159.8 221.8 167.6 231 146.9 252.5 130.8"/>
@@ -53,14 +53,14 @@
 		</defs>
 		<g id="text-on-path-01">
 			<use xlink:href="#Path1" fill="none" stroke="blue" />
-			<text font-size="36" font-family="Garamond" fill="black" >
+			<text font-size="36" font-family="Georgia" fill="black" >
 				<textPath xlink:href="#Path1">Text on a path</textPath>
 			</text>
 		</g>
 		<g id="text-on-path-02">
 			<!-- using tspan to change text color and position -->
 			<use xlink:href="#Path2" fill="none" stroke="blue" />
-			<text font-size="36" font-family="Garamond" fill="black" >
+			<text font-size="36" font-family="Georgia" fill="black" >
 				<textPath xlink:href="#Path2"><tspan dy="-12" fill="red" >Te</tspan><tspan dy="12">x</tspan>t on a path</textPath>
 			</text>
 			<rect x="17" y="169" width="274" height="41" fill="none" stroke="black" />
@@ -77,7 +77,7 @@
 			<text x="120" y="287" font-size="20" font-family="Arial" >'textPath' element.</text>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.9 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

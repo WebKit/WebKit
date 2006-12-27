@@ -1,0 +1,64 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (-45,-45) size 524.50x404.50
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.6 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      RenderSVGText {text} at (240,25) size 480x18
+        RenderSVGInlineText {#text} at (-66,-14) size 133x18
+          text run at (-66,-14) width 133: "<animateTransform>"
+      RenderSVGContainer {defs} at (-45,-45) size 90x90
+        RenderSVGContainer {g} at (-45,-45) size 90x90
+          RenderPath {circle} at (-41.00,-41.00) size 82.00x82.00 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [data="M40.00,0.00L39.92,2.51L39.68,5.01L39.29,7.50L38.74,9.95L38.04,12.36L37.19,14.72L36.19,17.03L35.05,19.27L33.77,21.43L32.36,23.51L30.82,25.50L29.16,27.38L27.38,29.16L25.50,30.82L23.51,32.36L21.43,33.77L19.27,35.05L17.03,36.19L14.72,37.19L12.36,38.04L9.95,38.74L7.50,39.29L5.01,39.68L2.51,39.92L0.00,40.00L-2.51,39.92L-5.01,39.68L-7.50,39.29L-9.95,38.74L-12.36,38.04L-14.72,37.19L-17.03,36.19L-19.27,35.05L-21.43,33.77L-23.51,32.36L-25.50,30.82L-27.38,29.16L-29.16,27.38L-30.82,25.50L-32.36,23.51L-33.77,21.43L-35.05,19.27L-36.19,17.03L-37.19,14.72L-38.04,12.36L-38.74,9.95L-39.29,7.50L-39.68,5.01L-39.92,2.51L-40.00,0.00L-39.92,-2.51L-39.68,-5.01L-39.29,-7.50L-38.74,-9.95L-38.04,-12.36L-37.19,-14.72L-36.19,-17.03L-35.05,-19.27L-33.77,-21.43L-32.36,-23.51L-30.82,-25.50L-29.16,-27.38L-27.38,-29.16L-25.50,-30.82L-23.51,-32.36L-21.43,-33.77L-19.27,-35.05L-17.03,-36.19L-14.72,-37.19L-12.36,-38.04L-9.95,-38.74L-7.50,-39.29L-5.01,-39.68L-2.51,-39.92L-0.00,-40.00L2.51,-39.92L5.01,-39.68L7.50,-39.29L9.95,-38.74L12.36,-38.04L14.72,-37.19L17.03,-36.19L19.27,-35.05L21.43,-33.77L23.51,-32.36L25.50,-30.82L27.38,-29.16L29.16,-27.38L30.82,-25.50L32.36,-23.51L33.77,-21.43L35.05,-19.27L36.19,-17.03L37.19,-14.72L38.04,-12.36L38.74,-9.95L39.29,-7.50L39.68,-5.01L39.92,-2.51"]
+          RenderPath {line} at (-45,-0.50) size 90x1 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M-45.00,0.00L45.00,0.00"]
+          RenderPath {line} at (-0.50,-45) size 1x90 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M0.00,-45.00L0.00,45.00"]
+      RenderSVGContainer {g} at (8,56) size 465.63x243
+        RenderSVGContainer {g} at (8,56) size 104x98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
+          RenderPath {rect} at (33.19,73) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderPath {rect} at (26,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-52,-14) size 104x18
+              text run at (-52,-14) width 104: "additive=replace"
+        RenderSVGContainer {g} at (126.37,56) size 107.26x98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
+          RenderPath {rect} at (153.19,73) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderPath {rect} at (126.37,56) size 107.26x68 [transform={m=((1.15,2.00)(-2.00,-0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-42,-14) size 85x18
+              text run at (-42,-14) width 85: "additive=sum"
+        RenderSVGContainer {g} at (245,56) size 111x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
+          RenderPath {rect} at (273.19,73) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderPath {rect} at (266,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-55,-14) size 111x18
+              text run at (-55,-14) width 111: "accumulate=none"
+          RenderSVGText {text} at (0,75) size 480x18
+            RenderSVGInlineText {#text} at (-52,-14) size 104x18
+              text run at (-52,-14) width 104: "additive=replace"
+        RenderSVGContainer {g} at (367,56) size 106x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+          RenderPath {rect} at (406.59,81.50) size 26.81x17 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
+          RenderPath {rect} at (386,56) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-53,-14) size 106x18
+              text run at (-53,-14) width 106: "accumulate=sum"
+          RenderSVGText {text} at (0,75) size 480x18
+            RenderSVGInlineText {#text} at (-52,-14) size 104x18
+              text run at (-52,-14) width 104: "additive=replace"
+        RenderSVGContainer {g} at (245,186) size 111x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,220.00)}]
+          RenderPath {rect} at (273.19,203) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderPath {rect} at (246.37,186) size 107.26x68 [transform={m=((2.00,0.00)(1.15,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-55,-14) size 111x18
+              text run at (-55,-14) width 111: "accumulate=none"
+          RenderSVGText {text} at (0,75) size 480x18
+            RenderSVGInlineText {#text} at (-42,-14) size 85x18
+              text run at (-42,-14) width 85: "additive=sum"
+        RenderSVGContainer {g} at (366.37,186) size 107.26x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,220.00)}]
+          RenderPath {rect} at (406.59,211.50) size 26.81x17 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
+          RenderPath {rect} at (366.37,186) size 107.26x68 [transform={m=((4.00,0.00)(2.31,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
+          RenderSVGText {text} at (0,60) size 480x18
+            RenderSVGInlineText {#text} at (-53,-14) size 106x18
+              text run at (-53,-14) width 106: "accumulate=sum"
+          RenderSVGText {text} at (0,75) size 480x18
+            RenderSVGInlineText {#text} at (-42,-14) size 85x18
+              text run at (-42,-14) width 85: "additive=sum"

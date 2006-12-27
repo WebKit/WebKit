@@ -1,19 +1,19 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (10,9) size 458x279
+    RenderSVGContainer {svg} at (0.50,0.50) size 499.50x359
+      RenderSVGContainer {g} at (10,9) size 490x279
         RenderSVGText {text} at (30,42) size 480x41
           RenderSVGInlineText {#text} at (0,-33) size 410x41
             text run at (0,-33) width 410: "Basic paint: fill properties."
         RenderPath {path} at (30,75) size 160x160 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M110.00,75.00L160.00,235.00L30.00,135.00L190.00,135.00L60.00,235.00"]
         RenderPath {path} at (285,75) size 160x160 [fill={[type=SOLID] [color=#FF0000]}] [data="M365.00,75.00L415.00,235.00L285.00,135.00L445.00,135.00L315.00,235.00"]
         RenderSVGText {text} at (10,282) size 480x33
-          RenderSVGInlineText {#text} at (0,-27) size 215x33
-            text run at (0,-27) width 215: "fill-rule:evenodd"
+          RenderSVGInlineText {#text} at (0,-27) size 247x33
+            text run at (0,-27) width 247: "fill-rule=\"evenodd\""
         RenderSVGText {text} at (260,282) size 480x33
-          RenderSVGInlineText {#text} at (0,-27) size 208x33
-            text run at (0,-27) width 208: "fill-rule:nonzero"
+          RenderSVGInlineText {#text} at (0,-27) size 240x33
+            text run at (0,-27) width 240: "fill-rule=\"nonzero\""
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
-          text run at (0,-36) width 264: "$Revision: 1.1 $"
+          text run at (0,-36) width 264: "$Revision: 1.6 $"
       RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

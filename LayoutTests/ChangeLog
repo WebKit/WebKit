@@ -1,5 +1,1348 @@
 2006-12-27  Eric Seidel  <eric@webkit.org>
 
+        Rubber-stamped by ggaren.
+        
+        Update SVG tests with the latest tests released by the W3C:
+        http://www.w3.org/Graphics/SVG/Test/20061213
+        
+        A few tests are likely to fail on the buildbot due to Asian fonts, filter color spaces, and '(' and ')' spacing differences between machines
+
+        * svg/W3C-SVG-1.1/animate-elem-02-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-02-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-03-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-04-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-05-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-07-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-08-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-09-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-09-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-09-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-09-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-09-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-10-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-10-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-10-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-10-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-11-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-11-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-11-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-11-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-12-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-12-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-12-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-12-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-13-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-14-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-16-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-17-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-18-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-19-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-20-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-21-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-22-b-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-22-b-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-22-b-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-22-b.svg:
+        * svg/W3C-SVG-1.1/animate-elem-23-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-23-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-23-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-25-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-25-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-25-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-25-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-25-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-26-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-26-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-26-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-26-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-26-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-27-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-27-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-27-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-27-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-27-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-28-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-28-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-28-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-28-t-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-28-t.svg:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-w3c.png:
+        * svg/W3C-SVG-1.1/animate-elem-29-b.svg:
+        * svg/W3C-SVG-1.1/animate-elem-30-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-30-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-30-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-30-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-31-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-31-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-31-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-31-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-32-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-32-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-32-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-33-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-33-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-33-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-33-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-34-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-34-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-34-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-34-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-34-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-35-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-36-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-36-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-37-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-37-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-37-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-37-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-38-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-39-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-39-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-40-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-40-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-41-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-41-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-41-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-42-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-43-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-44-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-44-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-44-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-44-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-44-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-45-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-46-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-46-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-46-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-46-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-47-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-48-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-49-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-50-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-51-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-52-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-52-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-52-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-53-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-60-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-60-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-60-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-60-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-60-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-61-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-61-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-61-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-61-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-61-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-62-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-62-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-62-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-62-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-63-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-63-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-63-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-63-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-63-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-64-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-64-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-64-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-64-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-64-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-65-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-65-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-65-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-65-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-65-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-66-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-66-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-66-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-66-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-66-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-67-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-67-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-67-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-67-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-67-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-68-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-68-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-68-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-68-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-68-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-69-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-69-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-69-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-69-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-69-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-70-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-70-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-70-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-70-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-77-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-77-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-77-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-77-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-78-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-78-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-78-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-78-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-80-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-80-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-81-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-81-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-81-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-81-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-82-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-82-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-82-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-82-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-83-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-83-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-83-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-83-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-84-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-84-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-84-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-84-t.svg: Added.
+        * svg/W3C-SVG-1.1/animate-elem-85-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/animate-elem-85-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-85-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/animate-elem-85-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/animate-elem-85-t.svg: Added.
+        * svg/W3C-SVG-1.1/color-prof-01-f-expected.png:
+        * svg/W3C-SVG-1.1/color-prof-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/color-prof-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/color-prop-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/color-prop-01-b-expected.png:
+        * svg/W3C-SVG-1.1/color-prop-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/color-prop-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/color-prop-01-b.svg:
+        * svg/W3C-SVG-1.1/color-prop-02-f-expected.checksum:
+        * svg/W3C-SVG-1.1/color-prop-02-f-expected.png:
+        * svg/W3C-SVG-1.1/color-prop-02-f-expected.txt:
+        * svg/W3C-SVG-1.1/color-prop-02-f-w3c.png:
+        * svg/W3C-SVG-1.1/color-prop-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/color-prop-03-t-expected.png:
+        * svg/W3C-SVG-1.1/color-prop-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/color-prop-03-t.svg:
+        * svg/W3C-SVG-1.1/color-prop-04-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/color-prop-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-coord-01-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/coords-coord-01-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/coords-coord-01-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/coords-coord-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-coord-01-t.svg: Added.
+        * svg/W3C-SVG-1.1/coords-coord-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/coords-coord-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/coords-coord-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/coords-coord-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-coord-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/coords-trans-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-01-b.svg:
+        * svg/W3C-SVG-1.1/coords-trans-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-02-t-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-02-t.svg:
+        * svg/W3C-SVG-1.1/coords-trans-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-03-t-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-03-t.svg:
+        * svg/W3C-SVG-1.1/coords-trans-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-04-t-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-04-t.svg:
+        * svg/W3C-SVG-1.1/coords-trans-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-05-t-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-05-t-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-05-t.svg:
+        * svg/W3C-SVG-1.1/coords-trans-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-trans-06-t-expected.png:
+        * svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-06-t-w3c.png:
+        * svg/W3C-SVG-1.1/coords-trans-06-t.svg:
+        * svg/W3C-SVG-1.1/coords-trans-07-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-trans-08-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-trans-09-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-units-01-b.svg:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-units-02-b.svg:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-units-03-b.svg:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b.svg:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b.svg:
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b.svg: Added.
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b.svg:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-conv-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-felem-01-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/filters-felem-01-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/filters-felem-01-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/filters-felem-01-b.svg: Added.
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-image-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-image-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-morph-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-overview-01-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f.svg:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/filters-tile-01-b.svg:
+        * svg/W3C-SVG-1.1/filters-turb-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/fonts-desc-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-04-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-desc-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png:
+        * svg/W3C-SVG-1.1/fonts-elem-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/fonts-elem-01-t.svg:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t.svg:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b.svg:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b.svg:
+        * svg/W3C-SVG-1.1/fonts-elem-05-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-05-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-06-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-06-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-07-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-elem-07-b.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t.svg: Added.
+        * svg/W3C-SVG-1.1/fonts-kern-01-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/fonts-kern-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/fonts-kern-01-t.svg: Added.
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f.svg:
+        * svg/W3C-SVG-1.1/interact-dom-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-dom-01-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-dom-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/interact-dom-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/interact-dom-01-b.svg:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/interact-events-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/interact-events-01-b.svg:
+        * svg/W3C-SVG-1.1/interact-order-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-order-01-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-order-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/interact-order-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/interact-order-01-b.svg:
+        * svg/W3C-SVG-1.1/interact-order-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/interact-order-02-b.svg:
+        * svg/W3C-SVG-1.1/interact-order-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-order-03-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-order-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/interact-order-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/interact-order-03-b.svg:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t-expected.png:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t.svg:
+        * svg/W3C-SVG-1.1/interact-zoom-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/interact-zoom-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-a-01-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-a-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-a-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/linking-a-01-b.svg:
+        * svg/W3C-SVG-1.1/linking-a-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-a-02-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-a-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-a-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/linking-a-02-b.svg:
+        * svg/W3C-SVG-1.1/linking-a-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-a-03-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-a-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-a-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/linking-a-03-b.svg:
+        * svg/W3C-SVG-1.1/linking-a-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-a-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/linking-a-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/linking-a-04-t.svg:
+        * svg/W3C-SVG-1.1/linking-a-05-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/linking-a-05-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-05-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/linking-a-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-05-t.svg: Added.
+        * svg/W3C-SVG-1.1/linking-a-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-07-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/linking-a-07-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-07-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/linking-a-07-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-07-t.svg: Added.
+        * svg/W3C-SVG-1.1/linking-a-08-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-a-09-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/linking-uri-01-b.svg:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/linking-uri-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-uri-03-t-expected.png:
+        * svg/W3C-SVG-1.1/linking-uri-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/linking-uri-03-t.svg:
+        * svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1/masking-intro-01-f-w3c.png: Added.
+        * svg/W3C-SVG-1.1/masking-intro-01-f.svg: Added.
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-mask-01-b.svg:
+        * svg/W3C-SVG-1.1/masking-opacity-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-opacity-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-opacity-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-opacity-01-b.svg:
+        * svg/W3C-SVG-1.1/masking-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-path-01-b.svg:
+        * svg/W3C-SVG-1.1/masking-path-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-02-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-path-03-b.svg:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-04-b-w3c.png:
+        * svg/W3C-SVG-1.1/masking-path-04-b.svg:
+        * svg/W3C-SVG-1.1/masking-path-05-f-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-05-f-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-05-f-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-05-f-w3c.png:
+        * svg/W3C-SVG-1.1/masking-path-05-f.svg:
+        * svg/W3C-SVG-1.1/masking-path-06-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/metadata-example-01-b.svg:
+        * svg/W3C-SVG-1.1/painting-fill-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-fill-01-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-fill-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-fill-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-fill-01-t.svg:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-fill-02-t.svg:
+        * svg/W3C-SVG-1.1/painting-fill-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-fill-03-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-fill-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-fill-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-fill-03-t.svg:
+        * svg/W3C-SVG-1.1/painting-fill-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-fill-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-fill-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-fill-04-t.svg:
+        * svg/W3C-SVG-1.1/painting-fill-05-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/painting-fill-05-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/painting-fill-05-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/painting-fill-05-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-fill-05-b.svg: Added.
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.png:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-w3c.png:
+        * svg/W3C-SVG-1.1/painting-marker-01-f.svg:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.png:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-w3c.png:
+        * svg/W3C-SVG-1.1/painting-marker-02-f.svg:
+        * svg/W3C-SVG-1.1/painting-marker-03-f-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/painting-marker-03-f-expected.png: Added.
+        * svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1/painting-marker-03-f-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-marker-03-f.svg: Added.
+        * svg/W3C-SVG-1.1/painting-marker-04-f-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.png:
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/painting-render-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/painting-render-01-b.svg:
+        * svg/W3C-SVG-1.1/painting-stroke-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-stroke-01-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-stroke-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-stroke-01-t.svg:
+        * svg/W3C-SVG-1.1/painting-stroke-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-stroke-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-stroke-02-t.svg:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t.svg:
+        * svg/W3C-SVG-1.1/painting-stroke-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-stroke-04-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/painting-stroke-04-t.svg:
+        * svg/W3C-SVG-1.1/painting-stroke-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-07-t.svg: Added.
+        * svg/W3C-SVG-1.1/painting-stroke-08-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-01-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-01-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-02-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-03-f-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-03-f.svg:
+        * svg/W3C-SVG-1.1/paths-data-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-04-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-04-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-05-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-05-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-05-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-06-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-06-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-06-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/paths-data-07-t-expected.png:
+        * svg/W3C-SVG-1.1/paths-data-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/paths-data-07-t-w3c.png:
+        * svg/W3C-SVG-1.1/paths-data-07-t.svg:
+        * svg/W3C-SVG-1.1/paths-data-08-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-08-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-08-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-08-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-data-09-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-09-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-09-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-09-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-09-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-data-10-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-10-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-10-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-10-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-10-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-data-11-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-12-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-12-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-12-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-12-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-13-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-13-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-13-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-13-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-13-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-data-14-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-14-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-14-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-14-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-data-15-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/paths-data-15-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-15-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/paths-data-15-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/paths-data-15-t.svg: Added.
+        * svg/W3C-SVG-1.1/paths-dist-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-01-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-07-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-07-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-07-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-07-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b-w3c.png:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b.svg:
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-13-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-14-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-14-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-14-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-15-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-15-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-15-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-15-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-16-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-17-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-18-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-19-b.svg: Added.
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-01-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-01-t.svg:
+        * svg/W3C-SVG-1.1/render-elems-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-02-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-02-t.svg:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-03-t.svg:
+        * svg/W3C-SVG-1.1/render-elems-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-06-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-06-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-07-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-07-t.svg:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-08-t-w3c.png:
+        * svg/W3C-SVG-1.1/render-elems-08-t.svg:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/render-groups-01-b.svg:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-03-t.svg:
+        * svg/W3C-SVG-1.1/resources/20x20.png: Added.
+        * svg/W3C-SVG-1.1/resources/SVGImageTest.svg: Added.
+        * svg/W3C-SVG-1.1/resources/animation-add-BE-09.svg:
+        * svg/W3C-SVG-1.1/resources/coords-units-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-blend-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-color-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-composite-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-comptran-01-f.svg: Added.
+        * svg/W3C-SVG-1.1/resources/filters-conv-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-diffuse-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/filters-example-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/galpha.png: Added.
+        * svg/W3C-SVG-1.1/resources/interact-dom-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-b.svg:
+        * svg/W3C-SVG-1.1/resources/makealpha.svg: Added.
+        * svg/W3C-SVG-1.1/resources/paths-data-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/paths-data-02-f.svg:
+        * svg/W3C-SVG-1.1/resources/paths-data-03-f.svg:
+        * svg/W3C-SVG-1.1/resources/paths-data-04-f.svg:
+        * svg/W3C-SVG-1.1/resources/plant.jpg: Added.
+        * svg/W3C-SVG-1.1/resources/rgbalpha.png: Added.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-b.svg:
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-b.svg:
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/smiley.png: Added.
+        * svg/W3C-SVG-1.1/resources/stefan_252_tRNS_opti.png: Added.
+        * svg/W3C-SVG-1.1/resources/svgRef1.svg: Added.
+        * svg/W3C-SVG-1.1/resources/svgRef4.css: Added.
+        * svg/W3C-SVG-1.1/resources/svgRef4.svg: Added.
+        * svg/W3C-SVG-1.1/resources/text-align-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-align-02-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-align-03-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-altglyph-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-extTref-BE-18-targ.svg:
+        * svg/W3C-SVG-1.1/resources/text-intro-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-tref-01-f.svg:
+        * svg/W3C-SVG-1.1/resources/text-ws-01-f.svg:
+        * svg/W3C-SVG-1.1/script-handle-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/script-handle-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/script-handle-03-b-expected.png:
+        * svg/W3C-SVG-1.1/script-handle-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/script-handle-03-b.svg:
+        * svg/W3C-SVG-1.1/script-handle-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/script-handle-04-b-expected.png:
+        * svg/W3C-SVG-1.1/script-handle-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-04-b-w3c.png:
+        * svg/W3C-SVG-1.1/script-handle-04-b.svg:
+        * svg/W3C-SVG-1.1/shapes-circle-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-circle-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-circle-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-circle-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-circle-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/shapes-circle-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/shapes-circle-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/shapes-circle-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-ellipse-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-ellipse-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/shapes-intro-01-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/shapes-intro-01-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/shapes-intro-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/shapes-intro-01-t.svg: Added.
+        * svg/W3C-SVG-1.1/shapes-line-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-line-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-line-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-line-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-line-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-polygon-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-polygon-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-polygon-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-polygon-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-polygon-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-polyline-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-polyline-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t.svg:
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/shapes-rect-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-cond-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-cond-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-cond-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-cond-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-cond-01-t.svg:
+        * svg/W3C-SVG-1.1/struct-cond-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-cond-02-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-cond-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-cond-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-cond-02-t.svg:
+        * svg/W3C-SVG-1.1/struct-cond-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-cond-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-cond-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-cond-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-cond-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-defs-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-defs-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-defs-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-defs-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-defs-01-t.svg:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-04-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-05-b.svg:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-dom-06-b.svg:
+        * svg/W3C-SVG-1.1/struct-frag-01-t.svg:
+        * svg/W3C-SVG-1.1/struct-frag-02-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-frag-02-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-frag-02-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-frag-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-frag-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-frag-04-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-frag-04-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-04-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-frag-04-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-04-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-frag-06-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-frag-06-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-06-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-frag-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-frag-06-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-group-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-group-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-group-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-group-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-group-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-group-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-group-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-group-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-group-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-group-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-image-01-t.svg:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-image-02-b.svg:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-03-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-image-03-t.svg:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/struct-image-04-t.svg:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-05-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-image-05-b.svg:
+        * svg/W3C-SVG-1.1/struct-image-06-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-image-06-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-06-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-image-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-06-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-image-07-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-image-07-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-07-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-image-07-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-07-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-image-08-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-image-08-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-image-08-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-08-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-image-09-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-image-09-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-09-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-image-09-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-09-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-image-10-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-image-10-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-10-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-image-10-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-image-10-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b.svg:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-use-01-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-01-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-use-02-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-use-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-use-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/struct-use-04-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-05-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/struct-use-05-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-05-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/struct-use-05-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/struct-use-05-b.svg: Added.
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/styling-css-01-b.svg:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/styling-css-02-b.svg:
+        * svg/W3C-SVG-1.1/styling-css-03-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/styling-css-04-f-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/styling-css-04-f-expected.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-04-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1/styling-css-04-f-w3c.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-04-f.svg: Added.
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-05-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-05-b.svg: Added.
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/styling-css-06-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/styling-css-06-b.svg: Added.
+        * svg/W3C-SVG-1.1/styling-inherit-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-inherit-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/styling-inherit-01-b.svg:
+        * svg/W3C-SVG-1.1/styling-pres-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-pres-01-t-expected.png:
+        * svg/W3C-SVG-1.1/styling-pres-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/styling-pres-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/styling-pres-01-t.svg:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-01-b.svg:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-02-b.svg:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-03-b.svg:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-04-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-04-b.svg:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-05-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-05-b.svg:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-06-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-align-06-b.svg:
+        * svg/W3C-SVG-1.1/text-align-07-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b.svg: Added.
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b.svg:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-deco-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-deco-01-b.svg:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-fonts-01-t.svg:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.png:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-fonts-03-t.svg: Added.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-02-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg:
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.png:
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-04-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg:
+        * svg/W3C-SVG-1.1/text-intro-05-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-intro-05-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-05-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-intro-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-intro-05-t.svg: Added.
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-path-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-path-01-b.svg:
+        * svg/W3C-SVG-1.1/text-spacing-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-spacing-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-spacing-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-spacing-01-b.svg:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-text-01-b.svg:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-03-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-text-03-b.svg:
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-text-04-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-text-04-t.svg: Added.
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-text-05-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-text-05-t.svg: Added.
+        * svg/W3C-SVG-1.1/text-text-06-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-text-06-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-text-06-t-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-text-07-t-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-text-07-t-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-text-07-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-text-07-t.svg: Added.
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-text-08-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-text-08-b.svg: Added.
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tref-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-tref-01-b.svg:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-tselect-01-b.svg:
+        * svg/W3C-SVG-1.1/text-tselect-01-f-w3c.png: Added.
+        * svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1/text-tselect-02-f.svg: Added.
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-w3c.png:
+        * svg/W3C-SVG-1.1/text-tspan-01-b.svg:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-01-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-ws-01-t.svg:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.png:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-02-t-w3c.png:
+        * svg/W3C-SVG-1.1/text-ws-02-t.svg:
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.checksum: Added.
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png: Added.
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt: Added.
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-w3c.png: Added.
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b.svg: Added.
+
+2006-12-27  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mitz.
         
         Corrected test results.  (Last minute change before earlier checkin.)

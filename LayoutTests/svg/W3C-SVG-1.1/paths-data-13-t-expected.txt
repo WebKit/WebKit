@@ -1,0 +1,10 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (237.50,53.50) size 162.50x246.50
+        RenderPath {path} at (240,53.50) size 160x5 [stroke={[type=SOLID] [color=#FF0000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M240.00,56.00L270.00,56.00L300.00,56.00L320.00,56.00L400.00,56.00"]
+        RenderPath {path} at (237.50,156) size 5x144 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M240.00,156.00L240.00,180.00L240.00,200.00L240.00,260.00L240.00,300.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.2 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

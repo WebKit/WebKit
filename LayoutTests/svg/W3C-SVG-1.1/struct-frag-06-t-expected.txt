@@ -1,0 +1,37 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (30,16) size 243x255.50
+        RenderSVGText {text} at (30,30) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 243x18
+            text run at (0,-14) width 243: "Default entities: amp, lt, gt, apos, quot:"
+        RenderSVGText {text} at (90,60) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 72x18
+            text run at (0,-14) width 72: "&, <, >, ', \""
+        RenderSVGText {text} at (30,100) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 133x18
+            text run at (0,-14) width 133: "Character references:"
+        RenderSVGText {text} at (90,130) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 178x18
+            text run at (0,-14) width 178: "A hexadecimal (&#x41)= A"
+        RenderSVGText {text} at (90,160) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 140x18
+            text run at (0,-14) width 69: "A decimal "
+            text run at (69,-14) width 71: "(&#65)= A"
+        RenderSVGText {text} at (30,200) size 480x18
+          RenderSVGInlineText {#text} at (0,-14) size 110x18
+            text run at (0,-14) width 110: "Entity references:"
+        RenderSVGText {text} at (105,228) size 480x18
+          RenderSVGInlineText {#text} at (-14,-14) size 28x18
+            text run at (-14,-14) width 28: "gray"
+        RenderSVGContainer {g} at (90,235) size 36x36 [transform={m=((0.20,0.00)(0.00,0.20)) t=(90.00,235.00)}]
+          RenderPath {path} at (90,235) size 36x36 [fill={[type=SOLID] [color=#808080]}] [data="M60.00,0.00L120.00,0.00L180.00,60.00L180.00,120.00L120.00,180.00L60.00,180.00L0.00,120.00L0.00,60.00"]
+        RenderSVGText {text} at (205,228) size 480x18
+          RenderSVGInlineText {#text} at (-25,-14) size 51x18
+            text run at (-25,-14) width 51: "outlined"
+        RenderSVGContainer {g} at (189.50,234.50) size 37x37 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]
+          RenderPath {path} at (189.50,234.50) size 37x37 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [data="M60.00,0.00L120.00,0.00L180.00,60.00L180.00,120.00L120.00,180.00L60.00,180.00L0.00,120.00L0.00,60.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.9 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

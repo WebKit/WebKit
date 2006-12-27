@@ -181,7 +181,7 @@
             <text x="12" y="347" fill="blue" >Copyright 2002 W3C. All Rights Reserved.</text>
         </a>
         <text font-size="12" x="35" y="330">filters-composite-01</text>
-        <text font-size="10" x="210" y="327">$Revision$</text>
+        <text font-size="10" x="210" y="327">$Revision: 1.1 $</text>
         <text font-size="10" x="210" y="345">Release 1.0</text>
         <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
     </g>

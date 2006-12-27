@@ -1,31 +1,31 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (10,25) size 440x260
+    RenderSVGContainer {svg} at (0.50,0.50) size 507.50x359
+      RenderSVGContainer {g} at (10,25) size 498x258
         RenderSVGText {text} at (10,40) size 480x19
           RenderSVGInlineText {#text} at (0,-15) size 316x19
             text run at (0,-15) width 316: "unicode-bidi=\"bidi-override\" direction=\"ltr\"."
-        RenderSVGContainer {g} at (10,63) size 440x22
-          RenderSVGText {text} at (10,80) size 480x22
-            RenderSVGInlineText {#text} at (0,-17) size 440x22
-              text run at (0,-17) width 440 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+        RenderSVGContainer {g} at (10,65) size 498x18
+          RenderSVGText {text} at (10,80) size 480x18
+            RenderSVGInlineText {#text} at (0,-15) size 498x18
+              text run at (0,-15) width 498 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
         RenderSVGText {text} at (10,140) size 480x19
           RenderSVGInlineText {#text} at (0,-15) size 316x19
             text run at (0,-15) width 316: "unicode-bidi=\"bidi-override\" direction=\"rtl\"."
-        RenderSVGContainer {g} at (10,163) size 440x22
-          RenderSVGText {text} at (10,180) size 480x22
-            RenderSVGInlineText {#text} at (0,-17) size 440x22
-              text run at (0,-17) width 440 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+        RenderSVGContainer {g} at (10,165) size 498x18
+          RenderSVGText {text} at (10,180) size 480x18
+            RenderSVGInlineText {#text} at (0,-15) size 498x18
+              text run at (0,-15) width 498 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
         RenderSVGText {text} at (10,240) size 480x19
           RenderSVGInlineText {#text} at (0,-15) size 274x19
             text run at (0,-15) width 274: "unicode-bidi=\"normal\" direction=\"ltr\"."
-        RenderSVGContainer {g} at (10,263) size 440x22
-          RenderSVGText {text} at (10,280) size 480x22
-            RenderSVGInlineText {#text} at (0,-17) size 440x22
-              text run at (0,-17) width 93: "is in Hebrew"
-              text run at (93,-17) width 314 RTL: " \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" "
-              text run at (407,-17) width 33: "Text"
+        RenderSVGContainer {g} at (10,265) size 498x18
+          RenderSVGText {text} at (10,280) size 480x18
+            RenderSVGInlineText {#text} at (0,-15) size 498x18
+              text run at (0,-15) width 108: "is in Hebrew"
+              text run at (108,-15) width 354 RTL: " \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" "
+              text run at (462,-15) width 36: "Text"
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
-          text run at (0,-36) width 264: "$Revision: 1.1 $"
+          text run at (0,-36) width 264: "$Revision: 1.9 $"
       RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

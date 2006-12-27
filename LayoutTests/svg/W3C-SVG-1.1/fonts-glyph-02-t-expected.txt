@@ -1,0 +1,17 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (100,28) size 261x192
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (100,28) size 261x92
+          RenderSVGText {text} at (100,100) size 480x92
+            RenderSVGInlineText {#text} at (0,-72) size 261x92
+              text run at (0,-72) width 261 RTL: "\x{69A} \x{69A}\x{69A}\x{69A}"
+        RenderSVGContainer {g} at (100,128) size 191x92
+          RenderSVGText {text} at (100,200) size 480x92
+            RenderSVGInlineText {#text} at (0,-72) size 191x92
+              text run at (0,-72) width 191 RTL: "\x{62E} \x{62E}\x{62E}\x{62E}"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.7 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

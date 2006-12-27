@@ -1,0 +1,46 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (50,22) size 165x186
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (50,22) size 165x186
+          RenderSVGText {text} at (50,50) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (100,50) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+          RenderSVGText {text} at (50,100) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (100,100) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+          RenderSVGText {text} at (50,150) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (100,150) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+          RenderSVGText {text} at (150,150) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (200,150) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+          RenderSVGText {text} at (50,200) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (100,200) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+          RenderSVGText {text} at (150,200) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 13x36
+              text run at (0,-28) width 13: "a"
+          RenderSVGText {text} at (200,200) size 480x36
+            RenderSVGInlineText {#text} at (0,-28) size 15x36
+              text run at (0,-28) width 15: "a"
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.4 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

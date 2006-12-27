@@ -39,7 +39,7 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
     <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision: 1.1 $" testname="painting-fill-01-t-c.svg">
+		<OperatorScript version="$Revision: 1.6 $" testname="painting-fill-03-t.svg">
 			<Paragraph>
 				Verify the basic capability to handle the fill rule properties evenodd and nonzero
 			</Paragraph>
@@ -65,13 +65,13 @@
 
     <path fill="red" fill-rule="evenodd"  d="M 110 75 l 50 160 l -130 -100 l 160 0 l -130 100 z"/>    
     <path fill="red" fill-rule="nonzero"  d="M 365 75 l 50 160 l -130 -100 l 160 0 l -130 100 z"/>
-    <text font-family="Arial" font-size="30" x="10" y="282">fill-rule:evenodd</text>
-    <text font-family="Arial" font-size="30" x="260" y="282">fill-rule:nonzero</text>
+    <text font-family="Arial" font-size="30" x="10" y="282">fill-rule="evenodd"</text>
+    <text font-family="Arial" font-size="30" x="260" y="282">fill-rule="nonzero"</text>
 
   </g>
 
 
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.6 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 
