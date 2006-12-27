@@ -1,3 +1,20 @@
+2006-12-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Geoff.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11968
+          BidiContext's m_basicDir is redundant
+
+        No test possible (no functionality change)
+
+        * rendering/bidi.cpp:
+        (WebCore::BidiContext::BidiContext):
+        (WebCore::operator==):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Use the block's
+        direction to resolve 'automatic' text-align.
+        * rendering/bidi.h:
+        (WebCore::BidiContext::dir):
+
 2006-12-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, not reviewed.
