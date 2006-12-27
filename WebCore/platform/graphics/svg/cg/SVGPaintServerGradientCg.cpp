@@ -214,23 +214,26 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderP
     RenderStyle* style = path->style();
     ASSERT(contextRef);
 
+    // Compute destination object bounding box
     CGRect objectBBox;
     if (boundingBoxMode())
         objectBBox = CGContextGetPathBoundingBox(contextRef);
+
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
         clipToFillPath(contextRef, path);
     if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke())
         clipToStrokePath(contextRef, path);
-    // make the gradient fit in the bbox if necessary.
-    if (boundingBoxMode()) { // no support for bounding boxes around text yet!
-        // get the object bbox
-        CGRect gradientBBox = CGRectMake(0,0,100,100); // FIXME - this is arbitrary no?
-        // generate a transform to map between the two.
+
+    if (boundingBoxMode()) {
+        // Choose default gradient bounding box
+        CGRect gradientBBox = CGRectMake(0, 0, 100, 100);
+
+        // Generate a transform to map between both bounding boxes
         CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, objectBBox);
         CGContextConcatCTM(contextRef, gradientIntoObjectBBox);
     }
 
-    // apply the gradient's own transform
+    // Apply the gradient's own transform
     CGAffineTransform transform = gradientTransform();
     CGContextConcatCTM(contextRef, transform);
 }

@@ -1,3 +1,22 @@
+2006-12-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add patternContentUnits support, and cleanup SVGPaintServerGradientCg.cpp
+        Fixes coords-units-01-b.svg
+
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::SVGPaintServerPattern):
+        (WebCore::SVGPaintServerPattern::contentBoundingBoxMode):
+        (WebCore::SVGPaintServerPattern::setContentBoundingBoxMode):
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::renderPath):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2006-12-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ggaren

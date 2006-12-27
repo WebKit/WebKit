@@ -1,3 +1,13 @@
+2006-12-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add patternContentUnits support, and cleanup SVGPaintServerGradientCg.cpp
+        Fixes coords-units-01-b.svg
+
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/custom/js-update-pattern-expected.txt:
+
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

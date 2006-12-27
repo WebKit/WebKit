@@ -155,9 +155,10 @@ void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternEleme
 void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* target, const IntSize& newSize, AffineTransform patternTransformMatrix)
 {
     bool bbox = (patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bboxContent = (patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
     float _x, _y, w, h;
-    if (bbox) {
+    if (bbox || bboxContent) {
         _x = x().valueAsPercentage();
         _y = y().valueAsPercentage();
         w = width().valueAsPercentage();
@@ -173,6 +174,16 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
     if (!patternImage)
         return;
 
+    GraphicsContext* context = patternImage->context();
+    ASSERT(context);
+ 
+    // If we render content relative to the pattern's bounding box, we have
+    // to correct the current transformation matrix of the GraphicsContext
+    if (bboxContent) {
+        context->save();
+        context->scale(FloatSize(width().value(), height().value()));
+    }
+
     // Render subtree into ImageBuffer
     for (Node* n = target->firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = svg_dynamic_cast(n);
@@ -187,8 +198,14 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         ImageBuffer::renderSubtreeToImage(patternImage, item);
     }
 
+    if (bboxContent) {
+        context->restore();
+        context->translate(x().value(), y().value());
+    }
+
     FloatRect rect(_x, _y, w, h);
     m_paintServer->setBbox(rect);
+    m_paintServer->setBoundingBoxMode(bbox);
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(patternImage);
 }

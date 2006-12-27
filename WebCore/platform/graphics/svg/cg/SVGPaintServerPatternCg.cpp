@@ -55,10 +55,20 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     CGSize cellSize = CGSize(tile()->size());
     CGFloat alpha = 1; // canvasStyle->opacity(); //which?
 
-    // Patterns don't seem to resepect the CTM unless we make them...
-    CGAffineTransform ctm = CGContextGetCTM(contextRef);
-    CGAffineTransform transform = patternTransform();
-    transform = CGAffineTransformConcat(transform, ctm);
+    if (boundingBoxMode()) {
+        // Compute destination object bounding box
+        CGRect objectBBox = CGContextGetPathBoundingBox(contextRef);
+
+        // Choose default pattern bounding box
+        CGRect patternBBox = CGRectMake(0, 0, 100, 100);
+
+        // Generate a transform to map between both bounding boxes
+        CGAffineTransform patternIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(patternBBox, objectBBox);
+        CGContextConcatCTM(contextRef, patternIntoObjectBBox);
+    }
+
+    // Repesct local pattern transformations
+    CGContextConcatCTM(contextRef, patternTransform());
 
     CGSize phase = CGSizeMake(bbox().x(), -bbox().y()); // Pattern space seems to start in the lower-left, so we flip the Y here.
     CGContextSetPatternPhase(contextRef, phase);
@@ -66,7 +76,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
     m_pattern = CGPatternCreate(tile(),
                                 CGRectMake(0, 0, cellSize.width, cellSize.height),
-                                transform,
+                                CGContextGetCTM(contextRef),
                                 bbox().width(),
                                 bbox().height(),
                                 kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
