@@ -583,7 +583,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (inSetWindow)
         return NO;
 
-    Page* page = core([self webFrame])->page();
+    Frame* frame = core([self webFrame]);
+    if (!frame)
+        return NO;
+    Page* page = frame->page();
+    if (!page)
+        return NO;
+
     bool wasDeferring = page->defersLoading();
     if (!wasDeferring)
         page->setDefersLoading(true);
@@ -1745,7 +1751,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
+    Frame* frame = core([self webFrame]);
+    if (!frame)
+        return nil;
+    [request _web_setHTTPReferrer:frame->loader()->outgoingReferrer()];
     return request;
 }
 
@@ -2143,7 +2152,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     switch (variable) {
         case NPNVWindowNPObject:
         {
-            NPObject *windowScriptObject = core([self webFrame])->windowScriptNPObject();
+            FrameMac* frame = core([self webFrame]);
+            NPObject* windowScriptObject = frame ? frame->windowScriptNPObject() : 0;
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (windowScriptObject)
