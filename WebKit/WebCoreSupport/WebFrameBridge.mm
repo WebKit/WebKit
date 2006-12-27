@@ -406,10 +406,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _addChild:[newBridge webFrame]];
     [newBridge release];
 
-    [_frame _loadURL:URL referrer:(hideReferrer ? String() : referrer) intoChild:[newBridge webFrame]];
+    RefPtr<Frame> newFrame = [newBridge _frame];
+    
+    [_frame _loadURL:URL referrer:(hideReferrer ? String() : referrer) intoChild:kit(newFrame.get())];
 
-    // Re-fetch the child frame, since its onload handler may have removed it from the document.
-    return m_frame->tree()->child(frameName);
+    // The frame's onload handler may have removed it from the document.
+    if (!newFrame->tree()->parent())
+        return 0;
+
+    return newFrame.get();
 }
 
 - (void)saveDocumentState:(NSArray *)documentState

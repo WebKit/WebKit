@@ -1,3 +1,16 @@
+2006-12-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Updated <rdar://problem/4871518> fix based on Darin's comments.
+
+        Instead of searching the frame tree to retrieve the new frame, put it in
+        a RefPtr, and then explicitly check for its removal. This option is slightly
+        more efficient, and it avoids problems that can occur due to frame name collision.
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:ownerElement:allowsScrolling:marginWidth:marginHeight:]):
+
 2006-12-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.
