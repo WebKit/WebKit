@@ -138,7 +138,7 @@ inline void CachedImage::createImage()
     // Create the image if it doesn't yet exist.
     
     if (!m_image) {
-#ifdef PLATFORM(CG)
+#if PLATFORM(CG)
         if (m_response.mimeType() == "application/pdf")
             m_image = new PDFDocumentImage;
         else
