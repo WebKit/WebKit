@@ -1,3 +1,11 @@
+2006-12-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix, plus a few "double &" => "double&" changes.
+        
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumber):
+        (WebCore::SVGPathParser::calculateArc):
+
 2006-12-27  Oliver Hunt <oliver@apple.com> 
 
         Build fix

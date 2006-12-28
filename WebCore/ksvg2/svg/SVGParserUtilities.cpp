@@ -23,13 +23,13 @@
 #ifdef SVG_SUPPORT
 #include "SVGParserUtilities.h"
 
-#include "String.h"
+#include "PlatformString.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-bool parseNumber(const UChar*& ptr, const UChar* end, double &number, bool skip)
+bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip)
 {
     int integer, exponent;
     double decimal, frac;
@@ -431,7 +431,7 @@ void SVGPathParser::parseSVG(const String& s, bool process)
 // For each bezier found a svgToCurve call is done.
 // Adapted from Niko's code in kdelibs/kdecore/svgicons.
 // Maybe this can serve in some shared lib? (Rob)
-void SVGPathParser::calculateArc(bool relative, double &curx, double &cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag)
+void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag)
 {
     double sin_th, cos_th;
     double a00, a01, a10, a11;
