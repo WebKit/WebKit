@@ -1,3 +1,20 @@
+2006-12-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9202
+          CSS3: border-radius not completely implemented, testcase hangs webkit
+
+        Test: fast/borders/borderRadiusAllStylesAllCorners.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorder): Changed to not draw "arcs" at straight
+        corners and to paint half-corners only where the styles mismatch.
+        Corrected the condition for matching styles: ridge, groove, inset and outset
+        all mismatch in the upper right and lower left corners and match in the other
+        two. The incorrect condition for a match was (almost) unnoticeable because of
+        the painting of both half-corners on each side that had at least one mismatch.
+
 2006-12-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reverting the previous checkin, as it caused an assertion in layout tests.
