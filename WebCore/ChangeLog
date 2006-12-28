@@ -1,5 +1,19 @@
 2006-12-28  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Alexey.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11671
+          REGRESSION (r13702): text-transform: capitalize changes non-breaking spaces to spaces
+
+        Test: fast/text/capitalize-preserve-nbsp.html
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::capitalize): Copy back non-breaking spaces from the
+        original string to the capitalized string. Change a 'previous' non-breaking
+        space into a space (this improves the fix for <rdar://problem/4502311> from r13702).
+
+2006-12-28  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=10699
