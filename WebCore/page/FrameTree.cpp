@@ -61,6 +61,7 @@ void FrameTree::setName(const AtomicString& name)
 
 void FrameTree::appendChild(PassRefPtr<Frame> child)
 {
+    ASSERT(child->page() == m_thisFrame->page());
     child->tree()->m_parent = m_thisFrame;
 
     Frame* oldLast = m_lastChild;
@@ -81,6 +82,9 @@ void FrameTree::removeChild(Frame* child)
 {
     child->tree()->m_parent = 0;
     child->setView(0);
+    if (child->ownerElement())
+        child->page()->decrementFrameCount();
+    child->pageDestroyed();
 
     // Slightly tricky way to prevent deleting the child until we are done with it, w/o
     // extra refs. These swaps leave the child in a circular list by itself. Clearing its

@@ -2246,7 +2246,10 @@ void FrameLoader::detachFromParent()
     m_client->detachedFromParent3();
     if (Frame* parent = m_frame->tree()->parent())
         parent->tree()->removeChild(m_frame);
-    m_frame->setView(0);
+    else {
+        m_frame->setView(0);
+        m_frame->pageDestroyed();
+    }
 #if PLATFORM(MAC)
     closeBridge();
 #endif
