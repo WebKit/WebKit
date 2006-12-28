@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=11124
+          REGRESSION (r14297): No drag image for partially-selected complex text
+
+        * fast/text/atsui-partial-selection-expected.checksum: Added.
+        * fast/text/atsui-partial-selection-expected.png: Added.
+        * fast/text/atsui-partial-selection-expected.txt: Added.
+        * fast/text/atsui-partial-selection.html: Added.
+
+2006-12-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         Based on a test by Joost de Valk.
 
         - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=9202

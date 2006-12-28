@@ -50,7 +50,7 @@ public:
     :m_characters(c), m_len(len), m_from(0), m_to(len)
     {}
 
-    TextRun(const UChar* c, int len, int from, int to) // This constructor is only used in one place in Mac-specific code.
+    TextRun(const UChar* c, int len, int from, int to) // This constructor is only used in Mac-specific code.
     :m_characters(c), m_len(len), m_from(from), m_to(to)
     {}
 

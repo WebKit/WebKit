@@ -473,10 +473,10 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 {
     OSStatus status;
     
-    int runLength = run.length();
+    int runLength = run.to() - run.from();
 
     TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
-    ATSULayoutParameters params(adjustedRun, style);
+    ATSULayoutParameters params(TextRun(adjustedRun.characters(), adjustedRun.length(), 0, adjustedRun.length()), style);
     params.initialize(this, graphicsContext);
     
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).

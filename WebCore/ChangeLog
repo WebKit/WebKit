@@ -2,6 +2,22 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11124
+          REGRESSION (r14297): No drag image for partially-selected complex text
+
+        Test: fast/text/atsui-partial-selection.html
+
+        * platform/Font.h: Changed comment.
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText): Corrected the run length calculation.
+        Changed the ATSUI layout parameters to know about the entire text run, rather
+        than just the range we are drawing. ATSUI measures the characters before
+        the range and positions the range accordingly.
+
+2006-12-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=9202
           CSS3: border-radius not completely implemented, testcase hangs webkit
 
