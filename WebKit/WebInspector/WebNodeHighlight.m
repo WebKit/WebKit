@@ -67,18 +67,17 @@ NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotific
     [_webNodeHighlightWindow setHasShadow:NO];
     [_webNodeHighlightWindow setIgnoresMouseEvents:YES];
     [_webNodeHighlightWindow setReleasedWhenClosed:YES];
-    [_webNodeHighlightWindow setLevel:[[view window] level] + 1];
     [_webNodeHighlightWindow setContentView:_webNodeHighlightView];
     [_webNodeHighlightView release];
 
-    [_webNodeHighlightWindow orderFront:self];
+    [[view window] addChildWindow:_webNodeHighlightWindow ordered:NSWindowAbove];
 
     // 30 frames per second time interval will play well with the CPU and still look smooth
     _timer = [[NSTimer scheduledTimerWithTimeInterval:(1.0 / 30.0) target:self selector:@selector(redraw:) userInfo:nil repeats:YES] retain];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSViewBoundsDidChangeNotification object:view];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSViewBoundsDidChangeNotification object:[view superview]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSWindowWillMoveNotification object:[view window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSWindowDidResizeNotification object:[view window]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSWindowWillCloseNotification object:[view window]];
 
     return self;
@@ -87,7 +86,7 @@ NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotific
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillMoveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
 
     [_timer invalidate];
@@ -115,7 +114,9 @@ NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotific
 
     // remove this observation before closing the window (more loop prevention)
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:nil];
     
+    [[_webNodeHighlightWindow parentWindow] removeChildWindow:_webNodeHighlightWindow];
     [_webNodeHighlightWindow close];
     _webNodeHighlightWindow = nil;
 
