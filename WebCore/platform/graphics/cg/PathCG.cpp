@@ -203,7 +203,7 @@ struct PathApplierInfo {
 void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
 {
     PathApplierInfo* pinfo = (PathApplierInfo*)info;
-    FloatPoint points[2];
+    FloatPoint points[3];
     PathElement pelement;
     pelement.type = (PathElementType)element->type;
     pelement.points = points;

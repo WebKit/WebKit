@@ -1,3 +1,15 @@
+2006-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Fix for memory smasher when drawing markers.
+        http://bugs.webkit.org/show_bug.cgi?id=12015
+        
+        No test case possible (crashes for some folks but not others, not even under --guard)
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::CGPathApplierToPathApplier): array was too small
+
 2006-12-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
