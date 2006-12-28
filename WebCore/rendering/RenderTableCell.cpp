@@ -135,6 +135,48 @@ void RenderTableCell::layout()
     m_widthChanged = false;
 }
 
+IntRect RenderTableCell::getAbsoluteRepaintRect()
+{
+    if (table()->collapseBorders()) {
+        bool rtl = table()->style()->direction() == RTL;
+        int outlineSize = style()->outlineSize();
+        int left = max(borderHalfLeft(true), outlineSize);
+        int right = max(borderHalfRight(true), outlineSize);
+        int top = max(borderHalfTop(true), outlineSize);
+        int bottom = max(borderHalfBottom(true), outlineSize);
+        if (left && !rtl || right && rtl) {
+            if (RenderTableCell* before = table()->cellBefore(this)) {
+                top = max(top, before->borderHalfTop(true));
+                bottom = max(bottom, before->borderHalfBottom(true));
+            }
+        }
+        if (left && rtl || right && !rtl) {
+            if (RenderTableCell* after = table()->cellAfter(this)) {
+                top = max(top, after->borderHalfTop(true));
+                bottom = max(bottom, after->borderHalfBottom(true));
+            }
+        }
+        if (top) {
+            if (RenderTableCell* above = table()->cellAbove(this)) {
+                left = max(left, above->borderHalfLeft(true));
+                right = max(right, above->borderHalfRight(true));
+            }
+        }
+        if (bottom) {
+            if (RenderTableCell* below = table()->cellBelow(this)) {
+                left = max(left, below->borderHalfLeft(true));
+                right = max(right, below->borderHalfRight(true));
+            }
+        }
+        left = max(left, -overflowLeft(false));
+        top = max(top, -overflowTop(false) - borderTopExtra());
+        IntRect r(-left, -borderTopExtra() - top, left + max(width() + right, overflowWidth(false)), borderTopExtra() + top + max(height() + bottom + borderBottomExtra(), overflowHeight(false)));
+        computeAbsoluteRepaintRect(r);
+        return r;
+    }
+    return RenderBlock::getAbsoluteRepaintRect();
+}
+
 void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     r.setY(r.y() + _topExtra);
@@ -487,46 +529,54 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
 
 int RenderTableCell::borderLeft() const
 {
-    if (table()->collapseBorders()) {
-        CollapsedBorderValue border = collapsedLeftBorder(table()->style()->direction() == RTL);
-        if (border.exists())
-            return (border.width() + 1) / 2; // Give the extra pixel to top and left.
-        return 0;
-    }
-    return RenderBlock::borderLeft();
+    return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlock::borderLeft();
 }
-    
+
 int RenderTableCell::borderRight() const
 {
-    if (table()->collapseBorders()) {
-        CollapsedBorderValue border = collapsedRightBorder(table()->style()->direction() == RTL);
-        if (border.exists())
-            return border.width() / 2;
-        return 0;
-    }
-    return RenderBlock::borderRight();
+    return table()->collapseBorders() ? borderHalfRight(false) : RenderBlock::borderRight();
 }
 
 int RenderTableCell::borderTop() const
 {
-    if (table()->collapseBorders()) {
-        CollapsedBorderValue border = collapsedTopBorder();
-        if (border.exists())
-            return (border.width() + 1) / 2; // Give the extra pixel to top and left.
-        return 0;
-    }
-    return RenderBlock::borderTop();
+    return table()->collapseBorders() ? borderHalfTop(false) : RenderBlock::borderTop();
 }
 
 int RenderTableCell::borderBottom() const
 {
-    if (table()->collapseBorders()) {
-        CollapsedBorderValue border = collapsedBottomBorder();
-        if (border.exists())
-            return border.width() / 2;
-        return 0;
-    }
-    return RenderBlock::borderBottom();
+    return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlock::borderBottom();
+}
+
+int RenderTableCell::borderHalfLeft(bool outer) const
+{
+    CollapsedBorderValue border = collapsedLeftBorder(table()->style()->direction() == RTL);
+    if (border.exists())
+        return (border.width() + (outer ? 0 : 1)) / 2; // Give the extra pixel to top and left.
+    return 0;
+}
+    
+int RenderTableCell::borderHalfRight(bool outer) const
+{
+    CollapsedBorderValue border = collapsedRightBorder(table()->style()->direction() == RTL);
+    if (border.exists())
+        return (border.width() + (outer ? 1 : 0)) / 2;
+    return 0;
+}
+
+int RenderTableCell::borderHalfTop(bool outer) const
+{
+    CollapsedBorderValue border = collapsedTopBorder();
+    if (border.exists())
+        return (border.width() + (outer ? 0 : 1)) / 2; // Give the extra pixel to top and left.
+    return 0;
+}
+
+int RenderTableCell::borderHalfBottom(bool outer) const
+{
+    CollapsedBorderValue border = collapsedBottomBorder();
+    if (border.exists())
+        return (border.width() + (outer ? 1 : 0)) / 2;
+    return 0;
 }
 
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
