@@ -1,3 +1,14 @@
+2006-12-27  Oliver Hunt <oliver@apple.com> 
+
+        Build fix
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/Image.h:
+        (WebCore::Image::getHBITMAP):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+
 2006-12-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

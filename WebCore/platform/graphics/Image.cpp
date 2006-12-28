@@ -30,6 +30,10 @@
 #include "IntRect.h"
 #include "MimeTypeRegistry.h"
 
+#if PLATFORM(CG)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace WebCore {
 
 Image::Image(ImageAnimationObserver* observer)

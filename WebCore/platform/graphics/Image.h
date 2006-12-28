@@ -99,7 +99,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    bool getHBITMAP(HBITMAP);
+    virtual bool getHBITMAP(HBITMAP) { return false; }
 #endif
 
 private:

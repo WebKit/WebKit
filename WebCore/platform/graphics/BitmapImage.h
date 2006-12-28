@@ -113,6 +113,10 @@ public:
     virtual CGImageRef getCGImageRef();
 #endif
     
+#if PLATFORM(WIN)
+    virtual bool getHBITMAP(HBITMAP);
+#endif
+
     NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
 private:

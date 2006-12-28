@@ -38,7 +38,7 @@ namespace WebCore {
 PDFDocumentImage::PDFDocumentImage()
     : Image(0) // PDFs don't animate
     , m_document(0)
-    , m_rotation(0f)
+    , m_rotation(0.0f)
     , m_currentPage(-1)
 {
 }
