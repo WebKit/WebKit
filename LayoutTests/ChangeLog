@@ -1,3 +1,12 @@
+2006-12-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reverting the previous checkin, as it caused an assertion in layout tests.
+
+        * fast/repaint/table-cell-collapsed-border-expected.checksum: Removed.
+        * fast/repaint/table-cell-collapsed-border-expected.png: Removed.
+        * fast/repaint/table-cell-collapsed-border-expected.txt: Removed.
+        * fast/repaint/table-cell-collapsed-border.html: Removed.
+
 2006-12-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
