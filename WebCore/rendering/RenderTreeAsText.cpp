@@ -452,8 +452,8 @@ DeprecatedString externalRepresentation(RenderObject* o)
     DeprecatedString s;
     if (o) {
         TextStream ts(&s);
-#ifdef SVG_SUPPORT
         ts.precision(2);
+#ifdef SVG_SUPPORT
         writeRenderResources(ts, o->document());
 #endif
         o->view()->frameView()->layout();

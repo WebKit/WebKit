@@ -1,3 +1,17 @@
+2006-12-28  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12016
+          REGRESSION: fast/text/stroking-decorations.html test fails with bus error in no-svg build
+
+        No test cases (no change in functionality).
+
+        * platform/TextStream.cpp: Properly initialize presicionFormats.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation): HTML tests now print out the stroke width, which is a float,
+        so the precision needs to be set.
+
 2006-12-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

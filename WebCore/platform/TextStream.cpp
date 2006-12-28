@@ -34,7 +34,7 @@
 namespace WebCore {
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
-const char* const precisionFormats[6] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f" "%.6f"}; 
+const char* const precisionFormats[7] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f", "%.6f"}; 
 const int maxPrecision = 6; // must match size of precisionFormats
 const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
 
