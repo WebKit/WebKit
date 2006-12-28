@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Image.h"
+#include "BitmapImage.h"
 
 #if PLATFORM(CG)
 
@@ -53,7 +53,7 @@ void FrameData::clear()
 
 // Drawing Routines
 
-void Image::checkForSolidColor()
+void BitmapImage::checkForSolidColor()
 {
     if (frameCount() > 1)
         m_isSolidColor = false;
@@ -82,19 +82,24 @@ void Image::checkForSolidColor()
     }
 }
 
-CGImageRef Image::getCGImageRef()
+CGImageRef BitmapImage::getCGImageRef()
 {
     return frameAtIndex(0);
 }
 
-void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+void fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
 {
-    if (m_isPDF) {
-        if (m_PDFDoc)
-            m_PDFDoc->draw(ctxt, srcRect, dstRect, compositeOp);
+    if (color.alpha() <= 0)
         return;
-    } 
     
+    ctxt->save();
+    ctxt->setCompositeOperation(!color.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+    ctxt->fillRect(dstRect, color);
+    ctxt->restore();
+}
+
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+{
     if (!m_source.initialized())
         return;
     
@@ -104,14 +109,9 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
-
-    if (m_isSolidColor && m_currentFrame == 0) {
-        if (m_solidColor.alpha() > 0) {
-            ctxt->save();
-            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && compositeOp == CompositeSourceOver ? CompositeCopy : compositeOp);
-            ctxt->fillRect(ir, m_solidColor);
-            ctxt->restore();
-        }
+    
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, ir, solidColor(), compositeOp);
         return;
     }
 
@@ -175,8 +175,8 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
 
 static void drawPattern(void* info, CGContextRef context)
 {
-    Image* data = (Image*)info;
-    CGImageRef image = data->frameAtIndex(data->currentFrame());
+    BitmapImage* data = (BitmapImage*)info;
+    CGImageRef image = data->nativeImageForCurrentFrame();
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
     CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect
@@ -185,20 +185,15 @@ static void drawPattern(void* info, CGContextRef context)
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint,
+void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint,
                       const FloatSize& tileSize, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
-
-    if (m_isSolidColor && m_currentFrame == 0) {
-        if (m_solidColor.alpha() > 0) {
-            ctxt->save();
-            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
-            ctxt->fillRect(destRect, m_solidColor);
-            ctxt->restore();
-        }
+    
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, destRect, solidColor(), op);
         return;
     }
 
@@ -272,20 +267,15 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule,
+void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule,
                       TileRule vRule, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
-    if (m_isSolidColor && m_currentFrame == 0) {
-        if (m_solidColor.alpha() > 0) {
-            ctxt->save();
-            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
-            ctxt->fillRect(dstRect, m_solidColor);
-            ctxt->restore();
-        }
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, dstRect, solidColor(), op);
         return;
     }
 

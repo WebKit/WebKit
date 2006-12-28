@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "Image.h"
+
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 
@@ -34,16 +36,21 @@ namespace WebCore {
 
     class GraphicsContext;
 
-    class PDFDocumentImage {
+    class PDFDocumentImage : public Image {
     public:
-        PDFDocumentImage(CFDataRef);
+        PDFDocumentImage();
         ~PDFDocumentImage();
+        
+        virtual bool setNativeData(NativeBytePtr, bool allDataReceived);
 
-        FloatSize size() const { return m_mediaBox.size(); }
-        void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator) const;
+        virtual IntSize size() const;
 
     private:
-        void setCurrentPage(int page);
+        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
+        virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator) { }
+        virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator)  { }
+        
+        void setCurrentPage(int);
         int pageCount() const;
         void adjustCTM(GraphicsContext*) const;
 

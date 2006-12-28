@@ -24,29 +24,24 @@
  */
 
 #import "config.h"
-#import "Image.h"
+#import "BitmapImage.h"
 
 #import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
-#import "PDFDocumentImage.h"
 #import "PlatformString.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
-// ================================================
-// Image Class
-// ================================================
-
-void Image::initPlatformData()
+void BitmapImage::initPlatformData()
 {
     m_nsImage = 0;
     m_tiffRep = 0;
 }
 
-void Image::invalidatePlatformData()
+void BitmapImage::invalidatePlatformData()
 {
     if (m_frames.size() != 1)
         return;
@@ -68,14 +63,14 @@ Image* Image::loadPlatformResource(const char *name)
     NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"tiff"];
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
-        Image* image = new Image;
+        Image* image = new BitmapImage;
         image->setNativeData((CFDataRef)namedImageData, true);
         return image;
     }
     return 0;
 }
 
-CFDataRef Image::getTIFFRepresentation()
+CFDataRef BitmapImage::getTIFFRepresentation()
 {
     if (m_tiffRep)
         return m_tiffRep;
@@ -108,7 +103,7 @@ CFDataRef Image::getTIFFRepresentation()
     return m_tiffRep;
 }
 
-NSImage* Image::getNSImage()
+NSImage* BitmapImage::getNSImage()
 {
     if (m_nsImage)
         return m_nsImage;

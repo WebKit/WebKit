@@ -27,94 +27,19 @@
 #include "config.h"
 #include "Image.h"
 
-#include "FloatRect.h"
-#include "Image.h"
-#include "ImageAnimationObserver.h"
 #include "IntRect.h"
-#include "PlatformString.h"
-#include "Timer.h"
-#include <wtf/Vector.h>
 #include "MimeTypeRegistry.h"
-
-#if PLATFORM(CG)
-// FIXME: Will go away when we make PDF a subclass.
-#include "PDFDocumentImage.h"
-#endif
 
 namespace WebCore {
 
-// ================================================
-// Image Class
-// ================================================
-
-Image::Image()
-: m_currentFrame(0), m_frames(0), m_animationObserver(0),
-  m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
-  m_isSolidColor(false), m_animatingImageType(true), m_animationFinished(false),
-  m_haveSize(false), m_sizeAvailable(false)
+Image::Image(ImageAnimationObserver* observer)
+    : m_animationObserver(observer)
 {
-#if PLATFORM(CG)
-    m_isPDF = false; // FIXME: Will go away when we make PDF a subclass.
-    m_PDFDoc = 0;
-#endif
-    initPlatformData();
-}
-
-Image::Image(ImageAnimationObserver* observer, bool isPDF)
- : m_currentFrame(0), m_frames(0), m_animationObserver(0),
-  m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
-  m_isSolidColor(false), m_animatingImageType(true), m_animationFinished(false),
-  m_haveSize(false), m_sizeAvailable(false)
-{
-    initPlatformData();
-#if PLATFORM(CG)
-    m_isPDF = isPDF; // FIXME: Will go away when we make PDF a subclass.
-    m_PDFDoc = 0;
-#endif
-    m_animationObserver = observer;
 }
 
 Image::~Image()
 {
-    invalidateData();
-    stopAnimation();
-#if PLATFORM(CG)
-    delete m_PDFDoc; // FIXME: Will go away when we make a PDF image subclass.
-#endif
 }
-
-void Image::invalidateData()
-{
-    // Destroy the cached images and release them.
-    if (m_frames.size()) {
-        m_frames.last().clear();
-        m_isSolidColor = false;
-        invalidatePlatformData();
-    }
-}
-
-void Image::cacheFrame(size_t index)
-{
-    size_t numFrames = frameCount();
-    if (!m_frames.size() && shouldAnimate()) {            
-        // Snag the repetition count.
-        m_repetitionCount = m_source.repetitionCount();
-        if (m_repetitionCount == cAnimationNone)
-            m_animatingImageType = false;
-    }
-    
-    if (m_frames.size() < numFrames)
-        m_frames.resize(numFrames);
-
-    m_frames[index].m_frame = m_source.createFrameAtIndex(index);
-    if (m_frames[index].m_frame)
-        checkForSolidColor();
-
-    if (shouldAnimate())
-        m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
-    m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
-}
-
 
 bool Image::supportsType(const String& type)
 {
@@ -124,25 +49,6 @@ bool Image::supportsType(const String& type)
 bool Image::isNull() const
 {
     return size().isEmpty();
-}
-
-IntSize Image::size() const
-{
-#if PLATFORM(CG)
-    // FIXME: Will go away when we make PDF a subclass.
-    if (m_isPDF) {
-        if (m_PDFDoc) {
-            FloatSize size = m_PDFDoc->size();
-            return IntSize((int)size.width(), (int)size.height());
-        }
-    } else
-#endif
-    
-    if (m_sizeAvailable && !m_haveSize) {
-        m_size = m_source.size();
-        m_haveSize = true;
-    }
-    return m_size;
 }
 
 bool Image::setData(bool allDataReceived)
@@ -171,136 +77,6 @@ bool Image::setData(bool allDataReceived)
 #endif
 
     return result;
-}
-
-bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
-{
-#if PLATFORM(CG)
-    // FIXME: Will go away when we make PDF a subclass.
-    if (m_isPDF) {
-        if (allDataReceived && !m_PDFDoc)
-            m_PDFDoc = new PDFDocumentImage(data);
-        return m_PDFDoc;
-    }
-#endif
-
-    invalidateData();
-    
-    // Feed all the data we've seen so far to the image decoder.
-    m_source.setData(data, allDataReceived);
-    
-    // Image properties will not be available until the first frame of the file
-    // reaches kCGImageStatusIncomplete.
-    return isSizeAvailable();
-}
-
-size_t Image::frameCount()
-{
-    return m_source.frameCount();
-}
-
-bool Image::isSizeAvailable()
-{
-    if (m_sizeAvailable)
-        return true;
-
-    m_sizeAvailable = m_source.isSizeAvailable();
-
-    return m_sizeAvailable;
-
-}
-
-NativeImagePtr Image::frameAtIndex(size_t index)
-{
-    if (index >= frameCount())
-        return 0;
-
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index);
-
-    return m_frames[index].m_frame;
-}
-
-float Image::frameDurationAtIndex(size_t index)
-{
-    if (index >= frameCount())
-        return 0;
-
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index);
-
-    return m_frames[index].m_duration;
-}
-
-bool Image::frameHasAlphaAtIndex(size_t index)
-{
-    if (index >= frameCount())
-        return 0;
-
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index);
-
-    return m_frames[index].m_hasAlpha;
-}
-
-bool Image::shouldAnimate()
-{
-    return (m_animatingImageType && !m_animationFinished && m_animationObserver);
-}
-
-void Image::startAnimation()
-{
-    if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
-        return;
-
-    m_frameTimer = new Timer<Image>(this, &Image::advanceAnimation);
-    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
-}
-
-void Image::stopAnimation()
-{
-    // This timer is used to animate all occurrences of this image.  Don't invalidate
-    // the timer unless all renderers have stopped drawing.
-    delete m_frameTimer;
-    m_frameTimer = 0;
-}
-
-void Image::resetAnimation()
-{
-    stopAnimation();
-    m_currentFrame = 0;
-    m_repetitionsComplete = 0;
-    m_animationFinished = false;
-}
-
-
-void Image::advanceAnimation(Timer<Image>* timer)
-{
-    // Stop the animation.
-    stopAnimation();
-    
-    // See if anyone is still paying attention to this animation.  If not, we don't
-    // advance and will simply pause the animation.
-    if (animationObserver()->shouldStopAnimation(this))
-        return;
-
-    m_currentFrame++;
-    if (m_currentFrame >= frameCount()) {
-        m_repetitionsComplete += 1;
-        if (m_repetitionCount && m_repetitionsComplete >= m_repetitionCount) {
-            m_animationFinished = false;
-            m_currentFrame--;
-            return;
-        }
-        m_currentFrame = 0;
-    }
-
-    // Notify our observer that the animation has advanced.
-    animationObserver()->animationAdvanced(this);
-        
-    // Kick off a timer to move to the next frame.
-    m_frameTimer = new Timer<Image>(this, &Image::advanceAnimation);
-    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
 }
 
 IntRect Image::rect() const

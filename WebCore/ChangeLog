@@ -1,3 +1,77 @@
+2006-12-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Add new PDFDocumentImage and BitmapImage classes (subclasses of Image)
+        (In preparation for adding SVGImage as part of bug 5971)
+        http://bugs.webkit.org/show_bug.cgi?id=11990
+        
+        Test cases landed separately as part of filing bug 11992.
+
+        * WebCore.xcodeproj/project.pbxproj: add BitmapImage.*
+        * loader/CachedImage.cpp:
+        (WebCore::nullImage): use BitmapImage directly
+        (WebCore::CachedImage::createImage): now create either BitmapImage or PDFDocumentImage directly
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::setImageData): use BitmapImage directly
+        * platform/graphics/BitmapImage.cpp: Added.
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::~BitmapImage):
+        (WebCore::BitmapImage::invalidateData):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::size):
+        (WebCore::BitmapImage::setNativeData):
+        (WebCore::BitmapImage::frameCount):
+        (WebCore::BitmapImage::isSizeAvailable):
+        (WebCore::BitmapImage::frameAtIndex):
+        (WebCore::BitmapImage::frameDurationAtIndex):
+        (WebCore::BitmapImage::frameHasAlphaAtIndex):
+        (WebCore::BitmapImage::shouldAnimate):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::stopAnimation):
+        (WebCore::BitmapImage::resetAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/BitmapImage.h: Added.
+        (WebCore::FrameData::FrameData):
+        (WebCore::BitmapImage::nativeImageForCurrentFrame): added.
+        (WebCore::BitmapImage::currentFrame):
+        (WebCore::BitmapImage::mayFillWithSolidColor): added.
+        (WebCore::BitmapImage::solidColor): added.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        * platform/graphics/Image.h:
+        (WebCore::Image::setNativeData): now virtual
+        (WebCore::Image::stopAnimation): now virtual
+        (WebCore::Image::resetAnimation): now virtual
+        (WebCore::Image::getNSImage): now virtual
+        (WebCore::Image::getTIFFRepresentation): now virtual
+        (WebCore::Image::getCGImageRef): now virtual
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::getCGImageRef): use nativeImageForCurrentFrame
+        (WebCore::fillWithSolidColor): added
+        (WebCore::BitmapImage::draw):
+        (WebCore::drawPattern): use fillWithSolidColor, mayFillWithSolidColor() and solidcolor()
+        (WebCore::BitmapImage::drawTiled): use fillWithSolidColor, mayFillWithSolidColor() and solidcolor()
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        (WebCore::PDFDocumentImage::size): change to subclass from Image
+        (WebCore::PDFDocumentImage::setNativeData):
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::drawTiled):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::BitmapImage::getTIFFRepresentation):
+        (WebCore::BitmapImage::getNSImage):
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        (WebCore::SVGFEImage::getCIFilter): remove soon-to-be unnecessary comment
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nullImage): use BitmapImage
+
 2006-12-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

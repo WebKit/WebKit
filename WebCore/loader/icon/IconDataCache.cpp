@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IconDataCache.h"
 
-#include "Image.h"
+#include "BitmapImage.h"
 #include <limits.h>
 #include "Logging.h"
 #include "SQLStatement.h"
@@ -69,7 +69,7 @@ void IconDataCache::setImageData(unsigned char* data, int size)
     // managing an image that was created with a copy of this raw image data.
     if (m_image)
         delete m_image;
-    m_image = new Image();
+    m_image = new BitmapImage();
 
     // Copy the provided data into the buffer of the new Image object
     Vector<char>& dataBuffer = m_image->dataBuffer();

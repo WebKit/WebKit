@@ -64,17 +64,6 @@ double SVGPathElement::getTotalLength()
 
 FloatPoint SVGPathElement::getPointAtLength(double /*distance*/)
 {
-    /*
-    double totalDistance = getTotalLength();
-    T2P::BezierPath* path = ownerDoc()->view()->toBezierPath(m_item);
-    if (path) {
-        T2P::Point p;
-        path->pointTangentNormalAt(distance / totalDistance, &p);
-        ret->setX(p.x());
-        ret->setY(p.y());
-    }
-   */
-
     return FloatPoint();
 }
 

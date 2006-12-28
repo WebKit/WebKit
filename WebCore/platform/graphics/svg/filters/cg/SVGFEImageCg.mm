@@ -37,7 +37,6 @@ CIFilter* SVGFEImage::getCIFilter(SVGResourceFilter* svgFilter) const
 
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    // FIXME: This is only partially implemented (only supports images)
     CIImage* ciImage = [CIImage imageWithCGImage:cachedImage()->image()->getCGImageRef()];
 
     // FIXME: There is probably a nicer way to perform both of these transforms.

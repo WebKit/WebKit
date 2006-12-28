@@ -2054,6 +2054,8 @@
 		A88AD50C095248F0001DD196 /* SVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
+		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; };
+		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
 		A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EB09D563270003AC8D /* StyledElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EC09D563270003AC8D /* StyledElement.cpp */; };
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
@@ -4805,6 +4807,8 @@
 		A890DF1C0930974800513F88 /* SVGStyledTransformableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledTransformableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1D0930974800513F88 /* SVGStyledLocatableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledLocatableElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1E0930974800513F88 /* SVGStyledLocatableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledLocatableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
+		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
 		A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasRenderingStyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasRenderingStyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSVGTimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8442,11 +8446,11 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				B27535290B053814002CE64F /* cg */,
-				B27535490B053814002CE64F /* mac */,
-				B2A015960AF6CD53006BCE0E /* svg */,
 				B27535270B053814002CE64F /* AffineTransform.cpp */,
 				B27535280B053814002CE64F /* AffineTransform.h */,
+				A89943270B42338700D7C802 /* BitmapImage.cpp */,
+				A89943260B42338700D7C802 /* BitmapImage.h */,
+				B27535290B053814002CE64F /* cg */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
@@ -8473,10 +8477,12 @@
 				B27535460B053814002CE64F /* IntRect.h */,
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
+				B27535490B053814002CE64F /* mac */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				B27535540B053814002CE64F /* Pen.cpp */,
 				B27535550B053814002CE64F /* Pen.h */,
+				B2A015960AF6CD53006BCE0E /* svg */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -10859,6 +10865,7 @@
 				E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */,
 				ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
+				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				AACF7C4E0B42EE6000080BD8 /* SVGParserUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12184,6 +12191,7 @@
 				B297BC700B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp in Sources */,
 				14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */,
 				B2080A120B3CA3B600120852 /* JSSVGPointListCustom.cpp in Sources */,
+				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				AACF7C4F0B42EE6000080BD8 /* SVGParserUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
