@@ -1,3 +1,15 @@
+2006-12-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10699
+          div with border-radius does not redraw properly if element inside div is resized
+
+        Test: fast/repaint/border-radius-repaint.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+
 2006-12-28  Darin Adler  <darin@apple.com>
 
         * loader/CachedImage.cpp: (WebCore::CachedImage::createImage):
