@@ -1,5 +1,12 @@
 2006-12-29  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyCromeClient::scaleFactor):  build fix, use 1.f instead of 1f
+
+2006-12-29  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         New tests:
