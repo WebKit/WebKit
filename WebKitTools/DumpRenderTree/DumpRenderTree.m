@@ -114,6 +114,7 @@ static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
 static BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 
 static BOOL dumpAsText;
+static BOOL dumpAsWebArchive;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static BOOL dumpBackForwardList;
@@ -498,6 +499,33 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
+static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
+{
+    NSString *errorString;
+    NSDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:[webArchive data]
+                                                                  mutabilityOption:NSPropertyListImmutable
+                                                                            format:NULL
+                                                                  errorDescription:&errorString];
+    if (!propertyList)
+        return errorString;
+
+    NSData *xmlData = [NSPropertyListSerialization dataFromPropertyList:propertyList
+                                                                 format:NSPropertyListXMLFormat_v1_0
+                                                       errorDescription:&errorString];
+    if (!xmlData)
+        return errorString;
+
+    // Normalize URLs in XML for testing
+    NSMutableString *result = [[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding];
+    NSString *cwdURL = [@"file://" stringByAppendingString:[[[NSFileManager defaultManager] currentDirectoryPath] stringByExpandingTildeInPath]];
+    [result replaceOccurrencesOfString:cwdURL
+                            withString:@"file://"
+                               options:NSLiteralSearch
+                                 range:NSMakeRange(0, [result length])];
+
+    return [result autorelease];
+}
+
 static void dump(void)
 {
     NSString *result = nil;
@@ -506,6 +534,9 @@ static void dump(void)
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
+        } else if (dumpAsWebArchive) {
+            WebArchive *webArchive = [[frame DOMDocument] webArchive];
+            result = serializeWebArchiveToXML(webArchive);
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
             if (isSVGW3CTest)
@@ -514,12 +545,19 @@ static void dump(void)
                 [[frame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
             result = [frame renderTreeAsExternalRepresentation];
         }
-        
-        if (!result)
-            printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
-        else {
+
+        if (!result) {
+            const char *errorMessage;
+            if (dumpAsText)
+                errorMessage = "[documentElement innerText]";
+            else if (dumpAsWebArchive)
+                errorMessage = "[[frame DOMDocument] webArchive]";
+            else
+                errorMessage = "[frame renderTreeAsExternalRepresentation]";
+            printf("ERROR: nil result from %s", errorMessage);
+        } else {
             fputs([result UTF8String], stdout);
-            if (!dumpAsText)
+            if (!dumpAsText && !dumpAsWebArchive)
                 dumpFrameScrollPosition(frame);
         }
 
@@ -560,7 +598,7 @@ static void dump(void)
     }
     
     if (dumpPixels) {
-        if (!dumpAsText) {
+        if (!dumpAsText && !dumpAsWebArchive) {
             // grab a bitmap from the view
             WebView* view = [frame webView];
             NSSize webViewSize = [view frame].size;
@@ -761,6 +799,7 @@ static void dump(void)
     if (aSelector == @selector(waitUntilDone)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
+            || aSelector == @selector(dumpAsWebArchive)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
@@ -841,6 +880,11 @@ static void dump(void)
 - (void)dumpAsText
 {
     dumpAsText = YES;
+}
+
+- (void)dumpAsWebArchive
+{
+    dumpAsWebArchive = YES;
 }
 
 - (void)dumpSelectionRect
@@ -1011,6 +1055,7 @@ static void runTest(const char *pathOrURL)
     topLoadingFrame = nil;
     waitToDump = NO;
     dumpAsText = NO;
+    dumpAsWebArchive = NO;
     dumpChildFrameScrollPositions = NO;
     shouldDumpEditingCallbacks = NO;
     dumpSelectionRect = NO;
