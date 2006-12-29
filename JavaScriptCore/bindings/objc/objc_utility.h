@@ -79,8 +79,6 @@ ObjcValueType objcValueTypeForType(const char *type);
 
 bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSize);
 
-void *createObjcInstanceForValue(JSValue *value, const RootObject *origin, const RootObject *current);
-
 JSObject *throwError(ExecState *, ErrorType, NSString *message);
 
 } // namespace Bindings

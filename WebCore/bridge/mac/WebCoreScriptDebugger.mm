@@ -150,7 +150,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     if ((self = [super init])) {
         _delegate   = delegate;
         _globalObj = [_delegate globalObject];
-        _debugger  = new WebCoreScriptDebuggerImp(self, [_globalObj _executionContext]->interpreter());
+        _debugger  = new WebCoreScriptDebuggerImp(self, [_globalObj _rootObject]->interpreter());
     }
     return self;
 }
@@ -233,9 +233,9 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         return _globalObj;
     }
 
-    const Bindings::RootObject *root1 = [_globalObj _originExecutionContext];
-    const Bindings::RootObject *root2 = [_globalObj _executionContext];
-    return [WebScriptObject _convertValueToObjcValue:value originExecutionContext:root1 executionContext:root2];
+    const Bindings::RootObject* root1 = [_globalObj _originRootObject];
+    const Bindings::RootObject* root2 = [_globalObj _rootObject];
+    return [WebScriptObject _convertValueToObjcValue:value originRootObject:root1 rootObject:root2];
 }
 
 @end

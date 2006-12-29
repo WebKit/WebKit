@@ -276,7 +276,7 @@ public:
         
         free ((void *)_type);
         _type = strdup(other._type);
-        _root = other._root;
+        _rootObject = other._rootObject;
         _array = other._array;
         
         return *this;
@@ -292,13 +292,13 @@ public:
 
     static JSValue *convertJObjectToArray (ExecState *exec, jobject anObject, const char *type, const RootObject *r);
 
-    const RootObject *executionContext() const { return _root; }
+    const RootObject* rootObject() const { return _rootObject; }
     
 private:
     RefPtr<JObjectWrapper> _array;
     unsigned int _length;
     const char *_type;
-    const RootObject *_root;
+    const RootObject *_rootObject;
 };
 
 } // namespace Bindings

@@ -38,10 +38,6 @@ namespace KJS {
   class ScopeChain;
   class TimeoutChecker;
   
-  namespace Bindings {
-    class RootObject;
-  }
-
   /**
    * Interpreter objects can be used to evaluate ECMAScript code. Each
    * interpreter has a global object which is used for the purposes of code
@@ -257,14 +253,6 @@ namespace KJS {
      */
     virtual void mark(bool currentThreadIsMainThread);
 
-    /**
-     * Provides a way to distinguish derived classes.
-     * Only useful if you reimplement Interpreter and if different kind of
-     * interpreters are created in the same process.
-     * The base class returns 0, the ECMA-bindings interpreter returns 1.
-     */
-    virtual int rtti() { return 0; }
-
 #ifdef KJS_DEBUG_MEM
     /**
      * @internal
@@ -304,8 +292,6 @@ namespace KJS {
      */
     virtual bool isSafeScript(const Interpreter*) { return true; }
   
-    virtual void *createLanguageInstanceForValue(ExecState*, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current);
-
     // This is a workaround to avoid accessing the global variables for these identifiers in
     // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
     const Identifier& argumentsIdentifier() { return *m_argumentsPropertyName; }

@@ -113,9 +113,9 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     // Get (or create) a cached JS object for the DOM node.
     KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(KJS::toJS(exec, nodeImpl));
 
-    const KJS::Bindings::RootObject *executionContext = WebCore::Mac(frame)->bindingRootObject();
+    const KJS::Bindings::RootObject* rootObject = WebCore::Mac(frame)->bindingRootObject();
 
-    [self _initializeWithObjectImp:scriptImp originExecutionContext:executionContext executionContext:executionContext];
+    [self _initializeWithObjectImp:scriptImp originRootObject:rootObject rootObject:rootObject];
 }
 
 @end

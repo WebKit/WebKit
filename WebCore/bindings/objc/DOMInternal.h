@@ -268,6 +268,14 @@
 #import "DOMXPathResultInternal.h"
 #endif // XPATH_SUPPORT
 
+namespace KJS {
+    class JSObject;
+    
+    namespace Bindings {
+        class RootObject;
+    }
+}
+
 namespace WebCore {
     class NodeFilter;
 
@@ -312,9 +320,13 @@ namespace WebCore {
 
 #endif // XPATH_SUPPORT
 
-namespace WebCore {
+// Helper functions for DOM wrappers and gluing to Objective-C
 
-    // Helper functions for DOM wrappers and gluing to Objective-C
+namespace KJS {
+    id createDOMWrapper(KJS::JSObject*, const KJS::Bindings::RootObject*, const KJS::Bindings::RootObject*);
+} // namespace KJS
+
+namespace WebCore {
 
     NSObject* getDOMWrapper(DOMObjectInternal*);
     void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);

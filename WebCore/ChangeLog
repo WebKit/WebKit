@@ -1,3 +1,33 @@
+2006-12-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Some cleanup in preparation for fixing <rdar://problem/4608404> 
+        WebScriptObject's _executionContext lack of ownership policy causes 
+        crashes (e.g., in Dashcode)
+        
+        Layout tests pass.
+
+        Renamed "root" | "execContext" | "executionContext" => rootObject, because
+        that's the object's (admittedly vague) type name.
+        
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_binding.h: Removed createLanguageInstanceForValue
+        and createObjcInstanceForValue because their only purpose was to confuse you.
+        
+        * bindings/objc/DOMInternal.h: Moved declaration of createDOMWrapper here.
+        createDOMWrapper is the new name for createObjcInstanceForValue.
+        
+        * bindings/objc/DOMInternal.mm: Renamed Interpreter::createObjcInstanceForValue
+        to createDOMWrapper because creating DOM wrappers has nothing to do with the interpreter,
+        and everything to do with the DOM. Renamed value to object because it is one.
+        Removed newObj nil check that is unnecessary in ObjC.
+
+        * bindings/objc/WebScriptObject.mm: Replaced call to createLanguageInstanceForValue
+        with explicit code to do the same thing it would have done: (1) try to create 
+        a DOM wrapper; (2) if the object is not a wrappable DOM object, create a 
+        vanilla WebScriptObject for it instead.
+
 2006-12-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -131,15 +131,15 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
 
 static id convertValueToObjcObject (ExecState* exec, JSValue* value)
 {
-    const Bindings::RootObject* root = rootForInterpreter(exec->dynamicInterpreter());
-    if (!root) {
-        Bindings::RootObject* newRoot = new Bindings::RootObject(0);
-        newRoot->setInterpreter(exec->dynamicInterpreter());
-        root = newRoot;
+    const Bindings::RootObject* rootObject = rootObjectForInterpreter(exec->dynamicInterpreter());
+    if (!rootObject) {
+        Bindings::RootObject* newRootObject = new Bindings::RootObject(0);
+        newRootObject->setInterpreter(exec->dynamicInterpreter());
+        rootObject = newRootObject;
     }
     if (!webScriptObjectClass)
         webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-    return [webScriptObjectClass _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];
+    return [webScriptObjectClass _convertValueToObjcValue:value originRootObject:rootObject rootObject:rootObject ];
 }
 
 void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue* aValue) const

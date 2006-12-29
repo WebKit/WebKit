@@ -47,7 +47,7 @@ JavaInstance::JavaInstance (jobject instance, const RootObject *r)
 {
     _instance = new JObjectWrapper (instance);
     _class = 0;
-    setExecutionContext (r);
+    setRootObject(r);
 }
 
 JavaInstance::~JavaInstance () 
@@ -144,13 +144,13 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     // Try to use the JNI abstraction first, otherwise fall back to
     // nornmal JNI.  The JNI dispatch abstraction allows the Java plugin
     // to dispatch the call on the appropriate internal VM thread.
-    const RootObject *execContext = executionContext();
+    const RootObject* rootObject = this->rootObject();
     bool handled = false;
-    if (execContext && execContext->nativeHandle()) {
+    if (rootObject && rootObject->nativeHandle()) {
         jobject obj = _instance->_instance;
         JSValue *exceptionDescription = NULL;
         const char *callingURL = 0;  // FIXME, need to propagate calling URL to Java
-        handled = dispatchJNICall (execContext->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
+        handled = dispatchJNICall(rootObject->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
         if (exceptionDescription) {
             throwError(exec, GeneralError, exceptionDescription->toString(exec));
             free (jArgs);
@@ -230,10 +230,10 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
             if (result.l != 0) {
                 const char *arrayType = jMethod->returnType();
                 if (arrayType[0] == '[') {
-                    resultValue = JavaArray::convertJObjectToArray (exec, result.l, arrayType, executionContext());
+                    resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
                 }
                 else {
-                    resultValue = Instance::createRuntimeObject(Instance::JavaLanguage, result.l, executionContext());
+                    resultValue = Instance::createRuntimeObject(Instance::JavaLanguage, result.l, rootObject);
                 }
             }
             else {

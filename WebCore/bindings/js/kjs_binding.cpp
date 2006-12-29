@@ -288,22 +288,6 @@ Interpreter* ScriptInterpreter::interpreterForGlobalObject(const JSValue* imp)
     return win->interpreter();
 }
 
-void* ScriptInterpreter::createLanguageInstanceForValue(ExecState* exec, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current)
-{
-    void* result = 0;
-    
-#if PLATFORM(MAC)
-    // FIXME: Need to implement bindings support.
-    if (language == Bindings::Instance::ObjectiveCLanguage)
-        result = createObjcInstanceForValue (exec, value, origin, current);
-#endif
-#if USE(JAVASCRIPTCORE_BINDINGS)
-    if (!result)
-        result = Interpreter::createLanguageInstanceForValue (exec, language, value, origin, current);
-#endif
-    return result;
-}
-
 bool ScriptInterpreter::shouldInterruptScript() const
 {
     return m_frame->shouldInterruptJavaScript();

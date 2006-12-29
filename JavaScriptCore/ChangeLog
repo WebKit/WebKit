@@ -1,3 +1,41 @@
+2006-12-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Some cleanup in preparation for fixing <rdar://problem/4608404> 
+        WebScriptObject's _executionContext lack of ownership policy causes 
+        crashes (e.g., in Dashcode)
+        
+        I'm just trying to make heads or tails of this baffling code.
+        
+        Renamed "root" | "execContext" | "executionContext" => "rootObject", because
+        that's the object's (admittedly vague) type name.
+        
+        * bindings/runtime.cpp: Removed createLanguageInstanceForValue
+        because I'll give you a dollar if you can explain to me what it actually did.
+        
+        * bindings/runtime_root.cpp: Put everything in the KJS::Bindings namespace,
+        removing the KJS::Bindings prefix from individual functions and datatypes.
+        This matches the header and eliminates a lot of syntax cruft.
+        
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant): Replaced use of createLanguageInstanceForValue
+        with call to _NPN_CreateScriptObject because that's what createLanguageInstanceForValue
+        actually did (but don't ask me for that dollar now; that's cheating.)
+
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue): Removed. Its only purpose was 
+        to call a single function for WebKit, which WebKit can do on its own.
+
+        * kjs/interpreter.h: Removed rtti() because it was unused, and this class
+        is scheduled for demolition anyway.
+        
+        * kjs/interpreter.cpp: Removed createLanguageInstanceForValue because it had
+        nothing to do with the Interpreter, and nothing makes Chuck Norris more mad
+        than a function whose sole purpose is to call another function of the same
+        name. (Really, I asked him.)
+
 2006-12-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.

@@ -692,11 +692,6 @@ void Interpreter::setShouldPrintExceptions(bool print)
   printExceptions = print;
 }
 
-void *Interpreter::createLanguageInstanceForValue(ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
-{
-    return Bindings::Instance::createLanguageInstanceForValue (exec, (Bindings::Instance::BindingLanguage)language, value, origin, current);
-}
-
 void Interpreter::saveBuiltins (SavedBuiltins& builtins) const
 {
     if (!builtins._internal)

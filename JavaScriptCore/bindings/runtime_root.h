@@ -42,8 +42,8 @@ typedef RootObject *(*FindRootObjectForNativeHandleFunctionPtr)(void *);
 typedef HashCountedSet<JSObject*> ReferencesSet;
 
 extern ReferencesSet* findReferenceSet(JSObject *imp);
-extern const RootObject *rootForImp (JSObject *imp);
-extern const RootObject *rootForInterpreter (Interpreter *interpreter);
+extern const RootObject* rootObjectForImp(JSObject*);
+extern const RootObject* rootObjectForInterpreter(Interpreter*);
 extern void addNativeReference (const RootObject *root, JSObject *imp);
 extern void removeNativeReference (JSObject *imp);
 

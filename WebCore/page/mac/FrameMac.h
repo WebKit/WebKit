@@ -104,7 +104,7 @@ public:
 
     void addPluginRootObject(KJS::Bindings::RootObject*);
 
-    KJS::Bindings::RootObject* executionContextForDOM();
+    KJS::Bindings::RootObject* rootObjectForDOM();
     
     WebScriptObject* windowScriptObject();
     NPObject* windowScriptNPObject();

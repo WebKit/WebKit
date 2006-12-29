@@ -178,8 +178,8 @@ NPObject* HTMLPlugInElement::createNPObject()
         return _NPN_CreateNoScriptObject();
 
     // Wrap the JSObject in an NPObject
-    const RootObject *executionContext = frame->bindingRootObject();
-    return _NPN_CreateScriptObject(0, jsElementValue->getObject(), executionContext, executionContext);
+    const RootObject* rootObject = frame->bindingRootObject();
+    return _NPN_CreateScriptObject(0, jsElementValue->getObject(), rootObject, rootObject);
 }
 
 NPObject* HTMLPlugInElement::getNPObject()

@@ -122,7 +122,7 @@ using KJS::Bindings::RootObject;
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
-- (RootObject*)executionContextForView:(NSView *)aView;
+- (RootObject*)rootObjectForView:(NSView *)aView;
 @end
 
 static RootObject* rootForView(void* v)
@@ -132,7 +132,7 @@ static RootObject* rootForView(void* v)
     RootObject *root = 0;
 
     if (aBridge)
-        root = [aBridge executionContextForView:aView];
+        root = [aBridge rootObjectForView:aView];
 
     return root;
 }
@@ -1693,14 +1693,14 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 @implementation WebCoreFrameBridge (WebCoreBridgeInternal)
 
-- (RootObject *)executionContextForView:(NSView *)aView
+- (RootObject *)rootObjectForView:(NSView *)aView
 {
     FrameMac *frame = [self _frame];
-    RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
-    root->setRootObjectImp(Window::retrieveWindow(frame));
-    root->setInterpreter(frame->scriptProxy()->interpreter());
-    frame->addPluginRootObject(root);
-    return root;
+    RootObject* rootObject = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
+    rootObject->setRootObjectImp(Window::retrieveWindow(frame));
+    rootObject->setInterpreter(frame->scriptProxy()->interpreter());
+    frame->addPluginRootObject(rootObject);
+    return rootObject;
 }
 
 @end

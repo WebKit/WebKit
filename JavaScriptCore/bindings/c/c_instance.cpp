@@ -41,7 +41,7 @@ CInstance::CInstance(NPObject* o)
 {
     _object = _NPN_RetainObject(o);
     _class = 0;
-    setExecutionContext(0);
+    setRootObject(0);
 }
 
 CInstance::~CInstance() 

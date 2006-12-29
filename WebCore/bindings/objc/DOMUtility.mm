@@ -25,14 +25,13 @@
  */
 
 #include "config.h"
-#import "kjs_dom.h"
-#import "Node.h"
-#import "kjs_css.h"
-#import "JSCSSRuleList.h"
 
 #import "DOMInternal.h"
+#import "JSCSSRuleList.h"
+#import "Node.h"
 #import "WebScriptObjectPrivate.h"
-
+#import "kjs_css.h"
+#import "kjs_dom.h"
 #import <objc/objc-runtime.h>
 
 // This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
@@ -40,35 +39,33 @@
 
 namespace KJS {
 
-void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+id createDOMWrapper(JSObject* object, const Bindings::RootObject* origin, const Bindings::RootObject* current)
 {
     id newObj = nil;
     
-    if (value->inherits(&DOMNode::info))
-        newObj = [objc_getClass("DOMNode") _nodeWith:static_cast<DOMNode *>(value)->impl()];
-    else if (value->inherits(&DOMNodeList::info))
-        newObj = [objc_getClass("DOMNodeList") _nodeListWith:static_cast<DOMNodeList *>(value)->impl()];
-    else if (value->inherits(&DOMNamedNodeMap::info))
-        newObj = [objc_getClass("DOMNamedNodeMap") _namedNodeMapWith:static_cast<DOMNamedNodeMap *>(value)->impl()];
-    else if (value->inherits(&DOMStyleSheetList::info))
-        newObj = [objc_getClass("DOMStyleSheetList") _styleSheetListWith:static_cast<DOMStyleSheetList *>(value)->impl()];
-    else if (value->inherits(&DOMStyleSheet::info))
-        newObj = [objc_getClass("DOMStyleSheet") _styleSheetWith:static_cast<DOMStyleSheet *>(value)->impl()];
-    else if (value->inherits(&DOMMediaList::info))
-        newObj = [objc_getClass("DOMMediaList") _mediaListWith:static_cast<DOMMediaList *>(value)->impl()];
-    else if (value->inherits(&WebCore::JSCSSRuleList::info))
-        newObj = [objc_getClass("DOMCSSRuleList") _CSSRuleListWith:static_cast<WebCore::JSCSSRuleList *>(value)->impl()];
-    else if (value->inherits(&DOMCSSRule::info))
-        newObj = [objc_getClass("DOMCSSRule") _CSSRuleWith:static_cast<DOMCSSRule *>(value)->impl()];
-    else if (value->inherits(&DOMCSSStyleDeclaration::info))
-        newObj = [objc_getClass("DOMCSSStyleDeclaration") _CSSStyleDeclarationWith:static_cast<DOMCSSStyleDeclaration *>(value)->impl()];
-    else if (value->inherits(&DOMCSSValue::info))
-        newObj = [objc_getClass("DOMCSSValue") _CSSValueWith:static_cast<DOMCSSValue *>(value)->impl()];
+    if (object->inherits(&DOMNode::info))
+        newObj = [objc_getClass("DOMNode") _nodeWith:static_cast<DOMNode*>(object)->impl()];
+    else if (object->inherits(&DOMNodeList::info))
+        newObj = [objc_getClass("DOMNodeList") _nodeListWith:static_cast<DOMNodeList*>(object)->impl()];
+    else if (object->inherits(&DOMNamedNodeMap::info))
+        newObj = [objc_getClass("DOMNamedNodeMap") _namedNodeMapWith:static_cast<DOMNamedNodeMap*>(object)->impl()];
+    else if (object->inherits(&DOMStyleSheetList::info))
+        newObj = [objc_getClass("DOMStyleSheetList") _styleSheetListWith:static_cast<DOMStyleSheetList*>(object)->impl()];
+    else if (object->inherits(&DOMStyleSheet::info))
+        newObj = [objc_getClass("DOMStyleSheet") _styleSheetWith:static_cast<DOMStyleSheet*>(object)->impl()];
+    else if (object->inherits(&DOMMediaList::info))
+        newObj = [objc_getClass("DOMMediaList") _mediaListWith:static_cast<DOMMediaList*>(object)->impl()];
+    else if (object->inherits(&WebCore::JSCSSRuleList::info))
+        newObj = [objc_getClass("DOMCSSRuleList") _CSSRuleListWith:static_cast<WebCore::JSCSSRuleList*>(object)->impl()];
+    else if (object->inherits(&DOMCSSRule::info))
+        newObj = [objc_getClass("DOMCSSRule") _CSSRuleWith:static_cast<DOMCSSRule*>(object)->impl()];
+    else if (object->inherits(&DOMCSSStyleDeclaration::info))
+        newObj = [objc_getClass("DOMCSSStyleDeclaration") _CSSStyleDeclarationWith:static_cast<DOMCSSStyleDeclaration*>(object)->impl()];
+    else if (object->inherits(&DOMCSSValue::info))
+        newObj = [objc_getClass("DOMCSSValue") _CSSValueWith:static_cast<DOMCSSValue*>(object)->impl()];
     
-    if (newObj)
-        [newObj _initializeWithObjectImp:value originExecutionContext:origin executionContext:current];
-    
+    [newObj _initializeWithObjectImp:object originRootObject:origin rootObject:current];
     return newObj;
 }
 
-}
+} // namespace KJS

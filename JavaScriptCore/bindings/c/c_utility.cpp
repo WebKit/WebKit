@@ -117,8 +117,8 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
     } else if (type == NullType) {
         NULL_TO_NPVARIANT(*result);
     } else if (type == ObjectType) {
-        JSObject *objectImp = static_cast<JSObject*>(value);
-        if (objectImp->classInfo() == &RuntimeObjectImp::info) {
+        JSObject* object = static_cast<JSObject*>(value);
+        if (object->classInfo() == &RuntimeObjectImp::info) {
             RuntimeObjectImp* imp = static_cast<RuntimeObjectImp *>(value);
             CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
             NPObject* obj = instance->getObject();
@@ -126,7 +126,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             OBJECT_TO_NPVARIANT(obj, *result);
         } else {
             Interpreter *originInterpreter = exec->dynamicInterpreter();
-            const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
+            const Bindings::RootObject* originRootObject = rootObjectForInterpreter(originInterpreter);
 
             Interpreter *interpreter = 0;
             if (originInterpreter->isGlobalObject(value)) {
@@ -136,15 +136,15 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             if (!interpreter)
                 interpreter = originInterpreter;
                 
-            const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
-            if (!executionContext) {
-                Bindings::RootObject *newExecutionContext = new Bindings::RootObject(0);
-                newExecutionContext->setInterpreter(interpreter);
-                executionContext = newExecutionContext;
+            const RootObject* rootObject = rootObjectForInterpreter(interpreter);
+            if (!rootObject) {
+                RootObject* newRootObject = new RootObject(0);
+                newRootObject->setInterpreter(interpreter);
+                rootObject = newRootObject;
             }
-    
-            NPObject* obj = (NPObject *)exec->dynamicInterpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
-            OBJECT_TO_NPVARIANT(obj, *result);
+
+            NPObject* npObject = _NPN_CreateScriptObject(0, object, originRootObject, rootObject);
+            OBJECT_TO_NPVARIANT(npObject, *result);
         }
     }
     else

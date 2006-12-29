@@ -10,24 +10,24 @@
 #include <JavaScriptCore/runtime_root.h>
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(KJS::JSValue *)value originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext;
++ (id)_convertValueToObjcValue:(KJS::JSValue*)value originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rootObject;
 - _init;
-- _initWithJSObject:(KJS::JSObject *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
-- (void)_initializeWithObjectImp:(KJS::JSObject *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
+- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rootObject;
+- (void)_initializeWithObjectImp:(KJS::JSObject*)imp originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rotObject;
 - (void)_initializeScriptDOMNodeImp;
 - (KJS::JSObject *)_imp;
-- (void)_setExecutionContext:(const KJS::Bindings::RootObject *)context;
-- (const KJS::Bindings::RootObject *)_executionContext;
-- (void)_setOriginExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext;
-- (const KJS::Bindings::RootObject *)_originExecutionContext;
+- (void)_setrootObject:(const KJS::Bindings::RootObject *)context;
+- (const KJS::Bindings::RootObject*)_rootObject;
+- (void)_setOriginRootObject:(const KJS::Bindings::RootObject*)originRootObject;
+- (const KJS::Bindings::RootObject*)_originRootObject;
 @end
 
 @interface WebScriptObjectPrivate : NSObject
 {
 @public
     KJS::JSObject *imp;
-    const KJS::Bindings::RootObject *executionContext;
-    const KJS::Bindings::RootObject *originExecutionContext;
+    const KJS::Bindings::RootObject* rootObject;
+    const KJS::Bindings::RootObject* originRootObject;
     BOOL isCreatedByDOMWrapper;
 }
 @end

@@ -136,7 +136,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
     switch (type) {
         case ObjcObjectType: {
             Interpreter *originInterpreter = exec->dynamicInterpreter();
-            const RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
+            const RootObject* originRootObject = rootObjectForInterpreter(originInterpreter);
 
             Interpreter *interpreter = 0;
             if (originInterpreter->isGlobalObject(value))
@@ -145,16 +145,16 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             if (!interpreter)
                 interpreter = originInterpreter;
                 
-            const RootObject *executionContext = rootForInterpreter(interpreter);
-            if (!executionContext) {
-                RootObject *newExecutionContext = new RootObject(0);
-                newExecutionContext->setInterpreter (interpreter);
-                executionContext = newExecutionContext;
+            const RootObject* rootObject = rootObjectForInterpreter(interpreter);
+            if (!rootObject) {
+                RootObject* newRootObject = new RootObject(0);
+                newRootObject->setInterpreter (interpreter);
+                rootObject = newRootObject;
             }
 
             if (!webScriptObjectClass)
                 webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-            result.objectValue = [webScriptObjectClass _convertValueToObjcValue:value originExecutionContext:originExecutionContext executionContext:executionContext ];
+            result.objectValue = [webScriptObjectClass _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject];
         }
         break;
 
@@ -359,16 +359,6 @@ ObjcValueType objcValueTypeForType(const char *type)
     }
 
     return objcValueType;
-}
-
-void *createObjcInstanceForValue(JSValue *value, const RootObject *origin, const RootObject *current)
-{
-    if (!value->isObject())
-        return 0;
-    if (!webScriptObjectClass)
-        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-    JSObject *object = static_cast<JSObject *>(value);
-    return [[[webScriptObjectClass alloc] _initWithJSObject:object originExecutionContext:origin executionContext:current] autorelease];
 }
 
 JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)

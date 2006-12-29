@@ -419,7 +419,7 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
     return String();
 }
 
-KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
+RootObject* FrameMac::rootObjectForDOM()
 {
     if (!settings()->isJavaScriptEnabled())
         return 0;
@@ -427,12 +427,12 @@ KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
     return bindingRootObject();
 }
 
-KJS::Bindings::RootObject *FrameMac::bindingRootObject()
+RootObject* FrameMac::bindingRootObject()
 {
     assert(settings()->isJavaScriptEnabled());
     if (!_bindingRoot) {
         JSLock lock;
-        _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
+        _bindingRoot = new RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
         _bindingRoot->setInterpreter(scriptProxy()->interpreter());
@@ -449,7 +449,7 @@ WebScriptObject *FrameMac::windowScriptObject()
     if (!_windowScriptObject) {
         KJS::JSLock lock;
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
-        _windowScriptObject = HardRetainWithNSRelease([[WebScriptObject alloc] _initWithJSObject:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
+        _windowScriptObject = HardRetainWithNSRelease([[WebScriptObject alloc] _initWithJSObject:win originRootObject:bindingRootObject() rootObject:bindingRootObject()]);
     }
 
     return _windowScriptObject;
@@ -714,7 +714,7 @@ void FrameMac::print()
     [Mac(this)->_bridge print];
 }
 
-KJS::Bindings::Instance *FrameMac::getAppletInstanceForWidget(Widget *widget)
+Instance* FrameMac::getAppletInstanceForWidget(Widget* widget)
 {
     NSView *aView = widget->getView();
     if (!aView)
@@ -730,28 +730,28 @@ KJS::Bindings::Instance *FrameMac::getAppletInstanceForWidget(Widget *widget)
     if (applet) {
         // Wrap the Java instance in a language neutral binding and hand
         // off ownership to the APPLET element.
-        KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
-        KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet, executionContext);        
+        RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
+        Instance* instance = Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject);
         return instance;
     }
     
     return 0;
 }
 
-static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
+static Instance* getInstanceForView(NSView *aView)
 {
     if ([aView respondsToSelector:@selector(objectForWebScript)]){
         id object = [aView objectForWebScript];
         if (object) {
-            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object, executionContext);
+            RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
+            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, object, rootObject);
         }
     }
     else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
         NPObject *object = [aView createPluginScriptableObject];
         if (object) {
-            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction()(aView);
-            KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::CLanguage, object, executionContext);
+            RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
+            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, object, rootObject);
             
             // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
             _NPN_ReleaseObject(object);
@@ -762,17 +762,17 @@ static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
     return 0;
 }
 
-KJS::Bindings::Instance *FrameMac::getEmbedInstanceForWidget(Widget *widget)
+Instance* FrameMac::getEmbedInstanceForWidget(Widget* widget)
 {
     return getInstanceForView(widget->getView());
 }
 
-KJS::Bindings::Instance *FrameMac::getObjectInstanceForWidget(Widget *widget)
+Instance* FrameMac::getObjectInstanceForWidget(Widget* widget)
 {
     return getInstanceForView(widget->getView());
 }
 
-void FrameMac::addPluginRootObject(KJS::Bindings::RootObject *root)
+void FrameMac::addPluginRootObject(RootObject* root)
 {
     m_rootObjects.append(root);
 }

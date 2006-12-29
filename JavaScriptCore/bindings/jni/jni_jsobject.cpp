@@ -79,7 +79,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
         }
         else {
             JSObject *imp = jlong_to_impptr(nativeHandle);
-            if (!rootForImp(imp)) {
+            if (!rootObjectForImp(imp)) {
                 fprintf (stderr, "%s:%d:  Attempt to access JavaScript from destroyed applet, type %d.\n", __FILE__, __LINE__, context->type);
                 return result;
             }
@@ -158,10 +158,10 @@ JavaJSObject::JavaJSObject(jlong nativeJSObject)
     // terribly wrong.
     assert (_imp != 0);
     
-    _root = rootForImp(_imp);
+    _rootObject = rootObjectForImp(_imp);
     
     // If we can't find the root for the object something is terribly wrong.
-    assert (_root != 0);
+    assert (_rootObject != 0);
 }
 
 
@@ -170,7 +170,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     JS_LOG ("methodName = %s\n", JavaString(methodName).UTF8String());
 
     // Lookup the function object.
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     JSLock lock;
     
     Identifier identifier(JavaString(methodName).ustring());
@@ -198,7 +198,7 @@ jobject JavaJSObject::eval(jstring script) const
     
     JSLock lock;
     
-    Completion completion = _root->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
+    Completion completion = _rootObject->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
     ComplType type = completion.complType();
     
     if (type == Normal) {
@@ -215,7 +215,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
 {
     JS_LOG ("(%p) memberName = %s\n", _imp, JavaString(memberName).UTF8String());
 
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     
     JSLock lock;
     JSValue *result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
@@ -226,7 +226,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
 void JavaJSObject::setMember(jstring memberName, jobject value) const
 {
     JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).UTF8String(), value);
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
@@ -236,7 +236,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 {
     JS_LOG ("memberName = %s\n", JavaString(memberName).UTF8String());
 
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->deleteProperty(exec, Identifier (JavaString(memberName).ustring()));
 }
@@ -250,7 +250,7 @@ jobject JavaJSObject::getSlot(jint index) const
     JS_LOG ("index = %ld\n", index);
 #endif
 
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
 
     JSLock lock;
     JSValue *result = _imp->get (exec, (unsigned)index);
@@ -267,7 +267,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
     JS_LOG ("index = %ld, value = %p\n", index, value);
 #endif
 
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->put(exec, (unsigned)index, convertJObjectToValue(value));
 }
@@ -279,7 +279,7 @@ jstring JavaJSObject::toString() const
     
     JSLock lock;
     JSObject *thisObj = const_cast<JSObject*>(_imp);
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     
     return (jstring)convertValueToJValue (exec, thisObj, object_type, "java.lang.String").l;
 }
@@ -299,7 +299,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
     if (nativeHandle == UndefinedHandle)
         return nativeHandle;
-    else if (rootForImp(jlong_to_impptr(nativeHandle))){
+    else if (rootObjectForImp(jlong_to_impptr(nativeHandle))){
         return nativeHandle;
     }
 
@@ -323,7 +323,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
 jobject JavaJSObject::convertValueToJObject (JSValue *value) const
 {
-    ExecState *exec = _root->interpreter()->globalExec();
+    ExecState* exec = _rootObject->interpreter()->globalExec();
     JNIEnv *env = getJNIEnv();
     jobject result = 0;
     
@@ -376,7 +376,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
                 
                 // Bump our 'meta' reference count for the imp.  We maintain the reference
                 // until either finalize is called or the applet shuts down.
-                addNativeReference (_root, imp);
+                addNativeReference(_rootObject, imp);
             }
         }
         // All other types will result in an undefined object.
@@ -434,7 +434,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     }
 
     JSLock lock;
-    RuntimeObjectImp *newImp = new RuntimeObjectImp(new Bindings::JavaInstance (theObject, _root));
+    RuntimeObjectImp* newImp = new RuntimeObjectImp(new Bindings::JavaInstance(theObject, _rootObject));
 
     return newImp;
 }

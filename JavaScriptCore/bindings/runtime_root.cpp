@@ -28,8 +28,7 @@
 #include "runtime_root.h"
 #include <wtf/HashCountedSet.h>
 
-using namespace KJS;
-using namespace KJS::Bindings;
+namespace KJS { namespace Bindings {
 
 // Java does NOT always call finalize (and thus KJS_JSObject_JSFinalize) when
 // it collects an objects.  This presents some difficulties.  We must ensure
@@ -45,7 +44,7 @@ using namespace KJS::Bindings;
 // 1 OR the applet is shutdown we deref the JavaScript instance.  Applet instances
 // are represented by a jlong.
 
-typedef HashMap<const Bindings::RootObject*, ReferencesSet*> ReferencesByRootMap; 
+typedef HashMap<const RootObject*, ReferencesSet*> ReferencesByRootMap; 
 
 static ReferencesByRootMap* getReferencesByRootMap()
 {
@@ -57,15 +56,15 @@ static ReferencesByRootMap* getReferencesByRootMap()
     return referencesByRootMap;
 }
 
-static ReferencesSet* getReferencesSet(const Bindings::RootObject *root)
+static ReferencesSet* getReferencesSet(const RootObject* rootObject)
 {
     ReferencesByRootMap* refsByRoot = getReferencesByRootMap();
     ReferencesSet* referencesSet = 0;
     
-    referencesSet = refsByRoot->get(root);
+    referencesSet = refsByRoot->get(rootObject);
     if (!referencesSet) {
         referencesSet  = new ReferencesSet;
-        refsByRoot->add(root, referencesSet);
+        refsByRoot->add(rootObject, referencesSet);
     }
     return referencesSet;
 }
@@ -75,7 +74,7 @@ static ReferencesSet* getReferencesSet(const Bindings::RootObject *root)
 // dictionary.
 // FIXME:  This is a potential performance bottleneck with many applets.  We could fix be adding a
 // imp to root dictionary.
-ReferencesSet* KJS::Bindings::findReferenceSet(JSObject *imp)
+ReferencesSet* findReferenceSet(JSObject* imp)
 {
     ReferencesByRootMap* refsByRoot = getReferencesByRootMap ();
     if (refsByRoot) {
@@ -93,10 +92,10 @@ ReferencesSet* KJS::Bindings::findReferenceSet(JSObject *imp)
 
 // FIXME:  This is a potential performance bottleneck with many applets.  We could fix be adding a
 // imp to root dictionary.
-const Bindings::RootObject *KJS::Bindings::rootForImp (JSObject *imp)
+const RootObject* rootObjectForImp (JSObject* imp)
 {
     ReferencesByRootMap* refsByRoot = getReferencesByRootMap ();
-    const Bindings::RootObject *rootObject = 0;
+    const RootObject* rootObject = 0;
     
     if (refsByRoot) {
         ReferencesByRootMap::const_iterator end = refsByRoot->end();
@@ -112,14 +111,14 @@ const Bindings::RootObject *KJS::Bindings::rootForImp (JSObject *imp)
     return rootObject;
 }
 
-const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter *interpreter)
+const RootObject* rootObjectForInterpreter(Interpreter* interpreter)
 {
     ReferencesByRootMap* refsByRoot = getReferencesByRootMap ();
     
     if (refsByRoot) {
         ReferencesByRootMap::const_iterator end = refsByRoot->end();
         for (ReferencesByRootMap::const_iterator it = refsByRoot->begin(); it != end; ++it) {
-            const Bindings::RootObject* aRootObject = it->first;
+            const RootObject* aRootObject = it->first;
             
             if (aRootObject->interpreter() == interpreter)
                 return aRootObject;
@@ -129,10 +128,10 @@ const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter 
     return 0;
 }
 
-void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, JSObject *imp)
+void addNativeReference(const RootObject* rootObject, JSObject* imp)
 {
-    if (root) {
-        ReferencesSet* referenceMap = getReferencesSet (root);
+    if (rootObject) {
+        ReferencesSet* referenceMap = getReferencesSet(rootObject);
         
         unsigned numReferences = referenceMap->count(imp);
         if (numReferences == 0) {
@@ -143,7 +142,7 @@ void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, JSObje
     }
 }
 
-void KJS::Bindings::removeNativeReference (JSObject *imp)
+void removeNativeReference(JSObject* imp)
 {
     if (!imp)
         return;
@@ -279,8 +278,8 @@ void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativ
     // Setup a source the other threads can use to signal the _runLoop
     // thread that a JavaScript call needs to be invoked.
     CFRunLoopSourceContext sourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, performJavaScriptAccess};
-    Bindings::RootObject::_performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
-    CFRunLoopAddSource(Bindings::RootObject::_runLoop, Bindings::RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
+    RootObject::_performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(RootObject::_runLoop, RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
 }
 #endif
 // Must be called when the applet is shutdown.
@@ -302,9 +301,9 @@ void RootObject::removeAllNativeReferences ()
     }
 }
 
-void RootObject::setInterpreter (KJS::Interpreter *i)
+void RootObject::setInterpreter (Interpreter* interpreter)
 {
-    _interpreter = i;
+    _interpreter = interpreter;
 }
 
-
+} } // namespace KJS::Bindings
