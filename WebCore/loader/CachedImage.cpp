@@ -34,7 +34,9 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
+#if PLATFORM(MAC)
 #include "SVGImage.h"
+#endif
 #include "LoaderFunctions.h"
 #if PLATFORM(CG)
 #include "PDFDocumentImage.h"
@@ -146,9 +148,11 @@ inline void CachedImage::createImage()
         else
 #endif
 #if SVG_SUPPORT
+#if PLATFORM(MAC)
         if (m_response.mimeType() == "image/svg+xml")
             m_image = new SVGImage(this);
         else
+#endif
 #endif
             m_image = new BitmapImage(this);
     }

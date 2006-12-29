@@ -1,3 +1,10 @@
+2006-12-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: SVGImage only works on Mac.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+
 2006-12-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
