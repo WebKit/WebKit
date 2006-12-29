@@ -52,6 +52,11 @@
 
 #include "kjs_css.lut.h"
 
+#if SVG_SUPPORT
+#include "JSSVGColor.h"
+#include "JSSVGPaint.h"
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -945,6 +950,12 @@ JSValue* toJS(ExecState* exec, CSSValue *v)
   else {
     if (v->isValueList())
       ret = new JSCSSValueList(exec, static_cast<CSSValueList*>(v));
+#if SVG_SUPPORT
+    else if (v->isSVGColor())
+      ret = new JSSVGColor(exec, static_cast<SVGColor*>(v));
+    else if (v->isSVGPaint())
+      ret = new JSSVGPaint(exec, static_cast<SVGPaint*>(v));
+#endif
     else if (v->isPrimitiveValue())
       ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue*>(v));
     else

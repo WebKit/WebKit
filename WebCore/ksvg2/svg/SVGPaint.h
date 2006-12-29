@@ -48,6 +48,7 @@ namespace WebCore {
         SVGPaint(const String& uri);
         SVGPaint(SVGPaintType);
         SVGPaint(SVGPaintType, const String& uri, const String& rgbPaint = String(), const String& iccPaint = String());
+        SVGPaint(const Color& c);
         virtual ~SVGPaint();
 
         // 'SVGPaint' functions

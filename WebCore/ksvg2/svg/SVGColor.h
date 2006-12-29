@@ -36,9 +36,10 @@ namespace WebCore {
     public:
         SVGColor();
         SVGColor(const String& rgbColor);
+        SVGColor(const Color& c);
         SVGColor(unsigned short colorType);
         virtual ~SVGColor();
-        
+
         enum SVGColorType {
             SVG_COLORTYPE_UNKNOWN                   = 0,
             SVG_COLORTYPE_RGBCOLOR                  = 1,
@@ -66,7 +67,6 @@ namespace WebCore {
     private:
         Color m_color;
         unsigned short m_colorType;
-        String m_rgbColor;
     };
 
 } // namespace WebCore

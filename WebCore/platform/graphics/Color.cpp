@@ -87,12 +87,9 @@ RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double 
 }
 
 // originally moved here from the CSS parser
-static inline bool parseHexColor(const String& name, RGBA32& rgb)
+bool Color::parseHexColor(const String& name, RGBA32& rgb)
 {
     int len = name.length();
-    if (!len)
-        return false;
-
     if (len == 3 || len == 6) {
         bool ok;
         int val = name.deprecatedString().toInt(&ok, 16);

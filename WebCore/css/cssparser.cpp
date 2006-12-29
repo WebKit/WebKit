@@ -251,7 +251,7 @@ RGBA32 CSSParser::parseColor(const String &string)
     CSSParser parser(true);
 
     // First try creating a color specified by name or the "#" syntax.
-    if (!parser.parseColor(string.deprecatedString(), color)) {
+    if (!parser.parseColor(string, color)) {
     
         // Now try to create a color from the rgb() or rgba() syntax.
         if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
@@ -2329,36 +2329,10 @@ CSSValueList* CSSParser::parseFontFamily()
     return list;
 }
 
-
-bool CSSParser::parseColor(const DeprecatedString &name, RGBA32& rgb)
+bool CSSParser::parseColor(const String &name, RGBA32& rgb)
 {
-    // FIXME: Should we move this stuff about hex digits without a "#" prefix
-    // into the Color class along with the "#"-prefix version?
-
-    int len = name.length();
-
-    if (!len)
-        return false;
-
-    bool ok;
-
-    if ( len == 3 || len == 6 ) {
-        int val = name.toInt(&ok, 16);
-        if ( ok ) {
-            if (len == 6) {
-                rgb =  (0xff << 24) | val;
-                return true;
-            }
-            else if ( len == 3 ) {
-                // #abc converts to #aabbcc according to the specs
-                rgb = (0xff << 24) |
-                    (val&0xf00)<<12 | (val&0xf00)<<8 |
-                    (val&0xf0)<<8 | (val&0xf0)<<4 |
-                    (val&0xf)<<4 | (val&0xf);
-                return true;
-            }
-        }
-    }
+    if (Color::parseHexColor(name, rgb))
+        return true;
 
     // try a little harder
     Color tc;
@@ -2435,61 +2409,66 @@ bool CSSParser::parseHSLParameters(Value* value, double* colorArray, bool parseA
     return true;
 }
 
-CSSPrimitiveValue *CSSParser::parseColor()
-{
-    return parseColorFromValue(valueList->current());
-}
-
-CSSPrimitiveValue *CSSParser::parseColorFromValue(Value* value)
+CSSPrimitiveValue *CSSParser::parseColor(Value* value)
 {
     RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(value ? value : valueList->current(), c))
+        return 0;
+    return new CSSPrimitiveValue(c);
+}
+
+bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
+{
     if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000.) {
-        DeprecatedString str;
+        String str;
         str.format("%06d", (int)(value->fValue+.5));
         if (!CSSParser::parseColor(str, c))
-            return 0;
+            return false;
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        if (!CSSParser::parseColor(deprecatedString(value->string), c))
-            return 0;
+        if (!CSSParser::parseColor(domString(value->string), c))
+            return false;
     } else if (value->unit == Value::Function &&
                 value->function->args != 0 &&
                 value->function->args->size() == 5 /* rgb + two commas */ &&
                 domString(value->function->name).lower() == "rgb(") {
         int colorValues[3];
         if (!parseColorParameters(value, colorValues, false))
-            return 0;
+            return false;
         c = makeRGB(colorValues[0], colorValues[1], colorValues[2]);
-    } else if (value->unit == Value::Function &&
+    } else if (!svg) {
+        if (value->unit == Value::Function &&
                 value->function->args != 0 &&
                 value->function->args->size() == 7 /* rgba + three commas */ &&
                 domString(value->function->name).lower() == "rgba(") {
-        int colorValues[4];
-        if (!parseColorParameters(value, colorValues, true))
-            return 0;
-        c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
-    } else if (value->unit == Value::Function &&
-                value->function->args != 0 &&
-                value->function->args->size() == 5 /* hsl + two commas */ &&
-                domString(value->function->name).lower() == "hsl(") {
-        double colorValues[3];
-        if (!parseHSLParameters(value, colorValues, false))
-            return 0;
-        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
-    } else if (value->unit == Value::Function &&
-                value->function->args != 0 &&
-                value->function->args->size() == 7 /* hsla + three commas */ &&
-                domString(value->function->name).lower() == "hsla(") {
-        double colorValues[4];
-        if (!parseHSLParameters(value, colorValues, true))
-            return 0;
-        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+            int colorValues[4];
+            if (!parseColorParameters(value, colorValues, true))
+                return false;
+            c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+        } else if (value->unit == Value::Function &&
+                    value->function->args != 0 &&
+                    value->function->args->size() == 5 /* hsl + two commas */ &&
+                    domString(value->function->name).lower() == "hsl(") {
+            double colorValues[3];
+            if (!parseHSLParameters(value, colorValues, false))
+                return false;
+            c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
+        } else if (value->unit == Value::Function &&
+                    value->function->args != 0 &&
+                    value->function->args->size() == 7 /* hsla + three commas */ &&
+                    domString(value->function->name).lower() == "hsla(") {
+            double colorValues[4];
+            if (!parseHSLParameters(value, colorValues, true))
+                return false;
+            c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+        } else
+            return false;
     } else
-        return 0;
+        return false;
 
-    return new CSSPrimitiveValue(c);
+    return true;
 }
 
 // This class tracks parsing state for shadow values.  If it goes out of scope (e.g., due to an early return)
@@ -2607,7 +2586,7 @@ bool CSSParser::parseShadow(int propId, bool important)
 
             if (!parsedColor)
                 // It's not built-in. Try to parse it as a color.
-                parsedColor = parseColorFromValue(val);
+                parsedColor = parseColor(val);
 
             if (!parsedColor || !context.allowColor)
                 return context.failed(); // This value is not a color or length and is invalid or

@@ -52,6 +52,12 @@ SVGPaint::SVGPaint(SVGPaintType paintType, const String& uri, const String& rgbP
     setUri(uri);
 }
 
+SVGPaint::SVGPaint(const Color& c)
+    : SVGColor(c)
+    , m_paintType(SVG_PAINTTYPE_RGBCOLOR)
+{
+}
+
 SVGPaint::~SVGPaint()
 {
 }

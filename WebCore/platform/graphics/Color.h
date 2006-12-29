@@ -94,13 +94,15 @@ public:
     operator QColor() const;
 #endif
 
+    static bool parseHexColor(const String& name, RGBA32& rgb);
+
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;
     static const RGBA32 darkGray = 0xFF808080;
     static const RGBA32 gray = 0xFFA0A0A0;
     static const RGBA32 lightGray = 0xFFC0C0C0;
     static const RGBA32 transparent = 0x00000000;
-    
+
 private:
     RGBA32 m_color;
     bool m_valid : 1;

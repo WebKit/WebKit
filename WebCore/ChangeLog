@@ -1,5 +1,38 @@
 2006-12-29  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12007
+        SVGColor::setRGBColor color creates/deletes many strings, slowing down parsing
+
+        Refactor code so svg reuses cssparser methods. Also make
+        SVGColor and SVGPaint more efficient by avoiding using
+        setRGBColor internally.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::CSSParser::parseShadow):
+        * css/cssparser.h:
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::cssText):
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::SVGPaint):
+        * ksvg2/svg/SVGPaint.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor):
+        * platform/graphics/Color.h:
+
+2006-12-29  Rob Buis  <buis@kde.org>
+
         Reviewed by weinig.
 
         http://bugs.webkit.org/show_bug.cgi?id=12022

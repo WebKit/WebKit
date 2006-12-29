@@ -348,89 +348,18 @@ CSSValue* CSSParser::parseSVGStrokeDasharray()
 
 CSSValue* CSSParser::parseSVGPaint()
 {
-    Value* value = valueList->current();
-    if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
-       value->fValue >= 0. && value->fValue < 1000000.) {
-        String str = String::format("%06d", (int)(value->fValue+.5));
-        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), str);
-    } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
-        String str = "#" + domString(value->string);
-        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), str);
-    } else if (value->unit == CSSPrimitiveValue::CSS_IDENT ||
-           (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
-        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), domString(value->string));
-    else if (value->unit == Value::Function && value->function->args != 0 &&
-            domString(value->function->name).lower() == "rgb(") {
-        ValueList* args = value->function->args;
-        Value* v = args->current();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        r = max(0, min(255, r));
-        g = max(0, min(255, g));
-        b = max(0, min(255, b));
-        
-        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), String::format("rgb(%d, %d, %d)", r, g, b));
-    }
-    else
-        return 0;
-
-    return new SVGPaint();
+    RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(valueList->current(), c, true))
+        return new SVGPaint();
+    return new SVGPaint(Color(c));
 }
 
 CSSValue* CSSParser::parseSVGColor()
 {
-    Value* value = valueList->current();
-    if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER && value->fValue >= 0. && value->fValue < 1000000.)
-        return new SVGColor(String::format("%06d", (int)(value->fValue+.5)));
-    else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR)
-        return new SVGColor("#" + domString(value->string));
-    else if (value->unit == CSSPrimitiveValue::CSS_IDENT || (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
-        return new SVGColor(domString(value->string));
-    else if (value->unit == Value::Function && value->function->args != 0 && domString(value->function->name).lower() == "rgb(") {
-        ValueList* args = value->function->args;
-        Value* v = args->current();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        r = max(0, min(255, r));
-        g = max(0, min(255, g));
-        b = max(0, min(255, b));
-        
-        return new SVGColor(String::format("rgb(%d, %d, %d)", r, g, b));
-    }
-    else
+    RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(valueList->current(), c, true))
         return 0;
-
-    return new SVGPaint();
+    return new SVGColor(Color(c));
 }
 
 }
