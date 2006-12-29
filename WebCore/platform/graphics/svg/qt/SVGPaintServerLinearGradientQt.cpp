@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-bool SVGPaintServerLinearGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerLinearGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     QPainter* painter(context ? context->platformContext() : 0);
     Q_ASSERT(painter);

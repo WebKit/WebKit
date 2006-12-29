@@ -105,18 +105,18 @@ FrameQt::FrameQt(Page* page, HTMLFrameOwnerElement* ownerElement,
     , m_bindingRoot(0)
 {
     Settings* settings = new Settings;
-    settings->setAutoLoadImages(true);
-    settings->setMinFontSize(5);
-    settings->setMinLogicalFontSize(5);
+    settings->setLoadsImagesAutomatically(true);
+    settings->setMinimumFontSize(5);
+    settings->setMinimumLogicalFontSize(5);
     settings->setShouldPrintBackgrounds(true);
-    settings->setIsJavaScriptEnabled(true);
+    settings->setJavaScriptEnabled(true);
 
-    settings->setMediumFixedFontSize(14);
-    settings->setMediumFontSize(14);
-    settings->setSerifFontName("Times New Roman");
-    settings->setSansSerifFontName("Arial");
-    settings->setFixedFontName("Courier");
-    settings->setStdFontName("Arial");
+    settings->setDefaultFixedFontSize(14);
+    settings->setDefaultFontSize(14);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setFixedFontFamily("Courier");
+    settings->setStandardFontFamily("Arial");
 
     setSettings(settings);
 
@@ -314,7 +314,7 @@ bool FrameQt::runJavaScriptPrompt(const String& message, const String& defaultVa
 
 KJS::Bindings::RootObject* FrameQt::bindingRootObject() 
 {
-    ASSERT(javaScriptEnabled()); 
+    ASSERT(settings()->isJavaScriptEnabled()); 
     if (!m_bindingRoot) {
         JSLock lock;
         m_bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.

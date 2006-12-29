@@ -80,7 +80,7 @@ Vector<String> Editor::guessesForMisspelledSelection()
     return Vector<String>();
 }
 
-void Editor::markMisspellingsInAdjacentWords(const VisiblePosition &p)
+void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 {
     if (!isContinuousSpellCheckingEnabled())
         return;

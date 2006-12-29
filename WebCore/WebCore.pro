@@ -456,6 +456,7 @@ SOURCES += \
     page/DOMWindow.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Frame.cpp \
+    page/Settings.cpp \
     page/Page.cpp \
     page/Chrome.cpp \
     page/FrameView.cpp \
@@ -580,6 +581,7 @@ SOURCES += \
     platform/network/qt/ResourceHandleQt.cpp \
     platform/network/qt/ResourceHandleManagerQt.cpp \
     platform/network/HTTPParsers.cpp \
+    platform/graphics/BitmapImage.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
@@ -943,6 +945,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGStopElement.cpp \
         ksvg2/svg/SVGDefsElement.cpp \
         ksvg2/svg/SVGMetadataElement.cpp \
+        ksvg2/svg/SVGParserUtilities.cpp \
         ksvg2/misc/SVGImageLoader.cpp \
         ksvg2/misc/SVGDocumentExtensions.cpp \
         ksvg2/misc/KSVGTimeScheduler.cpp \

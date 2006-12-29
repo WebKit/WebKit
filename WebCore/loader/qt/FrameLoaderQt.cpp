@@ -245,7 +245,7 @@ bool FrameLoader::canGoBackOrForward(int distance) const
 
 void FrameLoader::partClearedInBegin()
 {
-    if (m_frame->javaScriptEnabled())
+    if (m_frame->settings()->isJavaScriptEnabled())
         static_cast<FrameLoaderClientQt*>(m_client)->partClearedInBegin();
 }
 

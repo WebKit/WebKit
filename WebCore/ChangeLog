@@ -1,3 +1,41 @@
+2006-12-28  Daniel Molkentin <molkentin@kde.org>
+
+        Reviewed by Eric Seidel <eric@webkit.org>
+
+        - Fix font sizes
+        - Make Qt plattform build again:
+          - Adjust Qt platform to the Image class split.
+          - Introduce BitmapImage class
+          - add stub PDFDocumentImage class
+
+        * WebCore.pro:
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::partClearedInBegin):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawTiled):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::teardown):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::SVGPaintServerRadialGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::bindingRootObject):
+
 2006-12-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady Eidson.

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Image.h"
 
+#include "BitmapImage.h"
 #include "FloatRect.h"
 #include "PlatformString.h"
 #include "GraphicsContext.h"
@@ -61,24 +62,24 @@ void FrameData::clear()
 // Image Class
 // ================================================
 
-void Image::initPlatformData()
+void BitmapImage::initPlatformData()
 {
 }
 
-void Image::invalidatePlatformData()
+void BitmapImage::invalidatePlatformData()
 {
 }
 
 Image* Image::loadPlatformResource(const char* name)
 {
     Vector<char> arr = loadResourceIntoArray(name);
-    Image* img = new Image();
+    Image* img = new BitmapImage();
     img->setNativeData(&arr, true);
     return img;
 }
 
 // Drawing Routines
-void Image::draw(GraphicsContext* ctxt, const FloatRect& dst,
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                  const FloatRect& src, CompositeOperator op)
 {
     if (!m_source.initialized())
@@ -108,7 +109,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dst,
     startAnimation();
 }
 
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
+void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
                       const FloatSize& tileSize, CompositeOperator op)
 {
     if (!m_source.initialized())
@@ -150,12 +151,19 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     startAnimation();
 }
 
-void Image::checkForSolidColor()
+void BitmapImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, 
+        TileRule hRule, TileRule vRule, CompositeOperator op)
+{
+    // FIXME: no implemented
+}
+
+void BitmapImage::checkForSolidColor()
 {
     // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
     m_isSolidColor = false;
 }
 
 }
+
 
 // vim: ts=4 sw=4 et

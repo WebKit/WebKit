@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type) const
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     // FIXME: Reactivate old pattern code
 
