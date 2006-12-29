@@ -36,7 +36,9 @@
 #include "DocLoader.h"
 #include "Image.h"
 #include "LoaderFunctions.h"
+#if PLATFORM(CG)
 #include "PDFDocumentImage.h"
+#endif
 #include "Request.h"
 #include <wtf/Vector.h>
 
