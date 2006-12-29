@@ -1,3 +1,12 @@
+2006-12-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Disable MS-font dependent tests until http://bugs.webkit.org/show_bug.cgi?id=11662 is fixed.
+
+        * svg/W3C-SVG-1.1/text-align-08-b.svg: Removed.
+        * svg/custom/js-font-test.svg: Removed.
+
 2006-12-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
