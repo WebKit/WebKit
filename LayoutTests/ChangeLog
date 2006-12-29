@@ -1,3 +1,17 @@
+2006-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Test cases for SVGImage
+        http://bugs.webkit.org/show_bug.cgi?id=5971
+
+        * fast/images/animated-gif-with-offsets-expected.checksum: Added.
+        * fast/images/animated-gif-with-offsets-expected.png: Added.
+        * fast/images/resources/green-fixed-size-rect.svg: Added.
+        * fast/images/svg-as-background.html: Added.
+        * fast/images/svg-as-image.html: Added.
+        * fast/images/svg-as-tiled-background.html: Added.
+
 2006-12-29  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (build fix).
@@ -171,7 +185,7 @@
 
         * svg/custom/dynamic-svg-document-creation.svg:
 
-2006-12-27  Eric Seidel  <eric@eseidel.com>
+2006-12-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ggaren.
         

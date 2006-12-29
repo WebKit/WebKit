@@ -63,11 +63,14 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
         preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value);
     else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
-            if (m_cachedImage)
-                m_cachedImage->deref(this);
-            m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
-            if (m_cachedImage)
-                m_cachedImage->ref(this);
+            if (!href().startsWith("#")) {
+                // FIXME: this code needs to special-case url fragments and later look them up using getElementById instead of loading them here
+                if (m_cachedImage)
+                    m_cachedImage->deref(this);
+                m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
+                if (m_cachedImage)
+                    m_cachedImage->ref(this);
+            }
             return;
         }
         if (SVGLangSpace::parseMappedAttribute(attr))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef SVGImage_H
+#define SVGImage_H
+
+#ifdef SVG_SUPPORT
+
 #include "Image.h"
-
-#include "FloatRect.h"
-#include "GraphicsTypes.h"
-
-#if PLATFORM(CG)
-
-#include <ApplicationServices/ApplicationServices.h>
+#include "IntSize.h"
+#include <WTF/OwnPtr.h>
 
 namespace WebCore {
-
-    class GraphicsContext;
-
-    class PDFDocumentImage : public Image {
+    
+    class SVGDocument;
+    class Frame;
+    class FrameView;
+    class Page;
+    
+    class SVGImage : public Image {
     public:
-        PDFDocumentImage();
-        ~PDFDocumentImage();
+        SVGImage(ImageAnimationObserver*);
+        ~SVGImage();
         
-        virtual bool setNativeData(NativeBytePtr, bool allDataReceived);
-
         virtual IntSize size() const;
-
-    private:
-        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
+        
+        virtual bool setData(bool allDataReceived);
+        
+        virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
+        
+private:
+        virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator);
         virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator);
         virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator);
         
-        void setCurrentPage(int);
-        int pageCount() const;
-        void adjustCTM(GraphicsContext*) const;
-
-        CGPDFDocumentRef m_document;
-        FloatRect m_mediaBox;
-        FloatRect m_cropBox;
-        float m_rotation;
-        int m_currentPage;
+        SVGDocument* m_document;
+        OwnPtr<Page> m_page;
+        RefPtr<Frame> m_frame;
+        RefPtr<FrameView> m_frameView;
+        IntSize m_minSize;
     };
-
 }
 
-#endif // PLATFORM(CG)
+#endif // SVG_SUPPORT
+
+#endif

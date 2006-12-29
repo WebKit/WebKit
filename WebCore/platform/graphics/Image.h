@@ -72,7 +72,7 @@ public:
     int width() const;
     int height() const;
 
-    bool setData(bool allDataReceived);
+    virtual bool setData(bool allDataReceived);
     virtual bool setNativeData(NativeBytePtr, bool allDataReceived) { return false; }
     
     Vector<char>& dataBuffer() { return m_data; }

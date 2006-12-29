@@ -1,0 +1,149 @@
+/*
+ * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#ifdef SVG_SUPPORT
+
+#include "DocumentLoader.h"
+#include "FloatRect.h"
+#include "FrameLoader.h"
+#include "FrameMac.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "Page.h"
+#include "ResourceError.h"
+#include "SVGDocument.h"
+#include "SVGImage.h"
+#include "SVGLength.h"
+#include "SVGSVGElement.h"
+#include "Settings.h"
+
+#include "SVGImageEmptyClients.h"
+
+namespace WebCore {
+
+SVGImage::SVGImage(ImageAnimationObserver* observer)
+    : Image(observer)
+    , m_document(0)
+    , m_page(0)
+    , m_frame(0)
+    , m_frameView(0)
+{
+}
+
+SVGImage::~SVGImage()
+{
+    if (m_frame)
+        m_frame->loader()->frameDetached(); // Break both the loader and view references to the frame
+}
+
+IntSize SVGImage::size() const
+{
+    IntSize defaultSize(300, 150);
+    // FIXME: Eventually we'll be passed in the dest size and can scale against that
+    IntSize destSize = defaultSize;
+    
+    if (!m_frame || !m_frame->document())
+        return IntSize();
+    
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    if (!rootElement)
+        return defaultSize;
+    
+    SVGLength width = rootElement->width();
+    SVGLength height = rootElement->height();
+    
+    IntSize svgSize;
+    if (width.unitType() == LengthTypePercentage)
+        svgSize.setWidth(destSize.width() * width.valueInSpecifiedUnits());
+    else
+        svgSize.setWidth(width.value());
+    if (height.unitType() == LengthTypePercentage)
+        svgSize.setHeight(destSize.height() * height.valueInSpecifiedUnits());
+    else
+        svgSize.setHeight(height.value());
+    
+    return svgSize;
+}
+
+void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+{
+    if (!m_frame)
+        return;
+    
+    context->save();
+    context->clip(enclosingIntRect(dstRect));
+    context->translate(dstRect.location().x(), dstRect.location().y());
+    context->scale(FloatSize(dstRect.width()/srcRect.width(), dstRect.height()/srcRect.height()));
+    m_frame->paint(context, enclosingIntRect(srcRect));
+    context->restore();
+}
+
+void SVGImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator)
+{
+    // FIXME: implement to support background images
+}
+
+void SVGImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator)
+{
+    // FIXME: implement to support background images
+}
+
+bool SVGImage::setData(bool allDataReceived)
+{
+    int length = dataBuffer().size();
+    if (!length) // if this was an empty image
+        return true;
+    
+    if (allDataReceived) {
+        static ChromeClient* dummyChromeClient = new SVGEmptyCromeClient;
+        static FrameLoaderClient* dummyFrameLoaderClient =  new SVGEmptyFrameLoaderClient;
+        static EditorClient* dummyEditorClient = new SVGEmptyEditorClient;
+        static ContextMenuClient* dummyContextMenuClient = new SVGEmptyContextMenuClient;
+        static Settings* dummySettings = new Settings;
+
+        // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
+        // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
+        m_page.set(new Page(dummyChromeClient, dummyContextMenuClient, dummyEditorClient));
+        m_frame = new FrameMac(m_page.get(), 0, dummyFrameLoaderClient);
+        m_frameView = new FrameView(m_frame.get());
+        m_frameView->deref(); // FIXME: FrameView starts with a refcount of 1
+        m_frame->setView(m_frameView.get());
+        m_frame->setSettings(dummySettings);
+        ResourceRequest fakeRequest;
+        m_frame->loader()->load(fakeRequest); // Make sure the DocumentLoader is created
+        m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks
+        m_frame->loader()->commitProvisionalLoad(0);
+        m_frame->loader()->setResponseMIMEType("image/svg+xml");
+        m_frame->loader()->begin("placeholder.svg"); // create the empty document
+        m_frame->loader()->write(dataBuffer().data(), dataBuffer().size());
+        m_frame->loader()->end();
+    }
+    return m_frameView;
+}
+
+}
+
+#endif // SVG_SUPPORT

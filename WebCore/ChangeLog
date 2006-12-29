@@ -1,3 +1,206 @@
+2006-12-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        New tests:
+        * fast/images/svg-as-image.html
+        * fast/images/svg-as-background.html
+        * fast/images/svg-as-tiled-background.html
+        
+        Implement basic SVGImage support.
+        http://bugs.webkit.org/show_bug.cgi?id=5971
+        
+        This implementation depends on (rather ugly) stub Page and Frame clients in SVGImageEmptyClients.h
+
+        * WebCore.xcodeproj/project.pbxproj: add SVGImage.*
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute): ignore fragment urls
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * platform/graphics/Image.h: made setData virtual
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::drawTiled): stub method
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/svg/SVGImage.cpp: Added.
+        (WebCore::SVGImage::SVGImage):
+        (WebCore::SVGImage::~SVGImage):
+        (WebCore::SVGImage::size):
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::drawTiled): stub method
+        (WebCore::SVGImage::setData):
+        * platform/graphics/svg/SVGImage.h: Added.
+        (WebCore::SVGImage::frameAtIndex):
+        * platform/graphics/svg/SVGImageEmptyClients.h: Added.
+        (WebCore::SVGEmptyCromeClient::~SVGEmptyCromeClient):
+        (WebCore::SVGEmptyCromeClient::chromeDestroyed):
+        (WebCore::SVGEmptyCromeClient::setWindowRect):
+        (WebCore::SVGEmptyCromeClient::windowRect):
+        (WebCore::SVGEmptyCromeClient::pageRect):
+        (WebCore::SVGEmptyCromeClient::scaleFactor):
+        (WebCore::SVGEmptyCromeClient::focus):
+        (WebCore::SVGEmptyCromeClient::unfocus):
+        (WebCore::SVGEmptyCromeClient::createWindow):
+        (WebCore::SVGEmptyCromeClient::createModalDialog):
+        (WebCore::SVGEmptyCromeClient::show):
+        (WebCore::SVGEmptyCromeClient::canRunModal):
+        (WebCore::SVGEmptyCromeClient::runModal):
+        (WebCore::SVGEmptyCromeClient::setToolbarsVisible):
+        (WebCore::SVGEmptyCromeClient::toolbarsVisible):
+        (WebCore::SVGEmptyCromeClient::setStatusbarVisible):
+        (WebCore::SVGEmptyCromeClient::statusbarVisible):
+        (WebCore::SVGEmptyCromeClient::setScrollbarsVisible):
+        (WebCore::SVGEmptyCromeClient::scrollbarsVisible):
+        (WebCore::SVGEmptyCromeClient::setMenubarVisible):
+        (WebCore::SVGEmptyCromeClient::menubarVisible):
+        (WebCore::SVGEmptyCromeClient::setResizable):
+        (WebCore::SVGEmptyCromeClient::addMessageToConsole):
+        (WebCore::SVGEmptyCromeClient::canRunBeforeUnloadConfirmPanel):
+        (WebCore::SVGEmptyCromeClient::runBeforeUnloadConfirmPanel):
+        (WebCore::SVGEmptyCromeClient::closeWindowSoon):
+        (WebCore::SVGEmptyFrameLoaderClient::~SVGEmptyFrameLoaderClient):
+        (WebCore::SVGEmptyFrameLoaderClient::frameLoaderDestroyed):
+        (WebCore::SVGEmptyFrameLoaderClient::hasWebView):
+        (WebCore::SVGEmptyFrameLoaderClient::hasFrameView):
+        (WebCore::SVGEmptyFrameLoaderClient::hasBackForwardList):
+        (WebCore::SVGEmptyFrameLoaderClient::resetBackForwardList):
+        (WebCore::SVGEmptyFrameLoaderClient::provisionalItemIsTarget):
+        (WebCore::SVGEmptyFrameLoaderClient::loadProvisionalItemFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::invalidateCurrentItemPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::privateBrowsingEnabled):
+        (WebCore::SVGEmptyFrameLoaderClient::makeDocumentView):
+        (WebCore::SVGEmptyFrameLoaderClient::makeRepresentation):
+        (WebCore::SVGEmptyFrameLoaderClient::setDocumentViewFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::forceLayout):
+        (WebCore::SVGEmptyFrameLoaderClient::forceLayoutForNonHTML):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryForCommit):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryForBackForwardNavigation):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryForReload):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryForStandardLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryForInternalLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::updateHistoryAfterClientRedirect):
+        (WebCore::SVGEmptyFrameLoaderClient::setCopiesOnScroll):
+        (WebCore::SVGEmptyFrameLoaderClient::tokenForLoadErrorReset):
+        (WebCore::SVGEmptyFrameLoaderClient::resetAfterLoadError):
+        (WebCore::SVGEmptyFrameLoaderClient::doNotResetAfterLoadError):
+        (WebCore::SVGEmptyFrameLoaderClient::detachedFromParent1):
+        (WebCore::SVGEmptyFrameLoaderClient::detachedFromParent2):
+        (WebCore::SVGEmptyFrameLoaderClient::detachedFromParent3):
+        (WebCore::SVGEmptyFrameLoaderClient::detachedFromParent4):
+        (WebCore::SVGEmptyFrameLoaderClient::loadedFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::download):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchIdentifierForInitialRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillSendRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFinishLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFailLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillClose):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveIcon):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCommitLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFailLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFinishLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFirstLayout):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchCreatePage):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchShow):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebCore::SVGEmptyFrameLoaderClient::cancelPolicyCheck):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillSubmitForm):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidLoadMainResource):
+        (WebCore::SVGEmptyFrameLoaderClient::clearLoadingFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::isLoadingFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::revertToProvisionalState):
+        (WebCore::SVGEmptyFrameLoaderClient::setMainDocumentError):
+        (WebCore::SVGEmptyFrameLoaderClient::clearUnarchivingState):
+        (WebCore::SVGEmptyFrameLoaderClient::progressStarted):
+        (WebCore::SVGEmptyFrameLoaderClient::progressCompleted):
+        (WebCore::SVGEmptyFrameLoaderClient::incrementProgress):
+        (WebCore::SVGEmptyFrameLoaderClient::completeProgress):
+        (WebCore::SVGEmptyFrameLoaderClient::setMainFrameDocumentReady):
+        (WebCore::SVGEmptyFrameLoaderClient::startDownload):
+        (WebCore::SVGEmptyFrameLoaderClient::willChangeTitle):
+        (WebCore::SVGEmptyFrameLoaderClient::didChangeTitle):
+        (WebCore::SVGEmptyFrameLoaderClient::committedLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::finishedLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::finalSetupForReplace):
+        (WebCore::SVGEmptyFrameLoaderClient::cancelledError):
+        (WebCore::SVGEmptyFrameLoaderClient::cannotShowURLError):
+        (WebCore::SVGEmptyFrameLoaderClient::interruptForPolicyChangeError):
+        (WebCore::SVGEmptyFrameLoaderClient::cannotShowMIMETypeError):
+        (WebCore::SVGEmptyFrameLoaderClient::fileDoesNotExistError):
+        (WebCore::SVGEmptyFrameLoaderClient::shouldFallBack):
+        (WebCore::SVGEmptyFrameLoaderClient::setDefersLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::willUseArchive):
+        (WebCore::SVGEmptyFrameLoaderClient::isArchiveLoadPending):
+        (WebCore::SVGEmptyFrameLoaderClient::cancelPendingArchiveLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::clearArchivedResources):
+        (WebCore::SVGEmptyFrameLoaderClient::canHandleRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::canShowMIMEType):
+        (WebCore::SVGEmptyFrameLoaderClient::representationExistsForURLScheme):
+        (WebCore::SVGEmptyFrameLoaderClient::generatedMIMETypeForURLScheme):
+        (WebCore::SVGEmptyFrameLoaderClient::frameLoadCompleted):
+        (WebCore::SVGEmptyFrameLoaderClient::restoreScrollPositionAndViewState):
+        (WebCore::SVGEmptyFrameLoaderClient::provisionalLoadStarted):
+        (WebCore::SVGEmptyFrameLoaderClient::shouldTreatURLAsSameAsCurrent):
+        (WebCore::SVGEmptyFrameLoaderClient::addHistoryItemForFragmentScroll):
+        (WebCore::SVGEmptyFrameLoaderClient::didFinishLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebCore::SVGEmptyFrameLoaderClient::createDocumentLoader):
+        (WebCore::SVGEmptyFrameLoaderClient::setTitle):
+        (WebCore::SVGEmptyFrameLoaderClient::userAgent):
+        (WebCore::SVGEmptyEditorClient::~SVGEmptyEditorClient):
+        (WebCore::SVGEmptyEditorClient::pageDestroyed):
+        (WebCore::SVGEmptyEditorClient::shouldDeleteRange):
+        (WebCore::SVGEmptyEditorClient::shouldShowDeleteInterface):
+        (WebCore::SVGEmptyEditorClient::smartInsertDeleteEnabled):
+        (WebCore::SVGEmptyEditorClient::isContinuousSpellCheckingEnabled):
+        (WebCore::SVGEmptyEditorClient::toggleContinuousSpellChecking):
+        (WebCore::SVGEmptyEditorClient::isGrammarCheckingEnabled):
+        (WebCore::SVGEmptyEditorClient::toggleGrammarChecking):
+        (WebCore::SVGEmptyEditorClient::spellCheckerDocumentTag):
+        (WebCore::SVGEmptyEditorClient::selectWordBeforeMenuEvent):
+        (WebCore::SVGEmptyEditorClient::isEditable):
+        (WebCore::SVGEmptyEditorClient::shouldBeginEditing):
+        (WebCore::SVGEmptyEditorClient::shouldEndEditing):
+        (WebCore::SVGEmptyEditorClient::shouldInsertNode):
+        (WebCore::SVGEmptyEditorClient::shouldInsertText):
+        (WebCore::SVGEmptyEditorClient::shouldApplyStyle):
+        (WebCore::SVGEmptyEditorClient::didBeginEditing):
+        (WebCore::SVGEmptyEditorClient::respondToChangedContents):
+        (WebCore::SVGEmptyEditorClient::didEndEditing):
+        (WebCore::SVGEmptyEditorClient::registerCommandForUndo):
+        (WebCore::SVGEmptyEditorClient::registerCommandForRedo):
+        (WebCore::SVGEmptyEditorClient::clearUndoRedoOperations):
+        (WebCore::SVGEmptyEditorClient::canUndo):
+        (WebCore::SVGEmptyEditorClient::canRedo):
+        (WebCore::SVGEmptyEditorClient::undo):
+        (WebCore::SVGEmptyEditorClient::redo):
+        (WebCore::SVGEmptyEditorClient::dataForArchivedSelection):
+        (WebCore::SVGEmptyEditorClient::userVisibleString):
+        (WebCore::SVGEmptyContextMenuClient::~SVGEmptyContextMenuClient):
+        (WebCore::SVGEmptyContextMenuClient::contextMenuDestroyed):
+        (WebCore::SVGEmptyContextMenuClient::addCustomContextMenuItems):
+        (WebCore::SVGEmptyContextMenuClient::contextMenuItemSelected):
+        (WebCore::SVGEmptyContextMenuClient::downloadURL):
+        (WebCore::SVGEmptyContextMenuClient::copyImageToClipboard):
+        (WebCore::SVGEmptyContextMenuClient::lookUpInDictionary):
+        (WebCore::SVGEmptyContextMenuClient::speak):
+        (WebCore::SVGEmptyContextMenuClient::stopSpeaking):
+        (WebCore::SVGEmptyContextMenuClient::searchWithSpotlight):
+
 2006-12-29  George Staikos  <staikos@kde.org>
 
         Reviewed by Olliej.

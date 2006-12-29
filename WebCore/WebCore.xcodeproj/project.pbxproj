@@ -2074,6 +2074,9 @@
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FC09D563270003AC8D /* Attr.cpp */; };
 		A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8C9DD270B4374260097883A /* SVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C9DD250B4374260097883A /* SVGImage.cpp */; };
+		A8C9DD280B4374260097883A /* SVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C9DD260B4374260097883A /* SVGImage.h */; };
+		A8C9E0950B43A5250097883A /* SVGImageEmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C9E0940B43A5250097883A /* SVGImageEmptyClients.h */; };
 		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
@@ -5047,6 +5050,9 @@
 		A8C4A7FB09D563270003AC8D /* Attr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attr.h; sourceTree = "<group>"; };
 		A8C4A7FC09D563270003AC8D /* Attr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attr.cpp; sourceTree = "<group>"; };
 		A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttributeEntry.h; sourceTree = "<group>"; };
+		A8C9DD250B4374260097883A /* SVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImage.cpp; sourceTree = "<group>"; };
+		A8C9DD260B4374260097883A /* SVGImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImage.h; sourceTree = "<group>"; };
+		A8C9E0940B43A5250097883A /* SVGImageEmptyClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageEmptyClients.h; sourceTree = "<group>"; };
 		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
 		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
@@ -8492,6 +8498,8 @@
 			children = (
 				B2A015970AF6CD53006BCE0E /* cg */,
 				B2E27BDD0B0F2AE500F17C7B /* filters */,
+				A8C9DD250B4374260097883A /* SVGImage.cpp */,
+				A8C9DD260B4374260097883A /* SVGImage.h */,
 				B2D87C6B0B124E7300B0DE1E /* SVGPaintServer.cpp */,
 				B2D87C6C0B124E7300B0DE1E /* SVGPaintServer.h */,
 				B2D87C6D0B124E7300B0DE1E /* SVGPaintServerGradient.cpp */,
@@ -8515,6 +8523,7 @@
 				B2A015A50AF6CD53006BCE0E /* SVGResourceMarker.h */,
 				B2A015A60AF6CD53006BCE0E /* SVGResourceMasker.cpp */,
 				B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */,
+				A8C9E0940B43A5250097883A /* SVGImageEmptyClients.h */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -10867,6 +10876,8 @@
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				AACF7C4E0B42EE6000080BD8 /* SVGParserUtilities.h in Headers */,
+				A8C9DD280B4374260097883A /* SVGImage.h in Headers */,
+				A8C9E0950B43A5250097883A /* SVGImageEmptyClients.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12193,6 +12204,7 @@
 				B2080A120B3CA3B600120852 /* JSSVGPointListCustom.cpp in Sources */,
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				AACF7C4F0B42EE6000080BD8 /* SVGParserUtilities.cpp in Sources */,
+				A8C9DD270B4374260097883A /* SVGImage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
