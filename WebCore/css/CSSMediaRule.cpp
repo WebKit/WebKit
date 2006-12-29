@@ -38,7 +38,6 @@ CSSMediaRule::CSSMediaRule(StyleBase* parent, MediaList* mediaList, CSSRuleList*
     , m_lstMedia(mediaList)
     , m_lstCSSRules(ruleList)
 {
-    m_type = MEDIA_RULE;
 }
 
 CSSMediaRule::CSSMediaRule(StyleBase* parent)
@@ -47,7 +46,6 @@ CSSMediaRule::CSSMediaRule(StyleBase* parent)
     , m_lstCSSRules(new CSSRuleList())
 
 {
-    m_type = MEDIA_RULE;
 }
 
 CSSMediaRule::CSSMediaRule(StyleBase* parent, const String &media)
@@ -55,7 +53,6 @@ CSSMediaRule::CSSMediaRule(StyleBase* parent, const String &media)
     , m_lstMedia(new MediaList(this, media))
     , m_lstCSSRules(new CSSRuleList())
 {
-    m_type = MEDIA_RULE;
 }
 
 CSSMediaRule::~CSSMediaRule()
@@ -98,7 +95,7 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
         // @media rule.  They are currently not getting parsed, resulting in a SYNTAX_ERR
         // to get raised above.
 
-        // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified 
+        // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified
         // index, e.g., if an @import rule is inserted after a standard rule set or other
         // at-rule.
         ec = HIERARCHY_REQUEST_ERR;
@@ -117,7 +114,7 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
 void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 {
     if (index >= m_lstCSSRules->length()) {
-        // INDEX_SIZE_ERR: Raised if the specified index does not correspond to a 
+        // INDEX_SIZE_ERR: Raised if the specified index does not correspond to a
         // rule in the media rule list.
         ec = INDEX_SIZE_ERR;
         return;
@@ -137,7 +134,7 @@ String CSSMediaRule::cssText() const
         result += " ";
     }
     result += "{ \n";
-    
+
     if (m_lstCSSRules) {
         unsigned len = m_lstCSSRules->length();
         for (unsigned i = 0; i < len; i++) {
@@ -146,8 +143,9 @@ String CSSMediaRule::cssText() const
             result += "\n";
         }
     }
-    
+
     result += "}";
     return result;
 }
-}
+
+} // namespace WebCore

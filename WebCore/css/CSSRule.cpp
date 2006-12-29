@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSRule.h"
 
@@ -39,13 +40,13 @@ CSSRule* CSSRule::parentRule() const
 
 String CSSRule::cssText() const
 {
-    // ###
+    // FIXME: Implement!
     return String();
 }
 
-void CSSRule::setCssText(String /*str*/)
+void CSSRule::setCssText(String /*cssText*/)
 {
-    // ###
+    // FIXME: Implement!
 }
 
-}
+} // namespace WebCore

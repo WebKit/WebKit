@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
@@ -30,11 +31,16 @@ namespace WebCore {
 CSSFontFaceRule::CSSFontFaceRule(StyleBase* parent)
     : CSSRule(parent)
 {
-    m_type = FONT_FACE_RULE;
 }
 
 CSSFontFaceRule::~CSSFontFaceRule()
 {
 }
 
+String CSSFontFaceRule::cssText() const
+{
+    // FIXME: Implement!
+    return String();
 }
+
+} // namespace WebCore

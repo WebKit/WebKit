@@ -9011,17 +9011,17 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
-				AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */,
-				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
 				A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */,
-				A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */,
 				E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */,
+				A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */,
 				85C56CAC0AA89F8E00D95755 /* CSSCharsetRule.idl */,
 				BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */,
 				BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */,
+				AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */,
+				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
 				A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */,
 				A80E6CD30A1989CA007FB8C5 /* CSSFontFaceRule.h */,
 				85C56CA30AA89CA400D95755 /* CSSFontFaceRule.idl */,

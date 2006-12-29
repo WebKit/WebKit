@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSImportRule.h"
 
@@ -39,8 +40,6 @@ CSSImportRule::CSSImportRule(StyleBase* parent, const String& href, MediaList* m
     , m_cachedSheet(0)
     , m_loading(false)
 {
-    m_type = IMPORT_RULE;
-
     if (m_lstMedia)
         m_lstMedia->setParent(this);
     else
@@ -57,13 +56,13 @@ CSSImportRule::~CSSImportRule()
         m_cachedSheet->deref(this);
 }
 
-void CSSImportRule::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
+void CSSImportRule::setCSSStyleSheet(const String& url, const String& charset, const String& sheet)
 {
     if (m_styleSheet)
         m_styleSheet->setParent(0);
     m_styleSheet = new CSSStyleSheet(this, url, charset);
 
-    CSSStyleSheet *parent = parentStyleSheet();
+    CSSStyleSheet* parent = parentStyleSheet();
     m_styleSheet->parseString(sheet, !parent || parent->useStrictParsing());
     m_loading = false;
 
@@ -95,10 +94,11 @@ void CSSImportRule::insertedIntoParent()
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent())
+    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent()) {
         if (absHref == parent->baseURL())
             return;
-    
+    }
+
     m_cachedSheet = docLoader->requestCSSStyleSheet(absHref, parentSheet->charset());
     if (m_cachedSheet) {
         // if the import rule is issued dynamically, the sheet may be
@@ -126,4 +126,4 @@ String CSSImportRule::cssText() const
     return result;
 }
 
-}
+} // namespace WebCore

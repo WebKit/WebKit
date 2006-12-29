@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSStyleRule.h"
 
@@ -32,7 +33,6 @@ CSSStyleRule::CSSStyleRule(StyleBase* parent)
     : CSSRule(parent)
     , m_selector(0)
 {
-    m_type = STYLE_RULE;
 }
 
 CSSStyleRule::~CSSStyleRule()
@@ -56,25 +56,25 @@ String CSSStyleRule::selectorText() const
     return String();
 }
 
-void CSSStyleRule::setSelectorText(String /*str*/)
+void CSSStyleRule::setSelectorText(String /*selectorText*/)
 {
-    // ###
+    // FIXME: Implement!
 }
 
 String CSSStyleRule::cssText() const
 {
     String result = selectorText();
-    
+
     result += " { ";
     result += m_style->cssText();
     result += "}";
-    
+
     return result;
 }
 
-bool CSSStyleRule::parseString( const String &/*string*/, bool )
+bool CSSStyleRule::parseString(const String& /*string*/, bool /*strict*/)
 {
-    // ###
+    // FIXME
     return false;
 }
 
@@ -83,4 +83,4 @@ void CSSStyleRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
     m_style = style;
 }
 
-}
+} // namespace WebCore

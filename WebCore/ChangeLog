@@ -1,3 +1,67 @@
+2006-12-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12018
+        Cleanup of CSSRule and its subclasses
+
+        - Make CSSRule::type() virtual instead of using a member variable.
+        - General style cleanup.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::CSSCharsetRule):
+        * css/CSSCharsetRule.h:
+        (WebCore::CSSCharsetRule::isCharsetRule):
+        (WebCore::CSSCharsetRule::type):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::CSSFontFaceRule):
+        (WebCore::CSSFontFaceRule::cssText):
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::isFontFaceRule):
+        (WebCore::CSSFontFaceRule::type):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSImportRule.h:
+        (WebCore::CSSImportRule::isImportRule):
+        (WebCore::CSSImportRule::type):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        (WebCore::CSSMediaRule::insertRule):
+        (WebCore::CSSMediaRule::deleteRule):
+        (WebCore::CSSMediaRule::cssText):
+        * css/CSSMediaRule.h:
+        (WebCore::CSSMediaRule::isMediaRule):
+        (WebCore::CSSMediaRule::type):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        (WebCore::CSSPageRule::selectorText):
+        (WebCore::CSSPageRule::setSelectorText):
+        (WebCore::CSSPageRule::cssText):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::style):
+        (WebCore::CSSPageRule::type):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::cssText):
+        (WebCore::CSSRule::setCssText):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::):
+        (WebCore::CSSRule::CSSRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::setSelectorText):
+        (WebCore::CSSStyleRule::cssText):
+        (WebCore::CSSStyleRule::parseString):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::isStyleRule):
+        (WebCore::CSSStyleRule::style):
+        (WebCore::CSSStyleRule::type):
+        * css/CSSUnknownRule.h:
+        (WebCore::CSSUnknownRule::CSSUnknownRule):
+        (WebCore::CSSUnknownRule::type):
+
 2006-12-29  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ap.

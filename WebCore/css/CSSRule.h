@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSRule_H
-#define CSSRule_H
+#ifndef CSSRule_h
+#define CSSRule_h
 
 #include "StyleBase.h"
 
@@ -30,34 +30,34 @@ namespace WebCore {
 
 class CSSStyleSheet;
 
-class CSSRule : public StyleBase
-{
+class CSSRule : public StyleBase {
 public:
-    enum CSSRuleType { 
-        UNKNOWN_RULE, 
-        STYLE_RULE, 
-        CHARSET_RULE, 
-        IMPORT_RULE, 
-        MEDIA_RULE, 
-        FONT_FACE_RULE, 
-        PAGE_RULE 
+    enum CSSRuleType {
+        UNKNOWN_RULE,
+        STYLE_RULE,
+        CHARSET_RULE,
+        IMPORT_RULE,
+        MEDIA_RULE,
+        FONT_FACE_RULE,
+        PAGE_RULE
     };
-    
-    CSSRule(StyleBase* parent) : StyleBase(parent), m_type(UNKNOWN_RULE) { }
+
+    CSSRule(StyleBase* parent)
+        : StyleBase(parent)
+    {
+    }
 
     virtual bool isRule() { return true; }
-    unsigned short type() const { return m_type; }
+
+    virtual unsigned short type() const = 0;
 
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;
 
     virtual String cssText() const;
-    void setCssText(String str);
-
-protected:
-    CSSRuleType m_type;
+    void setCssText(String);
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSRule_h

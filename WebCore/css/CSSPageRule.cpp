@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSPageRule.h"
 
@@ -30,7 +31,6 @@ namespace WebCore {
 CSSPageRule::CSSPageRule(StyleBase* parent)
     : CSSRule(parent)
 {
-    m_type = PAGE_RULE;
 }
 
 CSSPageRule::~CSSPageRule()
@@ -39,13 +39,19 @@ CSSPageRule::~CSSPageRule()
 
 String CSSPageRule::selectorText() const
 {
-    // ###
+    // FIXME: Implement!
     return String();
 }
 
-void CSSPageRule::setSelectorText(const String& /*str*/)
+void CSSPageRule::setSelectorText(const String& /*selectorText*/)
 {
-    // ###
+    // FIXME: Implement!
 }
 
+String CSSPageRule::cssText() const
+{
+    // FIXME: Implement!
+    return String();
 }
+
+} // namespace WebCore

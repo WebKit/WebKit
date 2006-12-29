@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSPageRule_H
-#define CSSPageRule_H
+#ifndef CSSPageRule_h
+#define CSSPageRule_h
 
 #include "CSSRule.h"
 #include <wtf/RefPtr.h>
@@ -31,23 +31,27 @@ namespace WebCore {
 
 class CSSMutableStyleDeclaration;
 
-class CSSPageRule : public CSSRule
-{
+class CSSPageRule : public CSSRule {
 public:
     CSSPageRule(StyleBase* parent);
     virtual ~CSSPageRule();
-
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     virtual bool isPageRule() { return true; }
 
     String selectorText() const;
     void setSelectorText(const String&);
 
+    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
+
+    // Inherited from CSSRule
+    virtual unsigned short type() const { return PAGE_RULE; }
+
+    virtual String cssText() const;
+
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSPageRule_h
