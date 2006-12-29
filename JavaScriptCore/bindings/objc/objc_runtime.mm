@@ -34,7 +34,17 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-ClassStructPtr<WebScriptObject> KJS::Bindings::webScriptObjectClass = 0;
+extern ClassStructPtr KJS::Bindings::webScriptObjectClass()
+{
+    static ClassStructPtr<WebScriptObject> webScriptObjectClass = NSClassFromString(@"WebScriptObject");
+    return webScriptObjectClass;
+}
+
+extern ClassStructPtr KJS::Bindings::webUndefinedClass()
+{
+    static ClassStructPtr<WebScriptObject> webUndefinedClass = NSClassFromString(@"WebUndefined");
+    return webUndefinedClass;
+}
 
 // ---------------------- ObjcMethod ----------------------
 
@@ -137,9 +147,7 @@ static id convertValueToObjcObject (ExecState* exec, JSValue* value)
         newRootObject->setInterpreter(exec->dynamicInterpreter());
         rootObject = newRootObject;
     }
-    if (!webScriptObjectClass)
-        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-    return [webScriptObjectClass _convertValueToObjcValue:value originRootObject:rootObject rootObject:rootObject ];
+    return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject rootObject:rootObject ];
 }
 
 void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue* aValue) const

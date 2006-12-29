@@ -152,9 +152,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
                 rootObject = newRootObject;
             }
 
-            if (!webScriptObjectClass)
-                webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-            result.objectValue = [webScriptObjectClass _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject];
+            result.objectValue = [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject];
         }
         break;
 
@@ -229,18 +227,12 @@ JSValue *convertNSStringToString(NSString *nsstring)
 */
 JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type)
 {
-    static ClassStructPtr webUndefinedClass = 0;
-    if (!webUndefinedClass)
-        webUndefinedClass = NSClassFromString(@"WebUndefined");
-    if (!webScriptObjectClass)
-        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
-
     switch (type) {
         case ObjcObjectType: {
             id obj = *(id*)buffer;
             if ([obj isKindOfClass:[NSString class]])
                 return convertNSStringToString((NSString *)obj);
-            if ([obj isKindOfClass:webUndefinedClass])
+            if ([obj isKindOfClass:webUndefinedClass()])
                 return jsUndefined();
             if ((CFBooleanRef)obj == kCFBooleanTrue)
                 return jsBoolean(true);
@@ -250,7 +242,7 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
                 return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
                 return new RuntimeArray(exec, new ObjcArray(obj));
-            if ([obj isKindOfClass:webScriptObjectClass])
+            if ([obj isKindOfClass:webScriptObjectClass()])
                 return [obj _imp];
             if ([obj isKindOfClass:[NSNull class]])
                 return jsNull();
