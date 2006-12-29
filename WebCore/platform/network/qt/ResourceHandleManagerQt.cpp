@@ -238,8 +238,13 @@ void ResourceHandleManager::receivedResponse(RequestQt* request)
             ResourceRequest newRequest = request->resource->request();
             newRequest.setURL(DeprecatedString(location));
             client->willSendRequest(request->resource, newRequest, response);
-            request->request.setRequest(request->request.method(), newRequest.url().path());
+            request->request.setRequest(request->request.method(), newRequest.url().path() + newRequest.url().query());
             request->url = newRequest.url();
+            int port = request->url.port();
+            if (port && port != 80)
+                request->request.setValue(QLatin1String("Host"), request->url.host() + QLatin1Char(':') + QString::number(port));
+            else
+                request->request.setValue(QLatin1String("Host"), request->url.host());
             request->redirected = true;
             return;
         }
