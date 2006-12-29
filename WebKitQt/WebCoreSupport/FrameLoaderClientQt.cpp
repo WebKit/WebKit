@@ -505,16 +505,17 @@ void FrameLoaderClientQt::dispatchDidReceiveIcon()
 
 void FrameLoaderClientQt::frameLoaderDestroyed()
 {
-
+    notImplemented();
 }
 
 bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) const
 {
-
+    notImplemented();
 }
 
 void FrameLoaderClientQt::partClearedInBegin()
 {
+    notImplemented();
 }
 
 }

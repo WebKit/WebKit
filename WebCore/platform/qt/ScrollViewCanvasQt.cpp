@@ -67,10 +67,11 @@ void ScrollViewCanvasQt::paintEvent(QPaintEvent* ev)
 
     QRect clip = ev->rect();
 
+    fv->layout();
+
     QPainter p(this);
     GraphicsContext ctx(&p);
 
-    fv->layout();
     fv->frame()->paint(&ctx, clip);
 }
 

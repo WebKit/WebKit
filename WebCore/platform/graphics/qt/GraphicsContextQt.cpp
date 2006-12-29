@@ -145,9 +145,9 @@ struct TransparencyLayer
 {
     TransparencyLayer(const QPainter& p, int width, int height)
     {
-        pixmap = QPixmap(width, height);
+        pixmap = new QPixmap(width, height);
 
-        painter = new QPainter(&pixmap);
+        painter = new QPainter(pixmap);
         painter->setPen(p.pen());
         painter->setBrush(p.brush());
         painter->setMatrix(p.matrix());
@@ -160,16 +160,18 @@ struct TransparencyLayer
     }
 
     TransparencyLayer()
-        : painter(0)
+        : pixmap(0)
+        , painter(0)
     {
     }
 
     void cleanup()
     {
         delete painter;
+        delete pixmap;
     }
 
-    QPixmap pixmap;
+    QPixmap* pixmap;
     QPainter* painter;
     qreal opacity;
 };
@@ -613,9 +615,8 @@ void GraphicsContext::endTransparencyLayer()
 #if QT_VERSION >= 0x040200
     m_data->p().setOpacity(layer.opacity);
 #endif
-    m_data->p().drawPixmap(0, 0, layer.pixmap);
+    m_data->p().drawPixmap(0, 0, *layer.pixmap);
     m_data->p().restore();
-    m_data->p().end();
 
     layer.cleanup();
 }
