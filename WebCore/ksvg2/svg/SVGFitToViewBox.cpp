@@ -26,10 +26,10 @@
 
 #include "FloatRect.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 #include "StringImpl.h"
-#include "svgpathparser.h"
 
 namespace WebCore {
 
@@ -49,32 +49,28 @@ ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGPreserveAspectRat
 void SVGFitToViewBox::parseViewBox(const String& str)
 {
     double x = 0, y = 0, w = 0, h = 0;
-    DeprecatedString viewbox = str.deprecatedString();
-    const char* p = viewbox.latin1();
-    const char* end = p + viewbox.length();
-    const char* c = p;
-    p = parseCoord(c, x);
-    if (p == c)
+    const UChar* c = str.characters();
+    const UChar* end = c + str.length();
+
+    skipOptionalSpaces(c, end);
+
+    if (!parseNumber(c, end, x))
         goto bail_out;
 
-    c = p;
-    p = parseCoord(c, y);
-    if (p == c)
+    if (!parseNumber(c, end, y))
         goto bail_out;
 
-    c = p;
-    p = parseCoord(c, w);
-    if (w < 0.0 || p == c) // check that width is positive
+    if (!parseNumber(c, end, w) || w < 0.0) // check that width is positive
         goto bail_out;
 
-    c = p;
-    p = parseCoord(c, h);
-    if (h < 0.0 || p == c) // check that height is positive
+    if (!parseNumber(c, end, h, false) || h < 0.0) // check that height is positive
         goto bail_out;
-    
-    if (p < end) // nothing should come after the last, fourth number
+
+    skipOptionalSpaces(c, end);
+
+    if (c < end) // nothing should come after the last, fourth number
         goto bail_out;
-    
+
     setViewBoxBaseValue(FloatRect(x, y, w, h));
     return;
 

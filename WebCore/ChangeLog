@@ -1,3 +1,15 @@
+2006-12-29  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12028
+        Adapt viewBox parsing to SVGParserUtilities
+
+        Use the new parseNumber and add tests for viewBox parsing.
+
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+
 2006-12-29  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: SVGImage only works on Mac.
