@@ -1,3 +1,37 @@
+2006-12-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (build fix).
+
+        Reverted last commit until WebResourceData issue is fixed.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11882
+        Need a way to regression test .webarchive output files
+
+        * webarchive/resources/apple.gif: Removed.
+        * webarchive/resources/dump-webarchive.js: Removed.
+        * webarchive/resources/test-frame.html: Removed.
+        * webarchive/resources/test-style.css: Removed.
+        * webarchive/test-body-background-expected.txt: Removed.
+        * webarchive/test-body-background.html: Removed.
+        * webarchive/test-duplicate-resources-expected.txt: Removed.
+        * webarchive/test-duplicate-resources.html: Removed.
+        * webarchive/test-frameset-expected.txt: Removed.
+        * webarchive/test-frameset.html: Removed.
+        * webarchive/test-img-src-expected.txt: Removed.
+        * webarchive/test-img-src.html: Removed.
+        * webarchive/test-input-src-expected.txt: Removed.
+        * webarchive/test-input-src.html: Removed.
+        * webarchive/test-link-href-expected.txt: Removed.
+        * webarchive/test-link-href.html: Removed.
+        * webarchive/test-object-data-expected.txt: Removed.
+        * webarchive/test-object-data.html: Removed.
+        * webarchive/test-script-src-expected.txt: Removed.
+        * webarchive/test-script-src.html: Removed.
+        * webarchive/test-table-background-expected.txt: Removed.
+        * webarchive/test-table-background.html: Removed.
+        * webarchive/test-td-background-expected.txt: Removed.
+        * webarchive/test-td-background.html: Removed.
+
 2006-12-28  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
