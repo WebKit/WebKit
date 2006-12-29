@@ -1,3 +1,12 @@
+2006-12-29  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by olliej.
+
+        Stop DumpRenderTree from reporting false Frame/Node leaks due to new SVGImage
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree): clear WebCore cache before exiting
+
 2006-12-29  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (build fix).

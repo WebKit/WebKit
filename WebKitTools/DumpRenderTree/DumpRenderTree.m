@@ -417,6 +417,7 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [workQueue release];
 
+    [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts    
     [webView close];
     frame = nil;
 
