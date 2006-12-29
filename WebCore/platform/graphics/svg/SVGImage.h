@@ -30,7 +30,7 @@
 
 #include "Image.h"
 #include "IntSize.h"
-#include <WTF/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
     
