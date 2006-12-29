@@ -95,6 +95,23 @@ int parseTransformParamList(const UChar*& ptr, const UChar* end, double* x, int 
     return requiredParams + optionalParams;
 }
 
+static inline bool checkString(const UChar*& currTransform, const UChar*& end, const UChar* name, int length)
+{
+    if ((end - currTransform) < (length + 1))
+        return false;
+    if (memcmp(name, currTransform, sizeof(UChar) * length))
+        return false;
+    currTransform += length;
+    return true;
+}
+
+static const UChar skewXDesc[] =  {'s','k','e','w', 'X'};
+static const UChar skewYDesc[] =  {'s','k','e','w', 'Y'};
+static const UChar scaleDesc[] =  {'s','c','a','l', 'e'};
+static const UChar translateDesc[] =  {'t','r','a','n', 's', 'l', 'a', 't', 'e'};
+static const UChar rotateDesc[] =  {'r','o','t','a', 't', 'e'};
+static const UChar matrixDesc[] =  {'m','a','t','r', 'i', 'x'};
+
 bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
     double x[6] = {0, 0, 0, 0, 0, 0};
@@ -110,53 +127,29 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
         skipOptionalSpaces(currTransform, end);
 
         if (*currTransform == 's') {
-            if (!(end - currTransform) > 5)
-                goto bail_out;
-            if (currTransform[1] == 'k' && currTransform[2] == 'e' &&
-                  currTransform[3] == 'w') {
-                if (currTransform[4] == 'X')
-                    type = SVGTransform::SVG_TRANSFORM_SKEWX;
-                else if (currTransform[4] == 'Y')
-                    type = SVGTransform::SVG_TRANSFORM_SKEWY;
-                else
-                    goto bail_out;
+            if (checkString(currTransform, end, skewXDesc, sizeof(skewXDesc) / sizeof(UChar))) {
                 required = 1;
                 optional = 0;
-            } else if (currTransform[1] == 'c' && currTransform[2] == 'a' &&
-                  currTransform[3] == 'l' && currTransform[4] == 'e') {
+                type = SVGTransform::SVG_TRANSFORM_SKEWX;
+            } else if (checkString(currTransform, end, skewYDesc, sizeof(skewYDesc) / sizeof(UChar))) {
+                required = 1;
+                optional = 0;
+                type = SVGTransform::SVG_TRANSFORM_SKEWY;
+            } else if (checkString(currTransform, end, scaleDesc, sizeof(scaleDesc) / sizeof(UChar))) {
                 required = 1;
                 optional = 1;
                 type = SVGTransform::SVG_TRANSFORM_SCALE;
             } else
                 goto bail_out;
-            currTransform += 5;
-        } else if (*currTransform == 't') {
-            if (!((end - currTransform) > 9) &&
-                  currTransform[1] == 'r' && currTransform[2] == 'a' &&
-                  currTransform[3] == 'n' && currTransform[4] == 's' &&
-                  currTransform[5] == 'l' && currTransform[6] == 'a' &&
-                  currTransform[7] == 't' && currTransform[8] == 'e')
-                goto bail_out;
-            currTransform += 9;
+        } else if (checkString(currTransform, end, translateDesc, sizeof(translateDesc) / sizeof(UChar))) {
             required = 1;
             optional = 1;
             type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
-        } else if (*currTransform == 'r') {
-            if (!((end - currTransform) > 6) &&
-                  currTransform[1] == 'o' && currTransform[2] == 't' &&
-                  currTransform[3] == 'a' && currTransform[4] == 't' &&
-                  currTransform[5] == 'e')
-                goto bail_out;
-            currTransform += 6;
+        } else if (checkString(currTransform, end, rotateDesc, sizeof(rotateDesc) / sizeof(UChar))) {
             required = 1;
             optional = 2;
             type = SVGTransform::SVG_TRANSFORM_ROTATE;
-        } else if (*currTransform == 'm') {
-            if (!((end - currTransform) > 6) && currTransform[1] == 'a' &&
-                  currTransform[2] == 't' && currTransform[3] == 'r' &&
-                  currTransform[4] == 'i' && currTransform[5] == 'x')
-                goto bail_out;
-            currTransform += 6;
+        } else if (checkString(currTransform, end, matrixDesc, sizeof(matrixDesc) / sizeof(UChar))) {
             required = 6;
             optional = 0;
             type = SVGTransform::SVG_TRANSFORM_MATRIX;

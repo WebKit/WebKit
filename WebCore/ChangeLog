@@ -1,5 +1,19 @@
 2006-12-29  Rob Buis  <buis@kde.org>
 
+        Reviewed by weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12022
+        typo in SVGTransformable.cpp introduce in r18440
+     
+        Use the helper method proposed by Eric.
+
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::checkString):
+        (WebCore::):
+        (WebCore::SVGTransformable::parseTransformAttribute):
+
+2006-12-29  Rob Buis  <buis@kde.org>
+
         Reviewed by Eric.
 
         http://bugs.webkit.org/show_bug.cgi?id=12028
