@@ -24,7 +24,8 @@
 
 #ifdef SVG_SUPPORT
 #include "SVGLengthList.h"
-#include "SVGSVGElement.h"
+
+#include "SVGParserUtilities.h"
 
 namespace WebCore {
 
@@ -42,10 +43,17 @@ void SVGLengthList::parse(const String& value, const SVGStyledElement* context, 
     ExceptionCode ec = 0;
     clear(ec);
 
-    Vector<String> lengths = value.split(' ');
-    Vector<String>::const_iterator end = lengths.end();
-    for (Vector<String>::const_iterator it = lengths.begin(); it != end; ++it)
-        appendItem(SVGLength(context, mode, *it), ec);
+    const UChar* ptr = value.characters();
+    const UChar* end = ptr + value.length();
+    while (ptr < end) {
+        const UChar* start = ptr;
+        while (ptr < end && *ptr != ',' && !isWhitespace(*ptr))
+            ptr++;
+        if (ptr == start)
+            break;
+        appendItem(SVGLength(context, mode, String(start, ptr - start)), ec);
+        skipOptionalSpacesOrDelimiter(ptr, end);
+    }
 }
 
 }

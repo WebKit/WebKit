@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGFETurbulenceElementImpl_H
-#define KSVG_SVGFETurbulenceElementImpl_H
+#ifndef SVGFETurbulenceElement_H
+#define SVGFETurbulenceElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGFETurbulence.h"

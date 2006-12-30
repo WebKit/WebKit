@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGFEGaussianBlurElementImpl_H
-#define KSVG_SVGFEGaussianBlurElementImpl_H
+#ifndef SVGFEGaussianBlurElement_H
+#define SVGFEGaussianBlurElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGFEGaussianBlur.h"

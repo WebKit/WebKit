@@ -24,6 +24,8 @@
 
 #ifdef SVG_SUPPORT
 #include "SVGFETurbulenceElement.h"
+
+#include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {
@@ -66,12 +68,11 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
         else if (value == "nostitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_NOSTITCH);
     } else if (attr->name() == SVGNames::baseFrequencyAttr) {
-        Vector<String> numbers = value.split(' ');
-        setBaseFrequencyXBaseValue(numbers[0].toDouble());
-        if (numbers.size() == 1)
-            setBaseFrequencyYBaseValue(numbers[0].toDouble());
-        else
-            setBaseFrequencyYBaseValue(numbers[1].toDouble());
+        double x, y;
+        if (parseNumberOptionalNumber(value, x, y)) {
+            setBaseFrequencyXBaseValue(x);
+            setBaseFrequencyYBaseValue(y);
+        }
     } else if (attr->name() == SVGNames::seedAttr)
         setSeedBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::numOctavesAttr)

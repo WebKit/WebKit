@@ -26,6 +26,7 @@
 #include "SVGColor.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEDiffuseLighting.h"
 #include "SVGResourceFilter.h"
@@ -65,12 +66,11 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::diffuseConstantAttr)
         setDiffuseConstantBaseValue(value.toInt());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
-        Vector<String> numbers = value.split(' ');
-        setKernelUnitLengthXBaseValue(numbers[0].toDouble());
-        if (numbers.size() == 1)
-            setKernelUnitLengthYBaseValue(numbers[0].toDouble());
-        else
-            setKernelUnitLengthYBaseValue(numbers[1].toDouble());
+        double x, y;
+        if (parseNumberOptionalNumber(value, x, y)) {
+            setKernelUnitLengthXBaseValue(x);
+            setKernelUnitLengthYBaseValue(y);
+        }
     } else if (attr->name() == SVGNames::lighting_colorAttr)
         setLightingColorBaseValue(new SVGColor(value));
     else

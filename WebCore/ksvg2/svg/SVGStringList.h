@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGStringList_H
-#define KSVG_SVGStringList_H
+#ifndef SVGStringList_H
+#define SVGStringList_H
 
 #ifdef SVG_SUPPORT
 
@@ -38,11 +38,13 @@ namespace WebCore {
         
         // Internal
         void reset(const String& str);
+
+        void parse(const String& data, UChar delimiter = ',');
     };
 
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGStringList_H
+#endif // SVGStringList_H
 
 // vim:ts=4:noet

@@ -26,6 +26,7 @@
 #include "SVGFEGaussianBlurElement.h"
 
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {
@@ -55,12 +56,11 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
-        Vector<String> numbers = value.split(' ');
-        setStdDeviationXBaseValue(numbers[0].toDouble());
-        if (numbers.size() == 1)
-            setStdDeviationYBaseValue(numbers[0].toDouble());
-        else
-            setStdDeviationYBaseValue(numbers[1].toDouble());
+        double x, y;
+        if (parseNumberOptionalNumber(value, x, y)) {
+            setStdDeviationXBaseValue(x);
+            setStdDeviationYBaseValue(y);
+        }
     } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else

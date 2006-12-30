@@ -25,7 +25,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGNumberList.h"
 
-#include "SVGSVGElement.h"
+#include "SVGParserUtilities.h"
 
 namespace WebCore {
 
@@ -42,9 +42,15 @@ void SVGNumberList::parse(const String& value)
 {
     ExceptionCode ec = 0;
 
-    Vector<String> numbers = value.split(' ');
-    for (unsigned int i = 0; i < numbers.size(); i++)
-        appendItem(numbers[i].toDouble(), ec);
+    double number = 0;
+   
+    const UChar* ptr = value.characters();
+    const UChar* end = ptr + value.length();
+    while (ptr < end) {
+        if (!parseNumber(ptr, end, number))
+            return;
+        appendItem(number, ec);
+    }
 }
 
 }

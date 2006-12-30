@@ -42,20 +42,6 @@ using namespace std;
 
 namespace WebCore {
 
-// Helper function
-static void parseSeparatedList(SVGStringList* list, const String& data, UChar delimiter)
-{
-    // TODO : more error checking/reporting
-    ExceptionCode ec = 0;
-    list->clear(ec);
-
-    Vector<String> substrings = String(data).split(delimiter);
-    
-    Vector<String>::const_iterator end = substrings.end();
-    for (Vector<String>::const_iterator it = substrings.begin(); it != end; ++it)
-        list->appendItem(*it, ec);
-}
-
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
     , SVGTests()
@@ -132,22 +118,19 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
         m_href = value;
     else if (attr->name() == SVGNames::attributeNameAttr)
         m_attributeName = value;
-    else if (attr->name() == SVGNames::attributeTypeAttr)
-    {
+    else if (attr->name() == SVGNames::attributeTypeAttr) {
         if (value == "CSS")
             m_attributeType = ATTRIBUTETYPE_CSS;
         else if (value == "XML")
             m_attributeType = ATTRIBUTETYPE_XML;
         else if (value == "auto")
             m_attributeType = ATTRIBUTETYPE_AUTO;
-    }
-    else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr)
-    {
+    } else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr) {
         // Create list
         RefPtr<SVGStringList> temp = new SVGStringList();
 
         // Feed data into list
-        parseSeparatedList(temp.get(), value, ';');
+        temp->parse(value, ';');
 
         ExceptionCode ec = 0;
 
@@ -176,8 +159,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
                     clockValue = current.substring(dotPosition + 4);
                 else if (current.contains("repeat"))
                     clockValue = current.substring(dotPosition + 7);
-                else // DOM2 Event Reference
-                {
+                else { // DOM2 Event Reference
                     int plusMinusPosition = -1;
 
                     if (current.contains('+'))
@@ -203,52 +185,38 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
                 }
             }
         }
-    }
-    else if (attr->name() == SVGNames::durAttr)
-    {
+    } else if (attr->name() == SVGNames::durAttr) {
         m_simpleDuration = parseClockValue(value);
         if (!isIndefinite(m_simpleDuration))
             m_simpleDuration *= 1000.0;
-    }
-    else if (attr->name() == SVGNames::minAttr)
-    {
+    } else if (attr->name() == SVGNames::minAttr) {
         m_min = parseClockValue(value);
         if (!isIndefinite(m_min))
             m_min *= 1000.0;
-    }
-    else if (attr->name() == SVGNames::maxAttr)
-    {
+    } else if (attr->name() == SVGNames::maxAttr) {
         m_max = parseClockValue(value);
         if (!isIndefinite(m_max))
             m_max *= 1000.0;
-    }
-    else if (attr->name() == SVGNames::restartAttr)
-    {
+    } else if (attr->name() == SVGNames::restartAttr) {
         if (value == "whenNotActive")
             m_restart = RESTART_WHENNOTACTIVE;
         else if (value == "never")
             m_restart = RESTART_NEVER;
         else if (value == "always")
             m_restart = RESTART_ALWAYS;
-    }
-    else if (attr->name() == SVGNames::repeatCountAttr)
-    {
+    } else if (attr->name() == SVGNames::repeatCountAttr) {
         if (value == "indefinite")
             m_repeatCount = DBL_MAX;
         else
             m_repeatCount = value.toDouble();
-    }
-    else if (attr->name() == SVGNames::repeatDurAttr)
+    } else if (attr->name() == SVGNames::repeatDurAttr)
         m_repeatDur = value;
-    else if (attr->name() == SVGNames::fillAttr)
-    {
+    else if (attr->name() == SVGNames::fillAttr) {
         if (value == "freeze")
             m_fill = FILL_FREEZE;
         else if (value == "remove")
             m_fill = FILL_REMOVE;
-    }
-    else if (attr->name() == SVGNames::calcModeAttr)
-    {
+    } else if (attr->name() == SVGNames::calcModeAttr) {
         if (value == "discrete")
             m_calcMode = CALCMODE_DISCRETE;
         else if (value == "linear")
@@ -257,44 +225,32 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
             m_calcMode = CALCMODE_SPLINE;
         else if (value == "paced")
             m_calcMode = CALCMODE_PACED;
-    }
-    else if (attr->name() == SVGNames::valuesAttr)
-    {
+    } else if (attr->name() == SVGNames::valuesAttr) {
         m_values = new SVGStringList();
-        parseSeparatedList(m_values.get(), value, ';');
-    }
-    else if (attr->name() == SVGNames::keyTimesAttr)
-    {
+        m_values->parse(value, ';');
+    } else if (attr->name() == SVGNames::keyTimesAttr) {
         m_keyTimes = new SVGStringList();
-        parseSeparatedList(m_keyTimes.get(), value, ';');
-    }
-    else if (attr->name() == SVGNames::keySplinesAttr)
-    {
+        m_keyTimes->parse(value, ';');
+    } else if (attr->name() == SVGNames::keySplinesAttr) {
         m_keySplines = new SVGStringList();
-        parseSeparatedList(m_keySplines.get(), value, ';');
-    }
-    else if (attr->name() == SVGNames::fromAttr)
+        m_keySplines->parse(value, ';');
+    } else if (attr->name() == SVGNames::fromAttr)
         m_from = value;
     else if (attr->name() == SVGNames::toAttr)
         m_to = value;
     else if (attr->name() == SVGNames::byAttr)
         m_by = value;
-    else if (attr->name() == SVGNames::additiveAttr)
-    {
+    else if (attr->name() == SVGNames::additiveAttr) {
         if (value == "sum")
             m_additive = ADDITIVE_SUM;
         else if (value == "replace")
             m_additive = ADDITIVE_REPLACE;
-    }
-    else if (attr->name() == SVGNames::accumulateAttr)
-    {
+    } else if (attr->name() == SVGNames::accumulateAttr) {
         if (value == "sum")
             m_accumulate = ACCUMULATE_SUM;
         else if (value == "none")
             m_accumulate = ACCUMULATE_NONE;
-    }
-    else
-    {
+    } else {
         if (SVGTests::parseMappedAttribute(attr)) return;
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
         
@@ -314,8 +270,7 @@ double SVGAnimationElement::parseClockValue(const String& data) const
     int doublePointOne = parse.find(':');
     int doublePointTwo = parse.find(':', doublePointOne + 1);
 
-    if (doublePointOne != -1 && doublePointTwo != -1) // Spec: "Full clock values"
-    {
+    if (doublePointOne != -1 && doublePointTwo != -1) { // Spec: "Full clock values"
         unsigned int hours = parse.mid(0, 2).toUInt();
         unsigned int minutes = parse.mid(3, 2).toUInt();
         unsigned int seconds = parse.mid(6, 2).toUInt();
@@ -323,77 +278,59 @@ double SVGAnimationElement::parseClockValue(const String& data) const
 
         result = (3600 * hours) + (60 * minutes) + seconds;
 
-        if (parse.find('.') != -1)
-        {
+        if (parse.find('.') != -1) {
             DeprecatedString temp = parse.mid(9, 2);
             milliseconds = temp.toUInt();
             result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
         }
-    }
-    else if (doublePointOne != -1 && doublePointTwo == -1) // Spec: "Partial clock values"
-    {
+    } else if (doublePointOne != -1 && doublePointTwo == -1) { // Spec: "Partial clock values"
         unsigned int minutes = parse.mid(0, 2).toUInt();
         unsigned int seconds = parse.mid(3, 2).toUInt();
         unsigned int milliseconds = 0;
 
         result = (60 * minutes) + seconds;
 
-        if (parse.find('.') != -1)
-        {
+        if (parse.find('.') != -1) {
             DeprecatedString temp = parse.mid(6, 2);
             milliseconds = temp.toUInt();
             result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
         }
-    }
-    else // Spec: "Timecount values"
-    {
+    } else { // Spec: "Timecount values"
         int dotPosition = parse.find('.');
 
-        if (parse.endsWith("h"))
-        {
+        if (parse.endsWith("h")) {
             if (dotPosition == -1)
                 result = parse.mid(0, parse.length() - 1).toUInt() * 3600;
-            else
-            {
+            else {
                 result = parse.mid(0, dotPosition).toUInt() * 3600;
                 DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 2);
                 result += (3600.0 * temp.toUInt()) * (1 / pow(10.0, int(temp.length())));
             }
-        }
-        else if (parse.endsWith("min"))
-        {
+        } else if (parse.endsWith("min")) {
             if (dotPosition == -1)
                 result = parse.mid(0, parse.length() - 3).toUInt() * 60;
-            else
-            {
+            else {
                 result = parse.mid(0, dotPosition).toUInt() * 60;
                 DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 4);
                 result += (60.0 * temp.toUInt()) * (1 / pow(10.0, int(temp.length())));
             }
-        }
-        else if (parse.endsWith("ms"))
-        {
+        } else if (parse.endsWith("ms")) {
             if (dotPosition == -1)
                 result = parse.mid(0, parse.length() - 2).toUInt() / 1000.0;
-            else
-            {
+            else {
                 result = parse.mid(0, dotPosition).toUInt() / 1000.0;
                 DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 3);
                 result += (temp.toUInt() / 1000.0) * (1 / pow(10.0, int(temp.length())));
             }
-        }
-        else if (parse.endsWith("s"))
-        {
+        } else if (parse.endsWith("s")) {
             if (dotPosition == -1)
                 result = parse.mid(0, parse.length() - 1).toUInt();
-            else
-            {
+            else {
                 result = parse.mid(0, dotPosition).toUInt();
                 DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 2);
                 result += temp.toUInt() * (1 / pow(10.0, int(temp.length())));
             }
-        }
-        else
+        } else
             result = parse.toDouble();
     }
 
@@ -502,16 +439,13 @@ bool SVGAnimationElement::isAccumulated() const
 
 EAnimationMode SVGAnimationElement::detectAnimationMode() const
 {
-    if ((!m_from.isEmpty() && !m_to.isEmpty()) || (!m_to.isEmpty())) // to/from-to animation
-    {
+    if ((!m_from.isEmpty() && !m_to.isEmpty()) || (!m_to.isEmpty())) { // to/from-to animation
         if (!m_from.isEmpty()) // from-to animation
             return FROM_TO_ANIMATION;
         else
             return TO_ANIMATION;
-    }
-    else if ((m_from.isEmpty() && m_to.isEmpty() && !m_by.isEmpty()) ||
-            (!m_from.isEmpty() && !m_by.isEmpty())) // by/from-by animation
-    {
+    } else if ((m_from.isEmpty() && m_to.isEmpty() && !m_by.isEmpty()) ||
+            (!m_from.isEmpty() && !m_by.isEmpty())) { // by/from-by animation
         if (!m_from.isEmpty()) // from-by animation
             return FROM_BY_ANIMATION;
         else

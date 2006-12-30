@@ -27,6 +27,7 @@
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGFELightElement.h"
+#include "SVGParserUtilities.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {
@@ -68,12 +69,11 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::specularExponentAttr)
         setSpecularExponentBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
-        Vector<String> numbers = value.split(' ');
-        setKernelUnitLengthXBaseValue(numbers[0].toDouble());
-        if (numbers.size() == 1)
-            setKernelUnitLengthYBaseValue(numbers[0].toDouble());
-        else
-            setKernelUnitLengthYBaseValue(numbers[1].toDouble());
+        double x, y;
+        if (parseNumberOptionalNumber(value, x, y)) {
+            setKernelUnitLengthXBaseValue(x);
+            setKernelUnitLengthYBaseValue(y);
+        }
     } else if (attr->name() == SVGNames::lighting_colorAttr)
         setLightingColorBaseValue(new SVGColor(value));
     else
