@@ -1,3 +1,17 @@
+2006-12-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11998
+        Incorrect serialization of quotation marks in XML attributes.
+
+        Test: fast/dom/serialize-attribute.xhtml
+
+        * editing/markup.cpp:
+        (WebCore::escapeTextForMarkup): Added an isAttributeValue parameter, as the quotation mark
+        only needs to be encoded in attribute values.
+        (WebCore::startMarkup): Pass appropriate isAttributeValue to escapeTextForMarkup().
+
 2006-12-29  David Kilzer  <ddkilzer@webkit.org>
 
         Build fix for no-svg build.

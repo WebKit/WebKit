@@ -61,7 +61,7 @@ using namespace HTMLNames;
 
 static inline bool shouldSelfClose(const Node *node);
 
-static DeprecatedString escapeTextForMarkup(const DeprecatedString &in)
+static DeprecatedString escapeTextForMarkup(const DeprecatedString &in, bool isAttributeValue)
 {
     DeprecatedString s = "";
 
@@ -77,6 +77,12 @@ static DeprecatedString escapeTextForMarkup(const DeprecatedString &in)
             case '>':
                 s += "&gt;";
                 break;
+            case '"':
+                if (isAttributeValue) {
+                    s += "&quot;";
+                    break;
+                }
+                // fall through
             default:
                 s += in[i];
         }
@@ -163,7 +169,7 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             }
             bool useRenderedText = annotate && !enclosingNodeWithTag(const_cast<Node*>(node), selectTag);
             
-            DeprecatedString markup = useRenderedText ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
+            DeprecatedString markup = useRenderedText ? escapeTextForMarkup(renderedText(node, range), false) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString(), false);
             if (defaultStyle) {
                 Node *element = node->parentNode();
                 if (element) {
@@ -237,7 +243,7 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                     markup += " " + attr->name().localName().deprecatedString();
                 else
                     markup += " " + attr->name().toString().deprecatedString();
-                markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
+                markup += "=\"" + escapeTextForMarkup(value.deprecatedString(), true) + "\"";
             }
             
             if (additionalStyle.length() > 0)
