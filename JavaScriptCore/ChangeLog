@@ -1,3 +1,27 @@
+2006-12-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Geoff.
+
+        Update embedded pcre library from version 6.1 to 6.2.  From the pcre ChangeLog:
+
+        3. Added "b" to the 2nd argument of fopen() in dftables.c, for non-Unix-like
+           operating environments where this matters.
+
+        5. Named capturing subpatterns were not being correctly counted when a pattern
+           was compiled. This caused two problems: (a) If there were more than 100
+           such subpatterns, the calculation of the memory needed for the whole
+           compiled pattern went wrong, leading to an overflow error. (b) Numerical
+           back references of the form \12, where the number was greater than 9, were
+           not recognized as back references, even though there were sufficient
+           previous subpatterns.
+
+        * pcre/dftables.c: Item 3.
+        (main):
+        * pcre/pcre.h: Updated version.
+        * pcre/pcre_compile.c: Item 5.
+        (read_repeat_counts):
+        (pcre_compile2):
+
 2006-12-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brian Dash... err... Mark Rowe.

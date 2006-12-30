@@ -66,7 +66,7 @@ if (argc != 2)
   return 1;
   }
 
-f = fopen(argv[1], "w");
+f = fopen(argv[1], "wb");
 if (f == NULL)
   {
   fprintf(stderr, "dftables: failed to open %s for writing\n", argv[1]);

@@ -717,12 +717,18 @@ read_repeat_counts(const pcre_uchar *p, int *minp, int *maxp, int *errorcodeptr)
 int min = 0;
 int max = -1;
 
+/* Read the minimum value and do a paranoid check: a negative value indicates
+an integer overflow. */
+
 while ((DIGITAB(*p) & ctype_digit) != 0) min = min * 10 + *p++ - '0';
 if (min < 0 || min > 65535)
   {
     *errorcodeptr = ERR5;
     return p;
   }
+
+/* Read the maximum value if there is one, and again do a paranoid on its size.
+Also, max must not be less than min. */
 
 if (*p == '}') max = min; else
   {
@@ -3915,6 +3921,7 @@ BOOL utf8;
 BOOL class_utf8;
 #endif
 BOOL inescq = FALSE;
+BOOL capturing;
 unsigned int brastackptr = 0;
 size_t size;
 uschar *code;
@@ -4479,6 +4486,7 @@ while ((c = *(++ptr)) != 0)
     case '(':
     branch_newextra = 0;
     bracket_length = 1 + LINK_SIZE;
+    capturing = FALSE;
 
     /* Handle special forms of bracket, which all start (? */
 
@@ -4571,6 +4579,9 @@ while ((c = *(++ptr)) != 0)
 
         case 'P':
         ptr += 3;
+
+        /* Handle the definition of a named subpattern */
+
         if (*ptr == '<')
           {
           const pcre_uchar *p;    /* Don't amalgamate; some compilers */
@@ -4583,8 +4594,11 @@ while ((c = *(++ptr)) != 0)
             }
           name_count++;
           if (ptr - p > max_name_size) max_name_size = INT_CAST(ptr - p);
+          capturing = TRUE;   /* Named parentheses are always capturing */
           break;
           }
+
+        /* Handle back references and recursive calls to named subpatterns */
 
         if (*ptr == '=' || *ptr == '>')
           {
@@ -4771,18 +4785,24 @@ while ((c = *(++ptr)) != 0)
           continue;
           }
 
-        /* If options were terminated by ':' control comes here. Fall through
-        to handle the group below. */
+        /* If options were terminated by ':' control comes here. This is a
+        non-capturing group with an options change. There is nothing more that
+        needs to be done because "capturing" is already set FALSE by default;
+        we can just fall through. */
+
         }
       }
 
-    /* Extracting brackets must be counted so we can process escapes in a
-    Perlish way. If the number exceeds EXTRACT_BASIC_MAX we are going to
-    need an additional 3 bytes of store per extracting bracket. However, if
-    PCRE_NO_AUTO)CAPTURE is set, unadorned brackets become non-capturing, so we
-    must leave the count alone (it will aways be zero). */
+    /* Ordinary parentheses, not followed by '?', are capturing unless
+    PCRE_NO_AUTO_CAPTURE is set. */
 
-    else if ((options & PCRE_NO_AUTO_CAPTURE) == 0)
+    else capturing = (options & PCRE_NO_AUTO_CAPTURE) == 0;
+
+    /* Capturing brackets must be counted so we can process escapes in a
+    Perlish way. If the number exceeds EXTRACT_BASIC_MAX we are going to need
+    an additional 3 bytes of memory per capturing bracket. */
+
+    if (capturing)
       {
       bracount++;
       if (bracount > EXTRACT_BASIC_MAX) bracket_length += 3;
