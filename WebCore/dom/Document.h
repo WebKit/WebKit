@@ -683,7 +683,6 @@ protected:
     bool m_loadingSheet;
     bool visuallyOrdered;
     bool m_bParsing;
-    bool m_bAllDataReceived;
     bool m_docChanged;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;

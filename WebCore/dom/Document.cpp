@@ -315,7 +315,6 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     m_docLoader = new DocLoader(v ? v->frame() : 0, this);
 
     visuallyOrdered = false;
-    m_loadingSheet = false;
     m_bParsing = false;
     m_docChanged = false;
     m_tokenizer = 0;
@@ -1483,7 +1482,6 @@ void Document::setCSSStyleSheet(const String &url, const String& charset, const 
 {
     m_sheet = new CSSStyleSheet(this, url, charset);
     m_sheet->parseString(sheet);
-    m_loadingSheet = false;
 
     updateStyleSelector();
 }
