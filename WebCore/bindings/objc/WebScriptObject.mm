@@ -49,7 +49,7 @@ static void _didExecute(WebScriptObject *obj)
     ExecState* exec = [obj _rootObject]->interpreter()->globalExec();
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
-        func(exec, static_cast<JSObject*>([obj _rootObject]->rootObjectImp()));
+        func(exec, static_cast<JSObject*>([obj _rootObject]->interpreter()->globalObject()));
 }
 
 - (void)_initializeWithObjectImp:(JSObject*)imp originRootObject:(const RootObject*)originRootObject rootObject:(const RootObject*)rootObject

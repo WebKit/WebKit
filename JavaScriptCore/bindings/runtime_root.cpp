@@ -282,10 +282,11 @@ void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativ
     CFRunLoopAddSource(RootObject::_runLoop, RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
 }
 #endif
-// Must be called when the applet is shutdown.
-void RootObject::removeAllNativeReferences ()
+
+// Destroys the RootObject and unprotects all JSObjects associated with it.
+void RootObject::destroy()
 {
-    ReferencesSet* referencesSet = getReferencesSet (this);
+    ReferencesSet* referencesSet = getReferencesSet(this);
     
     if (referencesSet) {
         ReferencesSet::iterator end = referencesSet->end();
@@ -297,13 +298,9 @@ void RootObject::removeAllNativeReferences ()
         ReferencesByRootMap* refsByRoot = getReferencesByRootMap();
         refsByRoot->remove(this);
         delete referencesSet;
-        delete this;
     }
-}
 
-void RootObject::setInterpreter (Interpreter* interpreter)
-{
-    _interpreter = interpreter;
+    delete this;
 }
 
 } } // namespace KJS::Bindings

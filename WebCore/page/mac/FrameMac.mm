@@ -133,7 +133,7 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
 FrameMac::FrameMac(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
     : Frame(page, ownerElement, frameLoaderClient)
     , _bridge(nil)
-    , _bindingRoot(0)
+    , _bindingRootObject(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
 {
@@ -430,15 +430,12 @@ RootObject* FrameMac::rootObjectForDOM()
 RootObject* FrameMac::bindingRootObject()
 {
     assert(settings()->isJavaScriptEnabled());
-    if (!_bindingRoot) {
+    if (!_bindingRootObject) {
         JSLock lock;
-        _bindingRoot = new RootObject(0);    // The root gets deleted by JavaScriptCore.
-        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
-        _bindingRoot->setRootObjectImp (win);
-        _bindingRoot->setInterpreter(scriptProxy()->interpreter());
-        addPluginRootObject (_bindingRoot);
+        _bindingRootObject = new RootObject(0, scriptProxy()->interpreter()); // Deleted by cleanupPluginObjects().
+        addPluginRootObject(_bindingRootObject);
     }
-    return _bindingRoot;
+    return _bindingRootObject;
 }
 
 WebScriptObject *FrameMac::windowScriptObject()
@@ -784,10 +781,10 @@ void FrameMac::cleanupPluginObjects()
     
     unsigned count = m_rootObjects.size();
     for (unsigned i = 0; i < count; i++)
-        m_rootObjects[i]->removeAllNativeReferences();
+        m_rootObjects[i]->destroy();
     m_rootObjects.clear();
     
-    _bindingRoot = 0;
+    _bindingRootObject = 0;
     HardRelease(_windowScriptObject);
     _windowScriptObject = 0;
     

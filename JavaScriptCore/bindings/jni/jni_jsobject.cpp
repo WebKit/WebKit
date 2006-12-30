@@ -299,26 +299,25 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
     if (nativeHandle == UndefinedHandle)
         return nativeHandle;
-    else if (rootObjectForImp(jlong_to_impptr(nativeHandle))){
+
+    if (rootObjectForImp(jlong_to_impptr(nativeHandle)))
         return nativeHandle;
-    }
 
     FindRootObjectForNativeHandleFunctionPtr aFunc = RootObject::findRootObjectForNativeHandleFunction();
-    if (aFunc) {
-        Bindings::RootObject *root = aFunc(jlong_to_ptr(nativeHandle));
-        // If root is !NULL We must have been called via netscape.javascript.JavaJSObject.getWindow(),
-        // otherwise we are being called after creating a JavaJSObject in
-        // JavaJSObject::convertValueToJObject().
-        if (root) {
-            addNativeReference (root, root->rootObjectImp());        
-            return ptr_to_jlong(root->rootObjectImp());
-        }
-        else {
-            return nativeHandle;
-        }
+    if (!aFunc)
+        return ptr_to_jlong(0);
+
+    Bindings::RootObject* rootObject = aFunc(jlong_to_ptr(nativeHandle));
+    // If rootObject is !NULL We must have been called via netscape.javascript.JavaJSObject.getWindow(),
+    // otherwise we are being called after creating a JavaJSObject in
+    // JavaJSObject::convertValueToJObject().
+    if (rootObject) {
+        JSObject* globalObject = rootObject->interpreter()->globalObject();
+        addNativeReference(rootObject, globalObject);
+        return ptr_to_jlong(globalObject);
     }
-    
-    return ptr_to_jlong(0);
+
+    return nativeHandle;
 }
 
 jobject JavaJSObject::convertValueToJObject (JSValue *value) const

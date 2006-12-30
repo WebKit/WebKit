@@ -147,8 +147,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
                 
             const RootObject* rootObject = rootObjectForInterpreter(interpreter);
             if (!rootObject) {
-                RootObject* newRootObject = new RootObject(0);
-                newRootObject->setInterpreter (interpreter);
+                RootObject* newRootObject = new RootObject(0, interpreter);
                 rootObject = newRootObject;
             }
 

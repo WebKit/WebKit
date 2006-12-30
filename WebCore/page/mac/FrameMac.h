@@ -122,7 +122,7 @@ public:
 private:    
     NSImage* imageFromRect(NSRect) const;
 
-    KJS::Bindings::RootObject* _bindingRoot; // The root object used for objects bound outside the context of a plugin.
+    KJS::Bindings::RootObject* _bindingRootObject; // The root object used for objects bound outside the context of a plugin.
     Vector<KJS::Bindings::RootObject*> m_rootObjects;
     WebScriptObject* _windowScriptObject;
     NPObject* _windowScriptNPObject;

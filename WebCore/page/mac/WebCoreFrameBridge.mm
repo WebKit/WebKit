@@ -1696,10 +1696,8 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (RootObject *)rootObjectForView:(NSView *)aView
 {
     FrameMac *frame = [self _frame];
-    RootObject* rootObject = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
-    rootObject->setRootObjectImp(Window::retrieveWindow(frame));
-    rootObject->setInterpreter(frame->scriptProxy()->interpreter());
-    frame->addPluginRootObject(rootObject);
+    RootObject* rootObject = new RootObject(aView, frame->scriptProxy()->interpreter());
+    frame->addPluginRootObject(rootObject); // The Frame owns the RootObject.
     return rootObject;
 }
 

@@ -139,12 +139,11 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
     return jsUndefined();
 }
 
-static id convertValueToObjcObject (ExecState* exec, JSValue* value)
+static id convertValueToObjcObject(ExecState* exec, JSValue* value)
 {
-    const Bindings::RootObject* rootObject = rootObjectForInterpreter(exec->dynamicInterpreter());
+    const RootObject* rootObject = rootObjectForInterpreter(exec->dynamicInterpreter());
     if (!rootObject) {
-        Bindings::RootObject* newRootObject = new Bindings::RootObject(0);
-        newRootObject->setInterpreter(exec->dynamicInterpreter());
+        RootObject* newRootObject = new RootObject(0, exec->dynamicInterpreter());
         rootObject = newRootObject;
     }
     return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject rootObject:rootObject ];
