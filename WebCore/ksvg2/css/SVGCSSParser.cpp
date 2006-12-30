@@ -28,6 +28,7 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "cssparser.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
@@ -291,10 +292,14 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     /* shorthand properties */
     case SVGCSS_PROP_MARKER:
     {
-        const int properties[3] = { SVGCSS_PROP_MARKER_START,
-                                    SVGCSS_PROP_MARKER_MID,
-                                    SVGCSS_PROP_MARKER_END };
-        return parseShorthand(propId, properties, 3, important);
+        if (!parseValue(SVGCSS_PROP_MARKER_START, important))
+            return false;
+        CSSValue *value = parsedProperties[numParsedProperties - 1]->value();
+        m_implicitShorthand = true;
+        addProperty(SVGCSS_PROP_MARKER_MID, value, important);
+        addProperty(SVGCSS_PROP_MARKER_END, value, important);
+        m_implicitShorthand = false;
+        return true;
     }
     default:
         return false;
