@@ -46,7 +46,7 @@ SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , DeprecatedSVGPathParser()
+    , SVGPathParser()
     , m_pathLength(0.0)
 {
 }
@@ -344,7 +344,8 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::dAttr) {
         ExceptionCode ec;
         pathSegList()->clear(ec);
-        parseSVG(attr->value().deprecatedString(), true);
+        if (!parseSVG(attr->value(), true))
+            pathSegList()->clear(ec);
     } else {
         if (SVGTests::parseMappedAttribute(attr)) return;
         if (SVGLangSpace::parseMappedAttribute(attr)) return;

@@ -28,9 +28,9 @@
 #include "SVGAnimatedPoints.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
+#include "SVGParserUtilities.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
-#include "svgpathparser.h"
 
 namespace WebCore
 {

@@ -90,7 +90,7 @@ namespace WebCore
     {
     public:
         virtual ~SVGPathParser() { }
-        void parseSVG(const String &d, bool process = false);
+        bool parseSVG(const String &d, bool process = false);
 
     protected:
         virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true) = 0;

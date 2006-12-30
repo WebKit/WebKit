@@ -1961,8 +1961,6 @@
 		A88AD4A9095248F0001DD196 /* SVGPaint.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F88B089701F300BA5114 /* SVGPaint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD4AA095248F0001DD196 /* SVGPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F88C089701F300BA5114 /* SVGPathElement.cpp */; };
 		A88AD4AB095248F0001DD196 /* SVGPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F88D089701F300BA5114 /* SVGPathElement.h */; };
-		A88AD4AC095248F0001DD196 /* svgpathparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F88E089701F300BA5114 /* svgpathparser.cpp */; };
-		A88AD4AD095248F0001DD196 /* svgpathparser.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F88F089701F300BA5114 /* svgpathparser.h */; };
 		A88AD4AE095248F0001DD196 /* SVGPathSegArc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F890089701F300BA5114 /* SVGPathSegArc.cpp */; };
 		A88AD4AF095248F0001DD196 /* SVGPathSegArc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F891089701F300BA5114 /* SVGPathSegArc.h */; };
 		A88AD4B0095248F0001DD196 /* SVGPathSegClosePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F892089701F300BA5114 /* SVGPathSegClosePath.cpp */; };
@@ -4931,8 +4929,6 @@
 		A8C0F88B089701F300BA5114 /* SVGPaint.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGPaint.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F88C089701F300BA5114 /* SVGPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F88D089701F300BA5114 /* SVGPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F88E089701F300BA5114 /* svgpathparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svgpathparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F88F089701F300BA5114 /* svgpathparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = svgpathparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F890089701F300BA5114 /* SVGPathSegArc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegArc.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F891089701F300BA5114 /* SVGPathSegArc.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegArc.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F892089701F300BA5114 /* SVGPathSegClosePath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegClosePath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8307,8 +8303,6 @@
 				B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */,
 				A8C0F88C089701F300BA5114 /* SVGPathElement.cpp */,
 				A8C0F88D089701F300BA5114 /* SVGPathElement.h */,
-				A8C0F88E089701F300BA5114 /* svgpathparser.cpp */,
-				A8C0F88F089701F300BA5114 /* svgpathparser.h */,
 				A8C0F89D089701F300BA5114 /* SVGPathSeg.h */,
 				A8C0F890089701F300BA5114 /* SVGPathSegArc.cpp */,
 				A8C0F891089701F300BA5114 /* SVGPathSegArc.h */,
@@ -9552,7 +9546,6 @@
 				A88AD4A7095248F0001DD196 /* SVGNumberList.h in Headers */,
 				A88AD4A9095248F0001DD196 /* SVGPaint.h in Headers */,
 				A88AD4AB095248F0001DD196 /* SVGPathElement.h in Headers */,
-				A88AD4AD095248F0001DD196 /* svgpathparser.h in Headers */,
 				A88AD4AF095248F0001DD196 /* SVGPathSegArc.h in Headers */,
 				A88AD4B1095248F0001DD196 /* SVGPathSegClosePath.h in Headers */,
 				A88AD4B3095248F0001DD196 /* SVGPathSegCurvetoCubic.h in Headers */,
@@ -11139,7 +11132,6 @@
 				A88AD4A6095248F0001DD196 /* SVGNumberList.cpp in Sources */,
 				A88AD4A8095248F0001DD196 /* SVGPaint.cpp in Sources */,
 				A88AD4AA095248F0001DD196 /* SVGPathElement.cpp in Sources */,
-				A88AD4AC095248F0001DD196 /* svgpathparser.cpp in Sources */,
 				A88AD4AE095248F0001DD196 /* SVGPathSegArc.cpp in Sources */,
 				A88AD4B0095248F0001DD196 /* SVGPathSegClosePath.cpp in Sources */,
 				A88AD4B2095248F0001DD196 /* SVGPathSegCurvetoCubic.cpp in Sources */,

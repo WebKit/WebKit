@@ -1,3 +1,16 @@
+2006-12-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Adapted testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12004
+        Webkit doesnt handle omitting M at the start of path syntax well
+
+        * svg/custom/path-bad-data-expected.checksum:
+        * svg/custom/path-bad-data-expected.png:
+        * svg/custom/path-bad-data-expected.txt:
+        * svg/custom/path-bad-data.svg:
+
 2006-12-30  Rémi Zara  <remi_zara@mac.com>
 
         Reviewed by Darin.

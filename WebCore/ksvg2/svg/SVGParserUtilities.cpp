@@ -132,10 +132,10 @@ void SVGPolyParser::parsePoints(const String& s) const
     }
 }
 
-void SVGPathParser::parseSVG(const String& s, bool process)
+bool SVGPathParser::parseSVG(const String& s, bool process)
 {
     if (s.isEmpty())
-        return;
+        return false;
 
     const UChar* ptr = s.characters();
     const UChar* end = ptr + s.length();
@@ -145,6 +145,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
     bool closed = true;
     skipOptionalSpaces(ptr, end); // skip any leading spaces
     char command = *(ptr++), lastCommand = ' ';
+    if (command != 'm' && command != 'M') // path must start with moveto
+        return false;
 
     subpathx = subpathy = curx = cury = contrlx = contrly = 0.0;
     while (1) {
@@ -158,10 +160,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'M':
             {
-                if (!parseNumber(ptr, end, tox))
-                    break;
-                if (!parseNumber(ptr, end, toy))
-                    break;
+                if (!parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
 
                 if (process) {
                     subpathx = curx = relative ? curx + tox : tox;
@@ -177,8 +177,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'L':
             {
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
 
                 if (process) {
                     curx = relative ? curx + tox : tox;
@@ -192,7 +192,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             }
             case 'h':
             {
-                parseNumber(ptr, end, tox);
+                if (!parseNumber(ptr, end, tox))
+                    return false;
                 if (process) {
                     curx = curx + tox;
                     svgLineTo(curx, cury);
@@ -203,7 +204,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             }
             case 'H':
             {
-                parseNumber(ptr, end, tox);
+                if (!parseNumber(ptr, end, tox))
+                    return false;
                 if (process) {
                     curx = tox;
                     svgLineTo(curx, cury);
@@ -214,7 +216,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             }
             case 'v':
             {
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, toy))
+                    return false;
                 if (process) {
                     cury = cury + toy;
                     svgLineTo(curx, cury);
@@ -225,7 +228,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             }
             case 'V':
             {
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, toy))
+                    return false;
                 if (process) {
                     cury = toy;
                     svgLineTo(curx, cury);
@@ -250,12 +254,10 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'C':
             {
-                parseNumber(ptr, end, x1);
-                parseNumber(ptr, end, y1);
-                parseNumber(ptr, end, x2);
-                parseNumber(ptr, end, y2);
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, x1)  || !parseNumber(ptr, end, y1) ||
+                    !parseNumber(ptr, end, x2)  || !parseNumber(ptr, end, y2) ||
+                    !parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
 
                 if (process) {
                     px1 = relative ? curx + x1 : x1;
@@ -281,10 +283,10 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'S':
             {
-                parseNumber(ptr, end, x2);
-                parseNumber(ptr, end, y2);
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, x2)  || !parseNumber(ptr, end, y2) ||
+                    !parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
+
                 if (!(lastCommand == 'c' || lastCommand == 'C' ||
                      lastCommand == 's' || lastCommand == 'S')) {
                     contrlx = curx;
@@ -314,10 +316,9 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'Q':
             {
-                parseNumber(ptr, end, x1);
-                parseNumber(ptr, end, y1);
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, x1)  || !parseNumber(ptr, end, y1) ||
+                    !parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
 
                 if (process) {
                     px1 = relative ? (curx + 2 * (x1 + curx)) * (1.0 / 3.0) : (curx + 2 * x1) * (1.0 / 3.0);
@@ -342,8 +343,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 relative = true;
             case 'T':
             {
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
                 if (!(lastCommand == 'q' || lastCommand == 'Q' ||
                      lastCommand == 't' || lastCommand == 'T')) {
                     contrlx = curx;
@@ -378,15 +379,15 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             {
                 bool largeArc, sweep;
                 double angle, rx, ry;
-                parseNumber(ptr, end, rx);
-                parseNumber(ptr, end, ry);
-                parseNumber(ptr, end, angle);
-                parseNumber(ptr, end, tox);
+                if (!parseNumber(ptr, end, rx)    || !parseNumber(ptr, end, ry) ||
+                    !parseNumber(ptr, end, angle) || !parseNumber(ptr, end, tox))
+                    return false;
                 largeArc = tox == 1;
-                parseNumber(ptr, end, tox);
+                if (!parseNumber(ptr, end, tox))
+                    return false;
                 sweep = tox == 1;
-                parseNumber(ptr, end, tox);
-                parseNumber(ptr, end, toy);
+                if (!parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                    return false;
 
                 // Spec: radii are nonnegative numbers
                 rx = fabs(rx);
@@ -400,12 +401,12 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             }
             default:
                 // FIXME: An error should go to the JavaScript console, or the like.
-                return;
+                return false;
         }
         lastCommand = command;
 
         if (ptr >= end)
-            return;
+            return true;
 
         if (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) {
             // there are still coords in this command
@@ -413,8 +414,7 @@ void SVGPathParser::parseSVG(const String& s, bool process)
                 command = 'L';
             else if (command == 'm')
                 command = 'l';
-        }
-        else
+        } else
             command = *(ptr++);
 
         if (lastCommand != 'C' && lastCommand != 'c' &&
@@ -425,6 +425,8 @@ void SVGPathParser::parseSVG(const String& s, bool process)
             contrly = cury;
         }
     }
+
+    return false;
 }
 
 // This works by converting the SVG arc to "simple" beziers.

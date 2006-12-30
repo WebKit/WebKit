@@ -65,7 +65,7 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::pointsAttr) {
         ExceptionCode ec = 0;
         points()->clear(ec);
-        parsePoints(attr->value().deprecatedString());
+        parsePoints(attr->value());
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

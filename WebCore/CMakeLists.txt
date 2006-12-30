@@ -611,7 +611,6 @@ set (SVG_SOURCES
     ksvg2/svg/SVGNumberList.cpp
     ksvg2/svg/SVGPaint.cpp
     ksvg2/svg/SVGPathElement.cpp
-    ksvg2/svg/svgpathparser.cpp
     ksvg2/svg/SVGParserUtilities.cpp
     ksvg2/svg/SVGPathSegArc.cpp
     ksvg2/svg/SVGPathSegClosePath.cpp

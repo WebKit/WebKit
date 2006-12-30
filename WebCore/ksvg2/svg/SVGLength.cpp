@@ -31,7 +31,7 @@
 #include "RenderView.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
-#include "svgpathparser.h"
+#include "SVGParserUtilities.h"
 
 #include <math.h>
 #include <wtf/Assertions.h>
@@ -243,10 +243,10 @@ void SVGLength::setValueAsString(const String& s)
         return;
 
     double convertedNumber = 0;
-    DeprecatedString depString = s.deprecatedString();
-    const char* start = depString.latin1();
-    parseCoord(start, convertedNumber);
-    
+    const UChar* ptr = s.characters();
+    const UChar* end = ptr + s.length();
+    parseNumber(ptr, end, convertedNumber, false);
+
     m_unit = storeUnit(extractMode(m_unit), stringToLengthType(s));
     m_valueInSpecifiedUnits = convertedNumber;
 }

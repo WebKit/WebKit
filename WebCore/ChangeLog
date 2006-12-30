@@ -1,3 +1,28 @@
+2006-12-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12004
+        Webkit doesnt handle omitting M at the start of path syntax well
+
+        Improve path parsing error handling.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString):
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG):
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPolyElement.h:
+        * ksvg2/svg/svgpathparser.cpp: Removed.
+        * ksvg2/svg/svgpathparser.h: Removed.
+
 2006-12-30  Rémi Zara  <remi_zara@mac.com>
 
         Reviewed by Darin.
