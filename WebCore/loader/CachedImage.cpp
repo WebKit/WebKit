@@ -147,7 +147,7 @@ inline void CachedImage::createImage()
             m_image = new PDFDocumentImage;
         else
 #endif
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #if PLATFORM(MAC)
         if (m_response.mimeType() == "image/svg+xml")
             m_image = new SVGImage(this);

@@ -1,3 +1,14 @@
+2006-12-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Build fix for no-svg build.
+
+        Change #if SVG_SUPPORT to #ifdef SVG_SUPPORT.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+
 2006-12-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brian Dash... err... Mark Rowe.
