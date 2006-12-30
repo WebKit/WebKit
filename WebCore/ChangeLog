@@ -1,3 +1,19 @@
+2006-12-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12034
+        Adapt preserveAspectRatio parsing to SVGParserUtilities
+
+        Use the new SVGParserUtilities methods to parse prserveAspectRatio attribute.
+
+        * ksvg2/svg/SVGParserUtilities.h:
+        (WebCore::checkString):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::):
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGTransformable.cpp:
+
 2006-12-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Alexey.

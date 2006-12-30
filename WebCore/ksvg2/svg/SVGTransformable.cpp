@@ -95,16 +95,6 @@ int parseTransformParamList(const UChar*& ptr, const UChar* end, double* x, int 
     return requiredParams + optionalParams;
 }
 
-static inline bool checkString(const UChar*& currTransform, const UChar*& end, const UChar* name, int length)
-{
-    if ((end - currTransform) < (length + 1))
-        return false;
-    if (memcmp(name, currTransform, sizeof(UChar) * length))
-        return false;
-    currTransform += length;
-    return true;
-}
-
 static const UChar skewXDesc[] =  {'s','k','e','w', 'X'};
 static const UChar skewYDesc[] =  {'s','k','e','w', 'Y'};
 static const UChar scaleDesc[] =  {'s','c','a','l', 'e'};

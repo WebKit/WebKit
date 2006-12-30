@@ -55,6 +55,16 @@ namespace WebCore
         return ptr < end;
     }
 
+    static inline bool checkString(const UChar*& ptr, const UChar*& end, const UChar* name, int length)
+    {
+        if ((end - ptr) < length)
+            return false;
+        if (memcmp(name, ptr, sizeof(UChar) * length))
+            return false;
+        ptr += length;
+        return true;
+    }
+
     class SVGPolyParser
     {
     public:
