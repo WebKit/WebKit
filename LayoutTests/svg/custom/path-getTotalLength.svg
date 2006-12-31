@@ -1,34 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-    <rect id='result' fill='orange' width='100px' height='100px' />
-    <div id="path_test_area" transform="translate(100,0)" />
-        
-    <foreignObject y="150" width="600" height="400">
-    <html xmlns="http://www.w3.org/1999/xhtml">
-      <body>
-        <div id="log">
-        </div>
-      </body>
-    </html>
-    </foreignObject>
+    <g id='log' />
     <script>
     <![CDATA[
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+        
         var svgNS = "http://www.w3.org/2000/svg";
         var pathElement = document.createElementNS(svgNS, 'path');
         var errorTolerance = .1;
         
-        function log(string) {
-          var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
-          newDiv.textContent = string;
-          document.getElementById('log').appendChild(newDiv);
+        var logOffset = 20;
+        function result(didPass, string) {
+          var newText = document.createElementNS(svgNS, "text");
+          newText.setAttribute("x", 10);
+          newText.setAttribute("y", logOffset);
+          logOffset += 20;
+          newText.textContent = string;
+          var newTspan = document.createElementNS(svgNS, "tspan");
+          if (didPass) {
+            newTspan.textContent = "PASS: ";
+            newTspan.style.fill = "green";
+          } else {
+            newTspan.textContent = "FAIL: ";
+            newTspan.style.fill = "red";
+          }
+          newText.insertBefore(newTspan, newText.firstChild);
+          document.getElementById('log').appendChild(newText);
         }
         
         function expectLength(path, expectedLength) {
             pathElement.setAttribute("d", path);
-            var actualLength = pathElement.getTotalLength();
-            if (Math.abs(actualLength - expectedLength) < errorTolerance)
-                log("PASS: \"" + path + "\" = " + actualLength);
-            else
-                log("FAIL: \"" + path + "\" expected: " + expectedLength + " actual: " + actualLength);
+            
+            var actualLength;
+            try {
+                actualLength = pathElement.getTotalLength();
+                if (Math.abs(actualLength - expectedLength) < errorTolerance)
+                    result(true, path + "\" = " + actualLength);
+                else
+                    result(false, path + "\" expected: " + expectedLength + " actual: " + actualLength);
+            } catch(e) {
+                result(false, path + "\" expected: " + expectedLength + " got exception: " + e);
+            }
         }
         
         var errorCount = 0;
@@ -38,8 +50,6 @@
         expectLength('M 0 0 l 100 0 l 0 100 l -100 0 Z', 400);
         expectLength('M 0 0 t 0 100', 100);
         expectLength('M 0 0 Q 55 50 100 100', 141.4);  // I'm not sure if this is actually right
-        
-        document.getElementById('result').style.fill = 'green';
     ]]>
     </script>
 </svg>

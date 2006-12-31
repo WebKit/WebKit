@@ -1,20 +1,5 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (0,0) size 100x100
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      RenderForeignObject {foreignObject} at (0,0) size 600x400
-        RenderBlock {html} at (0,0) size 600x72
-          RenderBody {body} at (8,0) size 584x72
-            RenderBlock {div} at (0,0) size 584x72
-              RenderBlock {div} at (0,0) size 584x18
-                RenderText {#text} at (0,0) size 332x18
-                  text run at (0,0) width 332: "PASS: \"M 0 0 L 100 0 L 100 100 L 0 100 Z\" = 400"
-              RenderBlock {div} at (0,18) size 584x18
-                RenderText {#text} at (0,0) size 303x18
-                  text run at (0,0) width 303: "PASS: \"M 0 0 l 100 0 l 0 100 l -100 0 Z\" = 400"
-              RenderBlock {div} at (0,36) size 584x18
-                RenderText {#text} at (0,0) size 188x18
-                  text run at (0,0) width 188: "PASS: \"M 0 0 t 0 100\" = 100"
-              RenderBlock {div} at (0,54) size 584x18
-                RenderText {#text} at (0,0) size 360x18
-                  text run at (0,0) width 360: "PASS: \"M 0 0 Q 55 50 100 100\" = 141.4804229736328"
+PASS: M 0 0 L 100 0 L 100 100 L 0 100 Z" = 400
+PASS: M 0 0 l 100 0 l 0 100 l -100 0 Z" = 400
+PASS: M 0 0 t 0 100" = 100
+PASS: M 0 0 Q 55 50 100 100" = 141.4804229736328
+
