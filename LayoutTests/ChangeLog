@@ -1,3 +1,15 @@
+2006-12-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12037
+          For relatively positioned boxes in an RTL block, 'right' should win over 'left' if both are not 'auto'
+
+        * fast/block/positioning/relative-overconstrained-expected.checksum: Added.
+        * fast/block/positioning/relative-overconstrained-expected.png: Added.
+        * fast/block/positioning/relative-overconstrained-expected.txt: Added.
+        * fast/block/positioning/relative-overconstrained.html: Added.
+
 2006-12-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

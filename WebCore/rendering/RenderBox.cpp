@@ -969,12 +969,14 @@ void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
 
 int RenderBox::relativePositionOffsetX() const
 {
-    int tx = 0;
-    if(!style()->left().isAuto())
-        tx = style()->left().calcValue(containingBlockWidth());
-    else if(!style()->right().isAuto())
-        tx = -style()->right().calcValue(containingBlockWidth());
-    return tx;
+    if (!style()->left().isAuto()) {
+        if (!style()->right().isAuto() && containingBlock()->style()->direction() == RTL)
+            return -style()->right().calcValue(containingBlockWidth());
+        return style()->left().calcValue(containingBlockWidth());
+    }
+    if(!style()->right().isAuto())
+        return -style()->right().calcValue(containingBlockWidth());
+    return 0;
 }
 
 int RenderBox::relativePositionOffsetY() const
