@@ -24,13 +24,13 @@
 #ifdef SVG_SUPPORT
 #include "SVGZoomAndPan.h"
 
+#include "MappedAttribute.h"
 #include "SVGNames.h"
-#include "SVGSVGElement.h"
 
 namespace WebCore {
 
 SVGZoomAndPan::SVGZoomAndPan()
-    : m_zoomAndPan(SVGSVGElement::SVG_ZOOMANDPAN_MAGNIFY)
+    : m_zoomAndPan(SVG_ZOOMANDPAN_MAGNIFY)
 {
 }
 
@@ -53,9 +53,9 @@ bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::zoomAndPanAttr) {
         if (value == "disable")
-            setZoomAndPan(SVGSVGElement::SVG_ZOOMANDPAN_DISABLE);
+            setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
         else if (value == "magnify")
-            setZoomAndPan(SVGSVGElement::SVG_ZOOMANDPAN_MAGNIFY);
+            setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
         return true;
     }
 

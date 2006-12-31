@@ -30,6 +30,12 @@ namespace WebCore {
 
     class SVGZoomAndPan {
     public:
+        enum SVGZoomAndPanType {
+            SVG_ZOOMANDPAN_UNKNOWN = 0,
+            SVG_ZOOMANDPAN_DISABLE = 1,
+            SVG_ZOOMANDPAN_MAGNIFY = 2
+        };
+
         SVGZoomAndPan();
         virtual ~SVGZoomAndPan();
 

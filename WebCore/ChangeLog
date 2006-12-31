@@ -1,3 +1,18 @@
+2006-12-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Move the SVGZoomAndPanType enum out of SVGSVGElement and
+        SVGViewElement and into SVGZoomAndPan where it belongs.
+
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGViewElement.h:
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::SVGZoomAndPan):
+        (WebCore::SVGZoomAndPan::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::):
+
 2006-12-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
