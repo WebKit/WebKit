@@ -32,7 +32,7 @@ namespace WebCore
     class SVGPathSegArcAbs : public SVGPathSeg
     {
     public:
-        SVGPathSegArcAbs();
+        SVGPathSegArcAbs(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag);
         virtual ~SVGPathSegArcAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
@@ -74,7 +74,7 @@ namespace WebCore
     class SVGPathSegArcRel : public SVGPathSeg
     {
     public:
-        SVGPathSegArcRel();
+        SVGPathSegArcRel(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag);
         virtual ~SVGPathSegArcRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }

@@ -32,7 +32,7 @@ namespace WebCore
     class SVGPathSegMovetoAbs : public SVGPathSeg
     { 
     public:
-        SVGPathSegMovetoAbs();
+        SVGPathSegMovetoAbs(double x, double y);
         virtual ~SVGPathSegMovetoAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
@@ -53,7 +53,7 @@ namespace WebCore
     class SVGPathSegMovetoRel : public SVGPathSeg
     { 
     public:
-        SVGPathSegMovetoRel();
+        SVGPathSegMovetoRel(double x, double y);
         virtual ~SVGPathSegMovetoRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }

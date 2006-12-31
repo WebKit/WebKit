@@ -32,7 +32,7 @@ namespace WebCore
     class SVGPathSegLinetoAbs : public SVGPathSeg
     { 
     public:
-        SVGPathSegLinetoAbs();
+        SVGPathSegLinetoAbs(double x, double y);
         virtual ~SVGPathSegLinetoAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
@@ -53,7 +53,7 @@ namespace WebCore
     class SVGPathSegLinetoRel : public SVGPathSeg
     { 
     public:
-        SVGPathSegLinetoRel();
+        SVGPathSegLinetoRel(double x, double y);
         virtual ~SVGPathSegLinetoRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_REL; }

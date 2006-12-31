@@ -29,10 +29,11 @@
 
 namespace WebCore {
 
-SVGPathSegMovetoAbs::SVGPathSegMovetoAbs()
+SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(double x, double y)
     : SVGPathSeg()
+    , m_x(x)
+    , m_y(y)
 {
-    m_x = m_y = 0.0;
 }
 
 SVGPathSegMovetoAbs::~SVGPathSegMovetoAbs()
@@ -62,10 +63,11 @@ double SVGPathSegMovetoAbs::y() const
 
 
 
-SVGPathSegMovetoRel::SVGPathSegMovetoRel()
+SVGPathSegMovetoRel::SVGPathSegMovetoRel(double x, double y)
     : SVGPathSeg()
+    , m_x(x)
+    , m_y(y)
 {
-    m_x = m_y = 0.0;
 }
 
 SVGPathSegMovetoRel::~SVGPathSegMovetoRel()

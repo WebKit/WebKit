@@ -28,10 +28,13 @@
 
 namespace WebCore {
 
-SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs()
+SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs(double x, double y, double x2, double y2)
     : SVGPathSeg()
+    , m_x(x)
+    , m_y(y)
+    , m_x2(x2)
+    , m_y2(y2)
 {
-    m_x = m_y = m_x2 = m_y2 = 0.0;
 }
 
 SVGPathSegCurvetoCubicSmoothAbs::~SVGPathSegCurvetoCubicSmoothAbs()
@@ -80,10 +83,13 @@ double SVGPathSegCurvetoCubicSmoothAbs::y2() const
 
 
 
-SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel()
+SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel(double x, double y, double x2, double y2)
     : SVGPathSeg()
+    , m_x(x)
+    , m_y(y)
+    , m_x2(x2)
+    , m_y2(y2)
 {
-    m_x = m_y = m_x2 = m_y2 = 0.0;
 }
 
 SVGPathSegCurvetoCubicSmoothRel::~SVGPathSegCurvetoCubicSmoothRel()

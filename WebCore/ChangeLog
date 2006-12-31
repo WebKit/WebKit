@@ -1,4 +1,67 @@
-2006-12-31  Eric Seidel  <eric@eseidel.com>
+2006-12-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by weinig.
+
+        Make SVGPathSeg construction take fewer lines of code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        * ksvg2/svg/SVGPathSegArc.cpp:
+        (WebCore::SVGPathSegArcAbs::SVGPathSegArcAbs):
+        (WebCore::SVGPathSegArcRel::SVGPathSegArcRel):
+        * ksvg2/svg/SVGPathSegArc.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubic.cpp:
+        (WebCore::SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel):
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel):
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel):
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel):
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * ksvg2/svg/SVGPathSegLineto.cpp:
+        (WebCore::SVGPathSegLinetoAbs::SVGPathSegLinetoAbs):
+        (WebCore::SVGPathSegLinetoRel::SVGPathSegLinetoRel):
+        * ksvg2/svg/SVGPathSegLineto.h:
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.cpp:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel):
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        * ksvg2/svg/SVGPathSegLinetoVertical.cpp:
+        (WebCore::SVGPathSegLinetoVerticalAbs::SVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathSegLinetoVerticalRel::SVGPathSegLinetoVerticalRel):
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        * ksvg2/svg/SVGPathSegMoveto.cpp:
+        (WebCore::SVGPathSegMovetoAbs::SVGPathSegMovetoAbs):
+        (WebCore::SVGPathSegMovetoRel::SVGPathSegMovetoRel):
+        * ksvg2/svg/SVGPathSegMoveto.h:
+
+2006-12-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by weinig.
 
@@ -362,7 +425,7 @@
         (WebCore::CSSUnknownRule::CSSUnknownRule):
         (WebCore::CSSUnknownRule::type):
 
-2006-12-29  Eric Seidel  <eric@eseidel.com>
+2006-12-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
 

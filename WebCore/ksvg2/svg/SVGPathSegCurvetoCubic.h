@@ -32,7 +32,7 @@ namespace WebCore
     class SVGPathSegCurvetoCubicAbs : public SVGPathSeg 
     { 
     public:
-        SVGPathSegCurvetoCubicAbs();
+        SVGPathSegCurvetoCubicAbs(double x, double y, double x1, double y1, double x2, double y2);
         virtual ~SVGPathSegCurvetoCubicAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_ABS; }
@@ -69,7 +69,7 @@ namespace WebCore
     class SVGPathSegCurvetoCubicRel : public SVGPathSeg 
     { 
     public:
-        SVGPathSegCurvetoCubicRel();
+        SVGPathSegCurvetoCubicRel(double x, double y, double x1, double y1, double x2, double y2);
         virtual ~SVGPathSegCurvetoCubicRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_REL; }
