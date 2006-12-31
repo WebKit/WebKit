@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect id='result' fill='orange' width='100px' height='100px' />
+    <div id="path_test_area" transform="translate(100,0)" />
+        
+    <foreignObject y="150" width="600" height="400">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <body>
+        <div id="log">
+        </div>
+      </body>
+    </html>
+    </foreignObject>
+    <script>
+    <![CDATA[
+        var svgNS = "http://www.w3.org/2000/svg";
+        var pathElement = document.createElementNS(svgNS, 'path');
+        var errorTolerance = .1;
+        
+        function log(string) {
+          var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+          newDiv.textContent = string;
+          document.getElementById('log').appendChild(newDiv);
+        }
+        
+        function expectLength(path, expectedLength) {
+            pathElement.setAttribute("d", path);
+            var actualLength = pathElement.getTotalLength();
+            if (Math.abs(actualLength - expectedLength) < errorTolerance)
+                log("PASS: \"" + path + "\" = " + actualLength);
+            else
+                log("FAIL: \"" + path + "\" expected: " + expectedLength + " actual: " + actualLength);
+        }
+        
+        var errorCount = 0;
+        
+        // Tests go here:
+        expectLength('M 0 0 L 100 0 L 100 100 L 0 100 Z', 400);
+        expectLength('M 0 0 l 100 0 l 0 100 l -100 0 Z', 400);
+        expectLength('M 0 0 t 0 100', 100);
+        expectLength('M 0 0 Q 55 50 100 100', 141.4);  // I'm not sure if this is actually right
+        
+        document.getElementById('result').style.fill = 'green';
+    ]]>
+    </script>
+</svg>

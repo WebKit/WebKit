@@ -74,6 +74,9 @@ namespace WebCore {
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         FloatRect boundingRect() const;
+        
+        float length();
+        FloatPoint pointAtLength(float length, bool& ok);
 
         void clear();
         bool isEmpty() const;

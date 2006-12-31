@@ -2052,6 +2052,8 @@
 		A88AD50C095248F0001DD196 /* SVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
+		A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */ = {isa = PBXBuildFile; fileRef = A88DD4860B4629A300C02990 /* PathTraversalState.h */; };
+		A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A88DD4880B4629B000C02990 /* PathTraversalState.cpp */; };
 		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; };
 		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
 		A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EB09D563270003AC8D /* StyledElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4804,6 +4806,8 @@
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
 		A871DFE00A15376B00B12A68 /* RenderWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWidget.h; sourceTree = "<group>"; };
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
+		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
+		A88DD4880B4629B000C02990 /* PathTraversalState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathTraversalState.cpp; sourceTree = "<group>"; };
 		A890DF1B0930974800513F88 /* SVGStyledTransformableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledTransformableElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1C0930974800513F88 /* SVGStyledTransformableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledTransformableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1D0930974800513F88 /* SVGStyledLocatableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledLocatableElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8479,6 +8483,8 @@
 				B27535480B053814002CE64F /* IntSizeHash.h */,
 				B27535490B053814002CE64F /* mac */,
 				B27535520B053814002CE64F /* Path.cpp */,
+				A88DD4860B4629A300C02990 /* PathTraversalState.h */,
+				A88DD4880B4629B000C02990 /* PathTraversalState.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				B27535540B053814002CE64F /* Pen.cpp */,
 				B27535550B053814002CE64F /* Pen.h */,
@@ -10871,6 +10877,7 @@
 				AACF7C4E0B42EE6000080BD8 /* SVGParserUtilities.h in Headers */,
 				A8C9DD280B4374260097883A /* SVGImage.h in Headers */,
 				A8C9E0950B43A5250097883A /* SVGImageEmptyClients.h in Headers */,
+				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12197,6 +12204,7 @@
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				AACF7C4F0B42EE6000080BD8 /* SVGParserUtilities.cpp in Sources */,
 				A8C9DD270B4374260097883A /* SVGImage.cpp in Sources */,
+				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

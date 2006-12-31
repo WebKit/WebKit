@@ -1,3 +1,15 @@
+2006-12-31  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by weinig.
+        
+        Add SVGPathElement::getTotalLength
+        http://bugs.webkit.org/show_bug.cgi?id=12033
+
+        * svg/custom/path-getTotalLength-expected.checksum: Added.
+        * svg/custom/path-getTotalLength-expected.png: Added.
+        * svg/custom/path-getTotalLength-expected.txt: Added.
+        * svg/custom/path-getTotalLength.svg: Added.
+
 2006-12-31  Chris McLay  <chris@eeoh.com.au>
 
         Reviewed by Hyatt. Tweaked by Mitz.

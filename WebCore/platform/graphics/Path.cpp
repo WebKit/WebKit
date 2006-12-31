@@ -30,12 +30,61 @@
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "PathTraversalState.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
 const double QUARTER = 0.552; // approximation of control point positions on a bezier
-                      // to simulate a quarter of a circle.
+                              // to simulate a quarter of a circle.
 namespace WebCore {
+
+void pathLengthApplierFunction(void* info, const PathElement* element)
+{
+    PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
+    if (traversalState.m_success)
+        return;
+    FloatPoint* points = element->points;
+    float segmentLength = 0.0f;
+    switch (element->type) {
+        case PathElementMoveToPoint:
+            segmentLength = traversalState.moveTo(points[0]);
+            break;
+        case PathElementAddLineToPoint:
+            segmentLength = traversalState.lineTo(points[0]);
+            break;
+        case PathElementAddQuadCurveToPoint:
+            segmentLength = traversalState.quadraticBezierTo(points[0], points[1]);
+            break;
+        case PathElementAddCurveToPoint:
+            segmentLength = traversalState.cubicBezierTo(points[0], points[1], points[2]);
+            break;
+        case PathElementCloseSubpath:
+            segmentLength = traversalState.closeSubpath();
+            break;
+    }
+    traversalState.m_totalLength += segmentLength;
+    if ((traversalState.m_action == PathTraversalState::TraversalPointAtLength)
+     && (traversalState.m_totalLength > traversalState.m_desiredLength)) {
+        // FIXME: Need to actually find the exact point and change m_current
+        traversalState.m_success = true;
+    }
+}
+
+float Path::length()
+{
+    PathTraversalState traversalState(PathTraversalState::TraversalTotalLength);
+    apply(&traversalState, pathLengthApplierFunction);
+    return traversalState.m_totalLength;
+}
+
+FloatPoint Path::pointAtLength(float length, bool& ok)
+{
+    PathTraversalState traversalState(PathTraversalState::TraversalPointAtLength);
+    traversalState.m_desiredLength = length;
+    apply(&traversalState, pathLengthApplierFunction);
+    ok = traversalState.m_success;
+    return traversalState.m_current;
+}
 
 Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& roundingRadii)
 {

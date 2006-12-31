@@ -1,3 +1,38 @@
+2006-12-31  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by weinig.
+
+        Implement path length measuring for SVGPathElement::getTotalLength and friends.
+        http://bugs.webkit.org/show_bug.cgi?id=12033
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getTotalLength):
+        (WebCore::SVGPathElement::getPointAtLength):
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        * platform/graphics/Path.h:
+        * platform/graphics/PathTraversalState.cpp: Added.
+        (WebCore::midPoint):
+        (WebCore::distanceLine):
+        (WebCore::QuadraticBezier::QuadraticBezier):
+        (WebCore::QuadraticBezier::approximateDistance):
+        (WebCore::QuadraticBezier::split):
+        (WebCore::CubicBezier::CubicBezier):
+        (WebCore::CubicBezier::approximateDistance):
+        (WebCore::CubicBezier::split):
+        (WebCore::curveLength):
+        (WebCore::PathTraversalState::PathTraversalState):
+        (WebCore::PathTraversalState::closeSubpath):
+        (WebCore::PathTraversalState::moveTo):
+        (WebCore::PathTraversalState::lineTo):
+        (WebCore::PathTraversalState::quadraticBezierTo):
+        (WebCore::PathTraversalState::cubicBezierTo):
+        * platform/graphics/PathTraversalState.h: Added.
+        (WebCore::PathTraversalState::):
+
 2006-12-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

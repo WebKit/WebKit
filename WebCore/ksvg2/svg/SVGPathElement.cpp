@@ -59,12 +59,15 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGPathElement, double, Number, number, PathLength
 
 double SVGPathElement::getTotalLength()
 {
-    return 0;
+    // FIXME: this may wish to use the pathSegList instead of the pathdata if that's cheaper to build (or cached)
+    return toPathData().length();
 }
 
-FloatPoint SVGPathElement::getPointAtLength(double /*distance*/)
+FloatPoint SVGPathElement::getPointAtLength(double distance)
 {
-    return FloatPoint();
+    // FIXME: this may wish to use the pathSegList instead of the pathdata if that's cheaper to build (or cached)
+    bool ok = false;
+    return toPathData().pointAtLength(distance, ok);
 }
 
 unsigned long SVGPathElement::getPathSegAtLength(double)
