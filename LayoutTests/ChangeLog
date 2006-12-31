@@ -1,3 +1,15 @@
+2006-12-31  Chris McLay  <chris@eeoh.com.au>
+
+        Reviewed by Hyatt. Tweaked by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=9659
+          Quirksmode: Fixed / Overflow > Positioned objects get hidden when scrolling
+
+        * fast/overflow/clip-rects-fixed-ancestor-expected.checksum: Added.
+        * fast/overflow/clip-rects-fixed-ancestor-expected.png: Added.
+        * fast/overflow/clip-rects-fixed-ancestor-expected.txt: Added.
+        * fast/overflow/clip-rects-fixed-ancestor.html: Added.
+
 2006-12-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam.

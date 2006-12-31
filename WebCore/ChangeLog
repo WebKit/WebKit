@@ -1,5 +1,23 @@
 2006-12-31  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9659
+          Quirksmode: Fixed / Overflow > Positioned objects get hidden when scrolling
+
+        Added a 'fixed' flag to ClipRects, indicating that the cached rects are in
+        viewport coordinates. The flag is set (and scrolling is compensated for) for
+        fixed objects and their descendants.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::ClipRects):
+        (WebCore::ClipRects::fixed):
+
+2006-12-31  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Sam.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12037

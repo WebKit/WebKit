@@ -70,20 +70,23 @@ public:
         , m_fixedClipRect(r)
         , m_posClipRect(r)
         , m_refCnt(0)
+        , m_fixed(false)
     {
     }
 
-    ClipRects(const IntRect& o, const IntRect& f, const IntRect& p)
-        : m_overflowClipRect(o)
-        , m_fixedClipRect(f)
-        , m_posClipRect(p)
+    ClipRects(const IntRect& overflowRect, const IntRect& fixedRect, const IntRect& posRect, bool fixed)
+        : m_overflowClipRect(overflowRect)
+        , m_fixedClipRect(fixedRect)
+        , m_posClipRect(posRect)
         , m_refCnt(0)
+        , m_fixed(fixed)
     {
     }
 
     const IntRect& overflowClipRect() { return m_overflowClipRect; }
     const IntRect& fixedClipRect() { return m_fixedClipRect; }
     const IntRect& posClipRect() { return m_posClipRect; }
+    bool fixed() const { return m_fixed; }
 
     void ref() { m_refCnt++; }
     void deref(RenderArena* renderArena) { if (--m_refCnt == 0) destroy(renderArena); }
@@ -104,7 +107,8 @@ private:
     IntRect m_overflowClipRect;
     IntRect m_fixedClipRect;
     IntRect m_posClipRect;
-    unsigned m_refCnt;
+    unsigned m_refCnt : 31;
+    bool m_fixed : 1;
 };
 
 
