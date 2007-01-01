@@ -1762,6 +1762,8 @@
 		A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */; };
 		A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8239DFE09B3CF8A00B60641 /* Logging.cpp */; };
 		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8241D8B0B48D31E0084722B /* SVGTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8241D890B48D31E0084722B /* SVGTimer.h */; };
+		A8241D8C0B48D31E0084722B /* SVGTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8241D8A0B48D31E0084722B /* SVGTimer.cpp */; };
 		A826E8AE0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */; };
 		A826EC480A1B0CBE00CD1BB6 /* JSHTMLOptionElementConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */; };
 		A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E809D1508D000E61D7 /* SVGNames.cpp */; };
@@ -1843,8 +1845,8 @@
 		A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F7F6089701F300BA5114 /* SVGZoomEvent.h */; };
 		A88AD40C095248F0001DD196 /* KCanvasRenderingStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */; };
 		A88AD40D095248F0001DD196 /* KCanvasRenderingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */; };
-		A88AD40E095248F0001DD196 /* KSVGTimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */; };
-		A88AD40F095248F0001DD196 /* KSVGTimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */; };
+		A88AD40E095248F0001DD196 /* TimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */; };
+		A88AD40F095248F0001DD196 /* TimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6F0089701F100BA5114 /* TimeScheduler.h */; };
 		A88AD411095248F0001DD196 /* SVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */; };
 		A88AD412095248F0001DD196 /* SVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F800089701F300BA5114 /* SVGAElement.h */; };
 		A88AD415095248F0001DD196 /* SVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F803089701F300BA5114 /* SVGAnimateColorElement.cpp */; };
@@ -4721,6 +4723,8 @@
 		A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PlugInInfoStoreMac.mm; sourceTree = "<group>"; };
 		A8239DFE09B3CF8A00B60641 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		A8239DFF09B3CF8A00B60641 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		A8241D890B48D31E0084722B /* SVGTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTimer.h; sourceTree = "<group>"; };
+		A8241D8A0B48D31E0084722B /* SVGTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTimer.cpp; sourceTree = "<group>"; };
 		A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionElementConstructor.h; sourceTree = "<group>"; };
 		A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionElementConstructor.cpp; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4816,8 +4820,8 @@
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
 		A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasRenderingStyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasRenderingStyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSVGTimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KSVGTimeScheduler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0F6F0089701F100BA5114 /* TimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TimeScheduler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F4089701F100BA5114 /* CSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = CSSPropertyNames.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F5089701F100BA5114 /* CSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = CSSValueKeywords.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8008,13 +8012,15 @@
 			children = (
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
 				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
-				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
-				A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */,
+				A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */,
+				A8C0F6F0089701F100BA5114 /* TimeScheduler.h */,
 				A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */,
 				A8DF5FA1098460AA0052981B /* SVGDocumentExtensions.h */,
 				FAE0418D097596C9000540BE /* SVGImageLoader.cpp */,
 				FAE0418E097596C9000540BE /* SVGImageLoader.h */,
 				A8C32D89093D8BFA000B9CAC /* xlinkattrs.in */,
+				A8241D890B48D31E0084722B /* SVGTimer.h */,
+				A8241D8A0B48D31E0084722B /* SVGTimer.cpp */,
 			);
 			path = misc;
 			sourceTree = "<group>";
@@ -9491,7 +9497,7 @@
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,
 				A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */,
 				A88AD40D095248F0001DD196 /* KCanvasRenderingStyle.h in Headers */,
-				A88AD40F095248F0001DD196 /* KSVGTimeScheduler.h in Headers */,
+				A88AD40F095248F0001DD196 /* TimeScheduler.h in Headers */,
 				A88AD412095248F0001DD196 /* SVGAElement.h in Headers */,
 				A88AD416095248F0001DD196 /* SVGAnimateColorElement.h in Headers */,
 				A88AD42A095248F0001DD196 /* SVGAnimatedPathData.h in Headers */,
@@ -10878,6 +10884,7 @@
 				A8C9DD280B4374260097883A /* SVGImage.h in Headers */,
 				A8C9E0950B43A5250097883A /* SVGImageEmptyClients.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
+				A8241D8B0B48D31E0084722B /* SVGTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11082,7 +11089,7 @@
 				A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */,
 				A88AD40A095248F0001DD196 /* SVGZoomEvent.cpp in Sources */,
 				A88AD40C095248F0001DD196 /* KCanvasRenderingStyle.cpp in Sources */,
-				A88AD40E095248F0001DD196 /* KSVGTimeScheduler.cpp in Sources */,
+				A88AD40E095248F0001DD196 /* TimeScheduler.cpp in Sources */,
 				A88AD411095248F0001DD196 /* SVGAElement.cpp in Sources */,
 				A88AD415095248F0001DD196 /* SVGAnimateColorElement.cpp in Sources */,
 				A88AD429095248F0001DD196 /* SVGAnimatedPathData.cpp in Sources */,
@@ -12205,6 +12212,7 @@
 				AACF7C4F0B42EE6000080BD8 /* SVGParserUtilities.cpp in Sources */,
 				A8C9DD270B4374260097883A /* SVGImage.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
+				A8241D8C0B48D31E0084722B /* SVGTimer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

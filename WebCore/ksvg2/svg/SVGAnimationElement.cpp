@@ -26,10 +26,8 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "KSVGTimeScheduler.h"
-#include "PlatformString.h"
+#include "TimeScheduler.h"
 #include "SVGSVGElement.h"
-#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
 #include "ksvgcssproperties.h"

@@ -23,54 +23,21 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "KSVGTimeScheduler.h"
+#include "SVGTimer.h"
 
-#include "Document.h"
-#include "SVGAnimateColorElement.h"
+#include <wtf/HashMap.h>
 #include "SVGAnimateTransformElement.h"
 #include "SVGTransformList.h"
-#include "SVGDOMImplementation.h"
-#include "SVGNames.h"
-#include "SVGStyledElement.h"
+#include "SVGAnimateColorElement.h"
 #include "SVGStyledTransformableElement.h"
-#include "SystemTime.h"
-#include "Timer.h"
 
 namespace WebCore {
 
-const double staticTimerInterval = 0.050; // 50 ms
-
-typedef HashSet<SVGAnimationElement*> SVGNotifySet;
-
-class SVGTimer : private Timer<TimeScheduler>
-{
-public:
-    SVGTimer(TimeScheduler*, double interval, bool singleShot);
-
-    void start();
-    using Timer<TimeScheduler>::stop;
-    using Timer<TimeScheduler>::isActive;
-
-    void notifyAll();
-    void addNotify(SVGAnimationElement*, bool enabled = false);
-    void removeNotify(SVGAnimationElement*);
-
-    static SVGTimer* downcast(Timer<TimeScheduler>* t) { return static_cast<SVGTimer*>(t); }
-
-private:
-    double calculateTimePercentage(double elapsed, double start, double end, double duration, double repetitions);
-
-    TimeScheduler* m_scheduler;
-    double m_interval;
-    bool m_singleShot;
-
-    SVGNotifySet m_notifySet;
-    SVGNotifySet m_enabledNotifySet;
-};
-
 SVGTimer::SVGTimer(TimeScheduler* scheduler, double interval, bool singleShot)
     : Timer<TimeScheduler>(scheduler, &TimeScheduler::timerFired)
-    , m_scheduler(scheduler), m_interval(interval), m_singleShot(singleShot)
+    , m_scheduler(scheduler)
+    , m_interval(interval)
+    , m_singleShot(singleShot)
 {
 }
 
@@ -95,7 +62,7 @@ double SVGTimer::calculateTimePercentage(double elapsed, double start, double en
             percentage = 1.0 - (((start + end) - useElapsed) / end);
         else
             percentage = 1.0 - (((start + duration) - useElapsed) / duration);
-    } else if(duration == 0.0 && end != 0.0)
+    } else if (duration == 0.0 && end != 0.0)
         percentage = 1.0 - (((start + end) - useElapsed) / end);
 
     return percentage;
@@ -159,7 +126,7 @@ void SVGTimer::notifyAll()
             // #1 (duration > 0) -> fine
             // #2 (duration <= 0.0 && end > 0) -> fine
             
-            if((duration <= 0.0 && end <= 0.0) ||
+            if ((duration <= 0.0 && end <= 0.0) ||
                (animation->isIndefinite(duration) && end <= 0.0)) // Ignore dur="0" or dur="-neg"
                 continue;
             
@@ -171,7 +138,7 @@ void SVGTimer::notifyAll()
             // Special cases for animate* objects depending on 'additive' attribute
             if (animation->hasTagName(SVGNames::animateTransformTag)) {
                 SVGAnimateTransformElement *animTransform = static_cast<SVGAnimateTransformElement *>(animation);
-                if(!animTransform)
+                if (!animTransform)
                     continue;
 
                 AffineTransform transformMatrix = animTransform->transformMatrix();
@@ -271,105 +238,6 @@ void SVGTimer::removeNotify(SVGAnimationElement *element)
     m_enabledNotifySet.remove(element);
     if (m_enabledNotifySet.isEmpty())
         stop();
-}
-
-TimeScheduler::TimeScheduler(Document *document)
-    : m_creationTime(currentTime()), m_savedTime(0), m_document(document)
-{
-    // Don't start this timer yet.
-    m_intervalTimer = new SVGTimer(this, staticTimerInterval, false);
-}
-
-TimeScheduler::~TimeScheduler()
-{
-    deleteAllValues(m_timerSet);
-    delete m_intervalTimer;
-}
-
-void TimeScheduler::addTimer(SVGAnimationElement* element, unsigned ms)
-{
-    SVGTimer* svgTimer = new SVGTimer(this, ms * 0.001, true);
-    svgTimer->addNotify(element, true);
-    m_timerSet.add(svgTimer);
-    m_intervalTimer->addNotify(element, false);
-}
-
-void TimeScheduler::connectIntervalTimer(SVGAnimationElement* element)
-{
-    m_intervalTimer->addNotify(element, true);
-}
-
-void TimeScheduler::disconnectIntervalTimer(SVGAnimationElement* element)
-{
-    m_intervalTimer->removeNotify(element);
-}
-
-void TimeScheduler::startAnimations()
-{
-    m_creationTime = currentTime();
-
-    SVGTimerSet::iterator end = m_timerSet.end();
-    for (SVGTimerSet::iterator it = m_timerSet.begin(); it != end; ++it) {
-        SVGTimer* svgTimer = *it;
-        if (svgTimer && !svgTimer->isActive())
-            svgTimer->start();
-    }
-}
-
-void TimeScheduler::toggleAnimations()
-{
-    if (m_intervalTimer->isActive()) {
-        m_intervalTimer->stop();
-        m_savedTime = currentTime();
-    } else {
-        if (m_savedTime != 0) {
-            m_creationTime += currentTime() - m_savedTime;
-            m_savedTime = 0;
-        }
-        m_intervalTimer->start();
-    }
-}
-
-bool TimeScheduler::animationsPaused() const
-{
-    return !m_intervalTimer->isActive();
-}
-
-void TimeScheduler::timerFired(Timer<TimeScheduler>* baseTimer)
-{
-    // Get the pointer now, because notifyAll could make the document,
-    // including this TimeScheduler, go away.
-    RefPtr<Document> doc = m_document;
-
-    SVGTimer* timer = SVGTimer::downcast(baseTimer);
-
-    timer->notifyAll();
-
-    // FIXME: Is it really safe to look at m_intervalTimer now?
-    // Isn't it possible the TimeScheduler was deleted already?
-    // If so, timer, m_timerSet, and m_intervalTimer have all
-    // been deleted. May need to reference count the TimeScheduler
-    // to work around this, and ref/deref it in this function.
-    if (timer != m_intervalTimer) {
-        ASSERT(!timer->isActive());
-        ASSERT(m_timerSet.contains(timer));
-        m_timerSet.remove(timer);
-        delete timer;
-
-        // The singleShot timers of ie. <animate> with begin="3s" are notified
-        // by the previous call, and now all connections to the interval timer
-        // are created and now we just need to fire that timer (Niko)
-        if (!m_intervalTimer->isActive())
-            m_intervalTimer->start();
-    }
-
-    // Update any 'dirty' shapes.
-    doc->updateRendering();
-}
-
-double TimeScheduler::elapsed() const
-{
-    return currentTime() - m_creationTime;
 }
 
 } // namespace

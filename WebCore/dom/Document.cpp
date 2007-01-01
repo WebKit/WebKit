@@ -116,7 +116,7 @@
 #include "SVGElementFactory.h"
 #include "SVGZoomEvent.h"
 #include "SVGStyleElement.h"
-#include "KSVGTimeScheduler.h"
+#include "TimeScheduler.h"
 #endif
 
 using namespace std;

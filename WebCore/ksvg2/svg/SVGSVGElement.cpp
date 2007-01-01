@@ -30,7 +30,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "KSVGTimeScheduler.h"
+#include "TimeScheduler.h"
 #include "RenderSVGContainer.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"

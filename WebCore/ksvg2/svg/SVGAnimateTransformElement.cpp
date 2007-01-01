@@ -24,11 +24,11 @@
 #ifdef SVG_SUPPORT
 #include "SVGAnimateTransformElement.h"
 
-#include "KSVGTimeScheduler.h"
+#include "TimeScheduler.h"
 #include "SVGAngle.h"
 #include "AffineTransform.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGSVGElement.h"
+#include "SVGStyledTransformableElement.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include <math.h>
@@ -103,13 +103,10 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
                 m_toTransform = parseTransformValue(m_to);
                 m_toRotateSpecialCase = m_rotateSpecialCase;
 
-                if (!m_from.isEmpty()) // from-to animation
-                {
+                if (!m_from.isEmpty()) { // from-to animation
                     m_fromTransform = parseTransformValue(m_from);
                     m_fromRotateSpecialCase = m_rotateSpecialCase;
-                }
-                else // to animation
-                {
+                } else { // to animation
                     m_fromTransform = m_initialTransform;
                     m_fromRotateSpecialCase = false;
                 }
@@ -125,13 +122,10 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
                 m_toTransform = parseTransformValue(m_by);
                 m_toRotateSpecialCase = m_rotateSpecialCase;
 
-                if (!m_from.isEmpty()) // from-by animation
-                {
+                if (!m_from.isEmpty()) { // from-by animation
                     m_fromTransform = parseTransformValue(m_from);
                     m_fromRotateSpecialCase = m_rotateSpecialCase;
-                }
-                else // by animation
-                {
+                } else { // by animation
                     m_fromTransform = m_initialTransform;
                     m_fromRotateSpecialCase = false;
                 }
@@ -174,13 +168,12 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
         if (itemByPercentage == -1)
             return;
         
-        if (m_currentItem != itemByPercentage) // Item changed...
-        {
+        if (m_currentItem != itemByPercentage) { // Item changed...
             ExceptionCode ec = 0;
 
             // Extract current 'from' / 'to' values
-            String value1 = String(m_values->getItem(itemByPercentage, ec));
-            String value2 = String(m_values->getItem(itemByPercentage + 1, ec));
+            String value1 = m_values->getItem(itemByPercentage, ec);
+            String value2 = m_values->getItem(itemByPercentage + 1, ec);
 
             // Calculate new from/to transform values...
             if (!value1.isEmpty() && !value2.isEmpty()) {

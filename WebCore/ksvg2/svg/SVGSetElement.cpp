@@ -23,7 +23,7 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGSetElement.h"
-#include "KSVGTimeScheduler.h"
+#include "TimeScheduler.h"
 #include "Document.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGSVGElement.h"
