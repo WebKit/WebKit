@@ -1,3 +1,26 @@
+2007-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by andersca.
+
+        Split handleTimerEvent logic into separate functions in preparation for moving down into SVGAnimationElement
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::storeInitialValue):
+        (WebCore::SVGAnimateColorElement::resetValues):
+        (WebCore::SVGAnimateColorElement::updateCurrentValue):
+        (WebCore::SVGAnimateColorElement::startIfNecessary):
+        (WebCore::SVGAnimateColorElement::handleEndCondition):
+        (WebCore::SVGAnimateColorElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::storeInitialValue):
+        (WebCore::SVGAnimateTransformElement::resetValues):
+        (WebCore::SVGAnimateTransformElement::updateCurrentValue):
+        (WebCore::SVGAnimateTransformElement::startIfNecessary):
+        (WebCore::SVGAnimateTransformElement::handleEndCondition):
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+
 2007-01-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
@@ -7,7 +30,7 @@
         * ksvg2/svg/SVGColor.cpp:
         * ksvg2/svg/SVGColor.h:
 
-2007-01-01  Eric Seidel  <eric@eseidel.com>
+2007-01-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
 
@@ -28,7 +51,7 @@
         (WebCore::SVGSetElement::handleTimerEvent):
         * ksvg2/svg/SVGSetElement.h:
 
-2007-01-01  Eric Seidel  <eric@eseidel.com>
+2007-01-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
 

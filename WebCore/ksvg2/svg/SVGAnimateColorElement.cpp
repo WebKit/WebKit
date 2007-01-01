@@ -56,16 +56,87 @@ void calculateColorDifference(const Color& first, const Color& second, int& redD
     blueDiff = first.blue() - second.blue();
 }
 
-void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
+void SVGAnimateColorElement::storeInitialValue()
 {
-    // Start condition.
+    // Save initial color... (needed for fill="remove" or additve="sum")
+    RefPtr<SVGColor> initialColor(new SVGColor());
+    initialColor->setRGBColor(targetAttribute());
+    m_initialColor = initialColor->color();
+}
+
+void SVGAnimateColorElement::resetValues()
+{
+    m_currentItem = -1;
+    m_redDiff = 0;
+    m_greenDiff = 0;
+    m_blueDiff = 0;
+}
+
+bool SVGAnimateColorElement::updateCurrentValue(double timePercentage)
+{
+    int r = 0, g = 0, b = 0;
+    if ((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
+        calculateColor(timePercentage, r, g, b);
+    else if (m_values) {
+        int itemByPercentage = calculateCurrentValueItem(timePercentage);
+        
+        if (itemByPercentage == -1)
+            return false;
+        
+        if (m_currentItem != itemByPercentage) { // Item changed...
+            ExceptionCode ec = 0;
+            
+            // Extract current 'from' / 'to' values
+            String value1 = m_values->getItem(itemByPercentage, ec);
+            String value2 = m_values->getItem(itemByPercentage + 1, ec);
+            
+            // Calculate r/g/b shifting values...
+            if (!value1.isEmpty() && !value2.isEmpty()) {
+                bool apply = false;
+                if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) {
+                    r = m_toColor->color().red();
+                    g = m_toColor->color().green();
+                    b = m_toColor->color().blue();
+                    
+                    apply = true;
+                }
+                
+                m_toColor->setRGBColor(value2);
+                m_fromColor->setRGBColor(value1);
+                calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
+                
+                m_currentItem = itemByPercentage;
+                
+                if (!apply)
+                    return false;
+            }
+        } else if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) {
+            double relativeTime = calculateRelativeTimePercentage(timePercentage, m_currentItem);
+            calculateColor(relativeTime, r, g, b);
+        }
+    }
+    
+    if (!isFrozen() && timePercentage == 1.0) {
+        r = m_initialColor.red();
+        g = m_initialColor.green();
+        b = m_initialColor.blue();
+    }
+    
+    if (isAccumulated() && repeations() != 0.0) {
+        r += m_lastColor.red();
+        g += m_lastColor.green();
+        b += m_lastColor.blue();
+    }
+    
+    m_currentColor = clampColor(r, g, b);
+    return true;
+}
+
+bool SVGAnimateColorElement::startIfNecessary()
+{
     if (!connectedToTimer()) {
-        // Save initial color... (needed for fill="remove" or additve="sum")
-        RefPtr<SVGColor> initialColor = new SVGColor();
-        initialColor->setRGBColor(targetAttribute());
-
-        m_initialColor = initialColor->color();
-
+        storeInitialValue();
+        
         switch (detectAnimationMode()) {
             case TO_ANIMATION:
             case FROM_TO_ANIMATION:
@@ -75,7 +146,7 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
                     m_fromColor->setRGBColor(m_from);
                 else // to animation
                     m_fromColor->setRGBColor(m_initialColor.name());
-    
+                
                 calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
                 break;
             }
@@ -98,93 +169,41 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
             default:
             {
                 //kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
-                return;
+                return true;
             }
         }
-
+        
         connectTimer();
+        return true;
+    }
+    
+    return false;
+}
+
+void SVGAnimateColorElement::handleEndCondition()
+{
+    if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
+        m_lastColor = m_currentColor;
+        m_repeations++;
         return;
     }
-
-    // Calculations...
-    if (timePercentage >= 1.0)
-        timePercentage = 1.0;
-
-    int r = 0, g = 0, b = 0;
-    if ((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
-        calculateColor(timePercentage, r, g, b);
-    else if (m_values) {
-        int itemByPercentage = calculateCurrentValueItem(timePercentage);
-
-        if (itemByPercentage == -1)
-            return;
-
-        if (m_currentItem != itemByPercentage) { // Item changed...
-            ExceptionCode ec = 0;
-
-            // Extract current 'from' / 'to' values
-            String value1 = m_values->getItem(itemByPercentage, ec);
-            String value2 = m_values->getItem(itemByPercentage + 1, ec);
-
-            // Calculate r/g/b shifting values...
-            if (!value1.isEmpty() && !value2.isEmpty()) {
-                bool apply = false;
-                if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) {
-                    r = m_toColor->color().red();
-                    g = m_toColor->color().green();
-                    b = m_toColor->color().blue();
-
-                    apply = true;
-                }
-
-                m_toColor->setRGBColor(value2);
-                m_fromColor->setRGBColor(value1);
-                calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
-
-                m_currentItem = itemByPercentage;
-
-                if (!apply)
-                    return;
-            }
-        }
-        else if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) {
-            double relativeTime = calculateRelativeTimePercentage(timePercentage, m_currentItem);
-            calculateColor(relativeTime, r, g, b);
-        }
-    }
     
-    if (!isFrozen() && timePercentage == 1.0) {
-        r = m_initialColor.red();
-        g = m_initialColor.green();
-        b = m_initialColor.blue();
-    }
+    disconnectTimer();
+    resetValues();
+}
 
-    if (isAccumulated() && repeations() != 0.0) {
-        r += m_lastColor.red();
-        g += m_lastColor.green();
-        b += m_lastColor.blue();
-    }
+void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
+{
+    // Start condition.
+    if (!startIfNecessary())
+        return;
 
-    // Commit changes!
-    m_currentColor = clampColor(r, g, b);
+    if (!updateCurrentValue(timePercentage))
+        return;
     
     // End condition.
-    if (timePercentage == 1.0) {
-        if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
-            m_lastColor = m_currentColor;
-            m_repeations++;
-            return;
-        }
-
-        disconnectTimer();
-
-        // Reset...
-        m_currentItem = -1;
-
-        m_redDiff = 0;
-        m_greenDiff = 0;
-        m_blueDiff = 0;
-    }
+    if (timePercentage == 1.0)
+        handleEndCondition();
 }
 
 void SVGAnimateColorElement::applyAnimationToValue(Color& currentColor)

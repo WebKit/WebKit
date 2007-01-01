@@ -49,6 +49,11 @@ namespace WebCore {
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
+        void storeInitialValue();
+        void resetValues();
+        bool updateCurrentValue(double timePercentage);
+        bool startIfNecessary();
+        void handleEndCondition();
 
     private:
         Color m_lastColor;
