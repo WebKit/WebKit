@@ -2769,30 +2769,33 @@ void RenderBlock::calcMinMaxWidth()
     kdDebug( 6040 ) << renderName() << "(RenderBlock)::calcMinMaxWidth() this=" << this << endl;
 #endif
 
-    m_minWidth = 0;
-    m_maxWidth = 0;
-
-    if (childrenInline())
-        calcInlineMinMaxWidth();
-    else
-        calcBlockMinMaxWidth();
-
-    if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
-
-    if (!style()->autoWrap() && childrenInline()) {
-        m_minWidth = m_maxWidth;
-        
-        // A horizontal marquee with inline children has no minimum width.
-        if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal() && !m_layer->marquee()->isUnfurlMarquee())
-            m_minWidth = 0;
-    }
-
-    if (isTableCell()) {
-        Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
-        if (w.isFixed() && w.value() > 0)
-            m_maxWidth = max(m_minWidth, calcContentBoxWidth(w.value()));
-    } else if (style()->width().isFixed() && style()->width().value() > 0)
+    if (!isTableCell() && style()->width().isFixed() && style()->width().value() > 0)
         m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
+    else {
+        m_minWidth = 0;
+        m_maxWidth = 0;
+
+        if (childrenInline())
+            calcInlineMinMaxWidth();
+        else
+            calcBlockMinMaxWidth();
+
+        if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
+
+        if (!style()->autoWrap() && childrenInline()) {
+            m_minWidth = m_maxWidth;
+            
+            // A horizontal marquee with inline children has no minimum width.
+            if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal() && !m_layer->marquee()->isUnfurlMarquee())
+                m_minWidth = 0;
+        }
+
+        if (isTableCell()) {
+            Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
+            if (w.isFixed() && w.value() > 0)
+                m_maxWidth = max(m_minWidth, calcContentBoxWidth(w.value()));
+        }
+    }
     
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));

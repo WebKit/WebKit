@@ -1,1 +1,14 @@
+2006-12-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12049
+          RenderBlock::calcMinMaxWidth() should not examine children of fixed-width blocks
+
+        No test possible (no change to functionality).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcMinMaxWidth): Call calc{Inline,Block}MinMaxWidth()
+        only if their result is needed.
+
 == Rolled over to ChangeLog-2006-12-31 ==
