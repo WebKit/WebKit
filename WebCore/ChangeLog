@@ -1,3 +1,13 @@
+2006-12-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Re-enable animateTransform (now that SVGList is fixed)
+        (Things are only "less broken" not totally fixed yet.)
+
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (WebCore::SVGTimer::notifyAll):
+
 2006-12-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

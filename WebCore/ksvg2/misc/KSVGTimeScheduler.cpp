@@ -165,55 +165,38 @@ void SVGTimer::notifyAll()
             
             float percentage = calculateTimePercentage(elapsed, start, end, duration, repetitions);
                 
-            if(percentage <= 1.0 || animation->connected())
+            if (percentage <= 1.0 || animation->connected())
                 animation->handleTimerEvent(percentage);
 
-// FIXME: Disable animateTransform until SVGList can be fixed.
-#if 0
             // Special cases for animate* objects depending on 'additive' attribute
-            if(animation->hasTagName(SVGNames::animateTransformTag))
-            {
+            if (animation->hasTagName(SVGNames::animateTransformTag)) {
                 SVGAnimateTransformElement *animTransform = static_cast<SVGAnimateTransformElement *>(animation);
                 if(!animTransform)
                     continue;
 
-                RefPtr<SVGMatrix> transformMatrix = animTransform->transformMatrix();
-                if(!transformMatrix)
-                    continue;
+                AffineTransform transformMatrix = animTransform->transformMatrix();
+                RefPtr<SVGTransform> targetTransform = new SVGTransform();
 
-                RefPtr<SVGMatrix> initialMatrix = animTransform->initialMatrix();
-                RefPtr<SVGTransform> data = new SVGTransform();
-
-                if(!targetTransforms) // lazy creation, only if needed.
-                {
+                if (!targetTransforms) { // lazy creation, only if needed.
                     targetTransforms = new SVGTransformList();
 
-                    if(animation->isAdditive() && initialMatrix)
-                    {
-                        RefPtr<SVGMatrix> matrix = new SVGMatrix(initialMatrix->matrix());
-                        
-                        data->setMatrix(matrix.get());
-                        targetTransforms->appendItem(data.get());
-
-                        data = new SVGTransform();
+                    if (animation->isAdditive()) {
+                        targetTransform->setMatrix(animTransform->initialMatrix());
+                        targetTransforms->appendItem(targetTransform.get(), ec);
+                        targetTransform = new SVGTransform();
                     }
                 }
 
-                if(targetTransforms->numberOfItems() <= 1)
-                    data->setMatrix(transformMatrix.get());
-                else
-                {
-                    if(!animation->isAdditive())
-                        targetTransforms->clear();    
-                    
-                    data->setMatrix(transformMatrix.get());
+                if (targetTransforms->numberOfItems() <= 1)
+                    targetTransform->setMatrix(transformMatrix);
+                else {
+                    if (!animation->isAdditive())
+                        targetTransforms->clear(ec);
+                    targetTransform->setMatrix(transformMatrix);
                 }
 
-                targetTransforms->appendItem(data.get());
-            }
-            else
-#endif
-            if (animation->hasTagName(SVGNames::animateColorTag)) {
+                targetTransforms->appendItem(targetTransform.get(), ec);
+            } else if (animation->hasTagName(SVGNames::animateColorTag)) {
                 SVGAnimateColorElement* animColor = static_cast<SVGAnimateColorElement*>(animation);
                 if (!animColor)
                     continue;
