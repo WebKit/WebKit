@@ -2,6 +2,27 @@
 
         Reviewed by mitz.
 
+        More animation code cleanup.
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::connectedToTimer):
+        (WebCore::SVGAnimationElement::connectTimer):
+        (WebCore::SVGAnimationElement::disconnectTimer):
+        (WebCore::SVGAnimationElement::updateForElapsedSeconds):
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::handleTimerEvent):
+        * ksvg2/svg/SVGSetElement.h:
+
+2007-01-01  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mitz.
+
         More clean-up to animation code.
 
         * ksvg2/svg/SVGAnimateColorElement.cpp:

@@ -42,31 +42,25 @@ SVGSetElement::~SVGSetElement()
 void SVGSetElement::handleTimerEvent(double timePercentage)
 {
     // Start condition.
-    if (!m_connected) {    
-        ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
-        m_connected = true;
+    if (!connectedToTimer()) {
+        connectTimer();
         return;
     }
-
-    // Calculations...
-    if (timePercentage >= 1.0)
-        timePercentage = 1.0;
-
+    
     // Commit change now...
     if (m_savedTo.isEmpty()) {
-        m_savedTo = targetAttribute().deprecatedString();
+        m_savedTo = targetAttribute();
         setTargetAttribute(m_to);
     }
 
     // End condition.
     if (timePercentage == 1.0) {
-        ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
-        m_connected = false;
+        disconnectTimer();
 
         if (!isFrozen())
             setTargetAttribute(m_savedTo);
 
-        m_savedTo = DeprecatedString();
+        m_savedTo = String();
     }
 }
 

@@ -45,7 +45,7 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document*
     , SVGTests()
     , SVGExternalResourcesRequired()
     , m_targetElement(0)
-    , m_connected(false)
+    , m_connectedToTimer(false)
     , m_currentTime(0.0)
     , m_simpleDuration(0.0)
     , m_fill(FILL_REMOVE)
@@ -413,9 +413,9 @@ String SVGAnimationElement::attributeName() const
     return m_attributeName;
 }
 
-bool SVGAnimationElement::connected() const
+bool SVGAnimationElement::connectedToTimer() const
 {
-    return m_connected;
+    return m_connectedToTimer;
 }
 
 bool SVGAnimationElement::isFrozen() const
@@ -512,6 +512,20 @@ bool SVGAnimationElement::isIndefinite(double value) const
     return (value == DBL_MAX);
 }
 
+void SVGAnimationElement::connectTimer()
+{
+    ASSERT(!m_connectedToTimer);
+    ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
+    m_connectedToTimer = true;
+}
+
+void SVGAnimationElement::disconnectTimer()
+{
+    ASSERT(m_connectedToTimer);
+    ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
+    m_connectedToTimer = false;
+}
+
 static double calculateTimePercentage(double elapsedSeconds, double start, double end, double duration, double repetitions)
 {
     double percentage = 0.0;
@@ -541,7 +555,7 @@ bool SVGAnimationElement::updateForElapsedSeconds(double elapsedSeconds)
     
     float percentage = calculateTimePercentage(elapsedSeconds, m_begin, m_end, m_simpleDuration, m_repeations);
     
-    if (percentage <= 1.0 || connected())
+    if (percentage <= 1.0 || connectedToTimer())
         handleTimerEvent(percentage);
     
     return true;

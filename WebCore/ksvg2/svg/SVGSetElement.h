@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGSetElementImpl_H
-#define KSVG_SVGSetElementImpl_H
+#ifndef SVGSetElement_H
+#define SVGSetElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGAnimationElement.h"
@@ -40,7 +40,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        DeprecatedString m_savedTo;
+        String m_savedTo;
     };
 
 } // namespace WebCore
