@@ -1,3 +1,16 @@
+2007-01-01  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mitz.
+
+        More clean-up to animation code.
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        (WebCore::SVGAnimateTransformElement::calculateRotationFromMatrix):
+
 2007-01-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

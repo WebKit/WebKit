@@ -61,66 +61,36 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
     // Start condition.
     if (!m_connected) {
         // Save initial color... (needed for fill="remove" or additve="sum")
-        RefPtr<SVGColor> temp = new SVGColor();
-        temp->setRGBColor(targetAttribute());
+        RefPtr<SVGColor> initialColor = new SVGColor();
+        initialColor->setRGBColor(targetAttribute());
 
-        m_initialColor = temp->color();
+        m_initialColor = initialColor->color();
 
-        // Animation mode handling
         switch (detectAnimationMode()) {
             case TO_ANIMATION:
             case FROM_TO_ANIMATION:
             {
-                String toColorString(m_to);
-                m_toColor->setRGBColor(toColorString);
-    
-                String fromColorString;
+                m_toColor->setRGBColor(m_to);
                 if (!m_from.isEmpty()) // from-to animation
-                    fromColorString = m_from;
+                    m_fromColor->setRGBColor(m_from);
                 else // to animation
-                    fromColorString = m_initialColor.name();
+                    m_fromColor->setRGBColor(m_initialColor.name());
     
-                m_fromColor->setRGBColor(fromColorString);    
-
-                // Calculate color differences, once.
-                Color qTo = m_toColor->color();
-                Color qFrom = m_fromColor->color();
-    
-                m_redDiff = qTo.red() - qFrom.red();
-                m_greenDiff = qTo.green() - qFrom.green();
-                m_blueDiff = qTo.blue() - qFrom.blue();
-                
+                calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
                 break;
             }
             case BY_ANIMATION:
             case FROM_BY_ANIMATION:
             {
-                String byColorString(m_by);
-                m_toColor->setRGBColor(byColorString);
-
-                String fromColorString;
-            
                 if (!m_from.isEmpty()) // from-by animation
-                    fromColorString = m_from;
+                    m_fromColor->setRGBColor(m_from);
                 else // by animation
-                    fromColorString = m_initialColor.name();
-
-                m_fromColor->setRGBColor(fromColorString);
-
-                Color qBy = m_toColor->color();
-                Color qFrom = m_fromColor->color();
-
-                // Calculate 'm_toColor' using relative values
-                int r = qFrom.red() + qBy.red();
-                int g = qFrom.green() + qBy.green();
-                int b = qFrom.blue() + qBy.blue();
-
-                Color qTo = clampColor(r, g, b);
-            
-                String toColorString(qTo.name());
-                m_toColor->setRGBColor(toColorString);
+                    m_fromColor->setRGBColor(m_initialColor.name());
                 
-                calculateColorDifference(qTo, qFrom, m_redDiff, m_greenDiff, m_blueDiff);
+                m_toColor->setRGBColor(m_by);
+                m_toColor->setRGBColor(addColorsAndClamp(m_fromColor->color(), m_toColor->color()).name());
+                
+                calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
                 break;
             }
             case VALUES_ANIMATION:

@@ -83,7 +83,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             if (transformList) {
                 ExceptionCode ec = 0;
                 for (unsigned long i = 0; i < transformList->numberOfItems(); i++) {
-                    SVGTransform* value = transformList->getItem(i, ec).get();;
+                    SVGTransform* value = transformList->getItem(i, ec).get();
                     if (!value)
                         continue;
                         
@@ -242,19 +242,11 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             calculateRotationFromMatrix(qToMatrix, toAngle, toCx, toCy);
             calculateRotationFromMatrix(qFromMatrix, fromAngle, fromCx, fromCy);
 
-            if (m_toRotateSpecialCase) {
-                if (lround(toAngle) == 1)
-                    toAngle = 0.0;
-                else
-                    toAngle = 360.0;
-            }
+            if (m_toRotateSpecialCase)
+                toAngle = (lround(toAngle) == 1) ? 0.0 : 360.0;
 
-            if (m_fromRotateSpecialCase) {
-                if (lround(fromAngle) == 1)
-                    fromAngle = 0.0;
-                else
-                    fromAngle = 360.0;
-            }
+            if (m_fromRotateSpecialCase)
+                fromAngle = (lround(fromAngle) == 1) ? 0.0 : 360.0;
                     
             double angle = ((toAngle - fromAngle) * useTimePercentage) + fromAngle;
             double cx = (toCx - fromCx) * useTimePercentage + fromCx;
@@ -286,10 +278,8 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
     }
 
     // End condition.
-    if (timePercentage == 1.0)
-    {
-        if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount))
-        {
+    if (timePercentage == 1.0) {
+        if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
             m_lastMatrix.reset();
 
             if (!m_transformMatrix.isIdentity())
@@ -331,7 +321,7 @@ void SVGAnimateTransformElement::applyAnimationToValue(SVGTransformList* targetT
 
 RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const String& data) const
 {
-    DeprecatedString parse = data.deprecatedString().stripWhiteSpace();
+    String parse = data.stripWhiteSpace();
     if (parse.isEmpty())
         return 0;
     
@@ -344,20 +334,20 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Strin
         {
             double tx = 0.0, ty = 0.0;
             if (commaPos != - 1) {
-                tx = parse.mid(0, commaPos).toDouble();
-                ty = parse.mid(commaPos + 1).toDouble();
+                tx = parse.substring(0, commaPos).toDouble();
+                ty = parse.substring(commaPos + 1).toDouble();
             } else 
                 tx = parse.toDouble();
 
             parsedTransform->setTranslate(tx, ty);
-            break;    
+            break;
         }
         case SVGTransform::SVG_TRANSFORM_SCALE:
         {
             double sx = 1.0, sy = 1.0;
             if (commaPos != - 1) {
-                sx = parse.mid(0, commaPos).toDouble();
-                sy = parse.mid(commaPos + 1).toDouble();
+                sx = parse.substring(0, commaPos).toDouble();
+                sy = parse.substring(commaPos + 1).toDouble();
             } else {
                 sx = parse.toDouble();
                 sy = sx;
@@ -370,12 +360,12 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Strin
         {
             double angle = 0, cx = 0, cy = 0;
             if (commaPos != - 1) {
-                angle = parse.mid(0, commaPos).toDouble(); // TODO: probably needs it's own 'angle' parser
+                angle = parse.substring(0, commaPos).toDouble(); // TODO: probably needs it's own 'angle' parser
     
                 int commaPosTwo = parse.find(',', commaPos + 1); // In case three values are passed...
                 if (commaPosTwo != -1) {
-                    cx = parse.mid(commaPos + 1, commaPosTwo - commaPos - 1).toDouble();
-                    cy = parse.mid(commaPosTwo + 1).toDouble();
+                    cx = parse.substring(commaPos + 1, commaPosTwo - commaPos - 1).toDouble();
+                    cy = parse.substring(commaPosTwo + 1).toDouble();
                 }
             }
             else 
@@ -423,8 +413,7 @@ void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransfo
     double cosa = matrix.a();
     double sina = -matrix.c();
 
-    if (cosa != 1.0)
-    {
+    if (cosa != 1.0) {
         // Calculate the angle via magic ;)
         double temp = SVGAngle::todeg(asin(sina));
         angle = SVGAngle::todeg(acos(cosa));
