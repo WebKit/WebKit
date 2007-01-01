@@ -1,3 +1,12 @@
+2007-01-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Simple cleanups, removing unused color table, copyright and include guard fixes.
+
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGColor.h:
+
 2007-01-01  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.

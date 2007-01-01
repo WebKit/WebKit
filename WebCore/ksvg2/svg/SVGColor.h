@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGColorImpl_H
-#define KSVG_SVGColorImpl_H
+#ifndef SVGColor_H
+#define SVGColor_H
 #ifdef SVG_SUPPORT
 
 #include "CSSValue.h"
@@ -72,6 +72,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGColorImpl_H
+#endif // SVGColor_H
 
 // vim:ts=4:noet
